@@ -119,7 +119,7 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 			self.vodTypeCfg = NoSave(ConfigSelection(default=cfg.vodtype.value, choices=[('1', _('DVB(1)')), ('4097', _('IPTV(4097)'))]))
 			
 			
-			if os.path.isdir('/usr/lib/from xStaticText import StaticTextenigma2/python/Plugins/SystemPlugins/ServiceApp'):
+			if os.path.isdir('/usr/lib/enigma2/python/Plugins/SystemPlugins/ServiceApp'):
 				self.liveTypeCfg = NoSave(ConfigSelection(default=cfg.livetype.value, choices=[
 				 ('1', _('DVB(1)')),
 				 ('4097', _('IPTV(4097)')), 

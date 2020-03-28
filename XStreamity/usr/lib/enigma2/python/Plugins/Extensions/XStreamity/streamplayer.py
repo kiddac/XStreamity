@@ -476,7 +476,7 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, IPTVInfoBarShowHide, InfoBarS
 	def toggleStreamType(self):
 		currentindex = 0
 		streamtypelist = ["1","4097"]
-		if os.path.isdir('/usr/lib/from xStaticText import StaticTextenigma2/python/Plugins/SystemPlugins/ServiceApp'):
+		if os.path.isdir('/usr/lib/enigma2/python/Plugins/SystemPlugins/ServiceApp'):
 			streamtypelist = ["1","4097", "5001", "5002"]
 			
 		for index, item in enumerate(streamtypelist, start=0): 
@@ -672,7 +672,7 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarShowHide, InfoBarSeek, In
 	def toggleStreamType(self):
 		currentindex = 0
 		streamtypelist = ["1","4097"]
-		if os.path.isdir('/usr/lib/from xStaticText import StaticTextenigma2/python/Plugins/SystemPlugins/ServiceApp'):
+		if os.path.isdir('/usr/lib/enigma2/python/Plugins/SystemPlugins/ServiceApp'):
 			streamtypelist = ["1","4097", "5001", "5002"]
 			
 		for index, item in enumerate(streamtypelist, start=0): 
@@ -858,7 +858,7 @@ class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarShowHide, InfoBarSeek
 	def toggleStreamType(self):
 		currentindex = 0
 		streamtypelist = ["1","4097"]
-		if os.path.isdir('/usr/lib/from xStaticText import StaticTextenigma2/python/Plugins/SystemPlugins/ServiceApp'):
+		if os.path.isdir('/usr/lib/enigma2/python/Plugins/SystemPlugins/ServiceApp'):
 			streamtypelist = ["1","4097", "5001", "5002"]
 			
 		for index, item in enumerate(streamtypelist, start=0): 
