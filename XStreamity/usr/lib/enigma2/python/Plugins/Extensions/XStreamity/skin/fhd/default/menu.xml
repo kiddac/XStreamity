@@ -1,0 +1,23 @@
+<screen name="Menu" position="0,0" size="1920,1080" backgroundColor="#2a70a4" flags="wfNoBorder">
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/default/images/background.png" alphatest="blend" position="0,0" size="1920,1080" zPosition="-1" />
+	<widget source="global.CurrentTime" render="Label" position="1490,0" size="400,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1">
+		<convert type="ClockToText">Format:%H:%M | %A %-d %b</convert>
+	</widget>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/logo.png" position="center,60" size="200,145" alphatest="blend" zPosition="1" />
+	<widget source="Title" render="Label" position="center,210" size="1920,70" foregroundColor="#ffffff" backgroundColor="#2a70a4" halign="center" font="xstreamityregular;48" transparent="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/panel.png" position="center,300" size="800,660" alphatest="blend" zPosition="1" />
+	<widget source="list" render="Listbox" position="center,390" size="738,600" foregroundColor="#ffffff" backgroundColor="#2a70a4" foregroundColorSelected="#ffffff" backgroundColorSelected="#296fa3" itemHeight="120" scrollbarMode="showNever" transparent="1" zPosition="2">
+		<convert type="TemplatedMultiContent">{"template": [
+                        MultiContentEntryPixmapAlphaBlend(pos=(144, 20), size=(122, 80), png = 4),
+                        MultiContentEntryText(pos=(306, 0), size=(336, 120), font=0, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1),
+					],
+					"fonts": [gFont("xstreamityregular", 48)],
+					"itemHeight": 120,
+					"scrollbarMode": "showNever"
+              }</convert>
+	</widget>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/button-bg.png" position="0,1020" size="1920,60" alphatest="blend" zPosition="1" />
+	<widget source="key_red" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/key_red.png" position="909,1031" size="38,38" alphatest="blend" zPosition="2" />
+	<widget source="key_red" render="Label" position="961,1020" size="240,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#1f5792" valign="center" transparent="1" noWrap="1" zPosition="2" />
+</screen>
+

@@ -1,0 +1,582 @@
+openATV Enigma2 crash log
+
+crashdate=Fri Mar 27 22:16:07 2020
+compiledate=Jan  6 2020
+skin=slyk-q-1080/skin.xml
+sourcedate=2020-01-06
+branch=6.3
+rev=2.8.0-21413-g518dd67
+component=Enigma2
+
+stbmodel=u5
+stbmodel=ultimo
+stbmodel=dm8000
+kernelcmdline=console=ttyAMA0,115200 root=/dev/mmcblk1p1 rootfstype=ext4 rootwait  blkdevparts=mmcblk0:1M(fastboot),1M(bootargs),20M(recovery),2M(deviceinfo),8M(baseparam),8M(pqparam),20M(logo),20M(logobak),40M(fastplay),8M(kernel),32M(loader),-(other) coherent_pool=2M mem=969M mmz=ddr,0,0,48M vmalloc=500M
+nimsockets=NIM Socket 0:
+imageversion=box_type=dinobot4k
+imageissue=Welcome to openATV for %h
+
+
+7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:02+0000 [-] warning, skin is missing element blue in <class 'Screens.Menu.MainMenu'>
+22:16:02.6087 { W } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:02+0000 [-] warning, skin is missing element green in <class 'Screens.Menu.MainMenu'>
+22:16:02.6094 { W } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:02+0000 [-] warning, skin is missing element yellow in <class 'Screens.Menu.MainMenu'>
+22:16:02.7278 [ E ] gdi/accel.cpp:463 accelAlloc [gAccel] accel alloc failed
+
+22:16:02.7279 [ E ] gdi/gpixmap.cpp:216 gSurface [gSurface] ERROR: accelAlloc failed
+22:16:02.7333 [ E ] gdi/accel.cpp:463 accelAlloc [gAccel] accel alloc failed
+
+22:16:02.7334 [ E ] gdi/gpixmap.cpp:216 gSurface [gSurface] ERROR: accelAlloc failed
+22:16:02.7389 [ E ] gdi/accel.cpp:463 accelAlloc [gAccel] accel alloc failed
+
+22:16:02.7390 [ E ] gdi/gpixmap.cpp:216 gSurface [gSurface] ERROR: accelAlloc failed
+22:16:02.7457 [ E ] gdi/accel.cpp:463 accelAlloc [gAccel] accel alloc failed
+
+22:16:02.7458 [ E ] gdi/gpixmap.cpp:216 gSurface [gSurface] ERROR: accelAlloc failed
+22:16:02.7512 [ E ] gdi/accel.cpp:463 accelAlloc [gAccel] accel alloc failed
+
+22:16:02.7513 [ E ] gdi/gpixmap.cpp:216 gSurface [gSurface] ERROR: accelAlloc failed
+22:16:02.7567 [ E ] gdi/accel.cpp:463 accelAlloc [gAccel] accel alloc failed
+
+22:16:02.7568 [ E ] gdi/gpixmap.cpp:216 gSurface [gSurface] ERROR: accelAlloc failed
+22:16:02.7630 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:02+0000 [-] [SKIN] processing screen MenuSummary:
+22:16:02.7662 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:02+0000 [-] [SCREENNAME]  MenuSummary
+22:16:02.7678 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:02+0000 [-] [SCREENNAME]  ['menu_mainmenu', 'Menu']
+22:16:02.7722 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:02+0000 [-] KEY: 139 1 KEY_MENU MENU
+22:16:02.7742 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:02+0000 [-] "::ffff:192.168.1.105" - - [27/Mar/2020:22:16:02 +0000] "GET /api/remotecontrol?command=139&_=1585347331190 HTTP/1.1" 200 86 "http://192.168.1.107/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:74.0) Gecko/20100101 Firefox/74.0"
+22:16:02.7950 [   ] gdi/accel.cpp:330 blit !!!!!!!!!![gAccel] pal_addr1 b0f03bf0 clors=20!!!!!!!!!!
+22:16:02.7957 [   ] gdi/accel.cpp:338 blit !!!!!!!!!![gAccel] pal_addr2 b0f08880 clors=20!!!!!!!!!!
+22:16:02.7959 [   ] gdi/accel.cpp:338 blit !!!!!!!!!![gAccel] pal_addr2 b0f08880 clors=20!!!!!!!!!!
+22:16:02.7960 [   ] gdi/accel.cpp:338 blit !!!!!!!!!![gAccel] pal_addr2 b0f08880 clors=20!!!!!!!!!!
+22:16:02.7962 [   ] gdi/accel.cpp:330 blit !!!!!!!!!![gAccel] pal_addr1 b0f08880 clors=20!!!!!!!!!!
+22:16:02.7963 [   ] gdi/accel.cpp:338 blit !!!!!!!!!![gAccel] pal_addr2 b0f08880 clors=20!!!!!!!!!!
+22:16:02.7965 [   ] gdi/accel.cpp:338 blit !!!!!!!!!![gAccel] pal_addr2 b0f08880 clors=20!!!!!!!!!!
+22:16:02.7966 [   ] gdi/accel.cpp:338 blit !!!!!!!!!![gAccel] pal_addr2 b0f08880 clors=20!!!!!!!!!!
+22:16:02.7970 [   ] gdi/accel.cpp:330 blit !!!!!!!!!![gAccel] pal_addr1 b0f08880 clors=20!!!!!!!!!!
+22:16:02.7971 [   ] gdi/accel.cpp:338 blit !!!!!!!!!![gAccel] pal_addr2 b0f08880 clors=20!!!!!!!!!!
+22:16:02.7973 [   ] gdi/accel.cpp:338 blit !!!!!!!!!![gAccel] pal_addr2 b0f08880 clors=20!!!!!!!!!!
+22:16:02.7974 [   ] gdi/accel.cpp:338 blit !!!!!!!!!![gAccel] pal_addr2 b0f08880 clors=20!!!!!!!!!!
+22:16:02.7976 [   ] gdi/accel.cpp:330 blit !!!!!!!!!![gAccel] pal_addr1 b0f08880 clors=20!!!!!!!!!!
+22:16:02.7977 [   ] gdi/accel.cpp:338 blit !!!!!!!!!![gAccel] pal_addr2 b0f08880 clors=20!!!!!!!!!!
+22:16:02.7978 [   ] gdi/accel.cpp:338 blit !!!!!!!!!![gAccel] pal_addr2 b0f08880 clors=20!!!!!!!!!!
+22:16:02.7980 [   ] gdi/accel.cpp:338 blit !!!!!!!!!![gAccel] pal_addr2 b0f08880 clors=20!!!!!!!!!!
+22:16:02.7982 [   ] gdi/accel.cpp:330 blit !!!!!!!!!![gAccel] pal_addr1 b0f08880 clors=20!!!!!!!!!!
+22:16:02.7983 [   ] gdi/accel.cpp:338 blit !!!!!!!!!![gAccel] pal_addr2 b0f08880 clors=20!!!!!!!!!!
+22:16:02.7985 [   ] gdi/accel.cpp:338 blit !!!!!!!!!![gAccel] pal_addr2 b0f08880 clors=20!!!!!!!!!!
+22:16:02.7986 [   ] gdi/accel.cpp:338 blit !!!!!!!!!![gAccel] pal_addr2 b0f08880 clors=20!!!!!!!!!!
+22:16:02.7987 [   ] gdi/accel.cpp:330 blit !!!!!!!!!![gAccel] pal_addr1 b0f08880 clors=20!!!!!!!!!!
+22:16:02.7989 [   ] gdi/accel.cpp:338 blit !!!!!!!!!![gAccel] pal_addr2 b0f08880 clors=20!!!!!!!!!!
+22:16:02.7990 [   ] gdi/accel.cpp:338 blit !!!!!!!!!![gAccel] pal_addr2 b0f08880 clors=20!!!!!!!!!!
+22:16:02.7992 [   ] gdi/accel.cpp:330 blit !!!!!!!!!![gAccel] pal_addr1 b0f08880 clors=20!!!!!!!!!!
+22:16:02.7993 [   ] gdi/accel.cpp:338 blit !!!!!!!!!![gAccel] pal_addr2 b0f08880 clors=20!!!!!!!!!!
+22:16:02.7995 [   ] gdi/accel.cpp:338 blit !!!!!!!!!![gAccel] pal_addr2 b0f08880 clors=20!!!!!!!!!!
+22:16:02.7996 [   ] gdi/accel.cpp:330 blit !!!!!!!!!![gAccel] pal_addr1 b0f08880 clors=20!!!!!!!!!!
+22:16:02.7998 [   ] gdi/accel.cpp:338 blit !!!!!!!!!![gAccel] pal_addr2 b0f08880 clors=20!!!!!!!!!!
+22:16:02.7999 [   ] gdi/accel.cpp:338 blit !!!!!!!!!![gAccel] pal_addr2 b0f08880 clors=20!!!!!!!!!!
+22:16:02.8000 [   ] gdi/accel.cpp:330 blit !!!!!!!!!![gAccel] pal_addr1 b0f08880 clors=20!!!!!!!!!!
+22:16:02.8002 [   ] gdi/accel.cpp:338 blit !!!!!!!!!![gAccel] pal_addr2 b0f08880 clors=20!!!!!!!!!!
+22:16:02.8003 [   ] gdi/accel.cpp:338 blit !!!!!!!!!![gAccel] pal_addr2 b0f08880 clors=20!!!!!!!!!!
+22:16:02.8005 [   ] gdi/accel.cpp:330 blit !!!!!!!!!![gAccel] pal_addr1 b0f08880 clors=20!!!!!!!!!!
+22:16:02.8006 [   ] gdi/accel.cpp:338 blit !!!!!!!!!![gAccel] pal_addr2 b0f08880 clors=20!!!!!!!!!!
+22:16:02.8007 [   ] gdi/accel.cpp:338 blit !!!!!!!!!![gAccel] pal_addr2 b0f08880 clors=20!!!!!!!!!!
+22:16:03.8221 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:03+0000 [-] "::ffff:192.168.1.105" - - [27/Mar/2020:22:16:02 +0000] "GET /api/pipinfo?_=1585347331191 HTTP/1.1" 200 33 "http://192.168.1.107/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:74.0) Gecko/20100101 Firefox/74.0"
+22:16:03.8326 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:03+0000 [-] "::ffff:192.168.1.105" - - [27/Mar/2020:22:16:03 +0000] "GET /ajax/screenshot HTTP/1.1" 200 859 "http://192.168.1.107/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:74.0) Gecko/20100101 Firefox/74.0"
+22:16:03.9497 [   ] base/console.cpp:110 execute [eConsoleAppContainer] Starting /usr/bin/grab
+22:16:04.2933 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:04+0000 [-] KEY: 352 0 KEY_OK OK
+22:16:04.2939 { W } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:04+0000 [-] [ActionMap] Keymap 'WizardActions' -> Unknown action 'ok'! (Typo in keymap?)
+22:16:04.2948 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:04+0000 [-] [ActionMap] Keymap 'OkCancelActions' -> Action = 'ok'.
+22:16:04.2975 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:04+0000 [-] xtream_e2portal_url =  http://boom.ddns.me:8000/enigma2.php
+22:16:04.2992 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:04+0000 [-] username =  harry123
+22:16:04.3004 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:04+0000 [-] password =  harry123
+22:16:04.3009 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:04+0000 [-] plugin_version =   1.8
+22:16:04.3014 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:04+0000 [-] XCplugin Mod. E2 Plugin v.  1.8 Lite Passion
+22:16:04.3019 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:04+0000 [-] -----------CONFIG NEW END----------
+22:16:04.3024 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:04+0000 [-] !!!!!!!!-------------------- URL http://boom.ddns.me:8000/enigma2.php
+22:16:04.3031 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:04+0000 [-] next_request0  http://boom.ddns.me:8000/enigma2.php?username=harry123&password=harry123
+22:16:04.5471 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:04+0000 [-] url_info2 =  http://boom.ddns.me:8000/player_api.php?username=harry123&password=harry123
+22:16:04.7037 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:04+0000 [-] fpage = {"user_info":{"username":"harry123","password":"harry123","message":"<span style=\"font-size: 24px; color: rgb(255, 153, 0);\"><h2 style=\"font-size: 24px;\"><b style=\"font-size: 24px;\"><span style=\"font-size: 24px;\">WELCOME TO BOOM IPTV <\/span><\/b><\/h2><\/span><span style=\"font-size: 24px; color: rgb(255, 153, 0);\"><h2 style=\"font-size: 24px;\"><b style=\"font-size: 24px;\"><span style=\"font-size: 24px;\">WATCH TV EVERYWHERE IOS, ANDROID, ENIGMA2, MAG BOXES, PC, SMART TV<\/span><\/b><\/h2><\/span>","auth":1,"status":"Active","exp_date":null,"is_trial":"0","active_cons":"0","created_at":"1523395124","max_connections":"5","allowed_output_formats":["m3u8","ts"]},"server_info":{"url":"boom.ddns.me","port":"8000","https_port":"25463","server_protocol":"http","rtmp_port":"1935","timezone":"Europe\/London","timestamp_now":1585347363,"time_now":"2020-03-27 22:16:03"}}
+22:16:04.7052 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:04+0000 [-] user_info = {'username': 'harry123', 'status': 'Active', 'auth': 1, 'exp_date': 1893452400, 'message': '<span style="font-size: 24px; color: rgb(255, 153, 0);"><h2 style="font-size: 24px;"><b style="font-size: 24px;"><span style="font-size: 24px;">WELCOME TO BOOM IPTV <\\/span><\\/b><\\/h2><\\/span><span style="font-size: 24px; color: rgb(255, 153, 0);"><h2 style="font-size: 24px;"><b style="font-size: 24px;"><span style="font-size: 24px;">WATCH TV EVERYWHERE IOS, ANDROID, ENIGMA2, MAG BOXES, PC, SMART TV<\\/span><\\/b><\\/h2><\\/span>', 'password': 'harry123', 'max_connections': '5', 'is_trial': '0', 'created_at': '1523395124', 'allowed_output_formats': ['m3u8', 'ts'], 'active_cons': '0'}
+22:16:04.7058 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:04+0000 [-] max_connect = 5
+22:16:04.7064 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:04+0000 [-] active_cons = 5
+22:16:04.7074 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:04+0000 [-] [ActionMap] Keymap(s) 'XCpluginActions' -> Undefined action(s) 'showMovies, movielist'.
+22:16:04.7080 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:04+0000 [-] [SKIN] Parsing embedded skin <embedded-in-'xc_Main'>
+22:16:04.7100 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:04+0000 [-] [SKIN] processing screen <embedded-in-'xc_Main'>:
+22:16:04.7155 { E } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:04+0000 [-] [Skin] Error: Renderer 'xcRunningText' not found
+22:16:04.7238 [ E ] gdi/accel.cpp:463 accelAlloc [gAccel] accel alloc failed
+
+22:16:04.7239 [ E ] gdi/gpixmap.cpp:216 gSurface [gSurface] ERROR: accelAlloc failed
+22:16:04.7377 [ E ] gdi/accel.cpp:463 accelAlloc [gAccel] accel alloc failed
+
+22:16:04.7378 [ E ] gdi/gpixmap.cpp:216 gSurface [gSurface] ERROR: accelAlloc failed
+22:16:04.7536 [ E ] gdi/accel.cpp:463 accelAlloc [gAccel] accel alloc failed
+
+22:16:04.7537 [ E ] gdi/gpixmap.cpp:216 gSurface [gSurface] ERROR: accelAlloc failed
+22:16:04.7746 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:04+0000 [-] [SKIN] processing screen SimpleSummary:
+22:16:04.7778 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:04+0000 [-] [SCREENNAME]  ['xc_Main_summary', 'SimpleSummary']
+22:16:04.8060 [ E ] gdi/accel.cpp:463 accelAlloc [gAccel] accel alloc failed
+
+22:16:04.8060 [ E ] gdi/gpixmap.cpp:216 gSurface [gSurface] ERROR: accelAlloc failed
+22:16:04.8173 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:04+0000 [-] [SCREENNAME]  xc_Main
+22:16:04.8233 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:04+0000 [-] KEY: 352 1 KEY_OK OK
+22:16:04.8264 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:04+0000 [-] "::ffff:192.168.1.105" - - [27/Mar/2020:22:16:03 +0000] "GET /api/remotecontrol?command=352&_=1585347331192 HTTP/1.1" 200 86 "http://192.168.1.107/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:74.0) Gecko/20100101 Firefox/74.0"
+22:16:04.9423 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:04+0000 [-] "::ffff:192.168.1.105" - - [27/Mar/2020:22:16:04 +0000] "GET /grab?format=jpg&r=720&mode=all&T=1585347364680 HTTP/1.1" 200 586146 "http://192.168.1.107/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:74.0) Gecko/20100101 Firefox/74.0"
+22:16:04.9428 [   ] base/ebase.cpp:279 processOneEvent [eMainloop::processOneEvent] unhandled POLLERR/HUP/NVAL for fd 92(16)
+22:16:05.8645 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:05+0000 [-] "::ffff:192.168.1.105" - - [27/Mar/2020:22:16:05 +0000] "GET /api/pipinfo?_=1585347331193 HTTP/1.1" 200 33 "http://192.168.1.107/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:74.0) Gecko/20100101 Firefox/74.0"
+22:16:05.8729 [   ] base/console.cpp:110 execute [eConsoleAppContainer] Starting /usr/bin/grab
+22:16:06.7868 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:06+0000 [-] "::ffff:192.168.1.105" - - [27/Mar/2020:22:16:05 +0000] "GET /grab?format=jpg&r=720&mode=all&T=1585347366589 HTTP/1.1" 200 234316 "http://192.168.1.107/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:74.0) Gecko/20100101 Firefox/74.0"
+22:16:06.7872 [   ] base/ebase.cpp:279 processOneEvent [eMainloop::processOneEvent] unhandled POLLERR/HUP/NVAL for fd 96(16)
+22:16:07.7178 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:07+0000 [-] KEY: 352 0 KEY_OK OK
+22:16:07.7185 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:07+0000 [-] [ActionMap] Keymap 'XCpluginActions' -> Action = 'ok'.
+22:16:07.7190 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:07+0000 [-]  ********* current_index ***** 0 
+22:16:07.7197 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:07+0000 [-] Traceback (most recent call last):
+22:16:07.7202 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:07+0000 [-]   File "/usr/lib/enigma2/python/Components/ActionMap.py", line 57, in action
+22:16:07.7208 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:07+0000 [-]   File "/usr/lib/enigma2/python/Plugins/Extensions/XCplugin/plugin.py", line 1661, in ok
+22:16:07.7233 {   } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:07+0000 [-]     selected_channel = self.mlist[current_index]
+22:16:07.7239 { E } /usr/lib/python2.7/site-packages/twisted/python/util.py:815 untilConcludes 2020-03-27 22:16:07+0000 [-] TypeError: 'MenuList' object does not support indexing
+22:16:07.7241 [ E ] python/python.cpp:210 call [ePyObject] (PyObject_CallObject(<bound method HelpableActionMap.action of <Components.ActionMap.HelpableActionMap instance at 0xaf29ad00>>,('XCpluginActions', 'ok')) failed)
+
+
+dmesg
+
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003e (DTV_STAT_SIGNAL_STRENGTH)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (71)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (70)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766988
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003e (DTV_STAT_SIGNAL_STRENGTH)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (71)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (70)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766988
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003e (DTV_STAT_SIGNAL_STRENGTH)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (71)
+<7>dvb_demux_ioctl DMX_SET_FILTER:
+<7>dvb_demux_ioctl DMX_STOP:
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (70)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766988
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003e (DTV_STAT_SIGNAL_STRENGTH)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (71)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (70)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766988
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003e (DTV_STAT_SIGNAL_STRENGTH)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (71)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (70)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766988
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003e (DTV_STAT_SIGNAL_STRENGTH)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (71)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (70)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766988
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003e (DTV_STAT_SIGNAL_STRENGTH)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (71)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (70)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766988
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003e (DTV_STAT_SIGNAL_STRENGTH)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (71)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (70)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766988
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003e (DTV_STAT_SIGNAL_STRENGTH)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (71)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (70)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766988
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003e (DTV_STAT_SIGNAL_STRENGTH)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (71)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (70)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766988
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003e (DTV_STAT_SIGNAL_STRENGTH)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (71)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (70)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766988
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003e (DTV_STAT_SIGNAL_STRENGTH)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (71)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (70)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766988
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003e (DTV_STAT_SIGNAL_STRENGTH)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (71)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (70)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766988
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003e (DTV_STAT_SIGNAL_STRENGTH)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (71)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (70)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766988
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003e (DTV_STAT_SIGNAL_STRENGTH)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (71)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (70)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766988
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003e (DTV_STAT_SIGNAL_STRENGTH)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (71)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (70)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766988
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003e (DTV_STAT_SIGNAL_STRENGTH)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (71)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (70)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766988
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003e (DTV_STAT_SIGNAL_STRENGTH)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (71)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (69)
+<7>(NULL device *): dvb_frontend_ioctl: (70)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766988
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003f (DTV_STAT_CNR)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (72)
+<7>(NULL device *): dvb_frontend_ioctl: (83)
+<7>(NULL device *): dvb_frontend_ioctl_properties:
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.num = 1
+<7>(NULL device *): dvb_frontend_ioctl_properties: properties.props = be766990
+<7>(NULL device *): dtv_property_dump: tvp.cmd    = 0x0000003e (DTV_STAT_SIGNAL_STRENGTH)
+<7>(NULL device *): dtv_property_dump: tvp.u.data = 0x00000000
+<7>(NULL device *): dvb_frontend_ioctl: (71)
+

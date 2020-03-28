@@ -1,0 +1,41 @@
+<screen name="UserInfo" position="0,0" size="1920,1080" backgroundColor="#2a70a4" flags="wfNoBorder">
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/default/images/background.png" alphatest="blend" position="0,0" size="1920,1080" zPosition="-1" />
+	<widget source="global.CurrentTime" render="Label" position="1490,0" size="400,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1">
+		<convert type="ClockToText">Format:%H:%M | %A %-d %b</convert>
+	</widget>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/logo.png" position="center,60" size="200,145" alphatest="blend" zPosition="1" />
+	<widget source="Title" render="Label" position="center,210" size="1920,70" foregroundColor="#ffffff" backgroundColor="#2a70a4" halign="center" font="xstreamityregular;48" transparent="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/panel.png" position="center,300" size="800,660" alphatest="blend" zPosition="1" />
+	<eLabel text="Status:" position="590,330" size="369,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2" />
+	<eLabel text="Is Trial:" position="590,390" size="369,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2" />
+	<eLabel text="Active Connections:" position="590,450" size="369,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2" />
+	<eLabel text="Max Connections:" position="590,510" size="369,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2" />
+	<eLabel text="Created At:" position="590,570" size="369,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2" />
+	<eLabel text="Expiry Date:" position="590,630" size="369,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2" />
+	<eLabel text="Allowed Output Formats:" position="590,690" size="369,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2" />
+	<eLabel text="Real URL:" position="590,750" size="369,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2" />
+	<eLabel text="Timezone:" position="590,810" size="369,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2" />
+	<widget name="status" position="959,330" size="369,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2" />
+	<widget name="trial" position="959,390" size="369,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2" />
+	<widget name="activeconn" render="Label" position="959,450" size="369,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2" />
+	<widget name="maxconn" position="959,510" size="369,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2" />
+	<widget name="created" position="959,570" size="369,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2" />
+	<widget name="expiry" position="959,630" size="369,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2" />
+	<widget name="formats" position="959,690" size="369,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2" />
+	<widget name="realurl" position="732,750" size="596,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2" />
+	<widget name="timezone" position="959,810" size="369,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2" />
+	<widget name="fullurl" position="590,879" size="738,60" font="xstreamityregular;21" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" zPosition="2" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="center,388" size="738,4" alphatest="blend" zPosition="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="center,448" size="738,4" alphatest="blend" zPosition="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="center,508" size="738,4" alphatest="blend" zPosition="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="center,568" size="738,4" alphatest="blend" zPosition="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="center,628" size="738,4" alphatest="blend" zPosition="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="center,688" size="738,4" alphatest="blend" zPosition="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="center,748" size="738,4" alphatest="blend" zPosition="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="center,808" size="738,4" alphatest="blend" zPosition="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="center,868" size="738,4" alphatest="blend" zPosition="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/button-bg.png" position="0,1020" size="1920,60" alphatest="blend" zPosition="1" />
+	<widget source="key_red" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/key_red.png" position="909,1031" size="38,38" alphatest="blend" zPosition="2" />
+	<widget source="key_red" render="Label" position="961,1020" size="240,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#1f5792" valign="center" transparent="1" noWrap="1" zPosition="2" />
+</screen>
+
