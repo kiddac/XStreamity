@@ -70,5 +70,8 @@
 		<convert type="ConditionalShowHide" />
 	</widget>
 	<widget source="key_epg" render="Label" position="1665,1020" size="165,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#1f5792" valign="center" transparent="1" zPosition="2" />
+	
+	<widget source="page" render="Label" position="45,1020" size="219,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#1f5792" valign="center" transparent="1" noWrap="1" zPosition="2" />
+	<widget source="listposition" render="Label" position="270,1020" size="165,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#1f5792" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2" />
 </screen>
 

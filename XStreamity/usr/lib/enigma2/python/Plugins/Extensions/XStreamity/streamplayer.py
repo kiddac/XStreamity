@@ -487,6 +487,7 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, IPTVInfoBarShowHide, InfoBarS
 		self.servicetype = int(next(nextStreamType))
 		self.playStream(self.servicetype, self.streamurl)
 		
+
 	
 	def next(self):
 		if glob.currentchannelist:

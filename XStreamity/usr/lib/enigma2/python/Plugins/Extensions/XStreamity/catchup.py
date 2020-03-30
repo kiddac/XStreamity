@@ -300,8 +300,6 @@ class XStreamity_Catchup(Screen):
 			
 
 	def back(self):
-		
-		
 		if cfg.stopstream.value == True:
 			self.stopStream()
 			
@@ -354,8 +352,6 @@ class XStreamity_Catchup(Screen):
 			return
 			
 		if self["channel_list"].getCurrent():   
-				
-			
 			self.currentindex =  self["channel_list"].getCurrent()[3]
 			
 			glob.nextlist[-1]['index'] = self.currentindex  
@@ -367,8 +363,7 @@ class XStreamity_Catchup(Screen):
 			
 			if not self.isStream:
 				glob.nextlist.append({"playlist_url": playlist_url, "index": 0}) 
-				self.createSetup()
-				
+				self.createSetup()	
 			else:
 				if self.selectedlist == self["channel_list"]:
 					self.getCatchupList()
@@ -423,6 +418,9 @@ class XStreamity_Catchup(Screen):
 				with open('/etc/enigma2/X-Streamity/catchup_json2.json', 'w') as f:
 					json.dump(self.archive, f)
 					
+				#remove oldest catchup item in list. Usual void.
+				self.archive.pop(0)
+				
 				self.getlistings()
 				
 				
@@ -499,15 +497,42 @@ class XStreamity_Catchup(Screen):
 		
 		if stream_url:
 			stream = stream_url.rpartition('/')[-1]
-			
+
 		#playurl = "%s/streaming/timeshift.php?username=%s&password=%s&stream=%s&start=%s&duration=%s" % (self.host, self.username, self.password, stream, str(self["catchup_list"].getCurrent()[5]), str(self["catchup_list"].getCurrent()[6]))
 		playurl = "%s/timeshift/%s/%s/%s/%s/%s" % (self.host, self.username, self.password, str(self["catchup_list"].getCurrent()[6]), str(self["catchup_list"].getCurrent()[5]),  stream)
-	
-		if stream_url != 'None' and "/live/" in stream_url:
-			streamtype = glob.current_playlist["player_info"]["livetype"]
-			self.reference = eServiceReference(int(streamtype), 0, str(playurl))
-			glob.catchupdata = [str(self["catchup_list"].getCurrent()[0]), str(self["catchup_list"].getCurrent()[4])]
-			self.session.openWithCallback(self.createSetup,streamplayer.XStreamity_CatchupPlayer, str(playurl), str(streamtype))
+		
+		req = urllib2.Request(playurl, headers=hdr)
+		valid = False
+		try:
+			response = urllib2.urlopen(req)
+			valid = True
+			
+		
+		except urllib2.URLError as e:
+			print(e)
+			
+			pass
+			
+		except socket.timeout as e:
+			print(e)
+			
+			pass
+			
+		except:
+			print("\n ***** downloadSimpleData unknown error")
+			pass
+			
+		
+		if valid == True:
+			if stream_url != 'None' and "/live/" in stream_url:
+				streamtype = "1"
+				self.reference = eServiceReference(int(streamtype), 0, str(playurl))
+				glob.catchupdata = [str(self["catchup_list"].getCurrent()[0]), str(self["catchup_list"].getCurrent()[4])]
+				self.session.openWithCallback(self.createSetup,streamplayer.XStreamity_CatchupPlayer, str(playurl), str(streamtype))
+		else:
+			from Screens.MessageBox import MessageBox
+			self.session.open(MessageBox, _('Catchup error. No data for this slot'), MessageBox.TYPE_WARNING, timeout=5)
+			
 
 		
 	def goLeft(self):
@@ -705,7 +730,3 @@ def checkGZIP(url):
 	except:
 		pass
 		return response
-
-	
-
-		

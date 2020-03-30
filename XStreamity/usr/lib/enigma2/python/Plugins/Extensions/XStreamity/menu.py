@@ -30,6 +30,8 @@ import xstreamity_globals as glob
 import base64
 
 from Tools.BoundFunction import boundFunction
+import os
+import json
 
 
 class XStreamity_Menu(Screen):
@@ -51,6 +53,8 @@ class XStreamity_Menu(Screen):
 		self.setup_title = (_('Stream Selection'))
 		
 		self['key_red'] = StaticText(_('Back'))
+		
+		self.tempcategorytypepath = "/tmp/categories.xml"
 		
 		self['actions'] = ActionMap(['XStreamityActions'], {
 		'red': self.quit,
@@ -79,6 +83,8 @@ class XStreamity_Menu(Screen):
 
 
 	def quit(self):
+		if os.path.exists(self.tempcategorytypepath):
+			os.remove(self.tempcategorytypepath)
 		self.close()
 	
 		
@@ -100,27 +106,38 @@ class XStreamity_Menu(Screen):
 		self.list = []
 		response = ''
 		valid = False
+		fromfile = False
 		
-		try:
-			response = checkGZIP(url)
-			if response != '':
-				valid = True
-
-		except Exception as e:
-			print(e)
-			pass
-
-		except:
-			pass
-			
-		if valid == True and response != '':
-	
+		if not os.path.exists(self.tempcategorytypepath):
 			try:
-				root = ET.fromstring(response.read())
+				response = checkGZIP(url)
+				if response != '':
+					valid = True
+					
+					try:
+						content = response.read()
+					except:
+						content = response
+
+			except Exception as e:
+				print(e)
+				pass
+
 			except:
-				print "*** failed ***"
-				root = ET.fromstring(response)
+				pass	
+		else:
+			valid = True
+			fromfile = True
+			with open(self.tempcategorytypepath, "r") as f:
+				content = f.read()
+
 				
+		if valid == True and content != '':
+			
+			with open(self.tempcategorytypepath, 'w') as f:
+				f.write(content)
+
+			root = ET.fromstring(content)
 				
 			self.list = []
 			index = 0
@@ -160,10 +177,13 @@ class XStreamity_Menu(Screen):
 			
 			if len(self.list) == 1:
 				self.next()
-				self.close()	
+				self.close()
+				
 		else:
 			self.session.openWithCallback(self.close ,MessageBox, _('No data, blocked or playlist not compatible with XStreamity plugin.'), MessageBox.TYPE_WARNING, timeout=5)
-	
+				
+
+			
 		
 def buildListEntry(index, title, category_id, playlisturl):
 	png = None

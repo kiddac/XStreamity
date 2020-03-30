@@ -25,6 +25,7 @@ from Tools.BoundFunction import boundFunction
 from xStaticText import StaticText
 from datetime import datetime, timedelta
 
+
 #download / parse
 import base64
 import re
@@ -36,6 +37,7 @@ import xml.etree.ElementTree as ET
 from twisted.web.client import downloadPage, getPage, http
 import xstreamity_globals as glob
 import streamplayer, imagedownload
+import math
 
 from Screens.ParentalControlSetup import ProtectedScreen
 from Components.config import *
@@ -59,7 +61,6 @@ class XStreamity_Categories(Screen):
 		self.setup_title = (_('Categories'))
 		self.main_title = self.currentList[-1]["title"]
 	
-
 		self["channel"] = StaticText(self.main_title)
 		
 		self.list1 = []
@@ -122,6 +123,16 @@ class XStreamity_Categories(Screen):
 		self.protocol = glob.current_playlist['playlist_info']['protocol']
 		self.domain = glob.current_playlist['playlist_info']['domain']
 		self.host = glob.current_playlist['playlist_info']['host']
+		
+		self["page"] = StaticText('')
+		self["listposition"] = StaticText('')
+		self.page = 0
+		self.pageall = 0
+		self.position = 0
+		self.positionall = 0
+		self.itemsperpage = 12
+		
+		self.level = 1
 
 		self["actions"] = ActionMap(["XStreamityActions"], {
 			'red': self.back,
@@ -142,7 +153,7 @@ class XStreamity_Categories(Screen):
 			}, -2)
 			
 		glob.nextlist = []
-		glob.nextlist.append({"playlist_url": self.currentList[-1]["playlist_url"], "index": 0})
+		glob.nextlist.append({"playlist_url": self.currentList[-1]["playlist_url"], "index": 0, "level": self.level})
 		self.onFirstExecBegin.append(self.createSetup)
 		self.onLayoutFinish.append(self.__layoutFinished)
 		
@@ -208,25 +219,40 @@ class XStreamity_Categories(Screen):
 	
 		response = ''
 		index = 0
-
-		#self["channel_list"].selectionEnabled(0)
-		
+		levelpath = '/tmp/level' + str(self.level) + '.xml'
 		valid = False
-		try:
-			response = checkGZIP(url)
-			if response != '':
-				valid = True
-		except Exception as e:
-			print(e)
-			pass
+		
+		if not os.path.exists(levelpath):
+			try:
+				response = checkGZIP(url)
+				if response != '':
+					valid = True
+					
+					try:
+						content = response.read()
+					except:
+						content = response
+			
+					with open(levelpath, 'w') as f:
+						f.write(content)
+			
+			
+			except Exception as e:
+				print(e)
+				pass
 
-		except:
-			pass
-			
+			except:
+				pass
+		else:
+			valid = True
+			with open(levelpath, "r") as f:
+				content = f.read()
+
 		self.isStream = False
-		if valid == True and response != '':
-			root = ET.fromstring(response.read())
-			
+		if valid == True and content != '':
+
+			root = ET.fromstring(content)
+
 			for channel in root.findall('channel'):
 				title64 = ''
 				title = ''
@@ -356,9 +382,7 @@ class XStreamity_Categories(Screen):
 									shift = int(glob.current_playlist["player_info"]["epgshift"])
 									epgnextshifttime = time + timedelta(hours=shift)
 									epgnexttime = format(epgnextshifttime, '%H:%M') 
-								
-								
-
+	
 				if stream_url and "/movie/" in stream_url:
 					vodLines = description.splitlines()
 
@@ -386,7 +410,7 @@ class XStreamity_Categories(Screen):
 			glob.sort_list1 = self.channelList[:]
 			glob.sort_list2 = self.epglist[:]
 			glob.sort_list4 = self.voditemlist[:]
-			
+
 			if self["channel_list"].getCurrent():
 				#self["channel_list"].selectionEnabled(1)
 				try:
@@ -411,6 +435,11 @@ class XStreamity_Categories(Screen):
 		
 		if cfg.stopstream.value == True:
 			self.stopStream()
+			
+		levelpath = '/tmp/level' + str(self.level) + '.xml'
+		if os.path.exists(levelpath):
+			os.remove(levelpath)
+		self.level -= 1
 			
 		if len(glob.nextlist) == 0:
 			self.close()
@@ -445,7 +474,6 @@ class XStreamity_Categories(Screen):
 		else:
 			self.pin = True
 			self.next2()
-			
 				
 		
 	def next2(self):
@@ -473,6 +501,7 @@ class XStreamity_Categories(Screen):
 
 			if not self.isStream:
 				glob.nextlist.append({"playlist_url": playlist_url, "index": 0}) 
+				self.level += 1
 				self.createSetup()
 			else:
 				streamurl = ''
@@ -588,6 +617,16 @@ class XStreamity_Categories(Screen):
 			
 			channeltitle = self["channel_list"].getCurrent()[0]
 			stream_url = self["channel_list"].getCurrent()[8]
+			currentindex = self["channel_list"].getSelectionIndex()
+
+			self.position = currentindex + 1
+			self.positionall = len(self.channelList)
+			
+			self.page = int(math.ceil(float(self.position) / float(self.itemsperpage)))
+			self.pageall = int(math.ceil(float(self.positionall) / float(self.itemsperpage)))
+			
+			self["page"].setText('Page: ' + str(self.page) + " of " + str(self.pageall))
+			self["listposition"].setText(str(self.position) + "/" + str(self.positionall))
 
 			self["channel"].setText(self.main_title + ": " + str(channeltitle))
 			self["progress"].hide()
@@ -897,9 +936,6 @@ class XStreamity_Categories(Screen):
 		url = ''
 		size = []
 		if self["channel_list"].getCurrent():
-			
-	
-	
 			try:
 				currentindex = self["channel_list"].getSelectionIndex()
 			except:
@@ -1053,11 +1089,6 @@ def buildEPGListEntry(title, index, epgnowtime, epgnowtitle, epgnowdescription, 
 			]
 			
 	
-			
-
-
-
-
 def checkGZIP(url):
 	response = ''
 	request = urllib2.Request(url, headers=hdr)

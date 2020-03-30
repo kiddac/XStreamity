@@ -23,7 +23,6 @@ import os
 import urllib2
 import json
 
-
 import xstreamity_globals as glob
 import server, serverinfo, menu, settings
 from datetime import datetime
@@ -74,6 +73,8 @@ class XStreamity_Main(Screen):
 		self["splash"].show()
 		self["scroll_up"].hide()
 		self["scroll_down"].hide()
+		
+		self.tempplaylistpath = "/tmp/playlists.json"
 
 		self['actions'] = ActionMap(['XStreamityActions'], {
 		'red': self.quit,
@@ -144,9 +145,7 @@ class XStreamity_Main(Screen):
 			f.writelines((line.strip(' ') for line in lines if line.strip()))
 			f.truncate()
 			
-		
-
-
+			
 	def checkPlaylistUserFile(self):
 		with open(playlist_path, 'r+') as f:
 			lines = f.readlines()
@@ -158,8 +157,7 @@ class XStreamity_Main(Screen):
 					line = line.replace("mpegts", "ts")
 				f.write(line)
 			f.truncate()
-	
-	
+
 	
 	def getPlaylistUserFile(self):
 		with open(playlist_path) as f:
@@ -282,61 +280,68 @@ class XStreamity_Main(Screen):
 									
 	def downloadUserInfo(self):
 		index = 0 
-		for playlists in self.playlists_all:
-			response = ''
-			
-			valid = False
-			panel = "new"
-			player_api = str(playlists["playlist_info"]["player_api"])
-			panel_api = str(playlists["playlist_info"]["panel_api"])
-			full_url = str(playlists["playlist_info"]["full_url"])
-			domain = str(playlists["playlist_info"]["domain"])
-			username = str(playlists["playlist_info"]["username"])
-			password = str(playlists["playlist_info"]["password"])
-			
-			player_req = urllib2.Request(player_api, headers=hdr)
-			
-			
-			if 'get.php' in full_url and domain != '' and username != '' and password != '':
 		
-				try:
-					response = checkGZIP(player_api)
-					if response != '':
-						valid = True
-						panel = "new"
-				except Exception as e:
-					print(e)
+		if not os.path.exists(self.tempplaylistpath):
+			for playlists in self.playlists_all:
+				response = ''
+				
+				valid = False
+				panel = "new"
+				player_api = str(playlists["playlist_info"]["player_api"])
+				panel_api = str(playlists["playlist_info"]["panel_api"])
+				full_url = str(playlists["playlist_info"]["full_url"])
+				domain = str(playlists["playlist_info"]["domain"])
+				username = str(playlists["playlist_info"]["username"])
+				password = str(playlists["playlist_info"]["password"])
+				
+				player_req = urllib2.Request(player_api, headers=hdr)
+
+				if 'get.php' in full_url and domain != '' and username != '' and password != '':
+			
 					try:
-						response = checkGZIP(panel_api)
-						valid = True
-						panel = "old"
+						response = checkGZIP(player_api)
+						if response != '':
+							valid = True
+							panel = "new"
 					except Exception as e:
 						print(e)
+						try:
+							response = checkGZIP(panel_api)
+							valid = True
+							panel = "old"
+						except Exception as e:
+							print(e)
+
+						except:
+							pass
 
 					except:
 						pass
-
-				except:
-					pass
-	
-
-			if valid and response != '':
-				try:
-					self.playlists_all[index].update(json.load(response, object_pairs_hook=OrderedDict))
-				except:
+								
+				if valid and response != '':
 					try:
-						self.playlists_all[index].update(json.loads(response, object_pairs_hook=OrderedDict))
+						self.playlists_all[index].update(json.load(response, object_pairs_hook=OrderedDict))
 					except:
-						pass
+						try:
+							self.playlists_all[index].update(json.loads(response, object_pairs_hook=OrderedDict))
+						except:
+							pass
 						
-			index += 1
-			
+				index += 1			
+		else:
+			with open(self.tempplaylistpath, "r") as f:
+				response = f.read()
+				self.playlists_all = json.loads(response)
+
 		self["splash"].hide()
 		self.buildPlaylistList()	
 			
 		
 	def writeJsonFile(self):
 		with open(json_file, 'w') as f:
+			json.dump(self.playlists_all, f)
+			
+		with open(self.tempplaylistpath, 'w') as f:
 			json.dump(self.playlists_all, f)
 		self.createSetup()
 		
@@ -461,6 +466,8 @@ class XStreamity_Main(Screen):
 		
 	def quit(self):
 		self.playOriginalChannel()
+		if os.path.exists(self.tempplaylistpath):
+			os.remove(self.tempplaylistpath)
 		self.close()
 		
 		
