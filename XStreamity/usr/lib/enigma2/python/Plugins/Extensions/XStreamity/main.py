@@ -74,7 +74,7 @@ class XStreamity_Main(Screen):
 		self["scroll_up"].hide()
 		self["scroll_down"].hide()
 		
-		self.tempplaylistpath = "/tmp/playlists.json"
+		self.tempplaylistpath = "/tmp/xstreamity/playlists.json"
 
 		self['actions'] = ActionMap(['XStreamityActions'], {
 		'red': self.quit,

@@ -78,6 +78,7 @@ class XStreamity_Categories(Screen):
 
 		self.epglist = []
 		self["epg_list"] = MenuList2(self.epglist)
+		self["epg_list"].selectionEnabled(0)
 
 		self["epg_picon"] = Pixmap()
 		
@@ -113,6 +114,7 @@ class XStreamity_Categories(Screen):
 		self["key_yellow"] = StaticText(_('Sort: A-Z'))
 		self["key_blue"] = StaticText(_('Search'))
 		self["key_epg"] = StaticText('')
+		self["key_rec"] = StaticText('')
 		
 		self.isStream = False
 		self.filtered = False
@@ -149,6 +151,7 @@ class XStreamity_Categories(Screen):
 			"down": self.goDown,
 			"channelUp": self.pageUp,
 			"channelDown": self.pageDown,
+			"rec": self.downloadVod,
 			"0": self.reset,
 			}, -2)
 			
@@ -219,7 +222,7 @@ class XStreamity_Categories(Screen):
 	
 		response = ''
 		index = 0
-		levelpath = '/tmp/level' + str(self.level) + '.xml'
+		levelpath = '/tmp/xstreamity/level' + str(self.level) + '.xml'
 		valid = False
 		
 		if not os.path.exists(levelpath):
@@ -432,11 +435,12 @@ class XStreamity_Categories(Screen):
 		del glob.nextlist[-1]
 	
 		self["key_yellow"].setText(_('Sort: A-Z'))
+		self["key_rec"].setText('')
 		
 		if cfg.stopstream.value == True:
 			self.stopStream()
 			
-		levelpath = '/tmp/level' + str(self.level) + '.xml'
+		levelpath = '/tmp/xstreamity/level' + str(self.level) + '.xml'
 		if os.path.exists(levelpath):
 			os.remove(levelpath)
 		self.level -= 1
@@ -483,20 +487,20 @@ class XStreamity_Categories(Screen):
 		self["key_yellow"].setText(_('Sort: A-Z'))
 		if self["channel_list"].getCurrent():   
 				
-			self.currentindex =  self["channel_list"].getCurrent()[3]
+			currentindex =  self["channel_list"].getCurrent()[3]
 
-			glob.nextlist[-1]['index'] = self.currentindex  
+			glob.nextlist[-1]['index'] = currentindex  
 			
 			self.channelList = glob.sort_list1
 			self.epglist = glob.sort_list2
 			self.voditemlist = glob.sort_list4
 	
 			glob.currentchannelist = self.channelList
-			glob.currentchannelistindex = self.currentindex
+			glob.currentchannelistindex = currentindex
 			glob.currentepglist = self.epglist
 		
-			playlist_url = self.channelList[self.currentindex][7]
-			stream_url = self.channelList[self.currentindex][8]
+			playlist_url = self.channelList[currentindex][7]
+			stream_url = self.channelList[currentindex][8]
 			
 
 			if not self.isStream:
@@ -633,19 +637,27 @@ class XStreamity_Categories(Screen):
 			
 			self.timer3 = eTimer()
 			self.timer3.stop()
-
-			if stream_url != 'None' and "/live/" in stream_url:
-				self.displayEPG()   
-				self.displayProgress()
-				
-				# delay download to stop lag on channel scrolling
-				self.timer3.start(500, True)
-				try:
-					self.timer3_conn = self.timer3.timeout.connect(self.delayedDownload)
-				except:
-					self.timer3.callback.append(self.delayedDownload)   
+			
+			if stream_url != 'None' or '': 
+				if "/live/" in stream_url:
+					self["key_rec"].setText('')
+					self.displayEPG()   
+					self.displayProgress()
+					
+					# delay download to stop lag on channel scrolling
+					self.timer3.start(500, True)
+					try:
+						self.timer3_conn = self.timer3.timeout.connect(self.delayedDownload)
+					except:
+						self.timer3.callback.append(self.delayedDownload)   
+				elif "/movie/" or "/series/" in stream_url:
+					self["key_rec"].setText(_("Download"))
+					self.hideEPG()
 			else:
 				self.hideEPG()
+			
+					
+					
 				
 
 			if stream_url != 'None' and "/movie/" in stream_url:
@@ -660,33 +672,60 @@ class XStreamity_Categories(Screen):
 			else:
 				self.hideVod()
 				
-				
+	
 	def nownext(self):
 		if self["epg_list"].getCurrent():
+			currentindex = self["channel_list"].getCurrent()[3]
 			
-			startnowtime = self["epg_list"].getCurrent()[6]
-			titlenow = self["epg_list"].getCurrent()[7]
-			descriptionnow = self["epg_list"].getCurrent()[8]
+			stream_url = self.channelList[currentindex][8]
 			
-			startnexttime = self["epg_list"].getCurrent()[9]
-			titlenext =  self["epg_list"].getCurrent()[10]
-			descriptionnext = self["epg_list"].getCurrent()[11]
-			 
-			if self["key_epg"].getText() != '' or None:
-				current_epg = self["key_epg"].getText()
-				if current_epg == (_("Next Info")):
+			if stream_url != 'None':
+				if "/live/" in stream_url:
 					
-					nexttitle = "Next %s:  %s" % (startnexttime, titlenext )
-					self["epg_title"].setText(nexttitle)
-					self["epg_description"].setText(descriptionnext)
-					self["key_epg"].setText(_("Now Info"))
-					
-				else:
-					nowtitle = "%s - %s  %s" % (startnowtime, startnexttime, titlenow)
-					self["epg_title"].setText(nowtitle)
-					self["epg_description"].setText(descriptionnow)
-					self["key_epg"].setText(_("Next Info"))
+					if self["key_epg"] != '':
+				
+						startnowtime = self["epg_list"].getCurrent()[6]
+						titlenow = self["epg_list"].getCurrent()[7]
+						descriptionnow = self["epg_list"].getCurrent()[8]
+						
+						startnexttime = self["epg_list"].getCurrent()[9]
+						titlenext =  self["epg_list"].getCurrent()[10]
+						descriptionnext = self["epg_list"].getCurrent()[11]
+						 
+						if self["key_epg"].getText() != '' or None:
+							current_epg = self["key_epg"].getText()
+							if current_epg == (_("Next Info")):
+								
+								nexttitle = "Next %s:  %s" % (startnexttime, titlenext )
+								self["epg_title"].setText(nexttitle)
+								self["epg_description"].setText(descriptionnext)
+								self["key_epg"].setText(_("Now Info"))
+								
+							else:
+								nowtitle = "%s - %s  %s" % (startnowtime, startnexttime, titlenow)
+								self["epg_title"].setText(nowtitle)
+								self["epg_description"].setText(descriptionnow)
+								self["key_epg"].setText(_("Next Info"))
 			
+				elif "/movie/" or "/series/" in stream_url:
+					if self["key_rec"] != '':
+						self.openIMDb()
+		
+				
+	def openIMDb(self):
+		from Screens.MessageBox import MessageBox
+		try:
+			from Plugins.Extensions.IMDb.plugin import IMDB, IMDBEPGSelection
+			try:
+				name = self["channel_list"].getCurrent()[0]
+			except:
+				name = ''
+
+			self.session.open(IMDB, name, False)
+		except ImportError:
+			self.session.open(MessageBox, _('The IMDb plugin is not installed!\nPlease install it.'), type=MessageBox.TYPE_INFO, timeout=10)
+					
+				
 
 	def displayEPG(self):
 		if self["epg_list"].getCurrent():
@@ -883,33 +922,29 @@ class XStreamity_Categories(Screen):
 		text = ''
 		current_filter = self["key_blue"].getText()
 		if current_filter != (_('Reset Search')):
-			self.session.openWithCallback(
-				self.filterChannels,
-				VirtualKeyBoard,
-				title = _("Filter this category..."),
-				text=self.searchString
-			)
+			self.session.openWithCallback(self.filterChannels, VirtualKeyBoard, title = _("Filter this category..."), text = self.searchString)
 		else:
 			self.resetSearch()
 
 		
-	def filterChannels(self, searchString = None):
-		self.searchString = searchString
-		self["key_blue"].setText(_('Reset Search'))
-		self["key_yellow"].setText('')
-		
-		glob.filter_list1 = self.channelList[:]
-		glob.filter_list2 = self.epglist[:]	
-		glob.filter_list4 = self.voditemlist[:]
-		
-		self.channelList = [channel for channel in self.channelList if str(searchString).lower() in str(channel[0]).lower()]
-		self.epglist = [channel for channel in self.epglist if str(searchString).lower() in str(channel[0]).lower()]	
-		self.voditemlist = [channel for channel in self.voditemlist if str(searchString).lower() in str(channel[0]).lower()]
+	def filterChannels(self, result):
+		if result:
+			self.searchString = result
+			self["key_blue"].setText(_('Reset Search'))
+			self["key_yellow"].setText('')
+			
+			glob.filter_list1 = self.channelList[:]
+			glob.filter_list2 = self.epglist[:]	
+			glob.filter_list4 = self.voditemlist[:]
+			
+			self.channelList = [channel for channel in self.channelList if str(result).lower() in str(channel[0]).lower()]
+			self.epglist = [channel for channel in self.epglist if str(result).lower() in str(channel[0]).lower()]	
+			self.voditemlist = [channel for channel in self.voditemlist if str(result).lower() in str(channel[0]).lower()]
 
-		self["epg_list"].setList(self.epglist)				
-		self["channel_list"].setList(self.channelList)
+			self["epg_list"].setList(self.epglist)				
+			self["channel_list"].setList(self.channelList)
 
-		self.filtered = True
+			self.filtered = True
 		
 		
 	def resetSearch(self):
@@ -970,11 +1005,11 @@ class XStreamity_Categories(Screen):
 				
 		if size != []:
 			if url != '': 
-				temp = '/tmp/temp.png'
-				preview = '/tmp/preview.png'
+				temp = '/tmp/xstreamity/temp.png'
+				preview = '/tmp/xstreamity/preview.png'
 
 				try:
-					downloadPage(url, temp).addCallback(self. checkdownloaded, size, imagetype, temp)
+					downloadPage(url, temp).addCallback(self.checkdownloaded, size, imagetype, temp)
 				except:
 					pass
 			else:
@@ -1016,7 +1051,36 @@ class XStreamity_Categories(Screen):
 			if glob.newPlayingServiceRefString != '':
 				self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))	
 	
-		
+
+	def downloadVod(self):
+		if self['key_rec'] != '':
+			from Screens.MessageBox import MessageBox
+			
+			if cfg.downloadlocation.getValue() == '/media/':
+				self.session.open(MessageBox, _('VOD download folder not defined in main settings.'), MessageBox.TYPE_WARNING)
+				return
+
+				
+			if self["channel_list"].getCurrent():
+				currentindex =  self["channel_list"].getCurrent()[3]
+				stream_url = self.channelList[currentindex][8]
+				extension = str(os.path.splitext(stream_url)[-1])
+				title = self.channelList[currentindex][0]
+				
+				fileTitle = re.sub(r'[\<\>\:\"\/\\\|\?\*]', '_', title)
+				fileTitle = re.sub(r' ', '_', fileTitle)
+				fileTitle = re.sub(r'_+', '_', fileTitle)
+
+				try:
+					downloadPage(stream_url, str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension))
+					self.session.open(MessageBox, _('Downloading \n\n' + str(stream_url) + "\n\n" +  str(cfg.downloadlocation.getValue()) + "\n\n" + str(fileTitle) + str(extension) ), MessageBox.TYPE_INFO)
+
+				except:
+					self.session.open(MessageBox, _('Download Failed\n\n' + str(stream_url) + "\n\n" +  str(cfg.downloadlocation.getValue()) + "\n\n" + str(fileTitle) + str(extension) ), MessageBox.TYPE_WARNING)
+					pass
+		else:
+			return
+			
 
 class MenuList1(MenuList):
 	def __init__(self, list, enableWrapAround=True):

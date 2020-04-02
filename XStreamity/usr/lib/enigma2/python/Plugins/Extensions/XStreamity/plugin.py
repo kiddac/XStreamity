@@ -12,6 +12,7 @@ from Components.config import *
 
 import os
 import xstreamity_globals as glob
+import shutil
 
 screenwidth = getDesktop(0).size()
 
@@ -63,6 +64,7 @@ cfg.skin = ConfigSelection(default='default', choices=folders)
 cfg.parental = ConfigYesNo(default=False)
 cfg.timeout = ConfigNumber(default=10)
 cfg.showcatchup = ConfigYesNo(default=True)
+cfg.downloadlocation = ConfigDirectory(default='/media/')
 
 skin_path = skin_directory + cfg.skin.value + '/'
 common_path = skin_directory + 'common' + '/'
@@ -83,8 +85,21 @@ hdr = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.
 		 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
 		 'Accept-Encoding': 'deflate' }
 
+
+# create folder for working files
 if not os.path.exists('/etc/enigma2/X-Streamity/'):
 	os.makedirs('/etc/enigma2/X-Streamity/')
+	
+# delete temporary folder and contents
+if os.path.exists('/tmp/xstreamity/'):	
+	shutil.rmtree('/tmp/xstreamity') 
+
+# create temporary folder for downloaded files 
+if not os.path.exists('/tmp/xstreamity/'):	
+	os.makedirs('/tmp/xstreamity/')
+
+
+	
 	
 		
 def main(session, **kwargs):
@@ -100,6 +115,7 @@ def mainmenu(menuid, **kwargs):
 	else:
 		return []
 		
+
 
 def Plugins(**kwargs):
 	addFont(fontfolder + 'subset-RoundedMplus1c-Regular.ttf', 'xstreamityregular', 100, 0)

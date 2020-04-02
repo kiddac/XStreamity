@@ -117,6 +117,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 		self.cfg_showpicons = getConfigListEntry(_('Show picons in Live categories'), cfg.showpicons)
 		self.cfg_showcovers = getConfigListEntry(_('Show covers in VOD categories'), cfg.showcovers)
 		self.cfg_hirescovers = getConfigListEntry(_('Download Hi-Res VOD Covers'), cfg.hirescovers)
+		self.cfg_downloadlocation = getConfigListEntry(_('VOD download folder'), cfg.downloadlocation)
 		self.cfg_parental = getConfigListEntry(_('Parental control'), cfg.parental)
 		self.cfg_main = getConfigListEntry(_('Show in main menu *Restart GUI Required'), cfg.main)
 
@@ -150,6 +151,10 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 			
 			if cfg.showcovers.value == True:
 				self.list.append(self.cfg_hirescovers)
+				
+			if cfg.showvod.value == True or cfg.showseries.value == True:
+				self.list.append(self.cfg_downloadlocation)
+				
 				
 			self.list.append(self.cfg_parental)
 			self.list.append(self.cfg_main)
@@ -215,34 +220,61 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 		ConfigListScreen.keyOK(self)
 		sel = self['config'].getCurrent()[1]
 		if sel and sel == cfg.location:
-			self.openDirectoryBrowser(cfg.location.value)
+			self.openDirectoryBrowser(cfg.location.value, "location")
+		elif sel and sel == cfg.downloadlocation:
+			self.openDirectoryBrowser(cfg.downloadlocation.value, "downloadlocation")
 		else:
 			pass
 			
 
-	def openDirectoryBrowser(self, path):
-		try:
-			self.session.openWithCallback(
-			 self.openDirectoryBrowserCB,
-			 LocationBox,
-			 windowTitle=_('Choose Directory:'),
-			 text=_('Choose directory'),
-			 currDir=str(path),
-			 bookmarks=config.movielist.videodirs,
-			 autoAdd=False,
-			 editDir=True,
-			 inhibitDirs=['/bin', '/boot', '/dev', '/home', '/lib', '/proc', '/run', '/sbin', '/sys', '/var'],
-			 minFree=15)
-		except Exception as e:
-			print (e)
-		except:
-			pass
+	def openDirectoryBrowser(self, path, cfgitem):
+		
+		if cfgitem == "location":
+			try:
+				self.session.openWithCallback(
+				 self.openDirectoryBrowserCB,
+				 LocationBox,
+				 windowTitle=_('Choose Directory:'),
+				 text=_('Choose directory'),
+				 currDir=str(path),
+				 bookmarks=config.movielist.videodirs,
+				 autoAdd=False,
+				 editDir=True,
+				 inhibitDirs=['/bin', '/boot', '/dev', '/home', '/lib', '/proc', '/run', '/sbin', '/sys', '/var'],
+				 minFree=15)
+			except Exception as e:
+				print (e)
+			except:
+				pass
+		if cfgitem == "downloadlocation":
+			try:
+				self.session.openWithCallback(
+				 self.openDirectoryBrowserCB2,
+				 LocationBox,
+				 windowTitle=_('Choose Directory:'),
+				 text=_('Choose directory'),
+				 currDir=str(path),
+				 bookmarks=config.movielist.videodirs,
+				 autoAdd=False,
+				 editDir=True,
+				 inhibitDirs=['/bin', '/boot', '/dev', '/home', '/lib', '/proc', '/run', '/sbin', '/sys', '/var'],
+				 minFree=15)
+			except Exception as e:
+				print (e)
+			except:
+				pass
 
 
 	def openDirectoryBrowserCB(self, path):
 		if path is not None:
 			cfg.location.setValue(path)
-		
 		return
+		
+	
+	def openDirectoryBrowserCB2(self, path):
+		if path is not None:
+			cfg.downloadlocation.setValue(path)
+		return
+	
 	
 		

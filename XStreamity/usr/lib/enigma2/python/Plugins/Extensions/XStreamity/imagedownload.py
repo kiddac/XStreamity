@@ -54,7 +54,7 @@ def updatePreview(piconSize, imageType, temp):
 		im = bg
 
 		#save picon
-		preview = '/tmp/preview.png'
+		preview = '/tmp/xstreamity/preview.png'
 		im.save(preview, 'PNG')
 	except:
 		preview = ''		

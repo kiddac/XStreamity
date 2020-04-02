@@ -31,6 +31,17 @@ from itertools import cycle, islice
 from twisted.web.client import downloadPage, getPage, http
 from Tools.BoundFunction import boundFunction
 
+
+try:
+	from Plugins.Extensions.SubsSupport import SubsSupport, SubsSupportStatus
+except ImportError:
+	class SubsSupport(object):
+		def __init__(self, *args, **kwargs):
+			pass
+	class SubsSupportStatus(object):
+		def __init__(self, *args, **kwargs):
+			pass
+
 class IPTVInfoBarShowHide():
 	""" InfoBar show/hide control, accepts toggleShow and hide actions, might start
 	fancy animations. """
@@ -422,10 +433,10 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, IPTVInfoBarShowHide, InfoBarS
 
 		if size != []:      
 			if desc_image != '': 
-				temp = '/tmp/temp.png'
-				preview = '/tmp/preview.png'
+				temp = '/tmp/xstreamity/temp.png'
+				preview = '/tmp/xstreamity/preview.png'
 				try:
-					downloadPage(desc_image, temp).addCallback(self. checkdownloaded, size, imagetype, temp)
+					downloadPage(desc_image, temp).addCallback(self.checkdownloaded, size, imagetype, temp)
 				except:
 					pass
 			else:
@@ -521,7 +532,7 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, IPTVInfoBarShowHide, InfoBarS
 	
 	
 	
-class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarShowHide, InfoBarSeek, InfoBarAudioSelection, InfoBarSubtitleSupport, IPTVInfoBarPVRState):
+class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarShowHide, InfoBarSeek, InfoBarAudioSelection, InfoBarSubtitleSupport, IPTVInfoBarPVRState, SubsSupportStatus, SubsSupport ):
 	
 	
 	def __init__(self, session, streamurl, servicetype):
@@ -535,6 +546,8 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarShowHide, InfoBarSeek, In
 		InfoBarAudioSelection.__init__(self)
 		InfoBarSubtitleSupport.__init__(self)
 		IPTVInfoBarPVRState.__init__(self, PVRState, True)
+		SubsSupport.__init__(self, searchSupport=True, embeddedSupport=True)
+		SubsSupportStatus.__init__(self)
 		
 		protocol = glob.current_playlist['playlist_info']['protocol']
 		domain = glob.current_playlist['playlist_info']['domain']
@@ -570,7 +583,7 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarShowHide, InfoBarSeek, In
 			"stop": self.back,
 						
 			}, -2)
-			
+
 		self.onLayoutFinish.append(self.__layoutFinished) 
 			
 		
@@ -618,11 +631,11 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarShowHide, InfoBarSeek, In
 		if size != []:
 	
 			if desc_image != '': 
-				temp = '/tmp/temp.png'
-				preview = '/tmp/preview.png'
+				temp = '/tmp/xstreamity/temp.png'
+				preview = '/tmp/xstreamity/preview.png'
 
 				try:
-					downloadPage(desc_image, temp).addCallback(self. checkdownloaded, size, imagetype, temp)
+					downloadPage(desc_image, temp).addCallback(self.checkdownloaded, size, imagetype, temp)
 				except:
 					pass
 			else:
@@ -713,11 +726,11 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarShowHide, InfoBarSeek, In
 	def loadDefaultImage(self):
 		if self["cover"].instance:
 			self["cover"].instance.setPixmapFromFile(common_path + "cover.png")
-		
+			
 	
 	
 
-class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarShowHide, InfoBarSeek, InfoBarAudioSelection, InfoBarSubtitleSupport, IPTVInfoBarPVRState):
+class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarShowHide, InfoBarSeek, InfoBarAudioSelection, InfoBarSubtitleSupport, IPTVInfoBarPVRState, SubsSupportStatus, SubsSupport ):
 	
 	
 	def __init__(self, session, streamurl, servicetype):
@@ -731,6 +744,8 @@ class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarShowHide, InfoBarSeek
 		InfoBarAudioSelection.__init__(self)
 		InfoBarSubtitleSupport.__init__(self)
 		IPTVInfoBarPVRState.__init__(self, PVRState, True)
+		SubsSupport.__init__(self, searchSupport=True, embeddedSupport=True)
+		SubsSupportStatus.__init__(self)
 
 		protocol = glob.current_playlist['playlist_info']['protocol']
 		domain = glob.current_playlist['playlist_info']['domain']
@@ -806,10 +821,10 @@ class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarShowHide, InfoBarSeek
 
 		if size != []:      
 			if desc_image != '': 
-				temp = '/tmp/temp.png'
-				preview = '/tmp/preview.png'
+				temp = '/tmp/xstreamity/temp.png'
+				preview = '/tmp/xstreamity/preview.png'
 				try:
-					downloadPage(desc_image, temp).addCallback(self. checkdownloaded, size, imagetype, temp)
+					downloadPage(desc_image, temp).addCallback(self.checkdownloaded, size, imagetype, temp)
 				except:
 					pass
 			else:

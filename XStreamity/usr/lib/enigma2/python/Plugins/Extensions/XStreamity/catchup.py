@@ -605,11 +605,11 @@ class XStreamity_Catchup(Screen):
 					
 		if size != []:
 			if url != '': 
-				temp = '/tmp/temp.png'
-				preview = '/tmp/preview.png'
+				temp = '/tmp/xstreamity/temp.png'
+				preview = '/tmp/xstreamity/preview.png'
 
 				try:
-					downloadPage(url, temp).addCallback(self. checkdownloaded, size, imagetype, temp)
+					downloadPage(url, temp).addCallback(self.checkdownloaded, size, imagetype, temp)
 				except:
 					pass
 			else:

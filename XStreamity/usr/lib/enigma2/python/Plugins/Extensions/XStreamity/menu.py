@@ -54,7 +54,7 @@ class XStreamity_Menu(Screen):
 		
 		self['key_red'] = StaticText(_('Back'))
 		
-		self.tempcategorytypepath = "/tmp/categories.xml"
+		self.tempcategorytypepath = "/tmp/xstreamity/categories.xml"
 		
 		self['actions'] = ActionMap(['XStreamityActions'], {
 		'red': self.quit,
