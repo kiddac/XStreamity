@@ -300,6 +300,10 @@ class XStreamity_Catchup(Screen):
 			
 
 	def back(self):
+		
+		self["epg_title"].setText('')
+		self["epg_description"].setText('')
+		self["epg_picon"].hide()
 		if cfg.stopstream.value == True:
 			self.stopStream()
 			
@@ -402,8 +406,10 @@ class XStreamity_Catchup(Screen):
 		if response != "":
 			simple_data_table = json.load(response)
 			
+			"""
 			with open('/etc/enigma2/X-Streamity/catchup_json.json', 'w') as f:
 				json.dump(simple_data_table, f)
+				"""
 				
 			self.archive = []
 			hasarchive = False
@@ -414,9 +420,11 @@ class XStreamity_Catchup(Screen):
 							hasarchive = True
 							self.archive.append(listing)
 				
-			if hasarchive:			
+			if hasarchive:	
+				"""		
 				with open('/etc/enigma2/X-Streamity/catchup_json2.json', 'w') as f:
 					json.dump(self.archive, f)
+					"""
 					
 				#remove oldest catchup item in list. Usual void.
 				self.archive.pop(0)

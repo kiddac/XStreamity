@@ -1,4 +1,4 @@
-<screen name="Settings" position="0,0" size="1920,1080" backgroundColor="#2a70a4" flags="wfNoBorder">
+<screen name="XstreamitySettings" position="0,0" size="1920,1080" backgroundColor="#2a70a4" flags="wfNoBorder">
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/default/images/background.png" alphatest="blend" position="0,0" size="1920,1080" zPosition="-1" />
 	<widget source="global.CurrentTime" render="Label" position="1490,0" size="400,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1">
 		<convert type="ClockToText">Format:%H:%M | %A %-d %b</convert>
@@ -23,4 +23,3 @@
 	<widget source="key_green" render="Label" position="1102,1020" size="240,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="2" />
 	<widget name="VKeyIcon" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/key_text.png" position="1322,1031" size="38,38" alphatest="blend" transparent="1" zPosition="2" />
 </screen>
-

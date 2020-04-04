@@ -1,4 +1,4 @@
-<screen name="VodPlayer" position="0,0" size="1920,1080" backgroundColor="#ff000000" flags="wfNoBorder">
+<screen name="XstreamityVodPlayer" position="0,0" size="1920,1080" backgroundColor="#ff000000" flags="wfNoBorder">
 	<!-- bottom background -->
 	<eLabel position="0,864" size="1920,216" backgroundColor="#40000000" zPosition="1" />
 	<eLabel position="0,863" size="1920,1" backgroundColor="#fffffff" zPosition="1" />
@@ -84,4 +84,3 @@
 		<convert type="ConditionalShowHide" />
 	</widget>
 </screen>
-

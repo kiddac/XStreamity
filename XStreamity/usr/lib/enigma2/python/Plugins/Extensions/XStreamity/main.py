@@ -60,6 +60,7 @@ class XStreamity_Main(Screen):
 		self['key_blue'] = StaticText()
 		self['key_info'] = StaticText()
 		self['key_menu'] = StaticText(_('Settings'))
+		self['version'] = StaticText()
 		
 		self.list = []
 		self.drawList = []
@@ -88,9 +89,11 @@ class XStreamity_Main(Screen):
 		
 		}, -2)
 		
-		# check if playlists.txt file exists in specified location
+		#get version number 
+		with open("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/version.txt", 'r') as f:
+			self['version'].setText(f.read())
 		
-	
+		# check if playlists.txt file exists in specified location
 		if not os.path.isfile(playlist_path):
 			open(playlist_path, 'a').close()
 			
@@ -180,6 +183,9 @@ class XStreamity_Main(Screen):
 				self.livetype = cfg.livetype.value
 				self.vodtype = cfg.vodtype.value
 				self.epgshift = 0
+				self.livehidden = []
+				self.vodhidden = []
+				self.serieshidden = []
 		
 				urlsplit1 = line.split("/")
 				urlsplit2 = line.split("?")
@@ -252,6 +258,9 @@ class XStreamity_Main(Screen):
 				("livetype", self.livetype),
 				("vodtype", self.vodtype),
 				("epgshift", self.epgshift),
+				("livehidden", self.livehidden),
+				("vodhidden", self.vodhidden),
+				("serieshidden", self.serieshidden),
 				])
 			})	
 			
@@ -343,6 +352,7 @@ class XStreamity_Main(Screen):
 			
 		with open(self.tempplaylistpath, 'w') as f:
 			json.dump(self.playlists_all, f)
+
 		self.createSetup()
 		
 	

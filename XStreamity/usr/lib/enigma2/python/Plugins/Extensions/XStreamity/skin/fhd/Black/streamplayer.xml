@@ -1,4 +1,4 @@
-<screen name="StreamPlayer" position="0,0" size="1920,1080" backgroundColor="#ff000000" flags="wfNoBorder">
+<screen name="XstreamityStreamPlayer" position="0,0" size="1920,1080" backgroundColor="#ff000000" flags="wfNoBorder">
 	<!-- top background -->
 	<eLabel position="0,0" size="1920,216" backgroundColor="#40000000" zPosition="1" />
 	<eLabel position="0,217" size="1920,1" backgroundColor="#fffffff" zPosition="1" />
@@ -23,7 +23,7 @@
 	<widget source="nowtitle" render="Label" position="321,956" size="900,48" font="xstreamityregular;30" noWrap="1" foregroundColor="#ffffff" backgroundColor="#40000000" transparent="1" zPosition="3" />
 	<!-- now time -->
 	<widget source="nowtime" render="Label" position="1344,956" size="120,48" font="xstreamityregular;30" noWrap="1" foregroundColor="#ffffff" backgroundColor="#40000000" halign="right" transparent="1" zPosition="3" />
-	<widget name="progress" position="321,1002" size="1143,12" borderWidth="1" borderColor="#ffffff" foregroundColor="#000000" backgroundColor="#1a000000" zPosition="3" />
+	<widget name="progress" position="321,1002" size="1143,12" borderWidth="1" borderColor="#ffffff" foregroundColor="#003d68" backgroundColor="#1a000000" zPosition="3" />
 	<!-- next title -->
 	<widget source="nexttitle" render="Label" position="321,1016" size="900,48" font="xstreamityregular;30" noWrap="1" foregroundColor="#ffffff" backgroundColor="#40000000" transparent="1" zPosition="3" />
 	<!-- next time -->
@@ -90,4 +90,3 @@
 		<convert type="ConditionalShowHide" />
 	</widget>
 </screen>
-

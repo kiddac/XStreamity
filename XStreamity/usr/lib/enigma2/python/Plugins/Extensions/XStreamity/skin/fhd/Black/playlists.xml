@@ -1,10 +1,11 @@
-<screen name="Playlists" position="0,0" size="1920,1080" backgroundColor="#000000" flags="wfNoBorder">
+<screen name="XstreamityPlaylists" position="0,0" size="1920,1080" backgroundColor="#000000" flags="wfNoBorder">
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/Black/images/background.png" alphatest="blend" position="0,0" size="1920,1080" zPosition="-1" />
 	<widget name="splash" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/Black/images/splash.png" alphatest="blend" position="0,0" size="1920,1080" zPosition="1000" />
 	<widget source="global.CurrentTime" render="Label" position="1490,0" size="400,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" halign="right" transparent="1">
 		<convert type="ClockToText">Format:%H:%M | %A %-d %b</convert>
 	</widget>
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/logo.png" position="center,60" size="200,145" alphatest="blend" zPosition="1" />
+	<widget source="version" render="Label" position="center, 150" size="1920,27" font="xstreamityregular;18" foregroundColor="#ffffff" backgroundColor="#000000" halign="center" valign="center" transparent="1" />
 	<widget source="Title" render="Label" position="center,210" size="1920,70" foregroundColor="#ffffff" backgroundColor="#000000" halign="center" font="xstreamityregular;48" transparent="1" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/panel.png" position="center,300" size="800,660" alphatest="blend" zPosition="1" />
 	<widget source="playlists" render="Listbox" position="center,330" size="738,600" foregroundColor="#ffffff" backgroundColor="#000000" foregroundColorSelected="#ffffff" backgroundColorSelected="#003d68" itemHeight="120" scrollbarMode="showNever" transparent="1" zPosition="2">
@@ -28,11 +29,11 @@
 			MultiContentEntryText(pos = (453, 75), size = (224, 27), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_RIGHT, text = 8),
 			<!-- Max Conn Num -->
 			MultiContentEntryText(pos = (678, 75), size = (30, 27), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_RIGHT, text = 9),
-					],
-					"fonts": [gFont("xstreamityregular", 30), gFont("xstreamityregular", 21)],
-					"itemHeight": 120,
-					"scrollbarMode": "showNever"
-              }
+			],
+			"fonts": [gFont("xstreamityregular", 30), gFont("xstreamityregular", 21)],
+			"itemHeight": 120,
+			"scrollbarMode": "showNever"
+			}
 		</convert>
 	</widget>
 	<widget name="scroll_up" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/Black/images/up.png" position="center,283" size="36,36" alphatest="blend" zPosition="2" />
@@ -67,4 +68,3 @@
 	</widget>
 	<widget source="key_menu" render="Label" position="1612,1020" size="240,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" transparent="1" zPosition="2" />
 </screen>
-

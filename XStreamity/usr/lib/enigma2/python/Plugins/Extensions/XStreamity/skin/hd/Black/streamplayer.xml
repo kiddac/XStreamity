@@ -1,4 +1,4 @@
-<screen name="StreamPlayer" position="0,0" size="1280,720" backgroundColor="#ff000000" flags="wfNoBorder">
+<screen name="XstreamityStreamPlayer" position="0,0" size="1280,720" backgroundColor="#ff000000" flags="wfNoBorder">
 	<!-- top background -->
 	<eLabel position="0,0" size="1280,144" backgroundColor="#40000000" zPosition="1" />
 	<eLabel position="0,145" size="1280,1" backgroundColor="#fffffff" zPosition="1" />
@@ -15,15 +15,15 @@
 	<widget source="nowchannel" render="Label" position="214,592" size="600,32" font="xstreamitybold;24" noWrap="1" foregroundColor="#ffffff" backgroundColor="#40000000" transparent="1" zPosition="3" />
 	<widget name="speed" position="912,592" size="36,32" font="xstreamityregular;20" foregroundColor="#ffffff" backgroundColor="#40000000" halign="right" valign="center" transparent="1" zPosition="3" />
 	<widget name="statusicon" position="952,596" size="25,25" zPosition="5" alphatest="blend" pixmaps="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/state_play.png,/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/state_pause.png,/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/state_stop.png,/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/state_ff.png,/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/state_rw.png,/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/state_slow.png,/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/state_blank.png" />
-        <!-- left divider -->
+	<!-- left divider -->
 	<eLabel position="187,596" size="1,104" backgroundColor="#fffffff" zPosition="1" />
 	<!-- right divider -->
 	<eLabel position="1008,596" size="1,104" backgroundColor="#fffffff" zPosition="1" />
-        <!-- now title -->
+	<!-- now title -->
 	<widget source="nowtitle" render="Label" position="214,638" size="600,32" font="xstreamityregular;20" noWrap="1" foregroundColor="#ffffff" backgroundColor="#40000000" transparent="1" zPosition="3" />
 	<!-- now time -->
 	<widget source="nowtime" render="Label" position="896,638" size="80,32" font="xstreamityregular;20" noWrap="1" foregroundColor="#ffffff" backgroundColor="#40000000" halign="right" transparent="1" zPosition="3" />
-	<widget name="progress" position="214,668" size="762,8" borderWidth="1" borderColor="#ffffff" foregroundColor="#000000" backgroundColor="#1a000000" zPosition="3" />
+	<widget name="progress" position="214,668" size="762,8" borderWidth="1" borderColor="#ffffff" foregroundColor="#003d68" backgroundColor="#1a000000" zPosition="3" />
 	<!-- next title -->
 	<widget source="nexttitle" render="Label" position="214,677" size="600,32" font="xstreamityregular;20" noWrap="1" foregroundColor="#ffffff" backgroundColor="#40000000" transparent="1" zPosition="3" />
 	<!-- next time -->
@@ -94,4 +94,3 @@
 		<convert type="ConditionalShowHide" />
 	</widget>
 </screen>
-

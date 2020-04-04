@@ -5,6 +5,7 @@
 from . import _
 
 #import owibranding
+from collections import OrderedDict
 
 from Components.ActionMap import ActionMap
 from Components.Sources.List import List
@@ -69,6 +70,7 @@ class XStreamity_Menu(Screen):
 		self.username = glob.current_playlist['playlist_info']['username']
 		self.password = glob.current_playlist['playlist_info']['password']
 		self.live_categories = "%s/enigma2.php?username=%s&password=%s&type=get_live_categories" % (self.host, self.username, self.password)
+		self.live_streams = "%s/player_api.php?username=%s&password=%s&action=get_live_streams" % (self.host, self.username, self.password)
 		
 		if ref:
 			if not ref.startswith(self.host):
@@ -169,7 +171,9 @@ class XStreamity_Menu(Screen):
 				index += 1
 					
 			if cfg.showcatchup.value == True:
-				self.list.append([index, "Catch Up TV", "3", self.live_categories])  
+				hascatchup = self.checkCatchup()
+				if hascatchup:
+					self.list.append([index, "Catch Up TV", "3", self.live_categories])  
 
 			self.drawList = []
 			self.drawList = [buildListEntry(x[0],x[1],x[2],x[3]) for x in self.list]
@@ -183,7 +187,41 @@ class XStreamity_Menu(Screen):
 			self.session.openWithCallback(self.close ,MessageBox, _('No data, blocked or playlist not compatible with XStreamity plugin.'), MessageBox.TYPE_WARNING, timeout=5)
 				
 
+	def checkCatchup(self):
+		url = self.live_streams
+		valid = False
+		response = ''
+		self.catchup_all = []
+	
+		try:
+			response = checkGZIP(url)
+			if response != '':
+				valid = True
+		except Exception as e:
+			print(e)
+			pass
+
+		except:
+			pass
 			
+		if valid == True and response != '':
+			try:
+				self.catchup_all =  json.load(response, object_pairs_hook=OrderedDict)
+			except:
+				try:
+					self.catchup_all =  json.loads(response, object_pairs_hook=OrderedDict)
+				except:
+					pass
+			
+			
+			for item in self.catchup_all:
+				if "tv_archive" and "tv_archive_duration" in item :
+					if int(item["tv_archive"]) == 1 and int(item["tv_archive_duration"]) > 0:
+						return True
+						break
+		return False
+			
+	
 		
 def buildListEntry(index, title, category_id, playlisturl):
 	png = None
@@ -201,7 +239,7 @@ def checkGZIP(url):
 	request = urllib2.Request(url, headers=hdr)
 
 	try:
-		response= urllib2.urlopen(request, timeout=10)
+		response= urllib2.urlopen(request)
 		
 		if response.info().get('Content-Encoding') == 'gzip':
 			print "*** content is gzipped %s " % url

@@ -1,4 +1,4 @@
-<screen name="Categories" position="0,0" size="1280,720" backgroundColor="#000000" flags="wfNoBorder">
+<screen name="XstreamityCategories" position="0,0" size="1280,720" backgroundColor="#000000" flags="wfNoBorder">
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/Black/images/background.png" alphatest="blend" position="0,0" size="1280,720" zPosition="1" />
 	<widget source="global.CurrentTime" render="Label" position="993,0" size="267,40" font="xstreamityregular;18" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" halign="right" transparent="1" zPosition="2">
 		<convert type="ClockToText">Format:%H:%M | %A %-d %b</convert>
@@ -70,15 +70,14 @@
 		<convert type="ConditionalShowHide" />
 	</widget>
 	<widget source="key_epg" render="Label" position="1110,680" size="110,40" font="xstreamityregular;16" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" transparent="1" zPosition="2" />
-	
 	<widget source="key_rec" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/key_rec.png" position="1076,687" size="25,25" alphatest="blend" zPosition="2">
 		<convert type="ConditionalShowHide" />
 	</widget>
 	<widget source="key_rec" render="Label" position="1110,680" size="110,40" font="xstreamityregular;16" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" transparent="1" zPosition="2" />
-	
-	
+	<widget source="key_menu" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/key_menu.png" position="1076,687" size="25,25" alphatest="blend" zPosition="2">
+		<convert type="ConditionalShowHide" />
+	</widget>
+	<widget source="key_menu" render="Label" position="1110,680" size="110,40" font="xstreamityregular;16" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" transparent="1" zPosition="2" />
 	<widget source="page" render="Label" position="30,680" size="146,40" font="xstreamityregular;16" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" transparent="1" noWrap="1" zPosition="2" />
 	<widget source="listposition" render="Label" position="180,680" size="110,40" font="xstreamityregular;16" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2" />
-
 </screen>
-
