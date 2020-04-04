@@ -1,0 +1,3 @@
+#!/bin/sh
+rm -rf /etc/enigma2/X-Streamity/playlists.json > /dev/null 2>&1
+exit 0
