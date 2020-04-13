@@ -45,7 +45,5 @@
 		<key id="KEY_AUDIO" mapto="audioSelection" flags="b" />
 		<key id="KEY_AUDIO" mapto="audioSelectionLong" flags="l" />
 		<key id="KEY_RECORD" mapto="rec" flags="b" />
-		<key id="KEY_RECORD" mapto="instantRecord" flags="b" />
-		<key id="KEY_RECORD" mapto="ShortRecord" flags="b" />
 	</map>
 </keymap>

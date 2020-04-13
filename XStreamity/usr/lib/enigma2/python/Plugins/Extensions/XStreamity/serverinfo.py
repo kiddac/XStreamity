@@ -45,7 +45,7 @@ class XStreamity_UserInfo(Screen):
 	
 		self['key_red'] = StaticText(_('Close'))
 
-		self.createUserSetup()
+		self.onFirstExecBegin.append(self.createUserSetup)
 		self.onLayoutFinish.append(self.__layoutFinished)
 		
 		
@@ -54,7 +54,6 @@ class XStreamity_UserInfo(Screen):
 		
 		
 	def createUserSetup(self):
-		
 		if 'auth' in glob.current_playlist['user_info']:
 			self['authorised'].setText(str(glob.current_playlist['user_info']['auth']))
 			

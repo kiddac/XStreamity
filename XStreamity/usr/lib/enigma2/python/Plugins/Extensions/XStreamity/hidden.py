@@ -3,10 +3,7 @@
 
 # for localized messages     
 from . import _
-
-#import owibranding
 from collections import OrderedDict
-
 from Screens.Screen import Screen
 from plugin import skin_path, imagefolder, screenwidth, hdr, cfg, skinimagefolder, common_path, json_file
 from enigma import eListboxPythonMultiContent, gFont, RT_HALIGN_LEFT, RT_VALIGN_CENTER, eTimer, eServiceReference, iPlayableService
@@ -15,7 +12,6 @@ from Components.Sources.List import List
 from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaBlend
 from Tools.LoadPixmap import LoadPixmap
 from xStaticText import StaticText
-
 
 #download / parse
 import base64
@@ -30,6 +26,9 @@ class XStreamity_HiddenCategories(Screen):
 	def __init__(self, session, category_type, channellist):
 		Screen.__init__(self, session)
 		self.session = session
+		
+		
+		print "********* channellist ****** %s" % channellist
 
 		skin = skin_path + 'hidden.xml'
 		self.category_type = category_type
@@ -67,8 +66,9 @@ class XStreamity_HiddenCategories(Screen):
 			 'ok': self.toggleSelection,
 			 }, -2)
 
+		self.onFirstExecBegin.append(self.loadHidden)
 		self.onLayoutFinish.append(self.__layoutFinished)
-		self.loadHidden()
+
 		
 		
 	def __layoutFinished(self):
@@ -116,7 +116,9 @@ class XStreamity_HiddenCategories(Screen):
 	def toggleSelection(self):
 		if len(self['hidden_list'].list) > 0:
 			idx = self['hidden_list'].getIndex()
+			print "******** startlist 1******** %s" % self.startList
 			self.startList[idx][2] = not self.startList[idx][2]
+			print "******** startlist 2******** %s" % self.startList
 			self.refresh()  
 			
 			
@@ -141,16 +143,21 @@ class XStreamity_HiddenCategories(Screen):
 		
 		
 	def keyGreen(self):
-		
 		domain = glob.current_playlist['playlist_info']['domain']
 		username = glob.current_playlist['playlist_info']['username']
 		password = glob.current_playlist['playlist_info']['password']
 		
 		if self.category_type == "live":
 			glob.current_playlist['player_info']['livehidden'] = []
+			print "****************** %s" % glob.current_playlist['player_info']['livehidden']
+			
+			print "******** startlist ******** %s" % self.startList
 			for item in self.startList:
+				print item
 				if item[2] == True:
 					glob.current_playlist['player_info']['livehidden'].append(item[1])
+					
+			print "****************** %s" % glob.current_playlist['player_info']['livehidden']
 			
 		elif self.category_type == "vod":
 			glob.current_playlist['player_info']['vodhidden'] = []

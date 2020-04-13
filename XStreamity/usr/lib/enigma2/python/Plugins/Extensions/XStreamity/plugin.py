@@ -10,6 +10,8 @@ from Screens.Screen import Screen
 from Components.ConfigList import *
 from Components.config import *
 
+
+
 import os
 import xstreamity_globals as glob
 import shutil
@@ -31,30 +33,66 @@ for folder in folders:
 	skinlist = folder
 	
 
+languages = [
+
+('en', 'English'),
+('de', 'Deutsch'),
+('es', 'Español'),
+('fr', 'Français'),
+('it', 'Italiano'),
+('nl', 'Nederlands'),
+('tr', 'Türkçe'),
+('cs', 'Český'),
+('da', 'Dansk'),
+('hr', 'Hrvatski'),
+('hu', 'Magyar'),
+('no', 'Norsk'),
+('pl', 'Polski'),
+('ro', 'Română'),
+('ru', 'Pусский'),
+('sh', 'Srpski'),
+('sk', 'Slovenčina'),
+('fi', 'suomi'),
+('sv', 'svenska'),
+('uk', 'Український'),
+('ar', 'العربية'),
+('bg', 'български език'),
+('el', 'ελληνικά'),
+('sq', 'shqip')
+]
 config.plugins.XStreamity = ConfigSubsection()
 
 cfg = config.plugins.XStreamity
 
-if os.path.isdir('/usr/lib/enigma2/python/Plugins/SystemPlugins/ServiceApp'):
-	cfg.livetype = ConfigSelection(default='4097', choices=[
-	 ('1', _('DVB(1)')),
-	 ('4097', _('IPTV(4097)')), 
-	 ('5001', _('GStreamer(5001)')), 
-	 ('5002', 'ExtPlayer(5002)')])
-	cfg.vodtype = ConfigSelection(default='4097', choices=[
-	 ('1', _('DVB(1)')), 
-	 ('4097', _('IPTV(4097)')), 
-	 ('5001', _('GStreamer(5001)')), 
-	 ('5002', 'ExtPlayer(5002)')])
-else:
-	cfg.livetype = ConfigSelection(default='4097', choices=[('1', _('DVB(1)')), ('4097', _('IPTV(4097)'))])
-	cfg.vodtype =ConfigSelection(default='4097', choices=[('1', _('DVB(1)')), ('4097', _('IPTV(4097)'))])		 
+streamtypechoices = [('1', 'DVB(1)'), ('4097', 'IPTV(4097)')]
+
+if os.path.exists("/usr/bin/gstplayer"):
+	streamtypechoices.append( ('5001', 'GStreamer(5001)' ) )
+	
+if os.path.exists("/usr/bin/exteplayer3"):
+	streamtypechoices.append( ('5002', 'ExtePlayer(5002)') )
+	
+if os.path.exists("/usr/bin/apt-get"):
+	streamtypechoices.append( ('8193', 'GStreamer(8193)') )
+
+	
+cfg.livetype = ConfigSelection(default='4097', choices=streamtypechoices)
+cfg.vodtype =ConfigSelection(default='4097', choices=streamtypechoices)	
+	
+
+try:
+	from Components.UsageConfig import defaultMoviePath
+	downloadpath = defaultMoviePath()
+except:
+	from Components.UsageConfig import preferredPath, defaultStorageDevice
+	downloadpath = defaultStorageDevice()
+		
 			 
 cfg.location = ConfigDirectory(default='/etc/enigma2/X-Streamity/')
 cfg.main = ConfigYesNo(default=False)
 cfg.showpicons = ConfigYesNo(default=True)
 cfg.showcovers = ConfigYesNo(default=True)
-cfg.hirescovers = ConfigYesNo(default=False)
+#cfg.hirescovers = ConfigYesNo(default=False)
 cfg.livepreview = ConfigYesNo(default=False)
 cfg.stopstream = ConfigYesNo(default=False)
 cfg.showlive = ConfigYesNo(default=True)
@@ -64,7 +102,9 @@ cfg.skin = ConfigSelection(default='default', choices=folders)
 cfg.parental = ConfigYesNo(default=False)
 cfg.timeout = ConfigNumber(default=10)
 cfg.showcatchup = ConfigYesNo(default=True)
-cfg.downloadlocation = ConfigDirectory(default='/media/')
+cfg.downloadlocation = ConfigDirectory(default=downloadpath)
+cfg.refreshTMDB = ConfigYesNo(default=False)
+cfg.TMDBLanguage = ConfigSelection(default='en', choices=languages)
 
 skin_path = skin_directory + cfg.skin.value + '/'
 common_path = skin_directory + 'common' + '/'
@@ -99,8 +139,6 @@ if not os.path.exists('/tmp/xstreamity/'):
 	os.makedirs('/tmp/xstreamity/')
 
 
-	
-	
 		
 def main(session, **kwargs):
 	import main
@@ -116,6 +154,11 @@ def mainmenu(menuid, **kwargs):
 		return []
 		
 
+def extensionsmenu(session, **kwargs):
+	import main
+	session.open(main.XStreamity_Main)
+	return
+	
 
 def Plugins(**kwargs):
 	addFont(fontfolder + 'subset-RoundedMplus1c-Regular.ttf', 'xstreamityregular', 100, 0)
@@ -129,7 +172,12 @@ def Plugins(**kwargs):
 	
 	main_menu = PluginDescriptor(name = pluginname, description=description, where=PluginDescriptor.WHERE_MENU, fnc=mainmenu, needsRestart=True)
 	
+	extensions_menu = PluginDescriptor(name = pluginname, description=description, where=PluginDescriptor.WHERE_EXTENSIONSMENU, fnc=extensionsmenu, needsRestart=True)
+	
 	result = [PluginDescriptor(name = pluginname, description = description,where = PluginDescriptor.WHERE_PLUGINMENU,icon = iconFile,fnc = main)]
+	
+	result.append(extensions_menu)
+
 	
 	if cfg.main.getValue():
 		result.append(main_menu)

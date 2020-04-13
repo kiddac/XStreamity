@@ -11,9 +11,7 @@ def updatePreview(piconSize, imageType, temp):
 	#create blank image
 	bg = Image.new('RGBA', (width, height), (255, 255, 255, 0))
 	
-
 	try:
-	
 		im = Image.open(temp)
 		im = im.convert('RGBA')
 		
@@ -30,7 +28,6 @@ def updatePreview(piconSize, imageType, temp):
 		"""
 		
 		#resize / enlarge image - cannot do for picons due to transparency problems. 
-
 		if imageType == "cover":
 			basewidth = piconSize[0]
 			wpercent = (basewidth / float(width))

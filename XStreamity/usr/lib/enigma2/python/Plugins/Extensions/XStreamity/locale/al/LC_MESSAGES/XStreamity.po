@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: XStreamity\n"
 "POT-Creation-Date: 2020-02-29 22:09+0100\n"
-"PO-Revision-Date: 2020-03-14 19:31+0100\n"
+"PO-Revision-Date: 2020-04-08 15:21+0200\n"
 "Last-Translator: @Kqiqi1\n"
 "Language-Team: \n"
 "Language: al_AL\n"
@@ -28,7 +28,7 @@ msgstr "OK"
 
 #: categories.py:125 categories.py:748 categories.py:765
 msgid "Sort: A-Z"
-msgstr "Rbndit: A-Z"
+msgstr "Rëndit: A-Z"
 
 #: categories.py:126 categories.py:791
 msgid "Search"
@@ -276,6 +276,9 @@ msgstr "Adresa e Kompanis"
 msgid "playlists.txt location"
 msgstr "lokacioni tekst i listes"
 
+msgid "VOD download folder"
+msgstr "Dosja për shkarkimet VOD"
+
 msgid "Default Live stream type"
 msgstr "Lloi standard i luajtjes drejtpërdrejt"
 
@@ -309,14 +312,47 @@ msgstr "Zgjedhja e lëkurës *Ristartim paisje"
 msgid "Display Live categories"
 msgstr "Shfaq kategoritë e direkte"
 
+msgid "Display Catchup category"
+msgstr "Ekrani i kategoris Chatchup"
+
+msgid "Server timeout (seconds)"
+msgstr "Koha skaduese e serverit (sekonda"
+
 msgid "Display VOD categories"
 msgstr "Shfaq kategoritë VOD"
+
+msgid "Status:"
+msgstr "Statusi:"
+
+msgid "Is Trial:"
+msgstr "Testimi:"
+
+msgid "Active Connections:"
+msgstr "Akseset aktive:"
+
+msgid "Max Connections:"
+msgstr "Akseset maksimale:"
+
+msgid "Created At:"
+msgstr "Krijuar në datën:"
+
+msgid "Expiry Date:"
+msgstr "Data skaduëse:"
+
+msgid "Allowed Output Formats:"
+msgstr "Format e mundëshme:"
+
+msgid "Real URL:"
+msgstr "URL-ja Reale:"
+
+msgid "Timezone:"
+msgstr "Koha e zonës:"
 
 msgid "Display Series categories"
 msgstr "Shfaq kategoritë Seriale"
 
 msgid "Default VOD/Series stream type"
-msgstr "Lloji i rrjedhës së paracaktuar VOD/Seriale"
+msgstr "Lloi i rrjedhës VOD/Seriale"
 
 msgid "Preview streams in mini tv before playing"
 msgstr "Për shije para se të luani videon"

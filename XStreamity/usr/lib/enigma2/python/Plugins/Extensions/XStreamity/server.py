@@ -5,7 +5,6 @@
 from . import _
 
 import owibranding
-
 from Screens.Screen import Screen
 from plugin import skin_path, json_file, screenwidth, playlist_path, cfg
 from Components.Pixmap import Pixmap
@@ -20,9 +19,7 @@ from Screens.MessageBox import MessageBox
 from collections import OrderedDict
 import json
 import os
-
 import xstreamity_globals as glob
-
 
 class XStreamity_AddServer(ConfigListScreen, Screen):
 
@@ -32,14 +29,13 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 		
 		skin = skin_path + 'settings.xml'
 		
-		
 		try:
 			from boxbranding import getImageDistro, getImageVersion, getOEVersion
 		except:
 			
 			if owibranding.getMachineBrand() == "Dream Multimedia" or owibranding.getOEVersion() == "OE 2.2":
 				skin = skin_path + 'DreamOS/settings.xml'
-	
+
 		with open(skin, 'r') as f:
 			self.skin = f.read()
 			
@@ -71,8 +67,8 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 		self.password = 'password'
 		self.listType = 'm3u'
 		self.output = 'ts'
-		self.livetype = cfg.livetype.value
-		self.vodtype = cfg.vodtype.value
+		self.livetype = cfg.livetype.getValue()
+		self.vodtype = cfg.vodtype.getValue()
 		self.epgShift = 0
 		
 		self['actions'] = ActionMap(['XStreamityActions'],
@@ -82,8 +78,8 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 		 'green': self.save,
 		 }, -2)
 		 
-		self.initConfig()
-		self.createSetup()
+		self.onFirstExecBegin.append(self.initConfig)
+		
 		self.onLayoutFinish.append(self.__layoutFinished)
 
 	
@@ -106,6 +102,18 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 		
 		
 	def initConfig(self): 
+		
+		streamtypechoices = [('1', 'DVB(1)'), ('4097', 'IPTV(4097)')]
+
+		if os.path.exists("/usr/bin/gstplayer"):
+			streamtypechoices.append( ('5001', 'GStreamer(5001)' ) )
+			
+		if os.path.exists("/usr/bin/exteplayer3"):
+			streamtypechoices.append( ('5002', 'ExtePlayer(5002)') )
+			
+		if os.path.exists("/usr/bin/apt-get"):
+			streamtypechoices.append( ('8193', 'DreamOS GStreamer(8193)') )
+				
 		if self.editmode == False: 
 			self.nameCfg = NoSave(ConfigText(default= _('My IPTV'), fixed_size=False))
 			self.protocolCfg = NoSave(ConfigSelection(default='http://', choices=[('http://', _('http://')), ('https://', _('https://'))]))
@@ -115,21 +123,8 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 			self.passwordCfg = NoSave(ConfigText(default= _('password'), fixed_size=False))
 			self.typeCfg = NoSave(ConfigSelection(default='m3u', choices=[('m3u', 'm3u'), ('m3u_plus', 'm3u_plus')]))
 			self.outputCfg = NoSave(ConfigSelection(default='ts', choices=[('ts', 'ts'), ('m3u8', 'm3u8')]))
-			self.liveTypeCfg = NoSave(ConfigSelection(default=cfg.livetype.value, choices=[('1', _('DVB(1)')), ('4097', _('IPTV(4097)'))]))
-			self.vodTypeCfg = NoSave(ConfigSelection(default=cfg.vodtype.value, choices=[('1', _('DVB(1)')), ('4097', _('IPTV(4097)'))]))
-			
-			
-			if os.path.isdir('/usr/lib/enigma2/python/Plugins/SystemPlugins/ServiceApp'):
-				self.liveTypeCfg = NoSave(ConfigSelection(default=cfg.livetype.value, choices=[
-				 ('1', _('DVB(1)')),
-				 ('4097', _('IPTV(4097)')), 
-				 ('5001', _('GStreamer(5001)')), 
-				 ('5002', 'ExtPlayer(5002)')]))
-				self.vodTypeCfg = NoSave(ConfigSelection(default=cfg.vodtype.value, choices=[
-				 ('1', _('DVB(1)')), 
-				 ('4097', _('IPTV(4097)')), 
-				 ('5001', _('GStreamer(5001)')), 
-				 ('5002', 'ExtPlayer(5002)')]))
+			self.liveTypeCfg = NoSave(ConfigSelection(default=self.livetype, choices=streamtypechoices))
+			self.vodTypeCfg = NoSave(ConfigSelection(default=self.vodtype, choices=streamtypechoices))
 
 			self.epgShiftCfg = NoSave(ConfigSelectionNumber(min = -12, max = 12, stepwidth = 1, default=0))
 		else: 
@@ -154,23 +149,11 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 			self.passwordCfg = NoSave(ConfigText(default=self.password, fixed_size=False)) 
 			self.typeCfg = NoSave(ConfigSelection(default=self.listType, choices=[('m3u', 'm3u'), ('m3u_plus', 'm3u_plus')]))   
 			self.outputCfg = NoSave(ConfigSelection(default=self.output, choices=[('ts', 'ts'), ('m3u8', 'm3u8')]))
-			
-			self.liveTypeCfg = NoSave(ConfigSelection(default=self.liveType, choices=[('1', _('DVB(1)')), ('4097', _('IPTV(4097)'))]))
-			self.vodTypeCfg = NoSave(ConfigSelection(default=self.vodType, choices=[('1', _('DVB(1)')), ('4097', _('IPTV(4097)'))]))
-			
-			if os.path.isdir('/usr/lib/enigma2/python/Plugins/SystemPlugins/ServiceApp'):
-				self.liveTypeCfg = NoSave(ConfigSelection(default=self.liveType, choices=[
-				 ('1', _('DVB(1)')),
-				 ('4097', _('IPTV(4097)')), 
-				 ('5001', _('GStreamer(5001)')), 
-				 ('5002', 'ExtPlayer(5002)')]))
-				self.vodTypeCfg = NoSave(ConfigSelection(default=self.vodType, choices=[
-				 ('1', _('DVB(1)')), 
-				 ('4097', _('IPTV(4097)')), 
-				 ('5001', _('GStreamer(5001)')), 
-				 ('5002', 'ExtPlayer(5002)')]))
-
+			self.liveTypeCfg = NoSave(ConfigSelection(default=self.liveType, choices=streamtypechoices))
+			self.vodTypeCfg = NoSave(ConfigSelection(default=self.vodType, choices=streamtypechoices))
 			self.epgShiftCfg = NoSave(ConfigSelectionNumber(min = -12, max = 12, stepwidth = 1, default=self.epgshift))
+			
+			self.createSetup()
 			
 			
 	def createSetup(self):  
@@ -233,7 +216,6 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 			livetype = self.liveTypeCfg.value
 			vodtype = self.vodTypeCfg.value
 			epgshift = self.epgShiftCfg.value
-			
 			
 			if glob.current_playlist:
 				glob.current_playlist['playlist_info']['name'] = name

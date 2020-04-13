@@ -1,5 +1,5 @@
 <screen name="XstreamityCategories" position="0,0" size="1920,1080" backgroundColor="#000000" flags="wfNoBorder">
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/Black/images/background.png" alphatest="blend" position="0,0" size="1920,1080" zPosition="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/Black/images/background.png" alphatest="off" position="0,0" size="1920,1080" zPosition="1" />
 	<widget source="global.CurrentTime" render="Label" position="1490,0" size="400,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" halign="right" transparent="1" zPosition="2">
 		<convert type="ClockToText">Format:%H:%M | %A %-d %b</convert>
 	</widget>
@@ -31,7 +31,7 @@
 	<!-- vod section -->
 	<widget source="vod_title" render="Label" position="510,81" size="1110,42" font="xstreamitybold;30" foregroundColor="#ffffff" backgroundColor="#000000" halign="left" noWrap="1" transparent="1" zPosition="2" />
 	<widget source="vod_description" render="xRunningText" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" position="510,144" size="1110,120" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#000000" halign="left" transparent="1" zPosition="2" />
-	<widget name="vod_cover" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/Black/images/vod_cover.png" alphatest="blend" position="520,300" size="400,600" zPosition="2" />
+	<widget name="vod_cover" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/Black/images/vod_cover.png" alphatest="off" position="520,300" size="400,600" zPosition="2" />
 	<widget name="vod_background" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/vod_background.png" position="980,300" size="880,600" alphatest="blend" zPosition="2" />
 	<widget source="vod_video_type_label" render="Label" position="1010,330" size="240,60" font="xstreamitybold;27" foregroundColor="#ffffff" backgroundColor="#000000" halign="left" noWrap="1" transparent="1" zPosition="3" />
 	<widget source="vod_duration_label" render="Label" position="1010,390" size="240,60" font="xstreamitybold;27" foregroundColor="#ffffff" backgroundColor="#000000" halign="left" noWrap="1" transparent="1" zPosition="3" />
@@ -77,7 +77,7 @@
 	<widget source="key_menu" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/key_menu.png" position="1614,1031" size="38,38" alphatest="blend" zPosition="2">
 		<convert type="ConditionalShowHide" />
 	</widget>
-	<widget source="key_menu" render="Label" position="1665,1020" size="165,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" transparent="1" zPosition="2" />
+	<widget source="key_menu" render="Label" position="1665,1020" size="225,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" transparent="1" zPosition="2" />
 	<widget source="page" render="Label" position="45,1020" size="219,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" transparent="1" noWrap="1" zPosition="2" />
 	<widget source="listposition" render="Label" position="270,1020" size="165,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2" />
 </screen>

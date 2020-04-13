@@ -1,5 +1,5 @@
 <screen name="XstreamityUserInfo" position="0,0" size="1280,720" backgroundColor="#2a70a4" flags="wfNoBorder">
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/default/images/background.png" alphatest="blend" position="0,0" size="1280,720" zPosition="-1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/default/images/background.png" alphatest="off" position="0,0" size="1280,720" zPosition="-1" />
 	<widget source="global.CurrentTime" render="Label" position="993,0" size="267,40" font="xstreamityregular;18" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1">
 		<convert type="ClockToText">Format:%H:%M | %A %-d %b</convert>
 	</widget>

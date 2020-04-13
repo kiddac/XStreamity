@@ -67,8 +67,8 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 		 'ok': self.ok,
 		 }, -2)
 		 
-		self.initConfig()
-		self.createSetup()
+		self.onFirstExecBegin.append(self.initConfig)
+		
 		self.onLayoutFinish.append(self.__layoutFinished)
 		
 	def __layoutFinished(self):
@@ -108,7 +108,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 		self.cfg_showlive = getConfigListEntry(_('Display Live categories'), cfg.showlive)
 		self.cfg_showvod = getConfigListEntry(_('Display VOD categories'), cfg.showvod)
 		self.cfg_showseries = getConfigListEntry(_('Display Series categories'), cfg.showseries)
-		self.cfg_showcatchup = getConfigListEntry(_('Display Catchup Category'), cfg.showcatchup)
+		self.cfg_showcatchup = getConfigListEntry(_('Display Catchup category'), cfg.showcatchup)
 		
 		self.cfg_livetype = getConfigListEntry(_('Default Live stream type'), cfg.livetype)
 		self.cfg_vodtype = getConfigListEntry(_('Default VOD/Series stream type'), cfg.vodtype)
@@ -116,13 +116,17 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 		self.cfg_stopstream = getConfigListEntry(_('Stop stream on back button'), cfg.stopstream)
 		self.cfg_showpicons = getConfigListEntry(_('Show picons in Live categories'), cfg.showpicons)
 		self.cfg_showcovers = getConfigListEntry(_('Show covers in VOD categories'), cfg.showcovers)
-		self.cfg_hirescovers = getConfigListEntry(_('Download Hi-Res VOD Covers'), cfg.hirescovers)
+		#self.cfg_hirescovers = getConfigListEntry(_('Download Hi-Res VOD Covers'), cfg.hirescovers)
 		self.cfg_downloadlocation = getConfigListEntry(_('VOD download folder'), cfg.downloadlocation)
 		self.cfg_parental = getConfigListEntry(_('Parental control'), cfg.parental)
 		self.cfg_main = getConfigListEntry(_('Show in main menu *Restart GUI Required'), cfg.main)
+		
+		self.cfg_refreshTMDB = getConfigListEntry(_('Update VOD Movie Database information'), cfg.refreshTMDB)
+		self.cfg_TMDBLanguage = getConfigListEntry(_('VOD Movie Database language'), cfg.TMDBLanguage)
+		
+		self.createSetup()
 
 		
-
 	def createSetup(self):
 			self.list = []
 			self.list.append(self.cfg_skin)
@@ -149,11 +153,17 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 			if cfg.showvod.value == True or cfg.showseries.value == True:
 				self.list.append(self.cfg_showcovers)
 			
-			if cfg.showcovers.value == True:
-				self.list.append(self.cfg_hirescovers)
+			#if cfg.showcovers.value == True:
+				#self.list.append(self.cfg_hirescovers)
 				
 			if cfg.showvod.value == True or cfg.showseries.value == True:
 				self.list.append(self.cfg_downloadlocation)
+				
+			if cfg.showvod.value == True:
+				self.list.append(self.cfg_refreshTMDB)
+				if cfg.refreshTMDB.value == True:
+					self.list.append(self.cfg_TMDBLanguage)
+				
 				
 				
 			self.list.append(self.cfg_parental)
@@ -228,7 +238,6 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 			
 
 	def openDirectoryBrowser(self, path, cfgitem):
-		
 		if cfgitem == "location":
 			try:
 				self.session.openWithCallback(
@@ -246,6 +255,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 				print (e)
 			except:
 				pass
+				
 		if cfgitem == "downloadlocation":
 			try:
 				self.session.openWithCallback(
