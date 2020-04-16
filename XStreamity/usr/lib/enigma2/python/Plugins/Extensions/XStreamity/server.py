@@ -153,7 +153,7 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 			self.vodTypeCfg = NoSave(ConfigSelection(default=self.vodType, choices=streamtypechoices))
 			self.epgShiftCfg = NoSave(ConfigSelectionNumber(min = -12, max = 12, stepwidth = 1, default=self.epgshift))
 			
-			self.createSetup()
+		self.createSetup()
 			
 			
 	def createSetup(self):  
