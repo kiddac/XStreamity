@@ -24,7 +24,6 @@ def updatePreview(piconSize, imageType, temp):
 		cropped_image = Image.new("RGBA", (cwidth, cheight), (0,0,0,0))
 		cropped_image.paste(im, (0, 0))
 		im = cropped_image
-		
 		"""
 		
 		#resize / enlarge image - cannot do for picons due to transparency problems. 
@@ -57,9 +56,3 @@ def updatePreview(piconSize, imageType, temp):
 		preview = ''		
 
 	return preview
-
-
-
-		
-
-

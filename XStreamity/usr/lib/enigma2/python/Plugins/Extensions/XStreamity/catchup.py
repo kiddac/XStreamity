@@ -5,37 +5,34 @@
 from . import _
 from collections import OrderedDict
 from Screens.Screen import Screen
-from Screens.VirtualKeyBoard import VirtualKeyBoard
-from Screens.InfoBar import InfoBar, MoviePlayer
-from plugin import skin_path, imagefolder, screenwidth, hdr, cfg, skinimagefolder, common_path
-from enigma import eListboxPythonMultiContent, gFont, RT_HALIGN_LEFT, RT_VALIGN_CENTER, eTimer, eServiceReference, iPlayableService
+#from Screens.InfoBar import InfoBar, MoviePlayer
+from plugin import skin_path, screenwidth, hdr, cfg, common_path
+from enigma import eTimer, eServiceReference
 from Components.ActionMap import ActionMap
 from Components.Sources.List import List
-from Components.MenuList import MenuList
 from Components.Pixmap import Pixmap
-from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaBlend
-from Components.Renderer.xRunningText import xRunningText
 from Tools.LoadPixmap import LoadPixmap
-from Tools.BoundFunction import boundFunction
 from xStaticText import StaticText
 from datetime import datetime, timedelta
 import calendar
 
 #download / parse
 import base64
-import re
 import json
 import os
 import gzip
+import socket
 
 import urllib2
 import xml.etree.ElementTree as ET
-from twisted.web.client import downloadPage, getPage, http
+from twisted.web.client import downloadPage
 import xstreamity_globals as glob
 import streamplayer, imagedownload
+from Components.config import config
+#from Components.ParentalControl import parentalControl
+#from Screens.ParentalControlSetup import ProtectedScreen
 
-from Screens.ParentalControlSetup import ProtectedScreen
-from Components.config import *
+from StringIO import StringIO
 
 
 
@@ -60,7 +57,7 @@ class XStreamity_Catchup(Screen):
 
 		self.list1 = []
 		self.channelList = []
-		self["channel_list"] = MenuList1(self.channelList)
+		self["channel_list"] = List(self.channelList, enableWrapAround=True)
 		self["channel_list"].onSelectionChanged.append(self.selectionChanged)
 		self.selectedlist = self["channel_list"]
 
@@ -70,6 +67,13 @@ class XStreamity_Catchup(Screen):
 		self["epg_title"] = StaticText()
 		self["epg_description"] = StaticText()
 		self["epg_picon"] = Pixmap()
+		self["epg_picon"].hide()
+		
+		self.catchup_all = []
+		self["catchup_list"] = List(self.catchup_all, enableWrapAround=True)
+		self["catchup_list"].onSelectionChanged.append(self.selectionChanged)
+		
+
 
 		self["key_red"] = StaticText(_('Back'))
 		self["key_green"] = StaticText(_('OK'))
@@ -86,20 +90,16 @@ class XStreamity_Catchup(Screen):
 		self.password = glob.current_playlist['playlist_info']['password']
 		self.live_categories = "%s/player_api.php?username=%s&password=%s&action=get_live_streams" % (self.host, self.username, self.password)
 		self.simpledatatable = "%s/player_api.php?username=%s&password=%s&action=get_simple_data_table&stream_id=" % (self.host, self.username, self.password)
-
-		self.catchup_all = []
-		self["catchup_list"] = MenuList3(self.catchup_all)
-		self["catchup_list"].onSelectionChanged.append(self.selectionChanged)
+		
+		self.downloadingpicon = False
 
 		self["actions"] = ActionMap(["XStreamityActions"], {
 			'red': self.back,
 			'cancel': self.back,
 			'ok' :  self.next,
 			'green' : self.next,
-
-
-			"left": self.goLeft,
-			"right": self.goRight,
+			"left": self.pageUp,
+			"right": self.pageDown,
 			"up": self.goUp,
 			"down": self.goDown,
 			"channelUp": self.pageUp,
@@ -116,7 +116,6 @@ class XStreamity_Catchup(Screen):
 
 	def __layoutFinished(self):
 		self.setTitle(self.setup_title)
-		self.selectionChanged()
 
 
 	def createSetup(self):
@@ -165,6 +164,7 @@ class XStreamity_Catchup(Screen):
 
 	def downloadEnigma2Categories(self, url):
 		self.list1 = []
+		self.channelList = []
 		response = ''
 		index = 0
 		valid = False
@@ -193,10 +193,6 @@ class XStreamity_Catchup(Screen):
 				desc_image = ''
 				stream_url = ''
 
-				time = ''
-				starttime = ''
-				endtime = ''
-				programme = ''
 				epgnowtitle = ''
 				epgnowtime = ''
 				epgnowdescription = ''
@@ -228,14 +224,13 @@ class XStreamity_Catchup(Screen):
 
 				#remove times from title
 				if stream_url and "/live/" in stream_url:
-					if len(title.split("[")) > 1:
-						if len(title.split("[")) < 3:
-							title = title.split("[")[0].strip()
+
+					if stream_url and "/live/" in stream_url:
+						if title.find('[') == 0:
+							title = "[" + str(title.split("[")[1])
 						else:
-							if title.find('[') == 0:
-								title = "[" + title.split("[")[1]
-							else:
-								title = title.partition("[")[0]
+							if not len(title.split("[")) <= 1:
+								title = str(title.partition("[")[0])				
 
 
 				#fix missing port from playlist_url
@@ -279,11 +274,10 @@ class XStreamity_Catchup(Screen):
 
 
 			if self["channel_list"].getCurrent():
-				#self["channel_list"].selectionEnabled(1)
 				try:
-					self["channel_list"].moveToIndex(glob.nextlist[-1]['index'])
+					self["channel_list"].setIndex(glob.nextlist[-1]['index'])
 				except:
-					self["channel_list"].moveToIndex(0)
+					self["channel_list"].setIndex(0)
 
 		else:
 			from Screens.MessageBox import MessageBox
@@ -303,11 +297,13 @@ class XStreamity_Catchup(Screen):
 			self.stopStream()
 
 		if self.selectedlist == self["catchup_list"]:
-			self["catchup_list"].selectionEnabled(0)
+			instance = self["catchup_list"].master.master.instance
+			instance.setSelectionEnable(0)
 			self.catchup_all = []
 			self['catchup_list'].setList(self.catchup_all)
 
-			self["channel_list"].selectionEnabled(1)
+			instance = self["channel_list"].master.master.instance
+			instance.setSelectionEnable(1)
 			self.selectedlist = self["channel_list"]
 		else:
 			del glob.nextlist[-1]
@@ -351,19 +347,20 @@ class XStreamity_Catchup(Screen):
 			return
 
 		if self["channel_list"].getCurrent():
-			self.currentindex =  self["channel_list"].getCurrent()[3]
+			self.currentindex =  self["channel_list"].getCurrent()[1]
 
 			glob.nextlist[-1]['index'] = self.currentindex
 			glob.currentchannelist = self.channelList
 			glob.currentchannelistindex = self.currentindex
 
-			playlist_url = self.channelList[self.currentindex][7]
-			stream_url = self.channelList[self.currentindex][8]
+			playlist_url = self.channelList[self.currentindex][5]
 
 			if not self.isStream:
 				glob.nextlist.append({"playlist_url": playlist_url, "index": 0})
+				self["epg_picon"].hide()
 				self.createSetup()
 			else:
+				self["epg_picon"].show()
 				if self.selectedlist == self["channel_list"]:
 					self.getCatchupList()
 				else:
@@ -373,7 +370,7 @@ class XStreamity_Catchup(Screen):
 	def getCatchupList(self):
 		response = ''
 		stream = ''
-		stream_url = self.channelList[self.currentindex][8]
+		stream_url = self.channelList[self.currentindex][6]
 
 		if stream_url:
 			stream = stream_url.rpartition('/')[-1]
@@ -423,7 +420,6 @@ class XStreamity_Catchup(Screen):
 
 				#remove oldest catchup item in list. Usual void.
 				self.archive.pop(0)
-
 				self.getlistings()
 
 
@@ -434,206 +430,227 @@ class XStreamity_Catchup(Screen):
 		cu_description = ""
 		cu_play_start = ""
 		cu_duration = ""
-		cu_start = ""
-		cu_start_time = ""
-		cu_end = ""
-		cu_end_time = ""
+		shift = 0
+		catchupstart = 0
+		catchupend = 0
 
 		index = 0
 		self.catchup_all = []
 		for listing in self.archive:
-			if 'start' in listing:
-
-				cu_start = datetime.strptime(listing['start'], '%Y-%m-%d %H:%M:%S')
-				cu_start_time = cu_start.strftime("%H:%M")
-				cu_day = calendar.day_abbr[cu_start.weekday()]
-				cu_start_date = cu_start.strftime("%d/%m")
-				cu_play_start = cu_start.strftime('%Y-%m-%d:%H-%M')
-				cu_date_all = "%s %s" % (cu_day, cu_start_date)
-
-			if 'end' in listing:
-				cu_end = datetime.strptime(listing['end'], '%Y-%m-%d %H:%M:%S')
-				cu_end_time = cu_end.strftime("%H:%M")
-
-
-			if "epgshift" in glob.current_playlist["player_info"]:
-				if glob.current_playlist["player_info"]["epgshift"] != 0:
-					shift = int(glob.current_playlist["player_info"]["epgshift"])
-
-					if cu_start_time != "":
-
-						cu_startshift = cu_start + timedelta(hours=shift)
-						cu_start_time = format(cu_startshift, '%H:%M')
-
-					if cu_start_time != "":
-						cu_endshift = cu_end + timedelta(hours=shift)
-						cu_end_time = format(cu_endshift, '%H:%M')
-
-
-			cu_time_all = "%s - %s" % (cu_start_time, cu_end_time)
-
-			if 'start_timestamp' in listing and 'stop_timestamp' in listing:
-				cu_duration = (int(listing['stop_timestamp']) - int(listing['start_timestamp'])) / 60
-
+			
 			if 'title' in listing:
 				cu_title = base64.b64decode(listing['title'])
 
 			if 'description' in listing:
 				cu_description = base64.b64decode(listing['description'])
+				
+			if 'start_timestamp' in listing and 'stop_timestamp' in listing:
+				start_timestamp = int(listing['start_timestamp'])
+				stop_timestamp = int(listing['stop_timestamp'])
+				
+				if "epgshift" in glob.current_playlist["player_info"]:
+					if glob.current_playlist["player_info"]["epgshift"] != 0:
+						shift = int(glob.current_playlist["player_info"]["epgshift"])
+						
+						start_timestamp += shift * 3600
+						stop_timestamp += shift * 3600
 
+				cu_day = datetime.fromtimestamp(start_timestamp).strftime("%a")
+				cu_start_date = datetime.fromtimestamp(start_timestamp).strftime("%d/%m")
+				cu_date_all = "%s %s" % (cu_day, cu_start_date)
+				cu_time_all = "%s - %s" % (datetime.fromtimestamp(start_timestamp).strftime("%H:%M"), datetime.fromtimestamp(stop_timestamp).strftime("%H:%M"))
+			
+	
+				if cfg.catchupstart.getValue() != 0:
+					catchupstart = int(cfg.catchupstart.getValue())
+					
+				if cfg.catchupend.getValue() != 0:
+					catchupend = int(cfg.catchupend.getValue())
+					
+				cu_play_start = datetime.fromtimestamp(start_timestamp - (catchupstart * 60) ).strftime('%Y-%m-%d:%H-%M')
+				
+				cu_duration = ((stop_timestamp + (catchupend * 60)) - (start_timestamp - (catchupstart * 60))) / 60
+			
 			self.catchup_all.append(MenuCatchup(str(cu_date_all), str(cu_time_all), str(cu_title), str(cu_description), str(cu_play_start), str(cu_duration) , index ))
+			
 
 			index += 1
 
+		self.catchup_all.reverse()
 		self['catchup_list'].setList(self.catchup_all)
-		self["catchup_list"].selectionEnabled(1)
+		instance = self["catchup_list"].master.master.instance
+		instance.setSelectionEnable(1)
+		
+			
 		self.selectedlist = self["catchup_list"]
 		self.selectionChanged()
 
 
 	def playCatchup(self):
-		streamurl = ''
 		streamtype = "4097"
 		stream = ''
-		stream_url = self["channel_list"].getCurrent()[8]
+		stream_url = self["channel_list"].getCurrent()[6]
 
 		if stream_url:
 			stream = stream_url.rpartition('/')[-1]
 
-		#playurl = "%s/streaming/timeshift.php?username=%s&password=%s&stream=%s&start=%s&duration=%s" % (self.host, self.username, self.password, stream, str(self["catchup_list"].getCurrent()[5]), str(self["catchup_list"].getCurrent()[6]))
-		playurl = "%s/timeshift/%s/%s/%s/%s/%s" % (self.host, self.username, self.password, str(self["catchup_list"].getCurrent()[6]), str(self["catchup_list"].getCurrent()[5]),  stream)
-
+		#playurl = "%s/streaming/timeshift.php?username=%s&password=%s&stream=%s&start=%s&duration=%s" % (self.host, self.username, self.password, stream, str(self["catchup_list"].getCurrent()[4]), str(self["catchup_list"].getCurrent()[5]))
+		
+		playurl = "%s/timeshift/%s/%s/%s/%s/%s" % (self.host, self.username, self.password, str(self["catchup_list"].getCurrent()[5]), str(self["catchup_list"].getCurrent()[4]),  stream)
+		
 		req = urllib2.Request(playurl, headers=hdr)
 		valid = False
 		try:
 			response = urllib2.urlopen(req)
 			valid = True
-
-
+		
 		except urllib2.URLError as e:
 			print(e)
-
 			pass
 
 		except socket.timeout as e:
 			print(e)
-
 			pass
 
 		except:
 			print("\n ***** downloadSimpleData unknown error")
 			pass
 
-
 		if valid == True:
 			if stream_url != 'None' and "/live/" in stream_url:
 				streamtype = "4097"
 				self.reference = eServiceReference(int(streamtype), 0, str(playurl))
-				glob.catchupdata = [str(self["catchup_list"].getCurrent()[0]), str(self["catchup_list"].getCurrent()[4])]
+				glob.catchupdata = [str(self["catchup_list"].getCurrent()[0]), str(self["catchup_list"].getCurrent()[3])]
 				self.session.openWithCallback(self.createSetup,streamplayer.XStreamity_CatchupPlayer, str(playurl), str(streamtype))
 		else:
 			from Screens.MessageBox import MessageBox
 			self.session.open(MessageBox, _('Catchup error. No data for this slot'), MessageBox.TYPE_WARNING, timeout=5)
 
 
-
-	def goLeft(self):
-		self.selectedlist.pageUp()
-
-
-	def goRight(self):
-		self.selectedlist.pageDown()
-
-
 	def goUp(self):
-		self.selectedlist.up()
+		instance = self.selectedlist.master.master.instance
+		instance.moveSelection(instance.moveUp)
 
 
 	def goDown(self):
-		self.selectedlist.down()
+		instance = self.selectedlist.master.master.instance
+		instance.moveSelection(instance.moveDown)
 
 
 	def pageUp(self):
-		self.selectedlist.pageUp()
+		instance = self.selectedlist.master.master.instance
+		instance.moveSelection(instance.pageUp)
 
 
 	def pageDown(self):
-		self.selectedlist.pageDown()
-
+		instance = self.selectedlist.master.master.instance
+		instance.moveSelection(instance.pageDown)
+		
 
 	def reset(self):
-		self.selectedlist.moveToIndex(0)
+		self.selectedlist.setIndex(0)
 
 
 	def selectionChanged(self):
+		self.timerpicon = eTimer()
+		self.timerpicon.stop()
+		
 		if self["channel_list"].getCurrent():
 
 			channeltitle = self["channel_list"].getCurrent()[0]
-			stream_url = self["channel_list"].getCurrent()[8]
+			stream_url = self["channel_list"].getCurrent()[6]
 
 			self["channel"].setText(self.main_title + ": " + str(channeltitle))
 
 			self.timer3 = eTimer()
 			self.timer3.stop()
-
-			if stream_url != 'None' and "/live/" in stream_url:
-				# delay download to stop lag on channel scrolling
-				self.timer3.start(500, True)
-				try:
-					self.timer3_conn = self.timer3.timeout.connect(self.delayedDownload)
-				except:
-					self.timer3.callback.append(self.delayedDownload)
+			
+			if stream_url != 'None':
+				if "/live/" in stream_url:
+					self.downloadingpicon = False
+					try:
+						self.timerpicon.callback.append(self.downloadPicon)
+					except:
+						self.timerpicon_conn = self.timerpicon.timeout.connect(self.downloadPicon)
+					self.timerpicon.start(200, True)
+					
 		if self.selectedlist == self["catchup_list"]:
 			if self["catchup_list"].getCurrent():
 				self["epg_title"].setText(self["catchup_list"].getCurrent()[0])
-				self["epg_description"].setText(self["catchup_list"].getCurrent()[4])
+				self["epg_description"].setText(self["catchup_list"].getCurrent()[3])
 
 
-	def delayedDownload(self):
+	def downloadPicon(self):
+		self.timerpicon.stop()
+		if self.downloadingpicon:
+			return
+		self.downloadingpicon = True
+
+		if os.path.exists("/tmp/xstreamity/preview.png"):
+			os.remove("/tmp/xstreamity/preview.png")
+			
+		if os.path.exists("/tmp/xstreamity/original.png"):
+			os.remove("/tmp/xstreamity/original.png")
+			
 		url = ''
 		size = []
-		if self["channel_list"].getCurrent():
+		if self["channel_list"].getCurrent():	
+			desc_image = self["channel_list"].getCurrent()[3]
 
-			desc_image = self["channel_list"].getCurrent()[5]
-			stream_url = self["channel_list"].getCurrent()[8]
+			if cfg.showpicons.value == True:
 
-			if stream_url != 'None' and "/live/" in stream_url and cfg.showpicons.value == True:
 				imagetype = "picon"
 				url = desc_image
 				size = [147,88]
 				if screenwidth.width() > 1280:
 					size = [220,130]
 
-		if size != []:
-			if url != '':
-				temp = '/tmp/xstreamity/temp.png'
-				preview = '/tmp/xstreamity/preview.png'
 
+			if url != '' and url != "n/A" and url != None:
+				original = '/tmp/xstreamity/original.png'
+			
+				d = downloadPage(url, original)
+				d.addCallback(self.checkdownloaded, size, imagetype)
+				d.addErrback(self.ebPrintError)
+				return d
+			
+			else:
+				self.loadDefaultImage()
+
+	def ebPrintError(self, failure):
+		pass
+
+
+	def checkdownloaded(self, data, piconSize, imageType):
+			
+		self.downloadingpicon = False
+		original = '/tmp/xstreamity/original.png'
+		if self["channel_list"].getCurrent():
+			preview = ''
+			if os.path.exists(original):
 				try:
-					downloadPage(url, temp).addCallback(self.checkdownloaded, size, imagetype, temp)
+					preview = imagedownload.updatePreview(piconSize, imageType, original)
+					self.displayImage(preview)
+				except Exception as err:
+					print "* error ** %s" % err
 				except:
 					pass
-			else:
-				self.loadDefaultImage()
 
 
-	def checkdownloaded(self, data, piconSize, imageType, temp):
-		preview = ''
-		if os.path.exists(temp):
-
-			try:
-				preview = imagedownload.updatePreview(piconSize, imageType, temp)
-			except:
-				pass
-
-			if preview != '':
-				if self["epg_picon"].instance:
-					self["epg_picon"].instance.setPixmapFromFile(preview)
-			else:
-				self.loadDefaultImage()
-		return preview
-
-
+	def displayImage(self, preview):
+		stream_url = self["channel_list"].getCurrent()[6]
+		preview = '/tmp/xstreamity/preview.png'
+		if os.path.exists(preview):
+			if self["epg_picon"].instance:
+				self["epg_picon"].instance.setPixmapFromFile(preview)
+		else:
+			self.loadDefaultImage()
+				
+		if stream_url != 'None' and "/movie/" in stream_url:
+			self.displayVod()
+		#return preview
+		
+		
 	def loadDefaultImage(self):
 		if self["epg_picon"].instance:
 			self["epg_picon"].instance.setPixmapFromFile(common_path + "picon.png")
@@ -646,71 +663,14 @@ class XStreamity_Catchup(Screen):
 				self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
 
 
-
-class MenuList1(MenuList):
-	def __init__(self, list, enableWrapAround=True):
-		MenuList.__init__(self, list, enableWrapAround, eListboxPythonMultiContent)
-		if screenwidth.width() > 1280:
-			self.l.setFont(0, gFont("xstreamityregular", 27))
-			self.l.setFont(1, gFont("xstreamitybold", 27))
-			self.l.setItemHeight(60)
-		else:
-			self.l.setFont(0, gFont("xstreamityregular", 18))
-			self.l.setFont(1, gFont("xstreamitybold", 18))
-			self.l.setItemHeight(40)
-
-
-
+		 
 def buildChannelListEntry(index, title, description, desc_image, category_id, playlisturl, stream_url):
-	png = None
-	if stream_url == 'None':
-		png = LoadPixmap(common_path + "more.png")
-	else:
-		png = LoadPixmap(common_path + "play.png")
-
-	if screenwidth.width() > 1280:
-
-		return [title,
-		MultiContentEntryText(pos = (15, 0), size = (360, 60), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = title),
-		MultiContentEntryPixmapAlphaBlend(pos=(387, 20), size=(27, 21), png = png),
-		index, description, desc_image, category_id, playlisturl, stream_url]
-
-	else:
-
-		return [title,
-		MultiContentEntryText(pos = (8, 0), size = (240, 40), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = title),
-		MultiContentEntryPixmapAlphaBlend(pos=(258, 13), size=(18, 14), png = png),
-		 index, description, desc_image, category_id, playlisturl, stream_url]
+	png = LoadPixmap(common_path + "more.png")
+	return (title, index, description, desc_image, category_id, playlisturl, stream_url, png)
 
 
 def MenuCatchup(date_all, time_all, title, description, start, duration, index):
-	if screenwidth.width() > 1280:
-		return [title,
-				MultiContentEntryText(pos = (15, 0), size = (213, 60), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = date_all ),
-				MultiContentEntryText(pos = (240, 0), size = (240, 60), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = time_all),
-				MultiContentEntryText(pos = (480, 0), size = (828, 60), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = title),
-			 description, start, duration, index
-			]
-	else:
-			return [title,
-				MultiContentEntryText(pos = (10, 0), size = (182, 60), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = date_all ),
-				MultiContentEntryText(pos = (160, 0), size = (160, 60), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = time_all),
-				MultiContentEntryText(pos = (320, 0), size = (552, 60), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = title),
-			 description, start, duration, index
-			]
-
-
-class MenuList3(MenuList):
-	def __init__(self, list, enableWrapAround=True):
-		MenuList.__init__(self, list, enableWrapAround, eListboxPythonMultiContent)
-		if screenwidth.width() > 1280:
-			self.l.setFont(0, gFont("xstreamityregular", 27))
-			self.l.setFont(1, gFont("xstreamitybold", 27))
-			self.l.setItemHeight(60)
-		else:
-			self.l.setFont(0, gFont("xstreamityregular", 18))
-			self.l.setFont(1, gFont("xstreamitybold", 18))
-			self.l.setItemHeight(40)
+	return (title, date_all, time_all, description, start, duration, index)
 
 
 def checkGZIP(url):
@@ -718,7 +678,7 @@ def checkGZIP(url):
 	request = urllib2.Request(url, headers=hdr)
 
 	try:
-		timeout = cfg.timeout.getValue()
+		#timeout = cfg.timeout.getValue()
 		response= urllib2.urlopen(request)
 
 		if response.info().get('Content-Encoding') == 'gzip':

@@ -9,7 +9,7 @@ from Components.Sources.List import List
 from xStaticText import StaticText
 from enigma import eTimer, eServiceReference
 from Screens.Screen import Screen
-from plugin import skin_path, imagefolder, json_file, screenwidth, hdr, playlist_path, cfg, skinimagefolder, common_path
+from plugin import skin_path, json_file, hdr, playlist_path, cfg, common_path
 from Components.Pixmap import Pixmap
 from Tools.LoadPixmap import LoadPixmap
 from Screens.MessageBox import MessageBox
@@ -46,9 +46,7 @@ class XStreamity_Main(Screen):
 		self.setup_title = (_('Select Server'))
 
 		self['key_red'] = StaticText(_('Back'))
-
 		self['key_green'] = StaticText(_('Add'))
-
 		self['key_yellow'] = StaticText()
 		self['key_blue'] = StaticText()
 		self['key_info'] = StaticText()
@@ -262,7 +260,6 @@ class XStreamity_Main(Screen):
 
 	def removeOldPlaylists(self):
 		if self.playlists_all != []:
-
 				deleteList = []
 
 				with open(playlist_path) as f:
@@ -288,9 +285,7 @@ class XStreamity_Main(Screen):
 		if not os.path.exists(self.tempplaylistpath):
 			for playlists in self.playlists_all:
 				response = ''
-
 				valid = False
-				panel = "new"
 				player_api = str(playlists["playlist_info"]["player_api"])
 				panel_api = str(playlists["playlist_info"]["panel_api"])
 				full_url = str(playlists["playlist_info"]["full_url"])
@@ -298,27 +293,23 @@ class XStreamity_Main(Screen):
 				username = str(playlists["playlist_info"]["username"])
 				password = str(playlists["playlist_info"]["password"])
 
-				player_req = urllib2.Request(player_api, headers=hdr)
-
 				if 'get.php' in full_url and domain != '' and username != '' and password != '':
 
 					try:
 						response = checkGZIP(player_api)
 						if response != '':
 							valid = True
-							panel = "new"
 					except Exception as e:
 						print(e)
 						try:
 							response = checkGZIP(panel_api)
 							valid = True
-							panel = "old"
 						except Exception as e:
 							print(e)
 
 						except:
 							pass
-
+							
 					except:
 						pass
 
@@ -396,8 +387,6 @@ class XStreamity_Main(Screen):
 		index = 0
 
 		for playlist in self.playlists_all:
-			playlisttext = ''
-			validstate = 'Invalid'
 			name = ''
 			url = ''
 			active = ''
@@ -573,7 +562,6 @@ class XStreamity_Main(Screen):
 
 
 	def settings(self):
-		changed = False
 		self.session.openWithCallback(self.settingsChanged, settings.XStreamity_Settings)
 
 

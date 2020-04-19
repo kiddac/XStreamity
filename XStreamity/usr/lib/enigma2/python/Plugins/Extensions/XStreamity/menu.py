@@ -6,20 +6,15 @@ from . import _
 from collections import OrderedDict
 from Components.ActionMap import ActionMap
 from Components.Sources.List import List
-from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaBlend
 from xStaticText import StaticText
-from enigma import eListboxPythonMultiContent, gFont, RT_HALIGN_LEFT, RT_VALIGN_CENTER, eTimer, eSize, ePoint
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
-from plugin import skin_path, imagefolder, screenwidth, hdr, cfg, skinimagefolder, common_path
-from Components.Label import Label
-from Components.Pixmap import Pixmap
+from plugin import skin_path, hdr, cfg, common_path
 from Tools.LoadPixmap import LoadPixmap
 
 #download / parse
 import urllib2
 import xml.etree.ElementTree as ET
-import socket
 import gzip
 import xstreamity_globals as glob
 import base64
@@ -27,6 +22,7 @@ import base64
 from Tools.BoundFunction import boundFunction
 import os
 import json
+from StringIO import StringIO
 
 
 class XStreamity_Menu(Screen):
@@ -101,7 +97,6 @@ class XStreamity_Menu(Screen):
 		self.list = []
 		response = ''
 		valid = False
-		fromfile = False
 
 		if not os.path.exists(self.tempcategorytypepath):
 			try:
@@ -125,7 +120,6 @@ class XStreamity_Menu(Screen):
 				pass
 		else:
 			valid = True
-			fromfile = True
 			with open(self.tempcategorytypepath, "r") as f:
 				content = f.read()
 

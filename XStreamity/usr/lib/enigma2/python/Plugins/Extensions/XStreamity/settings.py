@@ -7,14 +7,12 @@ from . import _
 import owibranding
 
 from Screens.Screen import Screen
-from plugin import skin_path, screenwidth, cfg, playlist_path
+from plugin import skin_path, cfg
 from Components.Pixmap import Pixmap
-from Components.ActionMap import ActionMap,  NumberActionMap
+from Components.ActionMap import ActionMap
 from xStaticText import StaticText
-from Components.Sources.List import List
-from Components.ConfigList import *
-from Components.config import *
-from Screens.VirtualKeyBoard import VirtualKeyBoard
+from Components.ConfigList import ConfigListScreen 
+from Components.config import config, configfile, getConfigListEntry, ConfigText, ConfigSelection, ConfigNumber, ConfigPassword, ConfigYesNo, ConfigEnableDisable
 from Screens.MessageBox import MessageBox
 from Screens.LocationBox import LocationBox
 from Screens.ParentalControlSetup import ProtectedScreen
@@ -67,7 +65,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 		 'ok': self.ok,
 		 }, -2)
 		 
-		self.onFirstExecBegin.append(self.initConfig)
+		self.initConfig()
 		
 		self.onLayoutFinish.append(self.__layoutFinished)
 		
@@ -124,6 +122,10 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 		self.cfg_refreshTMDB = getConfigListEntry(_('Update VOD Movie Database information'), cfg.refreshTMDB)
 		self.cfg_TMDBLanguage = getConfigListEntry(_('VOD Movie Database language'), cfg.TMDBLanguage)
 		
+		self.cfg_catchupstart = getConfigListEntry(_('Margin before catchup (mins)'), cfg.catchupstart)
+		self.cfg_catchupend = getConfigListEntry(_('Margin after catchup (mins)'), cfg.catchupend)
+		
+		
 		self.createSetup()
 
 		
@@ -152,9 +154,6 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 				
 			if cfg.showvod.value == True or cfg.showseries.value == True:
 				self.list.append(self.cfg_showcovers)
-			
-			#if cfg.showcovers.value == True:
-				#self.list.append(self.cfg_hirescovers)
 				
 			if cfg.showvod.value == True or cfg.showseries.value == True:
 				self.list.append(self.cfg_downloadlocation)
@@ -164,6 +163,9 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 				if cfg.refreshTMDB.value == True:
 					self.list.append(self.cfg_TMDBLanguage)
 				
+			if cfg.showcatchup.value == True:
+				self.list.append(self.cfg_catchupstart)
+				self.list.append(self.cfg_catchupend)
 				
 				
 			self.list.append(self.cfg_parental)

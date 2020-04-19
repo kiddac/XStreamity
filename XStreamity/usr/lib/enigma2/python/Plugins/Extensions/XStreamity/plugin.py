@@ -6,14 +6,10 @@ from . import _
 
 from Plugins.Plugin import PluginDescriptor
 from enigma import getDesktop, addFont
-from Screens.Screen import Screen
-from Components.ConfigList import *
-from Components.config import *
-
-
+#from Components.ConfigList import *
+from Components.config import config, ConfigSubsection, ConfigSelection, ConfigDirectory, ConfigYesNo, ConfigNumber, ConfigSelectionNumber
 
 import os
-import xstreamity_globals as glob
 import shutil
 
 screenwidth = getDesktop(0).size()
@@ -84,7 +80,7 @@ try:
 	from Components.UsageConfig import defaultMoviePath
 	downloadpath = defaultMoviePath()
 except:
-	from Components.UsageConfig import preferredPath, defaultStorageDevice
+	from Components.UsageConfig import defaultStorageDevice
 	downloadpath = defaultStorageDevice()
 		
 			 
@@ -105,6 +101,8 @@ cfg.showcatchup = ConfigYesNo(default=True)
 cfg.downloadlocation = ConfigDirectory(default=downloadpath)
 cfg.refreshTMDB = ConfigYesNo(default=False)
 cfg.TMDBLanguage = ConfigSelection(default='en', choices=languages)
+cfg.catchupstart = ConfigSelectionNumber(0, 30, 1, default = 0)
+cfg.catchupend = ConfigSelectionNumber(0, 30, 1, default = 0)
 
 skin_path = skin_directory + cfg.skin.value + '/'
 common_path = skin_directory + 'common' + '/'

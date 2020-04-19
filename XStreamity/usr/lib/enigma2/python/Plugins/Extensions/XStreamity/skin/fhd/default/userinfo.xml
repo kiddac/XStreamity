@@ -17,7 +17,7 @@
 	<eLabel text="Timezone:" position="590,810" size="369,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2" />
 	<widget name="status" position="959,330" size="369,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2" />
 	<widget name="trial" position="959,390" size="369,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2" />
-	<widget name="activeconn" render="Label" position="959,450" size="369,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2" />
+	<widget name="activeconn" position="959,450" size="369,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2" />
 	<widget name="maxconn" position="959,510" size="369,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2" />
 	<widget name="created" position="959,570" size="369,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2" />
 	<widget name="expiry" position="959,630" size="369,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2" />

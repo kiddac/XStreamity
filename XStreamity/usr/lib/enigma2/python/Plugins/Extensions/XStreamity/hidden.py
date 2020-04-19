@@ -5,19 +5,13 @@
 from . import _
 from collections import OrderedDict
 from Screens.Screen import Screen
-from plugin import skin_path, imagefolder, screenwidth, hdr, cfg, skinimagefolder, common_path, json_file
-from enigma import eListboxPythonMultiContent, gFont, RT_HALIGN_LEFT, RT_VALIGN_CENTER, eTimer, eServiceReference, iPlayableService
+from plugin import skin_path, common_path, json_file
 from Components.ActionMap import ActionMap
 from Components.Sources.List import List
-from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaBlend
 from Tools.LoadPixmap import LoadPixmap
 from xStaticText import StaticText
 
-#download / parse
-import base64
-import re
 import json
-import os
 import xstreamity_globals as glob
 
 
@@ -26,9 +20,6 @@ class XStreamity_HiddenCategories(Screen):
 	def __init__(self, session, category_type, channellist):
 		Screen.__init__(self, session)
 		self.session = session
-		
-		
-		print "********* channellist ****** %s" % channellist
 
 		skin = skin_path + 'hidden.xml'
 		self.category_type = category_type
@@ -79,9 +70,6 @@ class XStreamity_HiddenCategories(Screen):
 	def loadHidden(self):
 		self.playlists_all = []
 		self.hidelist = []
-		domain = glob.current_playlist['playlist_info']['domain']
-		username = glob.current_playlist['playlist_info']['username']
-		password = glob.current_playlist['playlist_info']['password']
 		
 		if self.category_type == "live":
 			self.hidelist = glob.current_playlist['player_info']['livehidden']
@@ -93,10 +81,10 @@ class XStreamity_HiddenCategories(Screen):
 			self.hidelist = glob.current_playlist['player_info']['serieshidden']
 			
 		for item in self.channellist:
-			if item[6] not in self.hidelist:
-				self.startList.append([item[0], item[6], False])
-			if item[6] in self.hidelist:
-				self.startList.append([item[0], item[6], True])	
+			if item[4] not in self.hidelist:
+				self.startList.append([item[0], item[4], False])
+			if item[4] in self.hidelist:
+				self.startList.append([item[0], item[4], True])	
 		self.refresh()
 
 
@@ -116,9 +104,7 @@ class XStreamity_HiddenCategories(Screen):
 	def toggleSelection(self):
 		if len(self['hidden_list'].list) > 0:
 			idx = self['hidden_list'].getIndex()
-			print "******** startlist 1******** %s" % self.startList
 			self.startList[idx][2] = not self.startList[idx][2]
-			print "******** startlist 2******** %s" % self.startList
 			self.refresh()  
 			
 			
@@ -149,15 +135,11 @@ class XStreamity_HiddenCategories(Screen):
 		
 		if self.category_type == "live":
 			glob.current_playlist['player_info']['livehidden'] = []
-			print "****************** %s" % glob.current_playlist['player_info']['livehidden']
-			
-			print "******** startlist ******** %s" % self.startList
+
 			for item in self.startList:
 				print item
 				if item[2] == True:
 					glob.current_playlist['player_info']['livehidden'].append(item[1])
-					
-			print "****************** %s" % glob.current_playlist['player_info']['livehidden']
 			
 		elif self.category_type == "vod":
 			glob.current_playlist['player_info']['vodhidden'] = []

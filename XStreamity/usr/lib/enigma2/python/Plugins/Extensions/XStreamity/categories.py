@@ -7,22 +7,16 @@ from . import _
 from collections import OrderedDict
 from Screens.Screen import Screen
 from Screens.VirtualKeyBoard import VirtualKeyBoard
-from Screens.InfoBar import InfoBar, MoviePlayer
-from plugin import skin_path, imagefolder, screenwidth, hdr, cfg, skinimagefolder, common_path, json_file
-from enigma import eListboxPythonMultiContent, gFont, RT_HALIGN_LEFT, RT_VALIGN_CENTER, eTimer, eServiceReference, iPlayableService
+from plugin import skin_path, screenwidth, hdr, cfg, common_path
+from enigma import eTimer, eServiceReference
 from Components.ActionMap import ActionMap
 from Components.Sources.List import List
-from Components.MenuList import MenuList
-from Components.Sources.Progress import Progress
 from Components.Pixmap import Pixmap
-from Components.MultiContent import MultiContentEntryText, MultiContentEntryPixmapAlphaBlend
 from Components.ProgressBar import ProgressBar
-from Components.Renderer.xRunningText import xRunningText
+from Components.config import config
 from Tools.LoadPixmap import LoadPixmap
-from Tools.BoundFunction import boundFunction
 from xStaticText import StaticText
 from datetime import datetime, timedelta
-import time 
 
 #download / parse
 import base64
@@ -32,15 +26,15 @@ import os
 import gzip
 import urllib2
 import xml.etree.ElementTree as ET
-from twisted.web.client import downloadPage, getPage, http
-#from twisted.internet.defer import Deferred
+from twisted.web.client import downloadPage
 
 import xstreamity_globals as glob
 import streamplayer, imagedownload
 import math
 
-from Screens.ParentalControlSetup import ProtectedScreen
-from Components.config import *
+from StringIO import StringIO
+import calendar
+
 
 
 class XStreamity_Categories(Screen):
@@ -65,8 +59,9 @@ class XStreamity_Categories(Screen):
 
 		self.list1 = []
 		self.channelList = []
-		self["channel_list"] = MenuList1(self.channelList)
-		#self["channel_list"].onSelectionChanged.append(self.selectionChanged)
+		self["channel_list"] = List(self.channelList, enableWrapAround=True)
+		self["channel_list"].onSelectionChanged.append(self.selectionChanged)
+		
 		self.selectedlist = self["channel_list"]
 
 		self.listAll = []
@@ -80,7 +75,12 @@ class XStreamity_Categories(Screen):
 		self["epg_description"] = StaticText()
 
 		self.epglist = []
-		self["epg_list"] = MenuList2(self.epglist)
+		self["epg_list"] = List(self.epglist)
+		
+		
+		self.epgshortlist = []
+		self["epg_short_list"] =  List(self.epgshortlist, enableWrapAround=True)
+		self["epg_short_list"].onSelectionChanged.append(self.displayShortEPG)
 
 		self["epg_picon"] = Pixmap()
 		self["epg_picon"].hide()
@@ -145,6 +145,8 @@ class XStreamity_Categories(Screen):
 		self.downloadingpicon = False
 		self.downloadingcover = False
 		
+		self.showingshortEPG = False
+		
 		self.token = "ZUp6enk4cko4ZzBKTlBMTFNxN3djd25MOHEzeU5Zak1Bdkd6S3lPTmdqSjhxeUxMSTBNOFRhUGNBMjBCVmxBTzlBPT0K"
 
 		self["actions"] = ActionMap(["XStreamityActions"], {
@@ -155,9 +157,10 @@ class XStreamity_Categories(Screen):
 			'yellow' : self.sort,
 			'blue' : self.search,
 			'epg' : self.nownext,
+			"epg_long" : self.shortEPG,
 			'text' : self.nownext,
-			"left": self.goLeft,
-			"right": self.goRight,
+			"left": self.pageUp,
+			"right": self.pageDown,
 			"up": self.goUp,
 			"down": self.goDown,
 			"channelUp": self.pageUp,
@@ -165,8 +168,11 @@ class XStreamity_Categories(Screen):
 			"rec": self.downloadVod,
 			"0": self.reset,
 			"menu": self.showHiddenList,
-			#"info": self.getTMDB
-			}, -2)
+		
+
+			}, -1)
+			
+		self["actions"].csel = self
 
 		glob.nextlist = []
 		glob.nextlist.append({"playlist_url": self.currentList[-1]["playlist_url"], "index": 0, "level": self.level})
@@ -177,6 +183,7 @@ class XStreamity_Categories(Screen):
 
 	def __layoutFinished(self):
 		self.setTitle(self.setup_title)
+
 
 
 	def createSetup(self):
@@ -233,7 +240,7 @@ class XStreamity_Categories(Screen):
 			self["key_menu"].setText('')
 
 		self.downloadEnigma2Categories(ref)
-		self.selectionChanged()
+		#self.selectionChanged()
 
 
 	def downloadEnigma2Categories(self, url):
@@ -242,7 +249,6 @@ class XStreamity_Categories(Screen):
 		self.listAll = []
 		self.channelListAll = []
 		self.voditemlist = []
-
 
 		response = ''
 		index = 0
@@ -289,9 +295,6 @@ class XStreamity_Categories(Screen):
 				desc_image = ''
 				stream_url = ''
 				time = ''
-				starttime = ''
-				endtime = ''
-				programme = ''
 				epgnowtitle = ''
 				epgnowtime = ''
 				epgnowdescription = ''
@@ -440,9 +443,7 @@ class XStreamity_Categories(Screen):
 				str(epgnowtime), str(epgnowtitle), str(epgnowdescription), \
 				str(epgnexttime), str(epgnexttitle), str(epgnextdescription)]
 				)  
-				
-				#self.voditemlistAll.append([str(title), vodItems])
-				
+
 				indexAll += 1
 
 			self.channelList = []
@@ -455,18 +456,19 @@ class XStreamity_Categories(Screen):
 
 			self.epglist = []
 			self.epglist = [buildEPGListEntry(x[0], x[1], x[7], x[8], x[9], x[10], x[11], x[12]) for x in self.list1]
-			self["epg_list"].setList(self.epglist)
-			self["epg_list"].selectionEnabled(0)
+
+			
+			self["epg_list"].setList([])
 
 			glob.sort_list1 = self.channelList[:]
 			glob.sort_list2 = self.epglist[:]
 			glob.sort_list4 = self.voditemlist[:]
 
-			if self["channel_list"].getCurrent():
+			if self["channel_list"].getCurrent():	
 				try:
-					self["channel_list"].moveToIndex(glob.nextlist[-1]['index'])
+					self["channel_list"].setIndex(glob.nextlist[-1]['index'])
 				except:
-					self["channel_list"].moveToIndex(0)
+					self["channel_list"].setIndex(0)
 		else:
 			from Screens.MessageBox import MessageBox
 			if not self["channel_list"].getCurrent():
@@ -476,6 +478,11 @@ class XStreamity_Categories(Screen):
 				self.back()
 
 	def back(self):
+		
+		if self.selectedlist == self["epg_short_list"]:
+			 self.shortEPG()
+			 return
+			
 		self.resetSearch()
 		self.hideEPG()
 		self.hideVod()
@@ -534,7 +541,7 @@ class XStreamity_Categories(Screen):
 		self["key_yellow"].setText(_('Sort: A-Z'))
 		if self["channel_list"].getCurrent():
 
-			currentindex =  self["channel_list"].getCurrent()[3]
+			currentindex =  self["channel_list"].getCurrent()[1]
 
 			glob.nextlist[-1]['index'] = currentindex
 
@@ -546,21 +553,21 @@ class XStreamity_Categories(Screen):
 			glob.currentchannelistindex = currentindex
 			glob.currentepglist = self.epglist
 
-			playlist_url = self.channelList[currentindex][7]
-			stream_url = self.channelList[currentindex][8]
-
+			playlist_url = self.channelList[currentindex][5]
+			stream_url = self.channelList[currentindex][6]
+			
 			if not self.isStream:
 				glob.nextlist.append({"playlist_url": playlist_url, "index": 0})
 				self.level += 1
 				self.createSetup()
 			else:
-				streamurl = ''
 				streamtype = "4097"
 
 				if stream_url != 'None' and "/live/" in stream_url:
+					
+					
 					streamtype = glob.current_playlist["player_info"]["livetype"]
 					self.reference = eServiceReference(int(streamtype), 0, stream_url)
-
 					if self.session.nav.getCurrentlyPlayingServiceReference():
 						if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString() and cfg.livepreview.value == True:
 							self.session.nav.stopService()
@@ -582,39 +589,29 @@ class XStreamity_Categories(Screen):
 					self.session.openWithCallback(self.createSetup,streamplayer.XStreamity_VodPlayer, str(stream_url), str(streamtype))
 
 
-	def goLeft(self):
-		self.selectedlist.pageUp()
-		self.selectionChanged()
-
-
-	def goRight(self):
-		self.selectedlist.pageDown()
-		self.selectionChanged()
-
 
 	def goUp(self):
-		self.selectedlist.up()
-		self.selectionChanged()
+		instance = self.selectedlist.master.master.instance
+		instance.moveSelection(instance.moveUp)
 
 
 	def goDown(self):
-		self.selectedlist.down()
-		self.selectionChanged()
+		instance = self.selectedlist.master.master.instance
+		instance.moveSelection(instance.moveDown)
 
 
 	def pageUp(self):
-		self.selectedlist.pageUp()
-		self.selectionChanged()
+		instance = self.selectedlist.master.master.instance
+		instance.moveSelection(instance.pageUp)
 
 
 	def pageDown(self):
-		self.selectedlist.pageDown()
-		self.selectionChanged()
-
+		instance = self.selectedlist.master.master.instance
+		instance.moveSelection(instance.pageDown)
+		
 
 	def reset(self):
-		self.selectedlist.moveToIndex(0)
-		self.selectionChanged()
+		self.selectedlist.setIndex(0)
 
 
 	def displayProgress(self):
@@ -625,8 +622,8 @@ class XStreamity_Categories(Screen):
 
 		if self["epg_list"].getCurrent():
 
-			startnowtime = self["epg_list"].getCurrent()[6]
-			startnexttime = self["epg_list"].getCurrent()[9]
+			startnowtime = self["epg_list"].getCurrent()[2]
+			startnexttime = self["epg_list"].getCurrent()[5]
 
 			if startnowtime != '':
 				start = startnowtime
@@ -677,12 +674,15 @@ class XStreamity_Categories(Screen):
 		self.timercover = eTimer()
 		self.timercover.stop()
 		
+		#self["epg_short_list"].setList([])
+		self.showingshortEPG = False
+		
 		if self["channel_list"].getCurrent():
 
 			channeltitle = self["channel_list"].getCurrent()[0]
-			stream_url = self["channel_list"].getCurrent()[8]
-			currentindex = self["channel_list"].getSelectionIndex()
-
+			stream_url = self["channel_list"].getCurrent()[6]
+			currentindex = self["channel_list"].getIndex()
+			
 			self.position = currentindex + 1
 			self.positionall = len(self.channelList)
 
@@ -694,28 +694,25 @@ class XStreamity_Categories(Screen):
 
 			self["channel"].setText(self.main_title + ": " + str(channeltitle))
 
+			
 			if stream_url != 'None':
 				if "/live/" in stream_url:
-					#print "******* is live ********"
 					self.downloadingpicon = False
 					try:
 						self.timerpicon.callback.append(self.downloadPicon)
 					except:
 						self.timerpicon_conn = self.timerpicon.timeout.connect(self.downloadPicon)
 					self.timerpicon.start(200, True)
-	
+
 					self.displayEPG()
 					self.displayProgress()
 					self["key_rec"].setText('')
 
 				else:
-					#print "****** is vod ********"
 					self.hideEPG()
 					self["key_rec"].setText(_("Download"))
 
 					if "/movie/" in stream_url:
-						#self.displayVod()
-						
 						self.downloadingcover = False
 						try:
 							self.timercover.callback.append(self.downloadCover)
@@ -730,24 +727,176 @@ class XStreamity_Categories(Screen):
 							
 					else:
 						self.hideVod()
+						
 
 
+	def displayEPG(self):
+		if self["epg_list"].getCurrent() is None:
+			self["epg_picon"].show()
+			self["epg_bg"].show()
+			self["epg_list"].setList(self.epglist)
+
+		if self["epg_list"].getCurrent():
+			currentindex = self["channel_list"].getIndex()
+	
+			instance = self["epg_list"].master.master.instance
+			instance.setSelectionEnable(1)
+			self["epg_list"].setIndex(currentindex)
+
+			startnowtime = self["epg_list"].getCurrent()[2]
+			titlenow = self["epg_list"].getCurrent()[3]
+			descriptionnow = self["epg_list"].getCurrent()[4]
+			startnexttime = self["epg_list"].getCurrent()[5]
+			
+			if titlenow:
+				nowtitle = "%s - %s  %s" % (startnowtime, startnexttime, titlenow)
+				self["key_epg"].setText(_("Next Info"))
+				
+			else:
+				nowtitle = ""
+				self["key_epg"].setText('')
+				instance.setSelectionEnable(0)
+				
+
+			self["epg_title"].setText(nowtitle)
+			
+			self["epg_description"].setText(descriptionnow)
+			
+
+
+
+	def hideEPG(self):
+		self["epg_list"].setList([])
+		self["epg_picon"].hide()
+		self["epg_bg"].hide()
+		self["epg_title"].setText('')
+		self["epg_description"].setText('')
+		self["progress"].hide()
+		
+		
+	def shortEPG(self):
+		self.showingshortEPG = not self.showingshortEPG
+		if self.showingshortEPG:
+			self["epg_list"].setList([])
+			if self["channel_list"].getCurrent():
+				stream_url = self["channel_list"].getCurrent()[6]
+				if stream_url != 'None':
+					if "/live/" in stream_url:
+						
+						stream_id = stream_url.rpartition("/")[-1].partition(".")[0]
+								
+						response = ''
+						valid = False
+						player_api = str(glob.current_playlist["playlist_info"]["player_api"])
+						shortEPGJson = []
+						try:
+							response = checkGZIP(str(player_api) + "&action=get_short_epg&stream_id=" + str(stream_id) + "&limit=50")
+
+						except Exception as e:
+							print(e)
+							
+						except:
+							pass
+							
+						if response != '':
+							try:
+								shortEPGJson = json.load(response, object_pairs_hook=OrderedDict)
+							except:
+								try:
+									shortEPGJson = json.loads(response, object_pairs_hook=OrderedDict)
+								except:
+									pass
+									
+							epg_title = ""
+							epg_description = ""
+							epg_date_all = ""
+							epg_time_all = ""
+
+							index = 0 
+							
+							self.epgshortlist = []
+
+							if "epg_listings" in shortEPGJson:
+								for listing in shortEPGJson["epg_listings"]:
+									
+									if 'title' in listing:
+										epg_title = base64.b64decode(listing['title'])
+
+									if 'description' in listing:
+										epg_description = base64.b64decode(listing['description'])
+										
+									if 'start_timestamp' in listing and 'stop_timestamp' in listing:
+										start_timestamp = int(listing['start_timestamp'])
+										stop_timestamp = int(listing['stop_timestamp'])
+										
+										if "epgshift" in glob.current_playlist["player_info"]:
+											if glob.current_playlist["player_info"]["epgshift"] != 0:
+												shift = int(glob.current_playlist["player_info"]["epgshift"])
+												start_timestamp += shift * 3600
+												stop_timestamp += shift * 3600
+										
+										epg_day = datetime.fromtimestamp(start_timestamp).strftime("%a")
+										epg_start_date = datetime.fromtimestamp(start_timestamp).strftime("%d/%m")
+										epg_date_all = "%s %s" % (epg_day, epg_start_date)
+										epg_time_all = "%s - %s" % (datetime.fromtimestamp(start_timestamp).strftime("%H:%M"), datetime.fromtimestamp(stop_timestamp).strftime("%H:%M"))
+
+									self.epgshortlist.append(buildShortEPGListEntry(str(epg_date_all), str(epg_time_all), str(epg_title), str(epg_description), index ))
+									
+									index += 1
+
+									
+								self["epg_short_list"].setList(self.epgshortlist)
+								
+								instance = self["epg_short_list"].master.master.instance
+								instance.setSelectionEnable(1)
+								
+								self["progress"].hide()
+								self["key_green"].setText('')
+								self["key_yellow"].setText('')
+								self["key_blue"].setText('')
+								self["key_epg"].setText('')
+								
+								self.selectedlist = self["epg_short_list"]
+								self.displayShortEPG()
+		
+		else:
+			self["epg_short_list"].setList([])
+			self.selectedlist = self["channel_list"]
+			self.selectionChanged()
+			self["key_green"].setText(_('OK'))
+			self["key_yellow"].setText(_('Sort: A-Z'))
+			self["key_blue"].setText(_('Search'))
+			self["key_epg"].setText(_('Next Info'))
+		return
+					
+		
+	def displayShortEPG(self):
+		if self["epg_short_list"].getCurrent():
+			title = str(self["epg_short_list"].getCurrent()[0])
+			description = str(self["epg_short_list"].getCurrent()[3])
+			timeall = str(self["epg_short_list"].getCurrent()[2])
+			self["epg_title"].setText(timeall + " " + title)
+			self["epg_description"].setText(description)
+
+		
+					
 	def nownext(self):
+		
 		if self["channel_list"].getCurrent():
-			currentindex = self["channel_list"].getCurrent()[3]
+			currentindex = self["channel_list"].getCurrent()[1]
 
-			stream_url = self.channelList[currentindex][8]
+			stream_url = self.channelList[currentindex][6]
 
 			if stream_url != 'None':
 				if "/live/" in stream_url:
-					if self["key_epg"] != '':
-						startnowtime = self["epg_list"].getCurrent()[6]
-						titlenow = self["epg_list"].getCurrent()[7]
-						descriptionnow = self["epg_list"].getCurrent()[8]
+					if self["key_epg"] != '' and self["epg_list"].getCurrent():
+						startnowtime = self["epg_list"].getCurrent()[2]
+						titlenow = self["epg_list"].getCurrent()[3]
+						descriptionnow = self["epg_list"].getCurrent()[4]
 
-						startnexttime = self["epg_list"].getCurrent()[9]
-						titlenext =  self["epg_list"].getCurrent()[10]
-						descriptionnext = self["epg_list"].getCurrent()[11]
+						startnexttime = self["epg_list"].getCurrent()[5]
+						titlenext =  self["epg_list"].getCurrent()[6]
+						descriptionnext = self["epg_list"].getCurrent()[7]
 
 						if self["key_epg"].getText() != '' or None:
 							current_epg = self["key_epg"].getText()
@@ -767,58 +916,7 @@ class XStreamity_Categories(Screen):
 				elif "/movie/" in stream_url:
 					if self["key_rec"] != '':
 						self.openIMDb()
-
-
-	def openIMDb(self):
-		from Screens.MessageBox import MessageBox
-		try:
-			from Plugins.Extensions.IMDb.plugin import IMDB, IMDBEPGSelection
-			try:
-				name = self["channel_list"].getCurrent()[0]
-			except:
-				name = ''
-			self.session.open(IMDB, name, False)
-		except ImportError:
-			self.session.open(MessageBox, _('The IMDb plugin is not installed!\nPlease install it.'), type=MessageBox.TYPE_INFO, timeout=10)
-
-
-	def displayEPG(self):
-		if self["epg_list"].getCurrent():
-			try:
-				currentindex = self["channel_list"].getSelectionIndex()
-			except:
-				currentindex = self["channel_list"].getSelectedIndex()
-
-			self["epg_list"].selectionEnabled(1)
-			self["epg_list"].moveToIndex(currentindex)
-
-			startnowtime = self["epg_list"].getCurrent()[6]
-			titlenow = self["epg_list"].getCurrent()[7]
-			descriptionnow = self["epg_list"].getCurrent()[8]
-			startnexttime = self["epg_list"].getCurrent()[9]
-
-			self["epg_picon"].show()
-			self["epg_bg"].show()
-
-			if titlenow:
-				nowtitle = "%s - %s  %s" % (startnowtime, startnexttime, titlenow)
-				self["key_epg"].setText(_("Next Info"))
-			else:
-				nowtitle = ""
-				self["key_epg"].setText('')
-				self["epg_list"].selectionEnabled(0)
-
-			self["epg_title"].setText(nowtitle)
-			self["epg_description"].setText(descriptionnow)
-
-
-	def hideEPG(self):
-		self["epg_picon"].hide()
-		self["epg_bg"].hide()
-		self["epg_title"].setText('')
-		self["epg_description"].setText('')
-		self["epg_list"].selectionEnabled(0)
-		self["progress"].hide()
+		
 
 
 	def displayVod(self):
@@ -835,17 +933,11 @@ class XStreamity_Categories(Screen):
 
 		if self["channel_list"].getCurrent():
 
-			try:
-				currentindex = self["channel_list"].getSelectionIndex()
-			except:
-				currentindex = self["channel_list"].getSelectedIndex()
+			currentindex = self["channel_list"].getIndex()
 			
 			currentvod = self.voditemlist[currentindex][1]
-			
-			# print "******** currentvod ******"
-			# print currentvod 
 
-			stream_url = self["channel_list"].getCurrent()[8]
+			stream_url = self["channel_list"].getCurrent()[6]
 			if len(self.voditemlist) > 0:
 				self["vod_title"].setText(self.voditemlist[currentindex][0])
 				
@@ -853,8 +945,6 @@ class XStreamity_Categories(Screen):
 					self["vod_title"].setText(currentvod["NAME"])
 				elif 'O_NAME' in currentvod and currentvod["O_NAME"] != '':
 					self["vod_title"].setText(currentvod["O_NAME"])
-				#else: 
-					#self["vod_title"].setText('')
 					
 				if 'DESCRIPTION' in currentvod and currentvod["DESCRIPTION"] != '':
 					self["vod_description"].setText(currentvod["DESCRIPTION"])
@@ -874,13 +964,11 @@ class XStreamity_Categories(Screen):
 				else:
 					self["vod_duration"].setText('')
 					
-
 				if 'GENRE' in currentvod and (currentvod["GENRE"] != '' or currentvod["GENRE"] != []):
 					self["vod_genre"].setText(currentvod["GENRE"])
 				else:
 					self["vod_genre"].setText('')
 				
-
 				if 'RATING' in currentvod and currentvod["RATING"] != '':
 					self["vod_rating"].setText(currentvod["RATING"])
 				else:
@@ -891,7 +979,6 @@ class XStreamity_Categories(Screen):
 				else:
 					self["vod_country"].setText('')
 					
-
 				if 'RELEASEDATE' in currentvod and currentvod["RELEASEDATE"] != '':
 					try:
 						self["vod_release_date"].setText(datetime.strptime(currentvod["RELEASEDATE"], "%Y-%m-%d").strftime("%Y"))
@@ -899,22 +986,16 @@ class XStreamity_Categories(Screen):
 						pass
 				else:
 					self["vod_release_date"].setText('')
-					
 
 				if 'DIRECTOR' in currentvod and (currentvod["DIRECTOR"] != '' or currentvod["DIRECTOR"] != []):
 					self["vod_director"].setText(currentvod["DIRECTOR"])
-					
 				else:
 					self["vod_director"].setText('')
-				
 
 				if 'CAST' in currentvod and (currentvod["CAST"] != '' or currentvod["CAST"] != []):
 					self["vod_cast"].setText(currentvod["CAST"])
 				else:
 					self["vod_cast"].setText('')
-					
-				
-					
 					
 
 	def hideVod(self):
@@ -942,67 +1023,56 @@ class XStreamity_Categories(Screen):
 
 	def sort(self):
 		if self["channel_list"].getCurrent():
-			stream_url = self["channel_list"].getCurrent()[8]
+			stream_url = self["channel_list"].getCurrent()[6]
 
 			if not self.filtered:
 				current_sort = self["key_yellow"].getText()
 
 				if current_sort == (_('Sort: A-Z')):
-
 					self["key_yellow"].setText(_('Sort: Z-A'))
-					sort_type = 0
-					reverse_flag = False
+					self.channelList.sort(key=lambda x: x[0], reverse=False)
 
-					self.channelList.sort(key=lambda x: x[0], reverse=reverse_flag)
-					self.epglist.sort(key=lambda x: x[0], reverse=reverse_flag)
-					self.voditemlist.sort(key=lambda x: x[0], reverse=reverse_flag)
-
+					if stream_url != 'None' and "/live/" in stream_url:
+						self.epglist.sort(key=lambda x: x[0], reverse=False)
+			
 					if stream_url != 'None' and "/movie/" in stream_url:
-						self.displayVod()
+						self.voditemlist.sort(key=lambda x: x[0], reverse=False)
 
-					self["epg_list"].setList(self.epglist)
-					self["epg_list"].moveToIndex(0)
-					self["channel_list"].setList(self.channelList)
-					self["channel_list"].moveToIndex(0)
 
 				if current_sort == (_('Sort: Z-A')):
 					self["key_yellow"].setText(_('Sort: Original'))
-					sort_type = 0
-					reverse_flag = True
-
-					self.channelList.sort(key=lambda x: x[0], reverse=reverse_flag)
-					self.epglist.sort(key=lambda x: x[0], reverse=reverse_flag)
-					self.voditemlist.sort(key=lambda x: x[0], reverse=reverse_flag)
-
-					if self["channel_list"].getCurrent():
-						if stream_url != 'None' and "/movie/" in stream_url:
-							self.displayVod()
-
-					self["epg_list"].setList(self.epglist)
-					self["epg_list"].moveToIndex(0)
-					self["channel_list"].setList(self.channelList)
-					self["channel_list"].moveToIndex(0)
+					self.channelList.sort(key=lambda x: x[0], reverse=True)	
+	
+					if stream_url != 'None' and "/live/" in stream_url:
+						self.epglist.sort(key=lambda x: x[0], reverse=True)
+				
+					if stream_url != 'None' and "/movie/" in stream_url:
+						self.voditemlist.sort(key=lambda x: x[0], reverse=True)
 
 				if current_sort == (_('Sort: Original')):
-					self.voditemlist = glob.sort_list4
-
-					if self["channel_list"].getCurrent():
-						if stream_url != 'None' and "/movie/" in stream_url:
-							self.displayVod()
-
-					self.epglist = glob.sort_list2
-					self["epg_list"].setList(self.epglist)
-					self["epg_list"].moveToIndex(0)
-
-					self.channelList = glob.sort_list1
-					self["channel_list"].setList(self.channelList)
-					self["channel_list"].moveToIndex(0)
-
 					self["key_yellow"].setText(_('Sort: A-Z'))
+					self.channelList = glob.sort_list1
+					
+					if self["channel_list"].getCurrent():
+						
+						if stream_url != 'None' and "/live/" in stream_url:
+							self.epglist = glob.sort_list2
+
+						if stream_url != 'None' and "/movie/" in stream_url:
+								self.voditemlist = glob.sort_list4
+				
+				self["channel_list"].setList(self.channelList)
+				self["channel_list"].setIndex(0)
+					
+				if stream_url != 'None' and "/live/" in stream_url:
+					self["epg_list"].setList(self.epglist)
+					self["epg_list"].setIndex(0)
+					
+				if stream_url != 'None' and "/movie/" in stream_url:
+					self.displayVod()
 
 
 	def search(self):
-		text = ''
 		current_filter = self["key_blue"].getText()
 		if current_filter != (_('Reset Search')):
 			self.session.openWithCallback(self.filterChannels, VirtualKeyBoard, title = _("Filter this category..."), text = self.searchString)
@@ -1063,14 +1133,8 @@ class XStreamity_Categories(Screen):
 			
 		url = ''
 		size = []
-		if self["channel_list"].getCurrent():
-			try:
-				currentindex = self["channel_list"].getSelectionIndex()
-			except:
-				currentindex = self["channel_list"].getSelectedIndex()
-
-			desc_image = self["channel_list"].getCurrent()[5]
-			stream_url = self["channel_list"].getCurrent()[8]
+		if self["channel_list"].getCurrent():	
+			desc_image = self["channel_list"].getCurrent()[3]
 
 			if cfg.showpicons.value == True:
 
@@ -1080,7 +1144,6 @@ class XStreamity_Categories(Screen):
 				if screenwidth.width() > 1280:
 					size = [220,130]
 
-
 			if url != '' and url != "n/A" and url != None:
 				original = '/tmp/xstreamity/original.png'
 			
@@ -1088,13 +1151,10 @@ class XStreamity_Categories(Screen):
 				d.addCallback(self.checkdownloaded, size, imagetype)
 				d.addErrback(self.ebPrintError)
 				return d
-			
 			else:
 				self.loadDefaultImage()
 	
-			
-			
-				
+
 	def downloadCover(self):
 		self.timercover.stop()
 		if self.downloadingcover:
@@ -1110,13 +1170,10 @@ class XStreamity_Categories(Screen):
 		url = ''
 		size = []
 		if self["channel_list"].getCurrent():
-			try:
-				currentindex = self["channel_list"].getSelectionIndex()
-			except:
-				currentindex = self["channel_list"].getSelectedIndex()
 
-			desc_image = self["channel_list"].getCurrent()[5]
-			stream_url = self["channel_list"].getCurrent()[8]
+			currentindex = self["channel_list"].getIndex()
+				
+			desc_image = self["channel_list"].getCurrent()[3]
 
 			if cfg.showcovers.value == True:
 				self.loadDefaultImage()
@@ -1156,16 +1213,13 @@ class XStreamity_Categories(Screen):
 		
 
 	def checkdownloaded(self, data, piconSize, imageType):
-			
 		self.downloading = False
 		self.downloadingpicon = False
 		self.downloadingcover = False
 			
 		original = '/tmp/xstreamity/original.png'
 		
-		
 		if self["channel_list"].getCurrent():
-			stream_url = self["channel_list"].getCurrent()[8]
 			preview = ''
 			if os.path.exists(original):
 				try:
@@ -1178,7 +1232,7 @@ class XStreamity_Categories(Screen):
 
 			
 	def displayImage(self, preview):
-		stream_url = self["channel_list"].getCurrent()[8]
+		stream_url = self["channel_list"].getCurrent()[6]
 		preview = '/tmp/xstreamity/preview.png'
 		if os.path.exists(preview):
 			if self["vod_cover"].instance:
@@ -1215,10 +1269,9 @@ class XStreamity_Categories(Screen):
 			from Screens.MessageBox import MessageBox
 
 			if self["channel_list"].getCurrent():
-				currentindex =  self["channel_list"].getCurrent()[3]
-				stream_url = self.channelList[currentindex][8]
+				currentindex =  self["channel_list"].getCurrent()[1]
+				stream_url = self.channelList[currentindex][6]
 				extension = str(os.path.splitext(stream_url)[-1])
-
 
 				title = self.channelList[currentindex][0]
 
@@ -1252,13 +1305,14 @@ class XStreamity_Categories(Screen):
 	def showHiddenList(self):
 		if self["key_menu"] != '':
 			import hidden
-			playlist_url = self["channel_list"].getCurrent()[7]
-			if "get_live_streams" in playlist_url:
-				self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "live", self.channelListAll)
-			if "get_vod_streams" in playlist_url:
-				self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "vod", self.channelListAll)
-			if "get_series" in playlist_url:
-				self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "series", self.channelListAll)
+			if self["channel_list"].getCurrent():
+				playlist_url = self["channel_list"].getCurrent()[5]
+				if "get_live_streams" in playlist_url:
+					self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "live", self.channelListAll)
+				if "get_vod_streams" in playlist_url:
+					self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "vod", self.channelListAll)
+				if "get_series" in playlist_url:
+					self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "series", self.channelListAll)
 
 		
 	def getTMDB(self):
@@ -1268,12 +1322,9 @@ class XStreamity_Categories(Screen):
 		if self["channel_list"].getCurrent():
 			
 			title = self["channel_list"].getCurrent()[0]
-			stream_url = self["channel_list"].getCurrent()[8]
+			stream_url = self["channel_list"].getCurrent()[6]
 
-			try:
-				currentindex = self["channel_list"].getSelectionIndex()
-			except:
-				currentindex = self["channel_list"].getSelectedIndex()
+			currentindex = self["channel_list"].getIndex()
 			
 			currentvod = self.voditemlist[currentindex][1]
 
@@ -1334,7 +1385,6 @@ class XStreamity_Categories(Screen):
 		#print "******* IMDB ******** %s" % IMDB	
 		with open('/tmp/xstreamity/search.txt', "r") as f:
 			response = f.read()
-
 
 		if response != '':
 			
@@ -1466,10 +1516,7 @@ class XStreamity_Categories(Screen):
 				country = ", ".join(map(str,country))
 				
 				if self["channel_list"].getCurrent():
-					try:
-						currentindex = self["channel_list"].getSelectionIndex()
-					except:
-						currentindex = self["channel_list"].getSelectedIndex()
+					currentindex = self["channel_list"].getIndex()
 					
 					currentvod = self.voditemlist[currentindex][1]
 					
@@ -1511,78 +1558,39 @@ class XStreamity_Categories(Screen):
 							currentvod["COVER_BIG"] = posterpath
 
 						self.displayVod()
+						
+
+	def openIMDb(self):
+		from Screens.MessageBox import MessageBox
+		try:
+			from Plugins.Extensions.IMDb.plugin import IMDB
+			try:
+				name = self["channel_list"].getCurrent()[0]
+			except:
+				name = ''
+			self.session.open(IMDB, name, False)
+		except ImportError:
+			self.session.open(MessageBox, _('The IMDb plugin is not installed!\nPlease install it.'), type=MessageBox.TYPE_INFO, timeout=10)
+
+		
 								
 				
-
-class MenuList1(MenuList):
-	def __init__(self, list, enableWrapAround=True):
-		MenuList.__init__(self, list, enableWrapAround, eListboxPythonMultiContent)
-		if screenwidth.width() > 1280:
-			self.l.setFont(0, gFont("xstreamityregular", 27))
-			self.l.setFont(1, gFont("xstreamitybold", 27))
-			self.l.setItemHeight(60)
-		else:
-			self.l.setFont(0, gFont("xstreamityregular", 18))
-			self.l.setFont(1, gFont("xstreamitybold", 18))
-			self.l.setItemHeight(40)
-
-
 def buildChannelListEntry(index, title, description, desc_image, category_id, playlisturl, stream_url):
 	png = None
 	if stream_url == 'None':
 		png = LoadPixmap(common_path + "more.png")
 	else:
 		png = LoadPixmap(common_path + "play.png")
+	return (title, index, description, desc_image, category_id, playlisturl, stream_url, png)
 
-	if screenwidth.width() > 1280:
-
-		return [title,
-		MultiContentEntryText(pos = (15, 0), size = (360, 60), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = title),
-		MultiContentEntryPixmapAlphaBlend(pos=(387, 20), size=(27, 21), png = png),
-		index, description, desc_image, category_id, playlisturl, stream_url]
-
-	else:
-
-		return [title,
-		MultiContentEntryText(pos = (8, 0), size = (240, 40), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = title),
-		MultiContentEntryPixmapAlphaBlend(pos=(258, 13), size=(18, 14), png = png),
-		 index, description, desc_image, category_id, playlisturl, stream_url]
-
-
-
-
-class MenuList2(MenuList):
-	def __init__(self, list, enableWrapAround=True):
-		MenuList.__init__(self, list, enableWrapAround, eListboxPythonMultiContent)
-		if screenwidth.width() > 1280:
-			self.l.setFont(0, gFont("xstreamityregular", 27))
-			self.l.setFont(1, gFont("xstreamitybold", 27))
-			self.l.setItemHeight(60)
-		else:
-			self.l.setFont(0, gFont("xstreamityregular", 18))
-			self.l.setFont(1, gFont("xstreamitybold", 18))
-			self.l.setItemHeight(40)
-
-
-def buildEPGListEntry(title, index, epgnowtime, epgnowtitle, epgnowdescription, epgnexttime, epgnexttitle, epgnextdescription):
-
-	if screenwidth.width() > 1280:
-		return [title,
-			MultiContentEntryText(pos = (15, 0), size = (90, 60), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = epgnowtime),
-			MultiContentEntryText(pos = (105, 0), size = (525, 60), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = epgnowtitle),
-			MultiContentEntryText(pos = (705, 0), size = (90, 60), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = epgnexttime),
-			MultiContentEntryText(pos = (795, 0), size = (525, 60), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = epgnexttitle),
-			index, epgnowtime, epgnowtitle, epgnowdescription, epgnexttime, epgnexttitle, epgnextdescription
-			]
-	else:
-		return [title,
-			MultiContentEntryText(pos = (8, 0), size = (60, 40), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = epgnowtime),
-			MultiContentEntryText(pos = (70, 0), size = (350, 40), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = epgnowtitle),
-			MultiContentEntryText(pos = (470, 0), size = (60, 40), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = epgnexttime),
-			MultiContentEntryText(pos = (532, 0), size = (350, 40), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = epgnexttitle),
-			index, epgnowtime, epgnowtitle, epgnowdescription, epgnexttime, epgnexttitle, epgnextdescription
-			]
-
+		
+def buildEPGListEntry(index, title, epgnowtime, epgnowtitle, epgnowdescription, epgnexttime, epgnexttitle, epgnextdescription):
+	return (title, index, epgnowtime, epgnowtitle, epgnowdescription, epgnexttime, epgnexttitle, epgnextdescription )
+	
+	
+def buildShortEPGListEntry(date_all, time_all, title, description, index):
+	return (title, date_all, time_all, description, index)
+								
 
 def checkGZIP(url):
 	response = ''

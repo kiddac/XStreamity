@@ -1,11 +1,15 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+# for localized messages
+from . import _
+
 import owibranding
 from Screens.Screen import Screen
 from Components.config import config, ConfigClock, ConfigDateTime, getConfigListEntry
-from Components.ActionMap import  ActionMap, NumberActionMap
+from Components.ActionMap import  ActionMap
 from Components.ConfigList import ConfigListScreen
-from Components.Label import Label
 from xStaticText import StaticText
-from Components.Pixmap import Pixmap
 import time
 import datetime
 from plugin import skin_path

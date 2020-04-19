@@ -6,15 +6,13 @@ from . import _
 
 import owibranding
 from Screens.Screen import Screen
-from plugin import skin_path, json_file, screenwidth, playlist_path, cfg
+from plugin import skin_path, json_file, playlist_path, cfg
 from Components.Pixmap import Pixmap
-from Components.ActionMap import ActionMap,  NumberActionMap
+from Components.ActionMap import ActionMap
 from xStaticText import StaticText
-from Components.Sources.List import List
-from Components.ConfigList import *
-from Components.config import *
-from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Screens.MessageBox import MessageBox
+from Components.ConfigList import ConfigListScreen 
+from Components.config import config, getConfigListEntry, NoSave, ConfigText, ConfigSelection, ConfigSelectionNumber, ConfigNumber, ConfigPassword, ConfigYesNo, ConfigEnableDisable
 
 from collections import OrderedDict
 import json
