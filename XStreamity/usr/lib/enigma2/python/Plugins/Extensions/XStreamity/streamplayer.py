@@ -619,8 +619,8 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
 
 
 	def playStream(self, servicetype, streamurl):
-
-		self.reference = eServiceReference(int(self.servicetype),0,self.streamurl)
+		
+		self.reference = eServiceReference(int(self.servicetype),0, streamurl)
 		self.reference.setName(glob.currentchannelist[glob.currentchannelistindex][0])
 
 		if streamurl != 'None' and "/movie/" in streamurl:

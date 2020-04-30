@@ -1,0 +1,452 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Xtreamity\n"
+"POT-Creation-Date: 2020-04-24 13:30+0100\n"
+"PO-Revision-Date: 2020-04-24 23:39+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: en_GB\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.3\n"
+"X-Poedit-Basepath: ../../../Git/XStreamity/XStreamity/usr/lib/enigma2/python/Plugins/Extensions/XStreamity\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: RecordDateInput.py:32 server.py:51 serverinfo.py:46 settings.py:51
+msgid "Close"
+msgstr "Stäng"
+
+#: RecordDateInput.py:33 hidden.py:41 server.py:52 settings.py:52
+msgid "Save"
+msgstr "Spara"
+
+#: RecordDateInput.py:72
+msgid "Date"
+msgstr ""
+
+#: RecordDateInput.py:73
+msgid "Start Time"
+msgstr "Starttid på automatisk liveuppdatering"
+
+#: RecordDateInput.py:74
+msgid "End Time"
+msgstr "Välj tidpunkten för den automatiska uppdateringen"
+
+#: catchup.py:53
+msgid "Catch Up TV"
+msgstr "TV Arkiv: %s"
+
+#: catchup.py:78 categories.py:115 main.py:48 menu.py:45
+msgid "Back"
+msgstr "Tillbaka"
+
+#: catchup.py:79 categories.py:116 categories.py:866
+msgid "OK"
+msgstr "OK"
+
+#: catchup.py:285 categories.py:475
+msgid "No data or playlist not compatible with X-Streamity plugin."
+msgstr "Ingen data eller spel lista some är kompatibel med X-Streamity."
+
+#: catchup.py:287 categories.py:477
+msgid ""
+"Server taking too long to respond.\n"
+"Adjust server timeout in main settings."
+msgstr "Servern svarar inte. Ändra tids inställningarna för servern."
+
+#: catchup.py:320 categories.py:512
+msgid "Incorrect pin code."
+msgstr "Fel eller inte aktiverad pin kod."
+
+#: catchup.py:332 categories.py:524
+msgid "Please enter the parental control pin code"
+msgstr "Ange föräldrakontrollens PIN-kod"
+
+#: catchup.py:332 categories.py:524
+msgid "Enter pin code"
+msgstr "Skriv PIN-kod"
+
+#: catchup.py:527
+msgid "Catchup error. No data for this slot"
+msgstr "Feil: Nedladdningen av data fungerade inte"
+
+#: categories.py:55
+msgid "Categories"
+msgstr "Kategorier"
+
+#: categories.py:117 categories.py:491 categories.py:541 categories.py:867
+#: categories.py:1031 categories.py:1053 categories.py:1105
+msgid "Sort: A-Z"
+msgstr "Sortera: A-Ö"
+
+#: categories.py:118 categories.py:868 categories.py:1104
+msgid "Search"
+msgstr "Sök"
+
+#: categories.py:237
+msgid "Hide/Show"
+msgstr "Visa /Göm"
+
+#: categories.py:713
+msgid "Download"
+msgstr "Ladda ned"
+
+#: categories.py:753 categories.py:869 categories.py:903 categories.py:914
+msgid "Next Info"
+msgstr "Nästa info"
+
+#: categories.py:908
+msgid "Now Info"
+msgstr "Info"
+
+#: categories.py:925
+msgid "Video Type:"
+msgstr "Video Typ:"
+
+#: categories.py:926
+msgid "Duration:"
+msgstr "Varaktighet:"
+
+#: categories.py:927
+msgid "Genre:"
+msgstr "Genere:"
+
+#: categories.py:928
+msgid "Rating:"
+msgstr "Bedömning:"
+
+#: categories.py:929
+msgid "Country:"
+msgstr "Land:"
+
+#: categories.py:930
+msgid "Release Date:"
+msgstr "Utgivningsdatum:"
+
+#: categories.py:931
+msgid "Director:"
+msgstr "Regissör:"
+
+#: categories.py:932
+msgid "Cast:"
+msgstr "Roller:"
+
+#: categories.py:1032 categories.py:1042
+msgid "Sort: Z-A"
+msgstr "Sortera: Ö-A"
+
+#: categories.py:1043 categories.py:1052
+msgid "Sort: Original"
+msgstr "Sortera: I ordningsföljd"
+
+#: categories.py:1077 categories.py:1086
+msgid "Reset Search"
+msgstr "Återställ Sök"
+
+#: categories.py:1078
+msgid "Filter this category..."
+msgstr "Filtrera Kategorier..."
+
+#: categories.py:1294
+msgid ""
+"Downloading \n"
+"\n"
+msgstr "Laddar ned...\n"
+
+#: categories.py:1299
+msgid ""
+"Download Failed\n"
+"\n"
+msgstr ""
+"Ned laddingen misslyckades\n"
+"\n"
+
+#: categories.py:1573
+msgid ""
+"The IMDb plugin is not installed!\n"
+"Please install it."
+msgstr ""
+"IMDb plugin är inte installerat!\n"
+"Vänligen installera IMDb."
+
+#: hidden.py:31
+msgid "Hidden Categories"
+msgstr "Göm Kategorier"
+
+#: hidden.py:40 hidden.py:42
+msgid "Cancel"
+msgstr "Avbryt"
+
+#: hidden.py:43
+msgid "Invert"
+msgstr "Invertera"
+
+#: hidden.py:44
+msgid "Clear All"
+msgstr "Töm Allt"
+
+#: main.py:46
+msgid "Select Server"
+msgstr "Välj Server"
+
+#: main.py:49
+msgid "Add"
+msgstr "Lägg Till"
+
+#: main.py:53
+msgid "Settings"
+msgstr "Inställningar"
+
+#: main.py:365 main.py:413 main.py:421
+msgid "Active"
+msgstr "Aktiv"
+
+#: main.py:370 main.py:415
+msgid "Banned"
+msgstr "Bannlyst"
+
+#: main.py:372 main.py:419
+msgid "Expired"
+msgstr "Utlöpt"
+
+#: main.py:374 main.py:417
+msgid "Disabled"
+msgstr "Inaktiverad"
+
+#: main.py:376 main.py:396
+msgid "Server Not Responding"
+msgstr "Servern svarar inte"
+
+#: main.py:378 main.py:408
+msgid "Not Authorised"
+msgstr "Ej godkänd"
+
+#: main.py:442
+msgid "Edit"
+msgstr "Redigera"
+
+#: main.py:443
+msgid "Delete"
+msgstr "Radera"
+
+#: main.py:444
+msgid "Info"
+msgstr "Information"
+
+#: main.py:482
+msgid "Delete selected playlist?"
+msgstr "Radera vald spellista?"
+
+#: menu.py:43
+msgid "Stream Selection"
+msgstr "Välj Strömtyp"
+
+#: menu.py:172
+msgid "No data, blocked or playlist not compatible with XStreamity plugin."
+msgstr "Ingen data, Blockerad eller inte kompatibel spellista för XStreamity."
+
+#: plugin.py:150 plugin.py:169
+msgid "XStreamity"
+msgstr "Xstreamity"
+
+#: plugin.py:168
+msgid "IPTV Xtream Codes playlists player by KiddaC"
+msgstr "IPTV Xtream Codes Playlist player by KiddaC"
+
+#: server.py:40
+msgid "Add Server"
+msgstr "Lägg till Server"
+
+#: server.py:44
+msgid "Edit Server"
+msgstr "Redigera Server"
+
+#: server.py:91 settings.py:79
+msgid "Really close without saving settings?"
+msgstr "Vill du verkligen avsluta utan att spara inställningarna?"
+
+#: server.py:116
+msgid "My IPTV"
+msgstr "Min IPTV"
+
+#: server.py:117 server.py:143
+msgid "http://"
+msgstr "http://"
+
+#: server.py:117 server.py:143
+msgid "https://"
+msgstr "https://"
+
+#: server.py:120
+msgid "username"
+msgstr "användarnamn"
+
+#: server.py:121
+msgid "password"
+msgstr "lösenord"
+
+#: server.py:159
+msgid "Display name:"
+msgstr "Visnings Namn:"
+
+#: server.py:160
+msgid "Protocol:"
+msgstr "Protokol:"
+
+#: server.py:161
+msgid "Server URL:"
+msgstr "Server URL:"
+
+#: server.py:162
+msgid "Port:"
+msgstr "Port:"
+
+#: server.py:163
+msgid "Username:"
+msgstr "Användarnamn:"
+
+#: server.py:164
+msgid "Password:"
+msgstr "Lösenord:"
+
+#: server.py:165
+msgid "Type:"
+msgstr "Typ:"
+
+#: server.py:166
+msgid "Output:"
+msgstr "Output:"
+
+#: server.py:167
+msgid "Stream Type Live:"
+msgstr "Strömtyp för Live:"
+
+#: server.py:168
+msgid "Stream Type VOD:"
+msgstr "Ström typ för VOD:"
+
+#: server.py:169
+msgid "EPG Timeshift:"
+msgstr "EPG Tidsjustering:"
+
+#: serverinfo.py:26
+msgid "User Information"
+msgstr "Annvändarinformation"
+
+#: settings.py:43
+msgid "Main Settings"
+msgstr "Huvud Inställningar"
+
+#: settings.py:102
+msgid "Select skin *Restart GUI Required"
+msgstr "Välj utseende. *Omstart av GUI nödvändig"
+
+#: settings.py:103
+msgid "playlists.txt location"
+msgstr "playlists.txt plats"
+
+#: settings.py:104
+msgid "Server timeout (seconds)"
+msgstr "Server timeout (sekunder)"
+
+#: settings.py:106
+msgid "Display Live categories"
+msgstr "Visa Live kategorier"
+
+#: settings.py:107
+msgid "Display VOD categories"
+msgstr "Visa VOD kategorier"
+
+#: settings.py:108
+msgid "Display Series categories"
+msgstr "Visa serie kategorier"
+
+#: settings.py:109
+msgid "Display Catchup category"
+msgstr "Visa TV Arkiv kategorier"
+
+#: settings.py:111
+msgid "Default Live stream type"
+msgstr "Strömtyp för Live"
+
+#: settings.py:112
+msgid "Default VOD/Series stream type"
+msgstr "Ström typ för VOD/SERIE"
+
+#: settings.py:113
+msgid "Preview streams in mini tv before playing"
+msgstr "Förhandsgranska strömmar i mini-tv innan du spelar av"
+
+#: settings.py:114
+msgid "Stop stream on back button"
+msgstr "Stoppa avspelningen med tillbaka knappen"
+
+#: settings.py:115
+msgid "Show picons in Live categories"
+msgstr "Visa pikoner i Live kategorien"
+
+#: settings.py:116
+msgid "Show covers in VOD categories"
+msgstr "Visa omslag i VOD kategorien"
+
+#: settings.py:118
+msgid "VOD download folder"
+msgstr "Mappen för nedladdade VOD filer"
+
+#: settings.py:119
+msgid "Parental control"
+msgstr "Föräldrakontroll"
+
+#: settings.py:120
+msgid "Show in main menu *Restart GUI Required"
+msgstr "Visa i Huvud menyn *Omstart av GUI krävs"
+
+#: settings.py:122
+msgid "Update VOD Movie Database information"
+msgstr "Uppdatera VOD-filmdatabasinformation"
+
+#: settings.py:123
+msgid "VOD Movie Database language"
+msgstr "VOD Filmdatabasspråk"
+
+#: settings.py:125
+msgid "Margin before catchup (mins)"
+msgstr "Marginal före TV Arkiv (minuter)"
+
+#: settings.py:126
+msgid "Margin after catchup (mins)"
+msgstr "Marginal efter Tv Arkiv (minuter)"
+
+#: settings.py:248 settings.py:266
+msgid "Choose Directory:"
+msgstr "Välj Katalog:"
+
+#: settings.py:249 settings.py:267
+msgid "Choose directory"
+msgstr "Välj katalog"
+
+#: streamplayer.py:301
+msgid "TV"
+msgstr "TV"
+
+#: streamplayer.py:332
+msgid "Please enter recording time"
+msgstr "Ange inspelningstid"
+
+#: streamplayer.py:361
+msgid "Recording Started."
+msgstr "Inspelning Startade."
+
+#: streamplayer.py:363 streamplayer.py:366
+msgid "Recording Failed."
+msgstr "Inspelningen misslyckades."
+
+#: streamplayer.py:601
+msgid "VOD"
+msgstr "VOD"
+
+#: streamplayer.py:788
+msgid "Catch Up"
+msgstr "TV Arkiv"

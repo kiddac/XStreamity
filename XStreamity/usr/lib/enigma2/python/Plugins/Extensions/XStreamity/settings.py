@@ -173,7 +173,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 			self['config'].list = self.list
 			self['config'].l.setList(self.list)
 			self.handleInputHelpers()       
-		
+	
 
 	def handleInputHelpers(self):
 		if self['config'].getCurrent() is not None:

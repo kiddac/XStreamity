@@ -148,7 +148,8 @@ class XStreamity_HiddenCategories(Screen):
 					glob.current_playlist['player_info']['vodhidden'].append(item[1])
 				
 		elif self.category_type == "series":
-			self.hidelist = glob.current_playlist['player_info']['serieshidden']
+			glob.current_playlist['player_info']['serieshidden'] = []
+			#self.hidelist = glob.current_playlist['player_info']['serieshidden']
 			for item in self.startList:
 				if item[2] == True:
 					glob.current_playlist['player_info']['serieshidden'].append(item[1])

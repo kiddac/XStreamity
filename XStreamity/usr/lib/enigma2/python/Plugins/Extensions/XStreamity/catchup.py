@@ -448,12 +448,14 @@ class XStreamity_Catchup(Screen):
 				start_timestamp = int(listing['start_timestamp'])
 				stop_timestamp = int(listing['stop_timestamp'])
 				
+	
 				if "epgshift" in glob.current_playlist["player_info"]:
 					if glob.current_playlist["player_info"]["epgshift"] != 0:
 						shift = int(glob.current_playlist["player_info"]["epgshift"])
 						
 						start_timestamp += shift * 3600
 						stop_timestamp += shift * 3600
+						
 
 				cu_day = datetime.fromtimestamp(start_timestamp).strftime("%a")
 				cu_start_date = datetime.fromtimestamp(start_timestamp).strftime("%d/%m")
