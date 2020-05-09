@@ -33,18 +33,15 @@ import streamplayer, imagedownload
 import math
 
 from StringIO import StringIO
-import calendar
 
 
 
 class XStreamity_Categories(Screen):
 
-	def __init__(self, session, startList, currentList):
+	def __init__(self, session, category):
 		Screen.__init__(self, session)
 		self.session = session
-		self.currentList =[]
-		self.currentList.append(currentList)
-
+	
 		self.searchString = ''
 
 		skin = skin_path + 'categories.xml'
@@ -53,7 +50,22 @@ class XStreamity_Categories(Screen):
 			self.skin = f.read()
 
 		self.setup_title = (_('Categories'))
-		self.main_title = self.currentList[-1]["title"]
+		
+		if category == 0:
+			self.main_title = "Live Streams"
+			url = str(glob.current_playlist['playlist_info']['enigma2_api']) + "&type=get_live_categories"
+		if category == 1:
+			self.main_title = "Vod"
+			url = str(glob.current_playlist['playlist_info']['enigma2_api']) + "&type=get_vod_categories"
+		if category == 2:
+			self.main_title = "TV Series"
+			url = str(glob.current_playlist['playlist_info']['enigma2_api']) + "&type=get_series_categories"
+
+
+		self.level = 1
+		
+		glob.nextlist = []
+		glob.nextlist.append({"playlist_url": url, "index": 0, "level": self.level})
 
 		self["channel"] = StaticText(self.main_title)
 
@@ -76,7 +88,6 @@ class XStreamity_Categories(Screen):
 
 		self.epglist = []
 		self["epg_list"] = List(self.epglist)
-		
 		
 		self.epgshortlist = []
 		self["epg_short_list"] =  List(self.epgshortlist, enableWrapAround=True)
@@ -139,8 +150,6 @@ class XStreamity_Categories(Screen):
 		self.positionall = 0
 		self.itemsperpage = 12
 
-		self.level = 1
-
 		self.downloading = False
 		self.downloadingpicon = False
 		self.downloadingcover = False
@@ -174,8 +183,7 @@ class XStreamity_Categories(Screen):
 			
 		self["actions"].csel = self
 
-		glob.nextlist = []
-		glob.nextlist.append({"playlist_url": self.currentList[-1]["playlist_url"], "index": 0, "level": self.level})
+
 		self.onFirstExecBegin.append(self.createSetup)
 		
 		self.onLayoutFinish.append(self.__layoutFinished)
@@ -462,7 +470,7 @@ class XStreamity_Categories(Screen):
 
 			glob.sort_list1 = self.channelList[:]
 			glob.sort_list2 = self.epglist[:]
-			glob.sort_list4 = self.voditemlist[:]
+			glob.sort_list3 = self.voditemlist[:]
 
 			if self["channel_list"].getCurrent():	
 				try:
@@ -547,7 +555,7 @@ class XStreamity_Categories(Screen):
 
 			self.channelList = glob.sort_list1
 			self.epglist = glob.sort_list2
-			self.voditemlist = glob.sort_list4
+			self.voditemlist = glob.sort_list3
 
 			glob.currentchannelist = self.channelList
 			glob.currentchannelistindex = currentindex
@@ -786,7 +794,6 @@ class XStreamity_Categories(Screen):
 						stream_id = stream_url.rpartition("/")[-1].partition(".")[0]
 								
 						response = ''
-						valid = False
 						player_api = str(glob.current_playlist["playlist_info"]["player_api"])
 						shortEPGJson = []
 						try:
@@ -1059,7 +1066,7 @@ class XStreamity_Categories(Screen):
 							self.epglist = glob.sort_list2
 
 						if stream_url != 'None' and "/movie/" in stream_url:
-								self.voditemlist = glob.sort_list4
+								self.voditemlist = glob.sort_list3
 				
 				self["channel_list"].setList(self.channelList)
 				self["channel_list"].setIndex(0)
@@ -1088,7 +1095,7 @@ class XStreamity_Categories(Screen):
 
 			glob.filter_list1 = self.channelList[:]
 			glob.filter_list2 = self.epglist[:]
-			glob.filter_list4 = self.voditemlist[:]
+			glob.filter_list3 = self.voditemlist[:]
 
 			self.channelList = [channel for channel in self.channelList if str(result).lower() in str(channel[0]).lower()]
 			self.epglist = [channel for channel in self.epglist if str(result).lower() in str(channel[0]).lower()]
@@ -1105,7 +1112,7 @@ class XStreamity_Categories(Screen):
 		self["key_yellow"].setText(_('Sort: A-Z'))
 		self.channelList = glob.filter_list1
 		self.epglist = glob.filter_list2
-		self.voditemlist = glob.filter_list4
+		self.voditemlist = glob.filter_list3
 
 		self["epg_list"].setList(self.epglist)
 		self.displayEPG()
@@ -1136,18 +1143,16 @@ class XStreamity_Categories(Screen):
 		if self["channel_list"].getCurrent():	
 			desc_image = self["channel_list"].getCurrent()[3]
 
-			if cfg.showpicons.value == True:
-
-				imagetype = "picon"
-				url = desc_image
-				size = [147,88]
-				if screenwidth.width() > 1280:
-					size = [220,130]
+			imagetype = "picon"
+			url = desc_image
+			size = [147,88]
+			if screenwidth.width() > 1280:
+				size = [220,130]
 
 			if url != '' and url != "n/A" and url != None:
 				original = '/tmp/xstreamity/original.png'
 			
-				d = downloadPage(url, original)
+				d = downloadPage(url, original, timeout=3)
 				d.addCallback(self.checkdownloaded, size, imagetype)
 				d.addErrback(self.ebPrintError)
 				return d
@@ -1175,27 +1180,27 @@ class XStreamity_Categories(Screen):
 				
 			desc_image = self["channel_list"].getCurrent()[3]
 
-			if cfg.showcovers.value == True:
-				self.loadDefaultImage()
-				imagetype = "cover"
 
-				url = desc_image
-				
-				if 'COVER_BIG' in self.voditemlist[currentindex][1]:
-					if self.voditemlist[currentindex][1]["COVER_BIG"] != '' and self.voditemlist[currentindex][1]["COVER_BIG"] != None and self.voditemlist[currentindex][1]["COVER_BIG"] != "n/A":
-						url = self.voditemlist[currentindex][1]["COVER_BIG"]
-					else:
-						url = ''
+			self.loadDefaultImage()
+			imagetype = "cover"
 
-				size = [267, 400]
-				if screenwidth.width() > 1280:
-					size = [400,600]
+			url = desc_image
+			
+			if 'COVER_BIG' in self.voditemlist[currentindex][1]:
+				if self.voditemlist[currentindex][1]["COVER_BIG"] != '' and self.voditemlist[currentindex][1]["COVER_BIG"] != None and self.voditemlist[currentindex][1]["COVER_BIG"] != "n/A":
+					url = self.voditemlist[currentindex][1]["COVER_BIG"]
+				else:
+					url = ''
+
+			size = [267, 400]
+			if screenwidth.width() > 1280:
+				size = [400,600]
 
 
 			if url != '' and url != "n/A" and url != None:
 				original = '/tmp/xstreamity/original.png'
 			
-				d = downloadPage(url, original)
+				d = downloadPage(url, original, timeout=3)
 				d.addCallback(self.checkdownloaded, size, imagetype)
 				d.addErrback(self.ebPrintError)
 				return d
@@ -1373,7 +1378,7 @@ class XStreamity_Categories(Screen):
 					searchurl = 'http://api.themoviedb.org/3/find/' + str(currentvod["TMDB_ID"]) + '?api_key=' + str(self.check(self.token)) + '&external_source=imdb_id'
 
 				try:
-					downloadPage(searchurl, "/tmp/xstreamity/search.txt").addCallback(self.processTMDB, isIMDB)
+					downloadPage(searchurl, "/tmp/xstreamity/search.txt", timeout=3).addCallback(self.processTMDB, isIMDB)
 				except Exception as err:
 					print "download TMDB %s" % err
 					pass
@@ -1425,7 +1430,7 @@ class XStreamity_Categories(Screen):
 		detailsurl = "http://api.themoviedb.org/3/movie/" + str(resultid) + "?api_key=" + str(self.check(self.token)) + "&append_to_response=credits&language=" + str(language)
 		
 		try:
-			downloadPage(detailsurl, "/tmp/xstreamity/movie.txt").addCallback(self.processTMDBDetails)
+			downloadPage(detailsurl, "/tmp/xstreamity/movie.txt", timeout=3).addCallback(self.processTMDBDetails)
 		except Exception as err:
 			print "download TMDB details %s" % err
 			pass

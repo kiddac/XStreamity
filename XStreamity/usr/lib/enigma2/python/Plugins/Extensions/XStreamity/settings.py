@@ -103,18 +103,10 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 		self.cfg_location = getConfigListEntry(_('playlists.txt location'), cfg.location)
 		self.cfg_timeout = getConfigListEntry(_('Server timeout (seconds)'), cfg.timeout)
 		
-		self.cfg_showlive = getConfigListEntry(_('Display Live categories'), cfg.showlive)
-		self.cfg_showvod = getConfigListEntry(_('Display VOD categories'), cfg.showvod)
-		self.cfg_showseries = getConfigListEntry(_('Display Series categories'), cfg.showseries)
-		self.cfg_showcatchup = getConfigListEntry(_('Display Catchup category'), cfg.showcatchup)
-		
 		self.cfg_livetype = getConfigListEntry(_('Default Live stream type'), cfg.livetype)
 		self.cfg_vodtype = getConfigListEntry(_('Default VOD/Series stream type'), cfg.vodtype)
 		self.cfg_livepreview = getConfigListEntry(_('Preview streams in mini tv before playing'), cfg.livepreview)
 		self.cfg_stopstream = getConfigListEntry(_('Stop stream on back button'), cfg.stopstream)
-		self.cfg_showpicons = getConfigListEntry(_('Show picons in Live categories'), cfg.showpicons)
-		self.cfg_showcovers = getConfigListEntry(_('Show covers in VOD categories'), cfg.showcovers)
-		#self.cfg_hirescovers = getConfigListEntry(_('Download Hi-Res VOD Covers'), cfg.hirescovers)
 		self.cfg_downloadlocation = getConfigListEntry(_('VOD download folder'), cfg.downloadlocation)
 		self.cfg_parental = getConfigListEntry(_('Parental control'), cfg.parental)
 		self.cfg_main = getConfigListEntry(_('Show in main menu *Restart GUI Required'), cfg.main)
@@ -134,39 +126,23 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 			self.list.append(self.cfg_skin)
 			self.list.append(self.cfg_location)
 			self.list.append(self.cfg_timeout)
+		
 			
-			self.list.append(self.cfg_showlive)
-			self.list.append(self.cfg_showvod)
-			self.list.append(self.cfg_showseries)
-			self.list.append(self.cfg_showcatchup)
+			self.list.append(self.cfg_livetype)
 			
-			if cfg.showlive.value == True:
-				self.list.append(self.cfg_livetype)
-			
-			if cfg.showvod.value == True or cfg.showseries.value == True:
-				self.list.append(self.cfg_vodtype)
+			self.list.append(self.cfg_vodtype)
 			
 			self.list.append(self.cfg_livepreview)
 			self.list.append(self.cfg_stopstream)
-			
-			if cfg.showlive.value == True:
-				self.list.append(self.cfg_showpicons)
 				
-			if cfg.showvod.value == True or cfg.showseries.value == True:
-				self.list.append(self.cfg_showcovers)
+			self.list.append(self.cfg_downloadlocation)
 				
-			if cfg.showvod.value == True or cfg.showseries.value == True:
-				self.list.append(self.cfg_downloadlocation)
+			self.list.append(self.cfg_refreshTMDB)
+			if cfg.refreshTMDB.value == True:
+				self.list.append(self.cfg_TMDBLanguage)
 				
-			if cfg.showvod.value == True:
-				self.list.append(self.cfg_refreshTMDB)
-				if cfg.refreshTMDB.value == True:
-					self.list.append(self.cfg_TMDBLanguage)
-				
-			if cfg.showcatchup.value == True:
-				self.list.append(self.cfg_catchupstart)
-				self.list.append(self.cfg_catchupend)
-				
+			self.list.append(self.cfg_catchupstart)
+			self.list.append(self.cfg_catchupend)
 				
 			self.list.append(self.cfg_parental)
 			self.list.append(self.cfg_main)

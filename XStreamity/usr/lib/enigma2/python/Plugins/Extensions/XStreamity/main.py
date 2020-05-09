@@ -5,29 +5,23 @@
 from . import _
 from collections import OrderedDict
 from Components.ActionMap import ActionMap
-from Components.Sources.List import List
-from xStaticText import StaticText
-from enigma import eTimer, eServiceReference
-from Screens.Screen import Screen
-from plugin import skin_path, json_file, hdr, playlist_path, cfg, common_path
 from Components.Pixmap import Pixmap
-from Tools.LoadPixmap import LoadPixmap
-from Screens.MessageBox import MessageBox
-
-import os
-import urllib2
-import json
-
-import xstreamity_globals as glob
-import server, serverinfo, menu, settings
+from Components.Sources.List import List
 from datetime import datetime
+from enigma import eTimer, eServiceReference
+from plugin import skin_path, json_file, hdr, playlist_path, cfg, common_path
+from Screens.MessageBox import MessageBox
+from Screens.Screen import Screen
+from Tools.LoadPixmap import LoadPixmap
+from xStaticText import StaticText
 
-from ServiceReference import ServiceReference
+import json
+import os
+import server, serverinfo, menu, settings
+import xstreamity_globals as glob
 
-import gzip
-from StringIO import StringIO
-
-#from Components.ServiceList import ServiceList
+import requests
+from multiprocessing.pool import ThreadPool
 
 
 class XStreamity_Main(Screen):
@@ -56,17 +50,17 @@ class XStreamity_Main(Screen):
 		self.list = []
 		self.drawList = []
 		self["playlists"] = List(self.drawList)
+		self['playlists'].onSelectionChanged.append(self.getCurrentEntry)
 
 		self["splash"] = Pixmap()
+		self["splash"].hide()
 		self["scroll_up"] = Pixmap()
 		self["scroll_down"] = Pixmap()
 
-
-		self["splash"].show()
 		self["scroll_up"].hide()
 		self["scroll_down"].hide()
 
-		self.tempplaylistpath = "/tmp/xstreamity/playlists.json"
+		glob.configchanged = True
 
 		self['actions'] = ActionMap(['XStreamityActions'], {
 		'red': self.quit,
@@ -97,62 +91,41 @@ class XStreamity_Main(Screen):
 		if not os.path.isfile(playlist_path):
 			open(playlist_path, 'a').close()
 
-		if os.path.isfile(playlist_path) and os.stat(playlist_path).st_size > 0:
-			self.stripPlaylistUserFile()
-			self.checkPlaylistUserFile()
-
 		# check if playlists.json file exists in specified location
 		self.playlists_all = []
 		if not os.path.isfile(json_file):
 			open(json_file, 'a').close()
-
-		with open(json_file) as f:
-			try:
-				self.playlists_all = json.load(f, object_pairs_hook=OrderedDict)
-			except:
-				os.remove(json_file)
+		else:
+			with open(json_file) as f:
+				try:
+					self.playlists_all = json.load(f, object_pairs_hook=OrderedDict)
+				except:
+					os.remove(json_file)
 
 		if os.path.isfile(playlist_path) and os.stat(playlist_path).st_size > 0:
-			self.getPlaylistUserFile()
-			self.removeOldPlaylists()
+			self.checkPlaylistUserFile()
+	
 
-		if self.session.nav.getCurrentlyPlayingServiceReference():
-			glob.currentPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
-			glob.currentPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
-			glob.currentServiceName = ServiceReference(glob.currentPlayingServiceRef).getServiceName()
-			glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
-			glob.newPlayingServiceRefString = glob.newPlayingServiceRef.toString()
-
-		self.timer = eTimer()
-		try: ## DreamOS fix
-			self.timer_conn = self.timer.timeout.connect(self.downloadUserInfo)
-		except:
-			try:
-				self.timer.callback.append(self.downloadUserInfo)
-			except:
-				self.downloadUserInfo()
-		self.timer.start(200, True)
-		
-
-	def stripPlaylistUserFile(self):
+	def checkPlaylistUserFile(self):
+		self["splash"].show()
 		with open(playlist_path, 'r+') as f:
 			lines = f.readlines()
 			f.seek(0)
 			f.writelines((line.strip(' ') for line in lines if line.strip()))
 			f.truncate()
 
-
-	def checkPlaylistUserFile(self):
-		with open(playlist_path, 'r+') as f:
-			lines = f.readlines()
 			f.seek(0)
 			for line in lines:
 				if not line.startswith('http://') and not line.startswith('https://') and not line.startswith('#'):
 					line = '# ' + line
 				if "mpegts" in line:
 					line = line.replace("mpegts", "ts")
+				if line.strip() == "#":
+					line = ""
 				f.write(line)
-			f.truncate()
+			f.truncate()		
+
+		self.getPlaylistUserFile()
 
 
 	def getPlaylistUserFile(self):
@@ -209,137 +182,156 @@ class XStreamity_Main(Screen):
 								self.output = "ts"
 
 				self.player_api = "%s/player_api.php?username=%s&password=%s" % (self.host, self.username, self.password)
-				self.panel_api = "%s/panel_api.php?username=%s&password=%s" % (self.host, self.username, self.password)
 				self.enigma2_api = "%s/enigma2.php?username=%s&password=%s" % (self.host, self.username, self.password)
+				self.xmltv_api = "%s/xmltv.php?username=%s&password=%s" % (self.host, self.username, self.password)
 				self.full_url = "%s/get.php?username=%s&password=%s&type=%s&output=%s" % (self.host, self.username, self.password, self.type, self.output)
+				
+				playlist_exists = False
+		
+				if self.playlists_all != []:
+					for playlists in self.playlists_all:
+		
+						#extra check in case playlists.txt details have been amended
+						if "domain" in playlists["playlist_info"] and "username" in playlists["playlist_info"] and "password" in playlists["playlist_info"]:
+							if playlists["playlist_info"]["domain"] == self.domain and playlists["playlist_info"]["username"] == self.username and playlists["playlist_info"]["password"] == self.password:
+								playlist_exists = True
+								playlists["playlist_info"]["type"] = self.type
+								playlists["playlist_info"]["output"] = self.output
+								playlists["playlist_info"]["full_url"] = self.full_url #get.php
 
-				self.addPlaylistToJsonFile()
+				if playlist_exists == False:
+					self.playlists_all.append({
+					"playlist_info": OrderedDict([
+						("index", self.index),
+						("name", self.domain),
+						("protocol",self.protocol),
+						("domain", self.domain),
+						("port", self.port),
+						("username", self.username),
+						("password", self.password),
+						("type", self.type),
+						("output", self.output),
+						("host", self.host),
+						("player_api", self.player_api),
+						("enigma2_api", self.enigma2_api),
+						("xmltv_api", self.xmltv_api),
+						("full_url", self.full_url),
+						]),
+						"player_info": OrderedDict([
+						("livetype", self.livetype),
+						("vodtype", self.vodtype),
+						("epgshift", self.epgshift),
+						("livehidden", self.livehidden),
+						("vodhidden", self.vodhidden),
+						("serieshidden", self.serieshidden),
+						]),
+						"data": OrderedDict([
+						("live_categories", []),
+						("vod_categories", []),
+						("series_categories", []),	
+		
+						("live_streams", []),
+						
+						("catchup", False),
+						("catchup_checked", False),
+					
+						("lists_date", ''),
+						("epg_date", '')
+
+						]),
+					})
 				self.index += 1
 
-
-	def addPlaylistToJsonFile(self):
-		playlist_exists = False
-		if self.playlists_all != []:
-			for playlists in self.playlists_all:
-
-				#extra check in case playlists.txt details have been amended
-				if "domain" in playlists["playlist_info"] and "username" in playlists["playlist_info"] and "password" in playlists["playlist_info"]:
-					if playlists["playlist_info"]["domain"] == self.domain and playlists["playlist_info"]["username"] == self.username and playlists["playlist_info"]["password"] == self.password:
-						playlist_exists = True
-						playlists["playlist_info"]["type"] = self.type
-						playlists["playlist_info"]["output"] = self.output
-						playlists["playlist_info"]["full_url"] = self.full_url
-
-		if playlist_exists == False:
-			self.playlists_all.append({"playlist_info": OrderedDict([
-				("index", self.index),
-				("name", self.domain),
-				("protocol",self.protocol),
-				("domain", self.domain),
-				("port", self.port),
-				("username", self.username),
-				("password", self.password),
-				("type", self.type),
-				("output", self.output),
-				("host", self.host),
-				("player_api", self.player_api),
-				("panel_api", self.panel_api),
-				("enigma2_api", self.enigma2_api),
-				("full_url", self.full_url),
-				]),
-				"player_info": OrderedDict([
-				("livetype", self.livetype),
-				("vodtype", self.vodtype),
-				("epgshift", self.epgshift),
-				("livehidden", self.livehidden),
-				("vodhidden", self.vodhidden),
-				("serieshidden", self.serieshidden),
-				])
-			})
-
-
+		self.removeOldPlaylists()
+		
+		
 	def removeOldPlaylists(self):
 		if self.playlists_all != []:
-				deleteList = []
+			newList = []
+			
+			with open(playlist_path) as f:
+				lines = f.readlines()
 
-				with open(playlist_path) as f:
-					lines = f.readlines()
+			for playlist in self.playlists_all:
+				exists = False
+				for line in lines:
+					if not line.startswith('#'):
+						if str(playlist["playlist_info"]["domain"]) in line and 'username=' + str(playlist["playlist_info"]["username"]) in line and 'password=' + str(playlist["playlist_info"]["password"]) in line:
+							exists = True
 
-				for playlist in self.playlists_all:
-					exists = False
-					for line in lines:
-						if not line.startswith('#'):
-							if str(playlist["playlist_info"]["domain"]) in line and 'username=' + str(playlist["playlist_info"]["username"]) in line and 'password=' + str(playlist["playlist_info"]["password"]) in line:
-								exists = True
+				if exists == True:
+					newList.append(playlist)
 
-					if exists == False:
-						deleteList.append(playlist)
-
-				for playlist in deleteList:
-					self.playlists_all.remove(playlist)
+			self.playlists_all = newList
+				
+		self.getCurrentPlaying()
 
 
-	def downloadUserInfo(self):
-		index = 0
+	def getCurrentPlaying(self):
+		if self.session.nav.getCurrentlyPlayingServiceReference():
+			glob.currentPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
+			glob.currentPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
+			glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
+			glob.newPlayingServiceRefString = glob.newPlayingServiceRef.toString()
+		self.delayedDownload()
+	
+		
+	#delay to allow splash screen to show
+	def delayedDownload(self):
+		self.timer = eTimer()
+	
+		try: 
+			self.timer_conn = self.timer.timeout.connect(self.makeUrlList)
+		except:
+			try:
+				self.timer.callback.append(self.makeUrlList)
+			except:
+				self.self.makeUrlList()
+				
+		self.timer.start(5, True)
+		
+		
+	def makeUrlList(self):
+		self.url_list = []
+		x = 0 
+		for playlists in self.playlists_all:
+			player_api = str(playlists["playlist_info"]["player_api"])
+			full_url = str(playlists["playlist_info"]["full_url"])
+			domain = str(playlists["playlist_info"]["domain"])
+			username = str(playlists["playlist_info"]["username"])
+			password = str(playlists["playlist_info"]["password"])
+			if 'get.php' in full_url and domain != '' and username != '' and password != '':
+				self.url_list.append([player_api, x])
+			x += 1
+		
+		self.process_downloads()
+		
+				
+	def download_url(self, url):
+		index = url[1]
+		r = ''
+		try:
+			r = requests.get(url[0], headers=hdr, stream=True, timeout=5)
+			r.raise_for_status()
+			if r.status_code == requests.codes.ok:
+				return index, r.json()
+				
+		except requests.exceptions.RequestException as e:  
+			print (e)
+			pass
+			
+		return index, ''
 
-		if not os.path.exists(self.tempplaylistpath):
-			for playlists in self.playlists_all:
-				response = ''
-				valid = False
-				player_api = str(playlists["playlist_info"]["player_api"])
-				panel_api = str(playlists["playlist_info"]["panel_api"])
-				full_url = str(playlists["playlist_info"]["full_url"])
-				domain = str(playlists["playlist_info"]["domain"])
-				username = str(playlists["playlist_info"]["username"])
-				password = str(playlists["playlist_info"]["password"])
 
-				if 'get.php' in full_url and domain != '' and username != '' and password != '':
+	def process_downloads(self):
+		threads = len(self.url_list)
+		results = ThreadPool(threads).imap_unordered(self.download_url, self.url_list)
 
-					try:
-						response = checkGZIP(player_api)
-						if response != '':
-							valid = True
-					except Exception as e:
-						print(e)
-						try:
-							response = checkGZIP(panel_api)
-							valid = True
-						except Exception as e:
-							print(e)
+		for index, response in results:
+			if response != '':
+				self.playlists_all[index].update(response)
 
-						except:
-							pass
-							
-					except:
-						pass
-
-				if valid and response != '':
-					try:
-						self.playlists_all[index].update(json.load(response, object_pairs_hook=OrderedDict))
-					except:
-						try:
-							self.playlists_all[index].update(json.loads(response, object_pairs_hook=OrderedDict))
-						except:
-							pass
-
-				index += 1
-		else:
-			with open(self.tempplaylistpath, "r") as f:
-				response = f.read()
-				self.playlists_all = json.loads(response)
-
-		self["splash"].hide()
 		self.buildPlaylistList()
-
-
-	def writeJsonFile(self):
-		with open(json_file, 'w') as f:
-			json.dump(self.playlists_all, f)
-
-		with open(self.tempplaylistpath, 'w') as f:
-			json.dump(self.playlists_all, f)
-
-		self.createSetup()
 
 
 	def buildPlaylistList(self):
@@ -357,32 +349,17 @@ class XStreamity_Main(Screen):
 
 			if 'available_channels' in playlists:
 				del playlists['available_channels']
-
 		self.writeJsonFile()
 
 
-	def buildListEntry(self, index, name, url, expires, status, active, activenum, maxc, maxnum):
-		if status == (_('Active')):
-			pixmap = LoadPixmap(cached=True, path=common_path + 'led_green.png')
-
-			if int(activenum) >= int(maxnum) and int(maxnum) != 0:
-				pixmap = LoadPixmap(cached=True, path=common_path + 'led_yellow.png')
-		if status == (_('Banned')):
-			pixmap = LoadPixmap(cached=True, path=common_path + 'led_red.png')
-		if status == (_('Expired')):
-			pixmap = LoadPixmap(cached=True, path=common_path + 'led_grey.png')
-		if status == (_('Disabled')):
-			pixmap = LoadPixmap(cached=True, path=common_path + 'led_grey.png')
-		if status == (_('Server Not Responding')):
-			pixmap = LoadPixmap(cached=True, path=common_path + 'led_red.png')
-		if status == (_('Not Authorised')):
-			pixmap = LoadPixmap(cached=True, path=common_path + 'led_red.png')
-
-		return(index, str(name), str(url), str(expires), str(status), pixmap, str(active), str(activenum), str(maxc), str(maxnum))
-
-
+	def writeJsonFile(self):
+		with open(json_file, 'w') as f:
+			json.dump(self.playlists_all, f)
+		self.createSetup()
+		
+		
 	def createSetup(self):
-		#self['playlists'].setIndex(0)
+		self["splash"].hide()
 		self.list = []
 		index = 0
 
@@ -397,12 +374,14 @@ class XStreamity_Main(Screen):
 			expires = ''
 
 			if playlist != {}:
-				if 'playlist_info' in playlist and 'name' in playlist['playlist_info']:
-					name = playlist['playlist_info']['name']
-				else:
-					name = playlist['playlist_info']['domain']
-
-				url = playlist['playlist_info']['host']
+				if 'playlist_info' in playlist:
+					if'name' in playlist['playlist_info']:
+						name = playlist['playlist_info']['name']
+					elif 'domain' in playlist['playlist_info']:
+						name = playlist['playlist_info']['domain']
+					
+					if 'host' in playlist['playlist_info']:
+						url = playlist['playlist_info']['host']
 
 				if 'user_info' in playlist and 'auth' in playlist['user_info']:
 						status = (_('Not Authorised'))
@@ -436,28 +415,48 @@ class XStreamity_Main(Screen):
 				self.list.append([index, name, url, expires, status, active, activenum, maxc, maxnum])
 				index += 1
 
-		if self.list != []:
-			self.getCurrentEntry()
-			self['playlists'].onSelectionChanged.append(self.getCurrentEntry)
-			self['key_yellow'].setText(_('Edit'))
-			self['key_blue'].setText(_('Delete'))
-			self['key_info'].setText(_('Info'))
-
 		self.drawList = []
 		self.drawList = [self.buildListEntry(x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8]) for x in self.list]
 		self["playlists"].setList(self.drawList)
+		
+		if self.list != []:
+			self['key_yellow'].setText(_('Edit'))
+			self['key_blue'].setText(_('Delete'))
+			self['key_info'].setText(_('Info'))
+		else:
+			self['key_yellow'].setText('')
+			self['key_blue'].setText('')
+			self['key_info'].setText('')
+
+
+	def buildListEntry(self, index, name, url, expires, status, active, activenum, maxc, maxnum):
+		if status == (_('Active')):
+			pixmap = LoadPixmap(cached=True, path=common_path + 'led_green.png')
+
+			if int(activenum) >= int(maxnum) and int(maxnum) != 0:
+				pixmap = LoadPixmap(cached=True, path=common_path + 'led_yellow.png')
+		if status == (_('Banned')):
+			pixmap = LoadPixmap(cached=True, path=common_path + 'led_red.png')
+		if status == (_('Expired')):
+			pixmap = LoadPixmap(cached=True, path=common_path + 'led_grey.png')
+		if status == (_('Disabled')):
+			pixmap = LoadPixmap(cached=True, path=common_path + 'led_grey.png')
+		if status == (_('Server Not Responding')):
+			pixmap = LoadPixmap(cached=True, path=common_path + 'led_red.png')
+		if status == (_('Not Authorised')):
+			pixmap = LoadPixmap(cached=True, path=common_path + 'led_red.png')
+
+		return(index, str(name), str(url), str(expires), str(status), pixmap, str(active), str(activenum), str(maxc), str(maxnum))
+
+
+	def quit(self):
+		self.playOriginalChannel()
 
 
 	def playOriginalChannel(self):
 		if glob.currentPlayingServiceRefString != glob.newPlayingServiceRefString:
 			if glob.newPlayingServiceRefString != '':
 				self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
-
-
-	def quit(self):
-		if os.path.exists(self.tempplaylistpath):
-			os.remove(self.tempplaylistpath)
-		self.playOriginalChannel()
 		self.close()
 
 
@@ -490,37 +489,23 @@ class XStreamity_Main(Screen):
 						f.write(line)
 					f.truncate()
 					f.close()
-				self['playlists'].setIndex(0)
 			self.refresh()
 
 
 	def refresh(self):
-		self["splash"].show()
-		self.playlists_all = []
-		if not os.path.isfile(json_file) or not os.stat(json_file).st_size > 0:
-			open(json_file, 'a').close()
-
-		with open(json_file) as f:
-			try:
-				self.playlists_all = json.load(f, object_pairs_hook=OrderedDict)
-			except:
-				os.remove(json_file)
-
-		self.getPlaylistUserFile()
-		self.removeOldPlaylists()
-
 		if glob.configchanged:
-			self.timer = eTimer()
-			self.timer.start(200, True)
-			try: ## DreamOS fix
-				self.timer_conn = self.timer.timeout.connect(self.downloadUserInfo)
-			except:
-				self.timer.callback.append(self.downloadUserInfo)
-		else:
-			self["splash"].hide()
-			self.buildPlaylistList()
+			self["splash"].show()
+			self.playlists_all = []
+			if not os.path.isfile(json_file) or not os.stat(json_file).st_size > 0:
+				open(json_file, 'a').close()
+		
+			with open(json_file) as f:
+				try:
+					self.playlists_all = json.load(f, object_pairs_hook=OrderedDict)
+				except:
+					os.remove(json_file)
 
-		self.createSetup()
+			self.start()
 
 
 	def getCurrentEntry(self):
@@ -557,9 +542,6 @@ class XStreamity_Main(Screen):
 				if glob.current_playlist['user_info']['auth'] == 1 and glob.current_playlist['user_info']['status'] == "Active":
 					self.session.open(menu.XStreamity_Menu)
 
-	def getStreamsTypeTemp(self):
-			self.session.open(menu.XStreamity_Menu)
-
 
 	def settings(self):
 		self.session.openWithCallback(self.settingsChanged, settings.XStreamity_Settings)
@@ -570,20 +552,3 @@ class XStreamity_Main(Screen):
 			self.close()
 
 
-def checkGZIP(url):
-	response = ''
-	request = urllib2.Request(url, headers=hdr)
-
-	try:
-		response= urllib2.urlopen(request, timeout=10)
-
-		if response.info().get('Content-Encoding') == 'gzip':
-			print "*** content is gzipped %s " % url
-			buffer = StringIO( response.read())
-			deflatedContent = gzip.GzipFile(fileobj=buffer)
-			return deflatedContent
-		else:
-			return response
-	except:
-		pass
-		return response

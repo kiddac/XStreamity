@@ -5,24 +5,21 @@
 from . import _
 from collections import OrderedDict
 from Components.ActionMap import ActionMap
+from Components.Pixmap import Pixmap
 from Components.Sources.List import List
-from xStaticText import StaticText
-from Screens.Screen import Screen
+from enigma import eTimer
+from plugin import skin_path, hdr, cfg, common_path, json_file
 from Screens.MessageBox import MessageBox
-from plugin import skin_path, hdr, cfg, common_path
+from Screens.Screen import Screen
 from Tools.LoadPixmap import LoadPixmap
+from xStaticText import StaticText
 
-#download / parse
-import urllib2
-import xml.etree.ElementTree as ET
-import gzip
-import xstreamity_globals as glob
-import base64
-
-from Tools.BoundFunction import boundFunction
-import os
 import json
-from StringIO import StringIO
+import time
+import xstreamity_globals as glob
+
+import requests
+from multiprocessing.pool import ThreadPool
 
 
 class XStreamity_Menu(Screen):
@@ -35,7 +32,7 @@ class XStreamity_Menu(Screen):
 		with open(skin, 'r') as f:
 			self.skin = f.read()
 
-		self.startList = []
+		#self.startList = []
 		self.list = []
 		self.drawList = []
 		self["list"] = List(self.drawList)
@@ -43,8 +40,9 @@ class XStreamity_Menu(Screen):
 		self.setup_title = (_('Stream Selection'))
 
 		self['key_red'] = StaticText(_('Back'))
-
-		self.tempcategorytypepath = "/tmp/xstreamity/categories.xml"
+		
+		self["splash"] = Pixmap()
+		self["splash"].show()
 
 		self['actions'] = ActionMap(['XStreamityActions'], {
 		'red': self.quit,
@@ -58,180 +56,215 @@ class XStreamity_Menu(Screen):
 		self.host = glob.current_playlist['playlist_info']['host']
 		self.username = glob.current_playlist['playlist_info']['username']
 		self.password = glob.current_playlist['playlist_info']['password']
-		self.live_categories = "%s/enigma2.php?username=%s&password=%s&type=get_live_categories" % (self.host, self.username, self.password)
+		self.live_categories_e = "%s/enigma2.php?username=%s&password=%s&type=get_live_categories" % (self.host, self.username, self.password)
 		self.live_streams = "%s/player_api.php?username=%s&password=%s&action=get_live_streams" % (self.host, self.username, self.password)
 
 		if ref:
 			if not ref.startswith(self.host):
 				ref = str(ref.replace(self.protocol + self.domain ,self.host))
-
-		self.onFirstExecBegin.append(boundFunction(self.downloadEnigma2API, ref))
-		self.onLayoutFinish.append(self.__layoutFinished)
+				
+		# # new player_api code # #
+		self.p_live_categories_url =  	"%s/player_api.php?username=%s&password=%s&action=get_live_categories" % (self.host, self.username, self.password)
+		self.p_vod_categories_url =  	"%s/player_api.php?username=%s&password=%s&action=get_vod_categories" % (self.host, self.username, self.password)
+		self.p_series_categories_url =  "%s/player_api.php?username=%s&password=%s&action=get_series_categories" % (self.host, self.username, self.password)
+		self.p_live_streams_url = 		"%s/player_api.php?username=%s&password=%s&action=get_live_streams" % (self.host, self.username, self.password)
+		
+		glob.current_playlist['data']['live_streams'] = []
+		self.onFirstExecBegin.append(self.delayedDownload)
+		self.onLayoutFinish.append(self.__layoutFinished)				
 
 
 	def __layoutFinished(self):
 		self.setTitle(self.setup_title)
 
 
+	#delay to allow splash screen to show
+	def delayedDownload(self):
+		if glob.current_playlist['data']['live_categories'] == [] and \
+			glob.current_playlist['data']['vod_categories'] == [] and \
+			glob.current_playlist['data']['series_categories'] == []:
+		
+			self.timer = eTimer()
+			try: 
+				self.timer_conn = self.timer.timeout.connect(self.makeUrlList)
+			except:
+				try:
+					self.timer.callback.append(self.makeUrlList)
+				except:
+					self.makeUrlList()
+			self.timer.start(5, True)
+			
+		else:
+			self["splash"].hide()
+			self.createSetup()
+			
+	
+	"""		
+	def updateCategories(self):
+		self["splash"].show()
+		glob.current_playlist['data']['live_categories'] = [] 
+		glob.current_playlist['data']['vod_categories'] = [] 
+		glob.current_playlist['data']['series_categories'] = []
+		glob.current_playlist['data']['catchup'] = False
+		glob.current_playlist['data']['catchup_checked'] = False
+		self.timer = eTimer()
+		
+		try: 
+			self.timer_conn = self.timer.timeout.connect(self.makeUrlList)
+		except:
+			try:
+				self.timer.callback.append(self.makeUrlList)
+			except:
+				self.makeUrlList()
+		self.timer.start(5, True)
+		"""
+		
+		
+	def makeUrlList(self):
+		self.url_list = []
+		self.url_list.append([self.p_live_categories_url, 0])
+		self.url_list.append([self.p_vod_categories_url, 1])
+		self.url_list.append([self.p_series_categories_url, 2])
+		
+		if glob.current_playlist['data']['catchup_checked'] == False:
+			self.url_list.append([self.p_live_streams_url, 3])	
+			glob.current_playlist['data']['catchup_checked'] = True
+		
+	 	self.process_downloads()
+	 	
+	 	
+	def download_url(self, url):
+		timeout = cfg.timeout.getValue()
+		category = url[1]
+		retries = 9
+		r = ''
+		
+		while True:
+			retries -= 1
+			try:
+				r = requests.get(url[0], headers=hdr, stream=True, timeout=timeout)
+				r.raise_for_status()
+				if r.status_code == requests.codes.ok:
+
+					"""
+					with open(file_name, 'wb') as f:
+						for chunk in r.iter_content(chunk_size=8192): 
+							f.write(chunk)
+							"""
+				
+					return category, r.json()
+
+			except requests.exceptions.ConnectionError as errc:
+				print ("Error Connecting:",errc)
+				
+				if retries == 0:
+					break
+				else:
+					time.sleep(1)	
+		
+			except requests.exceptions.RequestException as e:  
+				print (e)
+				pass
+				break
+				
+		return category, ''
+		
+			
+	def process_downloads(self):
+		threads = len(self.url_list)
+		results = ThreadPool(threads).imap_unordered(self.download_url, self.url_list)
+
+		for category, response in results:
+			if response != '':
+				#add categories to main json file		
+					if category == 0:
+						glob.current_playlist['data']['live_categories'] = response
+					elif category == 1:
+						glob.current_playlist['data']['vod_categories'] = response
+					elif category == 2:
+						glob.current_playlist['data']['series_categories'] = response
+						
+					elif category == 3:
+						glob.current_playlist['data']['live_streams'] = response
+					
+		self["splash"].hide()
+		self.createSetup()	
+		
+			
+	def writeJsonFile(self):
+		with open(json_file) as f:
+			self.playlists_all = json.load(f, object_pairs_hook=OrderedDict)
+			
+		self.playlists_all[glob.current_selection] =  glob.current_playlist
+			
+		with open(json_file, 'w') as f:
+			json.dump(self.playlists_all, f)
+			
+			
+	def createSetup(self):
+		self.list = []
+		self.index = 0
+		
+		if glob.current_playlist['data']['live_categories'] != []:
+			self.index += 1
+			self.list.append([self.index, "Live Streams", 0, ""])
+			
+		if glob.current_playlist['data']['vod_categories'] != []:
+			self.index += 1
+			self.list.append([self.index, "Vod", 1, ""])
+			
+		if glob.current_playlist['data']['series_categories'] != []:
+			self.index += 1
+			self.list.append([self.index, "TV Series", 2, ""])
+
+		content = glob.current_playlist['data']['live_streams']
+		hascatchup = any(int(item["tv_archive"]) == 1 for item in content if "tv_archive" in item)
+		glob.current_playlist['data']['live_streams'] = []
+									
+		if hascatchup:
+			glob.current_playlist['data']['catchup'] = True
+			
+		if glob.current_playlist['data']['catchup'] == True:
+			self.index += 1
+			self.list.append([self.index, "Catch Up TV", 3, ""])
+		self.drawList = []
+		self.drawList = [buildListEntry(x[0],x[1],x[2],x[3]) for x in self.list]
+		self["list"].setList(self.drawList)
+		
+		self.writeJsonFile()
+		
+		if len(self.list) == 0:
+			self.session.openWithCallback(self.close ,MessageBox, _('No data, blocked or playlist not compatible with XStreamity plugin.'), MessageBox.TYPE_WARNING, timeout=5)
+		elif len(self.list) == 1:
+			self.next()
+			self.close()
+
+
 	def quit(self):
-		if os.path.exists(self.tempcategorytypepath):
-			os.remove(self.tempcategorytypepath)
+		self.writeJsonFile()
 		self.close()
 
 
 	def next(self):
 		import categories
 		import catchup
+		
+		category = self["list"].getCurrent()[2]
 
 		if self["list"].getCurrent():
-
-			self.currentList = {"title": self["list"].getCurrent()[1], "playlist_url": self["list"].getCurrent()[3], "index": self["list"].getCurrent()[0]}
-
-			if self["list"].getCurrent()[2] == "3":
-				self.session.open(catchup.XStreamity_Catchup, self.startList, self.currentList )
+			if self["list"].getCurrent()[2] == 3:
+				self.session.open(catchup.XStreamity_Catchup)
 			else:
-				self.session.open(categories.XStreamity_Categories, self.startList, self.currentList )
-
-
-	def downloadEnigma2API(self, url):
-		self.list = []
-		response = ''
-		valid = False
-
-		if not os.path.exists(self.tempcategorytypepath):
-			try:
-				response = checkGZIP(url)
-				if response != '':
-					valid = True
-
-					try:
-						content = response.read()
-					except:
-						content = response
-
-					with open(self.tempcategorytypepath, 'w') as f:
-						f.write(content)
-
-			except Exception as e:
-				print(e)
-				pass
-
-			except:
-				pass
-		else:
-			valid = True
-			with open(self.tempcategorytypepath, "r") as f:
-				content = f.read()
-
-
-		if valid == True and content != '':
-			root = ET.fromstring(content)
-			self.list = []
-			index = 0
-
-			for channel in root.findall('channel'):
-				title64 = channel.findtext('title')
-				category_id = str(channel.findtext('category_id'))
-				playlist_url = channel.findtext('playlist_url')
-
-				#check if correct port in url
-				if playlist_url:
-					if not playlist_url.startswith(self.host):
-						playlist_url = str(playlist_url.replace(self.protocol + self.domain ,self.host))
-
-				title = base64.b64decode(title64).decode('utf-8')
-
-				if cfg.showlive.value == True and category_id == "0":
-					self.startList.append({"title": str(title),"playlist_url": str(playlist_url)})
-					self.list.append([index, str(title), str(category_id), str(playlist_url)])
-
-				if cfg.showvod.value == True and category_id == "1":
-					self.startList.append({"title": str(title),"playlist_url": str(playlist_url)})
-					self.list.append([index, str(title), str(category_id), str(playlist_url)])
-
-				if cfg.showseries.value == True and category_id == "2":
-					self.startList.append({"title": str(title),"playlist_url": str(playlist_url)})
-					self.list.append([index, str(title), str(category_id), str(playlist_url)])
-
-				index += 1
-
-			if cfg.showcatchup.value == True:
-				hascatchup = self.checkCatchup()
-				if hascatchup:
-					self.list.append([index, "Catch Up TV", "3", self.live_categories])
-
-			self.drawList = []
-			self.drawList = [buildListEntry(x[0],x[1],x[2],x[3]) for x in self.list]
-			self["list"].setList(self.drawList)
-
-			if len(self.list) == 1:
-				self.next()
-				self.close()
-
-		else:
-			self.session.openWithCallback(self.close ,MessageBox, _('No data, blocked or playlist not compatible with XStreamity plugin.'), MessageBox.TYPE_WARNING, timeout=5)
-
-
-	def checkCatchup(self):
-		url = self.live_streams
-		valid = False
-		response = ''
-		self.catchup_all = []
-
-		try:
-			response = checkGZIP(url)
-			if response != '':
-				valid = True
-		except Exception as e:
-			print(e)
-			pass
-
-		except:
-			pass
-
-		if valid == True and response != '':
-			try:
-				self.catchup_all =  json.load(response, object_pairs_hook=OrderedDict)
-			except:
-				try:
-					self.catchup_all =  json.loads(response, object_pairs_hook=OrderedDict)
-				except:
-					pass
-
-			for item in self.catchup_all:
-				if "tv_archive" and "tv_archive_duration" in item :
-					if int(item["tv_archive"]) == 1 and int(item["tv_archive_duration"]) > 0:
-						return True
-						break
-		return False
-
+				self.session.open(categories.XStreamity_Categories, category )		
 
 
 def buildListEntry(index, title, category_id, playlisturl):
 	png = None
 
-	if category_id == "0": png = LoadPixmap(common_path + "live.png")
-	if category_id == "1": png = LoadPixmap(common_path + "vod.png")
-	if category_id == "2": png = LoadPixmap(common_path + "series.png")
-	if category_id == "3": png = LoadPixmap(common_path + "catchup.png")
+	if category_id == 0: png = LoadPixmap(common_path + "live.png")
+	if category_id == 1: png = LoadPixmap(common_path + "vod.png")
+	if category_id == 2: png = LoadPixmap(common_path + "series.png")
+	if category_id == 3: png = LoadPixmap(common_path + "catchup.png")
 
-	return (index, str(title), str(category_id), str(playlisturl), png)
+	return (index, str(title), category_id, str(playlisturl), png)
 
-
-def checkGZIP(url):
-	response = ''
-	request = urllib2.Request(url, headers=hdr)
-
-	try:
-		response= urllib2.urlopen(request)
-
-		if response.info().get('Content-Encoding') == 'gzip':
-			print "*** content is gzipped %s " % url
-			buffer = StringIO( response.read())
-			deflatedContent = gzip.GzipFile(fileobj=buffer)
-			return deflatedContent
-		else:
-			return response
-	except:
-		pass
-		return response

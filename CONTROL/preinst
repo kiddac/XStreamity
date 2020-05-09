@@ -1,3 +1,6 @@
 #!/bin/sh
-rm -rf /etc/enigma2/X-Streamity/playlists.json > /dev/null 2>&1
+if [ -f "/etc/enigma2/X-Streamity/playlists.json" ]
+	then
+	rm -f /etc/enigma2/X-Streamity/playlists.json > /dev/null 2>&1
+fi
 exit 0

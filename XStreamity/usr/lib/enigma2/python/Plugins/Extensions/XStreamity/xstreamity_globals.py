@@ -11,7 +11,6 @@ current_playlist = []
 
 configchanged = False
 
-#currentcategory = None
 currentcategoryindex = 0
 
 XMLTempList = []

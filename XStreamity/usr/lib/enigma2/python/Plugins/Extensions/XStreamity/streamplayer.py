@@ -461,7 +461,7 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 			if desc_image != '':
 				temp = '/tmp/xstreamity/temp.png'
 				try:
-					downloadPage(desc_image, temp).addCallback(self.checkdownloaded, size, imagetype, temp)
+					downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
 				except:
 					pass
 			else:
@@ -662,7 +662,7 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
 				temp = '/tmp/xstreamity/temp.png'
 
 				try:
-					downloadPage(desc_image, temp).addCallback(self.checkdownloaded, size, imagetype, temp)
+					downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
 				except:
 					pass
 			else:
@@ -840,7 +840,7 @@ class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySup
 			if desc_image != '':
 				temp = '/tmp/xstreamity/temp.png'
 				try:
-					downloadPage(desc_image, temp).addCallback(self.checkdownloaded, size, imagetype, temp)
+					downloadPage(desc_image, temp ,timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
 				except:
 					pass
 			else:

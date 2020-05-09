@@ -13,8 +13,8 @@ from Components.Sources.List import List
 from Components.Pixmap import Pixmap
 from Tools.LoadPixmap import LoadPixmap
 from xStaticText import StaticText
-from datetime import datetime, timedelta
-import calendar
+from datetime import datetime
+#import calendar
 
 #download / parse
 import base64
@@ -38,12 +38,9 @@ from StringIO import StringIO
 
 class XStreamity_Catchup(Screen):
 
-	def __init__(self, session, startList, currentList):
+	def __init__(self, session):
 		Screen.__init__(self, session)
 		self.session = session
-
-		self.currentList =[]
-		self.currentList.append(currentList)
 
 		skin = skin_path + 'catchup.xml'
 
@@ -51,7 +48,12 @@ class XStreamity_Catchup(Screen):
 			self.skin = f.read()
 
 		self.setup_title = (_('Catch Up TV'))
-		self.main_title = self.currentList[-1]["title"]
+		self.main_title = (_('Catch Up TV'))
+		
+		play_url = str(glob.current_playlist['playlist_info']['enigma2_api']) + "&type=get_live_categories"
+				
+		glob.nextlist = []
+		glob.nextlist.append({"playlist_url": play_url, "index": 0})
 
 		self["channel"] = StaticText(self.main_title)
 
@@ -73,8 +75,6 @@ class XStreamity_Catchup(Screen):
 		self["catchup_list"] = List(self.catchup_all, enableWrapAround=True)
 		self["catchup_list"].onSelectionChanged.append(self.selectionChanged)
 		
-
-
 		self["key_red"] = StaticText(_('Back'))
 		self["key_green"] = StaticText(_('OK'))
 		self["key_yellow"] = StaticText('')
@@ -88,8 +88,8 @@ class XStreamity_Catchup(Screen):
 		self.host = glob.current_playlist['playlist_info']['host']
 		self.username = glob.current_playlist['playlist_info']['username']
 		self.password = glob.current_playlist['playlist_info']['password']
-		self.live_categories = "%s/player_api.php?username=%s&password=%s&action=get_live_streams" % (self.host, self.username, self.password)
-		self.simpledatatable = "%s/player_api.php?username=%s&password=%s&action=get_simple_data_table&stream_id=" % (self.host, self.username, self.password)
+		self.live_categories = str(glob.current_playlist['playlist_info']['player_api']) + "&action=get_live_streams"
+		self.simpledatatable = str(glob.current_playlist['playlist_info']['player_api']) + "&action=get_simple_data_table&stream_id="
 		
 		self.downloadingpicon = False
 
@@ -106,9 +106,6 @@ class XStreamity_Catchup(Screen):
 			"channelDown": self.pageDown,
 			"0": self.reset,
 			}, -2)
-
-		glob.nextlist = []
-		glob.nextlist.append({"playlist_url": self.currentList[-1]["playlist_url"], "index": 0})
 
 		self.onFirstExecBegin.append(self.createSetup)
 		self.onLayoutFinish.append(self.__layoutFinished)
@@ -132,7 +129,6 @@ class XStreamity_Catchup(Screen):
 		response = ''
 		self.live_list_all = []
 		self.live_list_archive = []
-
 		try:
 			response = checkGZIP(url)
 			if response != '':
@@ -398,11 +394,6 @@ class XStreamity_Catchup(Screen):
 		if response != "":
 			simple_data_table = json.load(response)
 
-			"""
-			with open('/etc/enigma2/X-Streamity/catchup_json.json', 'w') as f:
-				json.dump(simple_data_table, f)
-				"""
-
 			self.archive = []
 			hasarchive = False
 			if 'epg_listings' in simple_data_table:
@@ -413,11 +404,6 @@ class XStreamity_Catchup(Screen):
 							self.archive.append(listing)
 
 			if hasarchive:
-				"""
-				with open('/etc/enigma2/X-Streamity/catchup_json2.json', 'w') as f:
-					json.dump(self.archive, f)
-					"""
-
 				#remove oldest catchup item in list. Usual void.
 				self.archive.pop(0)
 				self.getlistings()
@@ -599,19 +585,17 @@ class XStreamity_Catchup(Screen):
 		if self["channel_list"].getCurrent():	
 			desc_image = self["channel_list"].getCurrent()[3]
 
-			if cfg.showpicons.value == True:
-
-				imagetype = "picon"
-				url = desc_image
-				size = [147,88]
-				if screenwidth.width() > 1280:
-					size = [220,130]
+			imagetype = "picon"
+			url = desc_image
+			size = [147,88]
+			if screenwidth.width() > 1280:
+				size = [220,130]
 
 
 			if url != '' and url != "n/A" and url != None:
 				original = '/tmp/xstreamity/original.png'
 			
-				d = downloadPage(url, original)
+				d = downloadPage(url, original, timeout=3)
 				d.addCallback(self.checkdownloaded, size, imagetype)
 				d.addErrback(self.ebPrintError)
 				return d
