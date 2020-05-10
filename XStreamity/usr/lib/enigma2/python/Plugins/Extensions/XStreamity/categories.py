@@ -204,43 +204,6 @@ class XStreamity_Categories(Screen):
 
 		ref = str(glob.nextlist[-1]["playlist_url"])
 
-		"""
-		try:
-			import boxbranding
-			print "BOXBRANDING"
-			print "getMachineBuild = %s" % boxbranding.getMachineBuild()
-			print "getMachineBrand = %s" % boxbranding.getMachineBrand()
-			print "getMachineName = %s" % boxbranding.getMachineName()
-			print "getMachineProcModel = %s" % boxbranding.getMachineProcModel()
-			print "getBoxType = %s" % boxbranding.getBoxType()
-			print "getBrandOEM = %s" % boxbranding.getBrandOEM()
-			print "getOEVersion = %s" % boxbranding.getOEVersion()
-			print "getDriverDate = %s" % boxbranding.getDriverDate()
-			print "getImageVersion = %s" % boxbranding.getImageVersion()
-			print "getImageBuild = %s" % boxbranding.getImageBuild()
-			print "getImageDistro = %s" % boxbranding.getImageDistro()
-		except:
-			print "**** image does not have boxbranding"
-			pass
-
-		try:
-			import owibranding
-			print "OWIBRANDING"
-			print "getMachineBuild = %s" % owibranding.getMachineBuild()
-			print "getMachineBrand = %s" % owibranding.getMachineBrand()
-			print "getMachineName = %s" % owibranding.getMachineName()
-			print "getMachineProcModel = %s" % owibranding.getMachineProcModel()
-			print "getBoxType = %s" % owibranding.getBoxType()
-			print "getOEVersion = %s" % owibranding.getOEVersion()
-			print "getDriverDate = %s" % owibranding.getDriverDate()
-			print "getImageVersion = %s" % owibranding.getImageVersion()
-			print "getImageBuild = %s" % owibranding.getImageBuild()
-			print "getImageDistro = %s" % owibranding.getImageDistro()
-		except:
-			print "**** owibranding failed to load"
-			pass
-			"""
-
 		if self.level == 1:
 			self["key_menu"].setText(_("Hide/Show"))
 			self["key_epg"].setText('')

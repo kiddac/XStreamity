@@ -248,19 +248,21 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 				
 				
 			#update json file
-			self.playlists_all = []
-			with open(json_file) as f:
-				self.playlists_all = json.load(f, object_pairs_hook=OrderedDict)
 			
-			x = 0
-			for playlist in self.playlists_all:
-				if playlist['playlist_info']['domain'] == str(domain).strip() and playlist['playlist_info']['username'] == str(username).strip() and playlist['playlist_info']['password'] == str(password).strip(): 
-					self.playlists_all[x] =  glob.current_playlist
-					break
-				x += 1
+			if os.path.isfile(json_file) and os.stat(json_file).st_size > 0:
+				self.playlists_all = []
+				with open(json_file) as f:
+					self.playlists_all = json.load(f, object_pairs_hook=OrderedDict)
+				
+				x = 0
+				for playlist in self.playlists_all:
+					if playlist['playlist_info']['domain'] == str(domain).strip() and playlist['playlist_info']['username'] == str(username).strip() and playlist['playlist_info']['password'] == str(password).strip(): 
+						self.playlists_all[x] =  glob.current_playlist
+						break
+					x += 1
 
-			with open(json_file, 'w') as f:
-				json.dump(self.playlists_all, f)	
+				with open(json_file, 'w') as f:
+					json.dump(self.playlists_all, f)	
 			
 			if self.editmode == False: 	
 				glob.configchanged = True

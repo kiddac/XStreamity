@@ -118,8 +118,10 @@ class XStreamity_Main(Screen):
 			for line in lines:
 				if not line.startswith('http://') and not line.startswith('https://') and not line.startswith('#'):
 					line = '# ' + line
-				if "mpegts" in line:
-					line = line.replace("mpegts", "ts")
+				if "=mpegts" in line:
+					line = line.replace("=mpegts", "=ts")
+				if "=hls" in line:
+					line = line.replace("=hls", "=m3u8")
 				if line.strip() == "#":
 					line = ""
 				f.write(line)
@@ -178,7 +180,7 @@ class XStreamity_Main(Screen):
 							self.type = param.split('=')[1]
 						if param.startswith("output"):
 							self.output = param.split('=')[1].strip()
-							if self.output != "ts" or self.output != "m3u8":
+							if self.output != "ts" and self.output != "m3u8":
 								self.output = "ts"
 
 				self.player_api = "%s/player_api.php?username=%s&password=%s" % (self.host, self.username, self.password)
@@ -314,7 +316,10 @@ class XStreamity_Main(Screen):
 			r = requests.get(url[0], headers=hdr, stream=True, timeout=5)
 			r.raise_for_status()
 			if r.status_code == requests.codes.ok:
-				return index, r.json()
+				try:
+					return index, r.json()
+				except:
+					return index, ''
 				
 		except requests.exceptions.RequestException as e:  
 			print (e)
