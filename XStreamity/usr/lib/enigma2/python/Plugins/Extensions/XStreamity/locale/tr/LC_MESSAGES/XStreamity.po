@@ -2,27 +2,26 @@ msgid ""
 msgstr ""
 "Project-Id-Version: XStreamity\n"
 "POT-Creation-Date: 2020-02-29 22:09+0100\n"
-"PO-Revision-Date: 2020-05-12 13:39+0200\n"
+"PO-Revision-Date: 2020-05-12 16:02+0300\n"
 "Last-Translator: @Kqiqi1\n"
-"Language-Team: \n"
-"Language: al_AL\n"
+"Language-Team: biperva @ Dreamosat\n"
+"Language: tr_TR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.3\n"
-"X-Poedit-Basepath: ../Downloads/enigma2-plugin-extensions-"
-"xstreamity_1.0022.20200229_all/data/usr/lib/enigma2/python/Plugins/"
-"Extensions/XStreamity\n"
+"X-Generator: Poedit 2.3.1\n"
+"X-Poedit-Basepath: ../Downloads/enigma2-plugin-extensions-xstreamity_1.0022.20200229_all/"
+"data/usr/lib/enigma2/python/Plugins/Extensions/XStreamity\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SearchPath-0: .\n"
 
 #: categories.py:58
 msgid "Categories"
-msgstr "Kategoria"
+msgstr "Kategoriler"
 
 #: categories.py:123 main.py:50 menu.py:53
 msgid "Back"
-msgstr "Kthehu"
+msgstr "Geri"
 
 #: categories.py:124
 msgid "OK"
@@ -30,82 +29,79 @@ msgstr "OK"
 
 #: categories.py:125 categories.py:748 categories.py:765
 msgid "Sort: A-Z"
-msgstr "Rëndit: A-Z"
+msgstr "Sırala: A-Z"
 
 #: categories.py:126 categories.py:791
 msgid "Search"
-msgstr "Kërko"
+msgstr "Arama"
 
 #: categories.py:605 categories.py:616 categories.py:648
 msgid "Next Info"
-msgstr "Informacioni pasues"
+msgstr "Sonraki"
 
 #: categories.py:610
 msgid "Now Info"
-msgstr "Informacioni aktual"
-
-msgid "Dubbed kqiqi1:"
-msgstr "Përkthej Kqiqi1:"
+msgstr "Şimdi"
 
 #: categories.py:666
 msgid "Video Type:"
-msgstr "Farmati i materialit:"
+msgstr "Video Tipi:"
 
 #: categories.py:667
 msgid "Duration:"
-msgstr "Kohëzgjatja:"
+msgstr "Süre:"
 
 #: categories.py:668
 msgid "Genre:"
-msgstr "Zhanri:"
+msgstr "Tür:"
 
 #: categories.py:669
 msgid "Rating:"
-msgstr "Vlersimi:"
+msgstr "Değerlendirme:"
 
 #: categories.py:670
 msgid "Country:"
-msgstr "Gjuha:"
+msgstr "Ülke:"
 
 #: catchup.py:336 categories.py:517
 msgid "Please enter the parental control pin code"
-msgstr "Ju lutem vendosini kodin prindëror"
+msgstr "Lütfen ebeveyn kontrolü pin kodunu girin"
 
 #: streamplayer.py:352
 msgid "Please enter recording time"
-msgstr "Ju lutem vendosini kohën regjistruese"
+msgstr "Lütfen kayıt süresini girin"
 
 #: streamplayer.py:383 streamplayer.py:386
 msgid "Recording Failed."
-msgstr "Regjistrimi dështoi"
+msgstr "Kayıt Başarısız."
 
 #: settings.py:247 settings.py:265
 msgid "Choose directory"
-msgstr "Zgjidheni dosjen"
+msgstr "Dizin Seçin"
 
 #: settings.py:246 settings.py:264
 msgid "Choose Directory:"
-msgstr "Zgjidheni dosjen"
+msgstr "Dizin Seçin:"
 
 #: streamplayer.py:381
 msgid "Recording Started."
-msgstr "Regjistrimi sa po filloi"
+msgstr "Kayıt Başladı."
 
 #: categories.py:671
 msgid "Release Date:"
-msgstr "Data rilascio:"
+msgstr "Yayın Tarihi:"
 
 #: RecordDateInput.py:68
 msgid "Date"
-msgstr "Data"
+msgstr "Tarih"
 
 #: RecordDateInput.py:69
 msgid "Start Time"
-msgstr "Koha startuese"
+msgstr "Başlangıç Zamanı"
 
 #: RecordDateInput.py:70
 msgid "End Time"
-msgstr "Ora përfunduese"
+msgstr "Bitiş Zamanı"
 
 #: catchup.py:56
 msgid "Catch Up TV"
@@ -113,87 +109,87 @@ msgstr "Catch Up TV"
 
 #: categories.py:672
 msgid "Director:"
-msgstr "Dosja:"
+msgstr "Yönetmen:"
 
 #: categories.py:673
 msgid "Cast:"
-msgstr "Aktorët:"
+msgstr "Oyuncular:"
 
 #: categories.py:749 categories.py:756
 msgid "Sort: Z-A"
-msgstr "Dosja: Z-A"
+msgstr "Sırala: Z-A"
 
 #: categories.py:757 categories.py:764
 msgid "Sort: Original"
-msgstr "Dosja: Standard"
+msgstr "Sırala: Orijinal"
 
 #: categories.py:772 categories.py:785
 msgid "Reset Search"
-msgstr "Rivendosni kërkimin"
+msgstr "Aramayı Sıfırla"
 
 #: categories.py:776
 msgid "Filter this category..."
-msgstr "Filto kët kategori ..."
+msgstr "Kategoriyi filtrele..."
 
 #: main.py:48
 msgid "Select Server"
-msgstr "Vendose Serverin"
+msgstr "Sunucu Seç"
 
 #: main.py:52
 msgid "Add"
-msgstr "Vendos"
+msgstr "Ekle"
 
 #: main.py:57
 msgid "About"
-msgstr "Nga ne..."
+msgstr "Hakkında"
 
 #: main.py:344 main.py:359 main.py:409 main.py:417
 msgid "Active"
-msgstr "Aktivo"
+msgstr "Aktif"
 
 #: main.py:348 main.py:363 main.py:411
 msgid "Banned"
-msgstr "Refuzim"
+msgstr "Yasaklı"
 
 #: main.py:350 main.py:365 main.py:415
 msgid "Expired"
-msgstr "Ka skaduar"
+msgstr "Süresi Dolmuş"
 
 #: main.py:352 main.py:367 main.py:413
 msgid "Disabled"
-msgstr "Jo aktiv"
+msgstr "Etkisiz"
 
 #: main.py:354 main.py:369 main.py:391
 msgid "Server Not Responding"
-msgstr "Serveri nuk është aktiv"
+msgstr "Sunucu Cevap Vermiyor"
 
 #: main.py:356 main.py:371 main.py:404
 msgid "Not Authorised"
-msgstr "Nuk është i autorizuar"
+msgstr "İzinli Değil"
 
 #: main.py:439
 msgid "Edit"
-msgstr "Edito"
+msgstr "Düzenle"
 
 #: main.py:440
 msgid "Delete"
-msgstr "Shlyje"
+msgstr "Sil"
 
 #: main.py:441
 msgid "Info"
-msgstr "Informacione"
+msgstr "Bilgi"
 
 #: main.py:479
 msgid "Delete selected playlist?"
-msgstr "Doni ta shlyni listen e zgjedhur?"
+msgstr "Seçilen oynatma listesi silinsin mi?"
 
 #: main.py:556
 msgid "Maximum allowed users. Expect playback issues."
-msgstr "Përdorues maksimal. Mund të keni probleme me riprodhimin."
+msgstr "İzin verilen maksimum kullanıcı. Oynatma sorunlarını bekleyin."
 
 #: menu.py:51
 msgid "Stream Selection"
-msgstr "Përzgjedhja e burimit"
+msgstr "Stream Seçimi"
 
 #: plugin.py:46 plugin.py:59
 msgid "XStreamity"
@@ -201,31 +197,31 @@ msgstr "XStreamity"
 
 #: plugin.py:58
 msgid "IPTV Xtream Codes playlists player by KiddaC"
-msgstr "Playlist i Kodeve Xtream të IPTV nga KiddaC"
+msgstr "IPTV Xtream Codes çalma listeleri oynatıcı KiddaC tarafından yapılmıştır"
 
 #: server.py:47
 msgid "Add Server"
-msgstr "Vendos Serverin"
+msgstr "Server Ekle"
 
 #: server.py:51
 msgid "Edit Server"
-msgstr "Edito serverin"
+msgstr "Server Düzenle"
 
 #: server.py:58 serverinfo.py:46
 msgid "Close"
-msgstr "Mbylle"
+msgstr "Kapat"
 
 #: server.py:59
 msgid "Save"
-msgstr "Ruaje"
+msgstr "Kaydet"
 
 #: server.py:98
 msgid "Really close without saving settings?"
-msgstr "Doni ta mbylli pa ruajtur cilsimet?"
+msgstr "Ayarları kaydetmeden gerçekten kapatmak istiyor musunuz?"
 
 #: server.py:111
 msgid "My IPTV"
-msgstr "My IPTV"
+msgstr "IPTV"
 
 #: server.py:112 server.py:151
 msgid "http://"
@@ -237,19 +233,19 @@ msgstr ""
 
 #: server.py:115
 msgid "username"
-msgstr "Emri i përdoruesit"
+msgstr "kullanıcı adı"
 
 #: server.py:116
 msgid "password"
-msgstr "Fjalkalimi i perdoruesit"
+msgstr "şifre"
 
-#: server.py:119 server.py:120 server.py:125 server.py:130 server.py:159
-#: server.py:160 server.py:164 server.py:169
+#: server.py:119 server.py:120 server.py:125 server.py:130 server.py:159 server.py:160
+#: server.py:164 server.py:169
 msgid "DVB(1)"
 msgstr ""
 
-#: server.py:119 server.py:120 server.py:126 server.py:131 server.py:159
-#: server.py:160 server.py:165 server.py:170
+#: server.py:119 server.py:120 server.py:126 server.py:131 server.py:159 server.py:160
+#: server.py:165 server.py:170
 msgid "IPTV(4097)"
 msgstr ""
 
@@ -259,11 +255,11 @@ msgstr ""
 
 #: server.py:179
 msgid "Display name:"
-msgstr "Emri për të shfaqur:"
+msgstr "Görünecek Ad:"
 
 #: server.py:180
 msgid "Protocol:"
-msgstr "Protokollo:"
+msgstr "Protokol:"
 
 #: server.py:181
 msgid "Server URL:"
@@ -271,191 +267,194 @@ msgstr "URL Server:"
 
 #: server.py:182
 msgid "Port:"
-msgstr "Porta:"
+msgstr "Port:"
 
 #: server.py:183
 msgid "Username:"
-msgstr "Emri i përdoruesit:"
+msgstr "Kullanıcı Adı:"
 
 #: server.py:184
 msgid "Password:"
-msgstr "Fjalkalimi i perdoruesit"
+msgstr "Şifre:"
 
 #: server.py:185
 msgid "Type:"
-msgstr "Lloi:"
+msgstr "Tip:"
 
 #: server.py:186
 msgid "Output:"
-msgstr "Dalja luajtëse:"
+msgstr "Çıktı:"
 
 #: server.py:187
 msgid "Stream Type Live:"
-msgstr "Lloi stream Live:"
+msgstr "Akış Türü Canlı:"
 
 #: server.py:188
 msgid "Stream Type VOD:"
-msgstr "Lloi stream VOD:"
+msgstr "Akış Türü VOD:"
 
 #: server.py:189
 msgid "EPG Timeshift:"
-msgstr "Timeshift EPG:"
+msgstr "EPG Zaman Kayması:"
 
 #: serverinfo.py:26
 msgid "User Information"
-msgstr "Informacionet e perdoruesit"
+msgstr "Kullanıcı Bilgisi"
 
 #: streamplayer.py:165 streamplayer.py:374
 msgid "TV"
 msgstr ""
 
 msgid "Download"
-msgstr "Shkarko"
+msgstr "İndir"
 
 msgid "Settings"
-msgstr "Konfigurimet"
+msgstr "Ayarlar"
 
 msgid "Data rilascio:"
-msgstr "Data realizuese"
+msgstr "Yayın Tarihi:"
 
 msgid "Page: %d of %d"
-msgstr "Faqja %d nga %d"
+msgstr "Sayfa %d nga %d"
 
 msgid "Main Settings"
-msgstr "Konfigurimet Personale"
+msgstr "Ana Ayarlar"
 
 msgid "URL Server:"
-msgstr "Adresa e Kompanis"
+msgstr "Server URL:"
 
 msgid "playlists.txt location"
-msgstr "lokacioni tekst i listes"
+msgstr "playlists txt konumu"
 
 msgid "VOD download folder"
-msgstr "Dosja për shkarkimet VOD"
+msgstr "VOD İndirme Klasörü"
 
 msgid "Default Live stream type"
-msgstr "Lloi standard i luajtjes drejtpërdrejt"
+msgstr "Varsayılan Canlı akış türü"
 
 msgid "Default VOD stream type"
-msgstr "Lloi standard i luajtjes së Filmave"
+msgstr "Varsayılan VOD akış türü"
 
 msgid "Preview Live stream before playing"
-msgstr "Shijo para luajtjes"
+msgstr "Oynatmadan önce canlı akışı önizleyin"
 
 msgid "Stop stream on back button"
-msgstr "Ndalo luajtjen me Butonin exit"
+msgstr "Geri düğmesiyle akışı durdur"
 
 msgid "Show picons in Live cateogries"
-msgstr "Trego pikonët në kategorit drejtpërdrejt"
+msgstr "Canlı kategorisinde piconları göser"
 
 msgid "Show covers in VOD categories"
-msgstr "Trego pikonët në kategorit e filmave"
+msgstr "VOD kategorisinde film posterlerini göster"
 
 msgid "Download Hi-Res VOD Covers"
-msgstr "Shkarko Posteret me kfalitet për filma"
+msgstr "Yüksek Çözünürlüklü VOD Posterlerini İndir"
 
 msgid "Show in main menu *Restart GUI Required"
-msgstr "Trego në menyn kryësore startim i detyrueshë i paisjes"
+msgstr "Ana menüde göster *GUI Yeniden Başlatma Gerekli"
 
 msgid "Parental control"
-msgstr "Kontrolli prindëror"
+msgstr "Ebeveyn Kontrolü"
 
 msgid "Live:"
-msgstr "Direkt"
+msgstr "Canlı:"
 
 msgid "Cancel"
-msgstr "Anulo"
+msgstr "İptal"
 
 msgid "Clear All"
-msgstr "Shlyj të gjitha"
+msgstr "Hepsini Temizle"
 
 msgid "Hide/Show"
-msgstr "Fshih/Trego"
+msgstr "Göster/Gizle"
 
 msgid "Live Streams:"
-msgstr "Transmetimet Direkte:"
+msgstr "Canlı Yayınlar:"
 
 msgid "Invert"
-msgstr "Vendos"
+msgstr "Ters Çevir"
 
 msgid "Select skin *Restart GUI Required"
-msgstr "Zgjedhja e lëkurës *Ristartim paisje"
+msgstr "Skin seç * GUI'yi yeniden başlat Gerekli"
 
 msgid "Display Live categories"
-msgstr "Shfaq kategoritë e direkte"
+msgstr "Canlı kategorilerini görüntüle"
 
 msgid "Display Catchup category"
-msgstr "Ekrani i kategoris Chatchup"
+msgstr "Canlı kategorilerini görüntüle"
 
 msgid "Subtitles in:"
-msgstr "Titrat në gjuhën:"
+msgstr "Altyazılar:"
+
+msgid "Dubbed kqiqi1:"
+msgstr "Dublajlı Kqiqi1:"
 
 msgid "Server timeout (seconds)"
-msgstr "Koha skaduese e serverit (sekonda)"
+msgstr "Sunucu zaman aşımı (Saniye)"
 
 msgid "Display VOD categories"
-msgstr "Shfaq kategoritë VOD"
+msgstr "VOD kategorilerini görüntüle"
 
 #: categories.py:610
 msgid "Status:"
-msgstr "Statusi:"
+msgstr "Durum:"
 
 #: categories.py:610
 msgid "Is Trial:"
-msgstr "Testimi:"
+msgstr "Test:"
 
 #: categories.py:610
 msgid "Active Connections:"
-msgstr "Akseset aktive:"
+msgstr "Aktif Bağlantı:"
 
 #: categories.py:610
 msgid "Max Connections:"
-msgstr "Akseset maksimale:"
+msgstr "Maksimum Bağlantı:"
 
 #: categories.py:610
 msgid "Created At:"
-msgstr "Krijuar në datën:"
+msgstr "Oluşturma tarihi:"
 
 #: categories.py:610
 msgid "Expiry Date:"
-msgstr "Data skaduëse:"
+msgstr "Bitiş Tarihi:"
 
 #: categories.py:610
 msgid "Allowed Output Formats:"
-msgstr "Format e mundëshme:"
+msgstr "İzin Verilen Çıktı Biçimleri:"
 
 #: categories.py:610
 msgid "Real URL:"
-msgstr "URL-ja Reale:"
+msgstr "Gerçek URL:"
 
 #: serverinfo.py:26
 msgid "Timezone:"
-msgstr "Koha e zonës:"
+msgstr "Zaman dilimi:"
 
 #: catchup.py:293 categories.py:454
 msgid ""
 "Server taking too long to respond.\n"
 "Adjust server timeout in main settings."
 msgstr ""
-"Nuk ka përgjigjëje nga serveri, koh e stërgjatur. \n"
-"Rregullo kohën e serverit në cilësimet kryesore"
+"Sunucunun yanıt vermesi çok uzun sürüyor.\n"
+"Ayarlarda sunucu zaman aşımını ayarlayın."
 
 #: catchup.py:293 categories.py:454
 msgid "No data or playlist not compatible with X-Streamity plugin."
-msgstr "Nuk ka ose nuk është kopitabile me X-Streamity"
+msgstr "X-Streamity eklentisiyle uyumlu olmayan veri veya oynatma listesi yok."
 
 msgid "Display Series categories"
-msgstr "Shfaq kategoritë Seriale"
+msgstr "Dizi kategorilerini görüntüle"
 
 msgid "Default VOD/Series stream type"
-msgstr "Lloi i rrjedhës VOD/Seriale"
+msgstr "Varsayılan VOD / Dizi akış türü"
 
 #: settings.py:124
 msgid "Update VOD Movie Database information"
-msgstr "Aktualizo Informacionet VOD në bankier"
+msgstr "VOD Film Veritabanı bilgilerini güncelle"
 
 msgid "Preview streams in mini tv before playing"
-msgstr "Për shije para se të luani videon"
+msgstr "Oynatmadan önce akışları mini TVde önizleme"
 
 msgid "Show picons in Live categories"
-msgstr "Trego pikonët e kanaleve direkte"
+msgstr "Piconları Canlı kategorilerinde göster"

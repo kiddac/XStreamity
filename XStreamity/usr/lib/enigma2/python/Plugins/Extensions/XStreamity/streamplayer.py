@@ -368,6 +368,7 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 
 
 	def playStream(self, servicetype, streamurl):
+				
 		self["epg_description"].setText(glob.currentepglist[glob.currentchannelistindex][4])
 		self["nowchannel"].setText(glob.currentchannelist[glob.currentchannelistindex][0])
 		self["nowtitle"].setText(glob.currentepglist[glob.currentchannelistindex][3])
@@ -426,21 +427,25 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 			self["progress"].hide()
 
 
-		self.downloadPicon()
-
 		self.reference = eServiceReference(int(self.servicetype),0,self.streamurl)
-		self.reference.setName(str(glob.currentepglist[glob.currentchannelistindex][3]))
+		#self.reference.setName(str(glob.currentepglist[glob.currentchannelistindex][3]))
 
-		self.session.nav.stopService()
-		self.session.nav.playService(self.reference)
+		#self.session.nav.stopService()
+		if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString():
+			self.session.nav.playService(self.reference)
+			if self.session.nav.getCurrentlyPlayingServiceReference():
+				glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
+				glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
 
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
 		  iPlayableService.evStart: self.__evStart,
 		  iPlayableService.evSeekableStatusChanged : self.__evSeekableStatusChanged,
 		  iPlayableService.evEOF: self.__evEOF,
 		  })
+		  
+		self.downloadPicon()
 
-
+	
 	def downloadPicon(self):
 
 		size = []
@@ -458,7 +463,9 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 				size = [220,130]
 
 		if size != []:
-			if desc_image != '':
+			if desc_image and desc_image != "n/A" and desc_image != "":
+				if desc_image.startswith('https'):
+					desc_image = desc_image.replace('https','http')
 				temp = '/tmp/xstreamity/temp.png'
 				try:
 					downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
@@ -485,6 +492,11 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 		else:
 			print "file does not exist"
 		return preview
+		
+	
+	def loadDefaultImage(self):
+		if self["epg_picon"].instance:
+			self["epg_picon"].instance.setPixmapFromFile(common_path + "picon.png")
 
 
 	def __evStart(self):
@@ -500,10 +512,11 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 
 
 	def back(self):
-		if self.session.nav.getCurrentlyPlayingServiceReference():
-			glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
-			glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
-			glob.nextlist[-1]['index'] = glob.currentchannelistindex
+		glob.nextlist[-1]['index'] = glob.currentchannelistindex
+		
+		if cfg.stopstream.value == True:
+			self.stopStream()
+			
 		self.close()
 
 
@@ -554,12 +567,12 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 			self.playStream(self.servicetype, self.streamurl)
 
 
-	def loadDefaultImage(self):
-		if self["epg_picon"].instance:
-			self["epg_picon"].instance.setPixmapFromFile(common_path + "picon.png")
-
-
-
+	#play original channel
+	def stopStream(self):
+		if glob.currentPlayingServiceRefString != glob.newPlayingServiceRefString:
+			if glob.newPlayingServiceRefString != '':
+				self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
+				
 
 class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport, InfoBarServiceNotifications, InfoBarShowHide, InfoBarSeek, InfoBarAudioSelection, InfoBarSubtitleSupport, IPTVInfoBarPVRState, SubsSupportStatus, SubsSupport ):
 
@@ -619,9 +632,8 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
 
 
 	def playStream(self, servicetype, streamurl):
-		
 		self.reference = eServiceReference(int(self.servicetype),0, streamurl)
-		self.reference.setName(glob.currentchannelist[glob.currentchannelistindex][0])
+		#self.reference.setName(glob.currentchannelist[glob.currentchannelistindex][0])
 
 		if streamurl != 'None' and "/movie/" in streamurl:
 			self["streamcat"].setText("VOD")
@@ -634,12 +646,15 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
 		except:
 			pass
 
+		#self.session.nav.stopService()
+		if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString():
+			self.session.nav.playService(self.reference)
+			if self.session.nav.getCurrentlyPlayingServiceReference():
+				glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
+				glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
+
 		self.downloadPicon()
-
-		self.session.nav.stopService()
-		self.session.nav.playService(self.reference)
-
-
+		
 
 	def downloadPicon(self):
 		size = []
@@ -657,8 +672,10 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
 				size = [220,330]
 
 		if size != []:
-
-			if desc_image != '':
+			if desc_image and desc_image != "n/A" and desc_image != "":
+				if desc_image.startswith('https'):
+					desc_image = desc_image.replace('https','http')
+				
 				temp = '/tmp/xstreamity/temp.png'
 
 				try:
@@ -686,15 +703,21 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
 		else:
 			print "file does not exist"
 		return preview
+		
+	
+	def loadDefaultImage(self):
+		if self["cover"].instance:
+			self["cover"].instance.setPixmapFromFile(common_path + "cover.png")
 
 
 	def back(self):
-		if self.session.nav.getCurrentlyPlayingServiceReference():
-			glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
-			glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
-			glob.nextlist[-1]['index'] = glob.currentchannelistindex
+		glob.nextlist[-1]['index'] = glob.currentchannelistindex
+		
+		if cfg.stopstream.value == True:
+			self.stopStream()
+			
 		self.close()
-
+		
 
 	def toggleStreamType(self):
 		currentindex = 0
@@ -719,7 +742,6 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
 
 
 	def next(self):
-
 		if glob.currentchannelist:
 			stream_url = glob.currentchannelist[glob.currentchannelistindex][6]
 			listlength = len(glob.currentchannelist)
@@ -742,10 +764,11 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
 			self.playStream(self.servicetype, self.streamurl)
 
 
-	def loadDefaultImage(self):
-		if self["cover"].instance:
-			self["cover"].instance.setPixmapFromFile(common_path + "cover.png")
-
+	#play original channel
+	def stopStream(self):
+		if glob.currentPlayingServiceRefString != glob.newPlayingServiceRefString:
+			if glob.newPlayingServiceRefString != '':
+				self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
 
 
 
@@ -802,6 +825,7 @@ class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySup
 
 
 	def playStream(self, servicetype, streamurl):
+
 		self["epg_description"].setText(glob.catchupdata[1])
 		self["streamcat"].setText("Catch")
 		self["streamtype"].setText(str(servicetype))
@@ -811,15 +835,19 @@ class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySup
 		except:
 			pass
 
-		self.downloadPicon()
-
 		self.reference = eServiceReference(int(servicetype),0,streamurl)
-		self.reference.setName(glob.catchupdata[0])
+		#self.reference.setName(glob.catchupdata[0])
 
-		self.session.nav.stopService()
-		self.session.nav.playService(self.reference)
+		#self.session.nav.stopService()
+		if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString():
+			self.session.nav.playService(self.reference)
+			if self.session.nav.getCurrentlyPlayingServiceReference():
+				glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
+				glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
 
-
+		self.downloadPicon()
+		
+		
 	def downloadPicon(self):
 
 		size = []
@@ -830,14 +858,16 @@ class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySup
 			stream_url = glob.currentchannelist[glob.currentchannelistindex][6]
 			desc_image = glob.currentchannelist[glob.currentchannelistindex][3]
 
-		if stream_url != 'None':
+		if stream_url != 'None' :
 			imagetype = "picon"
 			size = [147,88]
 			if screenwidth.width() > 1280:
 				size = [220,130]
 
 		if size != []:
-			if desc_image != '':
+			if desc_image and desc_image != "n/A" and desc_image != "":
+				if desc_image.startswith('https'):
+					desc_image = desc_image.replace('https','http')
 				temp = '/tmp/xstreamity/temp.png'
 				try:
 					downloadPage(desc_image, temp ,timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
@@ -863,13 +893,19 @@ class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySup
 		else:
 			print "file does not exist"
 		return preview
+		
+		
+	def loadDefaultImage(self):
+		if self["epg_picon"].instance:
+			self["epg_picon"].instance.setPixmapFromFile(common_path + "picon.png")
 
 
 	def back(self):
-		if self.session.nav.getCurrentlyPlayingServiceReference():
-			glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
-			glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
-			glob.nextlist[-1]['index'] = glob.currentchannelistindex
+		glob.nextlist[-1]['index'] = glob.currentchannelistindex
+		
+		if cfg.stopstream.value == True:
+			self.stopStream()
+			
 		self.close()
 
 
@@ -895,9 +931,11 @@ class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySup
 		self.playStream(self.servicetype, self.streamurl)
 
 
-	def loadDefaultImage(self):
-		if self["epg_picon"].instance:
-			self["epg_picon"].instance.setPixmapFromFile(common_path + "picon.png")
+	#play original channel
+	def stopStream(self):
+		if glob.currentPlayingServiceRefString != glob.newPlayingServiceRefString:
+			if glob.newPlayingServiceRefString != '':
+				self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
 
 
 

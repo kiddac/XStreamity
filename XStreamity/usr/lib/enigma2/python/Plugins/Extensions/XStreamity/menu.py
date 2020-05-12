@@ -19,6 +19,8 @@ import time
 import xstreamity_globals as glob
 
 import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 from multiprocessing.pool import ThreadPool
 
 
@@ -136,39 +138,31 @@ class XStreamity_Menu(Screen):
 	def download_url(self, url):
 		timeout = cfg.timeout.getValue()
 		category = url[1]
-		retries = 9
 		r = ''
+	
+		retries = Retry(total=3, status_forcelist=[408, 429, 500, 503, 504], method_whitelist=["HEAD", "GET", "OPTIONS"], backoff_factor = 1)
 		
-		while True:
-			retries -= 1
-			try:
-				r = requests.get(url[0], headers=hdr, stream=True, timeout=timeout)
-				r.raise_for_status()
-				if r.status_code == requests.codes.ok:
-
-					"""
-					with open(file_name, 'wb') as f:
-						for chunk in r.iter_content(chunk_size=8192): 
-							f.write(chunk)
-							"""
-				
-					return category, r.json()
-
-			except requests.exceptions.ConnectionError as errc:
-				print ("Error Connecting:",errc)
-				
-				if retries == 0:
-					break
-				else:
-					time.sleep(1)	
+		adapter = HTTPAdapter(max_retries=retries)
+		http = requests.Session()
+		http.mount("http://", adapter)
 		
-			except requests.exceptions.RequestException as e:  
-				print (e)
-				pass
-				break
-				
-		return category, ''
+		try:
+			r = http.get(url[0], headers=hdr, stream=True, timeout=timeout)
+			r.raise_for_status()
+			if r.status_code == requests.codes.ok:
+				return category, r.json()
+			
+		except requests.exceptions.ConnectionError as e:
+			print ("Error Connecting:",e)
+			pass
+			return category, ''
+			
 		
+		except requests.exceptions.RequestException as e:  
+			print (e)
+			pass
+			return category, ''
+			
 			
 	def process_downloads(self):
 		threads = len(self.url_list)

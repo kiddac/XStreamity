@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: XStreamity\n"
-"POT-Creation-Date: 2020-04-13 20:17+0200\n"
-"PO-Revision-Date: 2020-04-13 20:19+0200\n"
+"POT-Creation-Date: 2020-05-12 21:25+0200\n"
+"PO-Revision-Date: 2020-05-12 21:26+0200\n"
 "Last-Translator: @Lululla\n"
 "Language-Team: \n"
 "Language: it_IT\n"
@@ -14,43 +14,43 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: RecordDateInput.py:28 server.py:53 serverinfo.py:46 settings.py:53
+#: RecordDateInput.py:32 server.py:51 serverinfo.py:46 settings.py:51
 msgid "Close"
 msgstr "Chiudi"
 
-#: RecordDateInput.py:29 hidden.py:50 server.py:54 settings.py:54
+#: RecordDateInput.py:33 hidden.py:41 server.py:52 settings.py:52
 msgid "Save"
 msgstr "Salva"
 
-#: RecordDateInput.py:68
+#: RecordDateInput.py:72
 msgid "Date"
 msgstr "Data"
 
-#: RecordDateInput.py:69
+#: RecordDateInput.py:73
 msgid "Start Time"
 msgstr "Ora di inizio"
 
-#: RecordDateInput.py:70
+#: RecordDateInput.py:74
 msgid "End Time"
 msgstr "Ora fine"
 
-#: catchup.py:56
+#: catchup.py:50 catchup.py:51
 msgid "Catch Up TV"
 msgstr "Catch Up TV"
 
-#: catchup.py:74 categories.py:115 main.py:48 menu.py:49
+#: catchup.py:78 categories.py:126 main.py:42 menu.py:42
 msgid "Back"
 msgstr "Indietro"
 
-#: catchup.py:75 categories.py:116
+#: catchup.py:79 categories.py:127 categories.py:836
 msgid "OK"
 msgstr "OK"
 
-#: catchup.py:291 categories.py:473
+#: catchup.py:281 categories.py:446
 msgid "No data or playlist not compatible with X-Streamity plugin."
 msgstr "Nessun dato o playlist non compatibile con il plugin X-Streamity."
 
-#: catchup.py:293 categories.py:475
+#: catchup.py:283 categories.py:448
 msgid ""
 "Server taking too long to respond.\n"
 "Adjust server timeout in main settings."
@@ -58,52 +58,116 @@ msgstr ""
 "Il server impiega troppo tempo a rispondere. \n"
 "Regola il timeout del server nelle impostazioni principali."
 
-#: catchup.py:324 categories.py:505
+#: catchup.py:316 categories.py:483
 msgid "Incorrect pin code."
 msgstr "Codice pin non corretto."
 
-#: catchup.py:336 categories.py:517
+#: catchup.py:328 categories.py:495
 msgid "Please enter the parental control pin code"
 msgstr "Inserisci il codice PIN del controllo genitori"
 
-#: catchup.py:336 categories.py:517
+#: catchup.py:328 categories.py:495
 msgid "Enter pin code"
 msgstr "Inserisci codice pin"
 
-#: catchup.py:536
+#: catchup.py:515
 msgid "Catchup error. No data for this slot"
-msgstr "Errore di Catchup. Nessun dato per questo slot"
+msgstr "Errore di Recupero. Nessun dato per questo slot"
 
-#: categories.py:61
+#: categories.py:52
 msgid "Categories"
 msgstr "Categorie"
 
-#: categories.py:117 categories.py:484 categories.py:534 categories.py:950
-#: categories.py:1001 categories.py:1035
+#: categories.py:128 categories.py:462 categories.py:512 categories.py:837
+#: categories.py:1001 categories.py:1023 categories.py:1075
 msgid "Sort: A-Z"
 msgstr "Ordina: A-Z"
 
-#: categories.py:118 categories.py:1034
+#: categories.py:129 categories.py:838 categories.py:1074
 msgid "Search"
 msgstr "Ricerca"
 
-#: categories.py:230
+#: categories.py:208
 msgid "Hide/Show"
 msgstr "Nascondi/Mostra"
 
-#: categories.py:714
+#: categories.py:684
 msgid "Download"
 msgstr "Download"
 
-#: categories.py:754 categories.py:765 categories.py:805
+#: categories.py:724 categories.py:839 categories.py:873 categories.py:884
 msgid "Next Info"
 msgstr "Info successive"
 
-#: categories.py:759
+#: categories.py:878
 msgid "Now Info"
 msgstr "Info Attuali"
 
-#: categories.py:782
+#: categories.py:895
+msgid "Video Type:"
+msgstr "Tipo Video:"
+
+#: categories.py:896
+msgid "Duration:"
+msgstr "Durata:"
+
+#: categories.py:897
+msgid "Genre:"
+msgstr "Genere"
+
+#: categories.py:898
+msgid "Rating:"
+msgstr "Valutazione:"
+
+#: categories.py:899
+msgid "Country:"
+msgstr "Paese:"
+
+#: categories.py:900
+msgid "Release Date:"
+msgstr "Data rilascio:"
+
+#: categories.py:901
+msgid "Director:"
+msgstr "Regista"
+
+#: categories.py:902
+msgid "Cast:"
+msgstr "Attori:"
+
+#: categories.py:1002 categories.py:1012
+msgid "Sort: Z-A"
+msgstr "Ordina: Z-A"
+
+#: categories.py:1013 categories.py:1022
+msgid "Sort: Original"
+msgstr "Ordina: Default"
+
+#: categories.py:1047 categories.py:1056
+msgid "Reset Search"
+msgstr "Reimposta Ricerca"
+
+#: categories.py:1048
+msgid "Filter this category..."
+msgstr "Filtra questa categoria ..."
+
+#: categories.py:1262
+msgid ""
+"Downloading \n"
+"\n"
+msgstr ""
+"Downloading \n"
+"\n"
+
+#: categories.py:1267
+msgid ""
+"Download Failed\n"
+"\n"
+msgstr ""
+"Download Failed\n"
+"\n"
+
+#: categories.py:1541
 msgid ""
 "The IMDb plugin is not installed!\n"
 "Please install it."
@@ -111,227 +175,163 @@ msgstr ""
 "Il plugin IMDb non è installato! \n"
 "Si prega di installarlo."
 
-#: categories.py:827
-msgid "Video Type:"
-msgstr "Tipo Video:"
-
-#: categories.py:828
-msgid "Duration:"
-msgstr "Durata:"
-
-#: categories.py:829
-msgid "Genre:"
-msgstr "Genere"
-
-#: categories.py:830
-msgid "Rating:"
-msgstr "Valutazione:"
-
-#: categories.py:831
-msgid "Country:"
-msgstr "Paese:"
-
-#: categories.py:832
-msgid "Release Date:"
-msgstr "Data rilascio:"
-
-#: categories.py:833
-msgid "Director:"
-msgstr "Regista"
-
-#: categories.py:834
-msgid "Cast:"
-msgstr "Attori:"
-
-#: categories.py:952 categories.py:968
-msgid "Sort: Z-A"
-msgstr "Ordina: Z-A"
-
-#: categories.py:969 categories.py:986
-msgid "Sort: Original"
-msgstr "Ordina: Default"
-
-#: categories.py:1007 categories.py:1016
-msgid "Reset Search"
-msgstr "Reimposta Ricerca"
-
-#: categories.py:1008
-msgid "Filter this category..."
-msgstr "Filtra questa categoria ..."
-
-#: categories.py:1241
-msgid ""
-"Downloading \n"
-"\n"
-msgstr ""
-"Downloading \n"
-"\n"
-
-#: categories.py:1246
-msgid ""
-"Download Failed\n"
-"\n"
-msgstr ""
-"Download Failed\n"
-"\n"
-
-#: hidden.py:40
+#: hidden.py:31
 msgid "Hidden Categories"
 msgstr "Categorie Nascoste"
 
-#: hidden.py:49 hidden.py:51
+#: hidden.py:40 hidden.py:42
 msgid "Cancel"
 msgstr "Annulla"
 
-#: hidden.py:52
+#: hidden.py:43
 msgid "Invert"
 msgstr "Inverti"
 
-#: hidden.py:53
+#: hidden.py:44
 msgid "Clear All"
 msgstr "Pulisci"
 
-#: main.py:46
+#: main.py:40
 msgid "Select Server"
 msgstr "Scegli Server"
 
-#: main.py:50
+#: main.py:43
 msgid "Add"
 msgstr "Aggiungi"
 
-#: main.py:55
+#: main.py:47
 msgid "Settings"
 msgstr "Impostazioni"
 
-#: main.py:374 main.py:424 main.py:432
-msgid "Active"
-msgstr "Attivo"
-
-#: main.py:379 main.py:426
-msgid "Banned"
-msgstr "Bannato"
-
-#: main.py:381 main.py:430
-msgid "Expired"
-msgstr "Scaduto"
-
-#: main.py:383 main.py:428
-msgid "Disabled"
-msgstr "Disabilitato"
-
-#: main.py:385 main.py:407
+#: main.py:378 main.py:449
 msgid "Server Not Responding"
 msgstr "Il Server non Risponde"
 
-#: main.py:387 main.py:419
+#: main.py:392 main.py:451
 msgid "Not Authorised"
 msgstr "Non Autorizzato"
 
-#: main.py:453
+#: main.py:397 main.py:405 main.py:438
+msgid "Active"
+msgstr "Attivo"
+
+#: main.py:399 main.py:443
+msgid "Banned"
+msgstr "Bannato"
+
+#: main.py:401 main.py:447
+msgid "Disabled"
+msgstr "Disabilitato"
+
+#: main.py:403 main.py:445
+msgid "Expired"
+msgstr "Scaduto"
+
+#: main.py:428
 msgid "Edit"
 msgstr "Modifica"
 
-#: main.py:454
+#: main.py:429
 msgid "Delete"
 msgstr "Cancella"
 
-#: main.py:455
+#: main.py:430
 msgid "Info"
 msgstr "Informazioni"
 
-#: main.py:493
+#: main.py:486
 msgid "Delete selected playlist?"
 msgstr "Cancellare Lista Selezionata?"
 
-#: menu.py:47
+#: menu.py:40
 msgid "Stream Selection"
 msgstr "Selezione del flusso"
 
-#: menu.py:178
+#: menu.py:237
 msgid "No data, blocked or playlist not compatible with XStreamity plugin."
 msgstr "Nessun dato, blocco o playlist non compatibile con il plugin XStreamity."
 
-#: plugin.py:152 plugin.py:171
+#: plugin.py:143 plugin.py:162
 msgid "XStreamity"
 msgstr "XStreamity"
 
-#: plugin.py:170
+#: plugin.py:161
 msgid "IPTV Xtream Codes playlists player by KiddaC"
 msgstr "IPTV Xtream Codes Playlist di KiddaC"
 
-#: server.py:42
+#: server.py:40
 msgid "Add Server"
 msgstr "Aggiungi Server"
 
-#: server.py:46
+#: server.py:44
 msgid "Edit Server"
 msgstr "Modifica Server"
 
-#: server.py:93 settings.py:81
+#: server.py:91 settings.py:79
 msgid "Really close without saving settings?"
 msgstr "Chiudi senza salvare le impostazioni?"
 
-#: server.py:118
+#: server.py:116
 msgid "My IPTV"
 msgstr "My IPTV"
 
-#: server.py:119 server.py:145
+#: server.py:117 server.py:143
 msgid "http://"
 msgstr ""
 
-#: server.py:119 server.py:145
+#: server.py:117 server.py:143
 msgid "https://"
 msgstr ""
 
-#: server.py:122
+#: server.py:120
 msgid "username"
 msgstr ""
 
-#: server.py:123
+#: server.py:121
 msgid "password"
 msgstr ""
 
-#: server.py:161
+#: server.py:159
 msgid "Display name:"
 msgstr "Nome da visualizzare:"
 
-#: server.py:162
+#: server.py:160
 msgid "Protocol:"
 msgstr "Protocollo:"
 
-#: server.py:163
+#: server.py:161
 msgid "Server URL:"
 msgstr "URL Server:"
 
-#: server.py:164
+#: server.py:162
 msgid "Port:"
 msgstr "Porta:"
 
-#: server.py:165
+#: server.py:163
 msgid "Username:"
 msgstr ""
 
-#: server.py:166
+#: server.py:164
 msgid "Password:"
 msgstr ""
 
-#: server.py:167
+#: server.py:165
 msgid "Type:"
 msgstr "Tipo:"
 
-#: server.py:168
+#: server.py:166
 msgid "Output:"
 msgstr "Output:"
 
-#: server.py:169
+#: server.py:167
 msgid "Stream Type Live:"
 msgstr "Stream Tipo Live:"
 
-#: server.py:170
+#: server.py:168
 msgid "Stream Type VOD:"
 msgstr "Stream Tipo VOD:"
 
-#: server.py:171
+#: server.py:169
 msgid "EPG Timeshift:"
 msgstr "Timeshift EPG:"
 
@@ -339,113 +339,95 @@ msgstr "Timeshift EPG:"
 msgid "User Information"
 msgstr "Informazioni Utente"
 
-#: settings.py:45
+#: settings.py:43
 msgid "Main Settings"
 msgstr "Impostazioni principali"
 
-#: settings.py:104
+#: settings.py:102
 msgid "Select skin *Restart GUI Required"
 msgstr "Seleziona skin * Riavvio GUI obbligatorio"
 
-#: settings.py:105
+#: settings.py:103
 msgid "playlists.txt location"
 msgstr "posizione playlists.txt"
 
-#: settings.py:106
+#: settings.py:104
 msgid "Server timeout (seconds)"
 msgstr "Timeout del Server (secondi)"
 
-#: settings.py:108
-msgid "Display Live categories"
-msgstr "Mostra categorie Live"
-
-#: settings.py:109
-msgid "Display VOD categories"
-msgstr "Mostra categorie VOD "
-
-#: settings.py:110
-msgid "Display Series categories"
-msgstr "Mostra categorie Serie"
-
-#: settings.py:111
-msgid "Display Catchup category"
-msgstr "Mostra categorie Catchup"
-
-#: settings.py:113
+#: settings.py:106
 msgid "Default Live stream type"
 msgstr "Tipo di stream live predefinito"
 
-#: settings.py:114
+#: settings.py:107
 msgid "Default VOD/Series stream type"
 msgstr "Tipo di stream VOD/Serie predefinito"
 
-#: settings.py:115
+#: settings.py:108
 msgid "Preview streams in mini tv before playing"
 msgstr "Anteprima stream in Mini Tv prima di eseguire"
 
-#: settings.py:116
+#: settings.py:109
 msgid "Stop stream on back button"
 msgstr "Interrompi streaming sul pulsante Indietro"
 
-#: settings.py:117
-msgid "Show picons in Live categories"
-msgstr "Mostra picons in categorie Live"
-
-#: settings.py:118
-msgid "Show covers in VOD categories"
-msgstr "Mostra Cover in categorie VOD"
-
-#: settings.py:120
+#: settings.py:110
 msgid "VOD download folder"
 msgstr "Cartella download VOD"
 
-#: settings.py:121
+#: settings.py:111
 msgid "Parental control"
 msgstr "Controllo genitori"
 
-#: settings.py:122
+#: settings.py:112
 msgid "Show in main menu *Restart GUI Required"
 msgstr "Mostra in menu principale * Riavvio GUI obbligatorio"
 
-#: settings.py:124
+#: settings.py:114
 msgid "Update VOD Movie Database information"
 msgstr "Aggiorna informazioni del database film VOD"
 
-#: settings.py:125
+#: settings.py:115
 msgid "VOD Movie Database language"
 msgstr "Lingua del database dei film VOD"
 
-#: settings.py:246 settings.py:264
+#: settings.py:117
+msgid "Margin before catchup (mins)"
+msgstr "Margine prima del recupero (minuti)"
+
+#: settings.py:118
+msgid "Margin after catchup (mins)"
+msgstr "Margine dopo del recupero (minuti)"
+
+#: settings.py:224 settings.py:242
 msgid "Choose Directory:"
 msgstr "Scegli percorso"
 
-#: settings.py:247 settings.py:265
+#: settings.py:225 settings.py:243
 msgid "Choose directory"
 msgstr "Scegli percorso"
 
-#: streamplayer.py:321
+#: streamplayer.py:301
 msgid "TV"
 msgstr "TV"
 
-#: streamplayer.py:352
+#: streamplayer.py:332
 msgid "Please enter recording time"
 msgstr "Inserisci il tempo di registrazione"
 
-#: streamplayer.py:381
+#: streamplayer.py:361
 msgid "Recording Started."
 msgstr "Registrazione Avviata"
 
-#: streamplayer.py:383 streamplayer.py:386
+#: streamplayer.py:363 streamplayer.py:366
 msgid "Recording Failed."
 msgstr "Registrazione Fallita"
 
-#: streamplayer.py:630
+#: streamplayer.py:601
 msgid "VOD"
 msgstr ""
 
-#: streamplayer.py:822
+#: streamplayer.py:788
 msgid "Catch Up"
-msgstr ""
+msgstr "Recupero"
 
-#~ msgid "Download Hi-Res VOD Covers"
-#~ msgstr "Download Alta Risoluzione Cover VOD"

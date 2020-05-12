@@ -2,27 +2,26 @@ msgid ""
 msgstr ""
 "Project-Id-Version: XStreamity\n"
 "POT-Creation-Date: 2020-02-29 22:09+0100\n"
-"PO-Revision-Date: 2020-05-12 13:39+0200\n"
+"PO-Revision-Date: 2020-05-12 13:40+0200\n"
 "Last-Translator: @Kqiqi1\n"
 "Language-Team: \n"
-"Language: al_AL\n"
+"Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.3\n"
-"X-Poedit-Basepath: ../Downloads/enigma2-plugin-extensions-"
-"xstreamity_1.0022.20200229_all/data/usr/lib/enigma2/python/Plugins/"
-"Extensions/XStreamity\n"
+"X-Poedit-Basepath: ../Downloads/enigma2-plugin-extensions-xstreamity_1.0022.20200229_all/"
+"data/usr/lib/enigma2/python/Plugins/Extensions/XStreamity\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SearchPath-0: .\n"
 
 #: categories.py:58
 msgid "Categories"
-msgstr "Kategoria"
+msgstr "Kategorien"
 
 #: categories.py:123 main.py:50 menu.py:53
 msgid "Back"
-msgstr "Kthehu"
+msgstr "Zurück"
 
 #: categories.py:124
 msgid "OK"
@@ -30,82 +29,79 @@ msgstr "OK"
 
 #: categories.py:125 categories.py:748 categories.py:765
 msgid "Sort: A-Z"
-msgstr "Rëndit: A-Z"
+msgstr "Sortieren: A-Z"
 
 #: categories.py:126 categories.py:791
 msgid "Search"
-msgstr "Kërko"
+msgstr "Suche"
 
 #: categories.py:605 categories.py:616 categories.py:648
 msgid "Next Info"
-msgstr "Informacioni pasues"
+msgstr "Nächste Info"
 
 #: categories.py:610
 msgid "Now Info"
-msgstr "Informacioni aktual"
-
-msgid "Dubbed kqiqi1:"
-msgstr "Përkthej Kqiqi1:"
+msgstr "Jetzt Info"
 
 #: categories.py:666
 msgid "Video Type:"
-msgstr "Farmati i materialit:"
+msgstr "Videotyp:"
 
 #: categories.py:667
 msgid "Duration:"
-msgstr "Kohëzgjatja:"
+msgstr "Dauer:"
 
 #: categories.py:668
 msgid "Genre:"
-msgstr "Zhanri:"
+msgstr "Genre:"
 
 #: categories.py:669
 msgid "Rating:"
-msgstr "Vlersimi:"
+msgstr "Bewertung:"
 
 #: categories.py:670
 msgid "Country:"
-msgstr "Gjuha:"
+msgstr "Sprache:"
 
 #: catchup.py:336 categories.py:517
 msgid "Please enter the parental control pin code"
-msgstr "Ju lutem vendosini kodin prindëror"
+msgstr "Bitte geben Sie den PIN-Code der Kindersicherung ein"
 
 #: streamplayer.py:352
 msgid "Please enter recording time"
-msgstr "Ju lutem vendosini kohën regjistruese"
+msgstr "Bitte geben Sie die Aufnahmezeit ein"
 
 #: streamplayer.py:383 streamplayer.py:386
 msgid "Recording Failed."
-msgstr "Regjistrimi dështoi"
+msgstr "Aufnahme fehlgeschlagen"
 
 #: settings.py:247 settings.py:265
 msgid "Choose directory"
-msgstr "Zgjidheni dosjen"
+msgstr "Verzeichnis Wählen"
 
 #: settings.py:246 settings.py:264
 msgid "Choose Directory:"
-msgstr "Zgjidheni dosjen"
+msgstr "Verzeichnis Wählen"
 
 #: streamplayer.py:381
 msgid "Recording Started."
-msgstr "Regjistrimi sa po filloi"
+msgstr "Aufnahme gestartet"
 
 #: categories.py:671
 msgid "Release Date:"
-msgstr "Data rilascio:"
+msgstr "Veröffentlichungsdatum"
 
 #: RecordDateInput.py:68
 msgid "Date"
-msgstr "Data"
+msgstr "Datum"
 
 #: RecordDateInput.py:69
 msgid "Start Time"
-msgstr "Koha startuese"
+msgstr "Startzeit"
 
 #: RecordDateInput.py:70
 msgid "End Time"
-msgstr "Ora përfunduese"
+msgstr "Endzeit"
 
 #: catchup.py:56
 msgid "Catch Up TV"
@@ -121,79 +117,79 @@ msgstr "Aktorët:"
 
 #: categories.py:749 categories.py:756
 msgid "Sort: Z-A"
-msgstr "Dosja: Z-A"
+msgstr "Sortieren: Z-A"
 
 #: categories.py:757 categories.py:764
 msgid "Sort: Original"
-msgstr "Dosja: Standard"
+msgstr "Sortierung: Standard"
 
 #: categories.py:772 categories.py:785
 msgid "Reset Search"
-msgstr "Rivendosni kërkimin"
+msgstr "Suche zurücksetzen"
 
 #: categories.py:776
 msgid "Filter this category..."
-msgstr "Filto kët kategori ..."
+msgstr "Filtern diese Kategorie ..."
 
 #: main.py:48
 msgid "Select Server"
-msgstr "Vendose Serverin"
+msgstr "Server hinzufügen"
 
 #: main.py:52
 msgid "Add"
-msgstr "Vendos"
+msgstr "Hinzufügen"
 
 #: main.py:57
 msgid "About"
-msgstr "Nga ne..."
+msgstr "Über uns..."
 
 #: main.py:344 main.py:359 main.py:409 main.py:417
 msgid "Active"
-msgstr "Aktivo"
+msgstr "Aktiviere"
 
 #: main.py:348 main.py:363 main.py:411
 msgid "Banned"
-msgstr "Refuzim"
+msgstr "Anulieren"
 
 #: main.py:350 main.py:365 main.py:415
 msgid "Expired"
-msgstr "Ka skaduar"
+msgstr "Abgelaufen"
 
 #: main.py:352 main.py:367 main.py:413
 msgid "Disabled"
-msgstr "Jo aktiv"
+msgstr "Nicht aktiv"
 
 #: main.py:354 main.py:369 main.py:391
 msgid "Server Not Responding"
-msgstr "Serveri nuk është aktiv"
+msgstr "Server ist nicht aktiv"
 
 #: main.py:356 main.py:371 main.py:404
 msgid "Not Authorised"
-msgstr "Nuk është i autorizuar"
+msgstr "Nicht autorisiert"
 
 #: main.py:439
 msgid "Edit"
-msgstr "Edito"
+msgstr "Editieren"
 
 #: main.py:440
 msgid "Delete"
-msgstr "Shlyje"
+msgstr "Löschen"
 
 #: main.py:441
 msgid "Info"
-msgstr "Informacione"
+msgstr "Informationen"
 
 #: main.py:479
 msgid "Delete selected playlist?"
-msgstr "Doni ta shlyni listen e zgjedhur?"
+msgstr "Ausgewählte Wiedergabeliste löschen?"
 
 #: main.py:556
 msgid "Maximum allowed users. Expect playback issues."
-msgstr "Përdorues maksimal. Mund të keni probleme me riprodhimin."
+msgstr "Maximal zulässige Benutzer. Probleme bei der Wiedergabe."
 
 #: menu.py:51
 msgid "Stream Selection"
-msgstr "Përzgjedhja e burimit"
+msgstr "Stream Auswahl"
 
 #: plugin.py:46 plugin.py:59
 msgid "XStreamity"
@@ -201,27 +197,27 @@ msgstr "XStreamity"
 
 #: plugin.py:58
 msgid "IPTV Xtream Codes playlists player by KiddaC"
-msgstr "Playlist i Kodeve Xtream të IPTV nga KiddaC"
+msgstr "IPTV Xtream Codes Wiedergabelisten Player von KiddaC"
 
 #: server.py:47
 msgid "Add Server"
-msgstr "Vendos Serverin"
+msgstr "Server hinzufügen"
 
 #: server.py:51
 msgid "Edit Server"
-msgstr "Edito serverin"
+msgstr "Server editieren"
 
 #: server.py:58 serverinfo.py:46
 msgid "Close"
-msgstr "Mbylle"
+msgstr "Schließen"
 
 #: server.py:59
 msgid "Save"
-msgstr "Ruaje"
+msgstr "Speichern"
 
 #: server.py:98
 msgid "Really close without saving settings?"
-msgstr "Doni ta mbylli pa ruajtur cilsimet?"
+msgstr "Wirklich schließen, ohne Einstellungen zu speichern?"
 
 #: server.py:111
 msgid "My IPTV"
@@ -237,19 +233,19 @@ msgstr ""
 
 #: server.py:115
 msgid "username"
-msgstr "Emri i përdoruesit"
+msgstr "Nutzername"
 
 #: server.py:116
 msgid "password"
-msgstr "Fjalkalimi i perdoruesit"
+msgstr "Password"
 
-#: server.py:119 server.py:120 server.py:125 server.py:130 server.py:159
-#: server.py:160 server.py:164 server.py:169
+#: server.py:119 server.py:120 server.py:125 server.py:130 server.py:159 server.py:160
+#: server.py:164 server.py:169
 msgid "DVB(1)"
 msgstr ""
 
-#: server.py:119 server.py:120 server.py:126 server.py:131 server.py:159
-#: server.py:160 server.py:165 server.py:170
+#: server.py:119 server.py:120 server.py:126 server.py:131 server.py:159 server.py:160
+#: server.py:165 server.py:170
 msgid "IPTV(4097)"
 msgstr ""
 
@@ -259,11 +255,11 @@ msgstr ""
 
 #: server.py:179
 msgid "Display name:"
-msgstr "Emri për të shfaqur:"
+msgstr "Anzeigename:"
 
 #: server.py:180
 msgid "Protocol:"
-msgstr "Protokollo:"
+msgstr "Protokoll:"
 
 #: server.py:181
 msgid "Server URL:"
@@ -271,31 +267,31 @@ msgstr "URL Server:"
 
 #: server.py:182
 msgid "Port:"
-msgstr "Porta:"
+msgstr "Port:"
 
 #: server.py:183
 msgid "Username:"
-msgstr "Emri i përdoruesit:"
+msgstr "Nutzername:"
 
 #: server.py:184
 msgid "Password:"
-msgstr "Fjalkalimi i perdoruesit"
+msgstr "Password:"
 
 #: server.py:185
 msgid "Type:"
-msgstr "Lloi:"
+msgstr "Typ:"
 
 #: server.py:186
 msgid "Output:"
-msgstr "Dalja luajtëse:"
+msgstr "Ausgabe:"
 
 #: server.py:187
 msgid "Stream Type Live:"
-msgstr "Lloi stream Live:"
+msgstr "Stream-Typ Live:"
 
 #: server.py:188
 msgid "Stream Type VOD:"
-msgstr "Lloi stream VOD:"
+msgstr "Stream-Typ VOD:"
 
 #: server.py:189
 msgid "EPG Timeshift:"
@@ -303,159 +299,162 @@ msgstr "Timeshift EPG:"
 
 #: serverinfo.py:26
 msgid "User Information"
-msgstr "Informacionet e perdoruesit"
+msgstr "Nutzerinformation"
 
 #: streamplayer.py:165 streamplayer.py:374
 msgid "TV"
 msgstr ""
 
 msgid "Download"
-msgstr "Shkarko"
+msgstr "Download"
 
 msgid "Settings"
-msgstr "Konfigurimet"
+msgstr "Einstellungen"
 
 msgid "Data rilascio:"
-msgstr "Data realizuese"
+msgstr "Erscheinungsdatum"
 
 msgid "Page: %d of %d"
-msgstr "Faqja %d nga %d"
+msgstr "Seite %d nga %d"
 
 msgid "Main Settings"
-msgstr "Konfigurimet Personale"
+msgstr "Haupteinstellungen"
 
 msgid "URL Server:"
-msgstr "Adresa e Kompanis"
+msgstr "URL Server"
 
 msgid "playlists.txt location"
-msgstr "lokacioni tekst i listes"
+msgstr "playlists txt Speicherort"
 
 msgid "VOD download folder"
-msgstr "Dosja për shkarkimet VOD"
+msgstr "VOD Download Ordner"
 
 msgid "Default Live stream type"
-msgstr "Lloi standard i luajtjes drejtpërdrejt"
+msgstr "Standard Live Stream Typ"
 
 msgid "Default VOD stream type"
-msgstr "Lloi standard i luajtjes së Filmave"
+msgstr "Standard VOD Stream Typ"
 
 msgid "Preview Live stream before playing"
-msgstr "Shijo para luajtjes"
+msgstr "Vorschau des Streams vor dem Abspielen"
 
 msgid "Stop stream on back button"
-msgstr "Ndalo luajtjen me Butonin exit"
+msgstr "Stoppen Sie den Stream auf der exit Taste"
 
 msgid "Show picons in Live cateogries"
-msgstr "Trego pikonët në kategorit drejtpërdrejt"
+msgstr "Symbole in Live kategorien anzeigen"
 
 msgid "Show covers in VOD categories"
-msgstr "Trego pikonët në kategorit e filmave"
+msgstr "Cover in VOD Kategorien anzeigen"
 
 msgid "Download Hi-Res VOD Covers"
-msgstr "Shkarko Posteret me kfalitet për filma"
+msgstr "Download Covers mit kualittet"
 
 msgid "Show in main menu *Restart GUI Required"
-msgstr "Trego në menyn kryësore startim i detyrueshë i paisjes"
+msgstr "Im Hauptmenü anzeigen *GUI neu starten erforderlich"
 
 msgid "Parental control"
-msgstr "Kontrolli prindëror"
+msgstr "Elterliche Kontrolle"
 
 msgid "Live:"
-msgstr "Direkt"
+msgstr "Live"
 
 msgid "Cancel"
-msgstr "Anulo"
+msgstr "Löschen"
 
 msgid "Clear All"
-msgstr "Shlyj të gjitha"
+msgstr "Alles löschen"
 
 msgid "Hide/Show"
-msgstr "Fshih/Trego"
+msgstr "Verstecken/anzeigen"
 
 msgid "Live Streams:"
-msgstr "Transmetimet Direkte:"
+msgstr "Live Streams:"
 
 msgid "Invert"
-msgstr "Vendos"
+msgstr "Umkehren"
 
 msgid "Select skin *Restart GUI Required"
-msgstr "Zgjedhja e lëkurës *Ristartim paisje"
+msgstr "Skin auswählen *GUI neu starten erforderlich"
 
 msgid "Display Live categories"
-msgstr "Shfaq kategoritë e direkte"
+msgstr "Live Kategorien anzeigen"
 
 msgid "Display Catchup category"
-msgstr "Ekrani i kategoris Chatchup"
+msgstr "Catchup Kategorie anzeigen"
 
 msgid "Subtitles in:"
-msgstr "Titrat në gjuhën:"
+msgstr "Untertitel in:"
+
+msgid "Dubbed kqiqi1:"
+msgstr "Përkthej Kqiqi1:"
 
 msgid "Server timeout (seconds)"
-msgstr "Koha skaduese e serverit (sekonda)"
+msgstr "Server Timeout (Sekunden)"
 
 msgid "Display VOD categories"
-msgstr "Shfaq kategoritë VOD"
+msgstr "VOD Kategorien anzeigen"
 
 #: categories.py:610
 msgid "Status:"
-msgstr "Statusi:"
+msgstr "Status:"
 
 #: categories.py:610
 msgid "Is Trial:"
-msgstr "Testimi:"
+msgstr "Test:"
 
 #: categories.py:610
 msgid "Active Connections:"
-msgstr "Akseset aktive:"
+msgstr "Aktive Verbindungen:"
 
 #: categories.py:610
 msgid "Max Connections:"
-msgstr "Akseset maksimale:"
+msgstr "Max Verbindungen:"
 
 #: categories.py:610
 msgid "Created At:"
-msgstr "Krijuar në datën:"
+msgstr "Hergestellt am:"
 
 #: categories.py:610
 msgid "Expiry Date:"
-msgstr "Data skaduëse:"
+msgstr "Verfallsdatum:"
 
 #: categories.py:610
 msgid "Allowed Output Formats:"
-msgstr "Format e mundëshme:"
+msgstr "Zulässige Ausgabeformate:"
 
 #: categories.py:610
 msgid "Real URL:"
-msgstr "URL-ja Reale:"
+msgstr "Reale URL:"
 
 #: serverinfo.py:26
 msgid "Timezone:"
-msgstr "Koha e zonës:"
+msgstr "Zeitzone:"
 
 #: catchup.py:293 categories.py:454
 msgid ""
 "Server taking too long to respond.\n"
 "Adjust server timeout in main settings."
 msgstr ""
-"Nuk ka përgjigjëje nga serveri, koh e stërgjatur. \n"
-"Rregullo kohën e serverit në cilësimet kryesore"
+"Server braucht zu lange, um zu antworten. \n"
+"Passen Sie das Server-Timeout in den Haupteinstellungen an"
 
 #: catchup.py:293 categories.py:454
 msgid "No data or playlist not compatible with X-Streamity plugin."
-msgstr "Nuk ka ose nuk është kopitabile me X-Streamity"
+msgstr "Keine Daten oder Wiedergabelisten, die nicht mit X-Streamity-Plugins kompatibel sind"
 
 msgid "Display Series categories"
-msgstr "Shfaq kategoritë Seriale"
+msgstr "Serienkategorien anzeigen"
 
 msgid "Default VOD/Series stream type"
-msgstr "Lloi i rrjedhës VOD/Seriale"
+msgstr "Standard-Stream-Typ für VoD/Serie"
 
 #: settings.py:124
 msgid "Update VOD Movie Database information"
-msgstr "Aktualizo Informacionet VOD në bankier"
+msgstr "Aktualisieren Sie die Informationen zur VOD Datenbank"
 
 msgid "Preview streams in mini tv before playing"
-msgstr "Për shije para se të luani videon"
+msgstr "Vorschau von Streams im Mini-TV vor dem Spielen"
 
 msgid "Show picons in Live categories"
-msgstr "Trego pikonët e kanaleve direkte"
+msgstr "Zeige Picons in Live-Kategorien"

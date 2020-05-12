@@ -18,9 +18,12 @@ from xStaticText import StaticText
 import json
 import os
 import server, serverinfo, menu, settings
+import time
 import xstreamity_globals as glob
 
 import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 from multiprocessing.pool import ThreadPool
 
 
@@ -54,6 +57,7 @@ class XStreamity_Main(Screen):
 
 		self["splash"] = Pixmap()
 		self["splash"].hide()
+		
 		self["scroll_up"] = Pixmap()
 		self["scroll_down"] = Pixmap()
 
@@ -312,20 +316,32 @@ class XStreamity_Main(Screen):
 	def download_url(self, url):
 		index = url[1]
 		r = ''
+	
+		retries = Retry(total=3, status_forcelist=[408, 429, 500, 503, 504], method_whitelist=["HEAD", "GET", "OPTIONS"], backoff_factor = 1)
+		
+		adapter = HTTPAdapter(max_retries=retries)
+		http = requests.Session()
+		http.mount("http://", adapter)
+		
 		try:
-			r = requests.get(url[0], headers=hdr, stream=True, timeout=5)
+			r = http.get(url[0], headers=hdr, stream=True, timeout=10, verify=False)
 			r.raise_for_status()
 			if r.status_code == requests.codes.ok:
 				try:
 					return index, r.json()
 				except:
 					return index, ''
-				
+			
+		except requests.exceptions.ConnectionError as e:
+			print ("Error Connecting:",e)
+			pass
+			return index, ''	
+			
+		
 		except requests.exceptions.RequestException as e:  
 			print (e)
 			pass
-			
-		return index, ''
+			return index, ''	
 
 
 	def process_downloads(self):
@@ -335,7 +351,8 @@ class XStreamity_Main(Screen):
 		for index, response in results:
 			if response != '':
 				self.playlists_all[index].update(response)
-
+			else:
+				self.playlists_all[index]['user_info'] = []
 		self.buildPlaylistList()
 
 

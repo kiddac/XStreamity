@@ -14,18 +14,7 @@ def updatePreview(piconSize, imageType, temp):
 	try:
 		im = Image.open(temp)
 		im = im.convert('RGBA')
-		
-		# crop blank pixel
-		"""
-		r,g,b,a = im.split()
-		bbox = a.getbbox()
-		im = im.crop(bbox)
-		(cwidth, cheight) = im.size
-		cropped_image = Image.new("RGBA", (cwidth, cheight), (0,0,0,0))
-		cropped_image.paste(im, (0, 0))
-		im = cropped_image
-		"""
-		
+			
 		#resize / enlarge image - cannot do for picons due to transparency problems. 
 		if imageType == "cover":
 			basewidth = piconSize[0]
@@ -50,7 +39,7 @@ def updatePreview(piconSize, imageType, temp):
 		im = bg
 
 		#save picon
-		preview = '/tmp/xstreamity/preview.png'
+		preview = '/tmp/xstreamity/original.png'
 		im.save(preview, 'PNG')
 	except:
 		preview = ''		

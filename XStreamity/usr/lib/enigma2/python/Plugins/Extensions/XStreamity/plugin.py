@@ -97,6 +97,7 @@ cfg.TMDBLanguage = ConfigSelection(default='en', choices=languages)
 cfg.catchupstart = ConfigSelectionNumber(0, 30, 1, default = 0)
 cfg.catchupend = ConfigSelectionNumber(0, 30, 1, default = 0)
 
+
 skin_path = skin_directory + cfg.skin.value + '/'
 common_path = skin_directory + 'common' + '/'
 
