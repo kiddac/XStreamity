@@ -426,7 +426,6 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 		else:
 			self["progress"].hide()
 
-
 		self.reference = eServiceReference(int(self.servicetype),0,self.streamurl)
 		#self.reference.setName(str(glob.currentepglist[glob.currentchannelistindex][3]))
 
@@ -445,10 +444,8 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 		  })
 		  
 		self.downloadPicon()
-		
 
 
-	
 	def downloadPicon(self):
 
 		size = []
@@ -636,7 +633,7 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
 
 	def playStream(self, servicetype, streamurl):
 		self.reference = eServiceReference(int(self.servicetype),0, streamurl)
-		#self.reference.setName(glob.currentchannelist[glob.currentchannelistindex][0])
+		self.reference.setName(glob.currentchannelist[glob.currentchannelistindex][0])
 
 		if streamurl != 'None' and "/movie/" in streamurl:
 			self["streamcat"].setText("VOD")
@@ -840,7 +837,7 @@ class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySup
 			pass
 
 		self.reference = eServiceReference(int(servicetype),0,streamurl)
-		#self.reference.setName(glob.catchupdata[0])
+		self.reference.setName(glob.catchupdata[0])
 
 		#self.session.nav.stopService()
 		if self.session.nav.getCurrentlyPlayingServiceReference():
