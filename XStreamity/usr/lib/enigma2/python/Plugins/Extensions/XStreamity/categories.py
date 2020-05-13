@@ -315,6 +315,10 @@ class XStreamity_Categories(Screen):
 					description = ''.join(chr(ord(c)) for c in description).decode('utf8')
 				except:
 					pass
+					
+				if cfg.hideall.getValue() == True:
+					if title == "All":
+						continue
 
 				category_id = channel.findtext('category_id')
 				playlist_url = channel.findtext('playlist_url')

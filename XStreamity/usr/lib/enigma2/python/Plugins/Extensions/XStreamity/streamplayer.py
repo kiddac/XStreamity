@@ -431,11 +431,12 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 		#self.reference.setName(str(glob.currentepglist[glob.currentchannelistindex][3]))
 
 		#self.session.nav.stopService()
-		if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString():
-			self.session.nav.playService(self.reference)
-			if self.session.nav.getCurrentlyPlayingServiceReference():
-				glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
-				glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
+		if self.session.nav.getCurrentlyPlayingServiceReference():
+			if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString():
+				self.session.nav.playService(self.reference)
+				if self.session.nav.getCurrentlyPlayingServiceReference():
+					glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
+					glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
 
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
 		  iPlayableService.evStart: self.__evStart,
@@ -444,6 +445,8 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 		  })
 		  
 		self.downloadPicon()
+		
+
 
 	
 	def downloadPicon(self):
@@ -647,11 +650,12 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
 			pass
 
 		#self.session.nav.stopService()
-		if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString():
-			self.session.nav.playService(self.reference)
-			if self.session.nav.getCurrentlyPlayingServiceReference():
-				glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
-				glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
+		if self.session.nav.getCurrentlyPlayingServiceReference():
+			if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString():
+				self.session.nav.playService(self.reference)
+				if self.session.nav.getCurrentlyPlayingServiceReference():
+					glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
+					glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
 
 		self.downloadPicon()
 		
@@ -839,11 +843,12 @@ class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySup
 		#self.reference.setName(glob.catchupdata[0])
 
 		#self.session.nav.stopService()
-		if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString():
-			self.session.nav.playService(self.reference)
-			if self.session.nav.getCurrentlyPlayingServiceReference():
-				glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
-				glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
+		if self.session.nav.getCurrentlyPlayingServiceReference():
+			if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString():
+				self.session.nav.playService(self.reference)
+				if self.session.nav.getCurrentlyPlayingServiceReference():
+					glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
+					glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
 
 		self.downloadPicon()
 		

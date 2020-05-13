@@ -117,6 +117,8 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 		self.cfg_catchupstart = getConfigListEntry(_('Margin before catchup (mins)'), cfg.catchupstart)
 		self.cfg_catchupend = getConfigListEntry(_('Margin after catchup (mins)'), cfg.catchupend)
 		
+		self.cfg_hideall = getConfigListEntry(_('Hide "ALL" category from category lists'), cfg.hideall) 
+		
 		
 		self.createSetup()
 
@@ -145,6 +147,9 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 			self.list.append(self.cfg_catchupend)
 				
 			self.list.append(self.cfg_parental)
+			
+			self.list.append(self.cfg_hideall)
+			
 			self.list.append(self.cfg_main)
 			self['config'].list = self.list
 			self['config'].l.setList(self.list)
