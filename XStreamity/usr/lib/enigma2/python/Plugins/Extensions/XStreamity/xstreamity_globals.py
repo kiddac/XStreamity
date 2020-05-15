@@ -24,7 +24,7 @@ nextlist = []
 
 changed = False
 
-sort_list1 = []
+originalChannelList = []
 sort_list2 = []
 sort_list3 = []
 sort_list4 = []

@@ -27,7 +27,7 @@ from Components.Label import Label
 
 
 from xStaticText import StaticText
-from enigma import eTimer, eServiceReference, iPlayableService
+from enigma import eTimer, eServiceReference, iPlayableService, ePicLoad
 from plugin import skin_path, screenwidth, common_path, cfg
 
 import os
@@ -39,6 +39,8 @@ from itertools import cycle, islice
 from twisted.web.client import downloadPage
 from ServiceReference import ServiceReference
 from time import time
+
+from Components.AVSwitch import AVSwitch
 
 
 class IPTVInfoBarShowHide():
@@ -368,7 +370,6 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 
 
 	def playStream(self, servicetype, streamurl):
-				
 		self["epg_description"].setText(glob.currentepglist[glob.currentchannelistindex][4])
 		self["nowchannel"].setText(glob.currentchannelist[glob.currentchannelistindex][0])
 		self["nowtitle"].setText(glob.currentepglist[glob.currentchannelistindex][3])
@@ -436,6 +437,12 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 				if self.session.nav.getCurrentlyPlayingServiceReference():
 					glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
 					glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
+		else:
+			self.session.nav.playService(self.reference)
+			if self.session.nav.getCurrentlyPlayingServiceReference():
+					glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
+					glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
+					
 
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
 		  iPlayableService.evStart: self.__evStart,
@@ -464,13 +471,20 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 
 		if size != []:
 			if desc_image and desc_image != "n/A" and desc_image != "":
-				if desc_image.startswith('https'):
-					desc_image = desc_image.replace('https','http')
+				
 				temp = '/tmp/xstreamity/temp.png'
 				try:
 					downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
 				except:
-					pass
+					if desc_image.startswith('https'):
+						desc_image = desc_image.replace('https','http')
+						try:
+							downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
+						except:
+							pass
+							self.loadDefaultImage()
+					else:
+						self.loadDefaultImage()	
 			else:
 				self.loadDefaultImage()
 
@@ -601,6 +615,14 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
 		self["streamcat"] = StaticText()
 		self["streamtype"] = StaticText()
 		self["extension"] = StaticText()
+		
+		self.PicLoad = ePicLoad()
+		self.Scale = AVSwitch().getFramebufferScale()
+		try:
+			self.PicLoad.PictureData.get().append(self.DecodePicture)
+		except:
+			self.PicLoad_conn = self.PicLoad.PictureData.connect(self.DecodePicture)
+		
 		self["cover"] = Pixmap()
 
 		self["eventname"] = Label()
@@ -653,11 +675,20 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
 				if self.session.nav.getCurrentlyPlayingServiceReference():
 					glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
 					glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
+		else:
+			self.session.nav.playService(self.reference)
+			if self.session.nav.getCurrentlyPlayingServiceReference():
+				glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
+				glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()	
 
-		self.downloadPicon()
+		self.downloadCover()
 		
 
-	def downloadPicon(self):
+	def downloadCover(self):
+		
+		if os.path.exists("/tmp/xstreamity/original.jpg"):
+			os.remove("/tmp/xstreamity/original.jpg")
+		
 		size = []
 		stream_url = ''
 		desc_image = ''
@@ -672,45 +703,73 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
 			if screenwidth.width() > 1280:
 				size = [220,330]
 
-		if size != []:
-			if desc_image and desc_image != "n/A" and desc_image != "":
+
+		if desc_image and desc_image != "n/A" and desc_image != "":
+			if desc_image.startswith('https'):
+				desc_image = desc_image.replace('https','http')
+			
+			temp = '/tmp/xstreamity/temp.jpg'
+
+			try:
+				downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
+			except:
 				if desc_image.startswith('https'):
 					desc_image = desc_image.replace('https','http')
-				
-				temp = '/tmp/xstreamity/temp.png'
-
-				try:
-					downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
-				except:
-					pass
-			else:
-				self.loadDefaultImage()
-
-
-	def checkdownloaded(self, data, piconSize, imageType, temp):
-		preview = ''
-		if os.path.exists(temp):
-			print "file exists"
-			try:
-				preview = imagedownload.updatePreview(piconSize, imageType, temp)
-			except:
-				pass
-
-			if preview != '':
-				if self["cover"].instance:
-					self["cover"].instance.setPixmapFromFile(preview)
-			else:
-				self.loadDefaultImage()
+					try:
+						downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
+					except:	
+						pass
+						self.loadDefaultImage()
+				else:
+					self.loadDefaultImage()
 		else:
-			print "file does not exist"
-		return preview
-		
-	
+			self.loadDefaultImage()
+
+
 	def loadDefaultImage(self):
 		if self["cover"].instance:
 			self["cover"].instance.setPixmapFromFile(common_path + "cover.png")
 
 
+
+	def checkdownloaded(self, data, piconSize, imageType, temp):
+		if imageType == "cover":
+			if self["cover"].instance:	
+				self.displayVodImage()	
+		
+
+
+	def displayVodImage(self):
+
+		preview = '/tmp/xstreamity/temp.jpg'
+		
+		width = 147
+		height = 220
+		
+		if screenwidth.width() > 1280:
+			width = 220
+			height = 330
+			
+		self.PicLoad.setPara([width,height,self.Scale[0],self.Scale[1],0,1,"FF000000"])
+		
+		if self.PicLoad.startDecode(preview):
+				# if this has failed, then another decode is probably already in progress
+				# throw away the old picload and try again immediately
+				self.PicLoad = ePicLoad()
+				try:
+					self.PicLoad.PictureData.get().append(self.DecodePicture)
+				except:
+					self.PicLoad_conn = self.PicLoad.PictureData.connect(self.DecodePicture)
+				self.PicLoad.setPara([width,height,self.Scale[0],self.Scale[1],0,1,"FF000000"])
+				self.PicLoad.startDecode(preview)
+
+	def DecodePicture(self, PicInfo = None):
+		ptr = self.PicLoad.getData()
+		if ptr is not None:
+			self["cover"].instance.setPixmap(ptr)
+			self["cover"].instance.show()
+			
+			
 	def back(self):
 		glob.nextlist[-1]['index'] = glob.currentchannelistindex
 		
@@ -846,6 +905,11 @@ class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySup
 				if self.session.nav.getCurrentlyPlayingServiceReference():
 					glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
 					glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
+		else:
+			self.session.nav.playService(self.reference)
+			if self.session.nav.getCurrentlyPlayingServiceReference():
+				glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
+				glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
 
 		self.downloadPicon()
 		

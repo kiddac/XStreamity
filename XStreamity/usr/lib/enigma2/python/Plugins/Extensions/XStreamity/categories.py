@@ -8,7 +8,7 @@ from collections import OrderedDict
 from Screens.Screen import Screen
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from plugin import skin_path, screenwidth, hdr, cfg, common_path
-from enigma import eTimer, eServiceReference
+from enigma import eTimer, eServiceReference, ePicLoad
 from Components.ActionMap import ActionMap
 from Components.Sources.List import List
 from Components.Pixmap import Pixmap
@@ -36,6 +36,7 @@ from StringIO import StringIO
 from urllib import unquote
 import sys
 
+from Components.AVSwitch import AVSwitch
 
 class XStreamity_Categories(Screen):
 
@@ -70,7 +71,7 @@ class XStreamity_Categories(Screen):
 
 		self["channel"] = StaticText(self.main_title)
 
-		self.list1 = []
+		self.list = []
 		self.channelList = []
 		self["channel_list"] = List(self.channelList, enableWrapAround=True)
 		self["channel_list"].onSelectionChanged.append(self.selectionChanged)
@@ -97,6 +98,15 @@ class XStreamity_Categories(Screen):
 		self["epg_picon"] = Pixmap()
 		self["epg_picon"].hide()
 
+
+		self.PicLoad = ePicLoad()
+		self.Scale = AVSwitch().getFramebufferScale()
+		
+		try:
+			self.PicLoad.PictureData.get().append(self.DecodePicture)
+		except:
+			self.PicLoad_conn = self.PicLoad.PictureData.connect(self.DecodePicture)
+		
 		#vod variables
 		self["vod_background"] = Pixmap()
 		self["vod_background"].hide()
@@ -185,9 +195,7 @@ class XStreamity_Categories(Screen):
 			
 		self["actions"].csel = self
 
-
 		self.onFirstExecBegin.append(self.createSetup)
-		
 		self.onLayoutFinish.append(self.__layoutFinished)
 
 
@@ -240,7 +248,7 @@ class XStreamity_Categories(Screen):
 
 
 	def downloadEnigma2Categories(self, url):
-		self.list1 = []
+		self.list = []
 		self.channelList = []
 		self.listAll = []
 		self.channelListAll = []
@@ -323,6 +331,21 @@ class XStreamity_Categories(Screen):
 				category_id = channel.findtext('category_id')
 				playlist_url = channel.findtext('playlist_url')
 				desc_image = channel.findtext('desc_image')
+				
+				if desc_image:
+					if desc_image.startswith("https://image.tmdb.org/t/p/") or desc_image.startswith("http://image.tmdb.org/t/p/"):
+						dimensions = desc_image.partition("/p/")[2].partition("/")[0]
+						if screenwidth.width() <= 1280:
+							desc_image = desc_image.replace(dimensions, "w267")
+						else:
+							desc_image = desc_image.replace(dimensions, "w400")
+							
+					if desc_image.startswith("https://vignette.wikia.nocookie.net/tvfanon6528"):
+						desc_image = desc_image.replace("https","http") 
+						if "scale-to-width-down" not in desc_image:
+							desc_image = str(desc_image) + "/revision/latest/scale-to-width-down/220"
+					
+
 				stream_url = channel.findtext('stream_url')
 				
 				#remove times from title
@@ -359,14 +382,13 @@ class XStreamity_Categories(Screen):
 							  
 							if line.startswith("COVER_BIG:"):
 								coverurl = title.partition(":")[-1]
-								if coverurl.startswith("https://image.tmdb.org/t/p/"):
+								if coverurl.startswith("https://image.tmdb.org/t/p/") or coverurl.startswith("http://image.tmdb.org/t/p/"):
 									dimensions = coverurl.partition("/p/")[2].partition("/")[0]
 									if screenwidth.width() <= 1280:
-										desc_image = coverurl.replace(dimensions, "w267")
-									else:
 										desc_image = coverurl.replace(dimensions, "w300")
-								 
-					
+									else:
+										desc_image = coverurl.replace(dimensions, "w400")
+								
 						try:
 							epgnowtime = newdescription[0].partition(" ")[0].lstrip("[").rstrip("]")
 						except:
@@ -432,7 +454,7 @@ class XStreamity_Categories(Screen):
 						hidden = True
 
 				if hidden == False:
-					self.list1.append([index, str(title), str(description),str(desc_image), str(category_id), str(playlist_url), str(stream_url), \
+					self.list.append([index, str(title), str(description),str(desc_image), str(category_id), str(playlist_url), str(stream_url), \
 					str(epgnowtime), str(epgnowtitle), str(epgnowdescription), \
 					str(epgnexttime), str(epgnexttitle), str(epgnextdescription)]
 					)
@@ -447,7 +469,7 @@ class XStreamity_Categories(Screen):
 				indexAll += 1
 
 			self.channelList = []
-			self.channelList = [buildChannelListEntry(x[0], x[1], x[2], x[3], x[4], x[5], x[6]) for x in self.list1]
+			self.channelList = [buildChannelListEntry(x[0], x[1], x[2], x[3], x[4], x[5], x[6]) for x in self.list]
 			
 			self.channelListAll = []
 			self.channelListAll = [buildChannelListEntry(x[0], x[1], x[2], x[3], x[4], x[5], x[6]) for x in self.listAll]
@@ -455,12 +477,12 @@ class XStreamity_Categories(Screen):
 			self["channel_list"].setList(self.channelList)
 
 			self.epglist = []
-			self.epglist = [buildEPGListEntry(x[0], x[1], x[7], x[8], x[9], x[10], x[11], x[12]) for x in self.list1]
+			self.epglist = [buildEPGListEntry(x[0], x[1], x[7], x[8], x[9], x[10], x[11], x[12]) for x in self.list]
 
 			
 			self["epg_list"].setList([])
 
-			glob.sort_list1 = self.channelList[:]
+			glob.originalChannelList = self.channelList[:]
 			glob.sort_list2 = self.epglist[:]
 			glob.sort_list3 = self.voditemlist[:]
 
@@ -480,10 +502,12 @@ class XStreamity_Categories(Screen):
 						stream_url = self.channelList[currentindex][6]
 						if stream_url != 'None' and "/live/" in stream_url:
 							self.showEPGElements()
-							self.hideVod()	
-						if stream_url != 'None' and ("/movie/" in stream_url or "/series/" in stream_url):
-							self.showVodElements()
+							self.hideVod()
+						else:
 							self.hideEPG()
+						if stream_url != 'None' and ("/movie/" in stream_url):
+							self.showVodElements()
+							
 		else:
 			from Screens.MessageBox import MessageBox
 			if not self["channel_list"].getCurrent():
@@ -491,7 +515,7 @@ class XStreamity_Categories(Screen):
 			else:
 				self.session.open(MessageBox, _('Server taking too long to respond.\nAdjust server timeout in main settings.'), MessageBox.TYPE_WARNING, timeout=5)
 				self.back()
-
+				
 
 	def back(self):
 		
@@ -531,7 +555,7 @@ class XStreamity_Categories(Screen):
 
 
 	def next(self):
-		if not self.isStream:
+		if self.level == 1:
 			self.pin = True
 			if cfg.parental.getValue() == True:
 				adult = "all,", "+18", "adult", "18+", "18 rated", "xxx" ,"sex", "porn", "pink", "blue"
@@ -553,6 +577,7 @@ class XStreamity_Categories(Screen):
 	def next2(self):
 		if self.pin == False:
 			return
+			
 		self["key_yellow"].setText(_('Sort: A-Z'))
 		
 		if self["channel_list"].getCurrent():
@@ -560,7 +585,7 @@ class XStreamity_Categories(Screen):
 
 			glob.nextlist[-1]['index'] = currentindex
 
-			self.channelList = glob.sort_list1
+			self.channelList = glob.originalChannelList
 			self.epglist = glob.sort_list2
 			self.voditemlist = glob.sort_list3
 
@@ -625,22 +650,27 @@ class XStreamity_Categories(Screen):
 		
 	def playStream(self):
 		# exit button back to playing stream
-		currentindex =  self["channel_list"].getCurrent()[1]
-		stream_url = self.channelList[currentindex][6]
-		
-		if self.session.nav.getCurrentlyPlayingServiceReference():
-			if not self.isStream or self.session.nav.getCurrentlyPlayingServiceReference().toString() == glob.currentPlayingServiceRefString: 
-				self.back()
-			else:
-				if "/live/" in stream_url:
-					ref = str(self.session.nav.getCurrentlyPlayingServiceReference().toString())
-					self.tempstreamtype = ref.partition(':')[0]
-					self.tempstream_url = unquote(ref.split(':')[10]).decode('utf8')
-					self.source = "exit"
-					self.pin = True
-					self.next2()
-				else:
+		if self["channel_list"].getCurrent():
+			currentindex =  self["channel_list"].getCurrent()[1]
+			stream_url = self.channelList[currentindex][6]
+			
+			if self.session.nav.getCurrentlyPlayingServiceReference():
+				if not self.isStream or self.session.nav.getCurrentlyPlayingServiceReference().toString() == glob.currentPlayingServiceRefString: 
 					self.back()
+				else:
+					if "/live/" in stream_url:
+						ref = str(self.session.nav.getCurrentlyPlayingServiceReference().toString())
+						self.tempstreamtype = ref.partition(':')[0]
+						self.tempstream_url = unquote(ref.split(':')[10]).decode('utf8')
+						self.source = "exit"
+						self.pin = True
+						
+						self["channel_list"].setIndex(glob.nextlist[-1]['index'])
+						self.next2()
+					else:
+						self.back()
+			else:
+				self.back()
 
 				
 	#play original channel
@@ -685,19 +715,14 @@ class XStreamity_Categories(Screen):
 					self.displayProgress()
 					self["key_rec"].setText('')
 
-				else:
+				if "/movie/" in stream_url or "/series/" in stream_url:
 					self["key_rec"].setText(_("Download"))
-
 					if "/movie/" in stream_url:
-						self.displayVod()
-						self.timercover = eTimer()
 						if cfg.refreshTMDB.value == True:
 							self.getTMDB()
-						try:
-							self.timercover.callback.append(self.downloadCover)
-						except:
-							self.timercover_conn = self.timercover.timeout.connect(self.downloadCover)
-						self.timercover.start(500, True)	
+						else:
+							self.downloadCover()
+							self.displayVod()
 				
 	
 	def downloadPicon(self):
@@ -719,21 +744,28 @@ class XStreamity_Categories(Screen):
 
 			if url != '' and url != "n/A" and url != None:
 				original = '/tmp/xstreamity/original.png'
-				if url.startswith('https'):
-					url = url.replace('https','http')
-				d = downloadPage(url, original, timeout=3)
-				d.addCallback(self.checkdownloaded, size, imagetype)
-				d.addErrback(self.ebPrintError)
-				return d
+				
+				try:
+					downloadPage(url, original, timeout=3).addCallback(self.checkdownloaded, size, imagetype).addErrback(self.ebPrintError)
+				except:
+					if url.startswith('https'):
+						url = url.replace('https','http')
+						try:
+							downloadPage(url, original, timeout=3).addCallback(self.checkdownloaded, size, imagetype).addErrback(self.ebPrintError)
+						except:
+							pass
+							self.loadDefaultImage()
+					else:
+						self.loadDefaultImage()	
+		
 			else:
 				self.loadDefaultImage()
 	
 
 	def downloadCover(self):
-		self.timercover.stop()
-			
-		if os.path.exists("/tmp/xstreamity/original.png"):
-			os.remove("/tmp/xstreamity/original.png")
+
+		if os.path.exists("/tmp/xstreamity/original.jpg"):
+			os.remove("/tmp/xstreamity/original.jpg")
 			
 		url = ''
 		size = []
@@ -748,29 +780,39 @@ class XStreamity_Categories(Screen):
 
 			url = desc_image
 			
+		
 			if 'COVER_BIG' in self.voditemlist[currentindex][1]:
 				if self.voditemlist[currentindex][1]["COVER_BIG"] and self.voditemlist[currentindex][1]["COVER_BIG"] != "n/A":
 					url = self.voditemlist[currentindex][1]["COVER_BIG"]
 				else:
 					url = ''
 					
+					
 			size = [267, 400]
 			if screenwidth.width() > 1280:
 				size = [400,600]
-
+			
 			if url and url != "n/A" and url != "":
-				original = '/tmp/xstreamity/original.png'
-				if url.startswith('https'):
+				original = '/tmp/xstreamity/original.jpg'
+				try:
+					downloadPage(url, original, timeout=3).addCallback(self.checkdownloaded, size, imagetype).addErrback(self.ebPrintError)		
+				except:
+					if url.startswith('https'):
 						url = url.replace('https','http')
-				d = downloadPage(url, original, timeout=3)
-				d.addCallback(self.checkdownloaded, size, imagetype)
-				d.addErrback(self.ebPrintError)
-				#return d			
+						try:
+							downloadPage(url, original, timeout=3).addCallback(self.checkdownloaded, size, imagetype).addErrback(self.ebPrintError)		
+						except:	
+							pass
+							self.loadDefaultImage()
+					else:
+						self.loadDefaultImage()
+						
 			else:
 				self.loadDefaultImage()
-
+				
 				
 	def ebPrintError(self, failure):
+		print "********* error ********"
 		self.loadDefaultImage()
 		pass
 		
@@ -784,37 +826,68 @@ class XStreamity_Categories(Screen):
 			
 			
 	def checkdownloaded(self, data, piconSize, imageType):
-		original = '/tmp/xstreamity/original.png'
-		
 		if self["channel_list"].getCurrent():
 			preview = ''
-			if os.path.exists(original):
-				try:
-					preview = imagedownload.updatePreview(piconSize, imageType, original)		
-				except Exception as e:
-					print "* error ** %s" % e
-					pass
-				except:
-					pass
-				self.displayImage()	
-			else:
-				print "********* false *******"
-				self.loadDefaultImage()
+			
+			if imageType == "picon":
+				
+				original = '/tmp/xstreamity/original.png'
+				if os.path.exists(original):
+					try:
+						imagedownload.updatePreview(piconSize, imageType, original)	
+						self.displayImage()		
+					except Exception as e:
+						print "* error ** %s" % e
+						pass
+					except:
+						pass
+				
+				else:
+					self.loadDefaultImage()
+				
+			if imageType == "cover":
+				if self["vod_cover"].instance:	
+					self.displayVodImage()	
+			
+
+	def displayImage(self):		
+		preview = '/tmp/xstreamity/original.png'		
+		if self["epg_picon"].instance:				 
+			self["epg_picon"].instance.setPixmapFromFile(preview)
 
 
-	def displayImage(self):
-		preview = '/tmp/xstreamity/original.png'
+	def displayVodImage(self):
+
+		preview = '/tmp/xstreamity/original.jpg'
 		
-		if os.path.exists(preview):
-			if self["vod_cover"].instance:
-				self["vod_cover"].instance.setPixmapFromFile(preview)
+		width = 267
+		height = 400
+		
+		if screenwidth.width() > 1280:
+			width = 400
+			height = 600
+			
+		self.PicLoad.setPara([width,height,self.Scale[0],self.Scale[1],0,1,"FF000000"])
+		
+		if self.PicLoad.startDecode(preview):
+				# if this has failed, then another decode is probably already in progress
+				# throw away the old picload and try again immediately
+				self.PicLoad = ePicLoad()
+				try:
+					self.PicLoad.PictureData.get().append(self.DecodePicture)
+				except:
+					self.PicLoad_conn = self.PicLoad.PictureData.connect(self.DecodePicture)
+				self.PicLoad.setPara([width,height,self.Scale[0],self.Scale[1],0,1,"FF000000"])
+				self.PicLoad.startDecode(preview)
+		
 
-			if self["epg_picon"].instance:
-				self["epg_picon"].instance.setPixmapFromFile(preview)
-		else:
-			self.loadDefaultImage()
-			
-			
+	def DecodePicture(self, PicInfo = None):
+		ptr = self.PicLoad.getData()
+		if ptr is not None:
+			self["vod_cover"].instance.setPixmap(ptr)
+			self["vod_cover"].instance.show()
+
+						
 	def showEPGElements(self):
 		self["epg_picon"].show()
 		self["epg_bg"].show()
@@ -1017,7 +1090,6 @@ class XStreamity_Categories(Screen):
 
 				
 	def nownext(self):
-		
 		if self["channel_list"].getCurrent():
 			currentindex = self["channel_list"].getCurrent()[1]
 
@@ -1226,7 +1298,7 @@ class XStreamity_Categories(Screen):
 
 				if current_sort == (_('Sort: Original')):
 					self["key_yellow"].setText(_('Sort: A-Z'))
-					self.channelList = glob.sort_list1
+					self.channelList = glob.originalChannelList
 					
 					if self["channel_list"].getCurrent():
 						
@@ -1459,8 +1531,11 @@ class XStreamity_Categories(Screen):
 			if valid:
 				if "poster_path" in self.detailsresult:
 					if self.detailsresult["poster_path"] != None:
-						posterpath = "http://image.tmdb.org/t/p/w300" + str(self.detailsresult["poster_path"])
-					
+						if screenwidth.width() <= 1280:
+							posterpath = "http://image.tmdb.org/t/p/w300" + str(self.detailsresult["poster_path"])
+						else:
+							posterpath = "http://image.tmdb.org/t/p/w400" + str(self.detailsresult["poster_path"])
+				
 				if "title" in self.detailsresult:
 					name = str(self.detailsresult["title"])
 
@@ -1548,7 +1623,7 @@ class XStreamity_Categories(Screen):
 						
 						if posterpath != '':
 							currentvod["COVER_BIG"] = posterpath
-
+						self.downloadCover()
 						self.displayVod()
 						
 

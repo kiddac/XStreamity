@@ -14,12 +14,15 @@ import shutil
 
 screenwidth = getDesktop(0).size()
 
-if screenwidth.width() > 1280:
-	skin_directory = '/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/' 
-	
-else:
-	skin_directory = '/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/' 
+dir_src = "/etc/enigma2/X-Streamity/"
+dir_dst = "/etc/enigma2/xstreamity/" 
+dir_tmp = "/tmp/xstreamity/"
+dir_plugins = "/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/"
 
+if screenwidth.width() > 1280:
+	skin_directory = "%sskin/fhd/" % (dir_plugins) 
+else:
+	skin_directory = "%sskin/hd/" % (dir_plugins) 
 
 folders = os.listdir(skin_directory)
 if "common" in folders:
@@ -83,8 +86,8 @@ except:
 	from Components.UsageConfig import defaultStorageDevice
 	downloadpath = defaultStorageDevice()
 		
-			 
-cfg.location = ConfigDirectory(default='/etc/enigma2/X-Streamity/')
+		 
+cfg.location = ConfigDirectory(default=dir_dst)
 cfg.main = ConfigYesNo(default=False)
 cfg.livepreview = ConfigYesNo(default=False)
 cfg.stopstream = ConfigYesNo(default=False)
@@ -97,42 +100,65 @@ cfg.TMDBLanguage = ConfigSelection(default='en', choices=languages)
 cfg.catchupstart = ConfigSelectionNumber(0, 30, 1, default = 0)
 cfg.catchupend = ConfigSelectionNumber(0, 30, 1, default = 0)
 cfg.hideall = ConfigYesNo(default=False) 
-
+cfg.api = ConfigSelection(default='enigma2', choices=[('enigma2', _('Enigma2 (Quick)')), ('player', _('Player (Full)'))])
 
 skin_path = skin_directory + cfg.skin.value + '/'
-common_path = skin_directory + 'common' + '/'
 
-playlist_path = '/etc/enigma2/X-Streamity/playlists.txt'		
+skin_path = '%s%s/' % (skin_directory, cfg.skin.value)
+common_path = '%scommon/' % (skin_directory)
+json_file = "%splaylists.json" % (dir_dst) 
+playlist_path = "%splaylists.txt" % (dir_dst) 
+
 if cfg.location.value:
-	playlist_path = cfg.location.value + '/playlists.txt'	
+	playlist_path = "%s/playlists.txt" % (cfg.location.value) 
+	print "******** your momma it exists ********%s" % cfg.location.value
+	print "******** your momma it exists ********%s" % cfg.location.getValue()
 	
-		 
-json_file = '/etc/enigma2/X-Streamity/playlists.json'
 
-fontfolder = '/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/fonts/'
-imagefolder = '/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/icons/'
-skinimagefolder = skin_path + '/images/'
-
+	
+fontfolder = "%sfonts/" % (dir_plugins) 
+imagefolder = "%sicons/" % (dir_plugins) 
+imagefolder = "%s/images/" % (skin_path) 
 
 hdr = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36',
 		 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
 		 'Accept-Encoding': 'deflate' }
 
 
+# delete old folder
+if os.path.exists(dir_src):
+	if not os.path.exists(dir_dst):
+		os.makedirs(dir_dst)
+
+	for file in os.listdir(dir_src):
+		src_file = os.path.join(dir_src, file)
+		dst_file = os.path.join(dir_dst, file)
+		shutil.move(src_file, dst_file)	
+	
+	shutil.rmtree('/etc/enigma2/X-Streamity/') 
+	#os.rmdir('/etc/enigma2/X-Streamity')
+
 # create folder for working files
-if not os.path.exists('/etc/enigma2/X-Streamity/'):
-	os.makedirs('/etc/enigma2/X-Streamity/')
+if not os.path.exists(dir_dst):
+	os.makedirs(dir_dst)
 	
 # delete temporary folder and contents
-if os.path.exists('/tmp/xstreamity/'):	
+if os.path.exists(dir_tmp):	
 	shutil.rmtree('/tmp/xstreamity') 
 
 # create temporary folder for downloaded files 
-if not os.path.exists('/tmp/xstreamity/'):	
-	os.makedirs('/tmp/xstreamity/')
+if not os.path.exists(dir_tmp):	
+	os.makedirs(dir_tmp)
 
+# check if playlists.txt file exists in specified location
+if not os.path.isfile(playlist_path):
+	open(playlist_path, 'a').close()
 
-		
+# check if playlists.json file exists in specified location
+if not os.path.isfile(json_file):
+	open(json_file, 'a').close()
+
+# remove 		
 def main(session, **kwargs):
 	import main
 	

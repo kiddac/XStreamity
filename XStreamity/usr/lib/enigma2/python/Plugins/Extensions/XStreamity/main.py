@@ -9,7 +9,7 @@ from Components.Pixmap import Pixmap
 from Components.Sources.List import List
 from datetime import datetime
 from enigma import eTimer, eServiceReference
-from plugin import skin_path, json_file, hdr, playlist_path, cfg, common_path
+from plugin import skin_path, json_file, hdr, playlist_path, cfg, common_path, dir_plugins
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools.LoadPixmap import LoadPixmap
@@ -17,7 +17,6 @@ from xStaticText import StaticText
 
 import json
 import os
-import server, serverinfo, menu, settings
 import time
 import xstreamity_globals as glob
 
@@ -25,6 +24,7 @@ import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 from multiprocessing.pool import ThreadPool
+
 
 
 class XStreamity_Main(Screen):
@@ -87,19 +87,16 @@ class XStreamity_Main(Screen):
 
 
 	def start(self):
+		
+		print "****** playlist_path playlist_path%s" % playlist_path
+		
 		#get version number
-		with open("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/version.txt", 'r') as f:
+		with open(dir_plugins + "version.txt", 'r') as f:
 			self['version'].setText(f.read())
-
-		# check if playlists.txt file exists in specified location
-		if not os.path.isfile(playlist_path):
-			open(playlist_path, 'a').close()
 
 		# check if playlists.json file exists in specified location
 		self.playlists_all = []
-		if not os.path.isfile(json_file):
-			open(json_file, 'a').close()
-		else:
+		if os.path.isfile(json_file):
 			with open(json_file) as f:
 				try:
 					self.playlists_all = json.load(f, object_pairs_hook=OrderedDict)
@@ -483,12 +480,14 @@ class XStreamity_Main(Screen):
 
 
 	def addServer(self):
+		import server
 		glob.configchanged = False
 		self.session.openWithCallback(self.refresh, server.XStreamity_AddServer, False)
 		return
 
 
 	def editServer(self):
+		import server
 		if self.list != []:
 			glob.configchanged = False
 			self.session.openWithCallback(self.refresh, server.XStreamity_AddServer, True)
@@ -551,6 +550,7 @@ class XStreamity_Main(Screen):
 
 
 	def openUserInfo(self):
+		import serverinfo
 		if self.list != []:
 			if 'user_info' in glob.current_playlist:
 				if 'auth' in glob.current_playlist['user_info']:
@@ -559,6 +559,7 @@ class XStreamity_Main(Screen):
 
 
 	def getStreamTypes(self):
+		import menu
 		if 'user_info' in glob.current_playlist:
 			if 'auth' in glob.current_playlist['user_info']:
 				if glob.current_playlist['user_info']['auth'] == 1 and glob.current_playlist['user_info']['status'] == "Active":
@@ -566,6 +567,7 @@ class XStreamity_Main(Screen):
 
 
 	def settings(self):
+		import settings
 		self.session.openWithCallback(self.settingsChanged, settings.XStreamity_Settings)
 
 

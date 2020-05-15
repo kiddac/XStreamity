@@ -118,13 +118,14 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 		self.cfg_catchupend = getConfigListEntry(_('Margin after catchup (mins)'), cfg.catchupend)
 		
 		self.cfg_hideall = getConfigListEntry(_('Hide "ALL" category from category lists'), cfg.hideall) 
-		
+		self.cfg_api = getConfigListEntry(_('Select playlist API'), cfg.api) 
 		
 		self.createSetup()
 
 		
 	def createSetup(self):
 			self.list = []
+			#self.list.append(self.cfg_api)
 			self.list.append(self.cfg_skin)
 			self.list.append(self.cfg_location)
 			self.list.append(self.cfg_timeout)
