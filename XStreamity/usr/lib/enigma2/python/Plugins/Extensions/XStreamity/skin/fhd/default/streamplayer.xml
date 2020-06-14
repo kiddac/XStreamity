@@ -75,7 +75,6 @@
 		<convert type="xServiceInfo">IsWidescreen</convert>
 		<convert type="ConditionalShowHide">Invert</convert>
 	</widget>
-	<!-- multichannel -->
 	<widget source="session.CurrentService" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/dolby.png" position="1752,1023" size="90,36" alphatest="blend" zPosition="2">
 		<convert type="xServiceInfo">IsMultichannel</convert>
 		<convert type="ConditionalShowHide" />

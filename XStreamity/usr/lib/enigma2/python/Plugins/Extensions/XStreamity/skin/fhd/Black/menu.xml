@@ -17,20 +17,19 @@
 			"scrollbarMode": "showNever"
 			}</convert>
 	</widget>
+	
+	<widget source="lastchecked" render="Label" position="center,900" size="738,30" font="xstreamityregular;21" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" halign="center" transparent="1" noWrap="1" zPosition="2" />
+	
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/button-bg.png" position="0,1020" size="1920,60" alphatest="blend" zPosition="1" />
 
-	<widget source="key_red" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/key_red.png" position="561,1031" size="38,38" alphatest="blend" zPosition="2">
+	<widget source="key_red" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/key_red.png" position="750,1031" size="38,38" alphatest="blend" zPosition="2">
 		<convert type="ConditionalShowHide" />
 	</widget>
-	<widget source="key_red" render="Label" position="613,1020" size="240,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" transparent="1" noWrap="1" zPosition="2" />
+	<widget source="key_red" render="Label" position="802,1020" size="240,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" transparent="1" noWrap="1" zPosition="2" />
 	
-	<widget source="key_yellow" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/key_green.png" position="861,1031" size="38,38" alphatest="blend" zPosition="2" >
+	<widget source="key_yellow" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/key_yellow.png" position="1050,1031" size="38,38" alphatest="blend" zPosition="2" >
 		<convert type="ConditionalShowHide" />
 	</widget>
-	<widget source="key_yellow" render="Label" position="913,1020" size="240,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" transparent="1" noWrap="1" zPosition="2" />	
+	<widget source="key_yellow" render="Label" position="1102,1020" size="240,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" transparent="1" noWrap="1" zPosition="2" />	
 	
-	<widget source="key_epg" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/key_epg.png" position="1161,1031" size="38,38" alphatest="blend" zPosition="2" >
-		<convert type="ConditionalShowHide" />
-	</widget>
-	<widget source="key_epg" render="Label" position="1213,1020" size="240,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" transparent="1" zPosition="2" />
 </screen>

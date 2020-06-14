@@ -6,7 +6,7 @@
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/left-panel.png" position="0,0" size="480,1080" alphatest="blend" zPosition="1" />
 	<widget source="session.VideoPicture" render="Pig" position="0,0" size="501,282" backgroundColor="#ff000000" transparent="1" zPosition="2" />
 	<!-- mask tv to prevent black borders -->
-	<eLabel position="0,0" size="480,270" backgroundColor="transparent" zPosition="3" />
+	<eLabel position="0,0" size="480,270" backgroundColor="#ff000000" zPosition="3" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="30,358" size="420,4" alphatest="blend" zPosition="1" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="30,418" size="420,4" alphatest="blend" zPosition="1" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="30,478" size="420,4" alphatest="blend" zPosition="1" />
@@ -19,11 +19,11 @@
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="30,898" size="420,4" alphatest="blend" zPosition="1" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="30,958" size="420,4" alphatest="blend" zPosition="1" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="30,1018" size="420,4" alphatest="blend" zPosition="1" />
-	<widget source="hidden_list" render="Listbox" position="30,300" size="420,720" foregroundColor="#ffffff" backgroundColor="#000000" foregroundColorSelected="#ffffff"
+	<widget source="hidden_list" render="Listbox" position="0,300" size="480,720" foregroundColor="#ffffff" backgroundColor="#000000" foregroundColorSelected="#ffffff"
 			backgroundColorSelected="#003d68" scrollbarMode="showOnDemand" scrollbarSliderBorderWidth="1" scrollbarWidth="6" itemHeight="60" transparent="1" zPosition="2" >
 		<convert type="TemplatedMultiContent">{"template": [
-			MultiContentEntryPixmapAlphaBlend(pos = (15, 12), size = (38, 36), png = 0),
-			MultiContentEntryText(pos = (69,0), size = (300, 60), font=0,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1),
+			MultiContentEntryPixmapAlphaBlend(pos = (18, 12), size = (38, 36), png = 0),
+			MultiContentEntryText(pos = (69,0), size = (381, 60), font=0,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1),
 			],
 			"fonts": [gFont("xstreamityregular", 27)],
 			"itemHeight": 60,

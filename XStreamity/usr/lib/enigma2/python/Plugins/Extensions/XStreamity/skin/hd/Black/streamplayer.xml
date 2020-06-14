@@ -59,7 +59,6 @@
 	<widget source="session.CurrentService" render="Label" position="1104,654" size="60,24" font="xstreamitybold;18" foregroundColor="#ffffff" backgroundColor="#40000000" valign="center" halign="center" transparent="1" zPosition="3">
 		<convert type="xServiceInfo">VideoHeight</convert>
 	</widget>
-	<!-- Framerate -->
 	<widget source="session.CurrentService" render="Label" position="1104,682" size="60,24" font="xstreamitybold;16" foregroundColor="#ffffff" backgroundColor="#40000000" valign="center" halign="center" transparent="1" zPosition="3">
 		<convert type="xServiceInfo">Framerate</convert>
 	</widget>

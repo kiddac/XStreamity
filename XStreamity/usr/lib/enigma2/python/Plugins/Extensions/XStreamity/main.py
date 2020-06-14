@@ -9,20 +9,24 @@ from Components.Pixmap import Pixmap
 from Components.Sources.List import List
 from datetime import datetime
 from enigma import eTimer, eServiceReference
-from plugin import skin_path, json_file, hdr, playlist_path, cfg, common_path, dir_plugins
+from os import system
+from plugin import skin_path, json_file, hdr, playlist_path, cfg, common_path, VERSION
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools.LoadPixmap import LoadPixmap
+from urlparse import urlparse, parse_qs
 from xStaticText import StaticText
 
 import json
 import os
-import time
+import requests
 import xstreamity_globals as glob
 
-import requests
 from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.util.retry import Retry
+try:
+	from requests.packages.urllib3.util.retry import Retry
+except:
+	from urllib3.util import Retry
 from multiprocessing.pool import ThreadPool
 
 
@@ -86,37 +90,46 @@ class XStreamity_Main(Screen):
 		self.setTitle(self.setup_title)
 
 
+	def clear_caches(self):
+		try:
+			system("echo 1 > /proc/sys/vm/drop_caches")
+			system("echo 2 > /proc/sys/vm/drop_caches")
+			system("echo 3 > /proc/sys/vm/drop_caches")
+		except:
+			pass
+		
+
 	def start(self):
-		
-		print "****** playlist_path playlist_path%s" % playlist_path
-		
 		#get version number
-		with open(dir_plugins + "version.txt", 'r') as f:
-			self['version'].setText(f.read())
+		self.clear_caches()
+		
+		self['version'].setText(VERSION)
 
 		# check if playlists.json file exists in specified location
 		self.playlists_all = []
+		
+
 		if os.path.isfile(json_file):
-			with open(json_file) as f:
+			with open(json_file, "rb") as f:
 				try:
-					self.playlists_all = json.load(f, object_pairs_hook=OrderedDict)
+					#self.playlists_all = json.load(f, object_pairs_hook=OrderedDict)
+					self.playlists_all = json.load(f)
 				except:
 					os.remove(json_file)
+		
 
 		if os.path.isfile(playlist_path) and os.stat(playlist_path).st_size > 0:
 			self.checkPlaylistUserFile()
-	
+
 
 	def checkPlaylistUserFile(self):
 		self["splash"].show()
-		with open(playlist_path, 'r+') as f:
+
+		with open(playlist_path, 'r+b') as f:
 			lines = f.readlines()
 			f.seek(0)
-			f.writelines((line.strip(' ') for line in lines if line.strip()))
-			f.truncate()
-
-			f.seek(0)
 			for line in lines:
+				line = line.strip(' ')
 				if not line.startswith('http://') and not line.startswith('https://') and not line.startswith('#'):
 					line = '# ' + line
 				if "=mpegts" in line:
@@ -126,64 +139,69 @@ class XStreamity_Main(Screen):
 				if line.strip() == "#":
 					line = ""
 				f.write(line)
-			f.truncate()		
-
+				
 		self.getPlaylistUserFile()
 
 
 	def getPlaylistUserFile(self):
-		with open(playlist_path) as f:
+		with open(playlist_path, "rb") as f:
 			lines = f.readlines()
-			f.seek(0)
+			#f.seek(0)
 			self.index = 0
 
 			for line in lines:
 				line = line.strip()
-				self.protocol = 'http://'
-				self.domain = ''
-				self.port = 80
 				self.username = ''
 				self.password = ''
 				self.type = 'm3u_plus'
 				self.output = 'ts'
-				self.host = ''
-				self.player_api = ''
-				self.enigma2_api = ''
+				
 				self.livetype = cfg.livetype.getValue()
 				self.vodtype = cfg.vodtype.getValue()
+				self.catchuptype = cfg.catchuptype.getValue()
 				self.epgshift = 0
 				self.livehidden = []
 				self.vodhidden = []
 				self.serieshidden = []
+				self.showlive = True
+				self.showvod = True
+				self.showseries = True
+				self.showcatchup = True
+				self.epgtype = "0"
+				self.epgquickshift = 0
 
-				urlsplit1 = line.split("/")
-				urlsplit2 = line.split("?")
-
-				self.protocol = urlsplit1[0] + "//"
-
+				parsed_uri = urlparse(line)
+				
+				self.protocol = parsed_uri.scheme + "://"
+				
 				if not (self.protocol == "http://" or self.protocol == "https://"):
 					continue
-
-				if len(urlsplit1) > 2:
-					self.domain = urlsplit1[2].split(':')[0]
-					if len(urlsplit1[2].split(':')) > 1:
-						self.port = urlsplit1[2].split(':')[1]
-
+					
+				self.domain = parsed_uri.hostname
+				self.port = parsed_uri.port
+				if not self.port:
+					self.port = 80
+					
 				self.host =  "%s%s:%s" % (self.protocol, self.domain, self.port)
-
-				if len(urlsplit2) > 1:
-					for param in urlsplit2[1].split("&"):
-						if param.startswith("username"):
-							self.username = param.split('=')[1]
-						if param.startswith("password"):
-							self.password = param.split('=')[1]
-						if param.startswith("type"):
-							self.type = param.split('=')[1]
-						if param.startswith("output"):
-							self.output = param.split('=')[1].strip()
-							if self.output != "ts" and self.output != "m3u8":
-								self.output = "ts"
-
+				
+				query = parse_qs(parsed_uri.query, keep_blank_values=True)
+				if "username" in query:
+					self.username = query['username'][0]
+				else:
+					continue
+					
+				if "password" in query:
+					self.password = query['password'][0]
+				else:
+					continue
+				
+				if "type" in query:
+					self.type = query['type'][0]
+					
+				if "output" in query:
+					self.output = query['output'][0]
+					
+				
 				self.player_api = "%s/player_api.php?username=%s&password=%s" % (self.host, self.username, self.password)
 				self.enigma2_api = "%s/enigma2.php?username=%s&password=%s" % (self.host, self.username, self.password)
 				self.xmltv_api = "%s/xmltv.php?username=%s&password=%s" % (self.host, self.username, self.password)
@@ -191,7 +209,7 @@ class XStreamity_Main(Screen):
 				
 				playlist_exists = False
 		
-				if self.playlists_all != []:
+				if self.playlists_all:
 					for playlists in self.playlists_all:
 		
 						#extra check in case playlists.txt details have been amended
@@ -202,9 +220,15 @@ class XStreamity_Main(Screen):
 								playlists["playlist_info"]["output"] = self.output
 								playlists["playlist_info"]["full_url"] = self.full_url #get.php
 
+								if "epgtype" not in playlists["player_info"]:
+									playlists["player_info"]["epgtype"] = self.epgtype
+									
+								if "epgquickshift" not in playlists["player_info"]:
+									playlists["player_info"]["epgquickshift"] = self.epgquickshift
+									
 				if playlist_exists == False:
 					self.playlists_all.append({
-					"playlist_info": OrderedDict([
+					"playlist_info": dict([
 						("index", self.index),
 						("name", self.domain),
 						("protocol",self.protocol),
@@ -223,12 +247,20 @@ class XStreamity_Main(Screen):
 						"player_info": OrderedDict([
 						("livetype", self.livetype),
 						("vodtype", self.vodtype),
+						("catchuptype", self.catchuptype),
 						("epgshift", self.epgshift),
 						("livehidden", self.livehidden),
 						("vodhidden", self.vodhidden),
 						("serieshidden", self.serieshidden),
+						("showlive", self.showlive),
+						("showvod", self.showvod),
+						("showseries", self.showseries),
+						("showcatchup", self.showcatchup),
+						("epgtype", self.epgtype),
+						("epgquickshift", self.epgquickshift),
 						]),
-						"data": OrderedDict([
+						
+						"data": dict([
 						("live_categories", []),
 						("vod_categories", []),
 						("series_categories", []),	
@@ -238,21 +270,21 @@ class XStreamity_Main(Screen):
 						("catchup", False),
 						("catchup_checked", False),
 					
-						("lists_date", ''),
-						("epg_date", '')
+						("last_check", ''),
+						("epg_date", ''),
 
 						]),
 					})
-				self.index += 1
 
+				self.index += 1
+			
 		self.removeOldPlaylists()
 		
 		
 	def removeOldPlaylists(self):
-		if self.playlists_all != []:
+		if self.playlists_all:
 			newList = []
-			
-			with open(playlist_path) as f:
+			with open(playlist_path, "rb") as f:
 				lines = f.readlines()
 
 			for playlist in self.playlists_all:
@@ -282,15 +314,13 @@ class XStreamity_Main(Screen):
 	#delay to allow splash screen to show
 	def delayedDownload(self):
 		self.timer = eTimer()
-	
 		try: 
 			self.timer_conn = self.timer.timeout.connect(self.makeUrlList)
 		except:
 			try:
 				self.timer.callback.append(self.makeUrlList)
 			except:
-				self.self.makeUrlList()
-				
+				self.self.makeUrlList()	
 		self.timer.start(5, True)
 		
 		
@@ -307,21 +337,20 @@ class XStreamity_Main(Screen):
 				self.url_list.append([player_api, x])
 			x += 1
 		
-		self.process_downloads()
+		if self.url_list != []:
+			self.process_downloads()
 		
 				
 	def download_url(self, url):
 		index = url[1]
 		r = ''
-	
-		retries = Retry(total=3, status_forcelist=[408, 429, 500, 503, 504], method_whitelist=["HEAD", "GET", "OPTIONS"], backoff_factor = 1)
-		
+		retries = Retry(total=1, status_forcelist=[408, 429, 500, 503, 504], method_whitelist=["HEAD", "GET", "OPTIONS"], backoff_factor = 3)
 		adapter = HTTPAdapter(max_retries=retries)
 		http = requests.Session()
 		http.mount("http://", adapter)
 		
 		try:
-			r = http.get(url[0], headers=hdr, stream=True, timeout=10, verify=False)
+			r = http.get(url[0], headers=hdr, stream=True, timeout=5, verify=False)
 			r.raise_for_status()
 			if r.status_code == requests.codes.ok:
 				try:
@@ -330,26 +359,27 @@ class XStreamity_Main(Screen):
 					return index, ''
 			
 		except requests.exceptions.ConnectionError as e:
-			print ("Error Connecting:",e)
+			print("Error Connecting: %s" % e)
 			pass
 			return index, ''	
 			
 		
 		except requests.exceptions.RequestException as e:  
-			print (e)
+			print(e)
 			pass
 			return index, ''	
 
 
 	def process_downloads(self):
 		threads = len(self.url_list)
-		results = ThreadPool(threads).imap_unordered(self.download_url, self.url_list)
-
+		pool = ThreadPool(threads)
+		results = pool.imap_unordered(self.download_url, self.url_list)
 		for index, response in results:
 			if response != '':
 				self.playlists_all[index].update(response)
 			else:
 				self.playlists_all[index]['user_info'] = []
+		pool.terminate()
 		self.buildPlaylistList()
 
 
@@ -372,7 +402,7 @@ class XStreamity_Main(Screen):
 
 
 	def writeJsonFile(self):
-		with open(json_file, 'w') as f:
+		with open(json_file, 'wb') as f:
 			json.dump(self.playlists_all, f)
 		self.createSetup()
 		
@@ -391,6 +421,7 @@ class XStreamity_Main(Screen):
 			maxnum = ''
 			status = (_('Server Not Responding'))
 			expires = ''
+			timeshift = 'EPG Timeshift: '
 
 			if playlist != {}:
 				if 'playlist_info' in playlist:
@@ -430,12 +461,14 @@ class XStreamity_Main(Screen):
 									if 'max_connections' in playlist['user_info']:
 										maxc = str("Max Conn:")
 										maxnum = playlist['user_info']['max_connections']
+										
+				timeshift += str(playlist['player_info']['epgshift'])
 
-				self.list.append([index, name, url, expires, status, active, activenum, maxc, maxnum])
+				self.list.append([index, name, url, expires, status, active, activenum, maxc, maxnum, timeshift])
 				index += 1
 
 		self.drawList = []
-		self.drawList = [self.buildListEntry(x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8]) for x in self.list]
+		self.drawList = [self.buildListEntry(x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7],x[8], x[9]) for x in self.list]
 		self["playlists"].setList(self.drawList)
 		
 		if self.list != []:
@@ -448,7 +481,7 @@ class XStreamity_Main(Screen):
 			self['key_info'].setText('')
 
 
-	def buildListEntry(self, index, name, url, expires, status, active, activenum, maxc, maxnum):
+	def buildListEntry(self, index, name, url, expires, status, active, activenum, maxc, maxnum, timeshift):
 		if status == (_('Active')):
 			pixmap = LoadPixmap(cached=True, path=common_path + 'led_green.png')
 
@@ -464,8 +497,8 @@ class XStreamity_Main(Screen):
 			pixmap = LoadPixmap(cached=True, path=common_path + 'led_red.png')
 		if status == (_('Not Authorised')):
 			pixmap = LoadPixmap(cached=True, path=common_path + 'led_red.png')
-
-		return(index, str(name), str(url), str(expires), str(status), pixmap, str(active), str(activenum), str(maxc), str(maxnum))
+			
+		return(index, str(name), str(url), str(expires), str(status), pixmap, str(active), str(activenum), str(maxc), str(maxnum), str(timeshift))
 
 
 	def quit(self):
@@ -501,32 +534,33 @@ class XStreamity_Main(Screen):
 			if answer is None:
 				self.session.openWithCallback(self.deleteServer, MessageBox, _('Delete selected playlist?'))
 			elif answer:
-				with open(playlist_path, 'r+') as f:
+				with open(playlist_path, 'r+b') as f:
 					lines = f.readlines()
 					f.seek(0)
 					for line in lines:
 						if str(currentplaylist['playlist_info']['domain']) in line and "username=" + str(currentplaylist['playlist_info']['username']) in line:
-							line = '#' + str(line)
+							line = '#%s' % line
 						f.write(line)
-					f.truncate()
-					f.close()
 			self.refresh()
 
 
 	def refresh(self):
-		if glob.configchanged:
-			self["splash"].show()
-			self.playlists_all = []
-			if not os.path.isfile(json_file) or not os.stat(json_file).st_size > 0:
-				open(json_file, 'a').close()
 		
-			with open(json_file) as f:
-				try:
-					self.playlists_all = json.load(f, object_pairs_hook=OrderedDict)
-				except:
-					os.remove(json_file)
+		self["splash"].show()
+		self.playlists_all = []
+		
+		"""
+		if not os.path.isfile(json_file) or not os.stat(json_file).st_size > 0:
+			open(json_file, 'a').close()
+			"""
+	
+		with open(json_file) as f:
+			try:
+				self.playlists_all = json.load(f)
+			except:
+				os.remove(json_file)
 
-			self.start()
+		self.start()
 
 
 	def getCurrentEntry(self):

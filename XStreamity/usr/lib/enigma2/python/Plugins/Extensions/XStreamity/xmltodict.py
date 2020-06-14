@@ -379,6 +379,7 @@ def _emit(key, value, content_handler,
         if isinstance(v, _basestring):
             v = OrderedDict(((cdata_key, v),))
         cdata = None
+        #attrs = OrderedDict()
         attrs = OrderedDict()
         children = []
         for ik, iv in v.items():
@@ -482,7 +483,7 @@ if __name__ == '__main__':  # pragma: no cover
                      item_depth=item_depth,
                      item_callback=handle_item,
                      dict_constructor=dict)
-        if item_depth == 0:
+        if item_depth == 0: 
             handle_item([], root)
     except KeyboardInterrupt:
         pass

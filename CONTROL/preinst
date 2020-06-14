@@ -9,4 +9,9 @@ if [ -f "/etc/enigma2/xstreamity/playlists.json" ]
 	rm -f /etc/enigma2/xstreamity/playlists.json > /dev/null 2>&1
 fi
 
+if [ -f "/etc/enigma2/xstreamity/x-playlists.json" ]
+	then
+	rm -f /etc/enigma2/xstreamity/x-playlists.json > /dev/null 2>&1
+fi
+
 exit 0

@@ -10,6 +10,7 @@ from Components.ActionMap import ActionMap
 from Components.Sources.List import List
 from Tools.LoadPixmap import LoadPixmap
 from xStaticText import StaticText
+from Screens.MessageBox import MessageBox
 
 import json
 import xstreamity_globals as glob
@@ -70,6 +71,7 @@ class XStreamity_HiddenCategories(Screen):
 	def loadHidden(self):
 		self.playlists_all = []
 		self.hidelist = []
+		self.startList = []
 		
 		if self.category_type == "live":
 			self.hidelist = glob.current_playlist['player_info']['livehidden']
@@ -83,7 +85,7 @@ class XStreamity_HiddenCategories(Screen):
 		for item in self.channellist:
 			if item[4] not in self.hidelist:
 				self.startList.append([item[0], item[4], False])
-			if item[4] in self.hidelist:
+			elif item[4] in self.hidelist:
 				self.startList.append([item[0], item[4], True])	
 		self.refresh()
 
@@ -95,11 +97,12 @@ class XStreamity_HiddenCategories(Screen):
 			pixmap = LoadPixmap(cached=True, path=common_path + "lock_off.png")
 		return(pixmap, str(name), str(category_id), enabled)
 		
-      
+	  
 	def refresh(self):
 		self.drawList = []
 		self.drawList = [self.buildListEntry(x[0], x[1], x[2]) for x in self.startList]
 		self['hidden_list'].updateList(self.drawList)
+		
 		
 	def toggleSelection(self):
 		if len(self['hidden_list'].list) > 0:
@@ -129,6 +132,18 @@ class XStreamity_HiddenCategories(Screen):
 		
 		
 	def keyGreen(self):
+		
+
+		count = 0
+		for item in self.startList:
+			if item[2] == True:
+				count += 1
+				
+		if count == len(self.channellist):
+			self.session.open(MessageBox, _("Error: All categories hidden. Please amend your selection."), MessageBox.TYPE_ERROR)
+			return
+			
+		
 		domain = glob.current_playlist['playlist_info']['domain']
 		username = glob.current_playlist['playlist_info']['username']
 		password = glob.current_playlist['playlist_info']['password']
@@ -137,7 +152,6 @@ class XStreamity_HiddenCategories(Screen):
 			glob.current_playlist['player_info']['livehidden'] = []
 
 			for item in self.startList:
-				print item
 				if item[2] == True:
 					glob.current_playlist['player_info']['livehidden'].append(item[1])
 			
@@ -149,12 +163,12 @@ class XStreamity_HiddenCategories(Screen):
 				
 		elif self.category_type == "series":
 			glob.current_playlist['player_info']['serieshidden'] = []
-			#self.hidelist = glob.current_playlist['player_info']['serieshidden']
 			for item in self.startList:
 				if item[2] == True:
 					glob.current_playlist['player_info']['serieshidden'].append(item[1])
 						
 		self.playlists_all = []
+		
 		with open(json_file) as f:
 			self.playlists_all = json.load(f, object_pairs_hook=OrderedDict)
 		 

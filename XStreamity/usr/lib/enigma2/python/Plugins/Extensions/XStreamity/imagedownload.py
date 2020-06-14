@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from PIL import Image, ImageChops
-
+from plugin import dir_tmp
 	
 def updatePreview(piconSize, imageType, temp):
 	width, height = piconSize
@@ -43,7 +43,7 @@ def updatePreview(piconSize, imageType, temp):
 			im = bg
 
 			#save picon
-			preview = '/tmp/xstreamity/original.png'
+			preview = dir_tmp + 'original.png'
 			im.save(preview, 'PNG')
 
 	except:

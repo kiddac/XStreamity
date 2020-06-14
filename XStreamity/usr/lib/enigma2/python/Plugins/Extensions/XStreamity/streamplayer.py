@@ -1,14 +1,28 @@
 # for localized messages
 from . import _
 
-from Screens.Screen import Screen
-from Screens.InfoBarGenerics import InfoBarMoviePlayerSummarySupport, InfoBarServiceNotifications, InfoBarSeek, InfoBarAudioSelection, InfoBarSubtitleSupport, InfoBarInstantRecord, InfoBarShowHide
-from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
-from Components.config import config, ConfigClock
 
-from Screens.PVRState import PVRState
+from Components.ActionMap import ActionMap
+from Components.AVSwitch import AVSwitch
+from Components.config import config, ConfigClock
+from Components.Label import Label
+from Components.ProgressBar import ProgressBar
+from Components.Pixmap import Pixmap, MultiPixmap
+from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
+from datetime import datetime, timedelta
+from enigma import eTimer, eServiceReference, iPlayableService, ePicLoad
+from itertools import cycle, islice
+from plugin import skin_path, screenwidth, common_path, cfg, dir_tmp
 from RecordTimer import RecordTimerEntry
+from Screens.InfoBarGenerics import InfoBarMoviePlayerSummarySupport, InfoBarServiceNotifications, InfoBarSeek, InfoBarAudioSelection, InfoBarSubtitleSupport, InfoBarInstantRecord, InfoBarShowHide
 from Screens.MessageBox import MessageBox
+from Screens.PVRState import PVRState
+from Screens.Screen import Screen
+from ServiceReference import ServiceReference
+from time import time
+from Tools.BoundFunction import boundFunction
+from twisted.web.client import downloadPage
+from xStaticText import StaticText
 
 try:
 	from Plugins.Extensions.SubsSupport import SubsSupport, SubsSupportStatus
@@ -20,27 +34,9 @@ except ImportError:
 		def __init__(self, *args, **kwargs):
 			pass
 
-from Components.ActionMap import ActionMap
-from Components.ProgressBar import ProgressBar
-from Components.Pixmap import Pixmap, MultiPixmap
-from Components.Label import Label
-
-
-from xStaticText import StaticText
-from enigma import eTimer, eServiceReference, iPlayableService, ePicLoad
-from plugin import skin_path, screenwidth, common_path, cfg
-
 import os
 import xstreamity_globals as glob
 import imagedownload
-
-from datetime import datetime, timedelta
-from itertools import cycle, islice
-from twisted.web.client import downloadPage
-from ServiceReference import ServiceReference
-from time import time
-
-from Components.AVSwitch import AVSwitch
 
 
 class IPTVInfoBarShowHide():
@@ -60,7 +56,6 @@ class IPTVInfoBarShowHide():
 		"hide": self.hide,
 		}, 1)
 
-
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap=
 		{
 			iPlayableService.evStart: self.serviceStarted,
@@ -78,16 +73,6 @@ class IPTVInfoBarShowHide():
 
 		self.onShow.append(self.__onShow)
 		self.onHide.append(self.__onHide)
-
-		#self.onLayoutFinish.append(self.__layoutFinished)
-
-
-	def __layoutFinished(self):
-		try:
-			self.pvrStateDialog = None
-			self.pvrStateDialog.hide()
-		except:
-			pass
 
 
 	def OkPressed(self):
@@ -162,7 +147,7 @@ class IPTVInfoBarShowHide():
 			self.__locked -= 1
 		except:
 			self.__locked = 0
-		if self.__locked  <0:
+		if self.__locked < 0:
 			self.__locked = 0
 		if self.execing:
 			self.startHideTimer()
@@ -187,71 +172,57 @@ class IPTVInfoBarPVRState:
 			self.pvrStateDialog.show()
 			self.startHideTimer()
 
+
 	def __playStateChanged(self, state):
 		playstateString = state[3]
 		state_summary = playstateString
+		
 		if self.pvrStateDialog.has_key("statusicon"):
 			self.pvrStateDialog["state"].setText(playstateString)
+			speedtext = ""
+			self.pvrStateDialog["speed"].setText("")
+			speed_summary = self.pvrStateDialog["speed"].text
+			
 			if playstateString == '>':
-				self.pvrStateDialog["statusicon"].setPixmapNum(0)
-				self.pvrStateDialog["speed"].setText("")
-				speed_summary = self.pvrStateDialog["speed"].text
 				statusicon_summary = 0
-				if self.has_key("state") and self.force_show:
-					self["state"].setText(playstateString)
-					self["statusicon"].setPixmapNum(0)
-					self["speed"].setText("")
+				self.pvrStateDialog["statusicon"].setPixmapNum(statusicon_summary)
+		
 			elif playstateString == '||':
-				self.pvrStateDialog["statusicon"].setPixmapNum(1)
-				self.pvrStateDialog["speed"].setText("")
-				speed_summary = self.pvrStateDialog["speed"].text
 				statusicon_summary = 1
-				if self.has_key("state") and self.force_show:
-					self["state"].setText(playstateString)
-					self["statusicon"].setPixmapNum(1)
-					self["speed"].setText("")
+				self.pvrStateDialog["statusicon"].setPixmapNum(statusicon_summary)
+					
 			elif playstateString == 'END':
-				self.pvrStateDialog["statusicon"].setPixmapNum(2)
-				self.pvrStateDialog["speed"].setText("")
-				speed_summary = self.pvrStateDialog["speed"].text
 				statusicon_summary = 2
-				if self.has_key("state") and self.force_show:
-					self["state"].setText(playstateString)
-					self["statusicon"].setPixmapNum(2)
-					self["speed"].setText("")
+				self.pvrStateDialog["statusicon"].setPixmapNum(statusicon_summary)
+
 			elif playstateString.startswith('>>'):
 				speed = state[3].split()
-				self.pvrStateDialog["statusicon"].setPixmapNum(3)
-				self.pvrStateDialog["speed"].setText(speed[1])
-				speed_summary = self.pvrStateDialog["speed"].text
 				statusicon_summary = 3
-				if self.has_key("state") and self.force_show:
-					self["state"].setText(playstateString)
-					self["statusicon"].setPixmapNum(3)
-					self["speed"].setText(speed[1])
+				self.pvrStateDialog["statusicon"].setPixmapNum(statusicon_summary)
+				self.pvrStateDialog["speed"].setText(speed[1])
+				speedtext = speed[1]
+		
 			elif playstateString.startswith('<<'):
 				speed = state[3].split()
-				self.pvrStateDialog["statusicon"].setPixmapNum(4)
-				self.pvrStateDialog["speed"].setText(speed[1])
-				speed_summary = self.pvrStateDialog["speed"].text
 				statusicon_summary = 4
-				if self.has_key("state") and self.force_show:
-					self["state"].setText(playstateString)
-					self["statusicon"].setPixmapNum(4)
-					self["speed"].setText(speed[1])
+				self.pvrStateDialog["statusicon"].setPixmapNum(statusicon_summary)
+				self.pvrStateDialog["speed"].setText(speed[1])
+				speedtext = speed[1]
+				
 			elif playstateString.startswith('/'):
-				self.pvrStateDialog["statusicon"].setPixmapNum(5)
-				self.pvrStateDialog["speed"].setText(playstateString)
-				speed_summary = self.pvrStateDialog["speed"].text
 				statusicon_summary = 5
-				if self.has_key("state") and self.force_show:
-					self["state"].setText(playstateString)
-					self["statusicon"].setPixmapNum(5)
-					self["speed"].setText(playstateString)
+				self.pvrStateDialog["statusicon"].setPixmapNum(statusicon_summary)
+				self.pvrStateDialog["speed"].setText(playstateString)
+
+				speedtext = playstateString
+						
+			if self.has_key("state") and self.force_show:		
+				self["state"].setText(playstateString)
+				self["statusicon"].setPixmapNum(statusicon_summary)
+				self["speed"].setText(speedtext)
 
 			for cb in self.onChangedEntry:
 				cb(state_summary, speed_summary, statusicon_summary)
-
 
 
 
@@ -270,9 +241,10 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 		InfoBarSubtitleSupport.__init__(self)
 		IPTVInfoBarPVRState.__init__(self, PVRState, True)
 		InfoBarInstantRecord.__init__(self)
-
+		  
 		self.streamurl = streamurl
 		self.servicetype = servicetype
+		self.retries = 0
 
 		skin = skin_path + 'streamplayer.xml'
 
@@ -311,18 +283,14 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 			"down": self.next,
 			"stop": self.back,
 			"rec": self.IPTVstartInstantRecording,
+			"red": self.back
 
 			}, -2)
 
-		self.onLayoutFinish.append(self.__layoutFinished)
-
-
-	def __layoutFinished(self):
-		self.playStream(self.servicetype, self.streamurl)
+		self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl))
 
 
 	def IPTVstartInstantRecording(self, limitEvent = True):
-
 		import RecordDateInput
 		begin = int(time())
 		end = begin + 3600
@@ -332,7 +300,6 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 
 		dlg = self.session.openWithCallback(self.RecordDateInputClosed, RecordDateInput.RecordDateInput, self.starttime, self.endtime)
 		dlg.setTitle(_("Please enter recording time"))
-
 
 
 	def RecordDateInputClosed(self, ret = None):
@@ -378,7 +345,7 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 		self["nexttime"].setText(glob.currentepglist[glob.currentchannelistindex][5])
 		self["streamcat"].setText("Live")
 		self["streamtype"].setText(str(servicetype))
-
+		
 		try:
 			self["extension"].setText(str(os.path.splitext(streamurl)[-1]))
 		except:
@@ -398,18 +365,26 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 			self["progress"].show()
 			start_time = datetime.strptime(start, "%H:%M")
 			end_time = datetime.strptime(end, "%H:%M")
+			
 			if end_time < start_time:
 				end_time = datetime.strptime(end, "%H:%M")  + timedelta(hours=24)
 
 			total_time = end_time - start_time
+	
 			duration = 0
+			
 			if total_time.total_seconds() > 0:
 			  duration = total_time.total_seconds()/60
 
 			now = datetime.now().strftime("%H:%M")
 			current_time = datetime.strptime(now, "%H:%M")
 			elapsed = current_time - start_time
+			
+			if elapsed.days < 0:
+				elapsed = timedelta(days=0,seconds=elapsed.seconds)
+							
 			elapsedmins = 0
+			
 			if elapsed.total_seconds() > 0:
 			  elapsedmins = elapsed.total_seconds()/60
 
@@ -418,50 +393,53 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 			else:
 			  percent = 100
 
-			if percent < 0:
-				percent = 0
-			if percent > 100:
-				percent = 100
-
 			self["progress"].setValue(percent)
 		else:
 			self["progress"].hide()
 
 		self.reference = eServiceReference(int(self.servicetype),0,self.streamurl)
 		#self.reference.setName(str(glob.currentepglist[glob.currentchannelistindex][3]))
-
-		#self.session.nav.stopService()
+		
+		"""
 		if self.session.nav.getCurrentlyPlayingServiceReference():
 			if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString():
 				self.session.nav.playService(self.reference)
-				if self.session.nav.getCurrentlyPlayingServiceReference():
-					glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
-					glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
+				
 		else:
-			self.session.nav.playService(self.reference)
-			if self.session.nav.getCurrentlyPlayingServiceReference():
-					glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
-					glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
-					
+			self.session.nav.playService(self.reference, forceRestart=True)
+			
+		if self.session.nav.getCurrentlyPlayingServiceReference():
+			glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
+			glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
+			"""
 
+		self.session.nav.playService(self.reference)
+			
+		if self.session.nav.getCurrentlyPlayingServiceReference():
+			glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
+			glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
+
+		
 		self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
-		  iPlayableService.evStart: self.__evStart,
-		  iPlayableService.evSeekableStatusChanged : self.__evSeekableStatusChanged,
-		  iPlayableService.evEOF: self.__evEOF,
+		  iPlayableService.evEnd: self.__evEnd,
+		  iPlayableService.evTunedIn: self.__evTunedIn,
+		  iPlayableService.evTuneFailed: self.__evTuneFailed,
+		  iPlayableService.evUpdatedInfo: self.__evUpdatedInfo,
+		  iPlayableService.evSeekableStatusChanged : self.__evSeekableStatusChanged, 
+		  iPlayableService.evEOF: self.__evEOF,	  
 		  })
-		  
+		  			
 		self.downloadPicon()
 
 
 	def downloadPicon(self):
-
 		size = []
 		stream_url = ''
 		desc_image = ''
 
 		if glob.currentchannelist:
-			stream_url = glob.currentchannelist[glob.currentchannelistindex][6]
-			desc_image = glob.currentchannelist[glob.currentchannelistindex][3]
+			stream_url = glob.currentchannelist[glob.currentchannelistindex][3]
+			desc_image = glob.currentchannelist[glob.currentchannelistindex][5]
 
 		if stream_url != 'None':
 			imagetype = "picon"
@@ -469,30 +447,27 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 			if screenwidth.width() > 1280:
 				size = [220,130]
 
-		if size != []:
-			if desc_image and desc_image != "n/A" and desc_image != "":
-				
-				temp = '/tmp/xstreamity/temp.png'
-				try:
-					downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
-				except:
-					if desc_image.startswith('https'):
-						desc_image = desc_image.replace('https','http')
-						try:
-							downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
-						except:
-							pass
-							self.loadDefaultImage()
-					else:
-						self.loadDefaultImage()	
-			else:
-				self.loadDefaultImage()
+		if desc_image and desc_image != "n/A" and desc_image != "":
+			temp = dir_tmp + 'temp.png'
+			try:
+				downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
+			except:
+				if desc_image.startswith('https'):
+					desc_image = desc_image.replace('https','http')
+					try:
+						downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
+					except:
+						pass
+						self.loadDefaultImage()
+				else:
+					self.loadDefaultImage()	
+		else:
+			self.loadDefaultImage()
 
 
 	def checkdownloaded(self, data, piconSize, imageType, temp):
 		preview = ''
 		if os.path.exists(temp):
-			print "file exists"
 			try:
 				preview = imagedownload.updatePreview(piconSize, imageType, temp)
 			except:
@@ -504,7 +479,7 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 			else:
 				self.loadDefaultImage()
 		else:
-			print "file does not exist"
+			print("file does not exist")
 		return preview
 		
 	
@@ -513,29 +488,63 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 			self["epg_picon"].instance.setPixmapFromFile(common_path + "picon.png")
 
 
-	def __evStart(self):
-		print "** evStart **"
+	def __evEnd(self):
+		print("** evEnd **")
 
 
+	def __evTunedIn(self):
+		print("** evTunedIn **")
+		if self.servicetype == "1":
+			self.hasStreamData = False
+			self.timerstream = eTimer()
+			try:
+				self.timerstream.callback.append(self.checkStream)
+			except:
+				self.timerstream_conn = self.timerstream.timeout.connect(self.checkStream)
+			self.timerstream.start(2000, True)
+			
+		
+	def __evTuneFailed(self):
+		print("** evTuneFailed **")
+		self.back()
+		
+
+	def __evUpdatedInfo(self):
+		#print("** evUpdatedInfo **")
+		if self.servicetype == "1":
+			self.hasStreamData = True
+			
+			
 	def __evSeekableStatusChanged(self):
-		print "** evSeekableStatusChanged **"
+		print("** evSeekableStatusChanged **")
 
 
 	def __evEOF(self):
-		print "** evEOF **"
+		print("** evEOF **")
+		if self.servicetype == "1":
+			self.session.nav.stopService
+			self.session.nav.playService(self.reference, forceRestart=True)
+			
 
+	def checkStream(self):	
+		if self.hasStreamData == False:
+			if self.retries < 2:
+				self.retries += 1
+				self.session.nav.stopService
+				self.session.nav.playService(self.reference, forceRestart=True)
+			
 
 	def back(self):
 		glob.nextlist[-1]['index'] = glob.currentchannelistindex
 		
-		if cfg.stopstream.value == True:
-			self.stopStream()
-			
+		#if cfg.stopstream.value == True:
+			#self.stopStream()
 		self.close()
 
 
 	def toggleStreamType(self):
 		currentindex = 0
+		self.retries = 0
 
 		streamtypelist = ["1","4097"]
 		
@@ -561,23 +570,25 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 
 
 	def next(self):
+		self.retries = 0
 		if glob.currentchannelist:
 			listlength = len(glob.currentchannelist)
 			glob.currentchannelistindex += 1
 			if glob.currentchannelistindex + 1 > listlength:
 				glob.currentchannelistindex = 0
-			self.streamurl = glob.currentchannelist[glob.currentchannelistindex][6]
+			self.streamurl = glob.currentchannelist[glob.currentchannelistindex][3]
 			self.playStream(self.servicetype, self.streamurl)
 
 
 	def prev(self):
+		self.retries = 0
 		if glob.currentchannelist:
 			listlength = len(glob.currentchannelist)
 			glob.currentchannelistindex -= 1
 			if glob.currentchannelistindex + 1 == 0:
 				glob.currentchannelistindex = listlength - 1
 
-			self.streamurl = glob.currentchannelist[glob.currentchannelistindex][6]
+			self.streamurl = glob.currentchannelist[glob.currentchannelistindex][3]
 			self.playStream(self.servicetype, self.streamurl)
 
 
@@ -588,8 +599,8 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 				self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
 				
 
-class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport, InfoBarServiceNotifications, InfoBarShowHide, InfoBarSeek, InfoBarAudioSelection, InfoBarSubtitleSupport, IPTVInfoBarPVRState, SubsSupportStatus, SubsSupport ):
 
+class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport, InfoBarServiceNotifications, InfoBarShowHide, InfoBarSeek, InfoBarAudioSelection, InfoBarSubtitleSupport, IPTVInfoBarPVRState, SubsSupportStatus, SubsSupport ):
 
 	def __init__(self, session, streamurl, servicetype):
 		Screen.__init__(self, session)
@@ -629,6 +640,9 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
 		self["state"] = Label()
 		self["speed"] = Label()
 		self["statusicon"] = MultiPixmap()
+		
+		self["PTSSeekBack"] = Pixmap()
+		self["PTSSeekPointer"] = Pixmap()
 
 		with open(skin, 'r') as f:
 			self.skin = f.read()
@@ -643,20 +657,14 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
 			"up": self.prev,
 			"down": self.next,
 			"stop": self.back,
+			"red": self.back,
 
 			}, -2)
 
-		self.onLayoutFinish.append(self.__layoutFinished)
-
-
-	def __layoutFinished(self):
-		self.playStream(self.servicetype, self.streamurl)
+		self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl))
 
 
 	def playStream(self, servicetype, streamurl):
-		self.reference = eServiceReference(int(self.servicetype),0, streamurl)
-		self.reference.setName(glob.currentchannelist[glob.currentchannelistindex][0])
-
 		if streamurl != 'None' and "/movie/" in streamurl:
 			self["streamcat"].setText("VOD")
 		else:
@@ -667,35 +675,37 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
 			self["extension"].setText(str(os.path.splitext(streamurl)[-1]))
 		except:
 			pass
-
-		#self.session.nav.stopService()
+			
+		print "*******************"
+		print glob.currentchannelist
+		print "*******************"
+		print glob.currentchannelistindex
+			
+		self.reference = eServiceReference(int(self.servicetype),0, self.streamurl)
+		self.reference.setName(glob.currentchannelist[glob.currentchannelistindex][0])
+		
+		self.session.nav.playService(self.reference)
+			
 		if self.session.nav.getCurrentlyPlayingServiceReference():
-			if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString():
-				self.session.nav.playService(self.reference)
-				if self.session.nav.getCurrentlyPlayingServiceReference():
-					glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
-					glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
-		else:
-			self.session.nav.playService(self.reference)
-			if self.session.nav.getCurrentlyPlayingServiceReference():
-				glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
-				glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()	
-
+			glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
+			glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
+					
 		self.downloadCover()
 		
 
 	def downloadCover(self):
-		
-		if os.path.exists("/tmp/xstreamity/original.jpg"):
-			os.remove("/tmp/xstreamity/original.jpg")
+		try:
+			os.remove(dir_tmp + 'original.jpg')
+		except:
+			pass
 		
 		size = []
 		stream_url = ''
 		desc_image = ''
 
 		if glob.currentchannelist:
-			stream_url = glob.currentchannelist[glob.currentchannelistindex][6]
-			desc_image = glob.currentchannelist[glob.currentchannelistindex][3]
+			stream_url = glob.currentchannelist[glob.currentchannelistindex][3]
+			desc_image = glob.currentchannelist[glob.currentchannelistindex][5]
 
 		if stream_url != 'None':
 			imagetype = "cover"
@@ -705,10 +715,8 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
 
 
 		if desc_image and desc_image != "n/A" and desc_image != "":
-			if desc_image.startswith('https'):
-				desc_image = desc_image.replace('https','http')
 			
-			temp = '/tmp/xstreamity/temp.jpg'
+			temp = dir_tmp + 'temp.jpg'
 
 			try:
 				downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
@@ -726,23 +734,19 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
 			self.loadDefaultImage()
 
 
+	def checkdownloaded(self, data, piconSize, imageType, temp):
+		if imageType == "cover":
+			if self["cover"].instance:	
+				self.displayVodImage()	
+				
+
 	def loadDefaultImage(self):
 		if self["cover"].instance:
 			self["cover"].instance.setPixmapFromFile(common_path + "cover.png")
 
 
-
-	def checkdownloaded(self, data, piconSize, imageType, temp):
-		if imageType == "cover":
-			if self["cover"].instance:	
-				self.displayVodImage()	
-		
-
-
 	def displayVodImage(self):
-
-		preview = '/tmp/xstreamity/temp.jpg'
-		
+		preview = dir_tmp + 'temp.jpg'
 		width = 147
 		height = 220
 		
@@ -763,19 +767,19 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
 				self.PicLoad.setPara([width,height,self.Scale[0],self.Scale[1],0,1,"FF000000"])
 				self.PicLoad.startDecode(preview)
 
+
 	def DecodePicture(self, PicInfo = None):
 		ptr = self.PicLoad.getData()
 		if ptr is not None:
 			self["cover"].instance.setPixmap(ptr)
 			self["cover"].instance.show()
 			
-			
+				
 	def back(self):
 		glob.nextlist[-1]['index'] = glob.currentchannelistindex
 		
-		if cfg.stopstream.value == True:
-			self.stopStream()
-			
+		#if cfg.stopstream.value == True:
+			#self.stopStream()	
 		self.close()
 		
 
@@ -803,24 +807,21 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
 
 	def next(self):
 		if glob.currentchannelist:
-			stream_url = glob.currentchannelist[glob.currentchannelistindex][6]
+		
 			listlength = len(glob.currentchannelist)
 			glob.currentchannelistindex += 1
 			if glob.currentchannelistindex + 1 > listlength:
 				glob.currentchannelistindex = 0
-			self.streamurl = stream_url
 			self.playStream(self.servicetype, self.streamurl)
 
 
 	def prev(self):
 		if glob.currentchannelist:
-			stream_url = glob.currentchannelist[glob.currentchannelistindex][6]
+			
 			listlength = len(glob.currentchannelist)
 			glob.currentchannelistindex -= 1
 			if glob.currentchannelistindex + 1 == 0:
 				glob.currentchannelistindex = listlength - 1
-
-			self.streamurl = stream_url
 			self.playStream(self.servicetype, self.streamurl)
 
 
@@ -829,7 +830,6 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
 		if glob.currentPlayingServiceRefString != glob.newPlayingServiceRefString:
 			if glob.newPlayingServiceRefString != '':
 				self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
-
 
 
 class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport, InfoBarServiceNotifications, InfoBarShowHide, InfoBarSeek, InfoBarAudioSelection, InfoBarSubtitleSupport, IPTVInfoBarPVRState, SubsSupportStatus, SubsSupport ):
@@ -864,6 +864,9 @@ class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySup
 		self["state"] = Label()
 		self["speed"] = Label()
 		self["statusicon"] = MultiPixmap()
+		
+		self["PTSSeekBack"] = Pixmap()
+		self["PTSSeekPointer"] = Pixmap()
 
 		with open(skin, 'r') as f:
 			self.skin = f.read()
@@ -872,20 +875,16 @@ class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySup
 
 		self['actions'] = ActionMap(["XStreamityActions"], {
 			'cancel': self.back,
+			'red': self.back,
 			'tv': self.toggleStreamType,
 			"stop": self.back,
 
 			}, -2)
 
-		self.onLayoutFinish.append(self.__layoutFinished)
-
-
-	def __layoutFinished(self):
-		self.playStream(self.servicetype, self.streamurl)
+		self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl))
 
 
 	def playStream(self, servicetype, streamurl):
-
 		self["epg_description"].setText(glob.catchupdata[1])
 		self["streamcat"].setText("Catch")
 		self["streamtype"].setText(str(servicetype))
@@ -898,49 +897,47 @@ class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySup
 		self.reference = eServiceReference(int(servicetype),0,streamurl)
 		self.reference.setName(glob.catchupdata[0])
 
-		#self.session.nav.stopService()
+		self.session.nav.playService(self.reference)
+			
 		if self.session.nav.getCurrentlyPlayingServiceReference():
-			if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString():
-				self.session.nav.playService(self.reference)
-				if self.session.nav.getCurrentlyPlayingServiceReference():
-					glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
-					glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
-		else:
-			self.session.nav.playService(self.reference)
-			if self.session.nav.getCurrentlyPlayingServiceReference():
-				glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
-				glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
-
+			glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
+			glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
+					
 		self.downloadPicon()
 		
 		
 	def downloadPicon(self):
-
 		size = []
 		stream_url = ''
 		desc_image = ''
 
 		if glob.currentchannelist:
-			stream_url = glob.currentchannelist[glob.currentchannelistindex][6]
-			desc_image = glob.currentchannelist[glob.currentchannelistindex][3]
+			stream_url = glob.currentchannelist[glob.currentchannelistindex][3]
+			desc_image = glob.currentchannelist[glob.currentchannelistindex][5]
 
-		if stream_url != 'None' :
+		if stream_url != 'None':
 			imagetype = "picon"
 			size = [147,88]
 			if screenwidth.width() > 1280:
 				size = [220,130]
 
-		if size != []:
-			if desc_image and desc_image != "n/A" and desc_image != "":
+		if desc_image and desc_image != "n/A" and desc_image != "":
+			
+			temp = dir_tmp + 'temp.png'
+			try:
+				downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
+			except:
 				if desc_image.startswith('https'):
 					desc_image = desc_image.replace('https','http')
-				temp = '/tmp/xstreamity/temp.png'
-				try:
-					downloadPage(desc_image, temp ,timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
-				except:
-					pass
-			else:
-				self.loadDefaultImage()
+					try:
+						downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
+					except:
+						pass
+						self.loadDefaultImage()
+				else:
+					self.loadDefaultImage()	
+		else:
+			self.loadDefaultImage()
 
 
 	def checkdownloaded(self, data, piconSize, imageType, temp):
@@ -957,7 +954,7 @@ class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySup
 			else:
 				self.loadDefaultImage()
 		else:
-			print "file does not exist"
+			print("file does not exist")
 		return preview
 		
 		
@@ -968,10 +965,8 @@ class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySup
 
 	def back(self):
 		glob.nextlist[-1]['index'] = glob.currentchannelistindex
-		
-		if cfg.stopstream.value == True:
-			self.stopStream()
-			
+		#if cfg.stopstream.value == True:
+			#self.stopStream()
 		self.close()
 
 
@@ -1002,6 +997,3 @@ class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySup
 		if glob.currentPlayingServiceRefString != glob.newPlayingServiceRefString:
 			if glob.newPlayingServiceRefString != '':
 				self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
-
-
-

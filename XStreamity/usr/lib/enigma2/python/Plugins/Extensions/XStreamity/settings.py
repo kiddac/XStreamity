@@ -6,18 +6,19 @@ from . import _
 
 import owibranding
 
-from Screens.Screen import Screen
-from plugin import skin_path, cfg
-from Components.Pixmap import Pixmap
 from Components.ActionMap import ActionMap
-from xStaticText import StaticText
 from Components.ConfigList import ConfigListScreen 
 from Components.config import config, configfile, getConfigListEntry, ConfigText, ConfigSelection, ConfigNumber, ConfigPassword, ConfigYesNo, ConfigEnableDisable
-from Screens.MessageBox import MessageBox
+from Components.Pixmap import Pixmap
+from plugin import skin_path, cfg
 from Screens.LocationBox import LocationBox
+from Screens.MessageBox import MessageBox
 from Screens.ParentalControlSetup import ProtectedScreen
+from Screens.Screen import Screen
+from xStaticText import StaticText
 
 import xstreamity_globals as glob
+
 
 class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
@@ -47,10 +48,9 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 		self.list = []
 		ConfigListScreen.__init__(self, self.list, session = self.session, on_change = self.changedEntry)
 		
-		
 		self['key_red'] = StaticText(_('Close'))
 		self['key_green'] = StaticText(_('Save'))
-		
+
 		self['VirtualKB'].setEnabled(False)
 		self['HelpWindow'] = Pixmap()
 		self['VKeyIcon'] = Pixmap()
@@ -103,10 +103,12 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 		self.cfg_location = getConfigListEntry(_('playlists.txt location'), cfg.location)
 		self.cfg_timeout = getConfigListEntry(_('Server timeout (seconds)'), cfg.timeout)
 		
-		self.cfg_livetype = getConfigListEntry(_('Default Live stream type'), cfg.livetype)
-		self.cfg_vodtype = getConfigListEntry(_('Default VOD/Series stream type'), cfg.vodtype)
-		self.cfg_livepreview = getConfigListEntry(_('Preview streams in mini tv before playing'), cfg.livepreview)
-		self.cfg_stopstream = getConfigListEntry(_('Stop stream on back button'), cfg.stopstream)
+		self.cfg_livetype = getConfigListEntry(_('Default LIVE stream type'), cfg.livetype)
+		self.cfg_vodtype = getConfigListEntry(_('Default VOD/SERIES stream type'), cfg.vodtype)
+		self.cfg_catchuptype = getConfigListEntry(_('Default CATCHUP stream type'), cfg.vodtype)
+		
+		self.cfg_livepreview = getConfigListEntry(_('Preview LIVE streams in mini tv before playing'), cfg.livepreview)
+		#self.cfg_stopstream = getConfigListEntry(_('Stop stream on back button'), cfg.stopstream)
 		self.cfg_downloadlocation = getConfigListEntry(_('VOD download folder'), cfg.downloadlocation)
 		self.cfg_parental = getConfigListEntry(_('Parental control'), cfg.parental)
 		self.cfg_main = getConfigListEntry(_('Show in main menu *Restart GUI Required'), cfg.main)
@@ -116,27 +118,22 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 		
 		self.cfg_catchupstart = getConfigListEntry(_('Margin before catchup (mins)'), cfg.catchupstart)
 		self.cfg_catchupend = getConfigListEntry(_('Margin after catchup (mins)'), cfg.catchupend)
-		
-		self.cfg_hideall = getConfigListEntry(_('Hide "ALL" category from category lists'), cfg.hideall) 
-		self.cfg_api = getConfigListEntry(_('Select playlist API'), cfg.api) 
-		
+
 		self.createSetup()
 
 		
 	def createSetup(self):
 			self.list = []
-			#self.list.append(self.cfg_api)
 			self.list.append(self.cfg_skin)
 			self.list.append(self.cfg_location)
 			self.list.append(self.cfg_timeout)
 		
-			
 			self.list.append(self.cfg_livetype)
-			
 			self.list.append(self.cfg_vodtype)
+			self.list.append(self.cfg_catchuptype)
 			
 			self.list.append(self.cfg_livepreview)
-			self.list.append(self.cfg_stopstream)
+			#self.list.append(self.cfg_stopstream)
 				
 			self.list.append(self.cfg_downloadlocation)
 				
@@ -148,8 +145,6 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 			self.list.append(self.cfg_catchupend)
 				
 			self.list.append(self.cfg_parental)
-			
-			self.list.append(self.cfg_hideall)
 			
 			self.list.append(self.cfg_main)
 			self['config'].list = self.list
@@ -236,7 +231,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 				 inhibitDirs=['/bin', '/boot', '/dev', '/home', '/lib', '/proc', '/run', '/sbin', '/sys', '/var'],
 				 minFree=15)
 			except Exception as e:
-				print (e)
+				print(e)
 			except:
 				pass
 				
@@ -254,7 +249,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 				 inhibitDirs=['/bin', '/boot', '/dev', '/home', '/lib', '/proc', '/run', '/sbin', '/sys', '/var'],
 				 minFree=15)
 			except Exception as e:
-				print (e)
+				print(e)
 			except:
 				pass
 
@@ -270,5 +265,3 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 			cfg.downloadlocation.setValue(path)
 		return
 	
-	
-		

@@ -1,5 +1,0 @@
-#!/bin/sh
-rm -rf /usr/lib/enigma2/python/Plugins/Extensions/XStreamity > /dev/null 2>&1
-echo "Restart GUI to finish uninstall!"
-sleep 10
-exit 0
