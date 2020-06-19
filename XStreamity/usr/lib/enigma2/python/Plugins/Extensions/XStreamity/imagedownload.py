@@ -11,9 +11,7 @@ def updatePreview(piconSize, imageType, temp):
 	try:
 		im = Image.open(temp)
 
-		
 		#resize / enlarge image - cannot do for picons due to transparency problems. 
-
 		if imageType == "cover":
 			basewidth = piconSize[0]
 			wpercent = (basewidth / float(width))

@@ -686,7 +686,6 @@ class XStreamity_Catchup(Screen):
 	#record button download video file
 	def downloadVideo(self):
 		if self["key_rec"].getText() != '':
-			seriesstring = ''
 			from Screens.MessageBox import MessageBox
 
 			if self["channel_list"].getCurrent():

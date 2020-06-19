@@ -51,7 +51,10 @@ def get_random():
 
 
 def bin2long(s):
-	return reduce(lambda x, y: (x << 8L) + y, map(ord, s))
+	try:
+		return reduce(lambda x, y: (x << 8L) + y, map(ord, s))
+	except:
+		pass
 
 
 def long2bin(l):

@@ -3,7 +3,6 @@
 
 # for localized messages
 from . import _
-from collections import OrderedDict
 from Components.ActionMap import ActionMap
 from Components.Pixmap import Pixmap
 from Components.Sources.List import List
@@ -40,7 +39,7 @@ class XStreamity_Menu(Screen):
 
 		self.list = []
 		self.drawList = []
-		self["list"] = List(self.drawList)
+		self["list"] = List(self.drawList, enableWrapAround=True)
 
 		self.setup_title = (_('Stream Selection'))
 
@@ -121,8 +120,8 @@ class XStreamity_Menu(Screen):
 			if glob.current_playlist['data']['catchup_checked'] == False:
 				self.url_list.append([self.p_live_streams_url, 3])	
 				glob.current_playlist['data']['catchup_checked'] = True
-		
-	 	self.process_downloads()
+				
+		self.process_downloads()
 	 	
 	 	
 	def download_url(self, url):

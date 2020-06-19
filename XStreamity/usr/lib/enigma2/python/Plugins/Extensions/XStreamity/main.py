@@ -14,7 +14,11 @@ from plugin import skin_path, json_file, hdr, playlist_path, cfg, common_path, V
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools.LoadPixmap import LoadPixmap
-from urlparse import urlparse, parse_qs
+try:
+	from urlparse import urlparse, parse_qs
+except:
+	from urllib.parse import urlparse, parse_qs
+	
 from xStaticText import StaticText
 
 import json
@@ -42,7 +46,8 @@ class XStreamity_Main(Screen):
 			self.skin = f.read()
 
 		self.list = []
-		self['menu'] = List(self.list)
+		self['menu'] = List(self.list, enableWrapAround=True)
+		
 
 		self.setup_title = (_('Select Server'))
 
@@ -151,11 +156,11 @@ class XStreamity_Main(Screen):
 
 			for line in lines:
 				line = line.strip()
+				self.port = 80
 				self.username = ''
 				self.password = ''
 				self.type = 'm3u_plus'
 				self.output = 'ts'
-				
 				self.livetype = cfg.livetype.getValue()
 				self.vodtype = cfg.vodtype.getValue()
 				self.catchuptype = cfg.catchuptype.getValue()
@@ -167,7 +172,7 @@ class XStreamity_Main(Screen):
 				self.showvod = True
 				self.showseries = True
 				self.showcatchup = True
-				self.epgtype = "0"
+				self.epgtype = "1"
 				self.epgquickshift = 0
 
 				parsed_uri = urlparse(line)
@@ -179,9 +184,7 @@ class XStreamity_Main(Screen):
 					
 				self.domain = parsed_uri.hostname
 				self.port = parsed_uri.port
-				if not self.port:
-					self.port = 80
-					
+
 				self.host =  "%s%s:%s" % (self.protocol, self.domain, self.port)
 				
 				query = parse_qs(parsed_uri.query, keep_blank_values=True)
@@ -423,44 +426,40 @@ class XStreamity_Main(Screen):
 			expires = ''
 			timeshift = 'EPG Timeshift: '
 
-			if playlist != {}:
-				if 'playlist_info' in playlist:
-					if'name' in playlist['playlist_info']:
-						name = playlist['playlist_info']['name']
-					elif 'domain' in playlist['playlist_info']:
-						name = playlist['playlist_info']['domain']
-					
-					if 'host' in playlist['playlist_info']:
-						url = playlist['playlist_info']['host']
+			if playlist:	
+				if'name' in playlist['playlist_info']:
+					name = playlist['playlist_info']['name']
+				elif 'domain' in playlist['playlist_info']:
+					name = playlist['playlist_info']['domain']
+				
+				url = playlist['playlist_info']['host']
 
 				if 'user_info' in playlist and 'auth' in playlist['user_info']:
 						status = (_('Not Authorised'))
 
 						if playlist['user_info']['auth'] == 1:
-							if 'status' in playlist['user_info']:
-								if playlist['user_info']['status'] == 'Active':
-									status = (_('Active'))
-								elif playlist['user_info']['status'] == 'Banned':
-									status = (_('Banned'))
-								elif playlist['user_info']['status'] == 'Disabled':
-									status = (_('Disabled'))
-								elif playlist['user_info']['status'] == 'Expired':
-									status = (_('Expired'))
+							
+							if playlist['user_info']['status'] == 'Active':
+								status = (_('Active'))
+							elif playlist['user_info']['status'] == 'Banned':
+								status = (_('Banned'))
+							elif playlist['user_info']['status'] == 'Disabled':
+								status = (_('Disabled'))
+							elif playlist['user_info']['status'] == 'Expired':
+								status = (_('Expired'))
 
-								if status == (_('Active')):
-									if 'exp_date' in playlist['user_info']:
-										try:
-											expires = str("Expires: ") + str(datetime.fromtimestamp(int(playlist['user_info']['exp_date'])).strftime('%d-%m-%Y'))
-										except:
-											expires = str("Expires: Null")
+							if status == (_('Active')):
+								
+								try:
+									expires = str("Expires: ") + str(datetime.fromtimestamp(int(playlist['user_info']['exp_date'])).strftime('%d-%m-%Y'))
+								except:
+									expires = str("Expires: Null")
 
-									if 'active_cons' in playlist['user_info']:
-										active = str("Active Conn:")
-										activenum = playlist['user_info']['active_cons']
+								active = str("Active Conn:")
+								activenum = playlist['user_info']['active_cons']
 
-									if 'max_connections' in playlist['user_info']:
-										maxc = str("Max Conn:")
-										maxnum = playlist['user_info']['max_connections']
+								maxc = str("Max Conn:")
+								maxnum = playlist['user_info']['max_connections']
 										
 				timeshift += str(playlist['player_info']['epgshift'])
 
@@ -549,11 +548,6 @@ class XStreamity_Main(Screen):
 		self["splash"].show()
 		self.playlists_all = []
 		
-		"""
-		if not os.path.isfile(json_file) or not os.stat(json_file).st_size > 0:
-			open(json_file, 'a').close()
-			"""
-	
 		with open(json_file) as f:
 			try:
 				self.playlists_all = json.load(f)

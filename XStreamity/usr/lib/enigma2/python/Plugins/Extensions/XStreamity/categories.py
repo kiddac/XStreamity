@@ -17,10 +17,12 @@ from enigma import eTimer, eServiceReference, ePicLoad
 #from multiprocessing.pool import ThreadPool
 from plugin import skin_path, screenwidth, hdr, cfg, common_path, dir_tmp
 from requests.adapters import HTTPAdapter
+
 try:
 	from requests.packages.urllib3.util.retry import Retry
 except:
 	from urllib3.util import Retry
+	
 from Screens.Screen import Screen
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Tools.LoadPixmap import LoadPixmap
@@ -56,7 +58,9 @@ class XStreamity_Categories(Screen):
 		self.searchString = ''
 
 		skin = skin_path + 'categories.xml'
-
+		if os.path.exists('/var/lib/dpkg/status'):
+			skin = skin_path + 'DreamOS/categories.xml'
+			
 		with open(skin, 'r') as f:
 			self.skin = f.read()
 
@@ -198,8 +202,9 @@ class XStreamity_Categories(Screen):
 		
 		self.listType = ''
 	
-		self.xmltv_exists = False
-		self.epgdownloaded = False
+		#self.xmltv_exists = False
+		#self.epgdownloaded = False
+		self.xmltvdownloaded = False
 		
 		self["actions"] = ActionMap(["XStreamityActions"], {
 			'cancel': self.back,
@@ -509,7 +514,8 @@ class XStreamity_Categories(Screen):
 				stream_icon = item['stream_icon']
 				added = item['added']
 				container_extension = item['container_extension']
-
+				rating = item['rating']
+				
 				if stream_icon:
 					if  stream_icon.startswith("https://image.tmdb.org/t/p/") or stream_icon.startswith("http://image.tmdb.org/t/p/"):
 						dimensions = stream_icon.partition("/p/")[2].partition("/")[0]
@@ -520,7 +526,7 @@ class XStreamity_Categories(Screen):
 
 				next_url = "%s/movie/%s/%s/%s.%s" % (self.host, self.username, self.password, stream_id, container_extension)
 				
-				self.list.append([index, str(name), str(stream_id), str(stream_icon), str(added), str(next_url)])
+				self.list.append([index, str(name), str(stream_id), str(stream_icon), str(added), str(rating), str(next_url)])
 				index += 1
 				
 
@@ -718,12 +724,25 @@ class XStreamity_Categories(Screen):
 					
 					
 					if glob.current_playlist['player_info']['epgtype'] == "2":
-						if os.path.exists(self.epg_full_path):
-							self.xmltv_exists = True
+						
+						if os.path.isfile(self.epg_full_path):
+							self.xmltvdownloaded = True
+							
 							if self["downloading"].instance:
 								self["downloading"].hide()
 							last_modified = datetime.fromtimestamp(int(os.path.getmtime(self.epg_full_path)))
 							datenow = datetime.now()
+							
+							if last_modified.date() < datenow.date():
+								try:
+									os.remove(self.epg_full_path)
+									self.xmltvdownloaded = False
+									self.doDownload()
+									
+								except:
+									pass
+								
+								"""
 							duration = datenow - last_modified
 							duration_in_s = duration.total_seconds()
 							days = divmod(duration_in_s, 86400) 
@@ -731,10 +750,13 @@ class XStreamity_Categories(Screen):
 							if days[0] >= 1:
 								try:
 									os.remove(self.epg_full_path)
-									self.xmltv_exists = False
+									self.xmltvdownloaded = False
+									self.doDownload()
+									
 								except:
 									pass
-						if self.xmltv_exists == False:	
+									"""
+						else:	
 							self.doDownload()
 						
 						
@@ -757,7 +779,7 @@ class XStreamity_Categories(Screen):
 				
 			elif self.listType == "vod_streams":	
 				self.channelList = []
-				self.channelList = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5]) for x in self.list]
+				self.channelList = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6]) for x in self.list]
 				self["channel_list"].setList(self.channelList)
 				
 			elif self.listType == "series_titles":
@@ -803,7 +825,7 @@ class XStreamity_Categories(Screen):
 
 	def back(self):
 		
-		self.epgdownloaded = False
+		#self.epgdownloaded = False
 		
 		if self.listType == "live_streams":
 			try:
@@ -997,7 +1019,7 @@ class XStreamity_Categories(Screen):
 						
 					
 					if glob.current_playlist['player_info']['epgtype'] == "2":	
-						if self.listType == "live_streams" and self.xmltv_exists and  self.sorted == False and self.filtered == False:
+						if self.listType == "live_streams" and self.xmltvdownloaded and  self.sorted == False and self.filtered == False:
 							self.getChannelChunk()
 						
 
@@ -1067,13 +1089,31 @@ class XStreamity_Categories(Screen):
 				
 						
 	def processXmltv(self):
+		self.xmlfail = False
 		x = threading.Thread(target=self.processXmltvEPG2, args=())
 		x.daemon = True
 		x.start()
+
 		x.join()
-				
-					
-					
+		
+		#if self.xmlfail:
+			#return
+		
+		self.epglist = []			
+		self.epglist = [buildEPGListEntry(x[0], x[1], x[7], x[8], x[9], x[10], x[11], x[12]) for x in self.list]
+		
+		#print "********* threadname ********"
+		#print(threading.currentThread().getName())
+		self["epg_list"].setList(self.epglist)
+		
+		instance = self["epg_list"].master.master.instance
+		instance.setSelectionEnable(0)	
+		
+		glob.originalChannelList = self.list[:]
+
+		if self.listType == "live_streams" and not self.showingshortEPG:
+			self.refreshEPGInfo()			
+		
 			
 	def displaySeriesData(self):
 		self.info = {}
@@ -1292,6 +1332,12 @@ class XStreamity_Categories(Screen):
 		
 
 	def refreshEPGInfo(self):
+		#print "********* threadname ********"
+		#print(threading.currentThread().getName())
+		
+		#if os.path.exists(self.epg_full_path):
+			#self.xmltv_exists = True
+							
 		if self["epg_list"].getCurrent():
 			instance = self["epg_list"].master.master.instance
 			instance.setSelectionEnable(1)
@@ -1682,13 +1728,14 @@ class XStreamity_Categories(Screen):
 
 			if self["channel_list"].getCurrent():
 				currentindex =  self["channel_list"].getCurrent()[2]
-				stream_url = self.channelList[currentindex][3]
+				#stream_url = self.channelList[currentindex][3]
+				stream_url =  self["channel_list"].getCurrent()[3]
 				extension = str(os.path.splitext(stream_url)[-1])
 
-				title = self.channelList[currentindex][0]
-
+				#title = self.channelList[currentindex][0]
+				title = self["channel_list"].getCurrent()[0]
 				if "/series/" in stream_url:
-					title = str(self.channelList[currentindex][15]) + " " + str(self.channelList[currentindex][0])
+					title = str(self["channel_list"].getCurrent()[15]) + " " + str(self["channel_list"].getCurrent()[0])
 
 				fileTitle = re.sub(r'[\<\>\:\"\/\\\|\?\*\[\]]', '', title)
 				#fileTitle = re.sub(r' ', '_', fileTitle)
@@ -1728,7 +1775,7 @@ class XStreamity_Categories(Screen):
 				
 			elif current_sort == (_('Sort: Newest')):
 				
-				self["key_yellow"].setText(_('Sort: Original'))
+				
 				if self.listType == "live_streams":
 					self.list.sort(key=lambda x: x[5], reverse=True)	
 				if self.listType == "vod_streams":	
@@ -1736,6 +1783,9 @@ class XStreamity_Categories(Screen):
 				if self.listType == "series_titles":	
 					self.list.sort(key=lambda x: x[10], reverse=True)	
 				self.sorted = True
+				
+				self["key_yellow"].setText(_('Sort: Original'))
+
 
 			elif current_sort == (_('Sort: Original')):
 				self["key_yellow"].setText(_('Sort: A-Z'))
@@ -1772,7 +1822,7 @@ class XStreamity_Categories(Screen):
 		self.list = glob.originalChannelList
 		self.filtered = False
 		self.sorted = False
-		self.epgdownloaded = False
+		#self.epgdownloaded = False
 		self.createSetup()
 		#self.buildLists()
 		
@@ -2043,13 +2093,13 @@ class XStreamity_Categories(Screen):
 		nowdict = {}
 
 		if os.path.isfile(self.epg_full_path):
-			
-			shift = 0
-									
+
+			shift = 0					
 			if "epgshift" in glob.current_playlist["player_info"]:
 				shift = int(glob.current_playlist["player_info"]["epgshift"])
-				
-			try:			
+	
+			try:	
+						
 				for event, elem in ET.iterparse(self.epg_full_path):
 					if elem.tag == 'programme':
 						channel = elem.get('channel')
@@ -2058,6 +2108,7 @@ class XStreamity_Categories(Screen):
 							if 'nextstart' in nowdict[str(channel)]:
 								elem.clear()
 								continue
+						
 						
 						if channel in (item for sublist in self.xmlchannellist for item in sublist):
 
@@ -2113,8 +2164,11 @@ class XStreamity_Categories(Screen):
 							
 					elif elem.tag == 'channel':
 						elem.clear()
+						continue
 			except:
-				self.session.open(MessageBox, _('XMLTV file is invalid.'), type=MessageBox.TYPE_ERROR, timeout=10)
+				print "********** xml error *********"
+				return
+				pass
 				
 								
 		for item in nowdict:
@@ -2129,23 +2183,8 @@ class XStreamity_Categories(Screen):
 						self.list[index][10] = str(nowdict[item]['nextstart'])
 						self.list[index][11] = str(nowdict[item]['nextitle'])
 						self.list[index][12] = str(nowdict[item]['nextdesc'])
-		
 
-		self.epglist = []			
-		self.epglist = [buildEPGListEntry(x[0], x[1], x[7], x[8], x[9], x[10], x[11], x[12]) for x in self.list]
-							
-		self["epg_list"].setList(self.epglist)
-		
-		instance = self["epg_list"].master.master.instance
-		instance.setSelectionEnable(0)	
-		
-		glob.originalChannelList = self.list[:]
-			
-		self.epgdownloaded = True
-		
-		if self.listType == "live_streams" and not self.showingshortEPG:
-			self.refreshEPGInfo()			
-		
+
 
 	def isNowInTimePeriod(self, startTime, endTime, nowTime):
 		if startTime < endTime:
@@ -2163,12 +2202,18 @@ class XStreamity_Categories(Screen):
 		if self["downloading"].instance:
 			self["downloading"].hide()
 		if self.session:
-			self.session.open(MessageBox, _("EPG Error. Failed to download XMLTV file."), type=MessageBox.TYPE_ERROR)
+			self.session.open(MessageBox, _("EPG Error. Failed to download XMLTV file.\nTry Quick EPG in Edit Server"), type=MessageBox.TYPE_ERROR)
 		
 		
 	def downloadcomplete(self, data=None):
 		if self["downloading"].instance:
 			self["downloading"].hide()
+		
+		self.xmltvdownloaded = True
+		
+		if os.stat(self.epg_full_path).st_size <= 100:
+			if self.session:
+				self.session.open(MessageBox, _("EPG Error. Failed to download XMLTV file.\nTry Quick EPG in Edit Server"), type=MessageBox.TYPE_ERROR)
 		self.clear_caches()
 		self.buildLists()
 		
@@ -2179,10 +2224,8 @@ class XStreamity_Categories(Screen):
 		url = glob.nextlist[-1]["playlist_url"]
 		urlpartition = url.rpartition("=")
 		urlcategory = url.rsplit("=")[-1]	
-		#if urlcategory == "ALL":
-			#urlcateogory = 0
 		url = str(glob.current_playlist['playlist_info']['enigma2_api']) + "&type=get_live_streams&cat_id=" + str(urlcategory)
-		#print url
+
 		
 		if not os.path.exists(str(dir_tmp) + "liveepg.xml"):
 			d = downloadPage(url, str(dir_tmp) + "liveepg.xml", timeout=5).addCallback(self.processEnigma2EPG).addErrback(self.epgError)
@@ -2314,9 +2357,9 @@ def buildLiveStreamList(index, title, stream_id, stream_icon, epg_channel_id, ad
 	return (title, png, index, next_url, stream_id, stream_icon, epg_channel_id, added)
 	
 
-def buildVodStreamList(index, title, stream_id, stream_icon, added, next_url):
+def buildVodStreamList(index, title, stream_id, stream_icon, added, rating, next_url):
 	png = LoadPixmap(common_path + "play.png")
-	return (title, png, index, next_url, stream_id, stream_icon, added)
+	return (title, png, index, next_url, stream_id, stream_icon, added, rating)
 
 
 def buildSeriesTitlesList(index, title, series_id, cover, plot, cast, director, genre, releaseDate, rating, lastmodified, next_url):

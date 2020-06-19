@@ -33,7 +33,7 @@ class XStreamity_HiddenCategories(Screen):
 
 		self.startList = []
 		self.drawList = []
-		self['hidden_list'] = List(self.drawList)
+		self['hidden_list'] = List(self.drawList, enableWrapAround=True)
 		self['hidden_list'].onSelectionChanged.append(self.getCurrentEntry)
 			
 		self.currentSelection = 0
@@ -132,8 +132,6 @@ class XStreamity_HiddenCategories(Screen):
 		
 		
 	def keyGreen(self):
-		
-
 		count = 0
 		for item in self.startList:
 			if item[2] == True:

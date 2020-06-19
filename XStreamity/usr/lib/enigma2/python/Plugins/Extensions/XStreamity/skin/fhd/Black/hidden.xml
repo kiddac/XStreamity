@@ -4,9 +4,9 @@
 		<convert type="ClockToText">Format:%H:%M | %A %-d %b</convert>
 	</widget>
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/left-panel.png" position="0,0" size="480,1080" alphatest="blend" zPosition="1" />
-	<widget source="session.VideoPicture" render="Pig" position="0,0" size="501,282" backgroundColor="#ff000000" transparent="1" zPosition="2" />
+	<widget source="session.VideoPicture" render="Pig" position="0,0" size="480,270" backgroundColor="#ff000000" zPosition="2" />
 	<!-- mask tv to prevent black borders -->
-	<eLabel position="0,0" size="480,270" backgroundColor="#ff000000" zPosition="3" />
+	<!-- <eLabel position="0,0" size="480,270" backgroundColor="#ff000000" zPosition="3" /> -->
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="30,358" size="420,4" alphatest="blend" zPosition="1" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="30,418" size="420,4" alphatest="blend" zPosition="1" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="30,478" size="420,4" alphatest="blend" zPosition="1" />

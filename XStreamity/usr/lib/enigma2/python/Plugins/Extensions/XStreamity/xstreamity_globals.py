@@ -11,6 +11,3 @@ nextlist = []
 changed = False
 originalChannelList = []
 catchupdata = []
-
-
-

@@ -4,8 +4,6 @@
 # for localized messages     
 from . import _
 
-import owibranding
-
 from Components.ActionMap import ActionMap
 from Components.ConfigList import ConfigListScreen 
 from Components.config import config, configfile, getConfigListEntry, ConfigText, ConfigSelection, ConfigNumber, ConfigPassword, ConfigYesNo, ConfigEnableDisable
@@ -18,6 +16,7 @@ from Screens.Screen import Screen
 from xStaticText import StaticText
 
 import xstreamity_globals as glob
+import os
 
 
 class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
@@ -31,12 +30,8 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 		
 		skin = skin_path + 'settings.xml'
 		
-		try:
-			from boxbranding import getImageDistro, getImageVersion, getOEVersion
-		except:
-			
-			if owibranding.getMachineBrand() == "Dream Multimedia" or owibranding.getOEVersion() == "OE 2.2":
-				skin = skin_path + 'DreamOS/settings.xml'
+		if os.path.exists('/var/lib/dpkg/status'):
+			skin = skin_path + 'DreamOS/settings.xml'
 	
 		with open(skin, 'r') as f:
 			self.skin = f.read()
@@ -165,7 +160,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 				
 				if not isinstance(self['config'].getCurrent()[1], ConfigNumber):
 					
-					 if isinstance(self['config'].getCurrent()[1].help_window, ConfigText) or isinstance(self['config'].getCurrent()[1].help_window, ConfigPassword):
+					if isinstance(self['config'].getCurrent()[1].help_window, ConfigText) or isinstance(self['config'].getCurrent()[1].help_window, ConfigPassword):
 						if self['config'].getCurrent()[1].help_window.instance is not None:
 							helpwindowpos = self['HelpWindow'].getPosition()
 

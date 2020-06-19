@@ -5,8 +5,6 @@
 	</widget>
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/left-panel.png" position="0,0" size="320,720" alphatest="blend" zPosition="1" />
 	<widget source="session.VideoPicture" render="Pig" position="0,0" size="320,180" backgroundColor="#ff000000" zPosition="2" />
-	<!-- mask tv to prevent black borders -->
-	<!-- <eLabel position="0,0" size="320,180" backgroundColor="#ff000000" zPosition="3" /> -->
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/divider.png" position="20,247" size="280,2" alphatest="blend" zPosition="1" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/divider.png" position="20,295" size="280,2" alphatest="blend" zPosition="1" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/divider.png" position="20,343" size="280,2" alphatest="blend" zPosition="1" />
@@ -19,7 +17,7 @@
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/divider.png" position="20,679" size="280,2" alphatest="blend" zPosition="1" />
 
 	<widget source="channel_list" render="Listbox" position="0,200" size="320,480" foregroundColor="#ffffff" backgroundColor="#000000" foregroundColorSelected="#ffffff" backgroundColorSelected="#003d68"
-			scrollbarMode="showOnDemand" scrollbarSliderBorderWidth="1" scrollbarWidth="4" itemHeight="48" transparent="1" zPosition="3" >
+			scrollbarMode="showOnDemand" itemHeight="48" transparent="1" zPosition="3" >
 		<convert type="TemplatedMultiContent">{"template": [
 			MultiContentEntryText(pos=(12, 0), size = (268, 48), font=0, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 0),
 			MultiContentEntryPixmapAlphaBlend(pos=(292, 16), size=(18, 14), png = 1),

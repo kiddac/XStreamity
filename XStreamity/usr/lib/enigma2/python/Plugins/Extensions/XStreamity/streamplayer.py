@@ -277,6 +277,7 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 		self['actions'] = ActionMap(["XStreamityActions"], {
 			'cancel': self.back,
 			'tv': self.toggleStreamType,
+			'info': self.toggleStreamType,
 			"channelUp": self.next,
 			"channelDown": self.prev,
 			"up": self.prev,
@@ -652,6 +653,7 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
 		self['actions'] = ActionMap(["XStreamityActions"], {
 			'cancel': self.back,
 			'tv': self.toggleStreamType,
+			'info': self.toggleStreamType,
 			"channelUp": self.next,
 			"channelDown": self.prev,
 			"up": self.prev,
@@ -675,12 +677,7 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
 			self["extension"].setText(str(os.path.splitext(streamurl)[-1]))
 		except:
 			pass
-			
-		print "*******************"
-		print glob.currentchannelist
-		print "*******************"
-		print glob.currentchannelistindex
-			
+				
 		self.reference = eServiceReference(int(self.servicetype),0, self.streamurl)
 		self.reference.setName(glob.currentchannelist[glob.currentchannelistindex][0])
 		
@@ -877,6 +874,7 @@ class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySup
 			'cancel': self.back,
 			'red': self.back,
 			'tv': self.toggleStreamType,
+			'info': self.toggleStreamType,
 			"stop": self.back,
 
 			}, -2)

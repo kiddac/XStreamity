@@ -4,8 +4,6 @@
 # for localized messages     
 from . import _
 
-import owibranding
-
 from collections import OrderedDict
 from Components.ActionMap import ActionMap
 from Components.ConfigList import ConfigListScreen 
@@ -28,12 +26,8 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 		
 		skin = skin_path + 'settings.xml'
 		
-		try:
-			from boxbranding import getImageDistro, getImageVersion, getOEVersion
-		except:
-			
-			if owibranding.getMachineBrand() == "Dream Multimedia" or owibranding.getOEVersion() == "OE 2.2":
-				skin = skin_path + 'DreamOS/settings.xml'
+		if os.path.exists('/var/lib/dpkg/status'):
+			skin = skin_path + 'DreamOS/settings.xml'
 
 		with open(skin, 'r') as f:
 			self.skin = f.read()
@@ -73,7 +67,7 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 		 'green': self.save,
 		 }, -2)
 		 
-		self.onFirstExecBegin.append(self.initConfig)	
+		self.onFirstExecBegin.append(self.initConfig)   
 		self.onLayoutFinish.append(self.__layoutFinished)
 
 	
@@ -190,16 +184,15 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 		
 		self['config'].list = self.list
 		self['config'].l.setList(self.list)
-		self.handleInputHelpers()	
+		self.handleInputHelpers()   
 		
 		
 	def handleInputHelpers(self):
 		if self['config'].getCurrent() is not None:
-			
 			if self.has_key('VKeyIcon'):
 				self['VirtualKB'].setEnabled(False)
-				self['VKeyIcon'].hide()	
-			
+				self['VKeyIcon'].hide() 
+				
 			if isinstance(self['config'].getCurrent()[1], ConfigText) or isinstance(self['config'].getCurrent()[1], ConfigPassword):
 				if self.has_key('VKeyIcon'):
 					if isinstance(self['config'].getCurrent()[1], ConfigNumber):
@@ -208,18 +201,17 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 					else:
 						self['VirtualKB'].setEnabled(True)
 						self['VKeyIcon'].show()
-				
-				if not isinstance(self['config'].getCurrent()[1], ConfigNumber):
 					
-					 if isinstance(self['config'].getCurrent()[1].help_window, ConfigText) or isinstance(self['config'].getCurrent()[1].help_window, ConfigPassword):
-						if self['config'].getCurrent()[1].help_window.instance is not None:
-							helpwindowpos = self['HelpWindow'].getPosition()
+					if not isinstance(self['config'].getCurrent()[1], ConfigNumber):
+						if isinstance(self['config'].getCurrent()[1].help_window, ConfigText) or isinstance(self['config'].getCurrent()[1].help_window, ConfigPassword):
+							if self['config'].getCurrent()[1].help_window.instance is not None:
+								helpwindowpos = self['HelpWindow'].getPosition()
 
-							if helpwindowpos:
-								helpwindowposx, helpwindowposy = helpwindowpos
-								if helpwindowposx and helpwindowposy:
-									from enigma import ePoint
-									self['config'].getCurrent()[1].help_window.instance.move(ePoint(helpwindowposx,helpwindowposy))
+								if helpwindowpos:
+									helpwindowposx, helpwindowposy = helpwindowpos
+									if helpwindowposx and helpwindowposy:
+										from enigma import ePoint
+										self['config'].getCurrent()[1].help_window.instance.move(ePoint(helpwindowposx,helpwindowposy))
 		
 	def save(self):
 		if self['config'].isChanged():
@@ -283,7 +275,7 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 					f.write(line)
 				if exists == False:
 					f.write("\n" + str(playlistline) + "\n")
-				f.truncate()	
+				f.truncate()    
 				
 				
 			#update json file
@@ -301,9 +293,9 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 					x += 1
 
 				with open(json_file, 'w') as f:
-					json.dump(self.playlists_all, f)	
+					json.dump(self.playlists_all, f)    
 			
-			if self.editmode == False: 	
+			if self.editmode == False:  
 				glob.configchanged = True
 	
 		self.close()

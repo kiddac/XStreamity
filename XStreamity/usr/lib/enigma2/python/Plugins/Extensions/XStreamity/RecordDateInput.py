@@ -4,7 +4,6 @@
 # for localized messages
 from . import _
 
-import owibranding
 from Screens.Screen import Screen
 from Components.config import config, ConfigClock, ConfigDateTime, getConfigListEntry
 from Components.ActionMap import  ActionMap
@@ -12,6 +11,7 @@ from Components.ConfigList import ConfigListScreen
 from xStaticText import StaticText
 import time
 import datetime
+import os
 from plugin import skin_path
 
 class RecordDateInput(Screen, ConfigListScreen):
@@ -19,12 +19,9 @@ class RecordDateInput(Screen, ConfigListScreen):
 		Screen.__init__(self, session)
 		
 		skin = skin_path + 'settings.xml'
-		try:
-			from boxbranding import getImageDistro, getImageVersion, getOEVersion
-		except:
-			
-			if owibranding.getMachineBrand() == "Dream Multimedia" or owibranding.getOEVersion() == "OE 2.2":
-				skin = skin_path + 'DreamOS/settings.xml'
+	
+		if os.path.exists('/var/lib/dpkg/status'):
+			skin = skin_path + 'DreamOS/settings.xml'
 	
 		with open(skin, 'r') as f:
 			self.skin = f.read()
@@ -61,7 +58,10 @@ class RecordDateInput(Screen, ConfigListScreen):
 		if conf_date:
 			self.save_mask |= 3
 		else:
-			conf_date = ConfigDateTime(default=time.time(), formatstring=config.usage.date.full.value, increment=86400)
+			try:
+				conf_date = ConfigDateTime(default=time.time(), formatstring=config.usage.date.full.value, increment=86400)
+			except:
+				conf_date = ConfigDateTime(default=time.time(), formatstring = _("%d.%B %Y"), increment=86400)
 		
 		self.timeinput_date = conf_date
 		self.timeinput_starttime = conf_starttime

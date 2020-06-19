@@ -2,14 +2,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2020-06-03 12:19+0100\n"
-"PO-Revision-Date: 2020-06-04 20:39+0200\n"
+"PO-Revision-Date: 2020-06-18 16:47+0200\n"
 "Last-Translator: \n"
 "Language-Team: @lululla\n"
 "Language: it_IT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.7\n"
+"X-Generator: Poedit 2.3.1\n"
 "X-Poedit-Basepath: ../../../Git/XStreamity/XStreamity/usr/lib/enigma2/python/Plugins/Extensions/XStreamity\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SearchPath-0: .\n"
@@ -153,7 +153,7 @@ msgstr "Azzera Ricerca"
 
 #: categories.py:1701
 msgid "Filter this category..."
-msgstr "Filtra categoria"
+msgstr "Filtra categoria..."
 
 #: categories.py:1949
 msgid ""
@@ -241,7 +241,7 @@ msgstr "Selezione flusso"
 
 #: menu.py:48 menu.py:92 menu.py:263
 msgid "Lists updated: "
-msgstr "Liste aggiornate:"
+msgstr "Liste aggiornate il "
 
 #: menu.py:229
 msgid "No data, blocked or playlist not compatible with XStreamity plugin."
@@ -430,3 +430,7 @@ msgstr ""
 #: streamplayer.py:852
 msgid "Catch Up"
 msgstr ""
+
+#: menu.py:47
+msgid "Refresh Lists"
+msgstr "AGGiORNA LISTA"
