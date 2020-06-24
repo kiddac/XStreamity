@@ -129,12 +129,15 @@ class XStreamity_Main(Screen):
 
 	def checkPlaylistUserFile(self):
 		self["splash"].show()
-
-		with open(playlist_path, 'r+b') as f:
+		
+		with open(playlist_path, 'r+') as f:
 			lines = f.readlines()
 			f.seek(0)
+			f.writelines((line.strip(' ') for line in lines if line.strip()))
+			f.truncate()
+			
+			f.seek(0)
 			for line in lines:
-				line = line.strip(' ')
 				if not line.startswith('http://') and not line.startswith('https://') and not line.startswith('#'):
 					line = '# ' + line
 				if "=mpegts" in line:
@@ -144,6 +147,8 @@ class XStreamity_Main(Screen):
 				if line.strip() == "#":
 					line = ""
 				f.write(line)
+			f.truncate()
+			
 				
 		self.getPlaylistUserFile()
 
@@ -183,11 +188,14 @@ class XStreamity_Main(Screen):
 					continue
 					
 				self.domain = parsed_uri.hostname
-				self.port = parsed_uri.port
+				
+				if parsed_uri.port:
+					self.port = parsed_uri.port
 
 				self.host =  "%s%s:%s" % (self.protocol, self.domain, self.port)
 				
 				query = parse_qs(parsed_uri.query, keep_blank_values=True)
+				
 				if "username" in query:
 					self.username = query['username'][0]
 				else:
@@ -200,6 +208,7 @@ class XStreamity_Main(Screen):
 				
 				if "type" in query:
 					self.type = query['type'][0]
+					
 					
 				if "output" in query:
 					self.output = query['output'][0]

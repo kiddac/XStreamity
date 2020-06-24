@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-VERSION = "2.19-20200620"
+VERSION = "2.20-20200624"
 
 # for localized messages  	 
 from . import _
