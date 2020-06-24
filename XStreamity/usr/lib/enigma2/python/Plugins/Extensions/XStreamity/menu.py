@@ -129,27 +129,29 @@ class XStreamity_Menu(Screen):
 		category = url[1]
 		r = ''
 	
-		retries = Retry(total=3, status_forcelist=[408, 429, 500, 503, 504], backoff_factor = 1)
+		#retries = Retry(total=3, status_forcelist=[408, 429, 500, 503, 504], backoff_factor = 1)
 		
-		adapter = HTTPAdapter(max_retries=retries)
+		adapter = HTTPAdapter(max_retries=0)
 		http = requests.Session()
 		http.mount("http://", adapter)
 		
 		try:
-			r = http.get(url[0], headers=hdr, stream=True, timeout=timeout, verify=False)
+			r = http.get(url[0], headers=hdr, stream=False, timeout=timeout, verify=False)
 			r.raise_for_status()
 			if r.status_code == requests.codes.ok:
+				response = r.json()
+				r.close()
 				return category, r.json()
 			
 		except requests.exceptions.ConnectionError as e:
 			print("Error Connecting: %s" % e)
-			pass
+			r.close()
 			return category, ''
 			
 		
 		except requests.exceptions.RequestException as e:  
 			print(e)
-			pass
+			r.close()
 			return category, ''
 			
 			

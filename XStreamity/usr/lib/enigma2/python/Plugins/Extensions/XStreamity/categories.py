@@ -324,16 +324,17 @@ class XStreamity_Categories(Screen):
 		levelpath = dir_tmp + 'level' + str(self.level) + '.xml'
 		
 		if not os.path.exists(levelpath):
-			retries = Retry(total=1, status_forcelist=[408, 429, 500, 503, 504], backoff_factor = 1)
-			adapter = HTTPAdapter(max_retries=retries)
+			#retries = Retry(total=1, status_forcelist=[408, 429, 500, 503, 504], backoff_factor = 1)
+			adapter = HTTPAdapter(max_retries=0)
 			http = requests.Session()
 			http.mount("http://", adapter)
 			try:
-				r = http.get(url, headers=hdr, stream=True, timeout=5, verify=False)
+				r = http.get(url, headers=hdr, stream=False, timeout=5, verify=False)
 				r.raise_for_status()
 				if r.status_code == requests.codes.ok:
 					
 					content = r.json()
+					r.close()
 					with open(levelpath, 'wb') as f:
 						f.write(json.dumps(content))
 						
@@ -341,10 +342,12 @@ class XStreamity_Categories(Screen):
 					
 			except requests.exceptions.ConnectionError as e:
 				print("Error Connecting: %s" % e)
+				r.close()
 				pass
 				
 			except requests.exceptions.RequestException as e:  
 				print(e)
+				r.close()
 				pass
 		else:
 			#print("******* using file data ******")
@@ -942,24 +945,29 @@ class XStreamity_Categories(Screen):
 					if self.session.nav.getCurrentlyPlayingServiceReference():
 						# live preview 
 						if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString() and cfg.livepreview.value == True:
+							self.session.nav.stopService()
 							self.session.nav.playService(self.reference)
 						
 							if self.session.nav.getCurrentlyPlayingServiceReference():
 								glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
 								glob.newPlayingServiceRefString = glob.newPlayingServiceRef.toString()
 						else:
-							self.session.open(streamplayer.XStreamity_StreamPlayer, str(next_url), str(streamtype))
+							self.session.openWithCallback(self.setIndex, streamplayer.XStreamity_StreamPlayer, str(next_url), str(streamtype))
 					else:
-						self.session.open(streamplayer.XStreamity_StreamPlayer, str(next_url), str(streamtype))
+						self.session.openWithCallback(self.setIndex, streamplayer.XStreamity_StreamPlayer, str(next_url), str(streamtype))
 
 				elif next_url != 'None' and ("/movie/" in next_url or "/series/" in next_url):
 					
 					streamtype = glob.current_playlist["player_info"]["vodtype"]
 					
 					self.reference = eServiceReference(int(streamtype), 0, next_url)
-					self.session.open(streamplayer.XStreamity_VodPlayer, str(next_url), str(streamtype))
+					self.session.openWithCallback(self.setIndex, streamplayer.XStreamity_VodPlayer, str(next_url), str(streamtype))
 
 
+	def setIndex(self):
+		self["channel_list"].setIndex(glob.currentchannelistindex)
+		self["epg_list"].setIndex(glob.currentchannelistindex)
+		
 	def playStream(self):
 		# exit button back to playing stream
 		if self["channel_list"].getCurrent():
@@ -983,6 +991,8 @@ class XStreamity_Categories(Screen):
 	def stopStream(self):
 		if glob.currentPlayingServiceRefString != glob.newPlayingServiceRefString:
 			if glob.newPlayingServiceRefString != '':
+				if self.session.nav.getCurrentlyPlayingServiceReference():
+					self.session.nav.stopService()
 				self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
 	
 				
@@ -1431,28 +1441,30 @@ class XStreamity_Categories(Screen):
 						shortEPGJson = []
 						
 						url = str(player_api) + "&action=get_short_epg&stream_id=" + str(stream_id) + "&limit=50"
-						retries = Retry(total=2, status_forcelist=[408, 429, 500, 503, 504], method_whitelist=["HEAD", "GET", "OPTIONS"], backoff_factor = 1)
-						adapter = HTTPAdapter(max_retries=retries)
+						#retries = Retry(total=2, status_forcelist=[408, 429, 500, 503, 504], method_whitelist=["HEAD", "GET", "OPTIONS"], backoff_factor = 1)
+						adapter = HTTPAdapter(max_retries=0)
 						http = requests.Session()
 						http.mount("http://", adapter)
 						
 						try:
-							r = http.get(url, headers=hdr, stream=True, timeout=3, verify=False)
+							r = http.get(url, headers=hdr, stream=False, timeout=3, verify=False)
 							r.raise_for_status()
 							if r.status_code == requests.codes.ok:
 								try:
 									response = r.json()
+									r.close()
 								except:
+									r.close()
 									response = ''
 								
 						except requests.exceptions.ConnectionError as e:
 							print("Error Connecting: %s" % e)
-							pass
+							r.close()
 							response = ''
 			
 						except requests.exceptions.RequestException as e:  
 							print(e)
-							pass
+							r.close()
 							response = ''
 							
 						if response != '':	
@@ -1590,19 +1602,20 @@ class XStreamity_Categories(Screen):
 		url = str(vod_info_url) + str(action) + str(stream_id)
 			
 		try:
-			r = requests.get(url, headers=hdr, stream=True, timeout=10, verify=False)
+			r = requests.get(url, headers=hdr, stream=False, timeout=5, verify=False)
 			r.raise_for_status()
 			if r.status_code == requests.codes.ok:
 				content = r.json()
+				r.close()
 				self.processVod(content)
 				
 		except requests.exceptions.ConnectionError as e:
 			print("Error Connecting: %s" % e)
-			pass
+			r.close()
 					
 		except requests.exceptions.RequestException as e:  
 			print(e)
-			pass
+			r.close()
 	
 	
 	def processVod(self,content):

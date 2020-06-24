@@ -523,7 +523,7 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 	def __evEOF(self):
 		print("** evEOF **")
 		if self.servicetype == "1":
-			self.session.nav.stopService
+			self.session.nav.stopService()
 			self.session.nav.playService(self.reference, forceRestart=True)
 			
 
@@ -531,7 +531,7 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 		if self.hasStreamData == False:
 			if self.retries < 2:
 				self.retries += 1
-				self.session.nav.stopService
+				self.session.nav.stopService()
 				self.session.nav.playService(self.reference, forceRestart=True)
 			
 
@@ -826,6 +826,8 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
 	def stopStream(self):
 		if glob.currentPlayingServiceRefString != glob.newPlayingServiceRefString:
 			if glob.newPlayingServiceRefString != '':
+				if self.session.nav.getCurrentlyPlayingServiceReference():
+					self.session.nav.stopService()
 				self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
 
 
@@ -994,4 +996,6 @@ class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySup
 	def stopStream(self):
 		if glob.currentPlayingServiceRefString != glob.newPlayingServiceRefString:
 			if glob.newPlayingServiceRefString != '':
+				if self.session.nav.getCurrentlyPlayingServiceReference():
+					self.session.nav.stopService()
 				self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))

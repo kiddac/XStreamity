@@ -180,19 +180,19 @@ class XStreamity_Catchup(Screen):
 		levelpath = dir_tmp + 'level' + str(self.level) + '.xml'
 
 		if not os.path.exists(levelpath):
-			retries = Retry(total=3, status_forcelist=[408, 429, 500, 503, 504], method_whitelist=["HEAD", "GET", "OPTIONS"], backoff_factor = 1)
+			#retries = Retry(total=3, status_forcelist=[408, 429, 500, 503, 504], method_whitelist=["HEAD", "GET", "OPTIONS"], backoff_factor = 1)
 			
-			adapter = HTTPAdapter(max_retries=retries)
+			adapter = HTTPAdapter(max_retries=0)
 			http = requests.Session()
 			http.mount("http://", adapter)
 			
 			try:
-				r = http.get(url, headers=hdr, stream=True, timeout=10, verify=False)
+				r = http.get(url, headers=hdr, stream=False, timeout=5, verify=False)
 				r.raise_for_status()
 				if r.status_code == requests.codes.ok:
 					
 					content = r.json()
-					
+					r.close()
 					with open(levelpath, 'w') as f:
 						f.write(json.dumps(content))
 						
@@ -200,12 +200,12 @@ class XStreamity_Catchup(Screen):
 				
 			except requests.exceptions.ConnectionError as e:
 				print("Error Connecting: %s" % e)
-				pass
+				r.close()
 				
 				
 			except requests.exceptions.RequestException as e:  
 				print(e)
-				pass
+				r.close()
 		else:
 			with open(levelpath, "r") as f:
 				content = f.read()	
@@ -302,24 +302,25 @@ class XStreamity_Catchup(Screen):
 		self.live_list_all = []
 		self.live_list_archive = []
 		
-		retries = Retry(total=2, status_forcelist=[408, 429, 500, 503, 504], method_whitelist=["HEAD", "GET", "OPTIONS"], backoff_factor = 1)
-		adapter = HTTPAdapter(max_retries=retries)
+		#retries = Retry(total=2, status_forcelist=[408, 429, 500, 503, 504], method_whitelist=["HEAD", "GET", "OPTIONS"], backoff_factor = 1)
+		adapter = HTTPAdapter(max_retries=0)
 		http = requests.Session()
 		http.mount("http://", adapter)
 			
 		try:
-			r = http.get(url, headers=hdr, stream=True, timeout=10, verify=False)
+			r = http.get(url, headers=hdr, stream=False, timeout=5, verify=False)
 			r.raise_for_status()
 			if r.status_code == requests.codes.ok:
 				self.streams = r.json()
+				r.close()
 				
 		except requests.exceptions.ConnectionError as e:
 			print("Error Connecting: %s" % e)
-			pass
+			r.close()
 			
 		except requests.exceptions.RequestException as e:  
 			print(e)
-			pass	
+			r.close()	
 
 		if self.streams != '':
 			for item in self.streams:
@@ -432,29 +433,31 @@ class XStreamity_Catchup(Screen):
 					shortEPGJson = []	
 					
 					url = str(self.simpledatatable) + str(stream_id)
-					retries = Retry(total=2, status_forcelist=[408, 429, 500, 503, 504], method_whitelist=["HEAD", "GET", "OPTIONS"], backoff_factor = 1)
+					#retries = Retry(total=2, status_forcelist=[408, 429, 500, 503, 504], method_whitelist=["HEAD", "GET", "OPTIONS"], backoff_factor = 1)
 					
-					adapter = HTTPAdapter(max_retries=retries)
+					adapter = HTTPAdapter(max_retries=0)
 					http = requests.Session()
 					http.mount("http://", adapter)
 					
 					try:
-						r = http.get(url, headers=hdr, stream=True, timeout=3, verify=False)
+						r = http.get(url, headers=hdr, stream=False, timeout=3, verify=False)
 						r.raise_for_status()
 						if r.status_code == requests.codes.ok:
 							try:
 								response = r.json()
+								r.close()
 							except:
 								response = ''
+								r.close()
 							
 					except requests.exceptions.ConnectionError as e:
 						print("Error Connecting: %s" % e)
-						pass
+						r.close()
 						response = ''
 		
 					except requests.exceptions.RequestException as e:  
 						print(e)
-						pass
+						r.close()
 						response = ''
 						
 					if response != '':
@@ -568,6 +571,8 @@ class XStreamity_Catchup(Screen):
 	def stopStream(self):
 		if glob.currentPlayingServiceRefString != glob.newPlayingServiceRefString:
 			if glob.newPlayingServiceRefString != '':
+				if self.session.nav.getCurrentlyPlayingServiceReference():
+					self.session.nav.stopService()
 				self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
 	
 	

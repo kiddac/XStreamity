@@ -356,29 +356,33 @@ class XStreamity_Main(Screen):
 	def download_url(self, url):
 		index = url[1]
 		r = ''
-		retries = Retry(total=1, status_forcelist=[408, 429, 500, 503, 504], method_whitelist=["HEAD", "GET", "OPTIONS"], backoff_factor = 3)
-		adapter = HTTPAdapter(max_retries=retries)
+		#retries = Retry(total=1, status_forcelist=[408, 429, 500, 503, 504], method_whitelist=["HEAD", "GET", "OPTIONS"], backoff_factor = 3)
+		adapter = HTTPAdapter(max_retries=0)
 		http = requests.Session()
 		http.mount("http://", adapter)
 		
 		try:
-			r = http.get(url[0], headers=hdr, stream=True, timeout=5, verify=False)
+			r = http.get(url[0], headers=hdr, stream=False, timeout=5, verify=False)
 			r.raise_for_status()
 			if r.status_code == requests.codes.ok:
 				try:
-					return index, r.json()
+					response = r.json()
+					r.close()
+					return index, response
+					
 				except:
+					r.close()
 					return index, ''
 			
 		except requests.exceptions.ConnectionError as e:
 			print("Error Connecting: %s" % e)
-			pass
+			r.close()
 			return index, ''	
 			
 		
 		except requests.exceptions.RequestException as e:  
 			print(e)
-			pass
+			r.close()
 			return index, ''	
 
 
