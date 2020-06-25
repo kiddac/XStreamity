@@ -6,7 +6,7 @@ from . import _
 
 from Screens.Screen import Screen
 from Components.config import config, ConfigClock, ConfigDateTime, getConfigListEntry
-from Components.ActionMap import  ActionMap
+from Components.ActionMap import ActionMap
 from Components.ConfigList import ConfigListScreen
 from xStaticText import StaticText
 import time
@@ -14,30 +14,29 @@ import datetime
 import os
 from plugin import skin_path
 
+
 class RecordDateInput(Screen, ConfigListScreen):
-	def __init__(self, session, config_starttime=None, config_endtime=None, config_date=None,  ):
+	def __init__(self, session, config_starttime=None, config_endtime=None, config_date=None):
 		Screen.__init__(self, session)
-		
+
 		skin = skin_path + 'settings.xml'
-	
+
 		if os.path.exists('/var/lib/dpkg/status'):
 			skin = skin_path + 'DreamOS/settings.xml'
-	
+
 		with open(skin, 'r') as f:
 			self.skin = f.read()
-		
+
 		self['key_red'] = StaticText(_('Close'))
 		self['key_green'] = StaticText(_('Save'))
 
 		self.createConfig(config_date, config_starttime, config_endtime)
 
-		self['actions'] = ActionMap(['XStreamityActions'],
-		 {
-		 'cancel': self.keyCancel,
-		 'red': self.keyCancel,
-		 'green': self.keyGo,
-
-		 }, -2)
+		self['actions'] = ActionMap(['XStreamityActions'], {
+				'cancel': self.keyCancel,
+				'red': self.keyCancel,
+				'green': self.keyGo,
+			}, -2)
 
 		self.list = []
 		ConfigListScreen.__init__(self, self.list)
@@ -48,21 +47,21 @@ class RecordDateInput(Screen, ConfigListScreen):
 		if conf_starttime:
 			self.save_mask |= 1
 		else:
-			conf_starttime = ConfigClock(default = time.time()),
-		
+			conf_starttime = ConfigClock(default=time.time()),
+
 		if conf_endtime:
 			self.save_mask |= 2
 		else:
-			conf_endtime = ConfigClock(default = time.time()),
-			
+			conf_endtime = ConfigClock(default=time.time()),
+
 		if conf_date:
 			self.save_mask |= 3
 		else:
 			try:
 				conf_date = ConfigDateTime(default=time.time(), formatstring=config.usage.date.full.value, increment=86400)
 			except:
-				conf_date = ConfigDateTime(default=time.time(), formatstring = _("%d.%B %Y"), increment=86400)
-		
+				conf_date = ConfigDateTime(default=time.time(), formatstring=_("%d.%B %Y"), increment=86400)
+
 		self.timeinput_date = conf_date
 		self.timeinput_starttime = conf_starttime
 		self.timeinput_endtime = conf_endtime
@@ -76,7 +75,7 @@ class RecordDateInput(Screen, ConfigListScreen):
 		configlist.list = self.list
 		configlist.l.setList(self.list)
 
-	
+
 	def keySelect(self):
 		self.keyGo()
 
@@ -88,19 +87,19 @@ class RecordDateInput(Screen, ConfigListScreen):
 
 
 	def keyGo(self):
-		starttime = self.getTimestamp(self.timeinput_date.value, self.timeinput_starttime.value )
-		endtime = self.getTimestamp(self.timeinput_date.value, self.timeinput_endtime.value )
+		starttime = self.getTimestamp(self.timeinput_date.value, self.timeinput_starttime.value)
+		endtime = self.getTimestamp(self.timeinput_date.value, self.timeinput_endtime.value)
 
 		if self.save_mask & 1:
 			self.timeinput_starttime.save()
-			
+
 		if self.save_mask & 2:
 			self.timeinput_endtime.save()
-			
+
 		if self.save_mask & 3:
 			self.timeinput_date.save()
-			
-		
+
+
 		self.close((True, starttime, endtime))
 
 	def keyCancel(self):
