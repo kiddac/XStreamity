@@ -1,7 +1,8 @@
 from Components.Sources.Source import Source
 
+
 class StaticText(Source):
-	def __init__(self, text = "", filter = lambda x: x):
+	def __init__(self, text="", filter=lambda x: x):
 		Source.__init__(self)
 		self.__text = text
 		self.filter = filter
