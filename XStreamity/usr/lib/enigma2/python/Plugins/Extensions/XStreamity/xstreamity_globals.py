@@ -1,6 +1,6 @@
-currentPlayingServiceRef = None 
+currentPlayingServiceRef = None
 currentPlayingServiceRefString = ""
-newPlayingServiceRef = None 
+newPlayingServiceRef = None
 newPlayingServiceRefString = ""
 current_selection = 0
 current_playlist = []
