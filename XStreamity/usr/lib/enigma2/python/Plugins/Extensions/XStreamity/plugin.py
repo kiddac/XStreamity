@@ -11,7 +11,7 @@ from Components.config import config, ConfigSubsection, ConfigSelection, ConfigD
 import os
 import shutil
 
-VERSION = "2.21-20200624"
+VERSION = "2.22-20200627"
 screenwidth = getDesktop(0).size()
 
 # dir_src = "/etc/enigma2/X-Streamity/"

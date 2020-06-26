@@ -187,7 +187,7 @@ class XStreamity_Catchup(Screen):
 			http.mount("http://", adapter)
 
 			try:
-				r = http.get(url, headers=hdr, stream=False, timeout=5, verify=False)
+				r = http.get(url, headers=hdr, stream=True, timeout=5, verify=False)
 				r.raise_for_status()
 				if r.status_code == requests.codes.ok:
 
@@ -308,7 +308,7 @@ class XStreamity_Catchup(Screen):
 		http.mount("http://", adapter)
 
 		try:
-			r = http.get(url, headers=hdr, stream=False, timeout=5, verify=False)
+			r = http.get(url, headers=hdr, stream=True, timeout=5, verify=False)
 			r.raise_for_status()
 			if r.status_code == requests.codes.ok:
 				self.streams = r.json()
@@ -440,7 +440,7 @@ class XStreamity_Catchup(Screen):
 					http.mount("http://", adapter)
 
 					try:
-						r = http.get(url, headers=hdr, stream=False, timeout=3, verify=False)
+						r = http.get(url, headers=hdr, stream=True, timeout=3, verify=False)
 						r.raise_for_status()
 						if r.status_code == requests.codes.ok:
 							try:

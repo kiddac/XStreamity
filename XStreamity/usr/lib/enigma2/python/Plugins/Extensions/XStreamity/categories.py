@@ -331,7 +331,7 @@ class XStreamity_Categories(Screen):
 			http = requests.Session()
 			http.mount("http://", adapter)
 			try:
-				r = http.get(url, headers=hdr, stream=False, timeout=5, verify=False)
+				r = http.get(url, headers=hdr, stream=True, timeout=5, verify=False)
 				r.raise_for_status()
 				if r.status_code == requests.codes.ok:
 
@@ -1441,7 +1441,7 @@ class XStreamity_Categories(Screen):
 						http.mount("http://", adapter)
 
 						try:
-							r = http.get(url, headers=hdr, stream=False, timeout=3, verify=False)
+							r = http.get(url, headers=hdr, stream=True, timeout=3, verify=False)
 							r.raise_for_status()
 							if r.status_code == requests.codes.ok:
 								try:
@@ -1594,7 +1594,7 @@ class XStreamity_Categories(Screen):
 		url = str(vod_info_url) + str(action) + str(stream_id)
 
 		try:
-			r = requests.get(url, headers=hdr, stream=False, timeout=5, verify=False)
+			r = requests.get(url, headers=hdr, stream=True, timeout=5, verify=False)
 			r.raise_for_status()
 			if r.status_code == requests.codes.ok:
 				content = r.json()
@@ -1894,11 +1894,19 @@ class XStreamity_Categories(Screen):
 				bad_chars = ["sd", "hd", "fhd", "uhd", "4k", "vod", "1080p", "720p", "blueray", "x264", "aac", "ozlem", "hindi", "hdrip", "(cache)", "(kids)", "[3d-en]", "[iran-dubbed]", "imdb", "top250", "multi-audio",
 				"multi-subs",  "multi-sub",
 
-				"[de]", "-de-", "[al]", "[nl]", "[pt]", "[audio-pt]", "[pl]", "-ru-", "[ru]", "[ar]", "[nordic-subbed]", "[nordic-subbeb]" "[ro]", "[gr]", "[fi]", "[no]", "[rs]", "[ba]", "[si]", "[mk]", "[ex-yu]", "[hr]", "[yu]", "[fr]",
-				"[in]", "[it]", "[da]", "[es]", "[se]", "[tr]", "[en]", "[uk]", "[us]",
-
-				"uk:", "de:", "nl:", "cg:", "al:", "ae:", "at:", "ee:", "lt:", "be:", "bg:", "cz:", "sk:", "dk:", "hr:", "rs:",  "ba:", "fi:", "fr:", "de:", "gr:", "hu:", "ir:", "it:", "br:", "mx:", "mk:", "nl:", "no:",
-				"pl:", "pt:", "ro:", "ru:", "es:", "se:", "ch:", "tr:", "us:",
+				 "[audio-pt]", "[nordic-subbed]", "[nordic-subbeb]",
+				 
+				"ae:", "al:", "ar:", "at:", "ba:", "be:", "bg:", "br:", "cg:", "ch:", "cz:", "da:", "de:", "dk:", "ee:", "en:", "es:", "ex-yu:", "fi:", "fr:", "gr:", "hr:", "hu:", "in:", "ir:", "it:", "lt:", "mk:",
+				"mx:", "nl:", "no:", "pl:", "pt:",  "ro:", "rs:", "ru:", "se:",  "si:", "sk:", "tr:", "uk:", "us:",  "yu:",
+				
+				"[ae]", "[al]", "[ar]", "[at]", "[ba]", "[be]", "[bg]", "[br]", "[cg]", "[ch]", "[cz]", "[da]", "[de]", "[dk]", "[ee]", "[en]", "[es]", "[ex-yu]", "[fi]", "[fr]", "[gr]", "[hr]", "[hu]", "[in]", "[ir]", "[it]", "[lt]", "[mk]",
+				"[mx]", "[nl]", "[no]", "[pl]", "[pt]",  "[ro]", "[rs]", "[ru]", "[se]",  "[si]", "[sk]", "[tr]", "[uk]", "[us]",  "[yu]",
+				
+				"-ae-", "-al-", "-ar-", "-at-", "-ba-", "-be-", "-bg-", "-br-", "-cg-", "-ch-", "-cz-", "-da-", "-de-", "-dk-", "-ee-", "-en-", "-es-", "-ex-yu-", "-fi-", "-fr-", "-gr-", "-hr-", "-hu-", "-in-", "-ir-", "-it-", "-lt-", "-mk-", 
+				"-mx-", "-nl-", "-no-", "-pl-", "-pt-",  "-ro-", "-rs-", "-ru-", "-se-",  "-si-", "-sk-", "-tr-", "-uk-", "-us-",  "-yu-",
+				
+				"|ae|", "|al|", "|ar|", "|at|", "|ba|", "|be|", "|bg|", "|br|", "|cg|", "|ch|", "|cz|", "|da|", "|de|", "|dk|", "|ee|", "|en|", "|es|", "|ex-yu|", "|fi|", "|fr|", "|gr|", "|hr|", "|hu|", "|in|", "|ir|", "|it|", "|lt|", "|mk|", 
+				"|mx|", "|nl|", "|no|", "|pl|", "|pt|",  "|ro|", "|rs|", "|ru|", "|se|",  "|si|", "|sk|", "|tr|", "|uk|", "|us|",  "|yu|",
 
 				"(", ")", "[", "]", "u-", "3d", "-", "'", ]
 
