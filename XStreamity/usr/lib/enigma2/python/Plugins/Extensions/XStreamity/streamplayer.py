@@ -276,10 +276,10 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 			'cancel': self.back,
 			'tv': self.toggleStreamType,
 			'info': self.toggleStreamType,
-			"channelUp": self.next,
+			"channelUp": self.__next__,
 			"channelDown": self.prev,
 			"up": self.prev,
-			"down": self.next,
+			"down": self.__next__,
 			"stop": self.back,
 			"rec": self.IPTVstartInstantRecording,
 			"red": self.back
@@ -565,7 +565,7 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 		self.playStream(self.servicetype, self.streamurl)
 
 
-	def next(self):
+	def __next__(self):
 		self.retries = 0
 		if glob.currentchannelist:
 			listlength = len(glob.currentchannelist)
@@ -649,10 +649,10 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
 			'cancel': self.back,
 			'tv': self.toggleStreamType,
 			'info': self.toggleStreamType,
-			"channelUp": self.next,
+			"channelUp": self.__next__,
 			"channelDown": self.prev,
 			"up": self.prev,
-			"down": self.next,
+			"down": self.__next__,
 			"stop": self.back,
 			"red": self.back,
 
@@ -794,7 +794,7 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
 		self.playStream(self.servicetype, self.streamurl)
 
 
-	def next(self):
+	def __next__(self):
 		if glob.currentchannelist:
 
 			listlength = len(glob.currentchannelist)

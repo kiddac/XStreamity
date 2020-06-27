@@ -16,6 +16,7 @@ from Tools.Directories import fileExists
 from time import time
 import os
 import hashlib
+from functools import reduce
 
 try:
 	from Components.About import about
@@ -52,7 +53,7 @@ def get_random():
 
 def bin2long(s):
 	try:
-		return reduce(lambda x, y: (x << 8L) + y, map(ord, s))
+		return reduce(lambda x, y: (x << 8) + y, list(map(ord, s)))
 	except:
 		pass
 

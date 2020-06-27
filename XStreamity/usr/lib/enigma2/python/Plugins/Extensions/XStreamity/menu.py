@@ -54,7 +54,7 @@ class XStreamity_Menu(Screen):
 			'red': self.quit,
 			'cancel': self.quit,
 			'yellow': self.updateCategories,
-			'ok':  self.next,
+			'ok':  self.__next__,
 		}, -2)
 
 		self.protocol = glob.current_playlist['playlist_info']['protocol']
@@ -220,7 +220,7 @@ class XStreamity_Menu(Screen):
 		if len(self.list) == 0:
 			self.session.openWithCallback(self.close, MessageBox, (_('No data, blocked or playlist not compatible with XStreamity plugin.')), MessageBox.TYPE_WARNING, timeout=5)
 		elif len(self.list) == 1:
-			self.next()
+			self.__next__()
 			self.close()
 
 
@@ -229,7 +229,7 @@ class XStreamity_Menu(Screen):
 		self.close()
 
 
-	def next(self):
+	def __next__(self):
 		import categories
 		import catchup
 

@@ -29,7 +29,11 @@ from Tools.LoadPixmap import LoadPixmap
 from twisted.web.client import downloadPage
 
 
-from urllib import unquote
+try:
+	from urllib import unquote
+except:
+	from urllib.parse import unquote
+	
 from xStaticText import StaticText
 from Screens.MessageBox import MessageBox
 
@@ -211,8 +215,8 @@ class XStreamity_Categories(Screen):
 		self["actions"] = ActionMap(["XStreamityActions"], {
 			'cancel': self.back,
 			'red': self.playStream,
-			'ok':  self.next,
-			'green': self.next,
+			'ok':  self.__next__,
+			'green': self.__next__,
 			'yellow': self.sort,
 			'blue': self.search,
 			'epg': self.nownext,
@@ -877,7 +881,7 @@ class XStreamity_Categories(Screen):
 		self.next2()
 
 
-	def next(self):
+	def __next__(self):
 		if self.level == 1:
 			self.pin = True
 			if cfg.parental.getValue() is True:

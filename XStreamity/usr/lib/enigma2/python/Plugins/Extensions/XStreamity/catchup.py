@@ -110,8 +110,8 @@ class XStreamity_Catchup(Screen):
 		self["actions"] = ActionMap(["XStreamityActions"], {
 			'red': self.back,
 			'cancel': self.back,
-			'ok':  self.next,
-			'green': self.next,
+			'ok':  self.__next__,
+			'green': self.__next__,
 			"left": self.pageUp,
 			"right": self.pageDown,
 			"up": self.goUp,
@@ -374,7 +374,7 @@ class XStreamity_Catchup(Screen):
 		self.next2()
 
 
-	def next(self):
+	def __next__(self):
 		if self.level == 1:
 			self.pin = True
 			if cfg.parental.getValue() is True:
