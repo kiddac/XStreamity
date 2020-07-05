@@ -1704,7 +1704,7 @@ class XStreamity_Categories(Screen):
             stream_url = self["channel_list"].getCurrent()[3]
             extension = str(os.path.splitext(stream_url)[-1])
 
-            if self["key_rec"].getText() == _('Download)'):
+            if self["key_rec"].getText() == _('Download'):
                 from Screens.MessageBox import MessageBox
 
                 title = self["channel_list"].getCurrent()[0]
