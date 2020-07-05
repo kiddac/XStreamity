@@ -187,12 +187,11 @@ class XStreamity_Catchup(Screen):
 			http.mount("http://", adapter)
 
 			try:
-				r = http.get(url, headers=hdr, stream=True, timeout=5, verify=False)
+				r = http.get(url, headers=hdr, stream=True, timeout=10, verify=False)
 				r.raise_for_status()
 				if r.status_code == requests.codes.ok:
 
 					content = r.json()
-					r.close()
 					with open(levelpath, 'w') as f:
 						f.write(json.dumps(content))
 
@@ -200,12 +199,10 @@ class XStreamity_Catchup(Screen):
 
 			except requests.exceptions.ConnectionError as e:
 				print("Error Connecting: %s" % e)
-				r.close()
 
 
 			except requests.exceptions.RequestException as e:
 				print(e)
-				r.close()
 		else:
 			with open(levelpath, "r") as f:
 				content = f.read()
@@ -308,19 +305,16 @@ class XStreamity_Catchup(Screen):
 		http.mount("http://", adapter)
 
 		try:
-			r = http.get(url, headers=hdr, stream=True, timeout=5, verify=False)
+			r = http.get(url, headers=hdr, stream=True, timeout=10, verify=False)
 			r.raise_for_status()
 			if r.status_code == requests.codes.ok:
 				self.streams = r.json()
-				r.close()
 
 		except requests.exceptions.ConnectionError as e:
 			print("Error Connecting: %s" % e)
-			r.close()
 
 		except requests.exceptions.RequestException as e:
 			print(e)
-			r.close()
 
 		if self.streams != '':
 			for item in self.streams:
@@ -440,24 +434,20 @@ class XStreamity_Catchup(Screen):
 					http.mount("http://", adapter)
 
 					try:
-						r = http.get(url, headers=hdr, stream=True, timeout=3, verify=False)
+						r = http.get(url, headers=hdr, stream=True, timeout=10, verify=False)
 						r.raise_for_status()
 						if r.status_code == requests.codes.ok:
 							try:
 								response = r.json()
-								r.close()
 							except:
 								response = ''
-								r.close()
 
 					except requests.exceptions.ConnectionError as e:
 						print("Error Connecting: %s" % e)
-						r.close()
 						response = ''
 
 					except requests.exceptions.RequestException as e:
 						print(e)
-						r.close()
 						response = ''
 
 					if response != '':

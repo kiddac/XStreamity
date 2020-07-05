@@ -100,7 +100,6 @@ class XStreamity_Main(Screen):
 	def start(self):
 		# get version number
 		self.clear_caches()
-
 		self['version'].setText(VERSION)
 
 		# check if playlists.json file exists in specified location
@@ -331,6 +330,8 @@ class XStreamity_Main(Screen):
 
 		if self.url_list != []:
 			self.process_downloads()
+		else:
+			self["splash"].hide()
 
 
 	def download_url(self, url):
@@ -342,27 +343,23 @@ class XStreamity_Main(Screen):
 		http.mount("http://", adapter)
 
 		try:
-			r = http.get(url[0], headers=hdr, stream=True, timeout=5, verify=False)
+			r = http.get(url[0], headers=hdr, stream=True, timeout=10, verify=False)
 			r.raise_for_status()
 			if r.status_code == requests.codes.ok:
 				try:
 					response = r.json()
-					r.close()
 					return index, response
 
 				except:
-					r.close()
 					return index, ''
 
 		except requests.exceptions.ConnectionError as e:
 			print("Error Connecting: %s" % e)
-			r.close()
 			return index, ''
 
 
 		except requests.exceptions.RequestException as e:
 			print(e)
-			r.close()
 			return index, ''
 
 
@@ -537,7 +534,7 @@ class XStreamity_Main(Screen):
 
 
 	def refresh(self):
-		self["splash"].show()
+		#self["splash"].show()
 		self.playlists_all = []
 
 		with open(json_file) as f:

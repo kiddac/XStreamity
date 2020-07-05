@@ -47,7 +47,7 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 		self['key_red'] = StaticText(_('Close'))
 		self['key_green'] = StaticText(_('Save'))
 
-		self['VirtualKB'].setEnabled(False)
+		#self['VirtualKB'].setEnabled(False)
 		self['HelpWindow'] = Pixmap()
 		self['VKeyIcon'] = Pixmap()
 		self['HelpWindow'].hide()
@@ -189,12 +189,6 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 
 	def handleInputHelpers(self):
 		if self['config'].getCurrent() is not None:
-
-			"""
-			if self.has_key('VKeyIcon'):
-				self['VirtualKB'].setEnabled(False)
-				self['VKeyIcon'].hide()
-				"""
 
 			if 'VKeyIcon' in self:
 				self['VirtualKB'].setEnabled(False)

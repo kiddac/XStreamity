@@ -136,17 +136,14 @@ class XStreamity_Menu(Screen):
 			r.raise_for_status()
 			if r.status_code == requests.codes.ok:
 				response = r.json()
-				r.close()
 				return category, r.json()
 
 		except requests.exceptions.ConnectionError as e:
 			print("Error Connecting: %s" % e)
-			r.close()
 			return category, ''
 
 		except requests.exceptions.RequestException as e:
 			print(e)
-			r.close()
 			return category, ''
 
 

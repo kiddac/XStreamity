@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2020-06-16 22:46+0100\n"
-"PO-Revision-Date: 2020-06-16 22:47+0100\n"
+"POT-Creation-Date: 2020-07-05 13:57+0100\n"
+"PO-Revision-Date: 2020-07-05 13:58+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -10,467 +10,485 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.3\n"
-"X-Poedit-Basepath: ../../../Git/XStreamity/XStreamity/usr/lib/enigma2/python/Plugins/Extensions/XStreamity\n"
+"X-Poedit-Basepath: ../../../Git/XStreamity/XStreamity/usr/lib/enigma2/python/Plugins/Extensions\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: RecordDateInput.py:29 server.py:46 serverinfo.py:46 settings.py:46
-msgid "Close"
-msgstr ""
-
-#: RecordDateInput.py:30 hidden.py:42 server.py:47 settings.py:47
-msgid "Save"
-msgstr ""
-
-#: RecordDateInput.py:69
-msgid "Date"
-msgstr ""
-
-#: RecordDateInput.py:70
-msgid "Start Time"
-msgstr ""
-
-#: RecordDateInput.py:71
-msgid "End Time"
-msgstr ""
-
-#: catchup.py:47 catchup.py:48
+#: XStreamity/catchup.py:47 XStreamity/catchup.py:48
 msgid "Catch Up TV"
 msgstr ""
 
-#: catchup.py:79 categories.py:153 main.py:54 menu.py:46
+#: XStreamity/catchup.py:79 XStreamity/categories.py:155 XStreamity/main.py:51
+#: XStreamity/menu.py:45
 msgid "Back"
 msgstr ""
 
-#: catchup.py:80 categories.py:154 categories.py:1504
+#: XStreamity/catchup.py:80 XStreamity/categories.py:156
+#: XStreamity/categories.py:1500
 msgid "OK"
 msgstr ""
 
-#: catchup.py:372 categories.py:857
+#: XStreamity/catchup.py:367 XStreamity/categories.py:862
 msgid "Incorrect pin code."
 msgstr ""
 
-#: catchup.py:383 categories.py:868
+#: XStreamity/catchup.py:378 XStreamity/categories.py:873
 msgid "Please enter the parental control pin code"
 msgstr ""
 
-#: catchup.py:383 categories.py:868
+#: XStreamity/catchup.py:378 XStreamity/categories.py:873
 msgid "Enter pin code"
 msgstr ""
 
-#: catchup.py:532 categories.py:1013 categories.py:1030
+#: XStreamity/catchup.py:523 XStreamity/categories.py:1024
+#: XStreamity/categories.py:1041
 msgid "Download"
 msgstr ""
 
-#: catchup.py:535
+#: XStreamity/catchup.py:526
 msgid "Catchup currently not available. Missing EPG data"
 msgstr ""
 
-#: catchup.py:565
+#: XStreamity/catchup.py:556
 msgid "Catchup error. No data for this slot"
 msgstr ""
 
-#: catchup.py:718 categories.py:1728
+#: XStreamity/catchup.py:711 XStreamity/categories.py:1718
 msgid ""
 "Downloading \n"
 "\n"
 msgstr ""
 
-#: catchup.py:723 categories.py:1733
+#: XStreamity/catchup.py:716 XStreamity/categories.py:1723
 msgid ""
 "Download Failed\n"
 "\n"
 msgstr ""
 
-#: categories.py:67
+#: XStreamity/categories.py:69
 msgid "Categories"
 msgstr ""
 
-#: categories.py:155 categories.py:836 categories.py:884 categories.py:1505
-#: categories.py:1745 categories.py:1773 categories.py:1803
+#: XStreamity/categories.py:157 XStreamity/categories.py:841
+#: XStreamity/categories.py:889 XStreamity/categories.py:1501
+#: XStreamity/categories.py:1845 XStreamity/categories.py:1870
+#: XStreamity/categories.py:1900
 msgid "Sort: A-Z"
 msgstr ""
 
-#: categories.py:156 categories.py:1506 categories.py:1802
+#: XStreamity/categories.py:158 XStreamity/categories.py:1502
+#: XStreamity/categories.py:1899
 msgid "Search"
 msgstr ""
 
-#: categories.py:303
+#: XStreamity/categories.py:305
 msgid "Hide/Show"
 msgstr ""
 
-#: categories.py:452 categories.py:453
+#: XStreamity/categories.py:454 XStreamity/categories.py:455
 msgid "All"
 msgstr ""
 
-#: categories.py:587
+#: XStreamity/categories.py:585
 msgid "Season "
 msgstr ""
 
-#: categories.py:1334 categories.py:1507 categories.py:1537 categories.py:1548
+#: XStreamity/categories.py:1335 XStreamity/categories.py:1503
+#: XStreamity/categories.py:1534 XStreamity/categories.py:1545
 msgid "Next Info"
 msgstr ""
 
-#: categories.py:1542
+#: XStreamity/categories.py:1514
+msgid "Record"
+msgstr ""
+
+#: XStreamity/categories.py:1539
 msgid "Now Info"
 msgstr ""
 
-#: categories.py:1558
+#: XStreamity/categories.py:1555
 msgid "Video Type:"
 msgstr ""
 
-#: categories.py:1559
+#: XStreamity/categories.py:1556
 msgid "Rating:"
 msgstr ""
 
-#: categories.py:1560
+#: XStreamity/categories.py:1557
 msgid "Genre:"
 msgstr ""
 
-#: categories.py:1561
+#: XStreamity/categories.py:1558
 msgid "Duration:"
 msgstr ""
 
-#: categories.py:1562
+#: XStreamity/categories.py:1559
 msgid "Release Date:"
 msgstr ""
 
-#: categories.py:1563
+#: XStreamity/categories.py:1560
 msgid "Cast:"
 msgstr ""
 
-#: categories.py:1564
+#: XStreamity/categories.py:1561
 msgid "Director:"
 msgstr ""
 
-#: categories.py:1565
+#: XStreamity/categories.py:1562
 msgid "Country:"
 msgstr ""
 
-#: categories.py:1746 categories.py:1750
+#: XStreamity/categories.py:1707
+msgid "Download)"
+msgstr ""
+
+#: XStreamity/categories.py:1831 XStreamity/streamplayer.py:329
+msgid "Recording Timer Set."
+msgstr ""
+
+#: XStreamity/categories.py:1833 XStreamity/streamplayer.py:331
+msgid "Recording Failed."
+msgstr ""
+
+#: XStreamity/categories.py:1846 XStreamity/categories.py:1850
 msgid "Sort: Z-A"
 msgstr ""
 
-#: categories.py:1752 categories.py:1758
+#: XStreamity/categories.py:1852 XStreamity/categories.py:1858
 msgid "Sort: Newest"
 msgstr ""
 
-#: categories.py:1754 categories.py:1769 categories.py:1772
+#: XStreamity/categories.py:1854 XStreamity/categories.py:1867
+#: XStreamity/categories.py:1869
 msgid "Sort: Original"
 msgstr ""
 
-#: categories.py:1784 categories.py:1793
+#: XStreamity/categories.py:1881 XStreamity/categories.py:1890
 msgid "Reset Search"
 msgstr ""
 
-#: categories.py:1785
+#: XStreamity/categories.py:1882
 msgid "Filter this category..."
 msgstr ""
 
-#: categories.py:2070
+#: XStreamity/categories.py:2173
 msgid ""
 "The IMDb plugin is not installed!\n"
 "Please install it."
 msgstr ""
 
-#: categories.py:2151
-msgid "XMLTV file is invalid."
-msgstr ""
-
-#: categories.py:2185 categories.py:2196
+#: XStreamity/categories.py:2288 XStreamity/categories.py:2299
 msgid ""
 "EPG Error. Failed to download XMLTV file.\n"
 "Try Quick EPG in Edit Server"
 msgstr ""
 
-#: hidden.py:32
+#: XStreamity/hidden.py:32
 msgid "Hidden Categories"
 msgstr ""
 
-#: hidden.py:41 hidden.py:43
+#: XStreamity/hidden.py:41 XStreamity/hidden.py:43
 msgid "Cancel"
 msgstr ""
 
-#: hidden.py:44
+#: XStreamity/hidden.py:42 XStreamity/record.py:38 XStreamity/server.py:48
+#: XStreamity/settings.py:47
+msgid "Save"
+msgstr ""
+
+#: XStreamity/hidden.py:44
 msgid "Invert"
 msgstr ""
 
-#: hidden.py:45
+#: XStreamity/hidden.py:45
 msgid "Clear All"
 msgstr ""
 
-#: hidden.py:141
+#: XStreamity/hidden.py:140
 msgid "Error: All categories hidden. Please amend your selection."
 msgstr ""
 
-#: main.py:52
+#: XStreamity/main.py:49
 msgid "Select Server"
 msgstr ""
 
-#: main.py:55
+#: XStreamity/main.py:52
 msgid "Add"
 msgstr ""
 
-#: main.py:59
+#: XStreamity/main.py:56
 msgid "Settings"
 msgstr ""
 
-#: main.py:425 main.py:495
+#: XStreamity/main.py:415 XStreamity/main.py:485
 msgid "Server Not Responding"
 msgstr ""
 
-#: main.py:438 main.py:497
+#: XStreamity/main.py:428 XStreamity/main.py:487
 msgid "Not Authorised"
 msgstr ""
 
-#: main.py:443 main.py:451 main.py:484
+#: XStreamity/main.py:433 XStreamity/main.py:441 XStreamity/main.py:474
 msgid "Active"
 msgstr ""
 
-#: main.py:445 main.py:489
+#: XStreamity/main.py:435 XStreamity/main.py:479
 msgid "Banned"
 msgstr ""
 
-#: main.py:447 main.py:493
+#: XStreamity/main.py:437 XStreamity/main.py:483
 msgid "Disabled"
 msgstr ""
 
-#: main.py:449 main.py:491
+#: XStreamity/main.py:439 XStreamity/main.py:481
 msgid "Expired"
 msgstr ""
 
-#: main.py:474
+#: XStreamity/main.py:464
 msgid "Edit"
 msgstr ""
 
-#: main.py:475
+#: XStreamity/main.py:465
 msgid "Delete"
 msgstr ""
 
-#: main.py:476
+#: XStreamity/main.py:466
 msgid "Info"
 msgstr ""
 
-#: main.py:534
+#: XStreamity/main.py:524
 msgid "Delete selected playlist?"
 msgstr ""
 
-#: menu.py:44
+#: XStreamity/menu.py:43
 msgid "Stream Selection"
 msgstr ""
 
-#: menu.py:47
+#: XStreamity/menu.py:46
 msgid "Refresh Lists"
 msgstr ""
 
-#: menu.py:49 menu.py:90 menu.py:257
+#: XStreamity/menu.py:48 XStreamity/menu.py:87 XStreamity/menu.py:250
 msgid "Lists updated: "
 msgstr ""
 
-#: menu.py:225
+#: XStreamity/menu.py:218
 msgid "No data, blocked or playlist not compatible with XStreamity plugin."
 msgstr ""
 
-#: plugin.py:162 plugin.py:181
+#: XStreamity/plugin.py:158 XStreamity/plugin.py:177
 msgid "XStreamity"
 msgstr ""
 
-#: plugin.py:180
+#: XStreamity/plugin.py:176
 msgid "IPTV Xtream Codes playlists player by KiddaC"
 msgstr ""
 
-#: server.py:35
-msgid "Add Server"
+#: XStreamity/record.py:37 XStreamity/server.py:47 XStreamity/serverinfo.py:47
+#: XStreamity/settings.py:46
+msgid "Close"
 msgstr ""
 
-#: server.py:39
-msgid "Edit Server"
-msgstr ""
-
-#: server.py:81 settings.py:74
-msgid "Really close without saving settings?"
-msgstr ""
-
-#: server.py:105 server.py:131
-msgid "http://"
-msgstr ""
-
-#: server.py:105 server.py:131
-msgid "https://"
-msgstr ""
-
-#: server.py:140
-msgid "Off"
-msgstr ""
-
-#: server.py:140
-msgid "Quick"
-msgstr ""
-
-#: server.py:140
-msgid "Full"
-msgstr ""
-
-#: server.py:155
-msgid "Display name:"
-msgstr ""
-
-#: server.py:157
-msgid "Protocol:"
-msgstr ""
-
-#: server.py:158
-msgid "Server URL:"
-msgstr ""
-
-#: server.py:159
-msgid "Port:"
-msgstr ""
-
-#: server.py:160
-msgid "Username:"
-msgstr ""
-
-#: server.py:161
-msgid "Password:"
-msgstr ""
-
-#: server.py:162
-msgid "Output:"
-msgstr ""
-
-#: server.py:165
-msgid "Show LIVE category:"
-msgstr ""
-
-#: server.py:166
-msgid "Show VOD category:"
-msgstr ""
-
-#: server.py:167
-msgid "Show SERIES category:"
-msgstr ""
-
-#: server.py:168
-msgid "Show CATCHUP category:"
-msgstr ""
-
-#: server.py:171
-msgid "Stream Type LIVE:"
-msgstr ""
-
-#: server.py:174
-msgid "Stream Type VOD/SERIES:"
-msgstr ""
-
-#: server.py:177
-msgid "Stream Type CATCHUP:"
-msgstr ""
-
-#: server.py:180
-msgid "EPG Type:"
-msgstr ""
-
-#: server.py:181
-msgid "EPG/Catchup Timeshift:"
-msgstr ""
-
-#: server.py:183
-msgid "Quick EPG Timeshift:"
-msgstr ""
-
-#: serverinfo.py:26
-msgid "User Information"
-msgstr ""
-
-#: settings.py:39
-msgid "Main Settings"
-msgstr ""
-
-#: settings.py:97
-msgid "Select skin *Restart GUI Required"
-msgstr ""
-
-#: settings.py:98
-msgid "playlists.txt location"
-msgstr ""
-
-#: settings.py:99
-msgid "Server timeout (seconds)"
-msgstr ""
-
-#: settings.py:101
-msgid "Default LIVE stream type"
-msgstr ""
-
-#: settings.py:102
-msgid "Default VOD/SERIES stream type"
-msgstr ""
-
-#: settings.py:103
-msgid "Default CATCHUP stream type"
-msgstr ""
-
-#: settings.py:105
-msgid "Preview LIVE streams in mini tv before playing"
-msgstr ""
-
-#: settings.py:107
-msgid "VOD download folder"
-msgstr ""
-
-#: settings.py:108
-msgid "Parental control"
-msgstr ""
-
-#: settings.py:109
-msgid "Show in main menu *Restart GUI Required"
-msgstr ""
-
-#: settings.py:111
-msgid "Update VOD Movie Database information"
-msgstr ""
-
-#: settings.py:112
-msgid "VOD Movie Database language"
-msgstr ""
-
-#: settings.py:114
-msgid "Margin before catchup (mins)"
-msgstr ""
-
-#: settings.py:115
-msgid "Margin after catchup (mins)"
-msgstr ""
-
-#: settings.py:220 settings.py:238
-msgid "Choose Directory:"
-msgstr ""
-
-#: settings.py:221 settings.py:239
-msgid "Choose directory"
-msgstr ""
-
-#: streamplayer.py:275
-msgid "TV"
-msgstr ""
-
-#: streamplayer.py:302
+#: XStreamity/record.py:51
 msgid "Please enter recording time"
 msgstr ""
 
-#: streamplayer.py:330
-msgid "Recording Started."
+#: XStreamity/record.py:54
+msgid "Please enter recording end time"
 msgstr ""
 
-#: streamplayer.py:332 streamplayer.py:335
-msgid "Recording Failed."
+#: XStreamity/record.py:73 XStreamity/server.py:81 XStreamity/settings.py:73
+msgid "Really close without saving settings?"
 msgstr ""
 
-#: streamplayer.py:650
+#: XStreamity/record.py:95
+msgid "Name"
+msgstr ""
+
+#: XStreamity/record.py:97
+msgid "Start Time"
+msgstr ""
+
+#: XStreamity/record.py:99
+msgid "End Time"
+msgstr ""
+
+#: XStreamity/server.py:36
+msgid "Add Server"
+msgstr ""
+
+#: XStreamity/server.py:40
+msgid "Edit Server"
+msgstr ""
+
+#: XStreamity/server.py:105 XStreamity/server.py:131
+msgid "http://"
+msgstr ""
+
+#: XStreamity/server.py:105 XStreamity/server.py:131
+msgid "https://"
+msgstr ""
+
+#: XStreamity/server.py:140
+msgid "Off"
+msgstr ""
+
+#: XStreamity/server.py:140
+msgid "Quick"
+msgstr ""
+
+#: XStreamity/server.py:140
+msgid "Full"
+msgstr ""
+
+#: XStreamity/server.py:155
+msgid "Display name:"
+msgstr ""
+
+#: XStreamity/server.py:157
+msgid "Protocol:"
+msgstr ""
+
+#: XStreamity/server.py:158
+msgid "Server URL:"
+msgstr ""
+
+#: XStreamity/server.py:159
+msgid "Port:"
+msgstr ""
+
+#: XStreamity/server.py:160
+msgid "Username:"
+msgstr ""
+
+#: XStreamity/server.py:161
+msgid "Password:"
+msgstr ""
+
+#: XStreamity/server.py:162
+msgid "Output:"
+msgstr ""
+
+#: XStreamity/server.py:165
+msgid "Show LIVE category:"
+msgstr ""
+
+#: XStreamity/server.py:166
+msgid "Show VOD category:"
+msgstr ""
+
+#: XStreamity/server.py:167
+msgid "Show SERIES category:"
+msgstr ""
+
+#: XStreamity/server.py:168
+msgid "Show CATCHUP category:"
+msgstr ""
+
+#: XStreamity/server.py:171
+msgid "Stream Type LIVE:"
+msgstr ""
+
+#: XStreamity/server.py:174
+msgid "Stream Type VOD/SERIES:"
+msgstr ""
+
+#: XStreamity/server.py:177
+msgid "Stream Type CATCHUP:"
+msgstr ""
+
+#: XStreamity/server.py:180
+msgid "EPG Type:"
+msgstr ""
+
+#: XStreamity/server.py:181
+msgid "EPG/Catchup Timeshift:"
+msgstr ""
+
+#: XStreamity/server.py:183
+msgid "Quick EPG Timeshift:"
+msgstr ""
+
+#: XStreamity/serverinfo.py:27
+msgid "User Information"
+msgstr ""
+
+#: XStreamity/settings.py:39
+msgid "Main Settings"
+msgstr ""
+
+#: XStreamity/settings.py:96
+msgid "Select skin *Restart GUI Required"
+msgstr ""
+
+#: XStreamity/settings.py:97
+msgid "playlists.txt location"
+msgstr ""
+
+#: XStreamity/settings.py:98
+msgid "Server timeout (seconds)"
+msgstr ""
+
+#: XStreamity/settings.py:100
+msgid "Default LIVE stream type"
+msgstr ""
+
+#: XStreamity/settings.py:101
+msgid "Default VOD/SERIES stream type"
+msgstr ""
+
+#: XStreamity/settings.py:102
+msgid "Default CATCHUP stream type"
+msgstr ""
+
+#: XStreamity/settings.py:104
+msgid "Preview LIVE streams in mini tv before playing"
+msgstr ""
+
+#: XStreamity/settings.py:106
+msgid "VOD download folder"
+msgstr ""
+
+#: XStreamity/settings.py:107
+msgid "Parental control"
+msgstr ""
+
+#: XStreamity/settings.py:108
+msgid "Show in main menu *Restart GUI Required"
+msgstr ""
+
+#: XStreamity/settings.py:110
+msgid "Update VOD Movie Database information"
+msgstr ""
+
+#: XStreamity/settings.py:111
+msgid "VOD Movie Database language"
+msgstr ""
+
+#: XStreamity/settings.py:113
+msgid "Margin before catchup (mins)"
+msgstr ""
+
+#: XStreamity/settings.py:114
+msgid "Margin after catchup (mins)"
+msgstr ""
+
+#: XStreamity/settings.py:220 XStreamity/settings.py:238
+msgid "Choose Directory:"
+msgstr ""
+
+#: XStreamity/settings.py:221 XStreamity/settings.py:239
+msgid "Choose directory"
+msgstr ""
+
+#: XStreamity/streamplayer.py:272
+msgid "TV"
+msgstr ""
+
+#: XStreamity/streamplayer.py:631
 msgid "VOD"
 msgstr ""
 
-#: streamplayer.py:869
+#: XStreamity/streamplayer.py:850
 msgid "Catch Up"
 msgstr ""
