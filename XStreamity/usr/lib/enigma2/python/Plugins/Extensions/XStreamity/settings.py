@@ -3,19 +3,19 @@
 
 # for localized messages
 from . import _
+from . import xstreamity_globals as glob
+from .plugin import skin_path, cfg
+from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
 from Components.ConfigList import ConfigListScreen
 from Components.config import config, configfile, getConfigListEntry, ConfigText, ConfigSelection, ConfigNumber, ConfigPassword, ConfigYesNo, ConfigEnableDisable
 from Components.Pixmap import Pixmap
-from plugin import skin_path, cfg
 from Screens.LocationBox import LocationBox
 from Screens.MessageBox import MessageBox
 from Screens.ParentalControlSetup import ProtectedScreen
 from Screens.Screen import Screen
-from xStaticText import StaticText
 
-import xstreamity_globals as glob
 import os
 
 

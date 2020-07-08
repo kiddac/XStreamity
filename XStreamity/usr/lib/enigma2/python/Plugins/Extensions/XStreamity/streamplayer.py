@@ -1,6 +1,12 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 # for localized messages
 from . import _
-
+from . import xstreamity_globals as glob
+from . import imagedownload
+from .plugin import skin_path, screenwidth, common_path, cfg, dir_tmp
+from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
 from Components.AVSwitch import AVSwitch
@@ -12,7 +18,6 @@ from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 from datetime import datetime, timedelta
 from enigma import eTimer, eServiceReference, iPlayableService, ePicLoad
 from itertools import cycle, islice
-from plugin import skin_path, screenwidth, common_path, cfg, dir_tmp
 from RecordTimer import RecordTimerEntry
 from Screens.InfoBarGenerics import InfoBarMoviePlayerSummarySupport, InfoBarServiceNotifications, InfoBarSeek, InfoBarAudioSelection, InfoBarSubtitleSupport, InfoBarShowHide
 from Screens.MessageBox import MessageBox
@@ -22,7 +27,6 @@ from ServiceReference import ServiceReference
 from time import time
 from Tools.BoundFunction import boundFunction
 from twisted.web.client import downloadPage
-from xStaticText import StaticText
 
 try:
     from Plugins.Extensions.SubsSupport import SubsSupport, SubsSupportStatus
@@ -36,8 +40,7 @@ except ImportError:
             pass
 
 import os
-import xstreamity_globals as glob
-import imagedownload
+
 
 
 class IPTVInfoBarShowHide():
@@ -289,7 +292,7 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 
 
     def IPTVstartInstantRecording(self, limitEvent=True):
-        import record
+        from . import record
         begin = int(time())
         end = begin + 3600
 

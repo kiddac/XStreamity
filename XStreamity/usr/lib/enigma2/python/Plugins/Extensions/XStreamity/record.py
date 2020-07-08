@@ -4,16 +4,18 @@
 # for localized messages
 from . import _
 
+from .plugin import skin_path
+from .xStaticText import StaticText
+
 from Components.ActionMap import ActionMap
 from Components.ConfigList import ConfigListScreen
 from Components.config import getConfigListEntry, ConfigText, ConfigPassword, ConfigNumber
 from Components.Pixmap import Pixmap
-from plugin import skin_path
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
-from xStaticText import StaticText
-import time
+
 import datetime
+import time
 import os
 
 

@@ -3,14 +3,16 @@
 
 # for localized messages
 from . import _
+from . import xstreamity_globals as glob
+from .plugin import skin_path
+from .xStaticText import StaticText
 
 from Components.Label import Label
 from Components.ActionMap import ActionMap
 from datetime import datetime
-from plugin import skin_path
 from Screens.Screen import Screen
-from xStaticText import StaticText
-import xstreamity_globals as glob
+
+
 import json
 
 

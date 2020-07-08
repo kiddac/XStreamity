@@ -1,8 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from .plugin import dir_tmp
 from PIL import Image, ImageChops
-from plugin import dir_tmp
 
 
 def updatePreview(piconSize, imageType, temp):

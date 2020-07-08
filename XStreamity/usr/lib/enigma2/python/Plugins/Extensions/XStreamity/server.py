@@ -4,19 +4,20 @@
 # for localized messages
 from . import _
 
+from . import xstreamity_globals as glob
+from .plugin import skin_path, json_file, playlist_path
+from .xStaticText import StaticText
+
 from collections import OrderedDict
 from Components.ActionMap import ActionMap
 from Components.ConfigList import ConfigListScreen
 from Components.config import getConfigListEntry, NoSave, ConfigText, ConfigSelection, ConfigSelectionNumber, ConfigNumber, ConfigPassword, ConfigYesNo, ConfigEnableDisable
 from Components.Pixmap import Pixmap
-from plugin import skin_path, json_file, playlist_path
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
-from xStaticText import StaticText
 
 import json
 import os
-import xstreamity_globals as glob
 
 
 class XStreamity_AddServer(ConfigListScreen, Screen):

@@ -3,17 +3,20 @@
 
 # for localized messages
 from . import _
+from . import xstreamity_globals as glob
+
+from .plugin import skin_path, common_path, json_file
+from .xStaticText import StaticText
+
 from collections import OrderedDict
-from Screens.Screen import Screen
-from plugin import skin_path, common_path, json_file
 from Components.ActionMap import ActionMap
 from Components.Sources.List import List
-from Tools.LoadPixmap import LoadPixmap
-from xStaticText import StaticText
 from Screens.MessageBox import MessageBox
+from Screens.Screen import Screen
+from Tools.LoadPixmap import LoadPixmap
 
 import json
-import xstreamity_globals as glob
+
 
 
 class XStreamity_HiddenCategories(Screen):

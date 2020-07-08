@@ -11,7 +11,7 @@ from Components.config import config, ConfigSubsection, ConfigSelection, ConfigD
 import os
 import shutil
 
-VERSION = "2.24-20200705"
+VERSION = "2.25-20200708"
 screenwidth = getDesktop(0).size()
 
 # dir_src = "/etc/enigma2/X-Streamity/"
@@ -147,7 +147,7 @@ if not os.path.isfile(json_file):
 
 
 def main(session, **kwargs):
-	import main
+	from . import main
 
 	session.open(main.XStreamity_Main)
 	return
@@ -161,7 +161,7 @@ def mainmenu(menuid, **kwargs):
 
 
 def extensionsmenu(session, **kwargs):
-	import main
+	from . import main
 	session.open(main.XStreamity_Main)
 	return
 

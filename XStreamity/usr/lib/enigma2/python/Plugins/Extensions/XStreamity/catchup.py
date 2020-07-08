@@ -1,8 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+
 # for localized messages
 from . import _
+
+from . import imagedownload
+from . import streamplayer
+from . import xstreamity_globals as glob
+
+from .plugin import skin_path, screenwidth, hdr, cfg, common_path, dir_tmp
 
 from Components.ActionMap import ActionMap
 from Components.Sources.List import List
@@ -10,27 +17,28 @@ from Components.Pixmap import Pixmap
 from Components.config import config
 from datetime import datetime
 from enigma import eTimer, eServiceReference
-from plugin import skin_path, screenwidth, hdr, cfg, common_path, dir_tmp
 from requests.adapters import HTTPAdapter
+from Screens.MessageBox import MessageBox
+from Screens.Screen import Screen
+from Tools.LoadPixmap import LoadPixmap
+from twisted.web.client import downloadPage
+from .xStaticText import StaticText
+
 try:
 	from requests.packages.urllib3.util.retry import Retry
 except:
 	from urllib3.util import Retry
-from Screens.Screen import Screen
-from Tools.LoadPixmap import LoadPixmap
-from twisted.web.client import downloadPage
-from xStaticText import StaticText
-from Screens.MessageBox import MessageBox
+	
+
 
 import base64
 import json
 import os
 import re
 import requests
-import streamplayer
-import imagedownload
+
 import time
-import xstreamity_globals as glob
+
 
 
 class XStreamity_Catchup(Screen):
@@ -198,7 +206,7 @@ class XStreamity_Catchup(Screen):
 					self.processData(content, url)
 
 			except requests.exceptions.ConnectionError as e:
-				print("Error Connecting: %s" % e)
+				print(("Error Connecting: %s" % e))
 
 
 			except requests.exceptions.RequestException as e:
@@ -311,7 +319,7 @@ class XStreamity_Catchup(Screen):
 				self.streams = r.json()
 
 		except requests.exceptions.ConnectionError as e:
-			print("Error Connecting: %s" % e)
+			print(("Error Connecting: %s" % e))
 
 		except requests.exceptions.RequestException as e:
 			print(e)
@@ -443,7 +451,7 @@ class XStreamity_Catchup(Screen):
 								response = ''
 
 					except requests.exceptions.ConnectionError as e:
-						print("Error Connecting: %s" % e)
+						print(("Error Connecting: %s" % e))
 						response = ''
 
 					except requests.exceptions.RequestException as e:
@@ -600,7 +608,7 @@ class XStreamity_Catchup(Screen):
 					try:
 						desc_image = self["channel_list"].getCurrent()[5]
 					except Exception as e:
-						print("* picon error ** %s" % e)
+						print(("* picon error ** %s" % e))
 						pass
 
 					imagetype = "picon"
@@ -649,7 +657,7 @@ class XStreamity_Catchup(Screen):
 						imagedownload.updatePreview(piconSize, imageType, original)
 						self.displayImage()
 					except Exception as e:
-						print("* error ** %s" % e)
+						print(("* error ** %s" % e))
 						pass
 					except:
 						pass
@@ -710,7 +718,7 @@ class XStreamity_Catchup(Screen):
 					downloadPage(str(playurl), str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension))
 					self.session.open(MessageBox, _('Downloading \n\n' + otitle + "\n\n" + str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension)), MessageBox.TYPE_INFO)
 				except Exception as e:
-					print("download catchup %s" % e)
+					print(("download catchup %s" % e))
 					pass
 				except:
 					self.session.open(MessageBox, _('Download Failed\n\n' + otitle + "\n\n" + str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension)), MessageBox.TYPE_WARNING)

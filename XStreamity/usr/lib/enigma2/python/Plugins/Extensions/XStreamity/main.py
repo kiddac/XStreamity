@@ -3,35 +3,37 @@
 
 # for localized messages
 from . import _
+from . import xstreamity_globals as glob
+from .plugin import skin_path, json_file, hdr, playlist_path, cfg, common_path, VERSION
+
 from collections import OrderedDict
 from Components.ActionMap import ActionMap
 from Components.Pixmap import Pixmap
 from Components.Sources.List import List
 from datetime import datetime
 from enigma import eTimer, eServiceReference
+from multiprocessing.pool import ThreadPool
 from os import system
-from plugin import skin_path, json_file, hdr, playlist_path, cfg, common_path, VERSION
+from requests.adapters import HTTPAdapter
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools.LoadPixmap import LoadPixmap
+from .xStaticText import StaticText
+
 try:
 	from urlparse import urlparse, parse_qs
 except:
 	from urllib.parse import urlparse, parse_qs
 
-from xStaticText import StaticText
-
-import json
-import os
-import requests
-import xstreamity_globals as glob
-
-from requests.adapters import HTTPAdapter
 try:
 	from requests.packages.urllib3.util.retry import Retry
 except:
 	from urllib3.util import Retry
-from multiprocessing.pool import ThreadPool
+
+
+import json
+import os
+import requests
 
 
 class XStreamity_Main(Screen):
@@ -354,7 +356,7 @@ class XStreamity_Main(Screen):
 					return index, ''
 
 		except requests.exceptions.ConnectionError as e:
-			print("Error Connecting: %s" % e)
+			print(("Error Connecting: %s" % e))
 			return index, ''
 
 
@@ -502,14 +504,14 @@ class XStreamity_Main(Screen):
 
 
 	def addServer(self):
-		import server
+		from . import server
 		glob.configchanged = False
 		self.session.openWithCallback(self.refresh, server.XStreamity_AddServer, False)
 		return
 
 
 	def editServer(self):
-		import server
+		from . import server
 		if self.list != []:
 			glob.configchanged = False
 			self.session.openWithCallback(self.refresh, server.XStreamity_AddServer, True)
@@ -566,7 +568,7 @@ class XStreamity_Main(Screen):
 
 
 	def openUserInfo(self):
-		import serverinfo
+		from . import serverinfo
 		if self.list != []:
 			if 'user_info' in glob.current_playlist:
 				if 'auth' in glob.current_playlist['user_info']:
@@ -575,7 +577,7 @@ class XStreamity_Main(Screen):
 
 
 	def getStreamTypes(self):
-		import menu
+		from . import menu
 		if 'user_info' in glob.current_playlist:
 			if 'auth' in glob.current_playlist['user_info']:
 				if glob.current_playlist['user_info']['auth'] == 1 and glob.current_playlist['user_info']['status'] == "Active":
@@ -583,7 +585,7 @@ class XStreamity_Main(Screen):
 
 
 	def settings(self):
-		import settings
+		from . import settings
 		self.session.openWithCallback(self.settingsChanged, settings.XStreamity_Settings)
 
 

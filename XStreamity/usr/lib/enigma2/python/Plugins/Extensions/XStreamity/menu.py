@@ -3,27 +3,29 @@
 
 # for localized messages
 from . import _
+from . import xstreamity_globals as glob
+
+from .plugin import skin_path, hdr, cfg, common_path, json_file
+from .xStaticText import StaticText
+
 from Components.ActionMap import ActionMap
 from Components.Pixmap import Pixmap
 from Components.Sources.List import List
 from datetime import datetime
 from enigma import eTimer
-from plugin import skin_path, hdr, cfg, common_path, json_file
+from multiprocessing.pool import ThreadPool
+from requests.adapters import HTTPAdapter
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools.LoadPixmap import LoadPixmap
-from xStaticText import StaticText
 
-import json
-import xstreamity_globals as glob
-
-import requests
-from requests.adapters import HTTPAdapter
 try:
 	from requests.packages.urllib3.util.retry import Retry
 except:
 	from urllib3.util import Retry
-from multiprocessing.pool import ThreadPool
+	
+import json
+import requests
 
 
 class XStreamity_Menu(Screen):
@@ -139,7 +141,7 @@ class XStreamity_Menu(Screen):
 				return category, r.json()
 
 		except requests.exceptions.ConnectionError as e:
-			print("Error Connecting: %s" % e)
+			print(("Error Connecting: %s" % e))
 			return category, ''
 
 		except requests.exceptions.RequestException as e:
@@ -227,8 +229,8 @@ class XStreamity_Menu(Screen):
 
 
 	def __next__(self):
-		import categories
-		import catchup
+		from . import categories
+		from . import catchup
 
 		category = self["list"].getCurrent()[2]
 
