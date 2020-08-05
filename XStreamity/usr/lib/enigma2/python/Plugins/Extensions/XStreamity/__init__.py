@@ -22,6 +22,7 @@ def localeInit():
         os_environ["LANGUAGE"] = lang  # Enigma doesn't set this (or LC_ALL, LC_MESSAGES, LANG). gettext needs it!
     gettext.bindtextdomain(PluginLanguageDomain, resolveFilename(SCOPE_PLUGINS, PluginLanguagePath))
 
+
 if isDreamOS:  # check if DreamOS image
     _ = lambda txt: gettext.dgettext(PluginLanguageDomain, txt) if txt else ""
     localeInit()

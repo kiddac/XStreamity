@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from .plugin import dir_tmp
-from PIL import Image, ImageChops
+from PIL import Image, ImageChops, ImageFile
 
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 def updatePreview(piconSize, imageType, temp):
     width, height = piconSize
@@ -18,7 +19,6 @@ def updatePreview(piconSize, imageType, temp):
             wpercent = (basewidth / float(width))
             hsize = int((float(height) * float(wpercent)))
             im = im.resize((basewidth, hsize), Image.ANTIALIAS)
-
 
         imagew, imageh = im.size
         if imagew > width or imageh > height:
@@ -36,16 +36,18 @@ def updatePreview(piconSize, imageType, temp):
             bgwidth, bgheight = bg.size
             bg_alpha = bg.convert('RGBA').split()[-1]
             temp = Image.new('L', (bgwidth, bgheight), 0)
-            temp.paste(im_alpha, ((bgwidth - imagew)/2, (bgheight - imageh)/2), im_alpha)
+            temp.paste(im_alpha, (int((bgwidth - imagew) / 2), int((bgheight - imageh) / 2)), im_alpha)
             bg_alpha = ImageChops.screen(bg_alpha, temp)
-            bg.paste(im, ((bgwidth - imagew)/2, (bgheight - imageh)/2))
+            bg.paste(im, (int((bgwidth - imagew) / 2), int((bgheight - imageh) / 2)))
             im = bg
 
             # save picon
             preview = dir_tmp + 'original.png'
             im.save(preview, 'PNG')
 
-    except:
+    except Exception as e:
+        print(e)
+        print("******* image failed *******")
         preview = ''
 
     return preview

@@ -154,7 +154,7 @@ def getAllInfo():
             elif procmodel == "purehd":
                 model = procmodel.replace("purehd", "Pure HD")
             elif procmodel == "purehdse":
-                    model = procmodel.replace("purehdse", "Pure HD SE")
+                model = procmodel.replace("purehdse", "Pure HD SE")
             elif procmodel == "revo4k":
                 model = procmodel.replace("revo4k", "Revo4K")
             elif procmodel == "galaxy4k":
@@ -320,11 +320,11 @@ def getAllInfo():
         elif procmodel == "hd530c":
             brand = "Mut@nt"
             model = "HD530c"
-        elif procmodel =="hd60":
-            brand ="Mut@nt"
+        elif procmodel == "hd60":
+            brand = "Mut@nt"
             model = "HD60"
-        elif procmodel =="multibox":
-            brand ="MaXytec"
+        elif procmodel == "multibox":
+            brand = "MaXytec"
             model = "Multibox"
             grabpip = 1
         elif procmodel == "arivalink200":
@@ -591,7 +591,7 @@ def getAllInfo():
     elif procmodel == "hd60":
         remote = "hd60"
     elif procmodel == "multibox":
-        remote = "multibox" 
+        remote = "multibox"
     elif procmodel in ("spycat", "spycatmini", "spycatminiplus", "spycat4kmini"):
         remote = "spycat"
     elif procmodel.startswith("ixuss"):
@@ -649,7 +649,7 @@ def getAllInfo():
 
     info['remote'] = remote
 
-    kernel = about.getKernelVersionString()[0]
+    kernel = int(about.getKernelVersionString()[0])
 
     distro = "unknown"
     imagever = "unknown"
@@ -700,7 +700,7 @@ def getAllInfo():
                 f = open("/etc/opkg/all-feed.conf", 'r')
                 oeline = f.readline().strip().lower()
                 f.close()
-                distro = oeline.split( )[1].replace("-all", "")
+                distro = oeline.split()[1].replace("-all", "")
             except:  # nosec  # noqa: E722
                 pass
 
@@ -736,13 +736,13 @@ def getAllInfo():
     # reporting the installed dvb-module version is as close as we get without too much hassle
     driverdate = 'unknown'
     try:
-        driverdate = os.popen('/usr/bin/opkg -V0 list_installed *dvb-modules*').readline().split( )[2]  # nosec
+        driverdate = os.popen('/usr/bin/opkg -V0 list_installed *dvb-modules*').readline().split()[2]  # nosec
     except:  # noqa: E722
         try:
-            driverdate = os.popen('/usr/bin/opkg -V0 list_installed *dvb-proxy*').readline().split( )[2]  # nosec
+            driverdate = os.popen('/usr/bin/opkg -V0 list_installed *dvb-proxy*').readline().split()[2]  # nosec
         except:  # noqa: E722
             try:
-                driverdate = os.popen('/usr/bin/opkg -V0 list_installed *kernel-core-default-gos*').readline().split( )[2]  # nosec
+                driverdate = os.popen('/usr/bin/opkg -V0 list_installed *kernel-core-default-gos*').readline().split()[2]  # nosec
             except:  # nosec # noqa: E722
                 pass
 
@@ -798,11 +798,14 @@ def getImageBuild():
 def getImageDistro():
     return STATIC_INFO_DIC['distro']
 
+
 def getLcd():
     return STATIC_INFO_DIC['lcd']
 
+
 def getGrabPip():
     return STATIC_INFO_DIC['grabpip']
+
 
 class rc_model:
     def getRcFolder(self):
