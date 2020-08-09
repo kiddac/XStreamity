@@ -1,9 +1,8 @@
 Package: enigma2-plugin-extensions-xstreamity
-Version: 2.26-20200805
+Version: 2.27-20200809
 Section: misc
 Priority: optional
 Architecture: all
 Maintainer: kiddac
 Description: IPTV Xtream Codes playlists player by KiddaC
-#Depends: python-image, python-imaging | python3-imaging, python-requests | python3-requests, python-multiprocessing | python3-multiprocessing
 Source: https://www.linuxsat-support.com

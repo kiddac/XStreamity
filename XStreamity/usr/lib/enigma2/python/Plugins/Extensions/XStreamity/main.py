@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 # for localized messages
+
+
 from . import _
 from . import xstreamity_globals as glob
 from .plugin import skin_path, json_file, hdr, playlist_path, cfg, common_path, VERSION
@@ -12,13 +14,74 @@ from Components.Pixmap import Pixmap
 from Components.Sources.List import List
 from datetime import datetime
 from enigma import eTimer, eServiceReference
-from multiprocessing.pool import ThreadPool
+
 from os import system
 from requests.adapters import HTTPAdapter
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools.LoadPixmap import LoadPixmap
 from .xStaticText import StaticText
+
+import json
+import os
+import sys
+
+pythonVer = 2
+if sys.version_info.major == 3:
+    pythonVer = 3
+
+if pythonVer == 2:
+    if not os.path.isfile("/usr/lib/python2.7/imghdr.pyo"):
+        try:
+            system("opkg install python-image")
+        except:
+            pass
+
+    if not os.path.exists("/usr/lib/python2.7/site-packages/PIL"):
+        try:
+            system("opkg install python-imaging")
+        except:
+            pass
+            
+    if not os.path.exists("/usr/lib/python2.7/site-packages/requests"):
+        try:
+            system("opkg install python-requests")
+        except:
+            pass
+
+    if not os.path.exists("/usr/lib/python2.7/multiprocessing"):
+        try:
+            system("opkg install python-multiprocessing")
+        except:
+            pass
+            
+if pythonVer == 3:
+    if not os.path.isfile("/usr/lib/python3.8/imghdr.py"):
+        try:
+            system("opkg install python3-image")
+        except:
+            pass
+
+    if not os.path.exists("/usr/lib/python3.8/site-packages/PIL"):
+        try:
+            system("opkg install python3-imaging")
+        except:
+            pass
+            
+    if not os.path.exists("/usr/lib/python3.8/site-packages/requests"):
+        try:
+            system("opkg install python3-requests")
+        except:
+            pass
+
+    if not os.path.exists("/usr/lib/python3.8/multiprocessing"):
+        try:
+            system("opkg install python3-multiprocessing")
+        except:
+            pass
+
+from multiprocessing.pool import ThreadPool
+import requests
 
 try:
     from urlparse import urlparse, parse_qs
@@ -29,11 +92,6 @@ try:
     from requests.packages.urllib3.util.retry import Retry
 except:
     from urllib3.util import Retry
-
-
-import json
-import os
-import requests
 
 
 class XStreamity_Main(Screen):
