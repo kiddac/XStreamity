@@ -26,35 +26,11 @@ import json
 import os
 import sys
 
-pythonVer = 2
-if sys.version_info.major == 3:
-    pythonVer = 3
+try:
+    pythonVer = sys.version_info.major
+except:
+    pythonVer = 2
 
-if pythonVer == 2:
-    if not os.path.isfile("/usr/lib/python2.7/imghdr.pyo"):
-        try:
-            system("opkg install python-image")
-        except:
-            pass
-
-    if not os.path.exists("/usr/lib/python2.7/site-packages/PIL"):
-        try:
-            system("opkg install python-imaging")
-        except:
-            pass
-            
-    if not os.path.exists("/usr/lib/python2.7/site-packages/requests"):
-        try:
-            system("opkg install python-requests")
-        except:
-            pass
-
-    if not os.path.exists("/usr/lib/python2.7/multiprocessing"):
-        try:
-            system("opkg install python-multiprocessing")
-        except:
-            pass
-            
 if pythonVer == 3:
     if not os.path.isfile("/usr/lib/python3.8/imghdr.py"):
         try:
@@ -67,7 +43,7 @@ if pythonVer == 3:
             system("opkg install python3-imaging")
         except:
             pass
-            
+
     if not os.path.exists("/usr/lib/python3.8/site-packages/requests"):
         try:
             system("opkg install python3-requests")
@@ -79,6 +55,32 @@ if pythonVer == 3:
             system("opkg install python3-multiprocessing")
         except:
             pass
+
+else:
+    if not os.path.isfile("/usr/lib/python2.7/imghdr.pyo"):
+        try:
+            system("opkg install python-image")
+        except:
+            pass
+
+    if not os.path.exists("/usr/lib/python2.7/site-packages/PIL"):
+        try:
+            system("opkg install python-imaging")
+        except:
+            pass
+
+    if not os.path.exists("/usr/lib/python2.7/site-packages/requests"):
+        try:
+            system("opkg install python-requests")
+        except:
+            pass
+
+    if not os.path.exists("/usr/lib/python2.7/multiprocessing"):
+        try:
+            system("opkg install python-multiprocessing")
+        except:
+            pass
+
 
 from multiprocessing.pool import ThreadPool
 import requests
