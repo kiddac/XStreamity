@@ -15,75 +15,16 @@ from Components.Sources.List import List
 from datetime import datetime
 from enigma import eTimer, eServiceReference
 
-from os import system
-from requests.adapters import HTTPAdapter
+from os import system, listdir, remove, mkdir, path, access, X_OK, chmod
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools.LoadPixmap import LoadPixmap
 from .xStaticText import StaticText
+from Screens.Console import Console
 
 import json
 import os
 import sys
-
-try:
-    pythonVer = sys.version_info.major
-except:
-    pythonVer = 2
-
-if pythonVer == 3:
-    if not os.path.isfile("/usr/lib/python3.8/imghdr.py"):
-        try:
-            system("opkg install python3-image")
-        except:
-            pass
-
-    if not os.path.exists("/usr/lib/python3.8/site-packages/PIL"):
-        try:
-            system("opkg install python3-imaging")
-        except:
-            pass
-
-    if not os.path.exists("/usr/lib/python3.8/site-packages/requests"):
-        try:
-            system("opkg install python3-requests")
-        except:
-            pass
-
-    if not os.path.exists("/usr/lib/python3.8/multiprocessing"):
-        try:
-            system("opkg install python3-multiprocessing")
-        except:
-            pass
-
-else:
-    if not os.path.isfile("/usr/lib/python2.7/imghdr.pyo"):
-        try:
-            system("opkg install python-image")
-        except:
-            pass
-
-    if not os.path.exists("/usr/lib/python2.7/site-packages/PIL"):
-        try:
-            system("opkg install python-imaging")
-        except:
-            pass
-
-    if not os.path.exists("/usr/lib/python2.7/site-packages/requests"):
-        try:
-            system("opkg install python-requests")
-        except:
-            pass
-
-    if not os.path.exists("/usr/lib/python2.7/multiprocessing"):
-        try:
-            system("opkg install python-multiprocessing")
-        except:
-            pass
-
-
-from multiprocessing.pool import ThreadPool
-import requests
 
 try:
     from urlparse import urlparse, parse_qs
@@ -91,10 +32,10 @@ except:
     from urllib.parse import urlparse, parse_qs
 
 try:
-    from requests.packages.urllib3.util.retry import Retry
+    pythonVer = sys.version_info.major
 except:
-    from urllib3.util import Retry
-
+    pythonVer = 2
+    
 
 class XStreamity_Main(Screen):
 
@@ -142,11 +83,35 @@ class XStreamity_Main(Screen):
             'menu': self.settings
         }, -2)
 
-        self.onFirstExecBegin.append(self.start)
+        self.onFirstExecBegin.append(self.check_dependencies)
         self.onLayoutFinish.append(self.__layoutFinished)
 
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
+
+    def check_dependencies(self):
+        dependencies = True
+        if pythonVer == 3:
+            if not os.path.isfile("/usr/lib/python3.8/imghdr.py") \
+                or not os.path.exists("/usr/lib/python3.8/site-packages/PIL") \
+                    or not os.path.exists("/usr/lib/python3.8/site-packages/requests") \
+                    or not os.path.exists("/usr/lib/python3.8/multiprocessing"):
+                dependencies = False
+
+        else:
+            if not os.path.isfile("/usr/lib/python2.7/imghdr.pyo") \
+                or not os.path.exists("/usr/lib/python2.7/site-packages/PIL") \
+                    or not os.path.exists("/usr/lib/python2.7/site-packages/requests") \
+                    or not os.path.exists("/usr/lib/python2.7/multiprocessing"):
+                dependencies = False
+
+        if dependencies is False:
+            if not access("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/dependencies.sh", X_OK):
+                chmod("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/dependencies.sh", 0o0755)
+            cmd1 = ". /usr/lib/enigma2/python/Plugins/Extensions/XStreamity/dependencies.sh"
+            self.session.openWithCallback(self.start, Console, title="Checking Python 2 Dependencies", cmdlist=[cmd1], closeOnSuccess=False)
+        else:
+            self.start()
 
     def clear_caches(self):
         try:
@@ -387,9 +352,11 @@ class XStreamity_Main(Screen):
             self["splash"].hide()
 
     def download_url(self, url):
+        import requests
+        from requests.adapters import HTTPAdapter
+
         index = url[1]
         r = ''
-        # retries = Retry(total=1, status_forcelist=[408, 429, 500, 503, 504], method_whitelist=["HEAD", "GET", "OPTIONS"], backoff_factor = 3)
         adapter = HTTPAdapter(max_retries=0)
         http = requests.Session()
         http.mount("http://", adapter)
@@ -414,6 +381,8 @@ class XStreamity_Main(Screen):
             return index, ''
 
     def process_downloads(self):
+        from multiprocessing.pool import ThreadPool
+
         threads = len(self.url_list)
         pool = ThreadPool(threads)
         results = pool.imap_unordered(self.download_url, self.url_list)
