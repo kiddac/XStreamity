@@ -109,7 +109,7 @@ class XStreamity_Main(Screen):
             if not access("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/dependencies.sh", X_OK):
                 chmod("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/dependencies.sh", 0o0755)
             cmd1 = ". /usr/lib/enigma2/python/Plugins/Extensions/XStreamity/dependencies.sh"
-            self.session.openWithCallback(self.start, Console, title="Checking Python 2 Dependencies", cmdlist=[cmd1], closeOnSuccess=False)
+            self.session.openWithCallback(self.start, Console, title="Checking Python Dependencies", cmdlist=[cmd1], closeOnSuccess=False)
         else:
             self.start()
 

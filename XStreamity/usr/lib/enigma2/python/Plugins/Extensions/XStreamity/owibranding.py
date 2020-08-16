@@ -1,22 +1,34 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-##############################################################################
-#                        2014 E2OpenPlugins                                  #
-#                                                                            #
-#  This file is open source software; you can redistribute it and/or modify  #
-#     it under the terms of the GNU General Public License version 2 as      #
-#               published by the Free Software Foundation.                   #
-#                                                                            #
+##########################################################################
+# OpenWebif: owbranding
+##########################################################################
+# Copyright (C) 2014 - 2020 E2OpenPlugins
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software Foundation,
+# Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
 ##############################################################################
 # Simulate the oe-a boxbranding module (Only functions required by OWIF)     #
 ##############################################################################
 
-# from Components.About import about
 from Tools.Directories import fileExists
 from time import time
 import os
 import hashlib
 from functools import reduce
+import re
 
 try:
     from Components.About import about
@@ -60,7 +72,7 @@ def bin2long(s):
 
 def long2bin(l):
     res = ""
-    for byte in range(128):
+    for byte in list(range(128)):
         res += chr((l >> (1024 - (byte + 1) * 8)) & 0xff)
     return res
 
@@ -188,12 +200,16 @@ def getAllInfo():
             model = procmodel.replace("gbue4k", "UHD UE 4k")
         elif procmodel == "ue4k":
             model = procmodel.replace("ue4k", "UHD UE 4k")
+        elif procmodel == "gbtrio4k":
+            model = procmodel.replace("gbtrio4k", "UHD Trio 4k")
     elif fileExists("/proc/stb/info/vumodel") and not fileExists("/proc/stb/info/boxtype"):
         brand = "Vu+"
         f = open("/proc/stb/info/vumodel", 'r')
         procmodel = f.readline().strip()
         f.close()
         model = procmodel.title().replace("olose", "olo SE").replace("olo2se", "olo2 SE").replace("2", "²").replace("4Kse", "4K SE")
+        if not procmodel.startswith("vu"):
+            procmodel = "vu%s" % procmodel
     elif fileExists("/proc/boxtype"):
         f = open("/proc/boxtype", 'r')
         procmodel = f.readline().strip().lower()
@@ -383,6 +399,9 @@ def getAllInfo():
             elif procmodel == "osmio4kplus":
                 model = "OS Mio 4K+"
                 grabpip = 1
+            elif procmodel == "osmini4k":
+                model = "OS Mini 4K"
+                grabpip = 1
             else:
                 model = procmodel
         elif procmodel == "h3":
@@ -401,6 +420,9 @@ def getAllInfo():
             brand = "Zgemma"
             model = "H7 series"
             grabpip = 1
+        elif procmodel == "h8":
+            brand = "Zgemma"
+            model = "H8 series"
         elif procmodel == "h9":
             brand = "Zgemma"
             model = "H9 series"
@@ -417,21 +439,70 @@ def getAllInfo():
         elif procmodel == "i55plus":
             brand = "Zgemma"
             model = "i55Plus"
+            grabpip = 1
+        elif procmodel == "hzero":
+            brand = "Zgemma"
+            model = "Hzero"
+        elif procmodel == "h8.2h":
+            brand = "Zgemma"
+            model = "H8.2H"
+        elif procmodel == "h9.s":
+            brand = "Zgemma"
+            model = "H9.S"
+            grabpip = 1
+        elif procmodel == "h9.t":
+            brand = "Zgemma"
+            model = "H9.T"
+            grabpip = 1
+        elif procmodel == "h9.2h":
+            brand = "Zgemma"
+            model = "H9.2H"
+            grabpip = 1
+        elif procmodel == "h9.2s":
+            brand = "Zgemma"
+            model = "H9.2S"
+            grabpip = 1
         elif procmodel == "h9combo":
             brand = "Zgemma"
             model = "H9Combo"
+            grabpip = 1
+        elif procmodel == "h9twin":
+            brand = "Zgemma"
+            model = "H9 Twin"
+            grabpip = 1
         elif procmodel == "vs1500":
             brand = "Vimastec"
             model = "vs1500"
             grabpip = 1
+        elif procmodel == "sf8008m":
+            brand = "Octagon"
+            model = "SF8008 4K Mini"
         elif procmodel.startswith("sf"):
             brand = "Octagon"
-            model = procmodel
+            if procmodel.startswith("sf8008"):
+                sf8008type = open("/proc/stb/info/type").read()
+                if sf8008type.startswith("11"):
+                    procmodel = "sf8008t"
+                    model = "SF8008 4K Twin"
+                elif sf8008type.startswith("12"):
+                    procmodel = "sf8008c"
+                    model = "SF8008 4K Combo"
+                else:  # sf8008type.startswith("10")
+                    procmodel = "sf8008s"
+                    model = "SF8008 4K Single"
+            else:
+                model = procmodel.upper()
         elif procmodel == "e4hd":
             brand = "Axas"
             model = "E4HD"
             lcd = 1
             grabpip = 1
+        elif procmodel == "ustym4kpro":
+            brand = "uClan"
+            model = "Ustym 4K Pro"
+        else:
+            model = procmodel
+
     elif fileExists("/proc/stb/info/model"):
         f = open("/proc/stb/info/model", 'r')
         procmodel = f.readline().strip().lower()
@@ -524,13 +595,13 @@ def getAllInfo():
     info['type'] = type
 
     remote = "dmm1"
-    if procmodel in ("solo", "duo", "uno", "solo2", "solose", "zero", "solo4k", "uno4k", "ultimo4k"):
+    if procmodel in ("vusolo", "vuduo", "vuuno", "vusolo2", "vusolose", "vuzero", "vusolo4k", "vuuno4k", "vuultimo4k"):
         remote = "vu_normal"
-    elif procmodel == "duo2":
+    elif procmodel == "vuduo2":
         remote = "vu_duo2"
-    elif procmodel == "ultimo":
+    elif procmodel == "vuultimo":
         remote = "vu_ultimo"
-    elif procmodel in ("uno4kse", "zero4k", "duo4k"):
+    elif procmodel in ("vuuno4kse", "vuzero4k", "vuduo4k"):
         remote = "vu_normal_02"
     elif procmodel == "e3hd":
         remote = "e3hd"
@@ -552,7 +623,7 @@ def getAllInfo():
         remote = "gigablue"
     elif procmodel == "gbquadplus":
         remote = "gbquadplus"
-    elif procmodel in ("gbquad4k", "gbue4k", "quad4k", "ue4k"):
+    elif procmodel in ("gbquad4k", "gbue4k", "quad4k", "ue4k", "gbtrio4k"):
         remote = "gb7252"
     elif procmodel in ("formuler1", "formuler3", "formuler4", "formuler4turbo"):
         remote = "formuler1"
@@ -604,7 +675,7 @@ def getAllInfo():
         remote = "dmm2"
     elif procmodel == "wetekplay":
         remote = procmodel
-    elif procmodel.startswith("osmio"):
+    elif procmodel.startswith("osm") and "4k" in procmodel:
         remote = "edision4"
     elif procmodel.startswith("osm"):
         remote = "osmini"
@@ -630,7 +701,7 @@ def getAllInfo():
         remote = "lunix4k"
     elif procmodel in ("sh1", "lc"):
         remote = "sh1"
-    elif procmodel in ("h3", "h4", "h5", "h6", "h7", "h9", "i55plus", "h9combo"):
+    elif procmodel in ("hzero", "h3", "h4", "h5", "h6", "h7", "h8", "h9", "i55plus", "h8.2h", "h9.s", "h9.t", "h9.2h", "h9.2s", "h9combo", "h9twin"):
         remote = "h3"
     elif procmodel == "i55":
         remote = "i55"
@@ -646,10 +717,20 @@ def getAllInfo():
         remote = "vs1x00"
     elif procmodel in ("e4hd"):
         remote = "e4hd"
+    elif procmodel in ("ustym4kpro"):
+        remote = "uclan"
 
     info['remote'] = remote
 
-    kernel = int(about.getKernelVersionString()[0])
+    try:
+        kernel = int(about.getKernelVersionString()[0])
+    except:  # when "about" is not available
+        try:
+            kernel = int(open("/proc/version", "r").read().split(' ', 4)[2].split('.', 2)[0])
+        except:  # nosec  # noqa: E722  # set a default
+            kernel = 2
+
+    print("****** kernel ********** %s" % kernel)
 
     distro = "unknown"
     imagever = "unknown"
@@ -745,6 +826,9 @@ def getAllInfo():
                 driverdate = os.popen('/usr/bin/opkg -V0 list_installed *kernel-core-default-gos*').readline().split()[2]  # nosec
             except:  # nosec # noqa: E722
                 pass
+    re_search = re.search('([0-9]{8})', driverdate)
+    if re_search is not None:
+        driverdate = re_search.group(1)
 
     info['oever'] = oever
     info['distro'] = distro
