@@ -32,10 +32,17 @@ except:
 
 import base64
 import json
+import math
 import os
 import re
 import requests
+import sys
 import time
+
+try:
+    pythonVer = sys.version_info.major
+except:
+    pythonVer = 2
 
 
 class XStreamity_Catchup(Screen):
@@ -174,7 +181,7 @@ class XStreamity_Catchup(Screen):
 
     def downloadData(self):
         url = glob.nextlist[-1]["playlist_url"]
-        levelpath = dir_tmp + 'level' + str(self.level) + '.xml'
+        levelpath = str(dir_tmp) + 'level' + str(self.level) + '.xml'
 
         if not os.path.exists(levelpath):
             # retries = Retry(total=3, status_forcelist=[408, 429, 500, 503, 504], method_whitelist=["HEAD", "GET", "OPTIONS"], backoff_factor = 1)
@@ -317,10 +324,7 @@ class XStreamity_Catchup(Screen):
             self.close()
 
     def back(self):
-        self["epg_title"].setText('')
-        self["epg_description"].setText('')
-        self["epg_picon"].hide()
-        self["key_rec"].setText('')
+        self.hideEPG()
 
         if self.selectedlist == self["epg_short_list"]:
 
@@ -499,6 +503,7 @@ class XStreamity_Catchup(Screen):
                                 self.epgshortlist.reverse()
                                 self["epg_short_list"].setList(self.epgshortlist)
 
+
                                 if self["epg_short_list"].getCurrent():
                                     glob.catchupdata = [str(self["epg_short_list"].getCurrent()[0]), str(self["epg_short_list"].getCurrent()[3])]
                                 instance = self["epg_short_list"].master.master.instance
@@ -518,6 +523,7 @@ class XStreamity_Catchup(Screen):
             timeall = str(self["epg_short_list"].getCurrent()[2])
             self["epg_title"].setText(timeall + " " + title)
             self["epg_description"].setText(description)
+            self.showEPGElements()
 
     def playCatchup(self):
         next_url = self["channel_list"].getCurrent()[3]
@@ -547,6 +553,15 @@ class XStreamity_Catchup(Screen):
         if self["channel_list"].getCurrent():
             channeltitle = self["channel_list"].getCurrent()[0]
             stream_url = self["channel_list"].getCurrent()[3]
+            currentindex = self["channel_list"].getIndex()
+
+            self.position = currentindex + 1
+            self.positionall = len(self.channelList)
+            self.page = int(math.ceil(float(self.position) / float(self.itemsperpage)))
+            self.pageall = int(math.ceil(float(self.positionall) / float(self.itemsperpage)))
+
+            self["page"].setText('Page: ' + str(self.page) + " of " + str(self.pageall))
+            self["listposition"].setText(str(self.position) + "/" + str(self.positionall))
 
             self["channel"].setText(self.main_title + ": " + str(channeltitle))
 
@@ -588,14 +603,18 @@ class XStreamity_Catchup(Screen):
                         size = [220, 130]
 
                     if url != '' and url != "n/A" and url is not None:
-                        original = dir_tmp + 'original.png'
-                        url = url.encode()
+                        original = str(dir_tmp) + 'original.png'
+
+                        if pythonVer == 3:
+                            url = url.encode()
+
                         try:
                             downloadPage(url, original, timeout=5).addCallback(self.checkdownloaded, size, imagetype).addErrback(self.ebPrintError)
                         except:
 
                             if url.startswith('https'):
                                 url = url.replace('https', 'http')
+
                                 try:
                                     downloadPage(url, original, timeout=5).addCallback(self.checkdownloaded, size, imagetype).addErrback(self.ebPrintError)
                                 except:
@@ -618,7 +637,7 @@ class XStreamity_Catchup(Screen):
         if self["channel_list"].getCurrent():
             if imageType == "picon":
 
-                original = dir_tmp + 'original.png'
+                original = str(dir_tmp) + 'original.png'
                 if os.path.exists(original):
                     try:
                         imagedownload.updatePreview(piconSize, imageType, original)
@@ -632,7 +651,7 @@ class XStreamity_Catchup(Screen):
                     self.loadDefaultImage()
 
     def displayImage(self):
-        preview = dir_tmp + 'original.png'
+        preview = str(dir_tmp) + 'original.png'
         if self["epg_picon"].instance:
             self["epg_picon"].instance.setPixmapFromFile(preview)
 
@@ -659,7 +678,6 @@ class XStreamity_Catchup(Screen):
                 date = str(self["epg_short_list"].getCurrent()[4])
                 duration = str(self["epg_short_list"].getCurrent()[5])
                 playurl = "%s/timeshift/%s/%s/%s/%s/%s" % (self.host, self.username, self.password, duration, date, stream)
-                playurl = playurl.encode()
                 extension = str(os.path.splitext(next_url)[-1])
 
                 date_all = str(self["epg_short_list"].getCurrent()[1]).strip()
@@ -674,8 +692,10 @@ class XStreamity_Catchup(Screen):
                 title = str(date) + " - " + str(channel) + " - " + str(otitle)
 
                 fileTitle = re.sub(r'[\<\>\:\"\/\\\|\?\*\[\]]', '_', title)
-                # fileTitle = re.sub(r' ', '_', fileTitle)
                 fileTitle = re.sub(r'_+', '_', fileTitle)
+
+                if pythonVer == 3:
+                    playurl = url.encode()
 
                 try:
                     downloadPage(str(playurl), str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension))

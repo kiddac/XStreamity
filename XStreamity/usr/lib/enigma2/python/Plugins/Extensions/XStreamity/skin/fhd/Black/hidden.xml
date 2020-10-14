@@ -1,4 +1,4 @@
-<screen name="XstreamityHiddenCategories" position="0,0" size="1920,1080" backgroundColor="#000000" flags="wfNoBorder">
+<screen name="XStreamityHiddenCategories" position="0,0" size="1920,1080" backgroundColor="#000000" flags="wfNoBorder">
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/Black/images/background.png" alphatest="off" position="0,0" size="1920,1080" zPosition="1" />
 	<widget source="global.CurrentTime" render="Label" position="1490,0" size="400,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" halign="right" transparent="1" zPosition="2">
 		<convert type="ClockToText">Format:%H:%M | %A %-d %b</convert>

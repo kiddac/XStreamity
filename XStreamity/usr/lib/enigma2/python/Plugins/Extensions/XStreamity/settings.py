@@ -9,7 +9,7 @@ from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
 from Components.ConfigList import ConfigListScreen
-from Components.config import config, configfile, getConfigListEntry, ConfigText, ConfigSelection, ConfigNumber, ConfigPassword, ConfigYesNo, ConfigEnableDisable
+from Components.config import config, configfile, getConfigListEntry, ConfigText, ConfigSelection, ConfigNumber, ConfigYesNo, ConfigEnableDisable
 from Components.Pixmap import Pixmap
 from Screens.LocationBox import LocationBox
 from Screens.MessageBox import MessageBox
@@ -43,13 +43,11 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.list = []
         ConfigListScreen.__init__(self, self.list, session=self.session, on_change=self.changedEntry)
 
-        self['key_red'] = StaticText(_('Close'))
+        self['key_red'] = StaticText(_('Back'))
         self['key_green'] = StaticText(_('Save'))
 
         self['VirtualKB'].setEnabled(False)
-        self['HelpWindow'] = Pixmap()
         self['VKeyIcon'] = Pixmap()
-        self['HelpWindow'].hide()
         self['VKeyIcon'].hide()
 
         self['actions'] = ActionMap(['XStreamityActions'], {
@@ -98,14 +96,15 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.cfg_vodtype = getConfigListEntry(_('Default VOD/SERIES stream type'), cfg.vodtype)
         self.cfg_catchuptype = getConfigListEntry(_('Default CATCHUP stream type'), cfg.vodtype)
 
-        self.cfg_livepreview = getConfigListEntry(_('Preview LIVE streams in mini tv before playing'), cfg.livepreview)
+        self.cfg_livepreview = getConfigListEntry(_('Preview LIVE streams in mini tv'), cfg.livepreview)
         # self.cfg_stopstream = getConfigListEntry(_('Stop stream on back button'), cfg.stopstream)
         self.cfg_downloadlocation = getConfigListEntry(_('VOD download folder'), cfg.downloadlocation)
         self.cfg_parental = getConfigListEntry(_('Parental control'), cfg.parental)
         self.cfg_main = getConfigListEntry(_('Show in main menu *Restart GUI Required'), cfg.main)
+        # self.cfg_oneplaylist = getConfigListEntry(_('Skip intro menus (single playlist)'), cfg.oneplaylist)
 
-        self.cfg_refreshTMDB = getConfigListEntry(_('Update VOD Movie Database information'), cfg.refreshTMDB)
-        self.cfg_TMDBLanguage = getConfigListEntry(_('VOD Movie Database language'), cfg.TMDBLanguage)
+        self.cfg_refreshTMDB = getConfigListEntry(_('Use Movie Database(TMDB) for VOD'), cfg.refreshTMDB)
+        self.cfg_TMDBLanguage = getConfigListEntry(_('Movie Database language'), cfg.TMDBLanguage)
 
         self.cfg_catchupstart = getConfigListEntry(_('Margin before catchup (mins)'), cfg.catchupstart)
         self.cfg_catchupend = getConfigListEntry(_('Margin after catchup (mins)'), cfg.catchupend)
@@ -136,6 +135,11 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
         self.list.append(self.cfg_parental)
 
+        """
+        if glob.oneplaylist:
+            self.list.append(self.cfg_oneplaylist)
+            """
+
         self.list.append(self.cfg_main)
         self['config'].list = self.list
         self['config'].l.setList(self.list)
@@ -143,8 +147,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
     def handleInputHelpers(self):
         if self['config'].getCurrent() is not None:
-            if isinstance(self['config'].getCurrent()[1], ConfigText) or isinstance(self['config'].getCurrent()[1], ConfigPassword):
-
+            if isinstance(self['config'].getCurrent()[1], ConfigText):
                 if 'VKeyIcon' in self:
                     if isinstance(self['config'].getCurrent()[1], ConfigNumber):
                         self['VirtualKB'].setEnabled(False)
@@ -152,27 +155,10 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
                     else:
                         self['VirtualKB'].setEnabled(True)
                         self['VKeyIcon'].show()
-
-                if not isinstance(self['config'].getCurrent()[1], ConfigNumber):
-
-                    if isinstance(self['config'].getCurrent()[1].help_window, ConfigText) or isinstance(self['config'].getCurrent()[1].help_window, ConfigPassword):
-                        if self['config'].getCurrent()[1].help_window.instance is not None:
-                            helpwindowpos = self['HelpWindow'].getPosition()
-
-                            if helpwindowpos:
-                                helpwindowposx, helpwindowposy = helpwindowpos
-                                if helpwindowposx and helpwindowposy:
-                                    from enigma import ePoint
-                                    self['config'].getCurrent()[1].help_window.instance.move(ePoint(helpwindowposx, helpwindowposy))
-
             else:
                 if 'VKeyIcon' in self:
                     self['VirtualKB'].setEnabled(False)
                     self['VKeyIcon'].hide()
-        else:
-            if 'VKeyIcon' in self:
-                self['VirtualKB'].setEnabled(False)
-                self['VKeyIcon'].hide()
 
     def changedEntry(self):
         self.item = self['config'].getCurrent()

@@ -11,10 +11,9 @@ from Components.config import config, ConfigSubsection, ConfigSelection, ConfigD
 import os
 import shutil
 
-VERSION = "2.30-20200816"
+VERSION = "2.51-20201014"
 screenwidth = getDesktop(0).size()
 
-# dir_src = "/etc/enigma2/X-Streamity/"
 dir_dst = "/etc/enigma2/xstreamity/"
 dir_tmp = "/tmp/xstreamity/"
 dir_plugins = "/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/"
@@ -95,12 +94,13 @@ cfg.livepreview = ConfigYesNo(default=False)
 cfg.stopstream = ConfigYesNo(default=False)
 cfg.skin = ConfigSelection(default='default', choices=folders)
 cfg.parental = ConfigYesNo(default=False)
-cfg.timeout = ConfigNumber(default=5)
+cfg.timeout = ConfigNumber(default=3)
 cfg.downloadlocation = ConfigDirectory(default=downloadpath)
 cfg.refreshTMDB = ConfigYesNo(default=True)
 cfg.TMDBLanguage = ConfigSelection(default='en', choices=languages)
 cfg.catchupstart = ConfigSelectionNumber(0, 30, 1, default=0)
 cfg.catchupend = ConfigSelectionNumber(0, 30, 1, default=0)
+cfg.oneplaylist = ConfigYesNo(default=False)
 
 skin_path = skin_directory + cfg.skin.value + '/'
 
@@ -116,14 +116,12 @@ fontfolder = "%sfonts/" % (dir_plugins)
 iconfolder = "%sicons/" % (dir_plugins)
 imagefolder = "%s/images/" % (skin_path)
 
-
-hdr = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36',
-       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Encoding': 'deflate'}
-
 """
 hdr = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36',
-         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8' }
-         """
+       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Encoding': 'deflate'}"""
+
+hdr = {'User-Agent': 'Enigma2 - XStreamity Plugin'}
+
 
 # create folder for working files
 if not os.path.exists(dir_dst):
@@ -147,9 +145,8 @@ if not os.path.isfile(json_file):
 
 
 def main(session, **kwargs):
-    from . import main
-
-    session.open(main.XStreamity_Main)
+    from . import mainmenu
+    session.open(mainmenu.XStreamity_MainMenu)
     return
 
 
@@ -161,8 +158,8 @@ def mainmenu(menuid, **kwargs):
 
 
 def extensionsmenu(session, **kwargs):
-    from . import main
-    session.open(main.XStreamity_Main)
+    from . import mainmenu
+    session.open(mainmenu.XStreamity_MainMenu)
     return
 
 

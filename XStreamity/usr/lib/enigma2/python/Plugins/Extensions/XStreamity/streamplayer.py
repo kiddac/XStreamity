@@ -40,6 +40,12 @@ except ImportError:
             pass
 
 import os
+import sys
+
+try:
+    pythonVer = sys.version_info.major
+except:
+    pythonVer = 2
 
 
 class IPTVInfoBarShowHide():
@@ -418,7 +424,8 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 
         if desc_image and desc_image != "n/A" and desc_image != "":
             temp = dir_tmp + 'temp.png'
-            desc_image = desc_image.encode()
+            if pythonVer == 3:
+                desc_image = desc_image.encode()
             try:
                 downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
             except:
@@ -659,9 +666,9 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
                 size = [220, 330]
 
         if desc_image and desc_image != "n/A" and desc_image != "":
-
             temp = dir_tmp + 'temp.jpg'
-            desc_image = desc_image.encode()
+            if pythonVer == 3:
+                desc_image = desc_image.encode()
             try:
                 downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
             except:
@@ -855,9 +862,9 @@ class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySup
                 size = [220, 130]
 
         if desc_image and desc_image != "n/A" and desc_image != "":
-
             temp = dir_tmp + 'temp.png'
-            desc_image = desc_image.encode()
+            if pythonVer == 3:
+                desc_image = desc_image.encode()
             try:
                 downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
             except:

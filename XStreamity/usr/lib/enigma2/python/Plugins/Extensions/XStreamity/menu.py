@@ -42,10 +42,12 @@ class XStreamity_Menu(Screen):
         self.drawList = []
         self["list"] = List(self.drawList, enableWrapAround=True)
 
-        self.setup_title = (_('Stream Selection'))
+        self.setup_title = str(glob.current_playlist['playlist_info']['name'])
 
         self['key_red'] = StaticText(_('Back'))
-        self['key_yellow'] = StaticText(_('Refresh Lists'))
+        self['key_green'] = StaticText(_('OK'))
+        self['key_yellow'] = StaticText(_('Settings'))
+        self['key_blue'] = StaticText(_('Update'))
 
         self['lastchecked'] = StaticText(_("Lists updated: ") + str(glob.current_playlist['data']['last_check']))
 
@@ -55,7 +57,9 @@ class XStreamity_Menu(Screen):
         self['actions'] = ActionMap(['XStreamityActions'], {
             'red': self.quit,
             'cancel': self.quit,
-            'yellow': self.updateCategories,
+            'yellow': self.settings,
+            'menu': self.settings,
+            'blue': self.updateCategories,
             'ok': self.__next__,
         }, -2)
 
@@ -73,15 +77,16 @@ class XStreamity_Menu(Screen):
 
         glob.current_playlist['data']['live_streams'] = []
 
-        self.onFirstExecBegin.append(self.delayedDownload)
+        self.onFirstExecBegin.append(self.start)
         self.onLayoutFinish.append(self.__layoutFinished)
 
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
 
     # delay to allow splash screen to show
-    def delayedDownload(self):
-        if glob.current_playlist['data']['live_categories'] == [] and glob.current_playlist['data']['vod_categories'] == [] and glob.current_playlist['data']['series_categories'] == []:
+    def start(self):
+
+        if glob.current_playlist['data']['data_downloaded'] is False:
 
             glob.current_playlist['data']['last_check'] = datetime.now().strftime("%d/%m/%Y %H:%M")
             self['lastchecked'].setText(_("Lists updated: ") + str(glob.current_playlist['data']['last_check']))
@@ -123,9 +128,8 @@ class XStreamity_Menu(Screen):
         category = url[1]
         r = ''
 
-        # retries = Retry(total=3, status_forcelist=[408, 429, 500, 503, 504], backoff_factor = 1)
-
-        adapter = HTTPAdapter(max_retries=0)
+        retries = Retry(total=2, status_forcelist=[429, 503, 504], backoff_factor=1)
+        adapter = HTTPAdapter(max_retries=retries)
         http = requests.Session()
         http.mount("http://", adapter)
 
@@ -133,7 +137,7 @@ class XStreamity_Menu(Screen):
             r = http.get(url[0], headers=hdr, stream=False, timeout=timeout, verify=False)
             r.raise_for_status()
             if r.status_code == requests.codes.ok:
-                response = r.json()
+                # response = r.json()
                 return category, r.json()
 
         except requests.exceptions.ConnectionError as e:
@@ -145,7 +149,7 @@ class XStreamity_Menu(Screen):
             return category, ''
 
     def process_downloads(self):
-        threads = 10
+        threads = 1
         pool = ThreadPool(threads)
         results = pool.imap_unordered(self.download_url, self.url_list)
 
@@ -166,10 +170,11 @@ class XStreamity_Menu(Screen):
         self.createSetup()
 
     def writeJsonFile(self):
-        with open(json_file, "r+") as f:
+        with open(json_file, "r") as f:
             self.playlists_all = json.load(f)
             self.playlists_all[glob.current_selection] = glob.current_playlist
-            f.seek(0)
+
+        with open(json_file, "w") as f:
             json.dump(self.playlists_all, f)
 
     def createSetup(self):
@@ -203,6 +208,8 @@ class XStreamity_Menu(Screen):
                 self.index += 1
                 self.list.append([self.index, "Catch Up TV", 3, ""])
 
+        glob.current_playlist['data']['data_downloaded'] = True
+
         self.drawList = []
         self.drawList = [buildListEntry(x[0], x[1], x[2], x[3]) for x in self.list]
         self["list"].setList(self.drawList)
@@ -216,7 +223,6 @@ class XStreamity_Menu(Screen):
             self.close()
 
     def quit(self):
-        self.writeJsonFile()
         self.close()
 
     def __next__(self):
@@ -250,6 +256,10 @@ class XStreamity_Menu(Screen):
             except:
                 self.makeUrlList()
         self.timer.start(5, True)
+
+    def settings(self):
+        from . import playsettings
+        self.session.openWithCallback(self.start, playsettings.XStreamity_Settings)
 
 
 def buildListEntry(index, title, category_id, playlisturl):

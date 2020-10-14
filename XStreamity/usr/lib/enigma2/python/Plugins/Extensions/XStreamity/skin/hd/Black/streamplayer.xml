@@ -1,4 +1,4 @@
-<screen name="XstreamityStreamPlayer" position="0,0" size="1280,720" backgroundColor="#ff000000" flags="wfNoBorder">
+<screen name="XStreamityStreamPlayer" position="0,0" size="1280,720" backgroundColor="#ff000000" flags="wfNoBorder">
 	<!-- top background -->
 	<eLabel position="0,0" size="1280,144" backgroundColor="#40000000" zPosition="1" />
 	<eLabel position="0,145" size="1280,1" backgroundColor="#fffffff" zPosition="1" />

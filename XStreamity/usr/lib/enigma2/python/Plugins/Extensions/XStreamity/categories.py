@@ -51,8 +51,14 @@ import sys
 import time
 import threading
 import zlib
+import codecs
 
 from os import system
+
+try:
+    pythonVer = sys.version_info.major
+except:
+    pythonVer = 2
 
 
 class XStreamity_Categories(Screen):
@@ -67,7 +73,7 @@ class XStreamity_Categories(Screen):
         if os.path.exists('/var/lib/dpkg/status'):
             skin = skin_path + 'DreamOS/categories.xml'
 
-        with open(skin, 'r') as f:
+        with codecs.open(skin, 'r', encoding='utf-8') as f:
             self.skin = f.read()
 
         self.setup_title = (_('Categories'))
@@ -319,7 +325,7 @@ class XStreamity_Categories(Screen):
 
     def downloadData(self):
         url = glob.nextlist[-1]["playlist_url"]
-        levelpath = dir_tmp + 'level' + str(self.level) + '.xml'
+        levelpath = str(dir_tmp) + 'level' + str(self.level) + '.xml'
 
         if not os.path.exists(levelpath):
             adapter = HTTPAdapter(max_retries=0)
@@ -331,7 +337,7 @@ class XStreamity_Categories(Screen):
                 if r.status_code == requests.codes.ok:
 
                     content = r.json()
-                    with open(levelpath, 'w') as f:
+                    with codecs.open(levelpath, 'w', encoding='utf-8') as f:
                         f.write(json.dumps(content))
 
                     self.processData(content, url)
@@ -345,7 +351,7 @@ class XStreamity_Categories(Screen):
                 pass
         else:
             # print("******* using file data ******")
-            with open(levelpath, "r") as f:
+            with codecs.open(levelpath, 'r', encoding='utf-8') as f:
                 self.processData(json.load(f), url)
 
     # code for natural sorting of numbers in string
@@ -477,6 +483,12 @@ class XStreamity_Categories(Screen):
             for item in currentCategory:
 
                 name = item['name']
+
+                if item['stream_type'] != "live":
+                    pattern = re.compile(r'[^\w\s()\[\]]', re.U)
+                    name = re.sub(r'_', '', re.sub(pattern, '', name))
+                    name = "** " + str(name) + " **"
+
                 stream_id = item['stream_id']
                 stream_icon = item['stream_icon']
                 epg_channel_id = item['epg_channel_id']
@@ -1163,13 +1175,13 @@ class XStreamity_Categories(Screen):
                         size = [220, 130]
 
                     if url != '' and url != "n/A" and url is not None:
-                        original = os.path.join(dir_tmp, 'original.png')
-                        # original = dir_tmp + 'original.png'
+                        # original = os.path.join(str(dir_tmp), 'original.png')
+                        original = str(dir_tmp) + 'original.png'
 
                         if url.startswith('https'):
                             url = url.replace('https', 'http')
-
-                        url = str.encode(url)
+                        if pythonVer == 3:
+                            url = url.encode()
                         downloadPage(url, original, timeout=5).addCallback(self.checkdownloaded, size, imagetype).addErrback(self.ebPrintError)
 
                     else:
@@ -1206,10 +1218,11 @@ class XStreamity_Categories(Screen):
                     size = [400, 600]
 
                 if url != '' and url != "n/A" and url is not None:
-                    original = dir_tmp + 'original.jpg'
+                    original = str(dir_tmp) + 'original.jpg'
                     if url.startswith('https'):
                         url = url.replace('https', 'http')
-                    url = url.encode()
+                    if pythonVer == 3:
+                        url = url.encode()
 
                     downloadPage(url, original, timeout=5).addCallback(self.checkdownloaded, size, imagetype).addErrback(self.ebPrintError)
 
@@ -1233,10 +1246,11 @@ class XStreamity_Categories(Screen):
             self["epg_picon"].instance.setPixmapFromFile(common_path + "picon.png")
 
     def checkdownloaded(self, data, piconSize, imageType):
+        print("******* check download **********")
         if self["channel_list"].getCurrent():
             if imageType == "picon":
-                # original = dir_tmp + 'original.png'
-                original = os.path.join(dir_tmp, 'original.png')
+                original = str(dir_tmp) + 'original.png'
+                # original = os.path.join(dir_tmp, 'original.png')
 
                 if os.path.exists(original):
                     try:
@@ -1255,12 +1269,12 @@ class XStreamity_Categories(Screen):
                     self.displayVodImage()
 
     def displayImage(self):
-        preview = dir_tmp + 'original.png'
+        preview = str(dir_tmp) + 'original.png'
         if self["epg_picon"].instance:
             self["epg_picon"].instance.setPixmapFromFile(preview)
 
     def displayVodImage(self):
-        preview = dir_tmp + 'original.jpg'
+        preview = str(dir_tmp) + 'original.jpg'
         width = 267
         height = 400
 
@@ -1665,7 +1679,10 @@ class XStreamity_Categories(Screen):
     def downloadVideo(self):
         if self["channel_list"].getCurrent():
             stream_url = self["channel_list"].getCurrent()[3]
-            stream_url = stream_url.encode()
+
+            if pythonVer == 3:
+                stream_url = stream_url.encode()
+
             extension = str(os.path.splitext(stream_url)[-1])
 
             if self["key_rec"].getText() == _('Download'):
@@ -1687,7 +1704,7 @@ class XStreamity_Categories(Screen):
                     self.session.open(MessageBox, _('Download Failed\n\n' + title + "\n\n" + str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension)), MessageBox.TYPE_WARNING)
                     pass
 
-            elif "/live/" in stream_url:
+            elif "/live/" in str(stream_url):
                 self.IPTVstartInstantRecording()
 
             else:
@@ -1884,7 +1901,7 @@ class XStreamity_Categories(Screen):
 
     def getTMDB(self):
         try:
-            os.remove(dir_tmp + 'search.txt')
+            os.remove(str(dir_tmp) + 'search.txt')
         except:
             pass
 
@@ -1962,10 +1979,11 @@ class XStreamity_Categories(Screen):
                     searchurl = 'http://api.themoviedb.org/3/search/movie?api_key=' + str(self.check(self.token)) + '&query=%22' + str(searchtitle) + '%22'
                 else:
                     searchurl = 'http://api.themoviedb.org/3/find/' + str(self.info["tmdb_id"]) + '?api_key=' + str(self.check(self.token)) + '&external_source=imdb_id'
-                searchurl = searchurl.encode()
+                if pythonVer == 3:
+                    searchurl = searchurl.encode()
 
                 try:
-                    downloadPage(searchurl, dir_tmp + 'search.txt', timeout=10).addCallback(self.processTMDB, isIMDB).addErrback(self.PrintError)
+                    downloadPage(searchurl, str(dir_tmp) + 'search.txt', timeout=10).addCallback(self.processTMDB, isIMDB).addErrback(self.PrintError)
                 except Exception as e:
                     print(("download TMDB %s" % e))
                     pass
@@ -1973,7 +1991,7 @@ class XStreamity_Categories(Screen):
                     pass
 
     def processTMDB(self, result, IMDB):
-        with open(dir_tmp + 'search.txt', "r") as f:
+        with codecs.open(str(dir_tmp) + 'search.txt', 'r', encoding='utf-8') as f:
             response = f.read()
 
         if response != '':
@@ -1998,7 +2016,7 @@ class XStreamity_Categories(Screen):
 
     def getTMDBDetails(self, resultid):
         try:
-            os.remove(dir_tmp + 'movie.txt')
+            os.remove(str(dir_tmp) + 'movie.txt')
         except:
             pass
 
@@ -2008,9 +2026,10 @@ class XStreamity_Categories(Screen):
             language = cfg.TMDBLanguage.value
 
         detailsurl = "http://api.themoviedb.org/3/movie/" + str(resultid) + "?api_key=" + str(self.check(self.token)) + "&append_to_response=credits&language=" + str(language)
-        detailsurl = detailsurl.encode()
+        if pythonVer == 3:
+            detailsurl = detailsurl.encode()
         try:
-            downloadPage(detailsurl, dir_tmp + 'movie.txt', timeout=10).addCallback(self.processTMDBDetails).addErrback(self.PrintError)
+            downloadPage(detailsurl, str(dir_tmp) + 'movie.txt', timeout=10).addCallback(self.processTMDBDetails).addErrback(self.PrintError)
         except Exception as e:
             print(("download TMDB details %s" % e))
             pass
@@ -2027,7 +2046,7 @@ class XStreamity_Categories(Screen):
         director = []
         cast = []
 
-        with open(dir_tmp + 'movie.txt', "r") as f:
+        with codecs.open(str(dir_tmp) + 'movie.txt', 'r', encoding='utf-8') as f:
             response = f.read()
 
         if response != '':
@@ -2224,8 +2243,9 @@ class XStreamity_Categories(Screen):
     def doDownload(self):
         self["downloading"].show()
         url = str(glob.current_playlist['playlist_info']['xmltv_api']) + "&next_days=1"
-        url = url.encode()
-        downloadPage(url, self.epg_full_path, headers=hdr).addCallback(self.downloadcomplete).addErrback(self.downloadFail)
+        if pythonVer == 3:
+            url = url.encode()
+        downloadPage(url, self.epg_full_path).addCallback(self.downloadcomplete).addErrback(self.downloadFail)
 
     def downloadFail(self, failure):
         print(("[EPG] download failed:", failure))
@@ -2250,8 +2270,9 @@ class XStreamity_Categories(Screen):
 
         url = glob.nextlist[-1]["playlist_url"]
         urlcategory = url.rsplit("=")[-1]
-        url = glob.current_playlist['playlist_info']['enigma2_api'] + "&type=get_live_streams&cat_id=" + str(urlcategory)
-        url = url.encode()
+        url = str(glob.current_playlist['playlist_info']['enigma2_api']) + "&type=get_live_streams&cat_id=" + str(urlcategory)
+        if pythonVer == 3:
+            url = url.encode()
 
         if not os.path.exists(str(dir_tmp) + "liveepg.xml"):
             downloadPage(url, str(dir_tmp) + "liveepg.xml", timeout=10).addCallback(self.processEnigma2EPG).addErrback(self.epgError)
@@ -2264,7 +2285,7 @@ class XStreamity_Categories(Screen):
 
     def processEnigma2EPG(self, data=None):
         if os.path.exists(str(dir_tmp) + "liveepg.xml"):
-            with open(str(dir_tmp) + "liveepg.xml", "r") as f:
+            with codecs.open(str(dir_tmp) + "liveepg.xml", 'r', encoding='utf-8') as f:
                 content = f.read()
 
         if content:

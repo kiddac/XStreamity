@@ -1,4 +1,4 @@
-<screen name="XstreamityCatchupPlayer" position="0,0" size="1920,1080" backgroundColor="#ff000000" flags="wfNoBorder">
+<screen name="XStreamityCatchupPlayer" position="0,0" size="1920,1080" backgroundColor="#ff000000" flags="wfNoBorder">
 	<!-- top background -->
 	<eLabel position="0,0" size="1920,216" backgroundColor="#40000000" zPosition="1" />
 	<eLabel position="0,217" size="1920,1" backgroundColor="#fffffff" zPosition="1" />
