@@ -49,6 +49,8 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self['VirtualKB'].setEnabled(False)
         self['VKeyIcon'] = Pixmap()
         self['VKeyIcon'].hide()
+        self['HelpWindow'] = Pixmap()
+        self['HelpWindow'].hide()
 
         self['actions'] = ActionMap(['XStreamityActions'], {
             'cancel': self.cancel,
@@ -146,15 +148,22 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.handleInputHelpers()
 
     def handleInputHelpers(self):
-        if self['config'].getCurrent() is not None:
-            if isinstance(self['config'].getCurrent()[1], ConfigText):
+        from enigma import ePoint
+        currConfig = self["config"].getCurrent()
+
+        if currConfig is not None:
+            if isinstance(currConfig[1], ConfigText):
                 if 'VKeyIcon' in self:
-                    if isinstance(self['config'].getCurrent()[1], ConfigNumber):
+                    if isinstance(currConfig[1], ConfigNumber):
                         self['VirtualKB'].setEnabled(False)
                         self['VKeyIcon'].hide()
                     else:
                         self['VirtualKB'].setEnabled(True)
                         self['VKeyIcon'].show()
+
+                if "HelpWindow" in self and currConfig[1].help_window and currConfig[1].help_window.instance is not None:
+                    helpwindowpos = self["HelpWindow"].getPosition()
+                    currConfig[1].help_window.instance.move(ePoint(helpwindowpos[0], helpwindowpos[1]))
             else:
                 if 'VKeyIcon' in self:
                     self['VirtualKB'].setEnabled(False)

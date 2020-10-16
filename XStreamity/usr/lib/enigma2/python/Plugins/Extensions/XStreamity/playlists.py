@@ -118,7 +118,8 @@ class XStreamity_Playlists(Screen):
                 self.url_list.append([player_api, x])
             x += 1
 
-        self.process_downloads()
+        if self.url_list:
+            self.process_downloads()
 
     def download_url(self, url):
         import requests
@@ -131,7 +132,7 @@ class XStreamity_Playlists(Screen):
         http.mount("http://", adapter)
 
         try:
-            r = http.get(url[0], headers=hdr, stream=True, timeout=cfg.timeout.value, verify=False)
+            r = http.get(url[0], headers=hdr, stream=True, timeout=10, verify=False)
             r.raise_for_status()
             if r.status_code == requests.codes.ok:
                 try:

@@ -39,10 +39,11 @@ class RecordDateInput(ConfigListScreen, Screen):
         self['key_red'] = StaticText(_('Close'))
         self['key_green'] = StaticText(_('Save'))
 
-        self['HelpWindow'] = Pixmap()
+
         self['VKeyIcon'] = Pixmap()
-        self['HelpWindow'].hide()
         self['VKeyIcon'].hide()
+        self['HelpWindow'] = Pixmap()       
+        self['HelpWindow'].hide()
 
         self.conf_name = config_name
         self.conf_date = config_date
@@ -101,31 +102,26 @@ class RecordDateInput(ConfigListScreen, Screen):
         self.handleInputHelpers()
 
     def handleInputHelpers(self):
-        if self['config'].getCurrent() is not None:
+        from enigma import ePoint
+        currConfig = self["config"].getCurrent()
 
-            if 'VKeyIcon' in self:
-                self['VirtualKB'].setEnabled(False)
-                self['VKeyIcon'].hide()
-
-            if isinstance(self['config'].getCurrent()[1], ConfigText) or isinstance(self['config'].getCurrent()[1], ConfigPassword):
+        if currConfig is not None:
+            if isinstance(currConfig[1], ConfigText):
                 if 'VKeyIcon' in self:
-                    if isinstance(self['config'].getCurrent()[1], ConfigNumber):
+                    if isinstance(currConfig[1], ConfigNumber):
                         self['VirtualKB'].setEnabled(False)
                         self['VKeyIcon'].hide()
                     else:
                         self['VirtualKB'].setEnabled(True)
                         self['VKeyIcon'].show()
 
-                    if not isinstance(self['config'].getCurrent()[1], ConfigNumber):
-                        if isinstance(self['config'].getCurrent()[1].help_window, ConfigText) or isinstance(self['config'].getCurrent()[1].help_window, ConfigPassword):
-                            if self['config'].getCurrent()[1].help_window.instance is not None:
-                                helpwindowpos = self['HelpWindow'].getPosition()
-
-                                if helpwindowpos:
-                                    helpwindowposx, helpwindowposy = helpwindowpos
-                                    if helpwindowposx and helpwindowposy:
-                                        from enigma import ePoint
-                                        self['config'].getCurrent()[1].help_window.instance.move(ePoint(helpwindowposx, helpwindowposy))
+                if "HelpWindow" in self and currConfig[1].help_window and currConfig[1].help_window.instance is not None:
+                    helpwindowpos = self["HelpWindow"].getPosition()
+                    currConfig[1].help_window.instance.move(ePoint(helpwindowpos[0], helpwindowpos[1]))
+            else:
+                if 'VKeyIcon' in self:
+                    self['VirtualKB'].setEnabled(False)
+                    self['VKeyIcon'].hide()
 
     def getTimestamp(self, date, mytime):
         d = time.localtime(date)

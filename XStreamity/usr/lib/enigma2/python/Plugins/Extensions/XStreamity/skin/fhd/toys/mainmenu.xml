@@ -1,10 +1,11 @@
-<screen name="XStreamityMainMenu" position="0,0" size="1920,1080" backgroundColor="#004757b5" flags="wfNoBorder" >
+<screen name="XStreamityMainMenu" position="0,0" size="1920,1080" backgroundColor="#4757b5" flags="wfNoBorder" >
 	<widget source="session.VideoPicture" render="Pig" position="0,0" size="192,108" transparent="1" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/toys/images/background2.jpg" backgroundColor="#ffffff" alphatest="off" position="0,0" size="1920,1080" zPosition="-1" />
 	<widget source="global.CurrentTime" render="Label" position="1490,0" size="400,60" font="xstreamitybold;27" foregroundColor="#ffffff" backgroundColor="#4c82cd" valign="center" halign="right" transparent="1">
 		<convert type="ClockToText">Format:%H:%M | %A %-d %b</convert>
 	</widget>
+	<widget source="version" render="Label" position="1557, 225" size="177,27" font="xstreamityregular;18" foregroundColor="#ffffff" backgroundColor="#5b97d6" halign="center" valign="center" transparent="1" /> 
 	<widget source="Title" render="Label" position="center,267" size="1920,70" foregroundColor="#ffffff" backgroundColor="#109dd2" halign="center" font="xstreamitybold;36" transparent="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/toys/images/background2.jpg" backgroundColor="#ffffff" alphatest="off" position="0,0" size="1920,1080" zPosition="-1" />
 	<widget source="list" render="Listbox" position="center,390" size="738,600" foregroundColor="#ffffff" backgroundColor="#0945b8" foregroundColorSelected="#004e98" backgroundColorSelected="#9bb1e6" 
 			selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/toys/images/selection2.png" backgroundPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/toys/images/blank.png"
 			itemHeight="120" scrollbarMode="showNever" transparent="1" zPosition="2" >
