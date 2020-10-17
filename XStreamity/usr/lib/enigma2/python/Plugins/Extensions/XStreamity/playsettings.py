@@ -58,7 +58,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
             'green': self.save,
         }, -2)
 
-        self.initConfig()
+        self.onFirstExecBegin.append(self.initConfig)
 
         self.onLayoutFinish.append(self.__layoutFinished)
 
@@ -147,6 +147,47 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self['config'].l.setList(self.list)
         self.handleInputHelpers()
 
+
+    def handleInputHelpers(self):
+        from enigma import ePoint
+        currConfig = self["config"].getCurrent()
+
+        if currConfig is not None:
+            if isinstance(currConfig[1], ConfigText):
+                if 'VKeyIcon' in self:
+                    if isinstance(currConfig[1], ConfigNumber):
+                        self['VirtualKB'].setEnabled(False)
+                        self['VKeyIcon'].hide()
+                    else:
+                        self['VirtualKB'].setEnabled(True)
+                        self['VKeyIcon'].show()
+
+                if "HelpWindow" in self and currConfig[1].help_window and currConfig[1].help_window.instance is not None:
+                    helpwindowpos = self["HelpWindow"].getPosition()
+                    currConfig[1].help_window.instance.move(ePoint(helpwindowpos[0], helpwindowpos[1]))
+            else:
+                if 'VKeyIcon' in self:
+                    self['VirtualKB'].setEnabled(False)
+                    self['VKeyIcon'].hide()
+
+
+    def changedEntry(self):
+        self.item = self['config'].getCurrent()
+        for x in self.onChangedEntry:
+            x()
+
+        try:
+            if isinstance(self['config'].getCurrent()[1], ConfigEnableDisable) or isinstance(self['config'].getCurrent()[1], ConfigYesNo) or isinstance(self['config'].getCurrent()[1], ConfigSelection):
+                self.createSetup()
+        except:
+            pass
+
+    def getCurrentEntry(self):
+        return self['config'].getCurrent() and self['config'].getCurrent()[0] or ''
+
+    def getCurrentValue(self):
+        return self['config'].getCurrent() and str(self['config'].getCurrent()[1].getText()) or ''
+        
     def save(self):
         if self['config'].isChanged():
             self.protocol = glob.current_playlist['playlist_info']['protocol']
@@ -232,42 +273,3 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
             json.dump(self.playlists_all, f)
         self.close()
 
-    def handleInputHelpers(self):
-        from enigma import ePoint
-        currConfig = self["config"].getCurrent()
-
-        if currConfig is not None:
-            if isinstance(currConfig[1], ConfigText):
-                if 'VKeyIcon' in self:
-                    if isinstance(currConfig[1], ConfigNumber):
-                        self['VirtualKB'].setEnabled(False)
-                        self['VKeyIcon'].hide()
-                    else:
-                        self['VirtualKB'].setEnabled(True)
-                        self['VKeyIcon'].show()
-
-                if "HelpWindow" in self and currConfig[1].help_window and currConfig[1].help_window.instance is not None:
-                    helpwindowpos = self["HelpWindow"].getPosition()
-                    currConfig[1].help_window.instance.move(ePoint(helpwindowpos[0], helpwindowpos[1]))
-            else:
-                if 'VKeyIcon' in self:
-                    self['VirtualKB'].setEnabled(False)
-                    self['VKeyIcon'].hide()
-
-
-    def changedEntry(self):
-        self.item = self['config'].getCurrent()
-        for x in self.onChangedEntry:
-            x()
-
-        try:
-            if isinstance(self['config'].getCurrent()[1], ConfigEnableDisable) or isinstance(self['config'].getCurrent()[1], ConfigYesNo) or isinstance(self['config'].getCurrent()[1], ConfigSelection):
-                self.createSetup()
-        except:
-            pass
-
-    def getCurrentEntry(self):
-        return self['config'].getCurrent() and self['config'].getCurrent()[0] or ''
-
-    def getCurrentValue(self):
-        return self['config'].getCurrent() and str(self['config'].getCurrent()[1].getText()) or ''

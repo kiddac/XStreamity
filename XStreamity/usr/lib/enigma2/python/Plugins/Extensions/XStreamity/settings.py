@@ -59,7 +59,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
             'ok': self.ok,
         }, -2)
 
-        self.initConfig()
+        self.onFirstExecBegin.append(self.initConfig)
 
         self.onLayoutFinish.append(self.__layoutFinished)
 
@@ -160,7 +160,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
                     else:
                         self['VirtualKB'].setEnabled(True)
                         self['VKeyIcon'].show()
-
+                
                 if "HelpWindow" in self and currConfig[1].help_window and currConfig[1].help_window.instance is not None:
                     helpwindowpos = self["HelpWindow"].getPosition()
                     currConfig[1].help_window.instance.move(ePoint(helpwindowpos[0], helpwindowpos[1]))
