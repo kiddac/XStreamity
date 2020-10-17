@@ -26,5 +26,5 @@
 	<widget source="key_green" render="Label" position="1102,1020" size="240,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" transparent="1" noWrap="1" zPosition="2" />
 
 	<widget name="VKeyIcon" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/key_text.png" position="1322,1031" size="38,38" alphatest="blend" transparent="1" zPosition="2" />
-	<widget name="HelpWindow" pixmap="vkey_icon.png" position="0,0" zPosition="1" size="1920,1080" transparent="1" alphatest="on"/>
+	<widget name="HelpWindow" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/vkey_icon.png" position="0,0" zPosition="1" size="1920,1080" transparent="1" alphatest="on"/>
 </screen>
