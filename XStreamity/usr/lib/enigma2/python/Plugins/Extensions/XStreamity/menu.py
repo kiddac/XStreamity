@@ -60,6 +60,7 @@ class XStreamity_Menu(Screen):
             'yellow': self.settings,
             'menu': self.settings,
             'blue': self.updateCategories,
+            'green': self.__next__,
             'ok': self.__next__,
         }, -2)
 
