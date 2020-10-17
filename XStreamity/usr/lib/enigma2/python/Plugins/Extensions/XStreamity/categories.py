@@ -481,18 +481,30 @@ class XStreamity_Categories(Screen):
 
         elif self.listType == "live_streams":
             for item in currentCategory:
+                
+                name = ''
+                stream_id = ''
+                stream_icon = '' 
+                epg_channel_id = ''
+                added = '' 
+                
+                if 'name' in item:
+                    name = item['name']
+                    
+                if 'stream_type' in item:
+                    if item['stream_type'] != "live":
+                        pattern = re.compile(r'[^\w\s()\[\]]', re.U)
+                        name = re.sub(r'_', '', re.sub(pattern, '', name))
+                        name = "** " + str(name) + " **"
 
-                name = item['name']
-
-                if item['stream_type'] != "live":
-                    pattern = re.compile(r'[^\w\s()\[\]]', re.U)
-                    name = re.sub(r'_', '', re.sub(pattern, '', name))
-                    name = "** " + str(name) + " **"
-
-                stream_id = item['stream_id']
-                stream_icon = item['stream_icon']
-                epg_channel_id = item['epg_channel_id']
-                added = item['added']
+                if 'stream_id' in item:
+                    stream_id = item['stream_id']
+                if 'stream_icon' in item:
+                    stream_icon = item['stream_icon']
+                if 'epg_channel_id' in item:    
+                    epg_channel_id = item['epg_channel_id']
+                if 'added' in item:
+                    added = item['added']
 
                 if stream_icon:
                     if stream_icon.startswith("https://vignette.wikia.nocookie.net/tvfanon6528"):
@@ -512,12 +524,26 @@ class XStreamity_Categories(Screen):
 
         elif self.listType == "vod_streams":
             for item in currentCategory:
-                name = item['name']
-                stream_id = item['stream_id']
-                stream_icon = item['stream_icon']
-                added = item['added']
-                container_extension = item['container_extension']
-                rating = item['rating']
+                
+                name = ''
+                stream_id = ''
+                stream_icon = '' 
+                added = '' 
+                container_extension = 'mp4'
+                rating = ''
+                
+                if 'name'  in item:
+                    name = item['name']
+                if 'stream_id' in item:
+                    stream_id = item['stream_id']
+                if 'stream_icon' in item:
+                    stream_icon = item['stream_icon']
+                if 'added' in item:
+                    added = item['added']
+                if 'container_extension' in item:
+                    container_extension = item['container_extension']
+                if 'rating' in item:
+                    rating = item['rating']
 
                 if stream_icon:
                     if stream_icon.startswith("https://image.tmdb.org/t/p/") or stream_icon.startswith("http://image.tmdb.org/t/p/"):
@@ -533,17 +559,40 @@ class XStreamity_Categories(Screen):
                 index += 1
 
         elif self.listType == "series_titles":
+
             for item in currentCategory:
-                name = item['name']
-                series_id = item['series_id']
-                cover = item['cover']
-                plot = item['plot']
-                cast = item['cast']
-                director = item['director']
-                genre = item['genre']
-                releaseDate = item['releaseDate']
-                rating = item['rating']
-                last_modified = item['last_modified']
+
+                name = ''
+                series_id = ''
+                cover = ''
+                plot = ''
+                cast = ''
+                director = ''
+                genre = ''
+                releaseDate = ''
+                rating = ''
+                last_modified = ''
+
+                if 'name' in item:
+                    name = item['name']
+                if 'series_id' in item:
+                    series_id = item['series_id']
+                if 'cover' in item:
+                    cover = item['cover']
+                if 'plot' in item:
+                    plot = item['plot']
+                if 'cast' in item:
+                    cast = item['cast']
+                if 'director' in item:
+                    director = item['director']
+                if 'genre' in item:
+                    genre = item['genre']
+                if 'releaseDate' in item:
+                    releaseDate = item['releaseDate']
+                if 'rating' in item:
+                    rating = item['rating']
+                if 'last_modified' in item:
+                    last_modified = item['last_modified']
 
                 if cover:
                     if cover.startswith("https://image.tmdb.org/t/p/") or cover.startswith("http://image.tmdb.org/t/p/"):
@@ -560,14 +609,38 @@ class XStreamity_Categories(Screen):
 
         elif self.listType == "series_seasons":
             if "info" in currentCategory:
-                name = currentCategory['info']['name']
-                cover = currentCategory['info']['cover']
-                overview = currentCategory['info']['plot']
-                cast = currentCategory['info']['cast']
-                director = currentCategory['info']['director']
-                genre = currentCategory['info']['genre']
-                airdate = currentCategory['info']['releaseDate']
-                rating = currentCategory['info']['rating']
+                try:
+                    name = currentCategory['info']['name']
+                except:
+                    name = ''
+                try:
+                    cover1 = currentCategory['info']['cover']
+                except:
+                    cover1 = ''
+                try:
+                    overview1 = currentCategory['info']['plot']
+                except:
+                    overview1 = ''
+                try:
+                    cast1 = currentCategory['info']['cast']
+                except:
+                    cast1 = ''
+                try:
+                    director1 = currentCategory['info']['director']
+                except:
+                    director1 = ''
+                try:
+                    genre1 = currentCategory['info']['genre']
+                except:
+                    genre1 = ''
+                try:
+                    airdate1 = currentCategory['info']['releaseDate']
+                except:
+                    airdate1 = ''
+                try:
+                    rating1 = currentCategory['info']['rating']
+                except:
+                    rating1 = ''
 
             if "episodes" in currentCategory:
                 if currentCategory["episodes"]:
@@ -586,7 +659,15 @@ class XStreamity_Categories(Screen):
 
                     if seasonlist:
                         for season in seasonlist:
+
                             name = _("Season ") + str(season)
+                            cover = cover1
+                            overview = overview1
+                            cast = cast1
+                            director = director1
+                            genre = genre1
+                            airdate = airdate1
+                            rating = rating1
 
                             if isdict:
                                 season_number = currentCategory["episodes"][str(season)][0]['season']
@@ -600,23 +681,34 @@ class XStreamity_Categories(Screen):
                                     for item in currentCategory['seasons']:
                                         if item['season_number'] == season_number:
                                             if "airdate" in item:
-                                                if item['airdate'] != "":
+                                                if item['airdate']:
                                                     airdate = item['airdate']
+                                                else:
+                                                    airdate = airdate1
 
                                             if "name" in item:
-                                                if item['name'] != "":
+                                                if item['name']:
                                                     name = item['name']
 
                                             if "overview" in item:
-                                                if item['overview'] != "":
+                                                if item['overview']:
                                                     overview = item['overview']
-
-                                            if "cover" in item:
-                                                cover = item['cover']
+                                                else:
+                                                    overview = overview1
 
                                             if "cover_big" in item:
-                                                cover = item['cover_big']
+                                                if item['cover_big']:
+                                                    cover = item['cover_big']
+                                                else:
+                                                    cover = cover1
 
+                                            elif "cover" in item:
+                                                if item['cover']:
+                                                    cover = item['cover']
+                                                else:
+                                                    cover = cover1
+                                            else:
+                                                cover = cover1
                             if cover:
                                 if cover.startswith("https://image.tmdb.org/t/p/") or cover.startswith("http://image.tmdb.org/t/p/"):
                                     dimensions = cover.partition("/p/")[2].partition("/")[0]
@@ -633,55 +725,88 @@ class XStreamity_Categories(Screen):
         elif self.listType == "series_episodes":
             if "info" in currentCategory:
 
-                shorttitle = currentCategory['info']['name']
-                cover = currentCategory['info']['cover']
-                plot = currentCategory['info']['plot']
-                cast = currentCategory['info']['cast']
-                director = currentCategory['info']['director']
-                genre = currentCategory['info']['genre']
-                releasedate = currentCategory['info']['releaseDate']
-                rating = currentCategory['info']['rating']
+                try:
+                    shorttitle1 = currentCategory['info']['name']
+                except:
+                    shorttitle1 = ''
+                try:
+                    cover1 = currentCategory['info']['cover']
+                except:
+                    cover1 = ''
+                try:
+                    plot1 = currentCategory['info']['plot']
+                except:
+                    plot1 = ''
+                try:
+                    cast1 = currentCategory['info']['cast']
+                except:
+                    cast1 = ''
+                try:
+                    director1 = currentCategory['info']['director']
+                except:
+                    director1 = ''
+                try:
+                    genre1 = currentCategory['info']['genre']
+                except:
+                    genre1 = ''
+                try:
+                    releasedate1 = currentCategory['info']['releaseDate']
+                except:
+                    releasedate1 = ''
+                try:
+                    rating1 = currentCategory['info']['rating']
+                except:
+                    rating1 = ''
 
             if "episodes" in currentCategory:
                 if currentCategory["episodes"]:
                     season_number = str(self.season_number)
+
 
                     try:
                         seasonlist = list(currentCategory['episodes'].keys())
                     except:
                         season_number = int(self.season_number)
 
+
                     for item in currentCategory['episodes'][season_number]:
+                        shorttitle = shorttitle1
+                        title = ''
+                        cover = cover1
+                        plot = plot1
+                        cast = cast1
+                        director = director1
+                        genre = genre1
+                        releasedate = releasedate1
+                        rating = rating1
+                        stream_id = ''
+                        container_extension = 'mp4'
+                        tmdb_id = ''
+                        duration = ''
 
-                        stream_id = item['id']
-                        title = item['title'].replace(str(shorttitle) + " - ", "")
-                        container_extension = item['container_extension']
-                        try:
+                        if 'id' in item:
+                            stream_id = item['id']
+
+                        if 'title' in item:
+                            title = item['title'].replace(str(shorttitle) + " - ", "")
+
+                        if 'container_extension' in item:
+                            container_extension = item['container_extension']
+
+                        if 'tmdb_id' in item:
                             tmdb_id = item['info']['tmdb_id']
-                        except:
-                            tmdb_id = ''
-                            pass
 
-                        try:
+                        if 'releasedate' in item['info']:
                             releasedate = item['info']['releasedate']
-                        except:
-                            pass
 
-                        try:
+                        if 'plot' in item['info']:
                             plot = item['info']['plot']
-                        except:
-                            pass
 
-                        try:
+                        if 'duration' in item['info']:
                             duration = item['info']['duration']
-                        except:
-                            duration = ''
-                            pass
 
-                        try:
+                        if 'rating' in item['info']:
                             rating = item['info']['rating']
-                        except:
-                            pass
 
                         if "seasons" in currentCategory:
                             if currentCategory['seasons']:
@@ -844,7 +969,7 @@ class XStreamity_Categories(Screen):
                 self["key_rec"].setText('')
 
                 # if cfg.stopstream.value == True:
-                self.stopStream()
+                # self.stopStream()
 
                 levelpath = str(dir_tmp) + 'level' + str(self.level) + '.xml'
                 try:
@@ -1082,8 +1207,6 @@ class XStreamity_Categories(Screen):
         self.epglist = []
         self.epglist = [buildEPGListEntry(x[0], x[1], x[7], x[8], x[9], x[10], x[11], x[12]) for x in self.list]
 
-        # print "********* threadname ********"
-        # print(threading.currentThread().getName())
         self["epg_list"].setList(self.epglist)
 
         instance = self["epg_list"].master.master.instance
@@ -1131,6 +1254,7 @@ class XStreamity_Categories(Screen):
         if self.listType == "series_episodes":
             if self["channel_list"].getCurrent():
                 current = self["channel_list"].getCurrent()
+
                 self["vod_title"].setText(current[0])
                 self["vod_description"].setText(current[6])
                 self["vod_genre"].setText(current[9])
