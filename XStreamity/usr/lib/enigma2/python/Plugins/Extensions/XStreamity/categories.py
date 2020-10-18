@@ -481,16 +481,16 @@ class XStreamity_Categories(Screen):
 
         elif self.listType == "live_streams":
             for item in currentCategory:
-                
+
                 name = ''
                 stream_id = ''
-                stream_icon = '' 
+                stream_icon = ''
                 epg_channel_id = ''
-                added = '' 
-                
+                added = ''
+
                 if 'name' in item:
                     name = item['name']
-                    
+
                 if 'stream_type' in item:
                     if item['stream_type'] != "live":
                         pattern = re.compile(r'[^\w\s()\[\]]', re.U)
@@ -501,7 +501,7 @@ class XStreamity_Categories(Screen):
                     stream_id = item['stream_id']
                 if 'stream_icon' in item:
                     stream_icon = item['stream_icon']
-                if 'epg_channel_id' in item:    
+                if 'epg_channel_id' in item:
                     epg_channel_id = item['epg_channel_id']
                 if 'added' in item:
                     added = item['added']
@@ -524,15 +524,15 @@ class XStreamity_Categories(Screen):
 
         elif self.listType == "vod_streams":
             for item in currentCategory:
-                
+
                 name = ''
                 stream_id = ''
-                stream_icon = '' 
-                added = '' 
+                stream_icon = ''
+                added = ''
                 container_extension = 'mp4'
                 rating = ''
-                
-                if 'name'  in item:
+
+                if 'name' in item:
                     name = item['name']
                 if 'stream_id' in item:
                     stream_id = item['stream_id']
@@ -762,12 +762,10 @@ class XStreamity_Categories(Screen):
                 if currentCategory["episodes"]:
                     season_number = str(self.season_number)
 
-
                     try:
                         seasonlist = list(currentCategory['episodes'].keys())
                     except:
                         season_number = int(self.season_number)
-
 
                     for item in currentCategory['episodes'][season_number]:
                         shorttitle = shorttitle1
@@ -958,6 +956,7 @@ class XStreamity_Categories(Screen):
             del glob.nextlist[-1]
 
             if len(glob.nextlist) == 0:
+                self.stopStream()
                 self.close()
 
             else:
@@ -968,8 +967,8 @@ class XStreamity_Categories(Screen):
                 self["key_yellow"].setText(_('Sort: A-Z'))
                 self["key_rec"].setText('')
 
-                # if cfg.stopstream.value == True:
-                # self.stopStream()
+                if cfg.stopstream.value:
+                    self.stopStream()
 
                 levelpath = str(dir_tmp) + 'level' + str(self.level) + '.xml'
                 try:
@@ -1104,6 +1103,7 @@ class XStreamity_Categories(Screen):
                 if self.session.nav.getCurrentlyPlayingServiceReference():
                     self.session.nav.stopService()
                 self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
+                glob.newPlayingServiceRefString = glob.currentPlayingServiceRefString
 
     def selectionChanged(self):
         if self["channel_list"].getCurrent():

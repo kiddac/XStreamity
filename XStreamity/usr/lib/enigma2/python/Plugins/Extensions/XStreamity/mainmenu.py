@@ -72,12 +72,21 @@ class XStreamity_MainMenu(Screen):
 
     def check_dependencies(self):
         dependencies = True
+
+        """
         if pythonVer == 3:
-            if not os.path.isfile("/usr/lib/python3.8/imghdr.py") \
-                or not os.path.exists("/usr/lib/python3.8/site-packages/PIL") \
-                    or not os.path.exists("/usr/lib/python3.8/site-packages/requests") \
-                    or not os.path.exists("/usr/lib/python3.8/multiprocessing"):
-                dependencies = False
+            if os.path.exists("/usr/bin/apt-get"):
+                if not os.path.isfile("/usr/lib/python/imghdr.py") \
+                    or not os.path.exists("/usr/lib/python/site-packages/PIL") \
+                        or not os.path.exists("/usr/lib/python/site-packages/requests") \
+                        or not os.path.exists("/usr/lib/python/multiprocessing"):
+                    dependencies = False
+            else:
+                if not os.path.isfile("/usr/lib/python3.8/imghdr.py") \
+                    or not os.path.exists("/usr/lib/python3.8/site-packages/PIL") \
+                        or not os.path.exists("/usr/lib/python3.8/site-packages/requests") \
+                        or not os.path.exists("/usr/lib/python3.8/multiprocessing"):
+                    dependencies = False
 
         else:
             if not os.path.isfile("/usr/lib/python2.7/imghdr.pyo") \
@@ -85,6 +94,14 @@ class XStreamity_MainMenu(Screen):
                     or not os.path.exists("/usr/lib/python2.7/site-packages/requests") \
                     or not os.path.exists("/usr/lib/python2.7/multiprocessing"):
                 dependencies = False
+                """
+
+        try:
+            import requests
+            from multiprocessing.pool import ThreadPool
+            from PIL import Image
+        except:
+            dependencies = False
 
         if dependencies is False:
             chmod("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/dependencies.sh", 0o0755)
@@ -104,7 +121,6 @@ class XStreamity_MainMenu(Screen):
     def start(self):
         self.playlists_all = xfiles.processfiles()
         self.createSetup()
-
 
     def createSetup(self):
         self.list = []

@@ -99,7 +99,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.cfg_catchuptype = getConfigListEntry(_('Default CATCHUP stream type'), cfg.vodtype)
 
         self.cfg_livepreview = getConfigListEntry(_('Preview LIVE streams in mini tv'), cfg.livepreview)
-        # self.cfg_stopstream = getConfigListEntry(_('Stop stream on back button'), cfg.stopstream)
+        self.cfg_stopstream = getConfigListEntry(_('Stop stream on back button'), cfg.stopstream)
         self.cfg_downloadlocation = getConfigListEntry(_('VOD download folder'), cfg.downloadlocation)
         self.cfg_parental = getConfigListEntry(_('Parental control'), cfg.parental)
         self.cfg_main = getConfigListEntry(_('Show in main menu *Restart GUI Required'), cfg.main)
@@ -124,7 +124,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.list.append(self.cfg_catchuptype)
 
         self.list.append(self.cfg_livepreview)
-        # self.list.append(self.cfg_stopstream)
+        self.list.append(self.cfg_stopstream)
 
         self.list.append(self.cfg_downloadlocation)
 
@@ -160,7 +160,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
                     else:
                         self['VirtualKB'].setEnabled(True)
                         self['VKeyIcon'].show()
-                
+
                 if "HelpWindow" in self and currConfig[1].help_window and currConfig[1].help_window.instance is not None:
                     helpwindowpos = self["HelpWindow"].getPosition()
                     currConfig[1].help_window.instance.move(ePoint(helpwindowpos[0], helpwindowpos[1]))
