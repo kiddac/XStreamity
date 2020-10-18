@@ -129,10 +129,11 @@ class XStreamity_MainMenu(Screen):
 
         if self.playlists_all:
             self.list.append([1, "Playlists"])
-            self.list.append([2, "Main Settings"])
             self.list.append([3, "Add Playlist"])
+            self.list.append([2, "Main Settings"])
         else:
             self.list.append([3, "Add Playlist"])
+            self.list.append([2, "Main Settings"])
 
         self.drawList = []
         self.drawList = [buildListEntry(x[0], x[1]) for x in self.list]

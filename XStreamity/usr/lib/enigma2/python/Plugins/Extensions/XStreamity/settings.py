@@ -59,7 +59,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
             'ok': self.ok,
         }, -2)
 
-        self.onFirstExecBegin.append(self.initConfig)
+        self.initConfig()
 
         self.onLayoutFinish.append(self.__layoutFinished)
 

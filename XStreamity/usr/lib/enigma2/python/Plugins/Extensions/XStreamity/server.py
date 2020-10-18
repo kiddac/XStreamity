@@ -46,7 +46,6 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
         self['HelpWindow'] = Pixmap()
         self['HelpWindow'].hide()
 
-
         self.protocol = 'http://'
         self.server = 'domain.xyz'
         self.port = 80
@@ -81,7 +80,7 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
         return
 
     def initConfig(self):
-        self.nameCfg = NoSave(ConfigText(default="Name", fixed_size=False))
+        self.nameCfg = NoSave(ConfigText(default="IPTV", fixed_size=False))
         self.protocolCfg = NoSave(ConfigSelection(default=self.protocol, choices=[('http://', _('http://')), ('https://', _('https://'))]))
         self.serverCfg = NoSave(ConfigText(default=self.server, fixed_size=False))
         self.portCfg = NoSave(ConfigNumber(default=self.port))
@@ -108,7 +107,7 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
     def handleInputHelpers(self):
         from enigma import ePoint
         currConfig = self["config"].getCurrent()
-        
+
         if currConfig is not None:
             if isinstance(currConfig[1], ConfigText):
                 if 'VKeyIcon' in self:
@@ -129,6 +128,7 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 
     def save(self):
         if self['config'].isChanged():
+
             self.name = self.nameCfg.value.strip()
             protocol = self.protocolCfg.value
             domain = self.serverCfg.value.strip()
@@ -139,6 +139,13 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
             output = self.outputCfg.value
 
             playlistline = '%s%s:%s/get.php?username=%s&password=%s&type=%s&output=%s #%s' % (protocol, domain, port, username, password, listtype, output, self.name)
+            self.apiline = '%s%s:%s/player_api.php?username=%s&password=%s' % (protocol, domain, port, username, password)
+
+            valid = self.checkline()
+
+            if not valid:
+                self.session.open(MessageBox, _("URL is not a valid or unauthorised"), type=MessageBox.TYPE_INFO, timeout=5)
+                return
 
             # update playlists.txt file
             if not os.path.isfile(playlist_path):
@@ -155,7 +162,7 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
             if exists is False:
                 with open(playlist_path, 'a') as f:
                     f.write("\n" + str(playlistline) + "\n")
-
+            self.session.open(MessageBox, _("Playlist added successfully."), type=MessageBox.TYPE_INFO, timeout=5)
             self.close()
 
     def changedEntry(self):
@@ -167,3 +174,26 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
                 self.createSetup()
         except:
             pass
+
+    def checkline(self):
+        import requests
+        valid = False
+        try:
+            r = requests.get(self.apiline, allow_redirects=True)
+            if r.status_code == 200:
+                response = r.json()
+                if 'user_info' in response:
+                    print("*** true 1 ***")
+                    if 'auth' in response['user_info']:
+                        print("**** true 2 ****")
+                        if response['user_info']['auth'] == 1:
+                            print("***** true 3 ******")
+                            valid = True
+
+        except requests.exceptions.ConnectionError as e:
+            print(("Error Connecting: %s" % e))
+
+        except requests.exceptions.RequestException as e:
+            print(e)
+
+        return valid

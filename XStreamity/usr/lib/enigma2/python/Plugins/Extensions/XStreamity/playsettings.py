@@ -19,13 +19,11 @@ import os
 import json
 
 
-class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
+class XStreamity_Settings(ConfigListScreen, Screen):
 
     def __init__(self, session):
         Screen.__init__(self, session)
 
-        if cfg.parental.getValue() is True:
-            ProtectedScreen.__init__(self)
         self.session = session
 
         skin = skin_path + 'settings.xml'
