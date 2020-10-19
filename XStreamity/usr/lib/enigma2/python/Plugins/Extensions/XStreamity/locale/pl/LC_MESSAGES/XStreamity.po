@@ -291,7 +291,7 @@ msgstr "Krótka nazwa lub nazwa dostawcy:"
 
 #: playsettings.py:122 server.py:99
 msgid "Output:"
-msgstr "Wyjście:"
+msgstr "Rodzaj Strumienia:"
 
 #: playsettings.py:124
 msgid "Show LIVE category:"
@@ -407,7 +407,7 @@ msgstr "Główne Ustawienia"
 
 #: settings.py:91
 msgid "Select skin *Restart GUI Required"
-msgstr "Wybierz skórkę * Wymagane ponowne uruchomienie GUI"
+msgstr "Wybierz skórkę *Restart GUI"
 
 #: settings.py:92
 msgid "playlists.txt location"
@@ -443,7 +443,7 @@ msgstr "Kontrola Rodzicielska"
 
 #: settings.py:103
 msgid "Show in main menu *Restart GUI Required"
-msgstr "Pokaż w menu głównym * Wymagane ponowne uruchomienie GUI"
+msgstr "Pokaż w menu głównym *Restart GUI"
 
 #: settings.py:106
 msgid "Use Movie Database(TMDB) for VOD"
