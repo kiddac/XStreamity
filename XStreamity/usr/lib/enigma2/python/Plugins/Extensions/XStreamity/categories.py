@@ -280,11 +280,12 @@ class XStreamity_Categories(Screen):
 
         try:
             if config.misc.epgcachepath:
-                self.epg_path = config.misc.epgcachepath.getValue() + "epg/"
-                if not os.path.exists(self.epg_path):
-                    os.makedirs(self.epg_path)
-                self.epg_file_name = "epg_%s.xml" % (glob.current_playlist['playlist_info']['domain'].replace(".", "_"))
-                self.epg_full_path = self.epg_path + self.epg_file_name
+                if config.misc.epgcachepath.getValue() != "/etc/enigma2/":
+                    self.epg_path = config.misc.epgcachepath.getValue() + "epg/"
+                    if not os.path.exists(self.epg_path):
+                        os.makedirs(self.epg_path)
+                    self.epg_file_name = "epg_%s.xml" % (glob.current_playlist['playlist_info']['domain'].replace(".", "_"))
+                    self.epg_full_path = self.epg_path + self.epg_file_name
         except:
             pass
 
@@ -1803,10 +1804,6 @@ class XStreamity_Categories(Screen):
     def downloadVideo(self):
         if self["channel_list"].getCurrent():
             stream_url = self["channel_list"].getCurrent()[3]
-
-            if pythonVer == 3:
-                stream_url = stream_url.encode()
-
             extension = str(os.path.splitext(stream_url)[-1])
 
             if self["key_rec"].getText() == _('Download'):
@@ -1817,6 +1814,9 @@ class XStreamity_Categories(Screen):
                     title = str(self["channel_list"].getCurrent()[15]) + " " + str(self["channel_list"].getCurrent()[0])
 
                 fileTitle = re.sub(r'[\<\>\:\"\/\\\|\?\*\[\]]', '', title)
+                
+                if pythonVer == 3:
+                    stream_url = stream_url.encode()
 
                 try:
                     downloadPage(stream_url, str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension)).addErrback(self.ebPrintError)
