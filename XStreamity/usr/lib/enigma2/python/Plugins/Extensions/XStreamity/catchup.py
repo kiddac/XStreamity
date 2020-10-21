@@ -237,36 +237,52 @@ class XStreamity_Catchup(Screen):
             for item in currentCategory:
 
                 for archive in self.live_list_archive:
-                    if item['category_id'] == archive['category_id']:
-
-                        category_name = item['category_name']
-                        category_id = item['category_id']
-                        next_url = "%s%s%s" % (glob.current_playlist['playlist_info']['player_api'], nextAction, category_id)
-                        self.list.append([index, str(category_name), str(next_url), str(category_id)])
-                        index += 1
-                        break
+                    category_id = ''
+                    category_name = ''
+                    if "category_id" in item:
+                        if item['category_id'] == archive['category_id']:
+                            if 'category_name' in item:
+                                category_name = item['category_name']
+                            category_id = item['category_id']
+                            next_url = "%s%s%s" % (glob.current_playlist['playlist_info']['player_api'], nextAction, category_id)
+                            self.list.append([index, str(category_name), str(next_url), str(category_id)])
+                            index += 1
+                            break
             self.buildLists()
 
         elif self.listType == "live_streams":
             for item in currentCategory:
-                if item['tv_archive'] == 1 and item['tv_archive_duration'] != "0":
+                name = ''
+                stream_id = ''
+                stream_icon = ''
+                epg_channel_id = ''
+                added = ''
 
-                    name = item['name']
-                    stream_id = item['stream_id']
-                    stream_icon = item['stream_icon']
-                    epg_channel_id = item['epg_channel_id']
-                    added = item['added']
+                if tv_archive in item and 'tv_archive_duration' in item:
+                    if item['tv_archive'] == 1 and item['tv_archive_duration'] != "0":
 
-                    epgnowtitle = epgnowtime = epgnowdescription = epgnexttitle = epgnexttime = epgnextdescription = ''
+                        if 'name' in item:
+                            name = item['name']
+                        if 'stream_id' in item:
+                            stream_id = item['stream_id']
+                        if 'stream_icon' in item:
+                            if stream_icon.startswith("http"):
+                                stream_icon = item['stream_icon']
+                        if 'epg_channel_id' in item:
+                            epg_channel_id = item['epg_channel_id']
+                        if 'added' in item:
+                            added = item['added']
 
-                    next_url = "%s/live/%s/%s/%s.%s" % (self.host, self.username, self.password, stream_id, self.output)
+                        epgnowtitle = epgnowtime = epgnowdescription = epgnexttitle = epgnexttime = epgnextdescription = ''
 
-                    self.list.append([
-                        index, str(name), str(stream_id), str(stream_icon), str(epg_channel_id), str(added), str(next_url),
-                        epgnowtime, epgnowtitle, epgnowdescription, epgnexttime, epgnexttitle, epgnextdescription
-                    ])
+                        next_url = "%s/live/%s/%s/%s.%s" % (self.host, self.username, self.password, stream_id, self.output)
 
-                    index += 1
+                        self.list.append([
+                            index, str(name), str(stream_id), str(stream_icon), str(epg_channel_id), str(added), str(next_url),
+                            epgnowtime, epgnowtitle, epgnowdescription, epgnexttime, epgnexttitle, epgnextdescription
+                        ])
+
+                        index += 1
 
             self.buildLists()
 
@@ -502,7 +518,6 @@ class XStreamity_Catchup(Screen):
 
                                 self.epgshortlist.reverse()
                                 self["epg_short_list"].setList(self.epgshortlist)
-
 
                                 if self["epg_short_list"].getCurrent():
                                     glob.catchupdata = [str(self["epg_short_list"].getCurrent()[0]), str(self["epg_short_list"].getCurrent()[3])]
