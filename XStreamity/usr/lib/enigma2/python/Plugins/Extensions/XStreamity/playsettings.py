@@ -187,15 +187,15 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         return self['config'].getCurrent() and str(self['config'].getCurrent()[1].getText()) or ''
         
     def save(self):
+        self.protocol = glob.current_playlist['playlist_info']['protocol']
+        self.domain = glob.current_playlist['playlist_info']['domain']
+        self.port = glob.current_playlist['playlist_info']['port']
+        self.username = glob.current_playlist['playlist_info']['username']
+        self.password = glob.current_playlist['playlist_info']['password']
+        self.listtype = "m3u"
+        self.host = "%s%s:%s" % (self.protocol, self.domain, self.port)
+            
         if self['config'].isChanged():
-            self.protocol = glob.current_playlist['playlist_info']['protocol']
-            self.domain = glob.current_playlist['playlist_info']['domain']
-            self.port = glob.current_playlist['playlist_info']['port']
-            self.username = glob.current_playlist['playlist_info']['username']
-            self.password = glob.current_playlist['playlist_info']['password']
-            self.listtype = "m3u"
-            self.host = "%s%s:%s" % (self.protocol, self.domain, self.port)
-
             self.name = self.nameCfg.value.strip()
             output = self.outputCfg.value
 
