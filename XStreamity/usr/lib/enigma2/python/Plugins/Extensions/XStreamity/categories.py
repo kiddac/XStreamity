@@ -36,7 +36,6 @@ try:
 except:
     from urllib.parse import unquote
 
-
 from Screens.MessageBox import MessageBox
 
 import xml.etree.cElementTree as ET
@@ -273,10 +272,23 @@ class XStreamity_Categories(Screen):
         self.selectedlist.setIndex(0)
         self.selectionChanged()
 
+    def minidelay(self):
+        self.timer = eTimer()
+        try:
+            self.timer_conn = self.timer.timeout.connect(self.createSetup)
+        except:
+            try:
+                self.timer.callback.append(self.createSetup)
+            except:
+                self.createSetup()
+        self.timer.start(5, True)
+
     def createSetup(self):
         self.epg_path = cfg.location.getValue() + "epg/"
+        if not os.path.exists(self.epg_path):
+            os.makedirs(self.epg_path)
         self.epg_file_name = "epg_%s.xml" % (glob.current_playlist['playlist_info']['domain'].replace(".", "_"))
-        self.epg_full_path = self.epg_path + self.epg_file_name
+        self.epg_full_path = str(self.epg_path + self.epg_file_name)
 
         try:
             if config.misc.epgcachepath:
@@ -351,7 +363,6 @@ class XStreamity_Categories(Screen):
                 print(e)
                 pass
         else:
-            # print("******* using file data ******")
             with codecs.open(levelpath, 'r', encoding='utf-8') as f:
                 self.processData(json.load(f), url)
 
@@ -501,7 +512,8 @@ class XStreamity_Categories(Screen):
                 if 'stream_id' in item:
                     stream_id = item['stream_id']
                 if 'stream_icon' in item:
-                    stream_icon = item['stream_icon']
+                    if stream_icon.startswith("http"):
+                        stream_icon = item['stream_icon']
                 if 'epg_channel_id' in item:
                     epg_channel_id = item['epg_channel_id']
                 if 'added' in item:
@@ -538,7 +550,8 @@ class XStreamity_Categories(Screen):
                 if 'stream_id' in item:
                     stream_id = item['stream_id']
                 if 'stream_icon' in item:
-                    stream_icon = item['stream_icon']
+                    if stream_icon.startswith("http"):
+                        stream_icon = item['stream_icon']
                 if 'added' in item:
                     added = item['added']
                 if 'container_extension' in item:
@@ -857,27 +870,33 @@ class XStreamity_Categories(Screen):
                                 try:
                                     os.remove(self.epg_full_path)
                                     self.xmltvdownloaded = False
-                                    self.doDownload()
+
+                                    self.timer = eTimer()
+                                    try:
+                                        self.timer_conn = self.timer.timeout.connect(self.doXMLTVDownload)
+                                    except:
+                                        try:
+                                            self.timer.callback.append(self.doXMLTVDownload)
+                                        except:
+                                            self.createSetup()
+                                    self.timer.start(5, True)
+
+                                    # self.doXMLTVDownload()
 
                                 except:
                                     pass
-
-                                """
-                            duration = datenow - last_modified
-                            duration_in_s = duration.total_seconds()
-                            days = divmod(duration_in_s, 86400)
-
-                            if days[0] >= 1:
-                                try:
-                                    os.remove(self.epg_full_path)
-                                    self.xmltvdownloaded = False
-                                    self.doDownload()
-
-                                except:
-                                    pass
-                                    """
                         else:
-                            self.doDownload()
+                            self.timer = eTimer()
+                            try:
+                                self.timer_conn = self.timer.timeout.connect(self.doXMLTVDownload)
+                            except:
+                                try:
+                                    self.timer.callback.append(self.doXMLTVDownload)
+                                except:
+                                    self.createSetup()
+                            self.timer.start(5, True)
+
+                            # self.doXMLTVDownload()
 
             elif self.listType == "live_streams":
                 self.epglist = []
@@ -1814,7 +1833,7 @@ class XStreamity_Categories(Screen):
                     title = str(self["channel_list"].getCurrent()[15]) + " " + str(self["channel_list"].getCurrent()[0])
 
                 fileTitle = re.sub(r'[\<\>\:\"\/\\\|\?\*\[\]]', '', title)
-                
+
                 if pythonVer == 3:
                     stream_url = stream_url.encode()
 
@@ -2364,13 +2383,13 @@ class XStreamity_Categories(Screen):
         if startTime < endTime:
             return nowTime >= startTime and nowTime <= endTime
 
-    def doDownload(self):
+    def doXMLTVDownload(self):
         self["downloading"].show()
         url = str(glob.current_playlist['playlist_info']['xmltv_api']) + "&next_days=1"
         if pythonVer == 3:
             url = url.encode()
         downloadPage(url, self.epg_full_path).addCallback(self.downloadcomplete).addErrback(self.downloadFail)
-
+        
     def downloadFail(self, failure):
         print(("[EPG] download failed:", failure))
         if self["downloading"].instance:
