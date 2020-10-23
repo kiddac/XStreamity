@@ -33,9 +33,6 @@ if [ -d /etc/opkg ]; then
         echo "checking python-multiprocessing"
         opkg install python-multiprocessing
         echo
-        echo "checking python-futures"
-        opkg install python-futures
-        echo
     fi
 else
     echo "updating feeds"
@@ -66,9 +63,6 @@ else
         echo
         echo "checking python-multiprocessing"
         apt-get install python-multiprocessing
-        echo
-        echo "checking python-futures"
-        apt-get install python-futures
         echo
     fi
 fi
