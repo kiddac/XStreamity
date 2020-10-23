@@ -87,7 +87,7 @@ class XStreamity_Playlists(Screen):
             with open(json_file, "r") as f:
                 try:
                     self.playlists_all = json.load(f)
-                    # self.playlists_all.sort(key=lambda e: e['playlist_info']['index'], reverse=False)
+                    self.playlists_all.sort(key=lambda e: e['playlist_info']['index'], reverse=False)
                 except:
                     os.remove(json_file)
 
