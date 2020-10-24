@@ -258,7 +258,7 @@ class XStreamity_Catchup(Screen):
                 epg_channel_id = ''
                 added = ''
 
-                if tv_archive in item and 'tv_archive_duration' in item:
+                if 'tv_archive' in item and 'tv_archive_duration' in item:
                     if item['tv_archive'] == 1 and item['tv_archive_duration'] != "0":
 
                         if 'name' in item:
