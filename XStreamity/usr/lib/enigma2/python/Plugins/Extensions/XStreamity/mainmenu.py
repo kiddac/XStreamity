@@ -77,7 +77,6 @@ class XStreamity_MainMenu(Screen):
             import requests
             from multiprocessing.pool import ThreadPool
             from PIL import Image
-            from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
         except:
             dependencies = False
 

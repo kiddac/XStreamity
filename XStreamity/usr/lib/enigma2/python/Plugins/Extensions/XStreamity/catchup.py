@@ -44,6 +44,31 @@ try:
 except:
     pythonVer = 2
 
+# https twisted client hack #
+try:
+    from OpenSSL import SSL
+    from twisted.internet import ssl, reactor
+    from twisted.internet._sslverify import ClientTLSOptions
+    sslverify = True
+except:
+    sslverify = False
+
+if sslverify:
+    try:
+        from urlparse import urlparse, parse_qs
+    except:
+        from urllib.parse import urlparse, parse_qs
+
+    class SNIFactory(ssl.ClientContextFactory):
+        def __init__(self, hostname=None):
+            self.hostname = hostname
+
+        def getContext(self):
+            ctx = self._contextFactory(self.method)
+            if self.hostname:
+                ClientTLSOptions(self.hostname, ctx)
+            return ctx
+
 
 class XStreamity_Catchup(Screen):
 
@@ -624,19 +649,15 @@ class XStreamity_Catchup(Screen):
                             url = url.encode()
 
                         try:
-                            downloadPage(url, original, timeout=5).addCallback(self.checkdownloaded, size, imagetype).addErrback(self.ebPrintError)
-                        except:
-
-                            if url.startswith('https'):
-                                url = url.replace('https', 'http')
-
-                                try:
-                                    downloadPage(url, original, timeout=5).addCallback(self.checkdownloaded, size, imagetype).addErrback(self.ebPrintError)
-                                except:
-                                    pass
-                                    self.loadDefaultImage()
+                            if url.startswith("https") and sslverify:
+                                parsed_uri = urlparse(url)
+                                domain = parsed_uri.hostname
+                                sniFactory = SNIFactory(domain)
+                                downloadPage(url, original, sniFactory, timeout=5).addCallback(self.checkdownloaded, size, imagetype).addErrback(self.ebPrintError)
                             else:
-                                self.loadDefaultImage()
+                                downloadPage(url, original, timeout=5).addCallback(self.checkdownloaded, size, imagetype).addErrback(self.ebPrintError)
+                        except:
+                            self.loadDefaultImage()
                     else:
                         self.loadDefaultImage()
 
@@ -713,7 +734,13 @@ class XStreamity_Catchup(Screen):
                     playurl = url.encode()
 
                 try:
-                    downloadPage(str(playurl), str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension))
+                    if playurl.startswith("https") and sslverify:
+                        parsed_uri = urlparse(str(playurl))
+                        domain = parsed_uri.hostname
+                        sniFactory = SNIFactory(domain)
+                        downloadPage(str(playurl), str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension), sniFactory)
+                    else:
+                        downloadPage(str(playurl), str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension))
                     self.session.open(MessageBox, _('Downloading \n\n' + otitle + "\n\n" + str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension)), MessageBox.TYPE_INFO)
                 except Exception as e:
                     print(("download catchup %s" % e))

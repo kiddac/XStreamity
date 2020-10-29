@@ -47,6 +47,31 @@ try:
 except:
     pythonVer = 2
 
+# https twisted client hack #
+try:
+    from OpenSSL import SSL
+    from twisted.internet import ssl, reactor
+    from twisted.internet._sslverify import ClientTLSOptions
+    sslverify = True
+except:
+    sslverify = False
+
+if sslverify:
+    try:
+        from urlparse import urlparse, parse_qs
+    except:
+        from urllib.parse import urlparse, parse_qs
+
+    class SNIFactory(ssl.ClientContextFactory):
+        def __init__(self, hostname=None):
+            self.hostname = hostname
+
+        def getContext(self):
+            ctx = self._contextFactory(self.method)
+            if self.hostname:
+                ClientTLSOptions(self.hostname, ctx)
+            return ctx
+
 
 class IPTVInfoBarShowHide():
     """ InfoBar show/hide control, accepts toggleShow and hide actions, might start
@@ -427,17 +452,15 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
             if pythonVer == 3:
                 desc_image = desc_image.encode()
             try:
-                downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
-            except:
-                if desc_image.startswith('https'):
-                    desc_image = desc_image.replace('https', 'http')
-                    try:
-                        downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
-                    except:
-                        pass
-                        self.loadDefaultImage()
+                if desc_image.startswith("https") and sslverify:
+                    parsed_uri = urlparse(desc_image)
+                    domain = parsed_uri.hostname
+                    sniFactory = SNIFactory(domain)
+                    downloadPage(desc_image, temp, sniFactory, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
                 else:
-                    self.loadDefaultImage()
+                    downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
+            except:
+                self.loadDefaultImage()
         else:
             self.loadDefaultImage()
 
@@ -669,18 +692,17 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
             temp = dir_tmp + 'temp.jpg'
             if pythonVer == 3:
                 desc_image = desc_image.encode()
+
             try:
-                downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
-            except:
-                if desc_image.startswith('https'):
-                    desc_image = desc_image.replace('https', 'http')
-                    try:
-                        downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
-                    except:
-                        pass
-                        self.loadDefaultImage()
+                if desc_image.startswith("https") and sslverify:
+                    parsed_uri = urlparse(desc_image)
+                    domain = parsed_uri.hostname
+                    sniFactory = SNIFactory(domain)
+                    downloadPage(desc_image, temp, sniFactory, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
                 else:
-                    self.loadDefaultImage()
+                    downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
+            except:
+                self.loadDefaultImage()
         else:
             self.loadDefaultImage()
 
@@ -866,17 +888,15 @@ class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySup
             if pythonVer == 3:
                 desc_image = desc_image.encode()
             try:
-                downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
-            except:
-                if desc_image.startswith('https'):
-                    desc_image = desc_image.replace('https', 'http')
-                    try:
-                        downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
-                    except:
-                        pass
-                        self.loadDefaultImage()
+                if desc_image.startswith("https") and sslverify:
+                    parsed_uri = urlparse(desc_image)
+                    domain = parsed_uri.hostname
+                    sniFactory = SNIFactory(domain)
+                    downloadPage(desc_image, temp, sniFactory, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
                 else:
-                    self.loadDefaultImage()
+                    downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
+            except:
+                self.loadDefaultImage()
         else:
             self.loadDefaultImage()
 
