@@ -370,21 +370,20 @@ class XStreamity_Categories(Screen):
 
                 if 'name' in item:
                     name = item['name']
+
                 if 'stream_id' in item:
                     stream_id = item['stream_id']
 
-                if 'stream_icon' in item:
+                if 'stream_icon' in item and item['stream_icon']:
                     if item['stream_icon'].startswith("http"):
                         stream_icon = item['stream_icon']
 
-                # fix some bad covers
-                if stream_icon:
-                    if stream_icon.startswith("https://image.tmdb.org/t/p/") or stream_icon.startswith("http://image.tmdb.org/t/p/"):
-                        dimensions = stream_icon.partition("/p/")[2].partition("/")[0]
-                        if screenwidth.width() <= 1280:
-                            stream_icon = stream_icon.replace(dimensions, "w300")
-                        else:
-                            stream_icon = stream_icon.replace(dimensions, "w400")
+                        if stream_icon.startswith("https://image.tmdb.org/t/p/") or stream_icon.startswith("http://image.tmdb.org/t/p/"):
+                            dimensions = stream_icon.partition("/p/")[2].partition("/")[0]
+                            if screenwidth.width() <= 1280:
+                                stream_icon = stream_icon.replace(dimensions, "w300")
+                            else:
+                                stream_icon = stream_icon.replace(dimensions, "w400")
 
                 if 'added' in item:
                     added = item['added']
@@ -562,9 +561,12 @@ class XStreamity_Categories(Screen):
             except:
                 pass
 
-            # self.loadDefaultImage()
-            size = []
+            size = [267, 400]
+            if screenwidth.width() > 1280:
+                size = [400, 600]
+
             desc_image = ''
+
             try:
                 desc_image = self["channel_list"].getCurrent()[5]
             except Exception as e:
@@ -574,16 +576,8 @@ class XStreamity_Categories(Screen):
                 if 'cover_big' in self.info:
                     desc_image = str(self.info["cover_big"]).strip()
 
-                size = [267, 400]
-                if screenwidth.width() > 1280:
-                    size = [400, 600]
-
                 if desc_image and desc_image != "n/A":
                     original = str(dir_tmp) + 'original.jpg'
-                    """
-                    if desc_image.startswith('https'):
-                        desc_image = desc_image.replace('https', 'http')
-                        """
 
                     if pythonVer == 3:
                         desc_image = desc_image.encode()

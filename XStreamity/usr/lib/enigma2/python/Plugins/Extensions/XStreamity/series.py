@@ -836,25 +836,19 @@ class XStreamity_Categories(Screen):
             except:
                 pass
 
-            # self.loadDefaultImage()
-            size = []
+            size = [267, 400]
+            if screenwidth.width() > 1280:
+                size = [400, 600]
+
             desc_image = ''
+
             try:
                 desc_image = self["channel_list"].getCurrent()[5]
             except Exception as e:
                 print(("* image error ** %s" % e))
 
-            size = [267, 400]
-            if screenwidth.width() > 1280:
-                size = [400, 600]
-
             if desc_image and desc_image != "n/A":
                 original = str(dir_tmp) + 'original.jpg'
-
-                """
-                if desc_image.startswith('https'):
-                    desc_image = desc_image.replace('https', 'http')
-                    """
 
                 if pythonVer == 3:
                     desc_image = desc_image.encode()
@@ -863,17 +857,13 @@ class XStreamity_Categories(Screen):
                     parsed_uri = urlparse(desc_image)
                     domain = parsed_uri.hostname
                     sniFactory = SNIFactory(domain)
-                    downloadPage(desc_image, original, sniFactory, timeout=5).addCallback(self.resizeImage, size).addErrback(self.imageError)
+                    downloadPage(desc_image, original, sniFactory, timeout=5).addCallback(self.resizeImage, size).addErrback(self.loadDefaultImage)
                 else:
-                    downloadPage(desc_image, original, timeout=5).addCallback(self.resizeImage, size).addErrback(self.imageError)
+                    downloadPage(desc_image, original, timeout=5).addCallback(self.resizeImage, size).addErrback(self.loadDefaultImage)
 
     def loadDefaultImage(self):
         if self["vod_cover"].instance:
             self["vod_cover"].instance.setPixmapFromFile(skin_path + "images/vod_cover.png")
-
-    def imageError(self, failure):
-        print(("********* image error ******** %s" % failure))
-        self.loadDefaultImage()
 
     def resizeImage(self, data, size):
         if self["channel_list"].getCurrent():

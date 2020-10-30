@@ -405,7 +405,7 @@ class XStreamity_Categories(Screen):
                     name = item['name']
 
                 # restyle bouquet markers
-                if 'stream_type' in item:
+                if 'stream_type' in item and item['stream_type']:
                     if item['stream_type'] != "live":
                         pattern = re.compile(r'[^\w\s()\[\]]', re.U)
                         name = re.sub(r'_', '', re.sub(pattern, '', name))
@@ -414,12 +414,10 @@ class XStreamity_Categories(Screen):
                 if 'stream_id' in item:
                     stream_id = item['stream_id']
 
-                if 'stream_icon' in item:
+                if 'stream_icon' in item and item['stream_icon']:
                     if item['stream_icon'].startswith("http"):
                         stream_icon = item['stream_icon']
 
-                # fix some bad picons
-                if stream_icon:
                     if stream_icon.startswith("https://vignette.wikia.nocookie.net/tvfanon6528"):
                         # stream_icon = stream_icon.replace("https", "http")
                         if "scale-to-width-down" not in stream_icon:
@@ -597,46 +595,33 @@ class XStreamity_Categories(Screen):
             except:
                 pass
 
-            # self.loadDefaultImage()
-
-            size = []
-            desc_image = ''
-
-            try:
-                desc_image = self["channel_list"].getCurrent()[5]
-            except Exception as e:
-                print(("* image error ** %s" % e))
-
             size = [147, 88]
             if screenwidth.width() > 1280:
                 size = [220, 130]
 
-            if desc_image and desc_image != "n/A":
-                original = str(dir_tmp) + 'original.png'
+            original = str(dir_tmp) + 'original.png'
+            desc_image = ''
 
-                """
-                if desc_image.startswith('https'):
-                    desc_image = desc_image.replace('https', 'http')
-                    """
+            try:
+                desc_image = self["channel_list"].getCurrent()[5]
 
-                if pythonVer == 3:
-                    desc_image = desc_image.encode()
+                if desc_image and desc_image != "n/A":
+                    if pythonVer == 3:
+                        desc_image = desc_image.encode()
 
-                if desc_image.startswith("https") and sslverify:
-                    parsed_uri = urlparse(desc_image)
-                    domain = parsed_uri.hostname
-                    sniFactory = SNIFactory(domain)
-                    downloadPage(desc_image, original, sniFactory, timeout=5).addCallback(self.resizeImage, size).addErrback(self.imageError)
-                else:
-                    downloadPage(desc_image, original, timeout=5).addCallback(self.resizeImage, size).addErrback(self.imageError)
+                    if desc_image.startswith("https") and sslverify:
+                        parsed_uri = urlparse(desc_image)
+                        domain = parsed_uri.hostname
+                        sniFactory = SNIFactory(domain)
+                        downloadPage(desc_image, original, sniFactory, timeout=5).addCallback(self.resizeImage, size).addErrback(self.loadDefaultImage)
+                    else:
+                        downloadPage(desc_image, original, timeout=5).addCallback(self.resizeImage, size).addErrback(self.loadDefaultImage)
+            except Exception as e:
+                print(("* image error ** %s" % e))
 
     def loadDefaultImage(self):
         if self["epg_picon"].instance:
             self["epg_picon"].instance.setPixmapFromFile(common_path + "picon.png")
-
-    def imageError(self, failure):
-        print(("********* image error ******** %s" % failure))
-        self.loadDefaultImage()
 
     def resizeImage(self, data, size):
         if self["channel_list"].getCurrent():
@@ -647,10 +632,9 @@ class XStreamity_Categories(Screen):
                     im = Image.open(original).convert('RGBA')
                     im.thumbnail(size, Image.ANTIALIAS)
 
-                    
                     # crop and center image
                     bg = Image.new('RGBA', size, (255, 255, 255, 0))
-                    
+
                     imagew, imageh = im.size
                     im_alpha = im.convert('RGBA').split()[-1]
                     bgwidth, bgheight = bg.size
@@ -660,7 +644,7 @@ class XStreamity_Categories(Screen):
                     bg_alpha = ImageChops.screen(bg_alpha, temp)
                     bg.paste(im, (int((bgwidth - imagew) / 2), int((bgheight - imageh) / 2)))
                     im = bg
-                    
+
                     im.save(original, 'PNG')
 
                     if self["epg_picon"].instance:
@@ -701,7 +685,7 @@ class XStreamity_Categories(Screen):
             start = ''
             end = ''
             percent = 0
-            
+
             if self["epg_list"].getCurrent():
                 start = self["epg_list"].getCurrent()[2]
                 end = self["epg_list"].getCurrent()[5]
@@ -711,7 +695,7 @@ class XStreamity_Categories(Screen):
 
                 start_time = datetime.strptime(startnowtime, "%H:%M")
                 end_time = datetime.strptime(startnexttime, "%H:%M")
-                
+
                 if end_time < start_time:
                     end_time = datetime.strptime(end, "%H:%M") + timedelta(hours=24)
 
@@ -955,6 +939,7 @@ class XStreamity_Categories(Screen):
         url = glob.nextlist[-1]["playlist_url"]
         urlcategory = url.rsplit("=")[-1]
         quickEPG = str(glob.current_playlist['playlist_info']['enigma2_api']) + "&type=get_live_streams&cat_id=" + str(urlcategory)
+
         if pythonVer == 3:
             quickEPG = quickEPG.encode()
 

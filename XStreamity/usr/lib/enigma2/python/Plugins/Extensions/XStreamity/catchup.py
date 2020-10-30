@@ -290,7 +290,7 @@ class XStreamity_Catchup(Screen):
                             name = item['name']
                         if 'stream_id' in item:
                             stream_id = item['stream_id']
-                        if 'stream_icon' in item:
+                        if 'stream_icon' in item and item['stream_icon']:
                             if stream_icon.startswith("http"):
                                 stream_icon = item['stream_icon']
                         if 'epg_channel_id' in item:
@@ -642,7 +642,7 @@ class XStreamity_Catchup(Screen):
                     if screenwidth.width() > 1280:
                         size = [220, 130]
 
-                    if url != '' and url != "n/A" and url is not None:
+                    if url and url != "n/A":
                         original = str(dir_tmp) + 'original.png'
 
                         if pythonVer == 3:
