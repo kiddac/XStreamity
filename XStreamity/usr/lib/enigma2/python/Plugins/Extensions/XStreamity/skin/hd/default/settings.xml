@@ -7,7 +7,7 @@
 	<widget source="Title" render="Label" position="center,140" size="1280,47" foregroundColor="#ffffff" backgroundColor="#2a70a4" halign="center" font="xstreamityregular;32" transparent="1" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/panel.png" position="center,200" size="533,440" alphatest="blend" zPosition="1" />
 
-	<widget name="config" textOffset="12,0" position="center,220" size="492,400" font="xstreamityregular;18" secondfont="xstreamityregular;18" foregroundColor="#ffffff" backgroundColor="#2a70a4" foregroundColorSelected="#ffffff" backgroundColorSelected="#296fa3" itemHeight="40" scrollbarMode="showOnDemand" scrollbarSliderBorderWidth="1" scrollbarWidth="4" transparent="1" zPosition="2" />
+	<widget name="config" textOffset="12,0" position="center,220" size="492,400" font="xstreamityregular;18" secondfont="xstreamityregular;18" foregroundColor="#ffffff" backgroundColor="#2a70a4" foregroundColorSelected="#ffffff" backgroundColorSelected="#296fa3" itemHeight="40" scrollbarMode="showOnDemand" scrollbarSliderBorderWidth="1" scrollbarWidth="4" enableWrapAround="1" transparent="1" zPosition="2" />
 	
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/divider.png" position="center,259" size="492,2" alphatest="blend" zPosition="1" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/divider.png" position="center,299" size="492,2" alphatest="blend" zPosition="1" />

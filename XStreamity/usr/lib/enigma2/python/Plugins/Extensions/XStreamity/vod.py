@@ -556,24 +556,27 @@ class XStreamity_Categories(Screen):
                         return
 
                 if desc_image and desc_image != "n/A":
-                    if pythonVer == 3:
-                        desc_image = desc_image.encode()
 
                     if desc_image.startswith("https") and sslverify:
                         parsed_uri = urlparse(desc_image)
                         domain = parsed_uri.hostname
                         sniFactory = SNIFactory(domain)
+                        if pythonVer == 3:
+                            desc_image = desc_image.encode()
                         downloadPage(desc_image, original, sniFactory, timeout=5).addCallback(self.resizeImage, size).addErrback(self.loadDefaultImage)
                     else:
+                        if pythonVer == 3:
+                            desc_image = desc_image.encode()
                         downloadPage(desc_image, original, timeout=5).addCallback(self.resizeImage, size).addErrback(self.loadDefaultImage)
                 else:
                     self.loadDefaultImage()
 
             except Exception as e:
-                print(("* image error ** %s" % e))
+                print("* image error ** %s" % e)
 
-    def loadDefaultImage(self):
+    def loadDefaultImage(self, failure=None):
         # print("*** loadDefaultImage ***")
+        print("*** failure *** %s" % failure)
         if self["vod_cover"].instance:
             self["vod_cover"].instance.setPixmapFromFile(skin_path + "images/vod_cover.png")
 
@@ -947,8 +950,12 @@ class XStreamity_Categories(Screen):
                     parsed_uri = urlparse(stream_url)
                     domain = parsed_uri.hostname
                     sniFactory = SNIFactory(domain)
+                    if pythonVer == 3:
+                        desc_image = desc_image.encode()
                     downloadPage(stream_url, str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension), sniFactory).addErrback(self.printError)
                 else:
+                    if pythonVer == 3:
+                        desc_image = desc_image.encode()
                     downloadPage(stream_url, str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension)).addErrback(self.printError)
                 self.session.open(MessageBox, _('Downloading \n\n' + title + "\n\n" + str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension)), MessageBox.TYPE_INFO)
             except Exception as e:

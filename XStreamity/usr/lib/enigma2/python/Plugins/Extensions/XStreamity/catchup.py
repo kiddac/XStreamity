@@ -645,16 +645,18 @@ class XStreamity_Catchup(Screen):
                     if url and url != "n/A":
                         original = str(dir_tmp) + 'original.png'
 
-                        if pythonVer == 3:
-                            url = url.encode()
-
                         try:
                             if url.startswith("https") and sslverify:
                                 parsed_uri = urlparse(url)
                                 domain = parsed_uri.hostname
                                 sniFactory = SNIFactory(domain)
+
+                                if pythonVer == 3:
+                                    url = url.encode()
                                 downloadPage(url, original, sniFactory, timeout=5).addCallback(self.checkdownloaded, size, imagetype).addErrback(self.ebPrintError)
                             else:
+                                if pythonVer == 3:
+                                    url = url.encode()
                                 downloadPage(url, original, timeout=5).addCallback(self.checkdownloaded, size, imagetype).addErrback(self.ebPrintError)
                         except:
                             self.loadDefaultImage()
@@ -730,16 +732,17 @@ class XStreamity_Catchup(Screen):
                 fileTitle = re.sub(r'[\<\>\:\"\/\\\|\?\*\[\]]', '_', title)
                 fileTitle = re.sub(r'_+', '_', fileTitle)
 
-                if pythonVer == 3:
-                    playurl = url.encode()
-
                 try:
                     if playurl.startswith("https") and sslverify:
                         parsed_uri = urlparse(str(playurl))
                         domain = parsed_uri.hostname
                         sniFactory = SNIFactory(domain)
+                        if pythonVer == 3:
+                            playurl = url.encode()
                         downloadPage(str(playurl), str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension), sniFactory)
                     else:
+                        if pythonVer == 3:
+                            playurl = url.encode()
                         downloadPage(str(playurl), str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension))
                     self.session.open(MessageBox, _('Downloading \n\n' + otitle + "\n\n" + str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension)), MessageBox.TYPE_INFO)
                 except Exception as e:

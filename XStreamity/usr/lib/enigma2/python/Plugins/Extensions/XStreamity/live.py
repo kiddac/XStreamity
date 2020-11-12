@@ -586,15 +586,16 @@ class XStreamity_Categories(Screen):
                 desc_image = self["channel_list"].getCurrent()[5]
 
                 if desc_image and desc_image != "n/A":
-                    if pythonVer == 3:
-                        desc_image = desc_image.encode()
-
                     if desc_image.startswith("https") and sslverify:
                         parsed_uri = urlparse(desc_image)
                         domain = parsed_uri.hostname
                         sniFactory = SNIFactory(domain)
+                        if pythonVer == 3:
+                            desc_image = desc_image.encode()
                         downloadPage(desc_image, original, sniFactory, timeout=5).addCallback(self.resizeImage, size).addErrback(self.loadDefaultImage)
                     else:
+                        if pythonVer == 3:
+                            desc_image = desc_image.encode()
                         downloadPage(desc_image, original, timeout=5).addCallback(self.resizeImage, size).addErrback(self.loadDefaultImage)
                 else:
                     self.loadDefaultImage()
@@ -982,15 +983,17 @@ class XStreamity_Categories(Screen):
         urlcategory = url.rsplit("=")[-1]
         quickEPG = str(glob.current_playlist['playlist_info']['enigma2_api']) + "&type=get_live_streams&cat_id=" + str(urlcategory)
 
-        if pythonVer == 3:
-            quickEPG = quickEPG.encode()
-
         if quickEPG.startswith("https") and sslverify:
             parsed_uri = urlparse(quickEPG)
             domain = parsed_uri.hostname
             sniFactory = SNIFactory(domain)
+
+            if pythonVer == 3:
+                quickEPG = quickEPG.encode()
             downloadPage(quickEPG, str(dir_tmp) + "liveepg.xml", sniFactory, timeout=5).addCallback(self.processQuickEPG).addErrback(self.QuickEPGError)
         else:
+            if pythonVer == 3:
+                quickEPG = quickEPG.encode()
             downloadPage(quickEPG, str(dir_tmp) + "liveepg.xml", timeout=5).addCallback(self.processQuickEPG).addErrback(self.QuickEPGError)
 
     def QuickEPGError(self, failure):
@@ -1511,15 +1514,17 @@ class XStreamity_Categories(Screen):
         # print("*** doXMLTVDownload ***")
         self["downloading"].show()
         url = str(glob.current_playlist['playlist_info']['xmltv_api']) + "&next_days=1"
-        if pythonVer == 3:
-            url = url.encode()
 
         if url.startswith("https") and sslverify:
             parsed_uri = urlparse(url)
             domain = parsed_uri.hostname
             sniFactory = SNIFactory(domain)
+            if pythonVer == 3:
+                url = url.encode()
             downloadPage(url, self.epg_full_path, sniFactory).addCallback(self.downloadcomplete).addErrback(self.downloadFail)
         else:
+            if pythonVer == 3:
+                url = url.encode()
             downloadPage(url, self.epg_full_path).addCallback(self.downloadcomplete).addErrback(self.downloadFail)
 
     def downloadFail(self, failure):

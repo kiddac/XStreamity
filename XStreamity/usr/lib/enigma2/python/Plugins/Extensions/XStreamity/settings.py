@@ -110,6 +110,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
         self.cfg_catchupstart = getConfigListEntry(_('Margin before catchup (mins)'), cfg.catchupstart)
         self.cfg_catchupend = getConfigListEntry(_('Margin after catchup (mins)'), cfg.catchupend)
+        self.cfg_subs = getConfigListEntry(_('Allow SubsSupport plugin in VOD'), cfg.subs)
 
         self.createSetup()
 
@@ -136,6 +137,8 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.list.append(self.cfg_catchupend)
 
         self.list.append(self.cfg_parental)
+        
+        self.list.append(self.cfg_subs)
 
         """
         if glob.oneplaylist:

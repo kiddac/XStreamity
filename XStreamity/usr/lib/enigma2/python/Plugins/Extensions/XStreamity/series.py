@@ -775,15 +775,17 @@ class XStreamity_Categories(Screen):
 
                 if desc_image and desc_image != "n/A":
 
-                    if pythonVer == 3:
-                        desc_image = desc_image.encode()
-
                     if desc_image.startswith("https") and sslverify:
                         parsed_uri = urlparse(desc_image)
                         domain = parsed_uri.hostname
                         sniFactory = SNIFactory(domain)
+
+                        if pythonVer == 3:
+                            desc_image = desc_image.encode()
                         downloadPage(desc_image, original, sniFactory, timeout=5).addCallback(self.resizeImage, size).addErrback(self.loadDefaultImage)
                     else:
+                        if pythonVer == 3:
+                            desc_image = desc_image.encode()
                         downloadPage(desc_image, original, timeout=5).addCallback(self.resizeImage, size).addErrback(self.loadDefaultImage)
                 else:
                     self.loadDefaultImage()
@@ -1158,7 +1160,7 @@ class XStreamity_Categories(Screen):
         if self["key_menu"].getText() != '':
             from . import hidden
             if self["channel_list"].getCurrent():
-                self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "series", self.list)
+                self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "series", self.list1)
 
     # record button download video file
     def downloadVideo(self):
@@ -1173,16 +1175,19 @@ class XStreamity_Categories(Screen):
 
                 fileTitle = re.sub(r'[\<\>\:\"\/\\\|\?\*\[\]]', '', title)
 
-                if pythonVer == 3:
-                    stream_url = stream_url.encode()
-
                 try:
                     if stream_url.startswith("https") and sslverify:
                         parsed_uri = urlparse(stream_url)
                         domain = parsed_uri.hostname
                         sniFactory = SNIFactory(domain)
+
+                        if pythonVer == 3:
+                            stream_url = stream_url.encode()
                         downloadPage(stream_url, str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension), sniFactory).addErrback(self.printError)
                     else:
+
+                        if pythonVer == 3:
+                            stream_url = stream_url.encode()
                         downloadPage(stream_url, str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension)).addErrback(self.printError)
 
                     self.session.open(MessageBox, _('Downloading \n\n' + title + "\n\n" + str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension)), MessageBox.TYPE_INFO)
@@ -1357,7 +1362,6 @@ class XStreamity_Categories(Screen):
                         self.info["cover_big"] = "http://image.tmdb.org/t/p/w300" + str(self.detailsresult["poster_path"])
                     else:
                         self.info["cover_big"] = "http://image.tmdb.org/t/p/w400" + str(self.detailsresult["poster_path"])
-                
 
                 if "name" in self.detailsresult and self.detailsresult["name"]:
                     self.info["name"] = str(self.detailsresult["name"])

@@ -28,9 +28,18 @@ from time import time
 from Tools.BoundFunction import boundFunction
 from twisted.web.client import downloadPage
 
-try:
-    from Plugins.Extensions.SubsSupport import SubsSupport, SubsSupportStatus
-except ImportError:
+if cfg.subs.value is True:
+    try:
+        from Plugins.Extensions.SubsSupport import SubsSupport, SubsSupportStatus
+    except ImportError:
+        class SubsSupport(object):
+            def __init__(self, *args, **kwargs):
+                pass
+
+        class SubsSupportStatus(object):
+            def __init__(self, *args, **kwargs):
+                pass
+else:
     class SubsSupport(object):
         def __init__(self, *args, **kwargs):
             pass
@@ -38,7 +47,7 @@ except ImportError:
     class SubsSupportStatus(object):
         def __init__(self, *args, **kwargs):
             pass
-
+    
 import os
 import sys
 
@@ -446,15 +455,17 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 
         if desc_image and desc_image != "n/A":
             temp = dir_tmp + 'temp.png'
-            if pythonVer == 3:
-                desc_image = desc_image.encode()
             try:
                 if desc_image.startswith("https") and sslverify:
                     parsed_uri = urlparse(desc_image)
                     domain = parsed_uri.hostname
                     sniFactory = SNIFactory(domain)
+                    if pythonVer == 3:
+                        desc_image = desc_image.encode()
                     downloadPage(desc_image, temp, sniFactory, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
                 else:
+                    if pythonVer == 3:
+                        desc_image = desc_image.encode()
                     downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
             except:
                 self.loadDefaultImage()
@@ -593,8 +604,10 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
         InfoBarAudioSelection.__init__(self)
         InfoBarSubtitleSupport.__init__(self)
         IPTVInfoBarPVRState.__init__(self, PVRState, True)
-        SubsSupport.__init__(self, searchSupport=True, embeddedSupport=True)
-        SubsSupportStatus.__init__(self)
+        
+        if cfg.subs.value is True:
+            SubsSupport.__init__(self, searchSupport=True, embeddedSupport=True)
+            SubsSupportStatus.__init__(self)
 
         self.streamurl = streamurl
         self.servicetype = servicetype
@@ -684,16 +697,18 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
 
         if desc_image and desc_image != "n/A":
             temp = dir_tmp + 'temp.jpg'
-            if pythonVer == 3:
-                desc_image = desc_image.encode()
 
             try:
                 if desc_image.startswith("https") and sslverify:
                     parsed_uri = urlparse(desc_image)
                     domain = parsed_uri.hostname
                     sniFactory = SNIFactory(domain)
+                    if pythonVer == 3:
+                        desc_image = desc_image.encode()
                     downloadPage(desc_image, temp, sniFactory, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
                 else:
+                    if pythonVer == 3:
+                        desc_image = desc_image.encode()
                     downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
             except:
                 self.loadDefaultImage()
@@ -804,8 +819,10 @@ class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySup
         InfoBarAudioSelection.__init__(self)
         InfoBarSubtitleSupport.__init__(self)
         IPTVInfoBarPVRState.__init__(self, PVRState, True)
-        SubsSupport.__init__(self, searchSupport=True, embeddedSupport=True)
-        SubsSupportStatus.__init__(self)
+        
+        if cfg.subs.value is True:
+            SubsSupport.__init__(self, searchSupport=True, embeddedSupport=True)
+            SubsSupportStatus.__init__(self)
 
         self.streamurl = streamurl
         self.servicetype = servicetype
@@ -876,15 +893,17 @@ class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySup
 
         if desc_image and desc_image != "n/A" and desc_image != "":
             temp = dir_tmp + 'temp.png'
-            if pythonVer == 3:
-                desc_image = desc_image.encode()
             try:
                 if desc_image.startswith("https") and sslverify:
                     parsed_uri = urlparse(desc_image)
                     domain = parsed_uri.hostname
                     sniFactory = SNIFactory(domain)
+                    if pythonVer == 3:
+                        desc_image = desc_image.encode()
                     downloadPage(desc_image, temp, sniFactory, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
                 else:
+                    if pythonVer == 3:
+                        desc_image = desc_image.encode()
                     downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
             except:
                 self.loadDefaultImage()
