@@ -16,7 +16,7 @@ from Components.Pixmap import Pixmap
 from Components.ProgressBar import ProgressBar
 from Components.Sources.List import List
 from datetime import datetime, timedelta, date
-from enigma import eTimer, eServiceReference
+from enigma import eTimer, eServiceReference, eEPGCache
 from PIL import Image, ImageChops
 from requests.adapters import HTTPAdapter
 from RecordTimer import RecordTimerEntry
@@ -1355,7 +1355,7 @@ class XStreamity_Categories(Screen):
         # print("*** getChannelChunk **")
 
         # print("**** list **** %s" % self.list2)
-
+        
         if self["channel_list"].getCurrent():
 
             currentindex = self["channel_list"].getIndex()

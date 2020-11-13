@@ -155,6 +155,7 @@ class XStreamity_Categories(Screen):
         self.info = ""
         self.storedtitle = ""
         self.storedseason = ""
+        self.filterresult = ""
 
         self.protocol = glob.current_playlist['playlist_info']['protocol']
         self.domain = glob.current_playlist['playlist_info']['domain']

@@ -166,7 +166,8 @@ class XStreamity_Menu(Screen):
                 elif category == 3:
                     glob.current_playlist['data']['live_streams'] = response
 
-        pool.terminate()
+        pool.close()
+        pool.join()
         self["splash"].hide()
         self.createSetup()
 

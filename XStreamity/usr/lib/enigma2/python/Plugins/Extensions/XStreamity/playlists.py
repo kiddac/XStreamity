@@ -154,15 +154,18 @@ class XStreamity_Playlists(Screen):
         from multiprocessing.pool import ThreadPool
 
         threads = len(self.url_list)
-        pool = ThreadPool(threads)
-        results = pool.imap_unordered(self.download_url, self.url_list)
-        for index, response in results:
-            if response != '':
-                self.playlists_all[index].update(response)
-            else:
-                self.playlists_all[index]['user_info'] = []
-        pool.terminate()
-        self.buildPlaylistList()
+        if threads:
+            pool = ThreadPool(threads)
+           
+            results = pool.imap_unordered(self.download_url, self.url_list)
+            for index, response in results:
+                if response != '':
+                    self.playlists_all[index].update(response)
+                else:
+                    self.playlists_all[index]['user_info'] = []
+            pool.close()
+            pool.join()
+            self.buildPlaylistList()
 
     def buildPlaylistList(self):
         for playlists in self.playlists_all:

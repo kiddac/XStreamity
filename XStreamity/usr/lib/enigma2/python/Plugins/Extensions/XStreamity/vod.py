@@ -151,6 +151,7 @@ class XStreamity_Categories(Screen):
         self["vod_cast"] = StaticText()
 
         self.isStream = False
+        self.filterresult = ""
         self.pin = False
 
         self.protocol = glob.current_playlist['playlist_info']['protocol']
