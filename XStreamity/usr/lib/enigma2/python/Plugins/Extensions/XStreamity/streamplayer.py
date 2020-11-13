@@ -28,9 +28,18 @@ from time import time
 from Tools.BoundFunction import boundFunction
 from twisted.web.client import downloadPage
 
-try:
-    from Plugins.Extensions.SubsSupport import SubsSupport, SubsSupportStatus
-except ImportError:
+if cfg.subs.value is True:
+    try:
+        from Plugins.Extensions.SubsSupport import SubsSupport, SubsSupportStatus
+    except ImportError:
+        class SubsSupport(object):
+            def __init__(self, *args, **kwargs):
+                pass
+
+        class SubsSupportStatus(object):
+            def __init__(self, *args, **kwargs):
+                pass
+else:
     class SubsSupport(object):
         def __init__(self, *args, **kwargs):
             pass
@@ -38,7 +47,7 @@ except ImportError:
     class SubsSupportStatus(object):
         def __init__(self, *args, **kwargs):
             pass
-
+    
 import os
 import sys
 
@@ -46,6 +55,31 @@ try:
     pythonVer = sys.version_info.major
 except:
     pythonVer = 2
+
+# https twisted client hack #
+try:
+    from OpenSSL import SSL
+    from twisted.internet import ssl, reactor
+    from twisted.internet._sslverify import ClientTLSOptions
+    sslverify = True
+except:
+    sslverify = False
+
+if sslverify:
+    try:
+        from urlparse import urlparse, parse_qs
+    except:
+        from urllib.parse import urlparse, parse_qs
+
+    class SNIFactory(ssl.ClientContextFactory):
+        def __init__(self, hostname=None):
+            self.hostname = hostname
+
+        def getContext(self):
+            ctx = self._contextFactory(self.method)
+            if self.hostname:
+                ClientTLSOptions(self.hostname, ctx)
+            return ctx
 
 
 class IPTVInfoBarShowHide():
@@ -177,39 +211,39 @@ class IPTVInfoBarPVRState:
             speedtext = ""
             self.pvrStateDialog["speed"].setText("")
             speed_summary = self.pvrStateDialog["speed"].text
+            if playstateString:
+                if playstateString == '>':
+                    statusicon_summary = 0
+                    self.pvrStateDialog["statusicon"].setPixmapNum(statusicon_summary)
 
-            if playstateString == '>':
-                statusicon_summary = 0
-                self.pvrStateDialog["statusicon"].setPixmapNum(statusicon_summary)
+                elif playstateString == '||':
+                    statusicon_summary = 1
+                    self.pvrStateDialog["statusicon"].setPixmapNum(statusicon_summary)
 
-            elif playstateString == '||':
-                statusicon_summary = 1
-                self.pvrStateDialog["statusicon"].setPixmapNum(statusicon_summary)
+                elif playstateString == 'END':
+                    statusicon_summary = 2
+                    self.pvrStateDialog["statusicon"].setPixmapNum(statusicon_summary)
 
-            elif playstateString == 'END':
-                statusicon_summary = 2
-                self.pvrStateDialog["statusicon"].setPixmapNum(statusicon_summary)
+                elif playstateString.startswith('>>'):
+                    speed = state[3].split()
+                    statusicon_summary = 3
+                    self.pvrStateDialog["statusicon"].setPixmapNum(statusicon_summary)
+                    self.pvrStateDialog["speed"].setText(speed[1])
+                    speedtext = speed[1]
 
-            elif playstateString.startswith('>>'):
-                speed = state[3].split()
-                statusicon_summary = 3
-                self.pvrStateDialog["statusicon"].setPixmapNum(statusicon_summary)
-                self.pvrStateDialog["speed"].setText(speed[1])
-                speedtext = speed[1]
+                elif playstateString.startswith('<<'):
+                    speed = state[3].split()
+                    statusicon_summary = 4
+                    self.pvrStateDialog["statusicon"].setPixmapNum(statusicon_summary)
+                    self.pvrStateDialog["speed"].setText(speed[1])
+                    speedtext = speed[1]
 
-            elif playstateString.startswith('<<'):
-                speed = state[3].split()
-                statusicon_summary = 4
-                self.pvrStateDialog["statusicon"].setPixmapNum(statusicon_summary)
-                self.pvrStateDialog["speed"].setText(speed[1])
-                speedtext = speed[1]
+                elif playstateString.startswith('/'):
+                    statusicon_summary = 5
+                    self.pvrStateDialog["statusicon"].setPixmapNum(statusicon_summary)
+                    self.pvrStateDialog["speed"].setText(playstateString)
 
-            elif playstateString.startswith('/'):
-                statusicon_summary = 5
-                self.pvrStateDialog["statusicon"].setPixmapNum(statusicon_summary)
-                self.pvrStateDialog["speed"].setText(playstateString)
-
-                speedtext = playstateString
+                    speedtext = playstateString
 
             if "state" in self and self.force_show:
                 self["state"].setText(playstateString)
@@ -408,9 +442,9 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
         self.downloadPicon()
 
     def downloadPicon(self):
-        size = []
-        stream_url = ''
-        desc_image = ''
+        size = [147, 88]
+        if screenwidth.width() > 1280:
+            size = [220, 130]
 
         if glob.currentchannelist:
             stream_url = glob.currentchannelist[glob.currentchannelistindex][3]
@@ -418,26 +452,23 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
 
         if stream_url != 'None':
             imagetype = "picon"
-            size = [147, 88]
-            if screenwidth.width() > 1280:
-                size = [220, 130]
 
-        if desc_image and desc_image != "n/A" and desc_image != "":
+        if desc_image and desc_image != "n/A":
             temp = dir_tmp + 'temp.png'
-            if pythonVer == 3:
-                desc_image = desc_image.encode()
             try:
-                downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
-            except:
-                if desc_image.startswith('https'):
-                    desc_image = desc_image.replace('https', 'http')
-                    try:
-                        downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
-                    except:
-                        pass
-                        self.loadDefaultImage()
+                if desc_image.startswith("https") and sslverify:
+                    parsed_uri = urlparse(desc_image)
+                    domain = parsed_uri.hostname
+                    sniFactory = SNIFactory(domain)
+                    if pythonVer == 3:
+                        desc_image = desc_image.encode()
+                    downloadPage(desc_image, temp, sniFactory, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
                 else:
-                    self.loadDefaultImage()
+                    if pythonVer == 3:
+                        desc_image = desc_image.encode()
+                    downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
+            except:
+                self.loadDefaultImage()
         else:
             self.loadDefaultImage()
 
@@ -573,8 +604,10 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
         InfoBarAudioSelection.__init__(self)
         InfoBarSubtitleSupport.__init__(self)
         IPTVInfoBarPVRState.__init__(self, PVRState, True)
-        SubsSupport.__init__(self, searchSupport=True, embeddedSupport=True)
-        SubsSupportStatus.__init__(self)
+        
+        if cfg.subs.value is True:
+            SubsSupport.__init__(self, searchSupport=True, embeddedSupport=True)
+            SubsSupportStatus.__init__(self)
 
         self.streamurl = streamurl
         self.servicetype = servicetype
@@ -651,9 +684,9 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
         except:
             pass
 
-        size = []
-        stream_url = ''
-        desc_image = ''
+        size = [147, 220]
+        if screenwidth.width() > 1280:
+            size = [220, 330]
 
         if glob.currentchannelist:
             stream_url = glob.currentchannelist[glob.currentchannelistindex][3]
@@ -661,26 +694,24 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
 
         if stream_url != 'None':
             imagetype = "cover"
-            size = [147, 220]
-            if screenwidth.width() > 1280:
-                size = [220, 330]
 
-        if desc_image and desc_image != "n/A" and desc_image != "":
+        if desc_image and desc_image != "n/A":
             temp = dir_tmp + 'temp.jpg'
-            if pythonVer == 3:
-                desc_image = desc_image.encode()
+
             try:
-                downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
-            except:
-                if desc_image.startswith('https'):
-                    desc_image = desc_image.replace('https', 'http')
-                    try:
-                        downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
-                    except:
-                        pass
-                        self.loadDefaultImage()
+                if desc_image.startswith("https") and sslverify:
+                    parsed_uri = urlparse(desc_image)
+                    domain = parsed_uri.hostname
+                    sniFactory = SNIFactory(domain)
+                    if pythonVer == 3:
+                        desc_image = desc_image.encode()
+                    downloadPage(desc_image, temp, sniFactory, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
                 else:
-                    self.loadDefaultImage()
+                    if pythonVer == 3:
+                        desc_image = desc_image.encode()
+                    downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
+            except:
+                self.loadDefaultImage()
         else:
             self.loadDefaultImage()
 
@@ -788,8 +819,10 @@ class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySup
         InfoBarAudioSelection.__init__(self)
         InfoBarSubtitleSupport.__init__(self)
         IPTVInfoBarPVRState.__init__(self, PVRState, True)
-        SubsSupport.__init__(self, searchSupport=True, embeddedSupport=True)
-        SubsSupportStatus.__init__(self)
+        
+        if cfg.subs.value is True:
+            SubsSupport.__init__(self, searchSupport=True, embeddedSupport=True)
+            SubsSupportStatus.__init__(self)
 
         self.streamurl = streamurl
         self.servicetype = servicetype
@@ -847,9 +880,9 @@ class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySup
         self.downloadPicon()
 
     def downloadPicon(self):
-        size = []
-        stream_url = ''
-        desc_image = ''
+        size = [147, 88]
+        if screenwidth.width() > 1280:
+            size = [220, 130]
 
         if glob.currentchannelist:
             stream_url = glob.currentchannelist[glob.currentchannelistindex][3]
@@ -857,26 +890,23 @@ class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySup
 
         if stream_url != 'None':
             imagetype = "picon"
-            size = [147, 88]
-            if screenwidth.width() > 1280:
-                size = [220, 130]
 
         if desc_image and desc_image != "n/A" and desc_image != "":
             temp = dir_tmp + 'temp.png'
-            if pythonVer == 3:
-                desc_image = desc_image.encode()
             try:
-                downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
-            except:
-                if desc_image.startswith('https'):
-                    desc_image = desc_image.replace('https', 'http')
-                    try:
-                        downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
-                    except:
-                        pass
-                        self.loadDefaultImage()
+                if desc_image.startswith("https") and sslverify:
+                    parsed_uri = urlparse(desc_image)
+                    domain = parsed_uri.hostname
+                    sniFactory = SNIFactory(domain)
+                    if pythonVer == 3:
+                        desc_image = desc_image.encode()
+                    downloadPage(desc_image, temp, sniFactory, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
                 else:
-                    self.loadDefaultImage()
+                    if pythonVer == 3:
+                        desc_image = desc_image.encode()
+                    downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
+            except:
+                self.loadDefaultImage()
         else:
             self.loadDefaultImage()
 

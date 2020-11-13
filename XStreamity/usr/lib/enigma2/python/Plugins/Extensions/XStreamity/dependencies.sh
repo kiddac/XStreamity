@@ -40,29 +40,29 @@ else
     echo
     if [[ $pyv =~ "Python 3" ]]; then
         echo "checking python3-image"
-        apt-get install python3-image
+        apt-get -y install python3-image
         echo
         echo "checking python3-imaging"
-        apt-get install python3-imaging
+        apt-get -y install python3-imaging
         echo
         echo "checking python3-requests"
-        apt-get install python3-requests
+        apt-get -y install python3-requests
         echo
         echo "checking python3-multiprocessing"
-        apt-get install python3-multiprocessing
+        apt-get -y install python3-multiprocessing
         echo
     else
         echo "checking python-image"
-        apt-get install python-image
+        apt-get -y install python-image
         echo
         echo "checking python-imaging"
-        apt-get install python-imaging
+        apt-get -y install python-imaging
         echo
         echo "checking python-requests"
-        apt-get install python-requests
+        apt-get -y install python-requests
         echo
         echo "checking python-multiprocessing"
-        apt-get install python-multiprocessing
+        apt-get -y install python-multiprocessing
         echo
     fi
 fi

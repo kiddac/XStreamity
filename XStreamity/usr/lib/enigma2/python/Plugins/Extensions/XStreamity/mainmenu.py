@@ -73,29 +73,6 @@ class XStreamity_MainMenu(Screen):
     def check_dependencies(self):
         dependencies = True
 
-        """
-        if pythonVer == 3:
-            if os.path.exists("/usr/bin/apt-get"):
-                if not os.path.isfile("/usr/lib/python/imghdr.py") \
-                    or not os.path.exists("/usr/lib/python/site-packages/PIL") \
-                        or not os.path.exists("/usr/lib/python/site-packages/requests") \
-                        or not os.path.exists("/usr/lib/python/multiprocessing"):
-                    dependencies = False
-            else:
-                if not os.path.isfile("/usr/lib/python3.8/imghdr.py") \
-                    or not os.path.exists("/usr/lib/python3.8/site-packages/PIL") \
-                        or not os.path.exists("/usr/lib/python3.8/site-packages/requests") \
-                        or not os.path.exists("/usr/lib/python3.8/multiprocessing"):
-                    dependencies = False
-
-        else:
-            if not os.path.isfile("/usr/lib/python2.7/imghdr.pyo") \
-                or not os.path.exists("/usr/lib/python2.7/site-packages/PIL") \
-                    or not os.path.exists("/usr/lib/python2.7/site-packages/requests") \
-                    or not os.path.exists("/usr/lib/python2.7/multiprocessing"):
-                dependencies = False
-                """
-
         try:
             import requests
             from multiprocessing.pool import ThreadPool

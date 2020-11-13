@@ -166,7 +166,8 @@ class XStreamity_Menu(Screen):
                 elif category == 3:
                     glob.current_playlist['data']['live_streams'] = response
 
-        pool.terminate()
+        pool.close()
+        pool.join()
         self["splash"].hide()
         self.createSetup()
 
@@ -227,16 +228,20 @@ class XStreamity_Menu(Screen):
         self.close()
 
     def __next__(self):
-        from . import categories
-        from . import catchup
-
         category = self["list"].getCurrent()[2]
-
         if self["list"].getCurrent():
-            if self["list"].getCurrent()[2] == 3:
+            if category  == 0:
+                from . import live
+                self.session.open(live.XStreamity_Categories)
+            elif category  == 1:
+                from . import vod
+                self.session.open(vod.XStreamity_Categories)
+            elif category  == 2:
+                from . import series
+                self.session.open(series.XStreamity_Categories)
+            elif category  == 3:
+                from . import catchup
                 self.session.open(catchup.XStreamity_Catchup)
-            else:
-                self.session.open(categories.XStreamity_Categories, category)
 
     def updateCategories(self):
         self["splash"].show()

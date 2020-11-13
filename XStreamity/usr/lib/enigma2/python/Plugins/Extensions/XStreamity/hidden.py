@@ -82,10 +82,10 @@ class XStreamity_HiddenCategories(Screen):
             self.hidelist = glob.current_playlist['player_info']['serieshidden']
 
         for item in self.channellist:
-            if item[4] not in self.hidelist:
-                self.startList.append([item[0], item[4], False])
-            elif item[4] in self.hidelist:
-                self.startList.append([item[0], item[4], True])
+            if item[3] not in self.hidelist:
+                self.startList.append([item[1], item[3], False])
+            elif item[3] in self.hidelist:
+                self.startList.append([item[1], item[3], True])
         self.refresh()
 
     def buildListEntry(self, name, category_id, enabled):

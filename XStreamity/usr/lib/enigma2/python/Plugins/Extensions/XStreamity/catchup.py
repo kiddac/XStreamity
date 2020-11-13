@@ -44,6 +44,31 @@ try:
 except:
     pythonVer = 2
 
+# https twisted client hack #
+try:
+    from OpenSSL import SSL
+    from twisted.internet import ssl, reactor
+    from twisted.internet._sslverify import ClientTLSOptions
+    sslverify = True
+except:
+    sslverify = False
+
+if sslverify:
+    try:
+        from urlparse import urlparse, parse_qs
+    except:
+        from urllib.parse import urlparse, parse_qs
+
+    class SNIFactory(ssl.ClientContextFactory):
+        def __init__(self, hostname=None):
+            self.hostname = hostname
+
+        def getContext(self):
+            ctx = self._contextFactory(self.method)
+            if self.hostname:
+                ClientTLSOptions(self.hostname, ctx)
+            return ctx
+
 
 class XStreamity_Catchup(Screen):
 
@@ -237,36 +262,52 @@ class XStreamity_Catchup(Screen):
             for item in currentCategory:
 
                 for archive in self.live_list_archive:
-                    if item['category_id'] == archive['category_id']:
-
-                        category_name = item['category_name']
-                        category_id = item['category_id']
-                        next_url = "%s%s%s" % (glob.current_playlist['playlist_info']['player_api'], nextAction, category_id)
-                        self.list.append([index, str(category_name), str(next_url), str(category_id)])
-                        index += 1
-                        break
+                    category_id = ''
+                    category_name = ''
+                    if "category_id" in item:
+                        if item['category_id'] == archive['category_id']:
+                            if 'category_name' in item:
+                                category_name = item['category_name']
+                            category_id = item['category_id']
+                            next_url = "%s%s%s" % (glob.current_playlist['playlist_info']['player_api'], nextAction, category_id)
+                            self.list.append([index, str(category_name), str(next_url), str(category_id)])
+                            index += 1
+                            break
             self.buildLists()
 
         elif self.listType == "live_streams":
             for item in currentCategory:
-                if item['tv_archive'] == 1 and item['tv_archive_duration'] != "0":
+                name = ''
+                stream_id = ''
+                stream_icon = ''
+                epg_channel_id = ''
+                added = ''
 
-                    name = item['name']
-                    stream_id = item['stream_id']
-                    stream_icon = item['stream_icon']
-                    epg_channel_id = item['epg_channel_id']
-                    added = item['added']
+                if 'tv_archive' in item and 'tv_archive_duration' in item:
+                    if item['tv_archive'] == 1 and item['tv_archive_duration'] != "0":
 
-                    epgnowtitle = epgnowtime = epgnowdescription = epgnexttitle = epgnexttime = epgnextdescription = ''
+                        if 'name' in item:
+                            name = item['name']
+                        if 'stream_id' in item:
+                            stream_id = item['stream_id']
+                        if 'stream_icon' in item and item['stream_icon']:
+                            if stream_icon.startswith("http"):
+                                stream_icon = item['stream_icon']
+                        if 'epg_channel_id' in item:
+                            epg_channel_id = item['epg_channel_id']
+                        if 'added' in item:
+                            added = item['added']
 
-                    next_url = "%s/live/%s/%s/%s.%s" % (self.host, self.username, self.password, stream_id, self.output)
+                        epgnowtitle = epgnowtime = epgnowdescription = epgnexttitle = epgnexttime = epgnextdescription = ''
 
-                    self.list.append([
-                        index, str(name), str(stream_id), str(stream_icon), str(epg_channel_id), str(added), str(next_url),
-                        epgnowtime, epgnowtitle, epgnowdescription, epgnexttime, epgnexttitle, epgnextdescription
-                    ])
+                        next_url = "%s/live/%s/%s/%s.%s" % (self.host, self.username, self.password, stream_id, self.output)
 
-                    index += 1
+                        self.list.append([
+                            index, str(name), str(stream_id), str(stream_icon), str(epg_channel_id), str(added), str(next_url),
+                            epgnowtime, epgnowtitle, epgnowdescription, epgnexttime, epgnexttitle, epgnextdescription
+                        ])
+
+                        index += 1
 
             self.buildLists()
 
@@ -503,7 +544,6 @@ class XStreamity_Catchup(Screen):
                                 self.epgshortlist.reverse()
                                 self["epg_short_list"].setList(self.epgshortlist)
 
-
                                 if self["epg_short_list"].getCurrent():
                                     glob.catchupdata = [str(self["epg_short_list"].getCurrent()[0]), str(self["epg_short_list"].getCurrent()[3])]
                                 instance = self["epg_short_list"].master.master.instance
@@ -602,26 +642,24 @@ class XStreamity_Catchup(Screen):
                     if screenwidth.width() > 1280:
                         size = [220, 130]
 
-                    if url != '' and url != "n/A" and url is not None:
+                    if url and url != "n/A":
                         original = str(dir_tmp) + 'original.png'
 
-                        if pythonVer == 3:
-                            url = url.encode()
-
                         try:
-                            downloadPage(url, original, timeout=5).addCallback(self.checkdownloaded, size, imagetype).addErrback(self.ebPrintError)
-                        except:
+                            if url.startswith("https") and sslverify:
+                                parsed_uri = urlparse(url)
+                                domain = parsed_uri.hostname
+                                sniFactory = SNIFactory(domain)
 
-                            if url.startswith('https'):
-                                url = url.replace('https', 'http')
-
-                                try:
-                                    downloadPage(url, original, timeout=5).addCallback(self.checkdownloaded, size, imagetype).addErrback(self.ebPrintError)
-                                except:
-                                    pass
-                                    self.loadDefaultImage()
+                                if pythonVer == 3:
+                                    url = url.encode()
+                                downloadPage(url, original, sniFactory, timeout=5).addCallback(self.checkdownloaded, size, imagetype).addErrback(self.ebPrintError)
                             else:
-                                self.loadDefaultImage()
+                                if pythonVer == 3:
+                                    url = url.encode()
+                                downloadPage(url, original, timeout=5).addCallback(self.checkdownloaded, size, imagetype).addErrback(self.ebPrintError)
+                        except:
+                            self.loadDefaultImage()
                     else:
                         self.loadDefaultImage()
 
@@ -694,11 +732,18 @@ class XStreamity_Catchup(Screen):
                 fileTitle = re.sub(r'[\<\>\:\"\/\\\|\?\*\[\]]', '_', title)
                 fileTitle = re.sub(r'_+', '_', fileTitle)
 
-                if pythonVer == 3:
-                    playurl = url.encode()
-
                 try:
-                    downloadPage(str(playurl), str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension))
+                    if playurl.startswith("https") and sslverify:
+                        parsed_uri = urlparse(str(playurl))
+                        domain = parsed_uri.hostname
+                        sniFactory = SNIFactory(domain)
+                        if pythonVer == 3:
+                            playurl = url.encode()
+                        downloadPage(str(playurl), str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension), sniFactory)
+                    else:
+                        if pythonVer == 3:
+                            playurl = url.encode()
+                        downloadPage(str(playurl), str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension))
                     self.session.open(MessageBox, _('Downloading \n\n' + otitle + "\n\n" + str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension)), MessageBox.TYPE_INFO)
                 except Exception as e:
                     print(("download catchup %s" % e))

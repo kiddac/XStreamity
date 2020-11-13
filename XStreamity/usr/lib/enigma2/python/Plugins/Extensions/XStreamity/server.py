@@ -183,11 +183,8 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
             if r.status_code == 200:
                 response = r.json()
                 if 'user_info' in response:
-                    print("*** true 1 ***")
                     if 'auth' in response['user_info']:
-                        print("**** true 2 ****")
                         if response['user_info']['auth'] == 1:
-                            print("***** true 3 ******")
                             valid = True
 
         except requests.exceptions.ConnectionError as e:

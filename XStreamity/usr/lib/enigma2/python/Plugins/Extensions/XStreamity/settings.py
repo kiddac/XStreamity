@@ -105,11 +105,12 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.cfg_main = getConfigListEntry(_('Show in main menu *Restart GUI Required'), cfg.main)
         # self.cfg_oneplaylist = getConfigListEntry(_('Skip intro menus (single playlist)'), cfg.oneplaylist)
 
-        self.cfg_refreshTMDB = getConfigListEntry(_('Use Movie Database(TMDB) for VOD'), cfg.refreshTMDB)
+        self.cfg_refreshTMDB = getConfigListEntry(_('Use Movie Database(TMDB) for VOD & Series'), cfg.refreshTMDB)
         self.cfg_TMDBLanguage = getConfigListEntry(_('Movie Database language'), cfg.TMDBLanguage)
 
         self.cfg_catchupstart = getConfigListEntry(_('Margin before catchup (mins)'), cfg.catchupstart)
         self.cfg_catchupend = getConfigListEntry(_('Margin after catchup (mins)'), cfg.catchupend)
+        self.cfg_subs = getConfigListEntry(_('Allow SubsSupport plugin in VOD'), cfg.subs)
 
         self.createSetup()
 
@@ -136,6 +137,8 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.list.append(self.cfg_catchupend)
 
         self.list.append(self.cfg_parental)
+        
+        self.list.append(self.cfg_subs)
 
         """
         if glob.oneplaylist:
