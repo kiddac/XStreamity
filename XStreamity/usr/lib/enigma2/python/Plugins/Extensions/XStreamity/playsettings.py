@@ -94,6 +94,9 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.vodType = str(glob.current_playlist['player_info']['vodtype'])
         self.catchupType = str(glob.current_playlist['player_info']['catchuptype'])
         self.epgType = str(glob.current_playlist['player_info']['epgtype'])
+        
+        self.epgUrl = str(glob.current_playlist['playlist_info']['xmltv_api'])
+        
         self.epgshift = str(glob.current_playlist['player_info']['epgshift'])
         self.epgquickshift = str(glob.current_playlist['player_info']['epgquickshift'])
         self.showlive = glob.current_playlist['player_info']['showlive']
@@ -106,7 +109,10 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.liveTypeCfg = NoSave(ConfigSelection(default=self.liveType, choices=streamtypechoices))
         self.vodTypeCfg = NoSave(ConfigSelection(default=self.vodType, choices=streamtypechoices))
         self.catchupTypeCfg = NoSave(ConfigSelection(default=self.catchupType, choices=streamtypechoices))
-        self.epgTypeCfg = NoSave(ConfigSelection(default=self.epgType, choices=[('0', _('Off')), ('1', _('Quick')), ('2', _('Full'))]))
+        self.epgTypeCfg = NoSave(ConfigSelection(default=self.epgType, choices=[('0', _('Off')), ('1', _('Quick')), ('2', _('XMLTV EPG (EPG Importer)'))]))
+        
+        self.epgUrlCfg = NoSave(ConfigText(default=self.epgUrl))
+        
         self.epgShiftCfg = NoSave(ConfigSelectionNumber(min=-12, max=12, stepwidth=1, default=self.epgshift))
         self.epgQuickShiftCfg = NoSave(ConfigSelectionNumber(min=-12, max=12, stepwidth=1, default=self.epgquickshift))
         self.showliveCfg = NoSave(ConfigYesNo(default=self.showlive))
@@ -137,6 +143,10 @@ class XStreamity_Settings(ConfigListScreen, Screen):
 
         if self.showliveCfg.value is True:
             self.list.append(getConfigListEntry(_('EPG Type:'), self.epgTypeCfg))
+            
+            if self.epgTypeCfg.value == '2':
+                self.list.append(getConfigListEntry(_('XMLTV EPG Url:'), self.epgUrlCfg))
+                
             self.list.append(getConfigListEntry(_('EPG/Catchup Timeshift:'), self.epgShiftCfg))
             if self.epgTypeCfg.value == '1':
                 self.list.append(getConfigListEntry(_('Quick EPG Timeshift:'), self.epgQuickShiftCfg))
@@ -210,6 +220,7 @@ class XStreamity_Settings(ConfigListScreen, Screen):
 
             epgshift = self.epgShiftCfg.value
             epgtype = self.epgTypeCfg.value
+            epgurl = self.epgUrlCfg.value
             epgquickshift = self.epgQuickShiftCfg.value
 
             glob.current_playlist['playlist_info']['name'] = self.name
@@ -222,6 +233,9 @@ class XStreamity_Settings(ConfigListScreen, Screen):
             glob.current_playlist['player_info']['vodtype'] = vodtype
             glob.current_playlist['player_info']['catchuptype'] = catchuptype
             glob.current_playlist['player_info']['epgtype'] = epgtype
+            
+            glob.current_playlist['player_info']['xmltv_api'] = epgurl
+                        
             glob.current_playlist['player_info']['epgshift'] = epgshift
             glob.current_playlist['player_info']['epgquickshift'] = epgquickshift
 

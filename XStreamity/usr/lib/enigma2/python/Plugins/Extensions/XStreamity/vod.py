@@ -960,7 +960,7 @@ class XStreamity_Categories(Screen):
                     downloadPage(stream_url, str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension)).addErrback(self.printError)
                 self.session.open(MessageBox, _('Downloading \n\n' + title + "\n\n" + str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension)), MessageBox.TYPE_INFO)
             except Exception as e:
-                print(("download vod %s" % e))
+                print(("download vod error %s" % e))
 
             except:
                 self.session.open(MessageBox, _('Download Failed\n\n' + title + "\n\n" + str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension)), MessageBox.TYPE_WARNING)
@@ -1046,7 +1046,7 @@ class XStreamity_Categories(Screen):
                 try:
                     downloadPage(searchurl, str(dir_tmp) + 'search.txt', timeout=10).addCallback(self.processTMDB, isIMDB).addErrback(self.printError)
                 except Exception as e:
-                    print(("download TMDB %s" % e))
+                    print(("download TMDB error %s" % e))
                 except:
                     pass
 
@@ -1091,7 +1091,7 @@ class XStreamity_Categories(Screen):
         try:
             downloadPage(detailsurl, str(dir_tmp) + 'movie.txt', timeout=10).addCallback(self.processTMDBDetails).addErrback(self.printError)
         except Exception as e:
-            print(("download TMDB details %s" % e))
+            print(("download TMDB details error %s" % e))
         except:
             pass
 

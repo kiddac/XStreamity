@@ -1193,7 +1193,7 @@ class XStreamity_Categories(Screen):
 
                     self.session.open(MessageBox, _('Downloading \n\n' + title + "\n\n" + str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension)), MessageBox.TYPE_INFO)
                 except Exception as e:
-                    print(("download series %s" % e))
+                    print(("download series error %s" % e))
 
                 except:
                     self.session.open(MessageBox, _('Download Failed\n\n' + title + "\n\n" + str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension)), MessageBox.TYPE_WARNING)
@@ -1265,7 +1265,7 @@ class XStreamity_Categories(Screen):
             try:
                 downloadPage(searchurl, str(dir_tmp) + 'search.txt', timeout=10).addCallback(self.processTMDB).addErrback(self.printError)
             except Exception as e:
-                print(("download TMDB %s" % e))
+                print(("download TMDB error %s" % e))
             except:
                 pass
 

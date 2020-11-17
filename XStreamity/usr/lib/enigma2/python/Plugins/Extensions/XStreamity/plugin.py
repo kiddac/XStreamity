@@ -11,7 +11,7 @@ from Components.config import config, ConfigSubsection, ConfigSelection, ConfigD
 import os
 import shutil
 
-VERSION = "2.62-20201310"
+VERSION = "2.65-20201116"
 screenwidth = getDesktop(0).size()
 
 dir_dst = "/etc/enigma2/xstreamity/"
@@ -102,6 +102,7 @@ cfg.catchupstart = ConfigSelectionNumber(0, 30, 1, default=0)
 cfg.catchupend = ConfigSelectionNumber(0, 30, 1, default=0)
 cfg.oneplaylist = ConfigYesNo(default=False)
 cfg.subs = ConfigYesNo(default=False)
+cfg.XMLTVStart = ConfigNumber()
 
 skin_path = skin_directory + cfg.skin.value + '/'
 

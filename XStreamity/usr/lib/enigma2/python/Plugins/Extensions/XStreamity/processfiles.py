@@ -175,6 +175,7 @@ def processfiles():
                             ("last_check", ''),
                             ("epg_date", ''),
                             ("data_downloaded", False),
+                            ("epg_importer_files", False)
                         ]),
                     })
 

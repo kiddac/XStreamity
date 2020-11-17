@@ -28,7 +28,7 @@ from time import time
 from Tools.BoundFunction import boundFunction
 from twisted.web.client import downloadPage
 
-if cfg.subs.value is True:
+if cfg.subs.getValue() is True:
     try:
         from Plugins.Extensions.SubsSupport import SubsSupport, SubsSupportStatus
     except ImportError:
@@ -47,7 +47,7 @@ else:
     class SubsSupportStatus(object):
         def __init__(self, *args, **kwargs):
             pass
-    
+
 import os
 import sys
 
@@ -604,7 +604,7 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
         InfoBarAudioSelection.__init__(self)
         InfoBarSubtitleSupport.__init__(self)
         IPTVInfoBarPVRState.__init__(self, PVRState, True)
-        
+
         if cfg.subs.value is True:
             SubsSupport.__init__(self, searchSupport=True, embeddedSupport=True)
             SubsSupportStatus.__init__(self)
@@ -819,7 +819,7 @@ class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySup
         InfoBarAudioSelection.__init__(self)
         InfoBarSubtitleSupport.__init__(self)
         IPTVInfoBarPVRState.__init__(self, PVRState, True)
-        
+
         if cfg.subs.value is True:
             SubsSupport.__init__(self, searchSupport=True, embeddedSupport=True)
             SubsSupportStatus.__init__(self)
