@@ -9,10 +9,9 @@ from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
 from Components.ConfigList import ConfigListScreen
-from Components.config import config, configfile, getConfigListEntry, ConfigText, ConfigSelection, ConfigNumber, ConfigYesNo, ConfigEnableDisable
+from Components.config import config, configfile, getConfigListEntry, ConfigText, ConfigSelection, ConfigNumber, ConfigYesNo
 from Components.Pixmap import Pixmap
 from Screens.LocationBox import LocationBox
-from Screens.MessageBox import MessageBox
 from Screens.ParentalControlSetup import ProtectedScreen
 from Screens.Screen import Screen
 
@@ -67,6 +66,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.setTitle(self.setup_title)
 
     def cancel(self, answer=None):
+        from Screens.MessageBox import MessageBox
         if answer is None:
             if self['config'].isChanged():
                 self.session.openWithCallback(self.cancel, MessageBox, _('Really close without saving settings?'))
@@ -179,7 +179,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
             x()
 
         try:
-            if isinstance(self['config'].getCurrent()[1], ConfigEnableDisable) or isinstance(self['config'].getCurrent()[1], ConfigYesNo) or isinstance(self['config'].getCurrent()[1], ConfigSelection):
+            if isinstance(self['config'].getCurrent()[1], ConfigYesNo) or isinstance(self['config'].getCurrent()[1], ConfigSelection):
                 self.createSetup()
         except:
             pass
@@ -191,7 +191,6 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         return self['config'].getCurrent() and str(self['config'].getCurrent()[1].getText()) or ''
 
     def ok(self):
-        ConfigListScreen.keyOK(self)
         sel = self['config'].getCurrent()[1]
         if sel and sel == cfg.location:
             self.openDirectoryBrowser(cfg.location.value, "location")
@@ -199,6 +198,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
             self.openDirectoryBrowser(cfg.downloadlocation.value, "downloadlocation")
         else:
             pass
+        ConfigListScreen.keyOK(self)
 
     def openDirectoryBrowser(self, path, cfgitem):
         if cfgitem == "location":
@@ -216,8 +216,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
                     minFree=15)
             except Exception as e:
                 print(e)
-            except:
-                pass
+        ConfigListScreen.keyOK(self)
 
         if cfgitem == "downloadlocation":
             try:
@@ -234,8 +233,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
                     minFree=15)
             except Exception as e:
                 print(e)
-            except:
-                pass
+        ConfigListScreen.keyOK(self)
 
     def openDirectoryBrowserCB(self, path):
         if path is not None:
