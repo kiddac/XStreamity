@@ -270,7 +270,8 @@ class XStreamity_Catchup(Screen):
                                 category_name = item['category_name']
                             category_id = item['category_id']
                             next_url = "%s%s%s" % (glob.current_playlist['playlist_info']['player_api'], nextAction, category_id)
-                            self.list.append([index, str(category_name), str(next_url), str(category_id)])
+                            if category_id not in glob.current_playlist['player_info']['livehidden']:
+                                self.list.append([index, str(category_name), str(next_url), str(category_id)])
                             index += 1
                             break
             self.buildLists()
