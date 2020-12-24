@@ -919,6 +919,8 @@ class XStreamity_Categories(Screen):
         self["channel_list"].setIndex(glob.currentchannelistindex)
         self["epg_list"].setIndex(glob.currentchannelistindex)
         self.selectionChanged()
+        self.xmltvcategorydownloaded = False
+        self.buildLists()
 
     def back(self):
         # print("*** back ***")

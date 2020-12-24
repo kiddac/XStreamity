@@ -99,6 +99,12 @@ def processfiles():
 
                 if "output" in query:
                     output = query['output'][0].strip()
+                    
+                if "timeshift" in query:
+                    try:
+                        epgshift = int(query['timeshift'][0].strip())
+                    except:
+                        pass
 
                 player_api = "%s/player_api.php?username=%s&password=%s" % (host, username, password)
                 enigma2_api = "%s/enigma2.php?username=%s&password=%s" % (host, username, password)
@@ -122,6 +128,7 @@ def processfiles():
                                 playlists["playlist_info"]["full_url"] = full_url  # get.php
                                 playlists["playlist_info"]["index"] = index
                                 playlists["data"]["data_downloaded"] = False
+                                playlists["player_info"]["epgshift"] = epgshift
 
                                 if "epgtype" not in playlists["player_info"]:
                                     playlists["player_info"]["epgtype"] = epgtype

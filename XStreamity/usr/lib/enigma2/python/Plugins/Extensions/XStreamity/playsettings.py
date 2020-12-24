@@ -239,7 +239,7 @@ class XStreamity_Settings(ConfigListScreen, Screen):
             glob.current_playlist['player_info']['epgshift'] = epgshift
             glob.current_playlist['player_info']['epgquickshift'] = epgquickshift
 
-            playlistline = '%s%s:%s/get.php?username=%s&password=%s&type=%s&output=%s #%s' % (self.protocol, self.domain, self.port, self.username, self.password, self.listtype, output, self.name)
+            playlistline = '%s%s:%s/get.php?username=%s&password=%s&type=%s&output=%s&timeshift=%s #%s' % (self.protocol, self.domain, self.port, self.username, self.password, self.listtype, output, epgshift, self.name)
             self.full_url = "%s/get.php?username=%s&password=%s&type=%s&output=%s" % (self.host, self.username, self.password, self.listtype, self.output)
             glob.current_playlist["playlist_info"]["full_url"] = self.full_url
 
