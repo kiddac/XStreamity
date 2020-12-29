@@ -94,11 +94,9 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.vodType = str(glob.current_playlist['player_info']['vodtype'])
         self.catchupType = str(glob.current_playlist['player_info']['catchuptype'])
         self.epgType = str(glob.current_playlist['player_info']['epgtype'])
-        
         self.epgUrl = str(glob.current_playlist['playlist_info']['xmltv_api'])
-        
         self.epgshift = str(glob.current_playlist['player_info']['epgshift'])
-        self.epgquickshift = str(glob.current_playlist['player_info']['epgquickshift'])
+        # self.epgquickshift = str(glob.current_playlist['player_info']['epgquickshift'])
         self.showlive = glob.current_playlist['player_info']['showlive']
         self.showvod = glob.current_playlist['player_info']['showvod']
         self.showseries = glob.current_playlist['player_info']['showseries']
@@ -110,11 +108,11 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.vodTypeCfg = NoSave(ConfigSelection(default=self.vodType, choices=streamtypechoices))
         self.catchupTypeCfg = NoSave(ConfigSelection(default=self.catchupType, choices=streamtypechoices))
         self.epgTypeCfg = NoSave(ConfigSelection(default=self.epgType, choices=[('0', _('Off')), ('1', _('Quick')), ('2', _('XMLTV EPG (EPG Importer)'))]))
-        
+
         self.epgUrlCfg = NoSave(ConfigText(default=self.epgUrl))
-        
+
         self.epgShiftCfg = NoSave(ConfigSelectionNumber(min=-12, max=12, stepwidth=1, default=self.epgshift))
-        self.epgQuickShiftCfg = NoSave(ConfigSelectionNumber(min=-12, max=12, stepwidth=1, default=self.epgquickshift))
+        # self.epgQuickShiftCfg = NoSave(ConfigSelectionNumber(min=-12, max=12, stepwidth=1, default=self.epgquickshift))
         self.showliveCfg = NoSave(ConfigYesNo(default=self.showlive))
         self.showvodCfg = NoSave(ConfigYesNo(default=self.showvod))
         self.showseriesCfg = NoSave(ConfigYesNo(default=self.showseries))
@@ -142,19 +140,25 @@ class XStreamity_Settings(ConfigListScreen, Screen):
             self.list.append(getConfigListEntry(_('Stream Type CATCHUP:'), self.catchupTypeCfg))
 
         if self.showliveCfg.value is True:
+            """
             self.list.append(getConfigListEntry(_('EPG Type:'), self.epgTypeCfg))
-            
+
             if self.epgTypeCfg.value == '2':
                 self.list.append(getConfigListEntry(_('XMLTV EPG Url:'), self.epgUrlCfg))
-                
+                """
+
+            self.list.append(getConfigListEntry(_('XMLTV EPG Url:'), self.epgUrlCfg))
+
             self.list.append(getConfigListEntry(_('EPG/Catchup Timeshift:'), self.epgShiftCfg))
+
+            """
             if self.epgTypeCfg.value == '1':
-                self.list.append(getConfigListEntry(_('Quick EPG Timeshift:'), self.epgQuickShiftCfg))
+                # self.list.append(getConfigListEntry(_('Quick EPG Timeshift:'), self.epgQuickShiftCfg))
+                """
 
         self['config'].list = self.list
         self['config'].l.setList(self.list)
         self.handleInputHelpers()
-
 
     def handleInputHelpers(self):
         from enigma import ePoint
@@ -178,7 +182,6 @@ class XStreamity_Settings(ConfigListScreen, Screen):
                     self['VirtualKB'].setEnabled(False)
                     self['VKeyIcon'].hide()
 
-
     def changedEntry(self):
         self.item = self['config'].getCurrent()
         for x in self.onChangedEntry:
@@ -195,7 +198,7 @@ class XStreamity_Settings(ConfigListScreen, Screen):
 
     def getCurrentValue(self):
         return self['config'].getCurrent() and str(self['config'].getCurrent()[1].getText()) or ''
-        
+
     def save(self):
         self.protocol = glob.current_playlist['playlist_info']['protocol']
         self.domain = glob.current_playlist['playlist_info']['domain']
@@ -204,7 +207,7 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.password = glob.current_playlist['playlist_info']['password']
         self.listtype = "m3u"
         self.host = "%s%s:%s" % (self.protocol, self.domain, self.port)
-            
+
         if self['config'].isChanged():
             self.name = self.nameCfg.value.strip()
             output = self.outputCfg.value
@@ -221,7 +224,7 @@ class XStreamity_Settings(ConfigListScreen, Screen):
             epgshift = self.epgShiftCfg.value
             epgtype = self.epgTypeCfg.value
             epgurl = self.epgUrlCfg.value
-            epgquickshift = self.epgQuickShiftCfg.value
+            # epgquickshift = self.epgQuickShiftCfg.value
 
             glob.current_playlist['playlist_info']['name'] = self.name
             glob.current_playlist['playlist_info']['output'] = output
@@ -232,12 +235,12 @@ class XStreamity_Settings(ConfigListScreen, Screen):
             glob.current_playlist['player_info']['livetype'] = livetype
             glob.current_playlist['player_info']['vodtype'] = vodtype
             glob.current_playlist['player_info']['catchuptype'] = catchuptype
-            glob.current_playlist['player_info']['epgtype'] = epgtype
-            
+            # glob.current_playlist['player_info']['epgtype'] = epgtype
+
             glob.current_playlist['player_info']['xmltv_api'] = epgurl
-                        
+
             glob.current_playlist['player_info']['epgshift'] = epgshift
-            glob.current_playlist['player_info']['epgquickshift'] = epgquickshift
+            # glob.current_playlist['player_info']['epgquickshift'] = epgquickshift
 
             playlistline = '%s%s:%s/get.php?username=%s&password=%s&type=%s&output=%s&timeshift=%s #%s' % (self.protocol, self.domain, self.port, self.username, self.password, self.listtype, output, epgshift, self.name)
             self.full_url = "%s/get.php?username=%s&password=%s&type=%s&output=%s" % (self.host, self.username, self.password, self.listtype, self.output)
@@ -271,17 +274,18 @@ class XStreamity_Settings(ConfigListScreen, Screen):
                     os.remove(json_file)
 
         if self.playlists_all:
+            x = 0
             for playlists in self.playlists_all:
-
                 # extra check in case playlists.txt details have been amended
                 if "domain" in playlists["playlist_info"] and "username" in playlists["playlist_info"] and "password" in playlists["playlist_info"]:
                     if playlists["playlist_info"]["domain"] == self.domain and playlists["playlist_info"]["username"] == self.username and playlists["playlist_info"]["password"] == self.password:
-                        playlists = glob.current_playlist
+                        self.playlists_all[x] = glob.current_playlist
                         break
+                x += 1
+
         self.writeJsonFile()
 
     def writeJsonFile(self):
         with open(json_file, 'w') as f:
             json.dump(self.playlists_all, f)
         self.close()
-

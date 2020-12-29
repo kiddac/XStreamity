@@ -7,7 +7,7 @@ from . import _
 from . import streamplayer
 from . import xstreamity_globals as glob
 
-from .plugin import skin_path, screenwidth, hdr, cfg, common_path, dir_tmp
+from .plugin import skin_path, screenwidth, hdr, cfg, common_path, dir_tmp, json_file
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -142,34 +142,14 @@ class XStreamity_Categories(Screen):
         self.showingshortEPG = False
 
         self.xmltvdownloaded = False
+        self.e2epgdownloaded = False
+
         self.epgchecklist = []
         self.epgdownloading = False
         self.epg_channel_list = []
         self.xmltvcategorydownloaded = False
-
-        # where full epg is saved
-
-        """
-        self.epg_path = cfg.location.getValue() + "epg/"
-        if not os.path.exists(self.epg_path):
-            os.makedirs(self.epg_path)
-
-
-        # if external media - override above and write to external
-
-        try:
-            if config.misc.epgcachepath:
-                if config.misc.epgcachepath.getValue() != "/etc/enigma2/":
-                    self.epg_path = config.misc.epgcachepath.getValue() + "epg/"
-                    if not os.path.exists(self.epg_path):
-                        os.makedirs(self.epg_path)
-        except:
-            pass
-
-
-        self.epg_file_name = "epg_%s.xml" % (glob.current_playlist['playlist_info']['domain'].replace(".", "_"))
-        self.epg_full_path = self.epg_path + self.epg_file_name
-        """
+        self.enigma2epgcategorydownloaded = False
+        self.favourites_category = False
 
         # vod variables
         self["vod_background"] = Pixmap()
@@ -268,6 +248,8 @@ class XStreamity_Categories(Screen):
             "channelUp": self.pageUp,
             "channelDown": self.pageDown,
             "rec": self.downloadStream,
+            "tv": self.favourite,
+            "stop": self.favourite,
             "0": self.reset,
         }, -1)
 
@@ -281,35 +263,77 @@ class XStreamity_Categories(Screen):
 
     def createSetup(self):
         # print("*** createSetup ***")
-
-        # enigma2_api quick epg location
-        try:
-            os.remove(str(dir_tmp) + "liveepg.xml")
-        except:
-            pass
-
-        # buttons
         self["epg_title"].setText('')
         self["epg_description"].setText('')
 
         if self.level == 1:  # category list
-            url = glob.nextlist[-1]['playlist_url']
-
-            # load category list from stored list
-            response = glob.current_playlist['data']['live_categories']
-
-            # full epg download
-            if glob.current_playlist['player_info']['epgtype'] == "2" and self.xmltvdownloaded is False:
-                self.downloadXMLTVdata()
-
-            self.processData(response, url)
+            self.processCategories()
 
         elif self.level == 2:  # channel list
-            self.downloadData()
+            self.downloadChannels()
 
-    def downloadData(self):
-        # print("*** downloadData ***")
+    def processCategories(self):
+        # print("*** processCategories ***")
+        index = 0
+
+        self.list1 = []
+        currentCategoryList = glob.current_playlist['data']['live_categories']
+        hidden = False
+        next_url = str(glob.current_playlist['playlist_info']['player_api']) + "&action=get_live_streams&category_id=0"
+
+        self.list1.append([index, _("FAVOURITES"), next_url + "0", "0", False])
+        index += 1
+
+        if "0" in glob.current_playlist['player_info']['livehidden']:
+            hidden = True
+        self.list1.append([index, _("ALL"), next_url, "0", hidden])
+        index += 1
+
+        for item in currentCategoryList:
+            hidden = False
+            category_name = item['category_name']
+            category_id = item['category_id']
+
+            next_url = str(glob.current_playlist['playlist_info']['player_api']) + "&action=get_live_streams&category_id=" + str(category_id)
+
+            if category_id in glob.current_playlist['player_info']['livehidden']:
+                hidden = True
+
+            self.list1.append([index, str(category_name), str(next_url), str(category_id), hidden])
+            index += 1
+
+        glob.originalChannelList1 = self.list1[:]
+
+        """
+        if glob.current_playlist['player_info']['epgtype'] == "1" and self.e2epgdownloaded is False:
+            self.downloadQuickEPGList()
+
+        if glob.current_playlist['player_info']['epgtype'] == "2" and self.xmltvdownloaded is False:
+            self.downloadXMLTVdata()
+            """
+           
+        cleanName = re.sub(r'[\<\>\:\"\/\\\|\?\*]', '_', str(glob.current_playlist['playlist_info']['name']))
+        cleanName = re.sub(r' ', '_', cleanName)
+        cleanName = re.sub(r'_+', '_', cleanName)
+
+        filepath = '/etc/epgimport/'
+        filename = 'xstreamity.' + str(cleanName) + '.sources.xml'
+        sourcepath = filepath + filename
+        epgfilename = 'xstreamity.' + str(cleanName) + '.channels.xml'
+        channelpath = filepath + epgfilename
+        
+        if self.xmltvdownloaded is False :
+            self.downloadXMLTVdata()
+
+        self.buildLists()
+
+    def downloadChannels(self):
+        # print("*** downloadChannels ***")
         url = glob.nextlist[-1]["playlist_url"]
+        self.favourites_category = False
+        if url.endswith("00"):
+            self.favourites_category = True
+
         levelpath = str(dir_tmp) + 'level' + str(self.level) + '.xml'
 
         if not os.path.exists(levelpath):
@@ -320,96 +344,331 @@ class XStreamity_Categories(Screen):
                 r = http.get(url, headers=hdr, stream=True, timeout=10, verify=False)
                 r.raise_for_status()
                 if r.status_code == requests.codes.ok:
-
                     content = r.json()
                     with codecs.open(levelpath, 'w', encoding='utf-8') as f:
                         f.write(json.dumps(content))
 
-                    self.processData(content, url)
+                    self.processChannels(content)
             except Exception as e:
                 print(e)
         else:
             with codecs.open(levelpath, 'r', encoding='utf-8') as f:
-                self.processData(json.load(f), url)
+                self.processChannels(json.load(f))
 
-        if glob.current_playlist['player_info']['epgtype'] == "1":
-            self.downloadQuickEPGList()
-
-    def processData(self, response, url):
-        # print("*** process data ***")
+    def processChannels(self, response):
+        # print("*** processChannels ***")
         index = 0
 
-        if self.level == 1:
-            self.list1 = []
-            currentCategoryList = response
-            hidden = False
-            next_url = str(glob.current_playlist['playlist_info']['player_api']) + "&action=get_live_streams&category_id=0"
+        self.list2 = []
+        currentChannelList = response
 
-            if "0" in glob.current_playlist['player_info']['livehidden']:
-                hidden = True
-            self.list1.append([index, _("All"), next_url, "0", hidden])
+        for item in currentChannelList:
+            name = ''
+            stream_id = ''
+            stream_icon = ''
+            epg_channel_id = ''
+            added = ''
+
+            if 'name' in item:
+                name = item['name']
+
+            # restyle bouquet markers
+            if 'stream_type' in item and item['stream_type'] and item['stream_type'] != "live":
+                pattern = re.compile(r'[^\w\s()\[\]]', re.U)
+                name = re.sub(r'_', '', re.sub(pattern, '', name))
+                name = "** " + str(name) + " **"
+
+            if 'stream_id' in item:
+                stream_id = item['stream_id']
+
+            if 'stream_icon' in item and item['stream_icon']:
+                if item['stream_icon'].startswith("http"):
+                    stream_icon = item['stream_icon']
+
+                if stream_icon.startswith("https://vignette.wikia.nocookie.net/tvfanon6528"):
+                    if "scale-to-width-down" not in stream_icon:
+                        stream_icon = str(stream_icon) + "/revision/latest/scale-to-width-down/220"
+
+            if 'epg_channel_id' in item:
+                epg_channel_id = item['epg_channel_id']
+
+            if 'added' in item:
+                added = item['added']
+
+            next_url = "%s/live/%s/%s/%s.%s" % (self.host, self.username, self.password, stream_id, self.output)
+
+            favourite = False
+            if 'livefavourites' in glob.current_playlist['player_info']:
+                if str(stream_id) in glob.current_playlist['player_info']['livefavourites']:
+                    favourite = True
+            else:
+                glob.current_playlist['player_info']['livefavourites'] = []
+                
+            watching = False
+
+            self.list2.append([index, str(name), str(stream_id), str(stream_icon), str(epg_channel_id), str(added), str(next_url), '', '', '', '', '', '', favourite, watching])
             index += 1
 
-            for item in currentCategoryList:
-                hidden = False
-                category_name = item['category_name']
-                category_id = item['category_id']
-
-                next_url = str(glob.current_playlist['playlist_info']['player_api']) + "&action=get_live_streams&category_id=" + str(category_id)
-
-                if category_id in glob.current_playlist['player_info']['livehidden']:
-                    hidden = True
-
-                self.list1.append([index, str(category_name), str(next_url), str(category_id), hidden])
-                index += 1
-
-            glob.originalChannelList1 = self.list1[:]
-
-        elif self.level == 2:
-            self.list2 = []
-            currentChannelList = response
-
-            for item in currentChannelList:
-                name = ''
-                stream_id = ''
-                stream_icon = ''
-                epg_channel_id = ''
-                added = ''
-
-                if 'name' in item:
-                    name = item['name']
-
-                # restyle bouquet markers
-                if 'stream_type' in item and item['stream_type'] and item['stream_type'] != "live":
-                    pattern = re.compile(r'[^\w\s()\[\]]', re.U)
-                    name = re.sub(r'_', '', re.sub(pattern, '', name))
-                    name = "** " + str(name) + " **"
-
-                if 'stream_id' in item:
-                    stream_id = item['stream_id']
-
-                if 'stream_icon' in item and item['stream_icon']:
-                    if item['stream_icon'].startswith("http"):
-                        stream_icon = item['stream_icon']
-
-                    if stream_icon.startswith("https://vignette.wikia.nocookie.net/tvfanon6528"):
-                        if "scale-to-width-down" not in stream_icon:
-                            stream_icon = str(stream_icon) + "/revision/latest/scale-to-width-down/220"
-
-                if 'epg_channel_id' in item:
-                    epg_channel_id = item['epg_channel_id']
-
-                if 'added' in item:
-                    added = item['added']
-
-                next_url = "%s/live/%s/%s/%s.%s" % (self.host, self.username, self.password, stream_id, self.output)
-
-                self.list2.append([index, str(name), str(stream_id), str(stream_icon), str(epg_channel_id), str(added), str(next_url), '', '', '', '', '', ''])
-                index += 1
-
-            glob.originalChannelList2 = self.list2[:]
+        glob.originalChannelList2 = self.list2[:]
 
         self.buildLists()
+
+    def downloadXMLTVdata(self):
+        # print("*** downloadXMLTVdata ***")
+        if epgimporter is False:
+            return
+
+        self["downloading"].show()
+        url = str(glob.current_playlist['playlist_info']['player_api']) + "&action=get_live_streams"
+        tmpfd, tempfilename = tempfile.mkstemp()
+
+        if url.startswith("https") and sslverify:
+            parsed_uri = urlparse(url)
+            domain = parsed_uri.hostname
+            sniFactory = SNIFactory(domain)
+
+            if pythonVer == 3:
+                url = url.encode()
+
+            downloadPage(url, tempfilename, sniFactory).addCallback(self.downloadcomplete, tempfilename).addErrback(self.downloadFail)
+        else:
+            if pythonVer == 3:
+                url = url.encode()
+            downloadPage(url, tempfilename).addCallback(self.downloadcomplete, tempfilename).addErrback(self.downloadFail)
+
+        os.close(tmpfd)
+
+    def downloadFail(self, failure):
+        # print("*** downloadFail ***")
+        print(("[EPG] download failed:", failure))
+        if self["downloading"].instance:
+            self["downloading"].hide()
+
+    def downloadcomplete(self, data, filename):
+        # print("***** download complete ****")
+        channellist_all = []
+        with open(filename, "r+b") as f:
+            try:
+                channellist_all = json.load(f)
+                self.epg_channel_list = []
+                for channel in channellist_all:
+
+                    self.epg_channel_list.append({"name": str(channel["name"]), "stream_id": str(channel["stream_id"]), "epg_channel_id": str(channel["epg_channel_id"]), "custom_sid": channel["custom_sid"]})
+            except:
+                pass
+
+        os.remove(filename)
+        self.buildXMLTV()
+
+    def buildXMLTV(self):
+        # print("***** buildXMLTV ****")
+        cleanName = re.sub(r'[\<\>\:\"\/\\\|\?\*]', '_', str(glob.current_playlist['playlist_info']['name']))
+        cleanName = re.sub(r' ', '_', cleanName)
+        cleanName = re.sub(r'_+', '_', cleanName)
+
+        filepath = '/etc/epgimport/'
+        filename = 'xstreamity.' + str(cleanName) + '.sources.xml'
+        sourcepath = filepath + filename
+        epgfilename = 'xstreamity.' + str(cleanName) + '.channels.xml'
+        channelpath = filepath + epgfilename
+
+        root = ET.Element('channels')
+
+        # if xmltv file doesn't already exist, create file and build.
+        if not os.path.isfile(channelpath):
+            open(channelpath, 'a').close()
+
+        # buildXMLTVSourceFile
+        with open(sourcepath, 'w') as f:
+            xml_str = '<?xml version="1.0" encoding="utf-8"?>\n'
+            xml_str += '<sources>\n'
+            xml_str += '<sourcecat sourcecatname="XStreamity ' + str(cleanName) + '">\n'
+            xml_str += '<source type="gen_xmltv" nocheck="1" channels="' + channelpath + '">\n'
+            xml_str += '<description>' + str(cleanName) + '</description>\n'
+            xml_str += '<url><![CDATA[' + str(glob.current_playlist['playlist_info']['xmltv_api']) + '&next_days=2]]></url>\n'
+            xml_str += '</source>\n'
+            xml_str += '</sourcecat>\n'
+            xml_str += '</sources>\n'
+            f.write(xml_str)
+
+        # buildXMLTVChannelFile
+        with open(channelpath, 'w') as f:
+            xml_str = '<?xml version="1.0" encoding="utf-8"?>\n'
+            xml_str += '<channels>\n'
+
+            for i in range(len(self.epg_channel_list)):
+
+                channelid = self.epg_channel_list[i]['epg_channel_id']
+                if "&" in channelid:
+                    channelid = channelid.replace("&", "&amp;")
+                bouquet_id = 0
+
+                stream_id = int(self.epg_channel_list[i]['stream_id'])
+                calc_remainder = int(stream_id) // 65535
+                bouquet_id = bouquet_id + calc_remainder
+                stream_id = int(stream_id) - int(calc_remainder * 65535)
+
+                unique_ref = 999 + int(glob.current_playlist['playlist_info']['index'])
+
+                serviceref = '1:0:1:' + str(format(bouquet_id, '04x')) + ":" + str(format(stream_id, '04x')) + ":" + str(format(unique_ref, '08x')) + ":0:0:0:0:" + "http%3a//example.m3u8"
+
+                if 'custom_sid' in self.epg_channel_list[i]:
+                    if self.epg_channel_list[i]['custom_sid'] and self.epg_channel_list[i]['custom_sid'] != "None":
+                        if self.epg_channel_list[i]['custom_sid'].startswith(":"):
+                            self.epg_channel_list[i]['custom_sid'] = "1" + self.epg_channel_list[i]['custom_sid']
+                        serviceref = str(':'.join(self.epg_channel_list[i]['custom_sid'].split(":")[:7])) + ":0:0:0:" + "http%3a//example.m3u8"
+
+                self.epg_channel_list[i]['serviceref'] = str(serviceref)
+                name = self.epg_channel_list[i]['name']
+
+                if channelid and channelid != "None":
+                    xml_str += '<channel id="' + str(channelid) + '">' + str(serviceref) + '</channel><!--' + str(name) + '-->\n'
+
+            xml_str += '</channels>\n'
+            f.write(xml_str)
+
+        if self["downloading"].instance:
+            self["downloading"].hide()
+
+        self.xmltvdownloaded = True
+
+        self.buildLists()
+
+    """
+    def downloadQuickEPGList(self):
+        # print("*** downloadQuickEPGList ***")
+        # download enigma2_api EPG
+
+        self["downloading"].show()
+
+        quickEPG = str(glob.current_playlist['playlist_info']['enigma2_api']) + "&type=get_live_streams&cat_id=0"
+
+        if quickEPG.startswith("https") and sslverify:
+            parsed_uri = urlparse(quickEPG)
+            domain = parsed_uri.hostname
+            sniFactory = SNIFactory(domain)
+
+            if pythonVer == 3:
+                quickEPG = quickEPG.encode()
+            downloadPage(quickEPG, str(dir_tmp) + "liveepg.xml", sniFactory, timeout=20).addCallback(self.dictQuickEPG).addErrback(self.QuickEPGError)
+        else:
+            if pythonVer == 3:
+                quickEPG = quickEPG.encode()
+            downloadPage(quickEPG, str(dir_tmp) + "liveepg.xml", timeout=20).addCallback(self.dictQuickEPG).addErrback(self.QuickEPGError)
+
+    def QuickEPGError(self, failure):
+        # print("*** QuickEPGError ***")
+        print(("********* Quick EPG Error ******** %s " % failure))
+        pass
+
+    def dictQuickEPG(self, data=None):
+        # print("*** dictQuickEPG ***")
+        try:
+            os.remove(str(dir_tmp) + "quickepg.json")
+        except:
+            pass
+
+        if os.path.exists(str(dir_tmp) + "liveepg.xml"):
+            with codecs.open(str(dir_tmp) + "liveepg.xml", 'r', encoding='utf-8') as f:
+                content = f.read()
+
+        quickepgdict = []
+
+        if content:
+            root = ET.fromstring(content)
+            index = 0
+            for channel in root.findall('channel'):
+                title = ''
+                nowtitle = nowdescription = nowstarttime = nowendtime = ''
+                nexttitle = nextdescription = ''
+
+                title = base64.b64decode(channel.findtext('title')).decode('utf-8')
+                try:
+                    title = ''.join(chr(ord(c)) for c in title).decode('utf8')
+                except:
+                    pass
+
+                title = title.partition("[")[0].strip()
+
+                description = base64.b64decode(channel.findtext('description')).decode('utf-8')
+                try:
+                    description = ''.join(chr(ord(c)) for c in description).decode('utf8')
+                except:
+                    pass
+
+                if description:
+                    lines = re.split("\n", description)
+                    newdescription = []
+
+                    # use string manipulation rather than regex for speed.
+                    for line in lines:
+                        if line.startswith("[") or line.startswith("("):
+                            newdescription.append(line)
+
+                    try:
+                        nowstarttime = newdescription[0].partition(" ")[0].lstrip("[").rstrip("]")
+                    except:
+                        pass
+
+                    try:
+                        nowtitle = newdescription[0].partition(" ")[-1].strip()
+                    except:
+                        pass
+
+                    try:
+                        nowdescription = newdescription[1].lstrip("(").rstrip(")").strip()
+                    except:
+                        pass
+
+                    try:
+                        nowendtime = newdescription[2].partition(" ")[0].lstrip("[").rstrip("]")
+                    except:
+                        pass
+
+                    try:
+                        nexttitle = newdescription[2].partition(" ")[-1].strip()
+                    except:
+                        pass
+
+                    try:
+                        nextdescription = newdescription[3].lstrip("(").rstrip(")").strip()
+                    except:
+                        pass
+
+                    shift = 0
+                    if "epgquickshift" in glob.current_playlist["player_info"]:
+                        shift = int(glob.current_playlist["player_info"]["epgquickshift"])
+
+                    if nowstarttime != "":
+                        nowstarttime = str(date.today()) + " " + str(nowstarttime)
+                        time = datetime.strptime(nowstarttime, "%Y-%m-%d %H:%M")
+                        nowshifttime = time + timedelta(hours=shift)
+                        nowstarttime = format(nowshifttime, '%H:%M')
+
+                    if nowendtime:
+                        nowendtime = str(date.today()) + " " + str(nowendtime)
+                        time = datetime.strptime(nowendtime, "%Y-%m-%d %H:%M")
+                        nextshifttime = time + timedelta(hours=shift)
+                        nowendtime = format(nextshifttime, '%H:%M')
+
+                quickepgdict.append(dict([
+                    ("title", str(title)),
+                    ("nowtitle", str(nowtitle)),
+                    ("nowdescription", str(nowdescription)),
+                    ("nowstarttime", str(nowstarttime)),
+                    ("nowendtime", str(nowendtime)),
+                    ("nexttitle", str(nexttitle)),
+                    ("nextdescription", str(nextdescription)),
+                ]))
+
+            with open(str(dir_tmp) + "quickepg.json", 'w') as f:
+                json.dump(quickepgdict, f)
+
+        if self["downloading"].instance:
+            self["downloading"].hide()
+
+        self.buildLists()
+        """
 
     def buildLists(self):
         # print("*** buildlists ***")
@@ -417,34 +676,51 @@ class XStreamity_Categories(Screen):
         if self.level == 1:
             self["key_menu"].setText(_("Hide/Show"))
             self["key_epg"].setText('')
-
             self.channelList = []
             if self.list1:
                 self.channelList = [buildCategoryList(x[0], x[1], x[2], x[3], x[4]) for x in self.list1 if x[4] is False]
+                self["channel_list"].setList(self.channelList)
 
         elif self.level == 2:
             self["key_menu"].setText('')
-            self.epglist = []
             self.channelList = []
+            self.epglist = []
 
             if self.list2:
+
+                """
+                if glob.current_playlist['player_info']['epgtype'] == "1":
+                    if self.enigma2epgcategorydownloaded is False:
+                        self.getE2EPG()
+
                 if glob.current_playlist['player_info']['epgtype'] == "2":
-                    if not self.xmltvcategorydownloaded and epgimporter:
+                    if epgimporter and self.xmltvcategorydownloaded is False:
                         self.getXMLTVEPG()
-
-                self.epglist = [buildEPGListEntry(x[0], x[1], x[7], x[8], x[9], x[10], x[11], x[12]) for x in self.list2]
-
-                self.channelList = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6]) for x in self.list2]
+                        """
+                
+                if epgimporter and self.xmltvcategorydownloaded is False:
+                    self.getXMLTVEPG()
+                    
+                if self.favourites_category:
+                    self.channelList = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[13], x[14]) for x in self.list2 if x[13] is True]
+                    self.epglist = [buildEPGListEntry(x[0], x[1], x[7], x[8], x[9], x[10], x[11], x[12]) for x in self.list2 if x[13] is True]
+                else:
+                    self.channelList = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[13], x[14]) for x in self.list2]
+                    self.epglist = [buildEPGListEntry(x[0], x[1], x[7], x[8], x[9], x[10], x[11], x[12]) for x in self.list2]
 
                 # disable epg panel selection
                 instance = self["epg_list"].master.master.instance
                 instance.setSelectionEnable(0)
 
-            self["epg_list"].setList(self.epglist)
-
-        self["channel_list"].setList(self.channelList)
+                self["channel_list"].setList(self.channelList)
+                self["epg_list"].setList(self.epglist)
 
         if self["channel_list"].getCurrent():
+
+            if self.level == 1:
+                self.hideEPG()
+            elif self.level == 2:
+                self.showEPG()
 
             if glob.nextlist[-1]['index'] != 0:
                 self["channel_list"].setIndex(glob.nextlist[-1]['index'])
@@ -452,26 +728,117 @@ class XStreamity_Categories(Screen):
                 channeltitle = self["channel_list"].getCurrent()[0]
                 self["channel"].setText(self.main_title + ": " + str(channeltitle))
 
-            if not glob.nextlist[-1]['filter']:
-                self["key_blue"].setText(_('Search'))
-            else:
-                self["key_blue"].setText(_('Reset Search'))
-
             if glob.nextlist[-1]['filter']:
                 self["key_yellow"].setText('')
+                self["key_blue"].setText(_('Reset Search'))
                 if self.level == 1:
                     self["key_menu"].setText('')
             else:
+                self["key_blue"].setText(_('Search'))
                 self["key_yellow"].setText(_(glob.nextlist[-1]['sort']))
                 if self.level == 1:
                     self["key_menu"].setText(_("Hide/Show"))
 
-            if self.level == 1:
-                self.hideEPG()
-            elif self.level == 2:
-                self.showEPG()
-
         self.selectionChanged()
+
+    def getXMLTVEPG(self):
+        # print("*** getXMLTVEPG **")
+
+        if self["channel_list"].getCurrent():
+            if self.epg_channel_list:
+                self.epgcache = eEPGCache.getInstance()
+
+                for channel in self.list2:
+                    self.eventslist = []
+
+                    for epgentry in self.epg_channel_list:
+                        if str(channel[4]) == str(epgentry['epg_channel_id']):
+                            serviceref = str(epgentry['serviceref'])
+                            events = ['IBDTEX', (serviceref, 1, -1, 12 * 60)]  # search next 12 hours
+                            self.eventslist = [] if self.epgcache is None else self.epgcache.lookupEvent(events)
+
+                            if self.eventslist:
+                                if len(self.eventslist) > 0:
+                                    try:
+                                        # start time
+                                        if self.eventslist[0][1]:
+                                            channel[7] = str(strftime("%H:%M", (localtime(self.eventslist[0][1]))))
+
+                                        # title
+                                        if self.eventslist[0][3]:
+                                            channel[8] = str(self.eventslist[0][3])
+
+                                        # description
+                                        if self.eventslist[0][4]:
+                                            channel[9] = str(self.eventslist[0][4])
+
+                                    except Exception as e:
+                                        print(e)
+
+                                if len(self.eventslist) > 1:
+                                    try:
+                                        # next start time
+                                        if self.eventslist[1][1]:
+                                            channel[10] = str(strftime("%H:%M", (localtime(self.eventslist[1][1]))))
+
+                                        # next title
+                                        if self.eventslist[1][3]:
+                                            channel[11] = str(self.eventslist[1][3])
+
+                                        # next description
+                                        if self.eventslist[1][4]:
+                                            channel[12] = str(self.eventslist[1][4])
+                                    except Exception as e:
+                                        print(e)
+
+                            break
+                            
+                self.xmltvcategorydownloaded = True
+
+                self.epglist = []
+                self.epglist = [buildEPGListEntry(x[0], x[1], x[7], x[8], x[9], x[10], x[11], x[12]) for x in self.list2]
+
+                self["epg_list"].setList(self.epglist)
+
+                instance = self["epg_list"].master.master.instance
+                instance.setSelectionEnable(0)
+
+                # self.refreshEPGInfo()
+                self.buildLists()
+
+    """
+    def getE2EPG(self):
+        # print("*** getE2EPG **")
+
+        with open(str(dir_tmp) + "quickepg.json", 'r') as f:
+            quickepglist = json.load(f)
+
+        if self["channel_list"].getCurrent():
+            for channel in self.list2:
+                for epgentry in quickepglist:
+
+                    if str(channel[1]) == str(epgentry['title']):
+                        # print(str(channel[1]))
+                        channel[7] = str(epgentry['nowstarttime'])
+                        channel[8] = str(epgentry['nowtitle'])
+                        channel[9] = str(epgentry['nowdescription'])
+                        channel[10] = str(epgentry['nowendtime'])
+                        channel[11] = str(epgentry['nexttitle'])
+                        channel[12] = str(epgentry['nextdescription'])
+                        break
+            self.enigma2epgcategorydownloaded = True
+
+            self.epglist = []
+            self.epglist = [buildEPGListEntry(x[0], x[1], x[7], x[8], x[9], x[10], x[11], x[12]) for x in self.list2]
+
+            self["epg_list"].setList(self.epglist)
+
+            instance = self["epg_list"].master.master.instance
+            instance.setSelectionEnable(0)
+
+            # self.refreshEPGInfo()
+            self.buildLists()
+            """
 
     def hideEPG(self):
         # print("*** hide EPG ***")
@@ -519,6 +886,7 @@ class XStreamity_Categories(Screen):
     def selectionChanged(self):
         # print("*** selectionChanged ***")
         if self["channel_list"].getCurrent():
+
             channeltitle = self["channel_list"].getCurrent()[0]
             currentindex = self["channel_list"].getIndex()
 
@@ -545,12 +913,17 @@ class XStreamity_Categories(Screen):
                         self.timerimage_conn = self.timerimage.timeout.connect(self.downloadImage)
                     self.timerimage.start(250, True)
 
-                """
-                if glob.current_playlist['player_info']['epgtype'] == "2":
-                    # if self.level == 2 and self.xmltvdownloaded and self.sorted is False and self.filtered is False:
-                    if self.level == 2 and self.xmltvdownloaded:
-                        self.getChannelChunk()
-                        """
+        else:
+            self.position = 0
+            self.positionall = 0
+            self.page = 0
+            self.pageall = 0
+
+            self["page"].setText('Page: ' + str(self.page) + " of " + str(self.pageall))
+            self["listposition"].setText(str(self.position) + "/" + str(self.positionall))
+
+            self["key_yellow"].setText('')
+            self["key_blue"].setText('')
 
     def downloadImage(self):
         # print("*** downloadImage ***")
@@ -627,7 +1000,7 @@ class XStreamity_Categories(Screen):
                 self.loadDefaultImage()
 
     def refreshEPGInfo(self):
-        # print("*** refreshEPGInfo ***")
+        print("*** refreshEPGInfo ***")
 
         if self["epg_list"].getCurrent():
             instance = self["epg_list"].master.master.instance
@@ -842,7 +1215,6 @@ class XStreamity_Categories(Screen):
 
     def pinEntered(self, result):
         # print("*** pinEntered ***")
-        from Screens.MessageBox import MessageBox
         if not result:
             self.pin = False
             self.session.open(MessageBox, _("Incorrect pin code."), type=MessageBox.TYPE_ERROR, timeout=5)
@@ -867,10 +1239,14 @@ class XStreamity_Categories(Screen):
         if self["channel_list"].getCurrent():
             currentindex = self["channel_list"].getIndex()
             next_url = self["channel_list"].getCurrent()[3]
+            stream_id = self["channel_list"].getCurrent()[4]
+            name = self["channel_list"].getCurrent()[0]
             glob.nextlist[-1]['index'] = currentindex
             glob.currentchannelist = self.channelList[:]
             glob.currentchannelistindex = currentindex
             glob.currentepglist = self.epglist[:]
+            
+            
 
             exitbutton = False
             callingfunction = sys._getframe().f_back.f_code.co_name
@@ -909,6 +1285,14 @@ class XStreamity_Categories(Screen):
                         if self.session.nav.getCurrentlyPlayingServiceReference():
                             glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
                             glob.newPlayingServiceRefString = glob.newPlayingServiceRef.toString()
+                            
+                        for channel in self.list2:
+                            if channel[2] == stream_id:
+                                channel[14] = True
+                            else:
+                                channel[14] = False
+                        self.buildLists()
+                                
                     else:
                         self.session.openWithCallback(self.setIndex, streamplayer.XStreamity_StreamPlayer, str(next_url), str(streamtype))
                 else:
@@ -920,6 +1304,7 @@ class XStreamity_Categories(Screen):
         self["epg_list"].setIndex(glob.currentchannelistindex)
         self.selectionChanged()
         self.xmltvcategorydownloaded = False
+        self.enigma2epgcategorydownloaded = False
         self.buildLists()
 
     def back(self):
@@ -962,126 +1347,9 @@ class XStreamity_Categories(Screen):
             self["channel_actions"].setEnabled(False)
 
             self.xmltvcategorydownloaded = False
+            self.enigma2epgcategorydownloaded = False
 
             self.buildLists()
-
-    def downloadQuickEPGList(self):
-        # print("*** downloadQuickEPGList ***")
-        # download enigma2_api EPG
-        url = glob.nextlist[-1]["playlist_url"]
-        urlcategory = url.rsplit("=")[-1]
-        quickEPG = str(glob.current_playlist['playlist_info']['enigma2_api']) + "&type=get_live_streams&cat_id=" + str(urlcategory)
-
-        if quickEPG.startswith("https") and sslverify:
-            parsed_uri = urlparse(quickEPG)
-            domain = parsed_uri.hostname
-            sniFactory = SNIFactory(domain)
-
-            if pythonVer == 3:
-                quickEPG = quickEPG.encode()
-            downloadPage(quickEPG, str(dir_tmp) + "liveepg.xml", sniFactory, timeout=5).addCallback(self.processQuickEPG).addErrback(self.QuickEPGError)
-        else:
-            if pythonVer == 3:
-                quickEPG = quickEPG.encode()
-            downloadPage(quickEPG, str(dir_tmp) + "liveepg.xml", timeout=5).addCallback(self.processQuickEPG).addErrback(self.QuickEPGError)
-
-    def QuickEPGError(self, failure):
-        # print("*** QuickEPGError ***")
-        print(("********* Quick EPG Error ******** %s " % failure))
-        pass
-
-    def processQuickEPG(self, data=None):
-        # print("*** processQuickEPG ***")
-        if os.path.exists(str(dir_tmp) + "liveepg.xml"):
-            with codecs.open(str(dir_tmp) + "liveepg.xml", 'r', encoding='utf-8') as f:
-                content = f.read()
-
-        if content:
-            root = ET.fromstring(content)
-            index = 0
-            for channel in root.findall('channel'):
-                nowtitle = nowdescription = nowstarttime = nowendtime = ''
-                nexttitle = nextdescription = ''
-
-                description = base64.b64decode(channel.findtext('description')).decode('utf-8')
-                try:
-                    description = ''.join(chr(ord(c)) for c in description).decode('utf8')
-                except:
-                    pass
-
-                if description:
-                    lines = re.split("\n", description)
-                    newdescription = []
-
-                    # use string manipulation rather than regex for speed.
-                    for line in lines:
-                        if line.startswith("[") or line.startswith("("):
-                            newdescription.append(line)
-
-                    try:
-                        nowstarttime = newdescription[0].partition(" ")[0].lstrip("[").rstrip("]")
-                    except:
-                        pass
-
-                    try:
-                        nowtitle = newdescription[0].partition(" ")[-1].strip()
-                    except:
-                        pass
-
-                    try:
-                        nowdescription = newdescription[1].lstrip("(").rstrip(")").strip()
-                    except:
-                        pass
-
-                    try:
-                        nowendtime = newdescription[2].partition(" ")[0].lstrip("[").rstrip("]")
-                    except:
-                        pass
-
-                    try:
-                        nexttitle = newdescription[2].partition(" ")[-1].strip()
-                    except:
-                        pass
-
-                    try:
-                        nextdescription = newdescription[3].lstrip("(").rstrip(")").strip()
-                    except:
-                        pass
-
-                    shift = 0
-                    if "epgquickshift" in glob.current_playlist["player_info"]:
-                        shift = int(glob.current_playlist["player_info"]["epgquickshift"])
-
-                    if nowstarttime != "":
-                        nowstarttime = str(date.today()) + " " + str(nowstarttime)
-                        time = datetime.strptime(nowstarttime, "%Y-%m-%d %H:%M")
-                        nowshifttime = time + timedelta(hours=shift)
-                        nowstarttime = format(nowshifttime, '%H:%M')
-
-                    if nowendtime:
-                        nowendtime = str(date.today()) + " " + str(nowendtime)
-                        time = datetime.strptime(nowendtime, "%Y-%m-%d %H:%M")
-                        nextshifttime = time + timedelta(hours=shift)
-                        nowendtime = format(nextshifttime, '%H:%M')
-
-                self.list2[index][7] = str(nowstarttime)
-                self.list2[index][8] = str(nowtitle)
-                self.list2[index][9] = str(nowdescription)
-                self.list2[index][10] = str(nowendtime)
-                self.list2[index][11] = str(nexttitle)
-                self.list2[index][12] = str(nextdescription)
-
-                index += 1
-
-            self.epglist = []
-            self.epglist = [buildEPGListEntry(x[0], x[1], x[7], x[8], x[9], x[10], x[11], x[12]) for x in self.list2]
-
-            self["epg_list"].setList(self.epglist)
-
-            instance = self["epg_list"].master.master.instance
-            instance.setSelectionEnable(0)
-
-            self.refreshEPGInfo()
 
     def nownext(self):
         # print("*** nownext ***")
@@ -1340,214 +1608,40 @@ class XStreamity_Categories(Screen):
                 self.session.open(MessageBox, _('Recording Failed.'), MessageBox.TYPE_WARNING)
         return
 
-    def downloadXMLTVdata(self):
-        # print("*** downloadXMLTVdata ***")
-
-        if epgimporter is False:
-            return
-
-        self["downloading"].show()
-        url = str(glob.current_playlist['playlist_info']['player_api']) + "&action=get_live_streams"
-        tmpfd, tempfilename = tempfile.mkstemp()
-        os.close(tmpfd)
-
-        if url.startswith("https") and sslverify:
-            parsed_uri = urlparse(url)
-            domain = parsed_uri.hostname
-            sniFactory = SNIFactory(domain)
-            if pythonVer == 3:
-                url = url.encode()
-            downloadPage(url, tempfilename, sniFactory).addCallback(self.downloadcomplete, tempfilename).addErrback(self.downloadFail)
-        else:
-            if pythonVer == 3:
-                url = url.encode()
-            downloadPage(url, tempfilename).addCallback(self.downloadcomplete, tempfilename).addErrback(self.downloadFail)
-
-    def downloadcomplete(self, data, filename):
-        # print("***** download complete ****")
-
-        channellist_all = []
-        with open(filename, "r+b") as f:
-            try:
-                channellist_all = json.load(f)
-            except:
-                os.unlink(filename)
-
-            self.epg_channel_list = []
-            for channel in channellist_all:
-                self.epg_channel_list.append({"name": str(channel["name"]), "stream_id": str(channel["stream_id"]), "epg_channel_id": str(channel["epg_channel_id"]), "custom_sid": str(channel["custom_sid"])})
-
-        os.unlink(filename)
-        self.buildXMLTV()
-
-    def downloadFail(self, failure):
-        # print("*** downloadFail ***")
-        print(("[EPG] download failed:", failure))
-        if self["downloading"].instance:
-            self["downloading"].hide()
-
-    def buildXMLTV(self):
-        cleanName = re.sub(r'[\<\>\:\"\/\\\|\?\*]', '_', str(glob.current_playlist['playlist_info']['name']))
-        cleanName = re.sub(r' ', '_', cleanName)
-        cleanName = re.sub(r'_+', '_', cleanName)
-
-        # remove old files
-        self.purge('/etc/epgimport', 'xstreamity.' + str(cleanName) + '.channels.xml')
-
-        self.purge('/etc/epgimport', 'xstreamity.' + str(cleanName) + '.sources.xml')
-
-        filepath = '/etc/epgimport/'
-        epgfilename = 'xstreamity.' + str(cleanName) + '.channels.xml'
-        channelpath = filepath + epgfilename
-
-        root = ET.Element('channels')
-
-        # if xmltv file doesn't already exist, create file and build.
-
-        if not os.path.isfile(channelpath):
-            open(channelpath, 'a').close()
-
-        # buildXMLTVChannelFile
-        with open(channelpath, 'w') as f:
-            xml_str = '<?xml version="1.0" encoding="utf-8"?>\n'
-            xml_str += '<channels>\n'
-
-            for i in range(len(self.epg_channel_list)):
-
-                channelid = self.epg_channel_list[i]['epg_channel_id']
-                if "&" in channelid:
-                    channelid = channelid.replace("&", "&amp;")
-                bouquet_id = 0
-
-                stream_id = int(self.epg_channel_list[i]['stream_id'])
-                calc_remainder = int(stream_id) // 65535
-                bouquet_id = bouquet_id + calc_remainder
-                stream_id = int(stream_id) - int(calc_remainder * 65535)
-
-                unique_ref = 999 + int(glob.current_playlist['playlist_info']['index'])
-
-                """
-                serviceref = "1:0:1:0:0:0:0:0:0:0:"
-
-                if self.epg_channel_list[i]['custom_sid']:
-                    if self.epg_channel_list[i]['custom_sid'].startswith(":"):
-                        self.epg_channel_list[i]['custom_sid'] = "1" + self.epg_channel_list[i]['custom_sid']
-                    serviceref = str(':'.join(self.epg_channel_list[i]['custom_sid'].split(":")[:7])) + ":0:0:0:"
-                else:
-                    serviceref = '1:0:1:' + str(format(bouquet_id, '04x')) + ":" + str(format(stream_id, '04x')) + ":" + str(format(unique_ref, '08x')) + ":0:0:0:0:" + "http%3a//example.m3u8"
-                    """
-
-                serviceref = '1:0:1:' + str(format(bouquet_id, '04x')) + ":" + str(format(stream_id, '04x')) + ":" + str(format(unique_ref, '08x')) + ":0:0:0:0:" + "http%3a//example.m3u8"
-
-                self.epg_channel_list[i]['serviceref'] = str(serviceref)
-                name = self.epg_channel_list[i]['name']
-
-                if channelid and channelid != "None":
-                    xml_str += '<channel id="' + str(channelid) + '">' + str(serviceref) + '</channel><!--' + str(name) + '-->\n'
-
-            xml_str += '</channels>\n'
-            f.write(xml_str)
-
-        # buildXMLTVSourceFile
-        cleanName = re.sub(r'[\<\>\:\"\/\\\|\?\* ]', '_', str(glob.current_playlist['playlist_info']['name']))
-        cleanName = re.sub(r' ', '_', cleanName)
-        cleanName = re.sub(r'_+', '_', cleanName)
-
-        filepath = '/etc/epgimport/'
-        epgfilename = 'xstreamity.' + str(cleanName) + '.channels.xml'
-        channelpath = filepath + epgfilename
-
-        filename = 'xstreamity.' + str(cleanName) + '.sources.xml'
-        sourcepath = filepath + filename
-
-        with open(sourcepath, 'w') as f:
-            xml_str = '<?xml version="1.0" encoding="utf-8"?>\n'
-            xml_str += '<sources>\n'
-            xml_str += '<sourcecat sourcecatname="XStreamity ' + str(cleanName) + '">\n'
-            xml_str += '<source type="gen_xmltv" nocheck="1" channels="' + channelpath + '">\n'
-            xml_str += '<description>' + str(cleanName) + '</description>\n'
-            xml_str += '<url><![CDATA[' + str(glob.current_playlist['playlist_info']['xmltv_api']) + '&next_days=2]]></url>\n'
-            xml_str += '</source>\n'
-            xml_str += '</sourcecat>\n'
-            xml_str += '</sources>\n'
-            f.write(xml_str)
-
-        if self["downloading"].instance:
-            self["downloading"].hide()
-
-        self.xmltvdownloaded = True
-
-    def purge(self, dir, pattern):
-        for f in os.listdir(dir):
-            file_path = os.path.join(dir, f)
-            if os.path.isfile(file_path):
-                if re.search(pattern, f):
-                    os.remove(file_path)
-
-    def getXMLTVEPG(self):
-        # print("*** getEPG **")
-
+    def favourite(self):
         if self["channel_list"].getCurrent():
-            if self.epg_channel_list:
-                self.epgcache = eEPGCache.getInstance()
+            currentindex = self["channel_list"].getIndex()
+            
+            print("** current index ***")
+            print(self.list2[currentindex])
+            
+      
+            if self["channel_list"].getCurrent()[4] not in glob.current_playlist['player_info']['livefavourites']:
+                glob.current_playlist['player_info']['livefavourites'].append(self["channel_list"].getCurrent()[4])
+            else:
+                glob.current_playlist['player_info']['livefavourites'].remove(self["channel_list"].getCurrent()[4])
 
-                for channel in self.list2:
-                    self.eventslist = []
+            with open(json_file, "r") as f:
+                try:
+                    self.playlists_all = json.load(f)
+                except:
+                    os.remove(json_file)
 
-                    for epgentry in self.epg_channel_list:
-                        if str(channel[4]) == str(epgentry['epg_channel_id']):
-                            print("**** channel id **** %s" % str(channel[4]))
-                            serviceref = str(epgentry['serviceref'])
+            if self.playlists_all:
+                x = 0
+                for playlists in self.playlists_all:
+                    if playlists["playlist_info"]["domain"] == glob.current_playlist["playlist_info"]["domain"] and playlists["playlist_info"]["username"] == glob.current_playlist["playlist_info"]["username"] and playlists["playlist_info"]["password"] == glob.current_playlist["playlist_info"]["password"]:
+                        self.playlists_all[x] = glob.current_playlist
+                        break
+                    x += 1
+            self.writeJsonFile()
 
-                            print("*** serviceref *** %s" % serviceref)
-
-                            events = ['IBDTEX', (serviceref, 1, -1, 12 * 60)]  # search next 12 hours
-
-                            self.eventslist = [] if self.epgcache is None else self.epgcache.lookupEvent(events)
-                            print(self.eventslist)
-
-                            if self.eventslist and len(self.eventslist) > 0:
-                                try:
-                                    # start time
-                                    if self.eventslist[0][1]:
-                                        # print(strftime("%H:%M", (localtime(self.eventslist[0][1]))))
-                                        channel[7] = str(strftime("%H:%M", (localtime(self.eventslist[0][1]))))
-
-                                    # title
-                                    if self.eventslist[0][3]:
-                                        # print(self.eventslist[0][3])
-                                        channel[8] = str(self.eventslist[0][3])
-
-                                    # description
-                                    if self.eventslist[0][4]:
-                                        # print(self.eventslist[0][4])
-                                        channel[9] = str(self.eventslist[0][4])
-
-                                except Exception as e:
-                                    print(e)
-
-                            if self.eventslist and len(self.eventslist) > 1:
-                                try:
-                                    # next start time
-                                    if self.eventslist[1][1]:
-                                        # print(strftime("%H:%M", (localtime(self.eventslist[1][1]))))
-                                        channel[10] = str(strftime("%H:%M", (localtime(self.eventslist[1][1]))))
-
-                                    # next title
-                                    if self.eventslist[1][3]:
-                                        # print(self.eventslist[1][3])
-                                        channel[11] = str(self.eventslist[1][3])
-
-                                    # next description
-                                    if self.eventslist[1][4]:
-                                        # print(self.eventslist[1][4])
-                                        channel[12] = str(self.eventslist[1][4])
-                                except Exception as e:
-                                    print(e)
-
-                            break
-                self.xmltvcategorydownloaded = True
-                self.buildLists()
+    def writeJsonFile(self):
+        with open(json_file, 'w') as f:
+            json.dump(self.playlists_all, f)
+        self.xmltvcategorydownloaded = False
+        self.enigma2epgcategorydownloaded = False
+        self.createSetup()
 
 
 def buildEPGListEntry(index, title, epgnowtime, epgnowtitle, epgnowdescription, epgnexttime, epgnexttitle, epgnextdescription):
@@ -1563,6 +1657,10 @@ def buildCategoryList(index, title, next_url, category_id, hidden):
     return (title, png, index, next_url, category_id, hidden)
 
 
-def buildLiveStreamList(index, title, stream_id, stream_icon, epg_channel_id, added, next_url):
+def buildLiveStreamList(index, title, stream_id, stream_icon, epg_channel_id, added, next_url, favourite, watching):
     png = LoadPixmap(common_path + "play.png")
-    return (title, png, index, next_url, stream_id, stream_icon, epg_channel_id, added)
+    if favourite:
+        png = LoadPixmap(common_path + "favourite.png")
+    if watching:
+        png = LoadPixmap(common_path + "watching.png")
+    return (title, png, index, next_url, stream_id, stream_icon, epg_channel_id, added, favourite, watching)

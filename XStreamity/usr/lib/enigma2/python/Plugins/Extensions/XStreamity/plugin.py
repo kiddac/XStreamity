@@ -11,7 +11,7 @@ from Components.config import config, ConfigSubsection, ConfigSelection, ConfigD
 import os
 import shutil
 
-VERSION = "2.70-20201224"
+VERSION = "2.76-20201229"
 screenwidth = getDesktop(0).size()
 
 dir_dst = "/etc/enigma2/xstreamity/"
@@ -94,7 +94,7 @@ cfg.livepreview = ConfigYesNo(default=False)
 cfg.stopstream = ConfigYesNo(default=False)
 cfg.skin = ConfigSelection(default='default', choices=folders)
 cfg.parental = ConfigYesNo(default=False)
-cfg.timeout = ConfigSelectionNumber(1 ,20, 1, default=3)
+cfg.timeout = ConfigSelectionNumber(1, 20, 1, default=3)
 cfg.downloadlocation = ConfigDirectory(default=downloadpath)
 cfg.refreshTMDB = ConfigYesNo(default=True)
 cfg.TMDBLanguage = ConfigSelection(default='en', choices=languages)

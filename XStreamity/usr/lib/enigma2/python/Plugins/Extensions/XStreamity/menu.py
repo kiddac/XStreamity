@@ -220,9 +220,6 @@ class XStreamity_Menu(Screen):
 
         if len(self.list) == 0:
             self.session.openWithCallback(self.close, MessageBox, (_('No data, blocked or playlist not compatible with XStreamity plugin.')), MessageBox.TYPE_WARNING, timeout=5)
-        elif len(self.list) == 1:
-            self.__next__()
-            self.close()
 
     def quit(self):
         self.close()
@@ -230,16 +227,16 @@ class XStreamity_Menu(Screen):
     def __next__(self):
         category = self["list"].getCurrent()[2]
         if self["list"].getCurrent():
-            if category  == 0:
+            if category == 0:
                 from . import live
                 self.session.open(live.XStreamity_Categories)
-            elif category  == 1:
+            elif category == 1:
                 from . import vod
                 self.session.open(vod.XStreamity_Categories)
-            elif category  == 2:
+            elif category == 2:
                 from . import series
                 self.session.open(series.XStreamity_Categories)
-            elif category  == 3:
+            elif category == 3:
                 from . import catchup
                 self.session.open(catchup.XStreamity_Catchup)
 

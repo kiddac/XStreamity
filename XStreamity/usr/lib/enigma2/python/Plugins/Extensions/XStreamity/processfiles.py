@@ -60,6 +60,8 @@ def processfiles():
         showcatchup = True
         epgtype = "1"
         epgquickshift = 0
+        livefavourites = []
+        vodfavourites = []
 
         for line in lines:
             if not line.startswith("#") and line.startswith('http'):
@@ -99,7 +101,7 @@ def processfiles():
 
                 if "output" in query:
                     output = query['output'][0].strip()
-                    
+
                 if "timeshift" in query:
                     try:
                         epgshift = int(query['timeshift'][0].strip())
@@ -164,6 +166,8 @@ def processfiles():
                             ("livehidden", livehidden),
                             ("vodhidden", vodhidden),
                             ("serieshidden", serieshidden),
+                            ("livefavourites", livefavourites),
+                            ("vodfavourites", vodfavourites),
                             ("showlive", showlive),
                             ("showvod", showvod),
                             ("showseries", showseries),
