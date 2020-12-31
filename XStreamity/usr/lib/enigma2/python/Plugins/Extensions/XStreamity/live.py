@@ -671,11 +671,11 @@ class XStreamity_Categories(Screen):
             elif self.level == 2:
                 self.showEPG()
 
-            if self.editmode is False:
+            if self.editmode is False and glob.nextlist[-1]['index'] != 0:
                 self["channel_list"].setIndex(glob.nextlist[-1]['index'])
 
-            channeltitle = self["channel_list"].getCurrent()[0]
-            self["channel"].setText(self.main_title + ": " + str(channeltitle))
+                channeltitle = self["channel_list"].getCurrent()[0]
+                self["channel"].setText(self.main_title + ": " + str(channeltitle))
 
             if glob.nextlist[-1]['filter']:
                 self["key_yellow"].setText('')
@@ -1604,7 +1604,7 @@ class XStreamity_Categories(Screen):
                     break
 
             if favExists:
-                glob.current_playlist['player_info']['livefavourites'][:] = [x for x in glob.current_playlist['player_info']['livefavourites'] if fav['stream_id'] != favStream_id]
+                glob.current_playlist['player_info']['livefavourites'][:] = [x for x in glob.current_playlist['player_info']['livefavourites'] if str(x['stream_id']) != str(favStream_id)]
             else:
                 self.list2[currentindex][16] = not self.list2[currentindex][16]
                 glob.current_playlist['player_info']['livefavourites'].append(dict([
