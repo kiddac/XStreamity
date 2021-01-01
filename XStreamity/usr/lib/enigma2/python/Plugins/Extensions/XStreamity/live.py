@@ -223,8 +223,6 @@ class XStreamity_Categories(Screen):
         self.tempstreamtype = ''
         self.tempstream_url = ''
 
-        self.token = "ZUp6enk4cko4ZzBKTlBMTFNxN3djd25MOHEzeU5Zak1Bdkd6S3lPTmdqSjhxeUxMSTBNOFRhUGNBMjBCVmxBTzlBPT0K"
-
         self.timerEPG = eTimer()
         self.timerBusy = eTimer()
 
@@ -666,11 +664,6 @@ class XStreamity_Categories(Screen):
 
         if self["channel_list"].getCurrent():
 
-            if self.level == 1:
-                self.hideEPG()
-            elif self.level == 2:
-                self.showEPG()
-
             if self.editmode is False and glob.nextlist[-1]['index'] != 0:
                 self["channel_list"].setIndex(glob.nextlist[-1]['index'])
 
@@ -697,6 +690,11 @@ class XStreamity_Categories(Screen):
             else:
                 self["key_red"] = StaticText(_('Back'))
                 self["key_green"] = StaticText(_('OK'))
+            
+            if self.level == 1:
+                self.hideEPG()
+            elif self.level == 2:
+                self.showEPG()
 
         self.selectionChanged()
 
@@ -965,7 +963,7 @@ class XStreamity_Categories(Screen):
 
                 now = datetime.now().strftime("%H:%M")
                 current_time = datetime.strptime(now, "%H:%M")
-                elapsed = current_time - start_time
+                elapsed = current_time - start_time        # print("*** parentalCheck ***")
 
                 if elapsed.days < 0:
                     elapsed = timedelta(days=0, seconds=elapsed.seconds)
@@ -1008,7 +1006,8 @@ class XStreamity_Categories(Screen):
                 if swapindex < 0:
                     return
 
-                glob.current_playlist['player_info']['livefavourites'][currentindex], glob.current_playlist['player_info']['livefavourites'][swapindex] = glob.current_playlist['player_info']['livefavourites'][swapindex], glob.current_playlist['player_info']['livefavourites'][currentindex]
+                glob.current_playlist['player_info']['livefavourites'][currentindex], glob.current_playlist['player_info']['livefavourites'][swapindex] = \
+                    glob.current_playlist['player_info']['livefavourites'][swapindex], glob.current_playlist['player_info']['livefavourites'][currentindex]
 
         instance = self.selectedlist.master.master.instance
         instance.moveSelection(instance.moveUp)
@@ -1070,19 +1069,19 @@ class XStreamity_Categories(Screen):
 
     # button 0
     def reset(self):
+        # print("*** reset ***")
         if self.editmode:
             return
         else:
-            # print("*** reset ***")
+
             self.selectedlist.setIndex(0)
             self.selectionChanged()
 
     def sort(self):
+        # print("*** sort ***")
         if self.editmode:
             return
         else:
-            # print("*** sort ***")
-
             if not self["key_yellow"].getText():
                 return
 
@@ -1132,9 +1131,9 @@ class XStreamity_Categories(Screen):
             self.buildLists()
 
     def search(self):
+        # print("*** search ***")
         if self.editmode:
             return
-        # print("*** search ***")
         else:
             if not self["key_blue"].getText():
                 return
@@ -1184,13 +1183,11 @@ class XStreamity_Categories(Screen):
             activelist = self.list2[:]
             activeoriginal = glob.originalChannelList2[:]
 
-        activelist = activeoriginal
-
         if self.level == 1:
-            self.list1 = activelist
+            self.list1 = activeoriginal
 
         elif self.level == 2:
-            self.list2 = activelist
+            self.list2 = activeoriginal
 
         self.filterresult = ""
         glob.nextlist[-1]["filter"] = self.filterresult
@@ -1205,6 +1202,7 @@ class XStreamity_Categories(Screen):
         self.next()
 
     def parentalCheck(self):
+        # print("*** parentalCheck ***")
         if self.editmode is False:
             print("*** parentalCheck ***")
             self.pin = True

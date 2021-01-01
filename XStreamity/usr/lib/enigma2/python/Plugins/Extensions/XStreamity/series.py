@@ -747,6 +747,17 @@ class XStreamity_Categories(Screen):
                 except:
                     self.timerSeries_conn = self.timerSeries.timeout.connect(self.displaySeriesData)
                 self.timerSeries.start(50, True)
+        else:
+            self.position = 0
+            self.positionall = 0
+            self.page = 0
+            self.pageall = 0
+
+            self["page"].setText('Page: ' + str(self.page) + " of " + str(self.pageall))
+            self["listposition"].setText(str(self.position) + "/" + str(self.positionall))
+
+            self["key_yellow"].setText('')
+            self["key_blue"].setText('')
 
     def downloadImage(self):
         # print("*** downloadImage ***")

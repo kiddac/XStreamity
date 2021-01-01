@@ -7,7 +7,7 @@ from . import _
 from . import streamplayer
 from . import xstreamity_globals as glob
 
-from .plugin import skin_path, screenwidth, hdr, cfg, common_path, dir_tmp
+from .plugin import skin_path, screenwidth, hdr, cfg, common_path, dir_tmp, json_file
 from .xStaticText import StaticText
 
 from collections import OrderedDict
@@ -29,6 +29,8 @@ try:
     from urllib import unquote
 except:
     from urllib.parse import unquote
+
+from Screens.MessageBox import MessageBox
 
 import base64
 import re
@@ -126,6 +128,8 @@ class XStreamity_Categories(Screen):
         self["progress"] = ProgressBar()
         self["progress"].hide()
 
+        self.favourites_category = False
+
         # vod variables
         self["vod_background"] = Pixmap()
         self["vod_background"].hide()
@@ -180,6 +184,8 @@ class XStreamity_Categories(Screen):
         self.timerVOD = eTimer()
         self.timerVODBusy = eTimer()
 
+        self.editmode = False
+
         self["key_red"] = StaticText(_('Back'))
         self["key_green"] = StaticText(_('OK'))
         self["key_yellow"] = StaticText(_('Sort: A-Z'))
@@ -222,7 +228,10 @@ class XStreamity_Categories(Screen):
             "channelUp": self.pageUp,
             "channelDown": self.pageDown,
             "rec": self.downloadVideo,
+            "tv": self.favourite,
+            "stop": self.favourite,
             "0": self.reset,
+            "menu": self.editfav,
         }, -1)
 
         self["channel_actions"].setEnabled(False)
@@ -245,21 +254,68 @@ class XStreamity_Categories(Screen):
         # print("*** createSetup ***")
 
         if self.level == 1:  # category list
-            url = glob.nextlist[-1]['playlist_url']
-
-            # load category list from stored list
-            response = glob.current_playlist['data']['vod_categories']
-            self.processData(response, url)
+            self.processCategories()
 
         elif self.level == 2:  # channel list
-            self.downloadData()
+            self.downloadChannels()
 
-    def downloadData(self):
-        # print("*** downloadData ***")
+    def processCategories(self):
+        # print("*** processCategories ***")
+        index = 0
+        self.list1 = []
+        currentCategoryList = glob.current_playlist['data']['vod_categories']
+
+        next_url = str(glob.current_playlist['playlist_info']['player_api']) + "&action=get_vod_streams&category_id=0"
+
+        # add FAVOURITES category to list
+        hidden = False
+        if "-1" in glob.current_playlist['player_info']['vodhidden']:
+            hidden = True
+        self.list1.append([index, _("FAVOURITES"), next_url + "0", "-1", hidden])
+        index += 1
+
+        # add ALL category to list
+        hidden = False
+        if "0" in glob.current_playlist['player_info']['vodhidden']:
+            hidden = True
+        self.list1.append([index, _("ALL"), next_url, "0", hidden])
+        index += 1
+
+        for item in currentCategoryList:
+            hidden = False
+            category_name = item['category_name']
+            category_id = item['category_id']
+
+            next_url = str(glob.current_playlist['playlist_info']['player_api']) + "&action=get_vod_streams&category_id=" + str(category_id)
+
+            if category_id in glob.current_playlist['player_info']['vodhidden']:
+                hidden = True
+
+            self.list1.append([index, str(category_name), str(next_url), str(category_id), hidden])
+            index += 1
+
+        glob.originalChannelList1 = self.list1[:]
+
+        self.buildLists()
+
+    def downloadChannels(self):
+        # print("*** downloadChannels ***")
         url = glob.nextlist[-1]["playlist_url"]
-        levelpath = str(dir_tmp) + 'level' + str(self.level) + '.xml'
 
-        if not os.path.exists(levelpath):
+        self.favourites_category = False
+        if url.endswith("00"):
+            self.favourites_category = True
+
+        levelpath = str(dir_tmp) + 'level' + str(self.level) + '.json'
+
+        if self.favourites_category:
+            self.processChannels(glob.current_playlist['player_info']['vodfavourites'])
+
+        elif os.path.exists(levelpath):
+            with codecs.open(levelpath, 'r', encoding='utf-8') as f:
+                self.processChannels(json.load(f))
+
+        else:
             adapter = HTTPAdapter(max_retries=0)
             http = requests.Session()
             http.mount("http://", adapter)
@@ -267,92 +323,84 @@ class XStreamity_Categories(Screen):
                 r = http.get(url, headers=hdr, stream=True, timeout=10, verify=False)
                 r.raise_for_status()
                 if r.status_code == requests.codes.ok:
-
                     content = r.json()
                     with codecs.open(levelpath, 'w', encoding='utf-8') as f:
                         f.write(json.dumps(content))
 
-                    self.processData(content, url)
+                    self.processChannels(content)
             except Exception as e:
                 print(e)
-        else:
-            with codecs.open(levelpath, 'r', encoding='utf-8') as f:
-                self.processData(json.load(f), url)
 
-    def processData(self, response, url):
-        # print("*** process data ***")
+    def processChannels(self, response):
+        # print("*** processChannels ***")
         index = 0
 
-        if self.level == 1:
-            self.list1 = []
-            currentCategoryList = response
-            hidden = False
-            next_url = str(glob.current_playlist['playlist_info']['player_api']) + "&action=get_vod_streams&category_id=0"
+        self.list2 = []
+        currentChannelList = response
 
-            if "0" in glob.current_playlist['player_info']['vodhidden']:
-                hidden = True
-            self.list1.append([index, _("All"), next_url, "0", hidden])
-            index += 1
+        for item in currentChannelList:
+            name = ''
+            stream_type = ''
+            stream_id = ''
+            stream_icon = ''
+            added = ''
+            container_extension = 'mp4'
+            rating = ''
 
-            for item in currentCategoryList:
-                hidden = False
-                category_name = item['category_name']
+            favourite = False
+            editmode = False
+
+            if 'name' in item:
+                name = item['name']
+
+                # restyle bouquet markers
+                if 'stream_type' in item and item['stream_type'] and item['stream_type'] != "movie":
+                    pattern = re.compile(r'[^\w\s()\[\]]', re.U)
+                    name = re.sub(r'_', '', re.sub(pattern, '', name))
+                    name = "** " + str(name) + " **"
+
+            if 'stream_type' in item:
+                stream_type = item['stream_type']
+
+            if 'stream_id' in item:
+                stream_id = item['stream_id']
+
+            if 'stream_icon' in item and item['stream_icon']:
+                if item['stream_icon'].startswith("http"):
+                    stream_icon = item['stream_icon']
+
+                    if stream_icon.startswith("https://image.tmdb.org/t/p/") or stream_icon.startswith("http://image.tmdb.org/t/p/"):
+                        dimensions = stream_icon.partition("/p/")[2].partition("/")[0]
+                        if screenwidth.width() <= 1280:
+                            stream_icon = stream_icon.replace(dimensions, "w300")
+                        else:
+                            stream_icon = stream_icon.replace(dimensions, "w400")
+
+            if 'added' in item:
+                added = item['added']
+
+            if 'category_id' in item:
                 category_id = item['category_id']
 
-                next_url = str(glob.current_playlist['playlist_info']['player_api']) + "&action=get_vod_streams&category_id=" + str(category_id)
+            if 'container_extension' in item:
+                container_extension = item['container_extension']
 
-                if category_id in glob.current_playlist['player_info']['vodhidden']:
-                    hidden = True
+            if 'rating' in item:
+                rating = item['rating']
 
-                self.list1.append([index, str(category_name), str(next_url), str(category_id), hidden])
-                index += 1
+            if 'vodfavourites' in glob.current_playlist['player_info']:
+                for fav in glob.current_playlist['player_info']['vodfavourites']:
+                    if str(stream_id) == str(fav['stream_id']):
+                        favourite = True
+                        break
+            else:
+                glob.current_playlist['player_info']['livefavourites'] = []
 
-            glob.originalChannelList1 = self.list1[:]
+            next_url = "%s/movie/%s/%s/%s.%s" % (str(self.host), str(self.username), str(self.password), str(stream_id), str(container_extension))
+            self.list2.append([index, str(name), str(stream_id), str(stream_icon), str(added), str(rating), str(next_url), favourite, editmode])
+            index += 1
 
-        elif self.level == 2:
-            self.list2 = []
-            currentChannelList = response
-
-            for item in currentChannelList:
-                name = ''
-                stream_id = ''
-                stream_icon = ''
-                added = ''
-                container_extension = 'mp4'
-                rating = ''
-
-                if 'name' in item:
-                    name = item['name']
-
-                if 'stream_id' in item:
-                    stream_id = item['stream_id']
-
-                if 'stream_icon' in item and item['stream_icon']:
-                    if item['stream_icon'].startswith("http"):
-                        stream_icon = item['stream_icon']
-
-                        if stream_icon.startswith("https://image.tmdb.org/t/p/") or stream_icon.startswith("http://image.tmdb.org/t/p/"):
-                            dimensions = stream_icon.partition("/p/")[2].partition("/")[0]
-                            if screenwidth.width() <= 1280:
-                                stream_icon = stream_icon.replace(dimensions, "w300")
-                            else:
-                                stream_icon = stream_icon.replace(dimensions, "w400")
-
-                if 'added' in item:
-                    added = item['added']
-
-                if 'container_extension' in item:
-                    container_extension = item['container_extension']
-
-                if 'rating' in item:
-                    rating = item['rating']
-
-                next_url = "%s/movie/%s/%s/%s.%s" % (self.host, self.username, self.password, stream_id, container_extension)
-
-                self.list2.append([index, str(name), str(stream_id), str(stream_icon), str(added), str(rating), str(next_url)])
-                index += 1
-
-            glob.originalChannelList2 = self.list2[:]
+        glob.originalChannelList2 = self.list2[:]
         self.buildLists()
 
     def buildLists(self):
@@ -361,43 +409,62 @@ class XStreamity_Categories(Screen):
         if self.level == 1:
             self["key_menu"].setText(_("Hide/Show"))
             self["key_rec"].setText('')
-
             self.channelList = []
 
-            if self.list1:
-                self.channelList = [buildCategoryList(x[0], x[1], x[2], x[3], x[4]) for x in self.list1 if x[4] is False]
+            self.channelList = [buildCategoryList(x[0], x[1], x[2], x[3], x[4]) for x in self.list1 if x[4] is False]
+            self["channel_list"].setList(self.channelList)
 
         elif self.level == 2:
             self["key_menu"].setText('')
             self["key_rec"].setText(_("Download"))
             self.channelList = []
 
-            if self.list2:
-                self.channelList = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6]) for x in self.list2]
+            # index = 0
+            # name = 1
+            # stream_id = 2
+            # stream_icon = 3
+            # added = 4
+            # rating = 5
+            # next_url = 6
+            # favourite = 7
+            # editmode = 8
+
+            if self.favourites_category:
+
+                self.channelList = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8]) for x in self.list2 if x[7] is True]
+            else:
+                self.channelList = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8]) for x in self.list2]
 
         self["channel_list"].setList(self.channelList)
 
         if self["channel_list"].getCurrent():
 
-            if glob.nextlist[-1]['index'] != 0:
+            if self.editmode is False and glob.nextlist[-1]['index'] != 0:
                 self["channel_list"].setIndex(glob.nextlist[-1]['index'])
 
                 channeltitle = self["channel_list"].getCurrent()[0]
                 self["channel"].setText(self.main_title + ": " + str(channeltitle))
 
-            if not glob.nextlist[-1]['filter']:
-                self["key_blue"].setText(_('Search'))
-            else:
-                self["key_blue"].setText(_('Reset Search'))
-
             if glob.nextlist[-1]['filter']:
                 self["key_yellow"].setText('')
+                self["key_blue"].setText(_('Reset Search'))
                 if self.level == 1:
                     self["key_menu"].setText('')
             else:
+                self["key_blue"].setText(_('Search'))
                 self["key_yellow"].setText(_(glob.nextlist[-1]['sort']))
                 if self.level == 1:
                     self["key_menu"].setText(_("Hide/Show"))
+
+            if self.editmode:
+                self["key_red"].setText('')
+                self["key_green"].setText('')
+                self["key_blue"].setText('')
+                self["key_yellow"].setText('')
+                self["key_epg"].setText('')
+            else:
+                self["key_red"] = StaticText(_('Back'))
+                self["key_green"] = StaticText(_('OK'))
 
             if self.level == 1:
                 self.hideVod()
@@ -477,6 +544,9 @@ class XStreamity_Categories(Screen):
             channeltitle = self["channel_list"].getCurrent()[0]
             currentindex = self["channel_list"].getIndex()
 
+            if self.editmode:
+                glob.nextlist[-1]['index'] = currentindex
+
             self.position = currentindex + 1
             self.positionall = len(self.channelList)
             self.page = int(math.ceil(float(self.position) / float(self.itemsperpage)))
@@ -493,7 +563,18 @@ class XStreamity_Categories(Screen):
                     self.timerVOD.callback.append(self.downloadVodData)
                 except:
                     self.timerVOD_conn = self.timerVOD.timeout.connect(self.downloadVodData)
-                self.timerVOD.start(50, True)
+                self.timerVOD.start(300, True)
+        else:
+            self.position = 0
+            self.positionall = 0
+            self.page = 0
+            self.pageall = 0
+
+            self["page"].setText('Page: ' + str(self.page) + " of " + str(self.pageall))
+            self["listposition"].setText(str(self.position) + "/" + str(self.positionall))
+
+            self["key_yellow"].setText('')
+            self["key_blue"].setText('')
 
     def downloadVodData(self):
         # print("*** downloadVodData ***")
@@ -518,8 +599,8 @@ class XStreamity_Categories(Screen):
                     self.info = None
 
                 if cfg.refreshTMDB.value is True:
-                    self.downloadImage()
-                    self.displayVod()
+                    # self.downloadImage()
+                    # self.displayVod()
                     self.getTMDB()
                 else:
                     self.downloadImage()
@@ -609,13 +690,13 @@ class XStreamity_Categories(Screen):
     def DecodePicture(self, PicInfo=None):
         # print("*** DecodePicture ***")
         ptr = self.PicLoad.getData()
-        if ptr is not None:
+        if ptr is not None and self.level == 2:
             self["vod_cover"].instance.setPixmap(ptr)
             self["vod_cover"].instance.show()
 
     def displayVod(self):
         # print("*** displayVod ***")
-        if self["channel_list"].getCurrent():
+        if self["channel_list"].getCurrent() and self.info and self.level == 2:
             stream_url = self["channel_list"].getCurrent()[3]
 
             if "name" in self.info:
@@ -689,95 +770,155 @@ class XStreamity_Categories(Screen):
 
     def goUp(self):
         # print("*** goUp ***")
+        if self.editmode:
+            if self["channel_list"].getCurrent():
+
+                x = 0
+                for fav in glob.current_playlist['player_info']['vodfavourites']:
+                    if self["channel_list"].getCurrent()[4] == fav['stream_id']:
+                        currentindex = x
+                        break
+                    x += 1
+
+                swapindex = currentindex - 1
+                if swapindex < 0:
+                    return
+
+                glob.current_playlist['player_info']['vodfavourites'][currentindex], glob.current_playlist['player_info']['vodfavourites'][swapindex] = \
+                    glob.current_playlist['player_info']['vodfavourites'][swapindex], glob.current_playlist['player_info']['vodfavourites'][currentindex]
+
         instance = self.selectedlist.master.master.instance
         instance.moveSelection(instance.moveUp)
         self.selectionChanged()
 
+        if self.editmode:
+            self.downloadChannels()
+            if self["channel_list"].getCurrent():
+                currentindex = self["channel_list"].getIndex()
+                self.list2[currentindex][8] = not self.list2[currentindex][8]
+                self.buildLists()
+
     def goDown(self):
+        if self.editmode:
+            if self["channel_list"].getCurrent():
+
+                x = 0
+                for fav in glob.current_playlist['player_info']['vodfavourites']:
+                    if self["channel_list"].getCurrent()[4] == fav['stream_id']:
+                        currentindex = x
+                        break
+                    x += 1
+
+                swapindex = currentindex + 1
+                if swapindex > len(self.channelList) - 1:
+                    return
+
+                glob.current_playlist['player_info']['vodfavourites'][currentindex], glob.current_playlist['player_info']['vodfavourites'][swapindex] = glob.current_playlist['player_info']['vodfavourites'][swapindex], glob.current_playlist['player_info']['vodfavourites'][currentindex]
+
         # print("*** goDown ***")
         instance = self.selectedlist.master.master.instance
         instance.moveSelection(instance.moveDown)
         self.selectionChanged()
 
+        if self.editmode:
+            self.downloadChannels()
+            if self["channel_list"].getCurrent():
+                currentindex = self["channel_list"].getIndex()
+                self.list2[currentindex][8] = not self.list2[currentindex][8]
+                self.buildLists()
+
     def pageUp(self):
-        # print("*** pageUp ***")
-        instance = self.selectedlist.master.master.instance
-        instance.moveSelection(instance.pageUp)
-        self.selectionChanged()
+        if self.editmode:
+            return
+        else:
+            # print("*** pageUp ***")
+            instance = self.selectedlist.master.master.instance
+            instance.moveSelection(instance.pageUp)
+            self.selectionChanged()
 
     def pageDown(self):
-        # print("*** pageDown ***")
-        instance = self.selectedlist.master.master.instance
-        instance.moveSelection(instance.pageDown)
-        self.selectionChanged()
+        if self.editmode:
+            return
+        else:
+            # print("*** pageDown ***")
+            instance = self.selectedlist.master.master.instance
+            instance.moveSelection(instance.pageDown)
+            self.selectionChanged()
 
     # button 0
     def reset(self):
-        # print("*** reset ***")
-        self.selectedlist.setIndex(0)
-        self.selectionChanged()
+        if self.editmode:
+            return
+        else:
+            # print("*** reset ***")
+            self.selectedlist.setIndex(0)
+            self.selectionChanged()
 
     def sort(self):
         # print("*** sort ***")
-
-        if not self["key_yellow"].getText():
+        if self.editmode:
             return
+        else:
+            if not self["key_yellow"].getText():
+                return
 
-        if self.level == 1:
-            activelist = self.list1[:]
-            activeoriginal = glob.originalChannelList1[:]
+            if self.level == 1:
+                activelist = self.list1[:]
+                activeoriginal = glob.originalChannelList1[:]
 
-        elif self.level == 2:
-            activelist = self.list2[:]
-            activeoriginal = glob.originalChannelList2[:]
+            elif self.level == 2:
+                activelist = self.list2[:]
+                activeoriginal = glob.originalChannelList2[:]
 
-        if self["channel_list"].getCurrent():
-            self["channel_list"].setIndex(0)
-            current_sort = self["key_yellow"].getText()
+            if self["channel_list"].getCurrent():
+                self["channel_list"].setIndex(0)
+                current_sort = self["key_yellow"].getText()
 
-            if current_sort == (_('Sort: A-Z')):
-                self["key_yellow"].setText(_('Sort: Z-A'))
-                activelist.sort(key=lambda x: x[1], reverse=False)
+                if current_sort == (_('Sort: A-Z')):
+                    self["key_yellow"].setText(_('Sort: Z-A'))
+                    activelist.sort(key=lambda x: x[1], reverse=False)
 
-            elif current_sort == (_('Sort: Z-A')):
-                if self.level == 2:
-                    self["key_yellow"].setText(_('Sort: Newest'))
-                else:
+                elif current_sort == (_('Sort: Z-A')):
+                    if self.level == 2:
+                        self["key_yellow"].setText(_('Sort: Newest'))
+                    else:
+                        self["key_yellow"].setText(_('Sort: Original'))
+                    activelist.sort(key=lambda x: x[1], reverse=True)
+
+                elif current_sort == (_('Sort: Newest')):
+                    if self.level == 2:
+                        activelist.sort(key=lambda x: x[5], reverse=True)
+
                     self["key_yellow"].setText(_('Sort: Original'))
-                activelist.sort(key=lambda x: x[1], reverse=True)
 
-            elif current_sort == (_('Sort: Newest')):
-                if self.level == 2:
-                    activelist.sort(key=lambda x: x[5], reverse=True)
+                elif current_sort == (_('Sort: Original')):
+                    self["key_yellow"].setText(_('Sort: A-Z'))
+                    activelist = activeoriginal
 
-                self["key_yellow"].setText(_('Sort: Original'))
+                if current_sort:
+                    glob.nextlist[-1]["sort"] = self["key_yellow"].getText()
 
-            elif current_sort == (_('Sort: Original')):
-                self["key_yellow"].setText(_('Sort: A-Z'))
-                activelist = activeoriginal
+            if self.level == 1:
+                self.list1 = activelist
 
-            if current_sort:
-                glob.nextlist[-1]["sort"] = self["key_yellow"].getText()
+            elif self.level == 2:
+                self.list2 = activelist
 
-        if self.level == 1:
-            self.list1 = activelist
-
-        elif self.level == 2:
-            self.list2 = activelist
-
-        self.buildLists()
+            self.buildLists()
 
     def search(self):
         # print("*** search ***")
-
-        if not self["key_blue"].getText():
+        if self.editmode:
             return
-
-        current_filter = self["key_blue"].getText()
-        if current_filter != (_('Reset Search')):
-            self.session.openWithCallback(self.filterChannels, VirtualKeyBoard, title=_("Filter this category..."), text=self.searchString)
         else:
-            self.resetSearch()
+            if not self["key_blue"].getText():
+                return
+
+            current_filter = self["key_blue"].getText()
+            if current_filter != (_('Reset Search')):
+                self.session.openWithCallback(self.filterChannels, VirtualKeyBoard, title=_("Filter this category..."), text=self.searchString)
+            else:
+                self.resetSearch()
 
     def filterChannels(self, result):
         # print("*** filterChannels ***")
@@ -817,13 +958,11 @@ class XStreamity_Categories(Screen):
             activelist = self.list2[:]
             activeoriginal = glob.originalChannelList2[:]
 
-        activelist = activeoriginal
-
         if self.level == 1:
-            self.list1 = activelist
+            self.list1 = activeoriginal
 
         elif self.level == 2:
-            self.list2 = activelist
+            self.list2 = activeoriginal
 
         self.filterresult = ""
         glob.nextlist[-1]["filter"] = self.filterresult
@@ -832,7 +971,6 @@ class XStreamity_Categories(Screen):
 
     def pinEntered(self, result):
         # print("*** pinEntered ***")
-        from Screens.MessageBox import MessageBox
         if not result:
             self.pin = False
             self.session.open(MessageBox, _("Incorrect pin code."), type=MessageBox.TYPE_ERROR, timeout=5)
@@ -840,14 +978,16 @@ class XStreamity_Categories(Screen):
 
     def parentalCheck(self):
         # print("*** parentalCheck ***")
-        self.pin = True
-        if self.level == 1:
-            if cfg.parental.getValue() is True:
-                adult = "all,", "+18", "adult", "18+", "18 rated", "xxx", "sex", "porn", "pink", "blue"
-                if any(s in str(self["channel_list"].getCurrent()[0]).lower() for s in adult):
-                    from Screens.InputBox import PinInput
-                    self.session.openWithCallback(self.pinEntered, PinInput, pinList=[config.ParentalControl.setuppin.value], triesEntry=config.ParentalControl.retries.servicepin, title=_("Please enter the parental control pin code"), windowTitle=_("Enter pin code"))
-        self.next()
+        if self.editmode is False:
+            print("*** parentalCheck ***")
+            self.pin = True
+            if self.level == 1:
+                if cfg.parental.getValue() is True:
+                    adult = "all,", "+18", "adult", "18+", "18 rated", "xxx", "sex", "porn", "pink", "blue"
+                    if any(s in str(self["channel_list"].getCurrent()[0]).lower() for s in adult):
+                        from Screens.InputBox import PinInput
+                        self.session.openWithCallback(self.pinEntered, PinInput, pinList=[config.ParentalControl.setuppin.value], triesEntry=config.ParentalControl.retries.servicepin, title=_("Please enter the parental control pin code"), windowTitle=_("Enter pin code"))
+            self.next()
 
     def next(self):
         # print("*** next ***")
@@ -894,9 +1034,13 @@ class XStreamity_Categories(Screen):
         # print("*** set index ***")
         self["channel_list"].setIndex(glob.currentchannelistindex)
         self.selectionChanged()
+        self.buildLists()
 
     def back(self):
         # print("*** back ***")
+        if self.editmode:
+            return
+
         del glob.nextlist[-1]
 
         if len(glob.nextlist) == 0:
@@ -911,7 +1055,7 @@ class XStreamity_Categories(Screen):
             if cfg.stopstream.value:
                 self.stopStream()
 
-            levelpath = str(dir_tmp) + 'level' + str(self.level) + '.xml'
+            levelpath = str(dir_tmp) + 'level' + str(self.level) + '.json'
             try:
                 os.remove(levelpath)
             except:
@@ -936,7 +1080,6 @@ class XStreamity_Categories(Screen):
 
     # record button download video file
     def downloadVideo(self):
-        from Screens.MessageBox import MessageBox
         if self["channel_list"].getCurrent():
             stream_url = self["channel_list"].getCurrent()[3]
             extension = str(os.path.splitext(stream_url)[-1])
@@ -1181,7 +1324,6 @@ class XStreamity_Categories(Screen):
         pass
 
     def openIMDb(self):
-        from Screens.MessageBox import MessageBox
         try:
             from Plugins.Extensions.IMDb.plugin import IMDB
             try:
@@ -1198,12 +1340,102 @@ class XStreamity_Categories(Screen):
         result = base64.b64decode(result).decode()
         return result
 
+    def favourite(self):
+        # print("**** favourite ***")
+        if self["channel_list"].getCurrent():
+            currentindex = self["channel_list"].getIndex()
+
+            favExists = False
+
+            for fav in glob.current_playlist['player_info']['vodfavourites']:
+                if self["channel_list"].getCurrent()[4] == fav['stream_id']:
+                    favExists = True
+                    favStream_id = fav['stream_id']
+                    break
+
+            if favExists:
+                glob.current_playlist['player_info']['vodfavourites'][:] = [x for x in glob.current_playlist['player_info']['vodfavourites'] if str(x['stream_id']) != str(favStream_id)]
+            else:
+                self.list2[currentindex][7] = not self.list2[currentindex][7]
+
+                # index = 0
+                # name = 1
+                # stream_id = 2
+                # stream_icon = 3
+                # added = 4
+                # rating = 5
+                # next_url = 6
+                # favourite = 7
+                # editmode = 8
+
+                glob.current_playlist['player_info']['vodfavourites'].append(dict([
+                    ("name", self.list2[currentindex][1]),
+                    ("stream_id", self.list2[currentindex][2]),
+                    ("stream_icon", self.list2[currentindex][3]),
+                    ("added", self.list2[currentindex][4]),
+                    ("rating", self.list2[currentindex][5]),
+                ]))
+
+            with open(json_file, "r") as f:
+                try:
+                    self.playlists_all = json.load(f)
+                except:
+                    os.remove(json_file)
+
+            if self.playlists_all:
+                x = 0
+                for playlists in self.playlists_all:
+                    if playlists["playlist_info"]["domain"] == glob.current_playlist["playlist_info"]["domain"] and playlists["playlist_info"]["username"] == glob.current_playlist["playlist_info"]["username"] and playlists["playlist_info"]["password"] == glob.current_playlist["playlist_info"]["password"]:
+                        self.playlists_all[x] = glob.current_playlist
+                        break
+                    x += 1
+            with open(json_file, 'w') as f:
+                json.dump(self.playlists_all, f)
+
+            self.createSetup()
+
+    def editfav(self):
+        if self.favourites_category:
+            self.editmode = not self.editmode
+            if self.editmode is False:
+
+                with open(json_file, "r") as f:
+                    try:
+                        self.playlists_all = json.load(f)
+                    except:
+                        os.remove(json_file)
+
+                if self.playlists_all:
+                    x = 0
+                    for playlists in self.playlists_all:
+                        if playlists["playlist_info"]["domain"] == glob.current_playlist["playlist_info"]["domain"] and playlists["playlist_info"]["username"] == glob.current_playlist["playlist_info"]["username"] and playlists["playlist_info"]["password"] == glob.current_playlist["playlist_info"]["password"]:
+                            self.playlists_all[x] = glob.current_playlist
+                            break
+                        x += 1
+                with open(json_file, 'w') as f:
+                    json.dump(self.playlists_all, f)
+
+                glob.nextlist[-1]['index'] = 0
+
+            if self["channel_list"].getCurrent():
+                currentindex = self["channel_list"].getIndex()
+                self.list2[currentindex][8] = not self.list2[currentindex][8]
+
+        else:
+            return
+        self.buildLists()
+
 
 def buildCategoryList(index, title, next_url, category_id, hidden):
     png = LoadPixmap(common_path + "more.png")
     return (title, png, index, next_url, category_id, hidden)
 
 
-def buildVodStreamList(index, title, stream_id, stream_icon, added, rating, next_url):
+def buildVodStreamList(index, title, stream_id, stream_icon, added, rating, next_url, favourite, editmode):
     png = LoadPixmap(common_path + "play.png")
+    if favourite:
+        png = LoadPixmap(common_path + "favourite.png")
+    if editmode:
+        png = LoadPixmap(common_path + "edit.png")
+
     return (title, png, index, next_url, stream_id, stream_icon, added, rating)
