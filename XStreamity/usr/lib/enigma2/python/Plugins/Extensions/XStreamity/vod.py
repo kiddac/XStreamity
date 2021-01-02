@@ -887,7 +887,7 @@ class XStreamity_Categories(Screen):
 
                 elif current_sort == (_('Sort: Newest')):
                     if self.level == 2:
-                        activelist.sort(key=lambda x: x[5], reverse=True)
+                        activelist.sort(key=lambda x: x[4], reverse=True)
 
                     self["key_yellow"].setText(_('Sort: Original'))
 
