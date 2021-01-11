@@ -11,7 +11,7 @@ from Components.config import config, ConfigSubsection, ConfigSelection, ConfigD
 import os
 import shutil
 
-VERSION = "2.81-20210101"
+VERSION = "2.82-20210111"
 screenwidth = getDesktop(0).size()
 
 dir_dst = "/etc/enigma2/xstreamity/"
@@ -78,14 +78,15 @@ if os.path.exists("/usr/bin/apt-get"):
 cfg.livetype = ConfigSelection(default='1', choices=streamtypechoices)
 cfg.vodtype = ConfigSelection(default='4097', choices=streamtypechoices)
 cfg.catchuptype = ConfigSelection(default='4097', choices=streamtypechoices)
-
+downloadpath = None
 
 try:
     from Components.UsageConfig import defaultMoviePath
     downloadpath = defaultMoviePath()
+    cfg.downloadlocation = ConfigDirectory(default=downloadpath)
 except:
-    from Components.UsageConfig import defaultStorageDevice
-    downloadpath = defaultStorageDevice()
+    if os.path.exists("/usr/bin/apt-get"):
+        cfg.downloadlocation = ConfigDirectory(default='/media/hdd/movie/')
 
 
 cfg.location = ConfigDirectory(default=dir_dst)
@@ -95,7 +96,7 @@ cfg.stopstream = ConfigYesNo(default=False)
 cfg.skin = ConfigSelection(default='default', choices=folders)
 cfg.parental = ConfigYesNo(default=False)
 cfg.timeout = ConfigSelectionNumber(1, 20, 1, default=3)
-cfg.downloadlocation = ConfigDirectory(default=downloadpath)
+# cfg.downloadlocation = ConfigDirectory(default=downloadpath)
 cfg.refreshTMDB = ConfigYesNo(default=True)
 cfg.TMDBLanguage = ConfigSelection(default='en', choices=languages)
 cfg.catchupstart = ConfigSelectionNumber(0, 30, 1, default=0)

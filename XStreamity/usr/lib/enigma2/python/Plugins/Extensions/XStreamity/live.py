@@ -690,7 +690,7 @@ class XStreamity_Categories(Screen):
             else:
                 self["key_red"] = StaticText(_('Back'))
                 self["key_green"] = StaticText(_('OK'))
-            
+
             if self.level == 1:
                 self.hideEPG()
             elif self.level == 2:
@@ -704,13 +704,20 @@ class XStreamity_Categories(Screen):
         if self["channel_list"].getCurrent():
 
             self.epgcache = eEPGCache.getInstance()
+            
+            offset = int(glob.current_playlist["player_info"]["epgshift"]) * 3600
 
             for channel in self.list2:
                 self.eventslist = []
 
                 serviceref = channel[8]
-                events = ['IBDTEX', (serviceref, 1, -1, 12 * 60)]  # search next 12 hours
+
+                events = ['IBDTEX', (serviceref, 1, -1, 12 * 60 )]  # search next 12 hours
                 self.eventslist = [] if self.epgcache is None else self.epgcache.lookupEvent(events)
+
+                for i in range(len(self.eventslist)):
+                    if self.eventslist[i][1] is not None:
+                        self.eventslist[i] = (self.eventslist[i][0], self.eventslist[i][1] + offset, self.eventslist[i][2], self.eventslist[i][3], self.eventslist[i][4])
 
                 if self.eventslist:
                     if len(self.eventslist) > 0:
@@ -963,7 +970,7 @@ class XStreamity_Categories(Screen):
 
                 now = datetime.now().strftime("%H:%M")
                 current_time = datetime.strptime(now, "%H:%M")
-                elapsed = current_time - start_time        # print("*** parentalCheck ***")
+                elapsed = current_time - start_time
 
                 if elapsed.days < 0:
                     elapsed = timedelta(days=0, seconds=elapsed.seconds)
@@ -1204,7 +1211,6 @@ class XStreamity_Categories(Screen):
     def parentalCheck(self):
         # print("*** parentalCheck ***")
         if self.editmode is False:
-            print("*** parentalCheck ***")
             self.pin = True
             if self.level == 1:
                 if cfg.parental.getValue() is True:

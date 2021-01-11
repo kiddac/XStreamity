@@ -201,6 +201,10 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         ConfigListScreen.keyOK(self)
 
     def openDirectoryBrowser(self, path, cfgitem):
+        
+        if os.path.exists("/usr/bin/apt-get"):
+                path = None
+
         if cfgitem == "location":
             try:
                 self.session.openWithCallback(
@@ -208,12 +212,8 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
                     LocationBox,
                     windowTitle=_('Choose Directory:'),
                     text=_('Choose directory'),
-                    currDir=str(path),
-                    bookmarks=config.movielist.videodirs,
-                    autoAdd=False,
-                    editDir=True,
-                    inhibitDirs=['/bin', '/boot', '/dev', '/home', '/lib', '/proc', '/run', '/sbin', '/sys', '/var'],
-                    minFree=15)
+                    currDir=path,
+                    bookmarks=config.movielist.videodirs)
             except Exception as e:
                 print(e)
         ConfigListScreen.keyOK(self)
@@ -225,12 +225,8 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
                     LocationBox,
                     windowTitle=_('Choose Directory:'),
                     text=_('Choose directory'),
-                    currDir=str(path),
-                    bookmarks=config.movielist.videodirs,
-                    autoAdd=False,
-                    editDir=True,
-                    inhibitDirs=['/bin', '/boot', '/dev', '/home', '/lib', '/proc', '/run', '/sbin', '/sys', '/var'],
-                    minFree=15)
+                    currDir=path,
+                    bookmarks=config.movielist.videodirs)
             except Exception as e:
                 print(e)
         ConfigListScreen.keyOK(self)

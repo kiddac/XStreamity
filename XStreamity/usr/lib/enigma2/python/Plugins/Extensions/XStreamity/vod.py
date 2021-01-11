@@ -394,7 +394,7 @@ class XStreamity_Categories(Screen):
                         favourite = True
                         break
             else:
-                glob.current_playlist['player_info']['livefavourites'] = []
+                glob.current_playlist['player_info']['vodfavourites'] = []
 
             next_url = "%s/movie/%s/%s/%s.%s" % (str(self.host), str(self.username), str(self.password), str(stream_id), str(container_extension))
             self.list2.append([index, str(name), str(stream_id), str(stream_icon), str(added), str(rating), str(next_url), favourite, editmode])

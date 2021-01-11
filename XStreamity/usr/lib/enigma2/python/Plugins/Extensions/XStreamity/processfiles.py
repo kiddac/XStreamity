@@ -58,8 +58,7 @@ def processfiles():
         showvod = True
         showseries = True
         showcatchup = True
-        epgtype = "1"
-        epgquickshift = 0
+        # epgquickshift = 0
         livefavourites = []
         vodfavourites = []
 
@@ -132,11 +131,11 @@ def processfiles():
                                 playlists["data"]["data_downloaded"] = False
                                 playlists["player_info"]["epgshift"] = epgshift
 
-                                if "epgtype" not in playlists["player_info"]:
-                                    playlists["player_info"]["epgtype"] = epgtype
+                                # if "epgtype" not in playlists["player_info"]:
+                                    # playlists["player_info"]["epgtype"] = epgtype
 
-                                if "epgquickshift" not in playlists["player_info"]:
-                                    playlists["player_info"]["epgquickshift"] = epgquickshift
+                                # if "epgquickshift" not in playlists["player_info"]:
+                                    # playlists["player_info"]["epgquickshift"] = epgquickshift
 
                                 break
 
@@ -172,8 +171,6 @@ def processfiles():
                             ("showvod", showvod),
                             ("showseries", showseries),
                             ("showcatchup", showcatchup),
-                            ("epgtype", epgtype),
-                            ("epgquickshift", epgquickshift),
                         ]),
 
                         "data": dict([
