@@ -1206,9 +1206,11 @@ class XStreamity_Categories(Screen):
         if not result:
             self.pin = False
             self.session.open(MessageBox, _("Incorrect pin code."), type=MessageBox.TYPE_ERROR, timeout=5)
-            return
-        else:
+            
+        if self.pin is True:
             self.next()
+        else:
+            return
 
     def parentalCheck(self):
         # print("*** parentalCheck ***")
@@ -1220,11 +1222,15 @@ class XStreamity_Categories(Screen):
                     if any(s in str(self["channel_list"].getCurrent()[0]).lower() for s in adult):
                         from Screens.InputBox import PinInput
                         self.session.openWithCallback(self.pinEntered, PinInput, pinList=[config.ParentalControl.setuppin.value], triesEntry=config.ParentalControl.retries.servicepin, title=_("Please enter the parental control pin code"), windowTitle=_("Enter pin code"))
-
+                    else:
+                        self.next()
+                else:
+                    self.next()
+            else:
+                self.next()
+                    
     def next(self):
         # print("*** next ***")
-        if self.pin is False:
-            return
 
         if self["channel_list"].getCurrent():
             currentindex = self["channel_list"].getIndex()

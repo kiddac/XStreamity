@@ -396,36 +396,48 @@ class XStreamity_Catchup(Screen):
                 self.level -= 1
                 self.createSetup()
 
+
     def pinEntered(self, result):
-        from Screens.MessageBox import MessageBox
+        # print("*** pinEntered ***")
         if not result:
             self.pin = False
             self.session.open(MessageBox, _("Incorrect pin code."), type=MessageBox.TYPE_ERROR, timeout=5)
-            return
-        else:
+            
+        if self.pin is True:
             self.next2()
-
+        else:
+            return
+            
     def __next__(self):
+        self.pin = True
         if self.level == 1:
-            self.pin = True
             if cfg.parental.getValue() is True:
                 adult = "all,", "+18", "adult", "18+", "18 rated", "xxx", "sex", "porn", "pink", "blue"
                 if any(s in str(self["channel_list"].getCurrent()[0]).lower() for s in adult):
                     from Screens.InputBox import PinInput
                     self.session.openWithCallback(self.pinEntered, PinInput, pinList=[config.ParentalControl.setuppin.value], triesEntry=config.ParentalControl.retries.servicepin, title=_("Please enter the parental control pin code"), windowTitle=_("Enter pin code"))
                 else:
-                    self.pin = True
                     self.next2()
             else:
-                self.pin = True
                 self.next2()
         else:
-            self.pin = True
             self.next2()
 
+    def parentalCheck(self):
+        # print("*** parentalCheck ***")
+        if self.editmode is False:
+            self.pin = True
+            if self.level == 1:
+                if cfg.parental.getValue() is True:
+                    adult = "all,", "+18", "adult", "18+", "18 rated", "xxx", "sex", "porn", "pink", "blue"
+                    if any(s in str(self["channel_list"].getCurrent()[0]).lower() for s in adult):
+                        from Screens.InputBox import PinInput
+                        self.session.openWithCallback(self.pinEntered, PinInput, pinList=[config.ParentalControl.setuppin.value], triesEntry=config.ParentalControl.retries.servicepin, title=_("Please enter the parental control pin code"), windowTitle=_("Enter pin code"))
+                    else:
+                        self.next()
+                        
+                        
     def next2(self):
-        if self.pin is False:
-            return
 
         if self["channel_list"].getCurrent():
             self.currentindex = self["channel_list"].getCurrent()[2]
