@@ -6,7 +6,7 @@
 from . import _
 from . import xstreamity_globals as glob
 from . import processfiles as xfiles
-from .plugin import skin_path, common_path, VERSION
+from .plugin import skin_path, common_path, VERSION, json_downloadfile
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -18,6 +18,7 @@ from Screens.Screen import Screen
 from Tools.LoadPixmap import LoadPixmap
 from ServiceReference import ServiceReference
 
+import json
 import os
 import sys
 
@@ -102,16 +103,27 @@ class XStreamity_MainMenu(Screen):
 
     def createSetup(self):
         self.list = []
-        if len(self.playlists_all):
-            glob.oneplaylist = True
+        downloads_all = []
+        
+        if os.path.isfile(json_downloadfile):
+            with open(json_downloadfile, "r") as f:
+                try:
+                    downloads_all = json.load(f)
+                except:
+                    pass
+    
 
         if self.playlists_all:
             self.list.append([1, "Playlists"])
             self.list.append([3, "Add Playlist"])
             self.list.append([2, "Main Settings"])
+            if downloads_all:
+                self.list.append([4, "Download Mngr."])
         else:
             self.list.append([3, "Add Playlist"])
             self.list.append([2, "Main Settings"])
+            if downloads_all:
+                self.list.append([4, "Download Mngr."])
 
         self.drawList = []
         self.drawList = [buildListEntry(x[0], x[1]) for x in self.list]
@@ -130,6 +142,11 @@ class XStreamity_MainMenu(Screen):
         from . import server
         self.session.openWithCallback(self.start, server.XStreamity_AddServer)
         return
+        
+    def downloadManager(self):
+        from . import downloadmanager
+        self.session.openWithCallback(self.start, downloadmanager.XStreamity_DownloadManager)
+        return
 
     def __next__(self):
         index = self["list"].getCurrent()[0]
@@ -141,6 +158,8 @@ class XStreamity_MainMenu(Screen):
                 self.settings()
             if index == 3:
                 self.addServer()
+            if index == 4:
+                self.downloadManager()
 
     def quit(self):
         self.playOriginalChannel()
@@ -161,5 +180,6 @@ def buildListEntry(index, title):
         png = LoadPixmap(common_path + "settings.png")
     if index == 3:
         png = LoadPixmap(common_path + "addplaylist.png")
-
+    if index == 4:
+        png = LoadPixmap(common_path + "vod_download.png")
     return (index, str(title), png)

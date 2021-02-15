@@ -7,7 +7,7 @@ from . import _
 from . import streamplayer
 from . import xstreamity_globals as glob
 
-from .plugin import skin_path, screenwidth, hdr, cfg, common_path, dir_tmp, json_file
+from .plugin import skin_path, screenwidth, hdr, cfg, common_path, dir_tmp, json_file, json_downloadfile
 from .xStaticText import StaticText
 
 from collections import OrderedDict
@@ -165,6 +165,7 @@ class XStreamity_Categories(Screen):
         self.username = glob.current_playlist['playlist_info']['username']
         self.password = glob.current_playlist['playlist_info']['password']
         self.output = glob.current_playlist['playlist_info']['output']
+        self.name = glob.current_playlist['playlist_info']['name']
 
         self["page"] = StaticText('')
         self["listposition"] = StaticText('')
@@ -974,7 +975,9 @@ class XStreamity_Categories(Screen):
         if not result:
             self.pin = False
             self.session.open(MessageBox, _("Incorrect pin code."), type=MessageBox.TYPE_ERROR, timeout=5)
-        self.next()
+            return
+        else:
+            self.next()
 
     def parentalCheck(self):
         # print("*** parentalCheck ***")
@@ -1079,6 +1082,7 @@ class XStreamity_Categories(Screen):
                 self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "vod", self.list1)
 
     # record button download video file
+    """
     def downloadVideo(self):
         if self["channel_list"].getCurrent():
             stream_url = self["channel_list"].getCurrent()[3]
@@ -1107,6 +1111,40 @@ class XStreamity_Categories(Screen):
 
             except:
                 self.session.open(MessageBox, _('Download Failed\n\n' + title + "\n\n" + str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension)), MessageBox.TYPE_WARNING)
+                """
+
+    def downloadVideo(self):
+        # load x-downloadlist.json file
+
+        if self["channel_list"].getCurrent():
+            title = self["channel_list"].getCurrent()[0]
+
+            stream_url = self["channel_list"].getCurrent()[3]
+
+            fileTitle = re.sub(r'[\<\>\:\"\/\\\|\?\*\[\]]', '', title)
+
+            downloads_all = []
+            if os.path.isfile(json_downloadfile):
+                with open(json_downloadfile, "r") as f:
+                    try:
+                        downloads_all = json.load(f)
+                    except:
+                        pass
+
+            """
+            if pythonVer == 3:
+                stream_url = stream_url.encode()
+                """
+
+            if [_("Movie"), title, stream_url, _("Not Started"), 0] not in downloads_all:
+                downloads_all.append([_("Movie"), title, stream_url, _("Not Started"), 0])
+
+                with open(json_downloadfile, 'w') as f:
+                    json.dump(downloads_all, f)
+
+                self.session.open(MessageBox, _(title) + "\n\n" + _("Added to download manager"), MessageBox.TYPE_INFO, timeout=5)
+            else:
+                self.session.open(MessageBox, _(title) + "\n\n" + _("Already added to download manager"), MessageBox.TYPE_ERROR, timeout=5)
 
     def getTMDB(self):
         try:

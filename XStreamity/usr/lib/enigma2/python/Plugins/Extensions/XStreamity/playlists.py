@@ -248,6 +248,9 @@ class XStreamity_Playlists(Screen):
         self.drawList = [self.buildListEntry(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9]) for x in self.list]
         self["playlists"].setList(self.drawList)
 
+        if len(self.list) == 1 and playlist['user_info']['status'] == 'Active' and cfg.skipplaylistsscreen.getValue() is True:
+            self.getStreamTypes()
+
     def buildListEntry(self, index, name, url, expires, status, active, activenum, maxc, maxnum, timeshift):
         if status == (_('Active')):
             pixmap = LoadPixmap(cached=True, path=common_path + 'led_green.png')
@@ -320,3 +323,8 @@ class XStreamity_Playlists(Screen):
             if 'auth' in glob.current_playlist['user_info']:
                 if glob.current_playlist['user_info']['auth'] == 1 and glob.current_playlist['user_info']['status'] == "Active":
                     self.session.open(menu.XStreamity_Menu)
+                    self.checkoneplaylist()
+
+    def checkoneplaylist(self):
+        if len(self.list) == 1 and cfg.skipplaylistsscreen.getValue() is True:
+            self.quit()

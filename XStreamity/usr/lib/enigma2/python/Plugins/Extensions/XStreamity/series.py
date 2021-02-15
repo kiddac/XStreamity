@@ -1063,7 +1063,9 @@ class XStreamity_Categories(Screen):
         if not result:
             self.pin = False
             self.session.open(MessageBox, _("Incorrect pin code."), type=MessageBox.TYPE_ERROR, timeout=5)
-        self.next()
+            return
+        else:
+            self.next()
 
     def parentalCheck(self):
         # print("*** parentalCheck ***")

@@ -401,7 +401,9 @@ class XStreamity_Catchup(Screen):
         if not result:
             self.pin = False
             self.session.open(MessageBox, _("Incorrect pin code."), type=MessageBox.TYPE_ERROR, timeout=5)
-        self.next2()
+            return
+        else:
+            self.next2()
 
     def __next__(self):
         if self.level == 1:

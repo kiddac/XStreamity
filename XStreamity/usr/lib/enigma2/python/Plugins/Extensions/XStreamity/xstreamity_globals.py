@@ -10,4 +10,4 @@ nextlist = []
 changed = False
 originalChannelList = []
 catchupdata = []
-oneplaylist = False
+currentDownloadTotalBytes = 0

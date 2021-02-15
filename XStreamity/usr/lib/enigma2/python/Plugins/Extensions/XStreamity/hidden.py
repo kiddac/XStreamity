@@ -42,7 +42,6 @@ class XStreamity_HiddenCategories(Screen):
 
         self["key_red"] = StaticText(_('Cancel'))
         self["key_green"] = StaticText(_('Save'))
-        self['key_red'] = StaticText(_('Cancel'))
         self['key_yellow'] = StaticText(_('Invert'))
         self['key_blue'] = StaticText(_('Clear All'))
 

@@ -11,7 +11,7 @@ from Components.config import config, ConfigSubsection, ConfigSelection, ConfigD
 import os
 import shutil
 
-VERSION = "2.82-20210111"
+VERSION = "2.83-20210215"
 screenwidth = getDesktop(0).size()
 
 dir_dst = "/etc/enigma2/xstreamity/"
@@ -101,15 +101,16 @@ cfg.refreshTMDB = ConfigYesNo(default=True)
 cfg.TMDBLanguage = ConfigSelection(default='en', choices=languages)
 cfg.catchupstart = ConfigSelectionNumber(0, 30, 1, default=0)
 cfg.catchupend = ConfigSelectionNumber(0, 30, 1, default=0)
-cfg.oneplaylist = ConfigYesNo(default=False)
 cfg.subs = ConfigYesNo(default=False)
 cfg.XMLTVStart = ConfigNumber()
+cfg.skipplaylistsscreen = ConfigYesNo(default=False)
 
 skin_path = skin_directory + cfg.skin.value + '/'
 
 skin_path = '%s%s/' % (skin_directory, cfg.skin.value)
 common_path = '%scommon/' % (skin_directory)
 json_file = "%sx-playlists.json" % (dir_dst)
+json_downloadfile = "%sx-downloads.json" % (dir_dst)
 playlist_path = "%splaylists.txt" % (dir_dst)
 
 if cfg.location.value:
@@ -142,9 +143,13 @@ if not os.path.exists(dir_tmp):
 if not os.path.isfile(playlist_path):
     open(playlist_path, 'a').close()
 
-# check if playlists.json file exists in specified location
+# check if x-playlists.json file exists in specified location
 if not os.path.isfile(json_file):
     open(json_file, 'a').close()
+    
+# check if x-downloads.json file exists in specified location
+if not os.path.isfile(json_downloadfile):
+    open(json_downloadfile, 'a').close()
 
 
 def main(session, **kwargs):

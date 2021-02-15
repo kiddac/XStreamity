@@ -1,0 +1,58 @@
+<screen name="XStreamityDownloader" position="0,0" size="1920,1080" backgroundColor="#000000" flags="wfNoBorder">
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/Black/images/background.png" alphatest="off" position="0,0" size="1920,1080" zPosition="-1" />
+	<widget source="global.CurrentTime" render="Label" position="1490,0" size="400,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" halign="right" transparent="1">
+		<convert type="ClockToText">Format:%H:%M | %A %-d %b</convert>
+	</widget>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/logo.png" position="center,60" size="200,145" alphatest="blend" zPosition="1" />
+	<widget source="Title" render="Label" position="center,210" size="1920,70" foregroundColor="#ffffff" backgroundColor="#000000" halign="center" font="xstreamityregular;48" transparent="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/panel-wide.png" position="center,300" size="1680,660" alphatest="blend" zPosition="1" />
+	
+	<widget source="downloadlist" render="Listbox" position="center,330" size="1620,600" font="xstreamityregular;27"  foregroundColor="#ffffff" backgroundColor="#000000" foregroundColorSelected="#ffffff" backgroundColorSelected="#003d68" itemHeight="60" scrollbarMode="showOnDemand" enableWrapAround="1" transparent="1" zPosition="2" >
+		<convert type="TemplatedMultiContent">
+			{"template": [
+				MultiContentEntryText(pos = (15, 0), size = (195, 60), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 0), # index 0 is the type
+				MultiContentEntryText(pos = (210, 0), size = (864, 60), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1), # index 0 is the name
+				MultiContentEntryText(pos = (1119, 0), size = (240, 60), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 3), # index 3 is the state
+				MultiContentEntryProgress(pos = (1359, 22), size = (150, 15), percent = -4), # index 4 should be progress
+				MultiContentEntryText(pos = (1515, 0), size = (90, 60), font=0, flags = RT_HALIGN_RIGHT|RT_VALIGN_CENTER, text = 5), # index 5 is the percentage
+				],
+				"fonts": [gFont("Regular", 27)],
+				"itemHeight": 60
+			}
+		</convert>
+	</widget>
+	
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="center,388" size="1620,4" alphatest="blend" zPosition="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="center,448" size="1620,4" alphatest="blend" zPosition="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="center,508" size="1620,4" alphatest="blend" zPosition="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="center,568" size="1620,4" alphatest="blend" zPosition="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="center,628" size="1620,4" alphatest="blend" zPosition="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="center,688" size="1620,4" alphatest="blend" zPosition="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="center,748" size="1620,4" alphatest="blend" zPosition="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="center,808" size="1620,4" alphatest="blend" zPosition="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="center,868" size="1620,4" alphatest="blend" zPosition="1" />
+
+        <widget source="diskspace" render="Label" position="120,960" size="1680,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2" />
+	
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/button-bg.png" position="0,1020" size="1920,60" alphatest="blend" zPosition="1" />
+	
+	<widget source="key_red" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/key_red.png" position="510,1031" size="38,38" alphatest="blend" zPosition="2">
+		<convert type="ConditionalShowHide" />
+	</widget>
+	<widget source="key_red" render="Label" position="571,1020" size="165,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" transparent="1" noWrap="1" zPosition="2" />
+	
+        <widget source="key_green" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/key_green.png" position="786,1031" size="38,38" alphatest="blend" zPosition="2">
+		<convert type="ConditionalShowHide" />
+	</widget>
+	<widget source="key_green" render="Label" position="837,1020" size="165,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" transparent="1" noWrap="1" zPosition="2" />
+	
+        <widget source="key_yellow" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/key_yellow.png" position="1062,1031" size="38,38" alphatest="blend" zPosition="2">
+		<convert type="ConditionalShowHide" />
+	</widget>
+	<widget source="key_yellow" render="Label" position="1113,1020" size="165,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" transparent="1" noWrap="1" zPosition="2" />
+	
+        <widget source="key_blue" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/key_blue.png" position="1338,1031" size="38,38" alphatest="blend" zPosition="2">
+		<convert type="ConditionalShowHide" />
+	</widget>
+	<widget source="key_blue" render="Label" position="1389,1020" size="165,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" transparent="1" noWrap="1" zPosition="2" />
+</screen>

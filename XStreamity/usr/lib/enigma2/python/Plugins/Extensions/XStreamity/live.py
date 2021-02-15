@@ -704,7 +704,7 @@ class XStreamity_Categories(Screen):
         if self["channel_list"].getCurrent():
 
             self.epgcache = eEPGCache.getInstance()
-            
+
             offset = int(glob.current_playlist["player_info"]["epgshift"]) * 3600
 
             for channel in self.list2:
@@ -712,7 +712,7 @@ class XStreamity_Categories(Screen):
 
                 serviceref = channel[8]
 
-                events = ['IBDTEX', (serviceref, 1, -1, 12 * 60 )]  # search next 12 hours
+                events = ['IBDTEX', (serviceref, 1, -1, 12 * 60)]  # search next 12 hours
                 self.eventslist = [] if self.epgcache is None else self.epgcache.lookupEvent(events)
 
                 for i in range(len(self.eventslist)):
@@ -1206,7 +1206,9 @@ class XStreamity_Categories(Screen):
         if not result:
             self.pin = False
             self.session.open(MessageBox, _("Incorrect pin code."), type=MessageBox.TYPE_ERROR, timeout=5)
-        self.next()
+            return
+        else:
+            self.next()
 
     def parentalCheck(self):
         # print("*** parentalCheck ***")
@@ -1218,7 +1220,6 @@ class XStreamity_Categories(Screen):
                     if any(s in str(self["channel_list"].getCurrent()[0]).lower() for s in adult):
                         from Screens.InputBox import PinInput
                         self.session.openWithCallback(self.pinEntered, PinInput, pinList=[config.ParentalControl.setuppin.value], triesEntry=config.ParentalControl.retries.servicepin, title=_("Please enter the parental control pin code"), windowTitle=_("Enter pin code"))
-            self.next()
 
     def next(self):
         # print("*** next ***")
