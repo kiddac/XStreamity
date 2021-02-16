@@ -1070,20 +1070,20 @@ class XStreamity_Categories(Screen):
 
     def parentalCheck(self):
         # print("*** parentalCheck ***")
-        if self.editmode is False:
-            self.pin = True
-            if self.level == 1:
-                if cfg.parental.getValue() is True:
-                    adult = "all,", "+18", "adult", "18+", "18 rated", "xxx", "sex", "porn", "pink", "blue"
-                    if any(s in str(self["channel_list"].getCurrent()[0]).lower() for s in adult):
-                        from Screens.InputBox import PinInput
-                        self.session.openWithCallback(self.pinEntered, PinInput, pinList=[config.ParentalControl.setuppin.value], triesEntry=config.ParentalControl.retries.servicepin, title=_("Please enter the parental control pin code"), windowTitle=_("Enter pin code"))
-                    else:
-                        self.next()
+        
+        self.pin = True
+        if self.level == 1:
+            if cfg.parental.getValue() is True:
+                adult = "all,", "+18", "adult", "18+", "18 rated", "xxx", "sex", "porn", "pink", "blue"
+                if any(s in str(self["channel_list"].getCurrent()[0]).lower() for s in adult):
+                    from Screens.InputBox import PinInput
+                    self.session.openWithCallback(self.pinEntered, PinInput, pinList=[config.ParentalControl.setuppin.value], triesEntry=config.ParentalControl.retries.servicepin, title=_("Please enter the parental control pin code"), windowTitle=_("Enter pin code"))
                 else:
                     self.next()
             else:
                 self.next()
+        else:
+            self.next()
 
     def next(self):
         # print("*** next ***")

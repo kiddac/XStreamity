@@ -112,7 +112,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
         self.cfg_subs = getConfigListEntry(_('Allow SubsSupport plugin in VOD'), cfg.subs)
 
-        self.cfg_skipplaylistsscreen = getConfigListEntry(_('Skip playlist selction screen if only 1 playlist'), cfg.skipplaylistsscreen)
+        self.cfg_skipplaylistsscreen = getConfigListEntry(_('Skip playlist selection screen if only 1 playlist'), cfg.skipplaylistsscreen)
 
         self.createSetup()
 
