@@ -398,7 +398,7 @@ class XStreamity_Categories(Screen):
                 glob.current_playlist['player_info']['vodfavourites'] = []
 
             next_url = "%s/movie/%s/%s/%s.%s" % (str(self.host), str(self.username), str(self.password), str(stream_id), str(container_extension))
-            self.list2.append([index, str(name), str(stream_id), str(stream_icon), str(added), str(rating), str(next_url), favourite, editmode])
+            self.list2.append([index, str(name), str(stream_id), str(stream_icon), str(added), str(rating), str(next_url), favourite, editmode, container_extension])
             index += 1
 
         glob.originalChannelList2 = self.list2[:]
@@ -429,12 +429,13 @@ class XStreamity_Categories(Screen):
             # next_url = 6
             # favourite = 7
             # editmode = 8
+            # container_extension = 9
 
             if self.favourites_category:
 
-                self.channelList = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8]) for x in self.list2 if x[7] is True]
+                self.channelList = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9]) for x in self.list2 if x[7] is True]
             else:
-                self.channelList = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8]) for x in self.list2]
+                self.channelList = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9]) for x in self.list2]
 
         self["channel_list"].setList(self.channelList)
 
@@ -975,7 +976,6 @@ class XStreamity_Categories(Screen):
         if not result:
             self.pin = False
             self.session.open(MessageBox, _("Incorrect pin code."), type=MessageBox.TYPE_ERROR, timeout=5)
-            
         if self.pin is True:
             self.next()
         else:
@@ -1022,8 +1022,8 @@ class XStreamity_Categories(Screen):
                 self["channel_list"].setIndex(0)
                 self["category_actions"].setEnabled(False)
                 self["channel_actions"].setEnabled(True)
-
                 self["key_yellow"].setText(_('Sort: A-Z'))
+
                 glob.nextlist.append({"playlist_url": next_url, "index": 0, "level": self.level, "sort": self["key_yellow"].getText(), "filter": ""})
                 self.createSetup()
 
@@ -1033,7 +1033,6 @@ class XStreamity_Categories(Screen):
                 if exitbutton:
                     if self.tempstreamtype:
                         streamtype = str(self.tempstreamtype)
-
                 self.reference = eServiceReference(int(streamtype), 0, next_url)
                 self.session.openWithCallback(self.setIndex, streamplayer.XStreamity_VodPlayer, str(next_url), str(streamtype))
 
@@ -1085,38 +1084,6 @@ class XStreamity_Categories(Screen):
             if self["channel_list"].getCurrent():
                 self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "vod", self.list1)
 
-    # record button download video file
-    """
-    def downloadVideo(self):
-        if self["channel_list"].getCurrent():
-            stream_url = self["channel_list"].getCurrent()[3]
-            extension = str(os.path.splitext(stream_url)[-1])
-            title = self["channel_list"].getCurrent()[0]
-            fileTitle = re.sub(r'[\<\>\:\"\/\\\|\?\*\[\]]', '', title)
-
-            if pythonVer == 3:
-                stream_url = stream_url.encode()
-
-            try:
-                if stream_url.startswith("https") and sslverify:
-                    parsed_uri = urlparse(stream_url)
-                    domain = parsed_uri.hostname
-                    sniFactory = SNIFactory(domain)
-                    if pythonVer == 3:
-                        desc_image = desc_image.encode()
-                    downloadPage(stream_url, str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension), sniFactory).addErrback(self.printError)
-                else:
-                    if pythonVer == 3:
-                        desc_image = desc_image.encode()
-                    downloadPage(stream_url, str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension)).addErrback(self.printError)
-                self.session.open(MessageBox, _('Downloading \n\n' + title + "\n\n" + str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension)), MessageBox.TYPE_INFO)
-            except Exception as e:
-                print(("download vod error %s" % e))
-
-            except:
-                self.session.open(MessageBox, _('Download Failed\n\n' + title + "\n\n" + str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension)), MessageBox.TYPE_WARNING)
-                """
-
     def downloadVideo(self):
         # load x-downloadlist.json file
 
@@ -1134,11 +1101,6 @@ class XStreamity_Categories(Screen):
                         downloads_all = json.load(f)
                     except:
                         pass
-
-            """
-            if pythonVer == 3:
-                stream_url = stream_url.encode()
-                """
 
             if [_("Movie"), title, stream_url, _("Not Started"), 0] not in downloads_all:
                 downloads_all.append([_("Movie"), title, stream_url, _("Not Started"), 0])
@@ -1409,6 +1371,7 @@ class XStreamity_Categories(Screen):
                 # next_url = 6
                 # favourite = 7
                 # editmode = 8
+                # container_extension = 9
 
                 glob.current_playlist['player_info']['vodfavourites'].append(dict([
                     ("name", self.list2[currentindex][1]),
@@ -1416,6 +1379,7 @@ class XStreamity_Categories(Screen):
                     ("stream_icon", self.list2[currentindex][3]),
                     ("added", self.list2[currentindex][4]),
                     ("rating", self.list2[currentindex][5]),
+                    ("container_extension", self.list2[currentindex][9]),
                 ]))
 
             with open(json_file, "r") as f:
@@ -1473,11 +1437,11 @@ def buildCategoryList(index, title, next_url, category_id, hidden):
     return (title, png, index, next_url, category_id, hidden)
 
 
-def buildVodStreamList(index, title, stream_id, stream_icon, added, rating, next_url, favourite, editmode):
+def buildVodStreamList(index, title, stream_id, stream_icon, added, rating, next_url, favourite, editmode, container_extension):
     png = LoadPixmap(common_path + "play.png")
     if favourite:
         png = LoadPixmap(common_path + "favourite.png")
     if editmode:
         png = LoadPixmap(common_path + "edit.png")
 
-    return (title, png, index, next_url, stream_id, stream_icon, added, rating)
+    return (title, png, index, next_url, stream_id, stream_icon, added, rating, container_extension)

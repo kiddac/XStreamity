@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-02-15 22:01+0000\n"
-"PO-Revision-Date: 2021-02-15 22:02+0000\n"
+"POT-Creation-Date: 2021-02-19 20:24+0000\n"
+"PO-Revision-Date: 2021-02-19 20:24+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.4.2\n"
-"X-Poedit-Basepath: ../../../Git/XStreamity/XStreamity/usr/lib/enigma2/python/Plugins/Extensions/XStreamity\n"
+"X-Poedit-Basepath: ../../..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SearchPath-0: .\n"
 
@@ -20,47 +20,47 @@ msgstr ""
 
 #: catchup.py:116 downloadmanager.py:52 live.py:231 live.py:691 mainmenu.py:47
 #: menu.py:47 playlists.py:47 playsettings.py:44 series.py:186 server.py:41
-#: settings.py:45 vod.py:190 vod.py:467
+#: settings.py:45 vod.py:190 vod.py:468
 msgid "Back"
 msgstr ""
 
 #: catchup.py:117 live.py:232 live.py:692 mainmenu.py:48 menu.py:48
-#: playlists.py:48 series.py:187 vod.py:191 vod.py:468
+#: playlists.py:48 series.py:187 vod.py:191 vod.py:469
 msgid "OK"
 msgstr ""
 
-#: catchup.py:403 live.py:1208 series.py:1065 vod.py:977
+#: catchup.py:404 live.py:1208 series.py:1064 vod.py:978
 msgid "Incorrect pin code."
 msgstr ""
 
-#: catchup.py:415 live.py:1222 series.py:1078 vod.py:992
+#: catchup.py:418 live.py:1224 series.py:1080 vod.py:993
 msgid "Please enter the parental control pin code"
 msgstr ""
 
-#: catchup.py:415 live.py:1222 series.py:1078 vod.py:992
+#: catchup.py:418 live.py:1224 series.py:1080 vod.py:993
 msgid "Enter pin code"
 msgstr ""
 
-#: catchup.py:556 downloadmanager.py:53 downloadmanager.py:133 series.py:622
+#: catchup.py:554 downloadmanager.py:53 downloadmanager.py:133 series.py:622
 #: vod.py:420
 msgid "Download"
 msgstr ""
 
-#: catchup.py:559
+#: catchup.py:557
 msgid "Catchup currently not available. Missing EPG data"
 msgstr ""
 
-#: catchup.py:586
+#: catchup.py:584
 msgid "Catchup error. No data for this slot"
 msgstr ""
 
-#: catchup.py:750 series.py:1207
+#: catchup.py:748 series.py:1212
 msgid ""
 "Downloading \n"
 "\n"
 msgstr ""
 
-#: catchup.py:755 series.py:1212
+#: catchup.py:753 series.py:1217
 msgid ""
 "Download Failed\n"
 "\n"
@@ -80,7 +80,7 @@ msgstr ""
 
 #: downloadmanager.py:90 downloadmanager.py:130 downloadmanager.py:223
 #: downloadmanager.py:232 downloadmanager.py:297 downloadmanager.py:329
-#: vod.py:1139 vod.py:1140
+#: vod.py:1105 vod.py:1106
 msgid "Not Started"
 msgstr ""
 
@@ -154,14 +154,14 @@ msgstr ""
 msgid "Live Streams"
 msgstr ""
 
-#: live.py:233 live.py:1107 live.py:1125 live.py:1183 live.py:1255
-#: series.py:188 series.py:965 series.py:983 series.py:1037 series.py:1103
-#: vod.py:192 vod.py:878 vod.py:896 vod.py:952 vod.py:1022
+#: live.py:233 live.py:1107 live.py:1125 live.py:1183 live.py:1261
+#: series.py:188 series.py:965 series.py:983 series.py:1037 series.py:1108
+#: vod.py:192 vod.py:879 vod.py:897 vod.py:953 vod.py:1025
 msgid "Sort: A-Z"
 msgstr ""
 
 #: live.py:234 live.py:679 live.py:1182 series.py:189 series.py:642
-#: series.py:1036 vod.py:193 vod.py:455 vod.py:951
+#: series.py:1036 vod.py:193 vod.py:456 vod.py:952
 msgid "Search"
 msgstr ""
 
@@ -173,49 +173,49 @@ msgstr ""
 msgid "ALL"
 msgstr ""
 
-#: live.py:615 live.py:682 series.py:593 series.py:653 vod.py:411 vod.py:458
+#: live.py:615 live.py:682 series.py:593 series.py:653 vod.py:411 vod.py:459
 msgid "Hide/Show"
 msgstr ""
 
 #: live.py:675 live.py:1149 live.py:1167 series.py:644 series.py:1004
-#: series.py:1022 vod.py:451 vod.py:919 vod.py:937
+#: series.py:1022 vod.py:452 vod.py:920 vod.py:938
 msgid "Reset Search"
 msgstr ""
 
-#: live.py:945 live.py:1354 live.py:1363
+#: live.py:945 live.py:1360 live.py:1369
 msgid "Next Info"
 msgstr ""
 
-#: live.py:1108 live.py:1111 series.py:966 series.py:969 vod.py:879 vod.py:882
+#: live.py:1108 live.py:1111 series.py:966 series.py:969 vod.py:880 vod.py:883
 msgid "Sort: Z-A"
 msgstr ""
 
-#: live.py:1113 live.py:1118 series.py:971 series.py:976 vod.py:884 vod.py:889
+#: live.py:1113 live.py:1118 series.py:971 series.py:976 vod.py:885 vod.py:890
 msgid "Sort: Newest"
 msgstr ""
 
 #: live.py:1115 live.py:1122 live.py:1124 series.py:973 series.py:980
-#: series.py:982 vod.py:886 vod.py:893 vod.py:895
+#: series.py:982 vod.py:887 vod.py:894 vod.py:896
 msgid "Sort: Original"
 msgstr ""
 
-#: live.py:1150 series.py:1005 vod.py:920
+#: live.py:1150 series.py:1005 vod.py:921
 msgid "Filter this category..."
 msgstr ""
 
-#: live.py:1358
+#: live.py:1364
 msgid "Now Info"
 msgstr ""
 
-#: live.py:1485
+#: live.py:1491
 msgid "Record"
 msgstr ""
 
-#: live.py:1593 streamplayer.py:357
+#: live.py:1599 streamplayer.py:357
 msgid "Recording Timer Set."
 msgstr ""
 
-#: live.py:1595 streamplayer.py:359
+#: live.py:1601 streamplayer.py:359
 msgid "Recording Failed."
 msgstr ""
 
@@ -371,35 +371,35 @@ msgstr ""
 msgid "Season "
 msgstr ""
 
-#: series.py:689 vod.py:504
+#: series.py:689 vod.py:505
 msgid "Video Type:"
 msgstr ""
 
-#: series.py:690 vod.py:505
+#: series.py:690 vod.py:506
 msgid "Rating:"
 msgstr ""
 
-#: series.py:691 vod.py:506
+#: series.py:691 vod.py:507
 msgid "Genre:"
 msgstr ""
 
-#: series.py:692 vod.py:507
+#: series.py:692 vod.py:508
 msgid "Duration:"
 msgstr ""
 
-#: series.py:693 vod.py:508
+#: series.py:693 vod.py:509
 msgid "Release Date:"
 msgstr ""
 
-#: series.py:694 vod.py:509
+#: series.py:694 vod.py:510
 msgid "Cast:"
 msgstr ""
 
-#: series.py:695 vod.py:510
+#: series.py:695 vod.py:511
 msgid "Director:"
 msgstr ""
 
-#: series.py:696 vod.py:511
+#: series.py:696 vod.py:512
 msgid "Country:"
 msgstr ""
 
@@ -516,7 +516,7 @@ msgid "Allow SubsSupport plugin in VOD"
 msgstr ""
 
 #: settings.py:115
-msgid "Skip playlist selction screen if only 1 playlist"
+msgid "Skip playlist selection screen if only 1 playlist"
 msgstr ""
 
 #: settings.py:211 settings.py:224
@@ -539,19 +539,19 @@ msgstr ""
 msgid "Catch Up"
 msgstr ""
 
-#: vod.py:1139 vod.py:1140
+#: vod.py:1105 vod.py:1106
 msgid "Movie"
 msgstr ""
 
-#: vod.py:1145
+#: vod.py:1111
 msgid "Added to download manager"
 msgstr ""
 
-#: vod.py:1147
+#: vod.py:1113
 msgid "Already added to download manager"
 msgstr ""
 
-#: vod.py:1373
+#: vod.py:1339
 msgid ""
 "The IMDb plugin is not installed!\n"
 "Please install it."
