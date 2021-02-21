@@ -100,6 +100,9 @@ class XStreamity_DownloadManager(Screen):
             json.dump(self.downloads_all, f)
 
     def updateList(self):
+        if not self.downloads_all:
+            self.saveJson()
+            self.close()
         self.drawList = []
         self.drawList = [self.buildListEntry(x[0], x[1], x[2], x[3], x[4]) for x in self.downloads_all]
         self["downloadlist"].setList(self.drawList)
@@ -199,7 +202,10 @@ class XStreamity_DownloadManager(Screen):
                 self.lastprogress = 0
 
                 self.url = self["downloadlist"].getCurrent()[2]
-                self.extension = str(os.path.splitext(self.url)[-1])
+                try:
+                    self.extension = str(os.path.splitext(self.url)[-1])
+                except:
+                    self.extension = ""
                 self.filmtitle = self["downloadlist"].getCurrent()[1]
 
                 cleanName = re.sub(r'[\<\>\:\"\/\\\|\?\*]', ' ', str(self.filmtitle))

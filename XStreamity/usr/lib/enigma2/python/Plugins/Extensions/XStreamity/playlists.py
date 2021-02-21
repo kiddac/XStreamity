@@ -22,6 +22,7 @@ from Tools.LoadPixmap import LoadPixmap
 
 import json
 import os
+import re
 import sys
 
 try:
@@ -288,6 +289,30 @@ class XStreamity_Playlists(Screen):
                         if str(currentplaylist['playlist_info']['domain']) in line and "username=" + str(currentplaylist['playlist_info']['username']) in line:
                             line = '#%s' % line
                         f.write(line)
+
+                self.deleteEpgImporterRef()
+
+    def deleteEpgImporterRef(self, data=None):
+
+        if data is None:
+            self.session.openWithCallback(self.deleteEpgImporterRef, MessageBox, _('Delete EPG Importer references?'))
+
+        else:
+            cleanName = re.sub(r'[\<\>\:\"\/\\\|\?\*]', '_', str(glob.current_playlist['playlist_info']['name']))
+            cleanName = re.sub(r' ', '_', cleanName)
+            cleanName = re.sub(r'_+', '_', cleanName)
+
+            filepath = '/etc/epgimport/'
+            filename = 'xstreamity.' + str(cleanName) + '.sources.xml'
+            sourcepath = filepath + filename
+            epgfilename = 'xstreamity.' + str(cleanName) + '.channels.xml'
+            channelpath = filepath + epgfilename
+
+            if os.path.exists(sourcepath):
+                os.remove(sourcepath)
+            if os.path.exists(channelpath):
+                os.remove(channelpath)
+
             self.playlists_all = xfiles.processfiles()
             self.start()
 

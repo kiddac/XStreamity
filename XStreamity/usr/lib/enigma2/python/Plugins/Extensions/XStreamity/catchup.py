@@ -9,7 +9,7 @@ from . import imagedownload
 from . import streamplayer
 from . import xstreamity_globals as glob
 
-from .plugin import skin_path, screenwidth, hdr, cfg, common_path, dir_tmp
+from .plugin import skin_path, screenwidth, hdr, cfg, common_path, dir_tmp, json_downloadfile
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -396,18 +396,17 @@ class XStreamity_Catchup(Screen):
                 self.level -= 1
                 self.createSetup()
 
-
     def pinEntered(self, result):
         # print("*** pinEntered ***")
         if not result:
             self.pin = False
             self.session.open(MessageBox, _("Incorrect pin code."), type=MessageBox.TYPE_ERROR, timeout=5)
-            
+
         if self.pin is True:
             self.next2()
         else:
             return
-            
+
     def __next__(self):
         self.pin = True
         if self.level == 1:
@@ -422,7 +421,7 @@ class XStreamity_Catchup(Screen):
                 self.next2()
         else:
             self.next2()
-                        
+
     def next2(self):
 
         if self["channel_list"].getCurrent():
@@ -706,9 +705,10 @@ class XStreamity_Catchup(Screen):
         self["epg_description"].setText('')
 
     # record button download video file
+
     def downloadVideo(self):
+        # load x-downloadlist.json file
         if self["key_rec"].getText() != '':
-            from Screens.MessageBox import MessageBox
 
             if self["channel_list"].getCurrent():
 
@@ -733,27 +733,23 @@ class XStreamity_Catchup(Screen):
                 fileTitle = re.sub(r'[\<\>\:\"\/\\\|\?\*\[\]]', '_', title)
                 fileTitle = re.sub(r'_+', '_', fileTitle)
 
-                try:
-                    if playurl.startswith("https") and sslverify:
-                        parsed_uri = urlparse(str(playurl))
-                        domain = parsed_uri.hostname
-                        sniFactory = SNIFactory(domain)
-                        if pythonVer == 3:
-                            playurl = url.encode()
-                        downloadPage(str(playurl), str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension), sniFactory)
-                    else:
-                        if pythonVer == 3:
-                            playurl = url.encode()
-                        downloadPage(str(playurl), str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension))
-                    self.session.open(MessageBox, _('Downloading \n\n' + otitle + "\n\n" + str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension)), MessageBox.TYPE_INFO)
-                except Exception as e:
-                    print(("download catchup %s" % e))
-                    pass
-                except:
-                    self.session.open(MessageBox, _('Download Failed\n\n' + otitle + "\n\n" + str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension)), MessageBox.TYPE_WARNING)
-                    pass
-        else:
-            return
+                downloads_all = []
+                if os.path.isfile(json_downloadfile):
+                    with open(json_downloadfile, "r") as f:
+                        try:
+                            downloads_all = json.load(f)
+                        except:
+                            pass
+
+                if [_("Movie"), title, playurl, _("Not Started"), 0] not in downloads_all:
+                    downloads_all.append([_("Catch-up"), title, playurl, _("Not Started"), 0])
+
+                    with open(json_downloadfile, 'w') as f:
+                        json.dump(downloads_all, f)
+
+                    self.session.open(MessageBox, _(title) + "\n\n" + _("Added to download manager"), MessageBox.TYPE_INFO, timeout=5)
+                else:
+                    self.session.open(MessageBox, _(title) + "\n\n" + _("Already added to download manager"), MessageBox.TYPE_ERROR, timeout=5)
 
 
 def buildCategoryList(index, title, next_url, category_id):
