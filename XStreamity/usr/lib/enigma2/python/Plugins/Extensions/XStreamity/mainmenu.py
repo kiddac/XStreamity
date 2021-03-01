@@ -97,21 +97,20 @@ class XStreamity_MainMenu(Screen):
         except:
             pass
 
-    def start(self):
+    def start(self, answer=None):
         self.playlists_all = xfiles.processfiles()
         self.createSetup()
 
     def createSetup(self):
         self.list = []
         downloads_all = []
-        
+
         if os.path.isfile(json_downloadfile):
             with open(json_downloadfile, "r") as f:
                 try:
                     downloads_all = json.load(f)
                 except:
                     pass
-    
 
         if self.playlists_all:
             self.list.append([1, "Playlists"])
@@ -142,7 +141,7 @@ class XStreamity_MainMenu(Screen):
         from . import server
         self.session.openWithCallback(self.start, server.XStreamity_AddServer)
         return
-        
+
     def downloadManager(self):
         from . import downloadmanager
         self.session.openWithCallback(self.start, downloadmanager.XStreamity_DownloadManager)

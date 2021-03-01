@@ -16,10 +16,38 @@ from Components.ProgressBar import ProgressBar
 from Components.Pixmap import Pixmap, MultiPixmap
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 from datetime import datetime, timedelta
-from enigma import eTimer, eServiceReference, iPlayableService, ePicLoad
+# from enigma import eTimer, eServiceReference, iPlayableService, ePicLoad
+from enigma import *
 from itertools import cycle, islice
 from RecordTimer import RecordTimerEntry
-from Screens.InfoBarGenerics import InfoBarMoviePlayerSummarySupport, InfoBarServiceNotifications, InfoBarSeek, InfoBarAudioSelection, InfoBarSubtitleSupport, InfoBarShowHide
+
+from Screens.InfoBarGenerics import InfoBarMenu, InfoBarSeek, InfoBarAudioSelection, InfoBarMoviePlayerSummarySupport, \
+    InfoBarSubtitleSupport, InfoBarSummarySupport, InfoBarServiceErrorPopupSupport, InfoBarNotifications
+
+
+"""
+try:
+    from Screens.InfoBarGenerics import InfoBarResolutionSelection
+except:
+    class InfoBarResolutionSelection(object):
+        def __init__(self, *args, **kwargs):
+            pass
+
+try:
+    from Screens.InfoBarGenerics import InfoBarAspectSelection
+except:
+    class InfoBarAspectSelection(object):
+        def __init__(self, *args, **kwargs):
+            pass
+
+try:
+    from Screens.InfoBarGenerics import InfoBarBuffer
+except:
+    class InfoBarBuffer(object):
+        def __init__(self, *args, **kwargs):
+            pass
+            """
+
 from Screens.MessageBox import MessageBox
 from Screens.PVRState import PVRState
 from Screens.Screen import Screen
@@ -150,6 +178,7 @@ class IPTVInfoBarShowHide():
         self.hideTimer.stop()
         if self.__state == self.STATE_SHOWN:
             self.hide()
+        # IPTVInfoBarShowHide.__init__(self)
 
     def toggleShow(self):
         if self.skipToggleShow:
@@ -254,20 +283,42 @@ class IPTVInfoBarPVRState:
                 cb(state_summary, speed_summary, statusicon_summary)
 
 
-class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport, InfoBarServiceNotifications, IPTVInfoBarShowHide, InfoBarSeek, InfoBarAudioSelection, InfoBarSubtitleSupport, IPTVInfoBarPVRState):
+class XStreamity_StreamPlayer(
+    Screen,
+    InfoBarBase,
+    InfoBarMenu,
+    InfoBarSeek,
+    InfoBarAudioSelection,
+    InfoBarMoviePlayerSummarySupport,
+    InfoBarSubtitleSupport,
+    InfoBarSummarySupport,
+    InfoBarServiceErrorPopupSupport,
+    InfoBarNotifications,
+    IPTVInfoBarShowHide,
+    IPTVInfoBarPVRState
+):
+
     def __init__(self, session, streamurl, servicetype):
         Screen.__init__(self, session)
 
         self.session = session
 
-        InfoBarBase.__init__(self)
-        InfoBarMoviePlayerSummarySupport.__init__(self)
-        InfoBarServiceNotifications.__init__(self)
-        IPTVInfoBarShowHide.__init__(self)
-        InfoBarSeek.__init__(self)
-        InfoBarAudioSelection.__init__(self)
-        InfoBarSubtitleSupport.__init__(self)
+        for x in InfoBarBase, \
+                InfoBarMenu, \
+                InfoBarSeek, \
+                InfoBarAudioSelection, \
+                InfoBarMoviePlayerSummarySupport, \
+                InfoBarSubtitleSupport, \
+                InfoBarSummarySupport, \
+                InfoBarServiceErrorPopupSupport, \
+                InfoBarNotifications, \
+                IPTVInfoBarShowHide:
+            x.__init__(self)
+
         IPTVInfoBarPVRState.__init__(self, PVRState, True)
+
+        config.av.aspect.value = "16:9"
+        config.av.aspect.save()
 
         self.streamurl = streamurl
         self.servicetype = servicetype
@@ -311,8 +362,8 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
             "down": self.__next__,
             "stop": self.back,
             "rec": self.IPTVstartInstantRecording,
-            "red": self.back
-
+            "red": self.back,
+            "green": self.toggleAspectRatio
         }, -2)
 
         self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl))
@@ -588,26 +639,59 @@ class XStreamity_StreamPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupp
             if glob.newPlayingServiceRefString != '':
                 self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
 
+    def toggleAspectRatio(self):
+        ASPECT = ["auto", "16:9", "4:3"]
+        ASPECT_MSG = {"auto": "Auto", "16:9": "16:9", "4:3": "4:3"}
+        if config.av.aspect.value in ASPECT:
+            index = ASPECT.index(config.av.aspect.value)
+            config.av.aspect.value = ASPECT[(index + 1) % 3]
+        else:
+            config.av.aspect.value = "auto"
+        config.av.aspect.save()
+        self.session.open(MessageBox, _("AV aspect is %s.") % ASPECT_MSG[config.av.aspect.value], MessageBox.TYPE_INFO, timeout=3)
 
-class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport, InfoBarServiceNotifications, InfoBarShowHide, InfoBarSeek, InfoBarAudioSelection, InfoBarSubtitleSupport, IPTVInfoBarPVRState, SubsSupportStatus, SubsSupport):
+
+class XStreamity_VodPlayer(
+    Screen,
+    InfoBarBase,
+    InfoBarMenu,
+    InfoBarSeek,
+    InfoBarAudioSelection,
+    InfoBarMoviePlayerSummarySupport,
+    InfoBarSubtitleSupport,
+    InfoBarSummarySupport,
+    InfoBarServiceErrorPopupSupport,
+    InfoBarNotifications,
+    IPTVInfoBarShowHide,
+    IPTVInfoBarPVRState,
+    SubsSupportStatus,
+    SubsSupport
+):
 
     def __init__(self, session, streamurl, servicetype):
         Screen.__init__(self, session)
-
         self.session = session
 
-        InfoBarBase.__init__(self)
-        InfoBarMoviePlayerSummarySupport.__init__(self)
-        InfoBarServiceNotifications.__init__(self)
-        InfoBarShowHide.__init__(self)
-        InfoBarSeek.__init__(self)
-        InfoBarAudioSelection.__init__(self)
-        InfoBarSubtitleSupport.__init__(self)
+        for x in InfoBarBase, \
+                InfoBarMenu, \
+                InfoBarSeek, \
+                InfoBarAudioSelection, \
+                InfoBarMoviePlayerSummarySupport, \
+                InfoBarSubtitleSupport, \
+                InfoBarSummarySupport, \
+                InfoBarServiceErrorPopupSupport, \
+                InfoBarNotifications, \
+                IPTVInfoBarShowHide:
+            x.__init__(self)
+
         IPTVInfoBarPVRState.__init__(self, PVRState, True)
 
         if cfg.subs.value is True:
             SubsSupport.__init__(self, searchSupport=True, embeddedSupport=True)
             SubsSupportStatus.__init__(self)
+
+        config.av.aspect.value = "16:9"
+        config.av.aspect.save()
 
         self.streamurl = streamurl
         self.servicetype = servicetype
@@ -650,7 +734,7 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
             "down": self.__next__,
             "stop": self.back,
             "red": self.back,
-
+            "green": self.toggleAspectRatio,
         }, -2)
 
         self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl))
@@ -803,26 +887,60 @@ class XStreamity_VodPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport
                     self.session.nav.stopService()
                 self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
 
+    def toggleAspectRatio(self):
+        ASPECT = ["auto", "16:9", "4:3"]
+        ASPECT_MSG = {"auto": "Auto", "16:9": "16:9", "4:3": "4:3"}
+        if config.av.aspect.value in ASPECT:
+            index = ASPECT.index(config.av.aspect.value)
+            config.av.aspect.value = ASPECT[(index + 1) % 3]
+        else:
+            config.av.aspect.value = "auto"
+        config.av.aspect.save()
+        self.session.open(MessageBox, _("AV aspect is %s.") % ASPECT_MSG[config.av.aspect.value], MessageBox.TYPE_INFO, timeout=3)
 
-class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySupport, InfoBarServiceNotifications, InfoBarShowHide, InfoBarSeek, InfoBarAudioSelection, InfoBarSubtitleSupport, IPTVInfoBarPVRState, SubsSupportStatus, SubsSupport):
+
+class XStreamity_CatchupPlayer(
+    Screen,
+    InfoBarBase,
+    InfoBarMenu,
+    InfoBarSeek,
+    InfoBarAudioSelection,
+    InfoBarMoviePlayerSummarySupport,
+    InfoBarSubtitleSupport,
+    InfoBarSummarySupport,
+    InfoBarServiceErrorPopupSupport,
+    InfoBarNotifications,
+    IPTVInfoBarShowHide,
+    IPTVInfoBarPVRState,
+    SubsSupportStatus,
+    SubsSupport
+):
 
     def __init__(self, session, streamurl, servicetype):
         Screen.__init__(self, session)
 
         self.session = session
 
-        InfoBarBase.__init__(self)
-        InfoBarMoviePlayerSummarySupport.__init__(self)
-        InfoBarServiceNotifications.__init__(self)
-        InfoBarShowHide.__init__(self)
-        InfoBarSeek.__init__(self)
-        InfoBarAudioSelection.__init__(self)
-        InfoBarSubtitleSupport.__init__(self)
+        for x in InfoBarBase, \
+                InfoBarMenu, \
+                InfoBarSeek, \
+                InfoBarAudioSelection, \
+                InfoBarMoviePlayerSummarySupport, \
+                InfoBarSubtitleSupport, \
+                InfoBarSummarySupport, \
+                InfoBarServiceErrorPopupSupport, \
+                InfoBarNotifications, \
+                IPTVInfoBarShowHide:
+            x.__init__(self)
+
         IPTVInfoBarPVRState.__init__(self, PVRState, True)
 
         if cfg.subs.value is True:
             SubsSupport.__init__(self, searchSupport=True, embeddedSupport=True)
             SubsSupportStatus.__init__(self)
+
+        config.av.aspect.value = "16:9"
+        config.av.aspect.save()
 
         self.streamurl = streamurl
         self.servicetype = servicetype
@@ -853,6 +971,7 @@ class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySup
             'tv': self.toggleStreamType,
             'info': self.toggleStreamType,
             "stop": self.back,
+            "green": self.toggleAspectRatio
 
         }, -2)
 
@@ -963,3 +1082,14 @@ class XStreamity_CatchupPlayer(Screen, InfoBarBase, InfoBarMoviePlayerSummarySup
                 if self.session.nav.getCurrentlyPlayingServiceReference():
                     self.session.nav.stopService()
                 self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
+
+    def toggleAspectRatio(self):
+        ASPECT = ["auto", "16:9", "4:3"]
+        ASPECT_MSG = {"auto": "Auto", "16:9": "16:9", "4:3": "4:3"}
+        if config.av.aspect.value in ASPECT:
+            index = ASPECT.index(config.av.aspect.value)
+            config.av.aspect.value = ASPECT[(index + 1) % 3]
+        else:
+            config.av.aspect.value = "auto"
+        config.av.aspect.save()
+        self.session.open(MessageBox, _("AV aspect is %s.") % ASPECT_MSG[config.av.aspect.value], MessageBox.TYPE_INFO, timeout=3)

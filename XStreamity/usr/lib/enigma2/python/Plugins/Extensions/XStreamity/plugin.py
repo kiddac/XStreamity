@@ -11,7 +11,7 @@ from Components.config import config, ConfigSubsection, ConfigSelection, ConfigD
 import os
 import shutil
 
-VERSION = "2.86-20210221"
+VERSION = "2.88-20210229"
 screenwidth = getDesktop(0).size()
 
 dir_dst = "/etc/enigma2/xstreamity/"
@@ -172,8 +172,8 @@ def extensionsmenu(session, **kwargs):
 
 
 def Plugins(**kwargs):
-    addFont(fontfolder + 'subset-RoundedMplus1c-Regular.ttf', 'xstreamityregular', 100, 0)
-    addFont(fontfolder + 'subset-RoundedMplus1c-Medium.ttf', 'xstreamitybold', 100, 0)
+    addFont(fontfolder + 'm-plus-rounded-1c-regular.ttf', 'xstreamityregular', 100, 0)
+    addFont(fontfolder + 'm-plus-rounded-1c-medium.ttf', 'xstreamitybold', 100, 0)
 
     iconFile = 'icons/plugin-icon_sd.png'
     if screenwidth.width() > 1280:

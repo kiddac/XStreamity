@@ -227,6 +227,12 @@ class XStreamity_Categories(Screen):
         self.timerBusy = eTimer()
 
         self.editmode = False
+        
+        try:
+            config.plugins.epgimport.import_onlybouquet.value = False
+            config.plugins.epgimport.import_onlybouquet.save()
+        except:
+            pass
 
         self["key_red"] = StaticText(_('Back'))
         self["key_green"] = StaticText(_('OK'))
