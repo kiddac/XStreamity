@@ -180,8 +180,28 @@ class XStreamity_Playlists(Screen):
                     if 'rtmp_port' in playlists['server_info']:
                         del playlists['server_info']['rtmp_port']
 
+                if 'auth' in playlists:
+                    try:
+                        auth = int(playlists['user_info']['auth'])
+                    except:
+                        playlists['user_info']['auth'] = 1
+
+
+                if 'status' in playlists['user_info']:
+                    if playlists['user_info']['status'] != "Active" and playlists['user_info']['status'] != "Banned" and playlists['user_info']['status'] != "Disabled" and playlists['user_info']['status'] != "Expired":
+                        playlists['user_info']['status'] = "Active"
+
+                if 'active_cons' in playlists['user_info']:
+                    if not playlists['user_info']['active_cons']:
+                        playlists['user_info']['active_cons'] = 0
+
+                if 'max_connections' in playlists['user_info']:
+                    if not playlists['user_info']['max_connections']:
+                        playlists['user_info']['max_connections'] = 0
+
             if 'available_channels' in playlists:
                 del playlists['available_channels']
+
         self.writeJsonFile()
 
     def writeJsonFile(self):
@@ -249,7 +269,7 @@ class XStreamity_Playlists(Screen):
         self.drawList = [self.buildListEntry(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9]) for x in self.list]
         self["playlists"].setList(self.drawList)
 
-        if len(self.list) == 1 and playlist['user_info']['status'] == 'Active' and cfg.skipplaylistsscreen.getValue() is True:
+        if len(self.list) == 1 and cfg.skipplaylistsscreen.getValue() is True and 'user_info' in playlist and 'status' in playlist['user_info'] and playlist['user_info']['status'] == 'Active':
             self.getStreamTypes()
 
     def buildListEntry(self, index, name, url, expires, status, active, activenum, maxc, maxnum, timeshift):
