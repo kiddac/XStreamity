@@ -20,13 +20,14 @@ import json
 
 class XStreamity_HiddenCategories(Screen):
 
-    def __init__(self, session, category_type, channellist):
+    def __init__(self, session, category_type, channellist, level=1):
         Screen.__init__(self, session)
         self.session = session
 
         skin = skin_path + 'hidden.xml'
         self.category_type = category_type
         self.channellist = channellist
+        self.level = level
 
         with open(skin, 'r') as f:
             self.skin = f.read()
@@ -69,8 +70,10 @@ class XStreamity_HiddenCategories(Screen):
     def loadHidden(self):
         self.playlists_all = []
         self.hidelist = []
+        self.hidechannellist = []
         self.startList = []
 
+        print("self.channellist %s" % self.channellist)
         if self.category_type == "live":
             self.hidelist = glob.current_playlist['player_info']['livehidden']
 
@@ -80,11 +83,20 @@ class XStreamity_HiddenCategories(Screen):
         elif self.category_type == "series":
             self.hidelist = glob.current_playlist['player_info']['serieshidden']
 
+        self.hidechannellist = glob.current_playlist['player_info']['channelshidden']
+
         for item in self.channellist:
-            if item[3] not in self.hidelist:
-                self.startList.append([item[1], item[3], False])
-            elif item[3] in self.hidelist:
-                self.startList.append([item[1], item[3], True])
+            if self.level == 1:
+                if item[3] not in self.hidelist:
+                    self.startList.append([item[1], item[3], False])
+                elif item[3] in self.hidelist:
+                    self.startList.append([item[1], item[3], True])
+            if self.level == 2:
+                if item[2] not in self.hidechannellist:
+                    self.startList.append([item[1], item[2], False])
+                elif item[2] in self.hidechannellist:
+                    self.startList.append([item[1], item[2], True])
+
         self.refresh()
 
     def buildListEntry(self, name, category_id, enabled):
@@ -136,11 +148,18 @@ class XStreamity_HiddenCategories(Screen):
         password = glob.current_playlist['playlist_info']['password']
 
         if self.category_type == "live":
-            glob.current_playlist['player_info']['livehidden'] = []
+            if self.level == 1:
+                glob.current_playlist['player_info']['livehidden'] = []
 
-            for item in self.startList:
-                if item[2] is True:
-                    glob.current_playlist['player_info']['livehidden'].append(item[1])
+                for item in self.startList:
+                    if item[2] is True:
+                        glob.current_playlist['player_info']['livehidden'].append(item[1])
+            if self.level == 2:
+                glob.current_playlist['player_info']['channelshidden'] = []
+
+                for item in self.startList:
+                    if item[2] is True:
+                        glob.current_playlist['player_info']['channelshidden'].append(item[1])
 
         elif self.category_type == "vod":
             glob.current_playlist['player_info']['vodhidden'] = []

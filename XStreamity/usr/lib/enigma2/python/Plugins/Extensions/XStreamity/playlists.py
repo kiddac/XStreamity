@@ -19,6 +19,7 @@ from enigma import eTimer
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools.LoadPixmap import LoadPixmap
+from datetime import datetime, timedelta, date
 
 import json
 import os
@@ -123,14 +124,16 @@ class XStreamity_Playlists(Screen):
             self.process_downloads()
 
     def download_url(self, url):
+        index = url[1]
+
         import requests
         from requests.adapters import HTTPAdapter
 
-        index = url[1]
         r = ''
-        adapter = HTTPAdapter(max_retries=0)
+        adapter = HTTPAdapter()
         http = requests.Session()
         http.mount("http://", adapter)
+        http.mount("https://", adapter)
 
         try:
             r = http.get(url[0], headers=hdr, stream=True, timeout=10, verify=False)
@@ -139,24 +142,31 @@ class XStreamity_Playlists(Screen):
                 try:
                     response = r.json()
                     return index, response
-
                 except:
+                    print("***** JSON FAIL ********")
                     return index, ''
 
-        except requests.exceptions.ConnectionError as e:
-            print(("Error Connecting: %s" % e))
-            return index, ''
+        except requests.ConnectionError as e:
+            print("OOPS!! Connection Error. \n")
+            print(str(e))
 
-        except requests.exceptions.RequestException as e:
-            print(e)
-            return index, ''
+        except requests.Timeout as e:
+            print("OOPS!! Timeout Error")
+            print(str(e))
+
+        except requests.RequestException as e:
+            print("OOPS!! General Error")
+            print(str(e))
+
+        return index, ''
 
     def process_downloads(self):
+
         from multiprocessing.pool import ThreadPool
 
         threads = len(self.url_list)
         if threads:
-            pool = ThreadPool(threads)
+            pool = ThreadPool(5)
             results = pool.imap_unordered(self.download_url, self.url_list)
             for index, response in results:
                 if response != '':
@@ -180,12 +190,15 @@ class XStreamity_Playlists(Screen):
                     if 'rtmp_port' in playlists['server_info']:
                         del playlists['server_info']['rtmp_port']
 
+                    if 'time_now' in playlists['server_info']:
+                        time_now_datestamp = datetime.strptime(str(playlists['server_info']['time_now']), "%Y-%m-%d %H:%M:%S")
+                        playlists['player_info']['serveroffset'] = datetime.now().hour - time_now_datestamp.hour
+
                 if 'auth' in playlists:
                     try:
                         auth = int(playlists['user_info']['auth'])
                     except:
                         playlists['user_info']['auth'] = 1
-
 
                 if 'status' in playlists['user_info']:
                     if playlists['user_info']['status'] != "Active" and playlists['user_info']['status'] != "Banned" and playlists['user_info']['status'] != "Disabled" and playlists['user_info']['status'] != "Expired":

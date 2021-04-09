@@ -16,9 +16,9 @@
         <key id="KEY_PVR" mapto="tv" flags="b" />
         <key id="KEY_MUTE" mapto="mute" flags="b" />
         <key id="KEY_OK" mapto="ok" flags="b" />
-		<key id="KEY_OK" mapto="ok_long" flags="l" />
+        <key id="KEY_OK" mapto="ok_long" flags="l" />
         <key id="KEY_ENTER" mapto="ok" flags="b" />
-		<key id="KEY_ENTER" mapto="ok_long" flags="l" />
+        <key id="KEY_ENTER" mapto="ok_long" flags="l" />
         <key id="KEY_STOP" mapto="stop" flags="b"/>
         <key id="KEY_RED" mapto="red" flags="b"/>
         <key id="KEY_RED" mapto="redlong" flags="l"/>

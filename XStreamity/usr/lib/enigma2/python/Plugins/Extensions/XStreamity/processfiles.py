@@ -51,9 +51,12 @@ def processfiles():
         vodtype = cfg.vodtype.getValue()
         catchuptype = cfg.catchuptype.getValue()
         epgshift = 0
+        catchupshift = 0
         livehidden = []
         vodhidden = []
         serieshidden = []
+        channelshidden = []
+
         showlive = True
         showvod = True
         showseries = True
@@ -61,8 +64,12 @@ def processfiles():
         # epgquickshift = 0
         livefavourites = []
         vodfavourites = []
+        serveroffset = 0
+        
 
         for line in lines:
+            
+            
             if not line.startswith("#") and line.startswith('http'):
                 line = line.strip()
 
@@ -101,11 +108,15 @@ def processfiles():
                 if "output" in query:
                     output = query['output'][0].strip()
 
+                epgshiftexists = False
                 if "timeshift" in query:
                     try:
+                        epgshiftexists = True
                         epgshift = int(query['timeshift'][0].strip())
                     except:
                         pass
+
+                    
 
                 player_api = "%s/player_api.php?username=%s&password=%s" % (host, username, password)
                 enigma2_api = "%s/enigma2.php?username=%s&password=%s" % (host, username, password)
@@ -123,23 +134,36 @@ def processfiles():
 
                                 playlist_exists = True
 
+                                if "channelshidden" not in playlists["player_info"]:
+                                    playlists["player_info"]["channelshidden"] = channelshidden
+
+                                if "serveroffset" not in playlists["player_info"]:
+                                    playlists["player_info"]["serveroffset"] = serveroffset
+
+                                if "catchupshift" not in playlists["player_info"]:
+                                    playlists["player_info"]["catchupshift"] = catchupshift
+
                                 playlists["playlist_info"]["name"] = name
                                 playlists["playlist_info"]["type"] = type
                                 playlists["playlist_info"]["output"] = output
                                 playlists["playlist_info"]["full_url"] = full_url  # get.php
                                 playlists["playlist_info"]["index"] = index
                                 playlists["data"]["data_downloaded"] = False
-                                playlists["player_info"]["epgshift"] = epgshift
+                                if epgshiftexists:
+                                    playlists["player_info"]["epgshift"] = epgshift
 
-                                # if "epgtype" not in playlists["player_info"]:
-                                    # playlists["player_info"]["epgtype"] = epgtype
+                                """
+                                if "epgtype" not in playlists["player_info"]:
+                                    playlists["player_info"]["epgtype"] = epgtype
 
-                                # if "epgquickshift" not in playlists["player_info"]:
-                                    # playlists["player_info"]["epgquickshift"] = epgquickshift
-
-                                break
+                                if "epgquickshift" not in playlists["player_info"]:
+                                    playlists["player_info"]["epgquickshift"] = epgquickshift
+                                    """
+                                # break
 
                 if not playlist_exists:
+                    
+                    
                     playlists_all.append({
                         "playlist_info": dict([
                             ("index", index),
@@ -162,15 +186,18 @@ def processfiles():
                             ("vodtype", vodtype),
                             ("catchuptype", catchuptype),
                             ("epgshift", epgshift),
+                            ("catchupshift", catchupshift),
                             ("livehidden", livehidden),
                             ("vodhidden", vodhidden),
                             ("serieshidden", serieshidden),
+                            ("channelshidden", channelshidden),
                             ("livefavourites", livefavourites),
                             ("vodfavourites", vodfavourites),
                             ("showlive", showlive),
                             ("showvod", showvod),
                             ("showseries", showseries),
                             ("showcatchup", showcatchup),
+                            ("serveroffset", serveroffset),
                         ]),
 
                         "data": dict([

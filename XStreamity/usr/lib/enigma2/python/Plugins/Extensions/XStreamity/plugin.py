@@ -11,7 +11,7 @@ from Components.config import config, ConfigSubsection, ConfigSelection, ConfigD
 import os
 import shutil
 
-VERSION = "2.90-20210306"
+VERSION = "2.92-20210409"
 screenwidth = getDesktop(0).size()
 
 dir_dst = "/etc/enigma2/xstreamity/"
@@ -120,9 +120,16 @@ fontfolder = "%sfonts/" % (dir_plugins)
 iconfolder = "%sicons/" % (dir_plugins)
 imagefolder = "%s/images/" % (skin_path)
 
+
 """
-hdr = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36',
-       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8', 'Accept-Encoding': 'deflate'}"""
+hdr = {
+'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:87.0) Gecko/20100101 Firefox/87.0',
+'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+'Accept-Language': 'en-GB,en;q=0.5',
+'Accept-Encoding': 'gzip, deflate',
+}
+"""
+
 
 hdr = {'User-Agent': 'Enigma2 - XStreamity Plugin'}
 
@@ -146,7 +153,7 @@ if not os.path.isfile(playlist_path):
 # check if x-playlists.json file exists in specified location
 if not os.path.isfile(json_file):
     open(json_file, 'a').close()
-    
+
 # check if x-downloads.json file exists in specified location
 if not os.path.isfile(json_downloadfile):
     open(json_downloadfile, 'a').close()

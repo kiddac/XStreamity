@@ -24,12 +24,6 @@ from Screens.Screen import Screen
 from Tools.LoadPixmap import LoadPixmap
 from twisted.web.client import downloadPage
 
-try:
-    from requests.packages.urllib3.util.retry import Retry
-except:
-    from urllib3.util import Retry
-
-
 import base64
 import json
 import math
@@ -209,7 +203,6 @@ class XStreamity_Catchup(Screen):
         levelpath = str(dir_tmp) + 'level' + str(self.level) + '.xml'
 
         if not os.path.exists(levelpath):
-            # retries = Retry(total=3, status_forcelist=[408, 429, 500, 503, 504], method_whitelist=["HEAD", "GET", "OPTIONS"], backoff_factor = 1)
 
             adapter = HTTPAdapter(max_retries=0)
             http = requests.Session()
@@ -340,7 +333,6 @@ class XStreamity_Catchup(Screen):
         self.live_list_all = []
         self.live_list_archive = []
 
-        # retries = Retry(total=2, status_forcelist=[408, 429, 500, 503, 504], method_whitelist=["HEAD", "GET", "OPTIONS"], backoff_factor = 1)
         adapter = HTTPAdapter(max_retries=0)
         http = requests.Session()
         http.mount("http://", adapter)
@@ -367,6 +359,7 @@ class XStreamity_Catchup(Screen):
 
     def back(self):
         self.hideEPG()
+        self["key_rec"].setText("")
 
         if self.selectedlist == self["epg_short_list"]:
 
@@ -458,7 +451,6 @@ class XStreamity_Catchup(Screen):
                     shortEPGJson = []
 
                     url = str(self.simpledatatable) + str(stream_id)
-                    # retries = Retry(total=2, status_forcelist=[408, 429, 500, 503, 504], method_whitelist=["HEAD", "GET", "OPTIONS"], backoff_factor = 1)
 
                     adapter = HTTPAdapter(max_retries=0)
                     http = requests.Session()
@@ -496,6 +488,21 @@ class XStreamity_Catchup(Screen):
                                             epg_description = ""
                                             epg_date_all = ""
                                             epg_time_all = ""
+                                            shift = 0
+                                            epgstart = ""
+                                            epgend = ""
+                                            epgstarttimestamp = ""
+                                            epgendtimestamp = ""
+                                            epg_day = ""
+                                            epg_start_date = ""
+                                            catchupstart = ""
+                                            epgstarttimestamp = ""
+                                            catchupend = ""
+                                            epg_duration = ""
+                                            start_timestamp = ""
+                                            stop_timestamp = ""
+                                            start = ""
+                                            start_timestamp = ""
 
                                             if 'title' in listing:
                                                 epg_title = base64.b64decode(listing['title']).decode('utf-8')
@@ -503,42 +510,54 @@ class XStreamity_Catchup(Screen):
                                             if 'description' in listing:
                                                 epg_description = base64.b64decode(listing['description']).decode('utf-8')
 
-                                            shift = 0
-
-                                            if "epgshift" in glob.current_playlist["player_info"]:
-                                                shift = int(glob.current_playlist["player_info"]["epgshift"])
+                                            if "catchupshift" in glob.current_playlist["player_info"]:
+                                                shift = int(glob.current_playlist["player_info"]["catchupshift"])
 
                                             if 'start' in listing:
-                                                epgstart = listing['start']
+                                                start = listing['start']
+                                                start_timestamp_o = int(time.mktime(time.strptime(start, "%Y-%m-%d %H:%M:%S")))
 
-                                                if 'end' in listing:
-                                                    epgend = listing['end']
+                                            if 'end' in listing:
+                                                end = listing['end']
+                                                stop_timestamp_o = int(time.mktime(time.strptime(end, "%Y-%m-%d %H:%M:%S")))
 
-                                                    epgstarttimestamp = int(time.mktime(time.strptime(epgstart, "%Y-%m-%d %H:%M:%S")))
-                                                    epgendtimestamp = int(time.mktime(time.strptime(epgend, "%Y-%m-%d %H:%M:%S")))
+                                            if 'start_timestamp' in listing:
+                                                start_timestamp = int(listing['start_timestamp'])
+                                                start_timestamp_datestamp = datetime.fromtimestamp(start_timestamp)
 
-                                                    # add epg timeshift
-                                                    epgstarttimestamp += shift * 60 * 60
-                                                    epgendtimestamp += shift * 60 * 60
+                                            if 'stop_timestamp' in listing:
+                                                stop_timestamp = int(listing['stop_timestamp'])
+                                                stop_timestamp_datestamp = datetime.fromtimestamp(stop_timestamp)
 
-                                                    epg_day = datetime.fromtimestamp(epgstarttimestamp).strftime("%a")
-                                                    epg_start_date = datetime.fromtimestamp(epgstarttimestamp).strftime("%d/%m")
-                                                    epg_date_all = "%s %s" % (epg_day, epg_start_date)
-                                                    epg_time_all = "%s - %s" % (datetime.fromtimestamp(epgstarttimestamp).strftime("%Y-%m-%d %H:%M:%S")[11:16],
-                                                                                datetime.fromtimestamp(epgendtimestamp).strftime("%Y-%m-%d %H:%M:%S")[11:16])
+                                            epg_date_all = "%s %s" % (start_timestamp_datestamp.strftime("%a"), start_timestamp_datestamp.strftime("%d/%m"))
 
-                                                    # add catchup buffer
-                                                    catchupstart = int(cfg.catchupstart.getValue())
-                                                    epgstarttimestamp -= catchupstart * 60
-                                                    catchupend = int(cfg.catchupend.getValue())
-                                                    epgendtimestamp += catchupend * 60
+                                            epg_time_all = "%s - %s" % (start_timestamp_datestamp.strftime("%H:%S"), stop_timestamp_datestamp.strftime("%H:%S"))
 
-                                                    epg_duration = int(epgendtimestamp - epgstarttimestamp) / 60
+                                            # add catchup buffer
+                                            catchupstart = int(cfg.catchupstart.getValue())
+                                            catchupend = int(cfg.catchupend.getValue())
 
-                                                    epgstarttimestamp -= shift * 60 * 60
-                                                    epg_date = str((datetime.fromtimestamp(epgstarttimestamp).strftime("%Y-%m-%d %H:%M:%S")).replace(":", "-").replace(" ", ":"))[0:16]
+                                            start_timestamp_o -= (catchupstart * 60)
+                                            stop_timestamp_o += (catchupend * 60)
 
-                                            self.epgshortlist.append(buildShortEPGListEntry(str(epg_date_all), str(epg_time_all), str(epg_title), str(epg_description), str(epg_date), str(epg_duration), index))
+                                            epg_duration = int(stop_timestamp_o - start_timestamp_o) / 60
+
+                                            start_timestamp_o += (shift * 60 * 60)
+
+                                            # url_datestring = str((datetime.fromtimestamp( start_timestamp).strftime("%Y-%m-%d %H:%M:%S")).replace(":", "-").replace(" ", ":"))[0:16]
+                                            url_datestring = str((datetime.fromtimestamp(start_timestamp_o).strftime("%Y-%m-%d %H:%M:%S")).replace(":", "-").replace(" ", ":"))[0:16]
+
+                                            print("start_timestamp %s" % start_timestamp)
+                                            print("stop_timestamp %s" % stop_timestamp)
+                                            print("start_timestamp_datestamp %s" % start_timestamp_datestamp)
+                                            print("stop_timestamp_datestamp %s" % stop_timestamp_datestamp)
+                                            print("epg_start_date %s" % epg_start_date)
+                                            print("epg_date_all %s" % epg_date_all)
+                                            print("epg_duration %s" % epg_duration)
+                                            print("url_datestring %s" % url_datestring)
+                                            print("shift %s" % shift)
+
+                                            self.epgshortlist.append(buildShortEPGListEntry(str(epg_date_all), str(epg_time_all), str(epg_title), str(epg_description), str(url_datestring), str(epg_duration), index))
                                             index += 1
 
                                 self.epgshortlist.reverse()
@@ -572,6 +591,7 @@ class XStreamity_Catchup(Screen):
         duration = str(self["epg_short_list"].getCurrent()[5])
 
         playurl = "%s/timeshift/%s/%s/%s/%s/%s" % (self.host, self.username, self.password, duration, date, stream)
+        print("***** playurl ******* %s" % playurl)
 
         if next_url != 'None' and "/live/" in next_url:
             streamtype = str(glob.current_playlist["player_info"]["catchuptype"])

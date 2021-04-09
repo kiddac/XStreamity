@@ -12,34 +12,36 @@
 		<convert type="TemplatedMultiContent">
 			{"template": [
 			<!-- name -->
-			MultiContentEntryText(pos = (21, 9), size = (525, 42), font=0,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 1),
+			MultiContentEntryText(pos = (21, 9), size = (432, 42), font=0,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 1),
 			
 			<!-- url -->
 			<!-- MultiContentEntryText(pos = (21, 48), size = (525, 27), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 2), -->
 			
-			<!-- Expires -->
-			MultiContentEntryText(pos = (21, 75), size = (525, 27), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 3),
-			
-			<!-- Timeshift -->
-			MultiContentEntryText(pos = (21, 48), size = (525, 27), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 10),
+			<!-- Authorised LED -->
+			MultiContentEntryPixmapAlphaBlend(pos = (699, 24), size = (23, 24), png = 5),
 			
 			<!-- Authorised -->
-			MultiContentEntryText(pos = (453, 18), size = (224, 27), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_RIGHT, text = 4),
-			
-			<!-- Authorised LED -->
-			MultiContentEntryPixmapAlphaBlend(pos = (690, 21), size = (23, 24), png = 5),
+			MultiContentEntryText(pos = (465, 21), size = (472, 30), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 4),
 			
 			<!-- Active Conn -->
-			MultiContentEntryText(pos = (453, 48), size = (224, 27), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_RIGHT, text = 6),
+			MultiContentEntryText(pos = (465, 48), size = (129, 30), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 6),
 			
 			<!-- Active Conn Num -->
-			MultiContentEntryText(pos = (678, 48), size = (30, 27), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_RIGHT, text = 7),
+			MultiContentEntryText(pos = (639, 48), size = (78, 30), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_RIGHT, text = 7),
 			
 			<!-- Max Conn -->
-			MultiContentEntryText(pos = (453, 75), size = (224, 27), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_RIGHT, text = 8),
+			MultiContentEntryText(pos = (465, 75), size = (120, 30), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 8),
 			
-			<!-- Max Conn Num -->
-			MultiContentEntryText(pos = (678, 75), size = (30, 27), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_RIGHT, text = 9),
+			<!-- Max Conn Num --> 
+			MultiContentEntryText(pos = (639, 75), size = (78, 30), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_RIGHT, text = 9),
+			
+			
+			<!-- Expires -->
+			MultiContentEntryText(pos = (21, 75), size = (240, 30), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 3),
+			
+			<!-- Timeshift -->
+			MultiContentEntryText(pos = (21, 48), size = (240, 30), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 10),
+		
 			],
 			"fonts": [gFont("xstreamityregular", 30), gFont("xstreamityregular", 21)],
 			"itemHeight": 120,
