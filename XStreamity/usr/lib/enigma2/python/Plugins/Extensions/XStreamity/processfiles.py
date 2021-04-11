@@ -66,9 +66,7 @@ def processfiles():
         vodfavourites = []
         serveroffset = 0
         
-
         for line in lines:
-            
             
             if not line.startswith("#") and line.startswith('http'):
                 line = line.strip()
@@ -116,8 +114,6 @@ def processfiles():
                     except:
                         pass
 
-                    
-
                 player_api = "%s/player_api.php?username=%s&password=%s" % (host, username, password)
                 enigma2_api = "%s/enigma2.php?username=%s&password=%s" % (host, username, password)
                 xmltv_api = "%s/xmltv.php?username=%s&password=%s" % (host, username, password)
@@ -162,7 +158,6 @@ def processfiles():
                                 # break
 
                 if not playlist_exists:
-                    
                     
                     playlists_all.append({
                         "playlist_info": dict([

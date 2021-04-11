@@ -39,7 +39,6 @@ class RecordDateInput(ConfigListScreen, Screen):
         self['key_red'] = StaticText(_('Close'))
         self['key_green'] = StaticText(_('Save'))
 
-
         self['VKeyIcon'] = Pixmap()
         self['VKeyIcon'].hide()
         self['HelpWindow'] = Pixmap()       
