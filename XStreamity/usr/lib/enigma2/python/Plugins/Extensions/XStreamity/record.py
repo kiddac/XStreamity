@@ -41,7 +41,7 @@ class RecordDateInput(ConfigListScreen, Screen):
 
         self['VKeyIcon'] = Pixmap()
         self['VKeyIcon'].hide()
-        self['HelpWindow'] = Pixmap()       
+        self['HelpWindow'] = Pixmap()
         self['HelpWindow'].hide()
 
         self.conf_name = config_name

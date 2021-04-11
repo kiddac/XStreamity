@@ -65,9 +65,9 @@ def processfiles():
         livefavourites = []
         vodfavourites = []
         serveroffset = 0
-        
+
         for line in lines:
-            
+
             if not line.startswith("#") and line.startswith('http'):
                 line = line.strip()
 
@@ -158,7 +158,7 @@ def processfiles():
                                 # break
 
                 if not playlist_exists:
-                    
+
                     playlists_all.append({
                         "playlist_info": dict([
                             ("index", index),
