@@ -19,7 +19,9 @@ from Components.ProgressBar import ProgressBar
 from Components.Sources.List import List
 from datetime import datetime, timedelta
 from enigma import eTimer, eServiceReference, ePicLoad
+from os import system
 from requests.adapters import HTTPAdapter
+from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Tools.LoadPixmap import LoadPixmap
@@ -30,19 +32,16 @@ try:
 except:
     from urllib.parse import unquote
 
-from Screens.MessageBox import MessageBox
-
 import base64
-import re
+import codecs
 import json
 import math
 import os
+import re
 import requests
 import sys
 import zlib
-import codecs
 
-from os import system
 
 try:
     pythonVer = sys.version_info.major
@@ -51,7 +50,6 @@ except:
 
 # https twisted client hack #
 try:
-    from OpenSSL import SSL
     from twisted.internet import ssl
     from twisted.internet._sslverify import ClientTLSOptions
     sslverify = True
@@ -174,9 +172,6 @@ class XStreamity_Categories(Screen):
         self.position = 0
         self.positionall = 0
         self.itemsperpage = 10
-
-        self.tempstreamtype = ''
-        self.tempstream_url = ''
 
         self.token = "ZUp6enk4cko4ZzBKTlBMTFNxN3djd25MOHEzeU5Zak1Bdkd6S3lPTmdqSjhxeUxMSTBNOFRhUGNBMjBCVmxBTzlBPT0K"
 
@@ -341,7 +336,6 @@ class XStreamity_Categories(Screen):
 
         for item in currentChannelList:
             name = ''
-            stream_type = ''
             stream_id = ''
             stream_icon = ''
             added = ''
@@ -360,9 +354,6 @@ class XStreamity_Categories(Screen):
                     name = re.sub(r'_', '', re.sub(pattern, '', name))
                     name = "** " + str(name) + " **"
 
-            if 'stream_type' in item:
-                stream_type = item['stream_type']
-
             if 'stream_id' in item:
                 stream_id = item['stream_id']
 
@@ -380,14 +371,13 @@ class XStreamity_Categories(Screen):
             if 'added' in item:
                 added = item['added']
 
-            if 'category_id' in item:
-                category_id = item['category_id']
-
             if 'container_extension' in item:
                 container_extension = item['container_extension']
 
             if 'rating' in item:
                 rating = item['rating']
+
+            next_url = "%s/movie/%s/%s/%s.%s" % (str(self.host), str(self.username), str(self.password), str(stream_id), str(container_extension))
 
             if 'vodfavourites' in glob.current_playlist['player_info']:
                 for fav in glob.current_playlist['player_info']['vodfavourites']:
@@ -397,7 +387,6 @@ class XStreamity_Categories(Screen):
             else:
                 glob.current_playlist['player_info']['vodfavourites'] = []
 
-            next_url = "%s/movie/%s/%s/%s.%s" % (str(self.host), str(self.username), str(self.password), str(stream_id), str(container_extension))
             self.list2.append([index, str(name), str(stream_id), str(stream_icon), str(added), str(rating), str(next_url), favourite, editmode, container_extension])
             index += 1
 
@@ -513,19 +502,13 @@ class XStreamity_Categories(Screen):
 
     def playStream(self):
         # print("*** playStream ***")
-        # exit button back to playing stream
+        # back button back to playing stream
         if self["channel_list"].getCurrent():
 
             if self.session.nav.getCurrentlyPlayingServiceReference():
                 if self.session.nav.getCurrentlyPlayingServiceReference().toString() == glob.currentPlayingServiceRefString:
                     self.back()
                 else:
-                    ref = str(self.session.nav.getCurrentlyPlayingServiceReference().toString())
-                    self.tempstreamtype = ref.partition(':')[0]
-                    self.tempstream_url = unquote(ref.split(':')[10]).decode('utf8')
-                    self.source = "exit"
-                    self.pin = True
-
                     self["channel_list"].setIndex(glob.nextlist[-1]['index'])
                     self.next()
             else:
@@ -953,11 +936,9 @@ class XStreamity_Categories(Screen):
         self["key_yellow"].setText(_('Sort: A-Z'))
 
         if self.level == 1:
-            activelist = self.list1[:]
             activeoriginal = glob.originalChannelList1[:]
 
         elif self.level == 2:
-            activelist = self.list2[:]
             activeoriginal = glob.originalChannelList2[:]
 
         if self.level == 1:
@@ -1008,15 +989,6 @@ class XStreamity_Categories(Screen):
             glob.currentchannelist = self.channelList[:]
             glob.currentchannelistindex = currentindex
 
-            exitbutton = False
-            callingfunction = sys._getframe().f_back.f_code.co_name
-            if callingfunction == "playStream":
-                exitbutton = True
-
-            if exitbutton:
-                if self.tempstream_url:
-                    next_url = str(self.tempstream_url)
-
             if self.level == 1:
                 self.level += 1
                 self["channel_list"].setIndex(0)
@@ -1029,10 +1001,6 @@ class XStreamity_Categories(Screen):
 
             elif self.level == 2:
                 streamtype = glob.current_playlist["player_info"]["vodtype"]
-
-                if exitbutton:
-                    if self.tempstreamtype:
-                        streamtype = str(self.tempstreamtype)
                 self.reference = eServiceReference(int(streamtype), 0, next_url)
                 self.session.openWithCallback(self.setIndex, streamplayer.XStreamity_VodPlayer, str(next_url), str(streamtype))
 
@@ -1054,8 +1022,6 @@ class XStreamity_Categories(Screen):
             self.close()
 
         else:
-            self.tempstreamtype = ''
-            self.tempstream_url = ''
             self["key_rec"].setText('')
 
             if cfg.stopstream.value:
@@ -1089,11 +1055,7 @@ class XStreamity_Categories(Screen):
 
         if self["channel_list"].getCurrent():
             title = self["channel_list"].getCurrent()[0]
-
             stream_url = self["channel_list"].getCurrent()[3]
-
-            fileTitle = re.sub(r'[\<\>\:\"\/\\\|\?\*\[\]]', '', title)
-
             downloads_all = []
             if os.path.isfile(json_downloadfile):
                 with open(json_downloadfile, "r") as f:

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from .plugin import dir_tmp
-from PIL import Image, ImageChops, ImageFile
+from PIL import Image, ImageChops
 
 
 def updatePreview(piconSize, imageType, temp):

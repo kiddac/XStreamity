@@ -16,7 +16,6 @@ from os import system, chmod
 from Screens.Console import Console
 from Screens.Screen import Screen
 from Tools.LoadPixmap import LoadPixmap
-from ServiceReference import ServiceReference
 
 import json
 import os

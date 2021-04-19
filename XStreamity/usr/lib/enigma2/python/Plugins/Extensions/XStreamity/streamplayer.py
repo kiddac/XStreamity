@@ -16,37 +16,13 @@ from Components.ProgressBar import ProgressBar
 from Components.Pixmap import Pixmap, MultiPixmap
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 from datetime import datetime, timedelta
-# from enigma import eTimer, eServiceReference, iPlayableService, ePicLoad
-from enigma import *
+from enigma import eTimer, eServiceReference, iPlayableService, ePicLoad
+
 from itertools import cycle, islice
 from RecordTimer import RecordTimerEntry
 
 from Screens.InfoBarGenerics import InfoBarMenu, InfoBarSeek, InfoBarAudioSelection, InfoBarMoviePlayerSummarySupport, \
     InfoBarSubtitleSupport, InfoBarSummarySupport, InfoBarServiceErrorPopupSupport, InfoBarNotifications
-
-
-"""
-try:
-    from Screens.InfoBarGenerics import InfoBarResolutionSelection
-except:
-    class InfoBarResolutionSelection(object):
-        def __init__(self, *args, **kwargs):
-            pass
-
-try:
-    from Screens.InfoBarGenerics import InfoBarAspectSelection
-except:
-    class InfoBarAspectSelection(object):
-        def __init__(self, *args, **kwargs):
-            pass
-
-try:
-    from Screens.InfoBarGenerics import InfoBarBuffer
-except:
-    class InfoBarBuffer(object):
-        def __init__(self, *args, **kwargs):
-            pass
-            """
 
 from Screens.MessageBox import MessageBox
 from Screens.PVRState import PVRState
@@ -86,8 +62,7 @@ except:
 
 # https twisted client hack #
 try:
-    from OpenSSL import SSL
-    from twisted.internet import ssl, reactor
+    from twisted.internet import ssl
     from twisted.internet._sslverify import ClientTLSOptions
     sslverify = True
 except:
@@ -95,9 +70,9 @@ except:
 
 if sslverify:
     try:
-        from urlparse import urlparse, parse_qs
+        from urlparse import urlparse
     except:
-        from urllib.parse import urlparse, parse_qs
+        from urllib.parse import urlparse
 
     class SNIFactory(ssl.ClientContextFactory):
         def __init__(self, hostname=None):
@@ -482,11 +457,9 @@ class XStreamity_StreamPlayer(
             glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
 
         self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
-            iPlayableService.evEnd: self.__evEnd,
             iPlayableService.evTunedIn: self.__evTunedIn,
             iPlayableService.evTuneFailed: self.__evTuneFailed,
             iPlayableService.evUpdatedInfo: self.__evUpdatedInfo,
-            iPlayableService.evSeekableStatusChanged: self.__evSeekableStatusChanged,
             iPlayableService.evEOF: self.__evEOF,
         })
 
@@ -544,11 +517,7 @@ class XStreamity_StreamPlayer(
         if self["epg_picon"].instance:
             self["epg_picon"].instance.setPixmapFromFile(common_path + "picon.png")
 
-    def __evEnd(self):
-        print("** evEnd **")
-
     def __evTunedIn(self):
-        print("** evTunedIn **")
         if self.servicetype == "1":
             self.hasStreamData = False
             self.timerstream = eTimer()
@@ -559,19 +528,13 @@ class XStreamity_StreamPlayer(
             self.timerstream.start(2000, True)
 
     def __evTuneFailed(self):
-        print("** evTuneFailed **")
         self.back()
 
     def __evUpdatedInfo(self):
-        # print("** evUpdatedInfo **")
         if self.servicetype == "1":
             self.hasStreamData = True
 
-    def __evSeekableStatusChanged(self):
-        print("** evSeekableStatusChanged **")
-
     def __evEOF(self):
-        print("** evEOF **")
         if self.servicetype == "1":
             self.session.nav.stopService()
             self.session.nav.playService(self.reference, forceRestart=True)
@@ -986,6 +949,8 @@ class XStreamity_CatchupPlayer(
             self["extension"].setText(str(os.path.splitext(streamurl)[-1]))
         except:
             pass
+            
+        print("streamurl %s " % streamurl)
 
         self.reference = eServiceReference(int(servicetype), 0, streamurl)
         self.reference.setName(glob.catchupdata[0])

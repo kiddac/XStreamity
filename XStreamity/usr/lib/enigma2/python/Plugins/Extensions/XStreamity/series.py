@@ -19,7 +19,9 @@ from Components.ProgressBar import ProgressBar
 from Components.Sources.List import List
 from datetime import datetime, timedelta
 from enigma import eTimer, eServiceReference, ePicLoad
+from os import system
 from requests.adapters import HTTPAdapter
+from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Tools.LoadPixmap import LoadPixmap
@@ -30,17 +32,17 @@ try:
 except:
     from urllib.parse import unquote
 
+
 import base64
-import re
+import codecs
 import json
 import math
 import os
+import re
 import requests
 import sys
 import zlib
-import codecs
 
-from os import system
 
 try:
     pythonVer = sys.version_info.major
@@ -49,7 +51,6 @@ except:
 
 # https twisted client hack #
 try:
-    from OpenSSL import SSL
     from twisted.internet import ssl
     from twisted.internet._sslverify import ClientTLSOptions
     sslverify = True
@@ -172,9 +173,6 @@ class XStreamity_Categories(Screen):
         self.position = 0
         self.positionall = 0
         self.itemsperpage = 10
-
-        self.tempstreamtype = ''
-        self.tempstream_url = ''
 
         self.token = "ZUp6enk4cko4ZzBKTlBMTFNxN3djd25MOHEzeU5Zak1Bdkd6S3lPTmdqSjhxeUxMSTBNOFRhUGNBMjBCVmxBTzlBPT0K"
 
@@ -704,12 +702,6 @@ class XStreamity_Categories(Screen):
                 if self.session.nav.getCurrentlyPlayingServiceReference().toString() == glob.currentPlayingServiceRefString:
                     self.back()
                 else:
-                    ref = str(self.session.nav.getCurrentlyPlayingServiceReference().toString())
-                    self.tempstreamtype = ref.partition(':')[0]
-                    self.tempstream_url = unquote(ref.split(':')[10]).decode('utf8')
-                    self.source = "exit"
-                    self.pin = True
-
                     self["channel_list"].setIndex(glob.nextlist[-1]['index'])
                     self.next()
             else:
@@ -803,7 +795,7 @@ class XStreamity_Categories(Screen):
                     self.loadDefaultImage()
 
             except Exception as e:
-                print(("* image error ** %s" % e))
+                print("* image error ** %s" % e)
 
     def loadDefaultImage(self, failure=None):
         # print("*** loadDefaultImage ***")
@@ -1037,20 +1029,16 @@ class XStreamity_Categories(Screen):
         self["key_yellow"].setText(_('Sort: A-Z'))
 
         if self.level == 1:
-            activelist = self.list1[:]
             activeoriginal = glob.originalChannelList1[:]
 
         elif self.level == 2:
-            activelist = self.list2[:]
             activeoriginal = glob.originalChannelList2[:]
 
-        activelist = activeoriginal
-
         if self.level == 1:
-            self.list1 = activelist
+            self.list1 = activeoriginal
 
         elif self.level == 2:
-            self.list2 = activelist
+            self.list2 = activeoriginal
 
         self.filterresult = ""
         glob.nextlist[-1]["filter"] = self.filterresult
@@ -1095,22 +1083,12 @@ class XStreamity_Categories(Screen):
             glob.currentchannelist = self.channelList[:]
             glob.currentchannelistindex = currentindex
 
-            exitbutton = False
-            callingfunction = sys._getframe().f_back.f_code.co_name
-            if callingfunction == "playStream":
-                exitbutton = True
-
-            if exitbutton:
-                if self.tempstream_url:
-                    next_url = str(self.tempstream_url)
-
             if self.level == 1:
-                self["key_yellow"].setText(_('Sort: A-Z'))
-
                 self.level += 1
                 self["channel_list"].setIndex(0)
                 self["category_actions"].setEnabled(False)
                 self["channel_actions"].setEnabled(True)
+                self["key_yellow"].setText(_('Sort: A-Z'))
 
                 glob.nextlist.append({"playlist_url": next_url, "index": 0, "level": self.level, "sort": self["key_yellow"].getText(), "filter": ""})
 
@@ -1135,10 +1113,6 @@ class XStreamity_Categories(Screen):
             elif self.level == 4:
                 streamtype = glob.current_playlist["player_info"]["vodtype"]
 
-                if exitbutton:
-                    if self.tempstreamtype:
-                        streamtype = str(self.tempstreamtype)
-
                 self.reference = eServiceReference(int(streamtype), 0, next_url)
                 self.session.openWithCallback(self.setIndex, streamplayer.XStreamity_VodPlayer, str(next_url), str(streamtype))
 
@@ -1156,8 +1130,6 @@ class XStreamity_Categories(Screen):
             self.close()
 
         else:
-            self.tempstreamtype = ''
-            self.tempstream_url = ''
             self["key_rec"].setText('')
 
             if cfg.stopstream.value:
@@ -1246,6 +1218,9 @@ class XStreamity_Categories(Screen):
             bad_chars = ["sd", "hd", "fhd", "uhd", "4k", "vod", "1080p", "720p", "blueray", "x264", "aac", "ozlem", "hindi", "hdrip", "(cache)", "(kids)", "[3d-en]", "[iran-dubbed]", "imdb", "top250", "multi-audio",
                          "multi-subs", "multi-sub", "[audio-pt]", "[nordic-subbed]", "[nordic-subbeb]",
 
+                         "ae:", "al:", "ar:", "at:", "ba:", "be:", "bg:", "br:", "cg:", "ch:", "cz:", "da:", "de:", "dk:", "ee:", "en:", "es:", "ex-yu:", "fi:", "fr:", "gr:", "hr:", "hu:", "in:", "ir:", "it:", "lt:", "mk:",
+                         "mx:", "nl:", "no:", "pl:", "pt:", "ro:", "rs:", "ru:", "se:", "si:", "sk:", "tr:", "uk:", "us:", "yu:",
+
                          "[ae]", "[al]", "[ar]", "[at]", "[ba]", "[be]", "[bg]", "[br]", "[cg]", "[ch]", "[cz]", "[da]", "[de]", "[dk]", "[ee]", "[en]", "[es]", "[ex-yu]", "[fi]", "[fr]", "[gr]", "[hr]", "[hu]", "[in]", "[ir]", "[it]", "[lt]", "[mk]",
                          "[mx]", "[nl]", "[no]", "[pl]", "[pt]", "[ro]", "[rs]", "[ru]", "[se]", "[si]", "[sk]", "[tr]", "[uk]", "[us]", "[yu]",
 
@@ -1255,7 +1230,7 @@ class XStreamity_Categories(Screen):
                          "|ae|", "|al|", "|ar|", "|at|", "|ba|", "|be|", "|bg|", "|br|", "|cg|", "|ch|", "|cz|", "|da|", "|de|", "|dk|", "|ee|", "|en|", "|es|", "|ex-yu|", "|fi|", "|fr|", "|gr|", "|hr|", "|hu|", "|in|", "|ir|", "|it|", "|lt|", "|mk|",
                          "|mx|", "|nl|", "|no|", "|pl|", "|pt|", "|ro|", "|rs|", "|ru|", "|se|", "|si|", "|sk|", "|tr|", "|uk|", "|us|", "|yu|",
 
-                         "(", ")", "[", "]", "u-", "3d", "'", "#", "/", "&"]
+                         "(", ")", "[", "]", "u-", "3d", "'", "#", "/"]
 
             for j in range(1900, 2025):
                 bad_chars.append(str(j))

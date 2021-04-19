@@ -15,11 +15,9 @@ from Components.Pixmap import Pixmap
 from Components.Sources.List import List
 from datetime import datetime
 from enigma import eTimer
-
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools.LoadPixmap import LoadPixmap
-from datetime import datetime, timedelta, date
 
 import json
 import os

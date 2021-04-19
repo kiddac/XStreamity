@@ -73,7 +73,6 @@ class XStreamity_HiddenCategories(Screen):
         self.hidechannellist = []
         self.startList = []
 
-        print("self.channellist %s" % self.channellist)
         if self.category_type == "live":
             self.hidelist = glob.current_playlist['player_info']['livehidden']
 
