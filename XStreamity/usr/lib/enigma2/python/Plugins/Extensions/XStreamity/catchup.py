@@ -486,23 +486,28 @@ class XStreamity_Catchup(Screen):
 
                                             epg_title = ""
                                             epg_description = ""
+
+                                            shift = 0
+
+                                            start = ""
+                                            start_timestamp_o = ""
+
+                                            end = ""
+                                            stop_timestamp_o = ""
+
+                                            start_timestamp = ""
+                                            start_timestamp_datestamp = ""
+
+                                            stop_timestamp = ""
+                                            stop_timestamp_datestamp = ""
+
                                             epg_date_all = ""
                                             epg_time_all = ""
-                                            shift = 0
-                                            epgstart = ""
-                                            epgend = ""
-                                            epgstarttimestamp = ""
-                                            epgendtimestamp = ""
-                                            epg_day = ""
-                                            epg_start_date = ""
+
                                             catchupstart = ""
-                                            epgstarttimestamp = ""
                                             catchupend = ""
+
                                             epg_duration = ""
-                                            start_timestamp = ""
-                                            stop_timestamp = ""
-                                            start = ""
-                                            start_timestamp = ""
 
                                             if 'title' in listing:
                                                 epg_title = base64.b64decode(listing['title']).decode('utf-8')
@@ -531,7 +536,7 @@ class XStreamity_Catchup(Screen):
 
                                             epg_date_all = "%s %s" % (start_timestamp_datestamp.strftime("%a"), start_timestamp_datestamp.strftime("%d/%m"))
 
-                                            epg_time_all = "%s - %s" % (start_timestamp_datestamp.strftime("%H:%S"), stop_timestamp_datestamp.strftime("%H:%S"))
+                                            epg_time_all = "%s - %s" % (start_timestamp_datestamp.strftime("%H:%M"), stop_timestamp_datestamp.strftime("%H:%M"))
 
                                             # add catchup buffer
                                             catchupstart = int(cfg.catchupstart.getValue())
@@ -544,18 +549,7 @@ class XStreamity_Catchup(Screen):
 
                                             start_timestamp_o += (shift * 60 * 60)
 
-                                            # url_datestring = str((datetime.fromtimestamp( start_timestamp).strftime("%Y-%m-%d %H:%M:%S")).replace(":", "-").replace(" ", ":"))[0:16]
                                             url_datestring = str((datetime.fromtimestamp(start_timestamp_o).strftime("%Y-%m-%d %H:%M:%S")).replace(":", "-").replace(" ", ":"))[0:16]
-
-                                            print("start_timestamp %s" % start_timestamp)
-                                            print("stop_timestamp %s" % stop_timestamp)
-                                            print("start_timestamp_datestamp %s" % start_timestamp_datestamp)
-                                            print("stop_timestamp_datestamp %s" % stop_timestamp_datestamp)
-                                            print("epg_start_date %s" % epg_start_date)
-                                            print("epg_date_all %s" % epg_date_all)
-                                            print("epg_duration %s" % epg_duration)
-                                            print("url_datestring %s" % url_datestring)
-                                            print("shift %s" % shift)
 
                                             self.epgshortlist.append(buildShortEPGListEntry(str(epg_date_all), str(epg_time_all), str(epg_title), str(epg_description), str(url_datestring), str(epg_duration), index))
                                             index += 1
@@ -587,14 +581,15 @@ class XStreamity_Catchup(Screen):
     def playCatchup(self):
         next_url = self["channel_list"].getCurrent()[3]
         stream = next_url.rpartition('/')[-1]
+        if stream.endswith(".ts"):
+            stream = stream.replace(".ts", ".m3u8")
         date = str(self["epg_short_list"].getCurrent()[4])
         duration = str(self["epg_short_list"].getCurrent()[5])
 
         playurl = "%s/timeshift/%s/%s/%s/%s/%s" % (self.host, self.username, self.password, duration, date, stream)
-        print("***** playurl ******* %s" % playurl)
 
         if next_url != 'None' and "/live/" in next_url:
-            streamtype = str(glob.current_playlist["player_info"]["catchuptype"])
+            streamtype = "4097"
             self.reference = eServiceReference(int(streamtype), 0, str(playurl))
             glob.catchupdata = [str(self["epg_short_list"].getCurrent()[0]), str(self["epg_short_list"].getCurrent()[3])]
             self.session.openWithCallback(self.createSetup, streamplayer.XStreamity_CatchupPlayer, str(playurl), str(streamtype))

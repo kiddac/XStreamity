@@ -13,7 +13,6 @@ except:
 
 
 def processfiles():
-    # load x-playlists.json file
     playlists_all = []
     if os.path.isfile(json_file):
         with open(json_file, "r") as f:
@@ -49,7 +48,7 @@ def processfiles():
         output = 'ts'
         livetype = cfg.livetype.getValue()
         vodtype = cfg.vodtype.getValue()
-        catchuptype = cfg.catchuptype.getValue()
+        # catchuptype = cfg.catchuptype.getValue()
         epgshift = 0
         catchupshift = 0
         livehidden = []
@@ -178,7 +177,7 @@ def processfiles():
                         "player_info": OrderedDict([
                             ("livetype", livetype),
                             ("vodtype", vodtype),
-                            ("catchuptype", catchuptype),
+                            # ("catchuptype", catchuptype),
                             ("epgshift", epgshift),
                             ("catchupshift", catchupshift),
                             ("livehidden", livehidden),

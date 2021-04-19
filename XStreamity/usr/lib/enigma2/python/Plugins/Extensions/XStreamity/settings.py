@@ -96,7 +96,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
         self.cfg_livetype = getConfigListEntry(_('Default LIVE stream type'), cfg.livetype)
         self.cfg_vodtype = getConfigListEntry(_('Default VOD/SERIES stream type'), cfg.vodtype)
-        self.cfg_catchuptype = getConfigListEntry(_('Default CATCHUP stream type'), cfg.vodtype)
+        # self.cfg_catchuptype = getConfigListEntry(_('Default CATCHUP stream type'), cfg.vodtype)
 
         self.cfg_livepreview = getConfigListEntry(_('Preview LIVE streams in mini tv'), cfg.livepreview)
         self.cfg_stopstream = getConfigListEntry(_('Stop stream on back button'), cfg.stopstream)
@@ -126,7 +126,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
         self.list.append(self.cfg_livetype)
         self.list.append(self.cfg_vodtype)
-        self.list.append(self.cfg_catchuptype)
+        # self.list.append(self.cfg_catchuptype)
 
         self.list.append(self.cfg_livepreview)
         self.list.append(self.cfg_stopstream)

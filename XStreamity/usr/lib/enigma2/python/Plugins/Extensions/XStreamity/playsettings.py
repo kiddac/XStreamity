@@ -4,7 +4,7 @@
 # for localized messages
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import skin_path, cfg, playlist_path, json_file
+from .plugin import skin_path, playlist_path, json_file
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -12,7 +12,6 @@ from Components.ConfigList import ConfigListScreen
 from Components.config import getConfigListEntry, ConfigText, ConfigSelection, ConfigSelectionNumber, ConfigNumber, ConfigYesNo, ConfigEnableDisable, NoSave
 from Components.Pixmap import Pixmap
 from Screens.MessageBox import MessageBox
-from Screens.ParentalControlSetup import ProtectedScreen
 from Screens.Screen import Screen
 
 import os
@@ -92,7 +91,7 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.output = str(glob.current_playlist['playlist_info']['output'])
         self.liveType = str(glob.current_playlist['player_info']['livetype'])
         self.vodType = str(glob.current_playlist['player_info']['vodtype'])
-        self.catchupType = str(glob.current_playlist['player_info']['catchuptype'])
+        # self.catchupType = str(glob.current_playlist['player_info']['catchuptype'])
         # self.epgType = str(glob.current_playlist['player_info']['epgtype'])
         self.epgUrl = str(glob.current_playlist['playlist_info']['xmltv_api'])
         self.epgshift = str(glob.current_playlist['player_info']['epgshift'])
@@ -107,7 +106,7 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.outputCfg = NoSave(ConfigSelection(default=self.output, choices=[('ts', 'ts'), ('m3u8', 'm3u8')]))
         self.liveTypeCfg = NoSave(ConfigSelection(default=self.liveType, choices=streamtypechoices))
         self.vodTypeCfg = NoSave(ConfigSelection(default=self.vodType, choices=streamtypechoices))
-        self.catchupTypeCfg = NoSave(ConfigSelection(default=self.catchupType, choices=streamtypechoices))
+        # self.catchupTypeCfg = NoSave(ConfigSelection(default=self.catchupType, choices=streamtypechoices))
         # self.epgTypeCfg = NoSave(ConfigSelection(default=self.epgType, choices=[('0', _('Off')), ('1', _('Quick')), ('2', _('XMLTV EPG (EPG Importer)'))]))
 
         self.epgUrlCfg = NoSave(ConfigText(default=self.epgUrl))
@@ -138,8 +137,10 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         if self.showvodCfg.value is True or self.showseriesCfg.value is True:
             self.list.append(getConfigListEntry(_('Stream Type VOD/SERIES:'), self.vodTypeCfg))
 
+        """
         if self.showcatchupCfg.value is True:
             self.list.append(getConfigListEntry(_('Stream Type CATCHUP:'), self.catchupTypeCfg))
+            """
 
         if self.showliveCfg.value is True:
             """
@@ -223,7 +224,7 @@ class XStreamity_Settings(ConfigListScreen, Screen):
 
             livetype = self.liveTypeCfg.value
             vodtype = self.vodTypeCfg.value
-            catchuptype = self.catchupTypeCfg.value
+            # catchuptype = self.catchupTypeCfg.value
 
             epgshift = self.epgShiftCfg.value
             catchupshift = self.catchupShiftCfg.value
@@ -239,7 +240,6 @@ class XStreamity_Settings(ConfigListScreen, Screen):
             glob.current_playlist['player_info']['showcatchup'] = showcatchup
             glob.current_playlist['player_info']['livetype'] = livetype
             glob.current_playlist['player_info']['vodtype'] = vodtype
-            glob.current_playlist['player_info']['catchuptype'] = catchuptype
             # glob.current_playlist['player_info']['epgtype'] = epgtype
 
             glob.current_playlist['player_info']['xmltv_api'] = epgurl

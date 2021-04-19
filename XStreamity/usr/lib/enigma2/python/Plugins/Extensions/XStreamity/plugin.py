@@ -11,7 +11,7 @@ from Components.config import config, ConfigSubsection, ConfigSelection, ConfigD
 import os
 import shutil
 
-VERSION = "2.92-20210409"
+VERSION = "2.93-20210419"
 screenwidth = getDesktop(0).size()
 
 dir_dst = "/etc/enigma2/xstreamity/"
@@ -77,7 +77,7 @@ if os.path.exists("/usr/bin/apt-get"):
 
 cfg.livetype = ConfigSelection(default='1', choices=streamtypechoices)
 cfg.vodtype = ConfigSelection(default='4097', choices=streamtypechoices)
-cfg.catchuptype = ConfigSelection(default='4097', choices=streamtypechoices)
+# cfg.catchuptype = ConfigSelection(default='4097', choices=streamtypechoices)
 downloadpath = None
 
 try:
