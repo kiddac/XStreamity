@@ -93,7 +93,7 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.vodType = str(glob.current_playlist['player_info']['vodtype'])
         # self.catchupType = str(glob.current_playlist['player_info']['catchuptype'])
         # self.epgType = str(glob.current_playlist['player_info']['epgtype'])
-        self.epgUrl = str(glob.current_playlist['playlist_info']['xmltv_api'])
+        self.epgUrl = str(glob.current_playlist['player_info']['xmltv_api'])
         self.epgshift = str(glob.current_playlist['player_info']['epgshift'])
         self.catchupshift = str(glob.current_playlist['player_info']['catchupshift'])
         # self.epgquickshift = str(glob.current_playlist['player_info']['epgquickshift'])

@@ -581,8 +581,12 @@ class XStreamity_Catchup(Screen):
     def playCatchup(self):
         next_url = self["channel_list"].getCurrent()[3]
         stream = next_url.rpartition('/')[-1]
+
+        """
         if stream.endswith(".ts"):
             stream = stream.replace(".ts", ".m3u8")
+            """
+
         date = str(self["epg_short_list"].getCurrent()[4])
         duration = str(self["epg_short_list"].getCurrent()[5])
 

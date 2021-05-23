@@ -41,31 +41,32 @@ def processfiles():
 
         # read entries from playlists.txt
         index = 0
-        port = 80
-        username = ''
-        password = ''
-        type = 'm3u_plus'
-        output = 'ts'
+
         livetype = cfg.livetype.getValue()
         vodtype = cfg.vodtype.getValue()
-        # catchuptype = cfg.catchuptype.getValue()
-        epgshift = 0
-        catchupshift = 0
-        livehidden = []
-        vodhidden = []
-        serieshidden = []
-        channelshidden = []
-
-        showlive = True
-        showvod = True
-        showseries = True
-        showcatchup = True
-        # epgquickshift = 0
-        livefavourites = []
-        vodfavourites = []
-        serveroffset = 0
 
         for line in lines:
+
+            port = 80
+            username = ''
+            password = ''
+            type = 'm3u_plus'
+            output = 'ts'
+
+            epgshift = 0
+            catchupshift = 0
+            livehidden = []
+            vodhidden = []
+            serieshidden = []
+            channelshidden = []
+
+            showlive = True
+            showvod = True
+            showseries = True
+            showcatchup = True
+            livefavourites = []
+            vodfavourites = []
+            serveroffset = 0
 
             if not line.startswith("#") and line.startswith('http'):
                 line = line.strip()
@@ -117,6 +118,7 @@ def processfiles():
                 enigma2_api = "%s/enigma2.php?username=%s&password=%s" % (host, username, password)
                 xmltv_api = "%s/xmltv.php?username=%s&password=%s" % (host, username, password)
                 full_url = "%s/get.php?username=%s&password=%s&type=%s&output=%s" % (host, username, password, type, output)
+                
 
                 playlist_exists = False
 
@@ -137,6 +139,10 @@ def processfiles():
 
                                 if "catchupshift" not in playlists["player_info"]:
                                     playlists["player_info"]["catchupshift"] = catchupshift
+                                    
+                                if "xmltv_api" not in playlists["player_info"]:
+                                    playlists["player_info"]["xmltv_api"] = xmltv_api
+                                    
 
                                 playlists["playlist_info"]["name"] = name
                                 playlists["playlist_info"]["type"] = type
@@ -191,6 +197,7 @@ def processfiles():
                             ("showseries", showseries),
                             ("showcatchup", showcatchup),
                             ("serveroffset", serveroffset),
+                            ("xmltv_api", xmltv_api),
                         ]),
 
                         "data": dict([

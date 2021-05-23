@@ -129,7 +129,7 @@ class XStreamity_Menu(Screen):
         category = url[1]
         r = ''
 
-        retries = Retry(total=2, status_forcelist=[429, 503, 504], backoff_factor=1)
+        retries = Retry(total=1, status_forcelist=[429, 503, 504], backoff_factor=1)
         adapter = HTTPAdapter(max_retries=retries)
         http = requests.Session()
         http.mount("http://", adapter)
@@ -150,7 +150,7 @@ class XStreamity_Menu(Screen):
             return category, ''
 
     def process_downloads(self):
-        threads = 1
+        threads = 10
         pool = ThreadPool(threads)
         results = pool.imap_unordered(self.download_url, self.url_list)
 
@@ -230,6 +230,10 @@ class XStreamity_Menu(Screen):
             if category == 0:
                 from . import live
                 self.session.open(live.XStreamity_Categories)
+                
+                # from . import livedangerous
+                # self.session.open(livedangerous.XStreamity_Categories)
+                
             elif category == 1:
                 from . import vod
                 self.session.open(vod.XStreamity_Categories)
