@@ -292,8 +292,8 @@ class XStreamity_StreamPlayer(
 
         IPTVInfoBarPVRState.__init__(self, PVRState, True)
 
-        config.av.aspect.value = "16:9"
-        config.av.aspect.save()
+        # config.av.aspect.value = "16:9"
+        # config.av.aspect.save()
 
         self.streamurl = streamurl
         self.servicetype = servicetype
@@ -653,8 +653,8 @@ class XStreamity_VodPlayer(
             SubsSupport.__init__(self, searchSupport=True, embeddedSupport=True)
             SubsSupportStatus.__init__(self)
 
-        config.av.aspect.value = "16:9"
-        config.av.aspect.save()
+        # config.av.aspect.value = "16:9"
+        # config.av.aspect.save()
 
         self.streamurl = streamurl
         self.servicetype = servicetype
@@ -902,8 +902,8 @@ class XStreamity_CatchupPlayer(
             SubsSupport.__init__(self, searchSupport=True, embeddedSupport=True)
             SubsSupportStatus.__init__(self)
 
-        config.av.aspect.value = "16:9"
-        config.av.aspect.save()
+        # config.av.aspect.value = "16:9"
+        # config.av.aspect.save()
 
         self.streamurl = streamurl
         self.servicetype = servicetype
