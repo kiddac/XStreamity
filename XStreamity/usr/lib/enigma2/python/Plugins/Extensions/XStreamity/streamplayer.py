@@ -534,9 +534,16 @@ class XStreamity_StreamPlayer(
             self.hasStreamData = True
 
     def __evEOF(self):
+        print("[XStreamity_StreamPlayer]** evEOF **")
         if self.servicetype == "1":
-            self.session.nav.stopService()
-            self.session.nav.playService(self.reference, forceRestart=True)
+                self.retries += 1
+                if self.retries > 3:
+                        self.retries = 0
+                        print("[XStreamity_StreamPlayer]** evEOF retries over 3 and self-servicetype =1 suggests multiple url redirect. so retry with servicetype = 4092 **")                      
+                        self.session.open(MessageBox, _("multiple url redirects - unable to run streamtype '1', trying streamtype '4097'."), MessageBox.TYPE_INFO, timeout=3)
+                        self.session.nav.stopService()
+                        self.servicetype = "4097"                        
+                        self.playStream(self.servicetype, self.streamurl)
 
     def checkStream(self):
         if self.hasStreamData is False:
