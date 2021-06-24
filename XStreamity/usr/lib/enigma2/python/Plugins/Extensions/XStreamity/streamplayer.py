@@ -388,16 +388,15 @@ class XStreamity_StreamPlayer(
             return
 
     def playStream(self, servicetype, streamurl):
-        self["epg_description"].setText(glob.currentepglist[glob.currentchannelistindex][4])
-        self["nowchannel"].setText(glob.currentchannelist[glob.currentchannelistindex][0])
-        self["nowtitle"].setText(glob.currentepglist[glob.currentchannelistindex][3])
-        self["nexttitle"].setText(glob.currentepglist[glob.currentchannelistindex][6])
-        self["nowtime"].setText(glob.currentepglist[glob.currentchannelistindex][2])
-        self["nexttime"].setText(glob.currentepglist[glob.currentchannelistindex][5])
-        self["streamcat"].setText("Live")
-        self["streamtype"].setText(str(servicetype))
-
-        try:
+        try:    
+            self["epg_description"].setText(glob.currentepglist[glob.currentchannelistindex][4])
+            self["nowchannel"].setText(glob.currentchannelist[glob.currentchannelistindex][0])
+            self["nowtitle"].setText(glob.currentepglist[glob.currentchannelistindex][3])
+            self["nexttitle"].setText(glob.currentepglist[glob.currentchannelistindex][6])
+            self["nowtime"].setText(glob.currentepglist[glob.currentchannelistindex][2])
+            self["nexttime"].setText(glob.currentepglist[glob.currentchannelistindex][5])
+            self["streamcat"].setText("Live")
+            self["streamtype"].setText(str(servicetype))
             self["extension"].setText(str(os.path.splitext(streamurl)[-1]))
         except:
             pass
