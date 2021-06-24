@@ -108,6 +108,7 @@ class XStreamity_HiddenCategories(Screen):
     def refresh(self):
         self.drawList = []
         self.drawList = [self.buildListEntry(x[0], x[1], x[2]) for x in self.startList]
+        self['hidden_list'].setList(self.drawList)
         self['hidden_list'].updateList(self.drawList)
 
     def toggleSelection(self):
