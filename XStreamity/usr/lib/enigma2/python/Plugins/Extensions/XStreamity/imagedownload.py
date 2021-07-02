@@ -1,8 +1,43 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
 from .plugin import dir_tmp
-from PIL import Image, ImageChops
+from PIL import Image, ImageChops, ImageFile, PngImagePlugin
+import re
+import sys
+
+
+_simple_palette = re.compile(b"^\xff*\x00\xff*$")
+
+
+def mycall(self, cid, pos, length):
+    if cid.decode("ascii") == "tRNS":
+        return self.chunk_TRNS(pos, length)
+    else:
+        return getattr(self, "chunk_" + cid.decode("ascii"))(pos, length)
+
+
+def mychunk_TRNS(self, pos, length):
+    s = ImageFile._safe_read(self.fp, length)
+    if self.im_mode == "P":
+        if _simple_palette.match(s):
+            i = s.find(b"\0")
+            if i >= 0:
+                self.im_info["transparency"] = i
+        else:
+            self.im_info["transparency"] = s
+    elif self.im_mode in ("1", "L", "I"):
+        self.im_info["transparency"] = i16(s)
+    elif self.im_mode == "RGB":
+        self.im_info["transparency"] = i16(s), i16(s, 2), i16(s, 4)
+    return s
+
+
+try:
+    pythonVer = sys.version_info.major
+except:
+    pythonVer = 2
+
+if pythonVer != 2:
+    PngImagePlugin.ChunkStream.call = mycall
+    PngImagePlugin.PngStream.chunk_TRNS = mychunk_TRNS
 
 
 def updatePreview(piconSize, imageType, temp):

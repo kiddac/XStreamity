@@ -1,8 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
-# for localized messages
-
 from . import _
 from . import xstreamity_globals as glob
 from . import processfiles as xfiles
@@ -20,6 +15,7 @@ from Tools.LoadPixmap import LoadPixmap
 import json
 import os
 import sys
+import re
 
 try:
     pythonVer = sys.version_info.major
