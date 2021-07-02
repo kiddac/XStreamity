@@ -1,7 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
-# for localized messages
 from . import _
 
 from .plugin import skin_path, playlist_path
