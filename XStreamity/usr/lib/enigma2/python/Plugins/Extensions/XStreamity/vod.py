@@ -1,4 +1,9 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+# for localized messages
 from . import _
+
 from . import streamplayer
 from . import xstreamity_globals as glob
 

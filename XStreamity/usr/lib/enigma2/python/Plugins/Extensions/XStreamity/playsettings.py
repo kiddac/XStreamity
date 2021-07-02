@@ -1,3 +1,7 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+# for localized messages
 from . import _
 from . import xstreamity_globals as glob
 from .plugin import skin_path, playlist_path, json_file

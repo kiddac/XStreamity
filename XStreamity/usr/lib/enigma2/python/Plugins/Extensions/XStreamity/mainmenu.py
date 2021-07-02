@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 from . import _
 from . import xstreamity_globals as glob
 from . import processfiles as xfiles

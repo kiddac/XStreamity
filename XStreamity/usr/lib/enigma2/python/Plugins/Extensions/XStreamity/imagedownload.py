@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 from .plugin import dir_tmp
 from PIL import Image, ImageChops, ImageFile, PngImagePlugin
 import re
