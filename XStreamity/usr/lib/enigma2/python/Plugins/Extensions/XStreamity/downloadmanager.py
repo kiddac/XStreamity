@@ -2,10 +2,6 @@
 # -*- coding: utf-8 -*-
 
 # for localized messages
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
-# for localized messages
 from . import _
 from .downloader import downloadWithProgress
 from .plugin import skin_path, json_downloadfile, cfg
