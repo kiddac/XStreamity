@@ -96,7 +96,9 @@ class XStreamity_HiddenCategories(Screen):
                 elif item[2] in self.hidechannellist:
                     self.startList.append([item[1], item[2], True])
 
-        self.refresh()
+        self.drawList = []
+        self.drawList = [self.buildListEntry(x[0], x[1], x[2]) for x in self.startList]
+        self['hidden_list'].setList(self.drawList)
 
     def buildListEntry(self, name, category_id, enabled):
         if enabled:
