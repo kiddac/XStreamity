@@ -1,9 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# for localized messages
 from . import _
-
 from . import streamplayer
 from . import xstreamity_globals as glob
 
@@ -18,7 +16,7 @@ from Components.Sources.List import List
 from datetime import datetime, timedelta, date
 from enigma import eTimer, eServiceReference, eEPGCache
 from os import system
-from PIL import Image, ImageChops
+from PIL import Image, ImageChops, ImageFile, PngImagePlugin
 from requests.adapters import HTTPAdapter
 from RecordTimer import RecordTimerEntry
 from Screens.MessageBox import MessageBox
@@ -42,11 +40,40 @@ import tempfile
 import time
 import xml.etree.cElementTree as ET
 
+_simple_palette = re.compile(b"^\xff*\x00\xff*$")
+
+
+def mycall(self, cid, pos, length):
+    if cid.decode("ascii") == "tRNS":
+        return self.chunk_TRNS(pos, length)
+    else:
+        return getattr(self, "chunk_" + cid.decode("ascii"))(pos, length)
+
+
+def mychunk_TRNS(self, pos, length):
+    s = ImageFile._safe_read(self.fp, length)
+    if self.im_mode == "P":
+        if _simple_palette.match(s):
+            i = s.find(b"\0")
+            if i >= 0:
+                self.im_info["transparency"] = i
+        else:
+            self.im_info["transparency"] = s
+    elif self.im_mode in ("1", "L", "I"):
+        self.im_info["transparency"] = i16(s)
+    elif self.im_mode == "RGB":
+        self.im_info["transparency"] = i16(s), i16(s, 2), i16(s, 4)
+    return s
+
 
 try:
     pythonVer = sys.version_info.major
 except:
     pythonVer = 2
+
+if pythonVer != 2:
+    PngImagePlugin.ChunkStream.call = mycall
+    PngImagePlugin.PngStream.chunk_TRNS = mychunk_TRNS
 
 # https twisted client hack #
 try:
@@ -75,6 +102,24 @@ if sslverify:
 epgimporter = False
 if os.path.isdir('/usr/lib/enigma2/python/Plugins/Extensions/EPGImport'):
     epgimporter = True
+
+_initialized = 0
+
+
+def _mypreinit():
+    global _initialized
+    if _initialized >= 1:
+        return
+    try:
+        from . import MyPngImagePlugin
+        assert MyPngImagePlugin
+    except ImportError:
+        pass
+
+    _initialized = 1
+
+
+Image.preinit = _mypreinit
 
 
 class XStreamity_Categories(Screen):
@@ -561,10 +606,10 @@ class XStreamity_Categories(Screen):
             xml_str += '<sourcecat sourcecatname="XStreamity ' + str(cleanName) + '">\n'
             xml_str += '<source type="gen_xmltv" nocheck="1" channels="' + channelpath + '">\n'
             xml_str += '<description>' + str(cleanName) + '</description>\n'
-            if  str(glob.current_playlist['player_info']['xmltv_api']) == str(glob.current_playlist['playlist_info']['xmltv_api']):
+            if str(glob.current_playlist['player_info']['xmltv_api']) == str(glob.current_playlist['playlist_info']['xmltv_api']):
                 xml_str += '<url><![CDATA[' + str(glob.current_playlist['player_info']['xmltv_api']) + '&next_days=2]]></url>\n'
             else:
-                xml_str += '<url><![CDATA[' + str(glob.current_playlist['player_info']['xmltv_api'])+ ']]></url>\n'
+                xml_str += '<url><![CDATA[' + str(glob.current_playlist['player_info']['xmltv_api']) + ']]></url>\n'
             xml_str += '</source>\n'
             xml_str += '</sourcecat>\n'
             xml_str += '</sources>\n'
