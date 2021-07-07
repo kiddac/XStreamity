@@ -259,7 +259,6 @@ class IPTVInfoBarPVRState:
 
 
 class XStreamity_StreamPlayer(
-    Screen,
     InfoBarBase,
     InfoBarMenu,
     InfoBarSeek,
@@ -270,7 +269,8 @@ class XStreamity_StreamPlayer(
     InfoBarServiceErrorPopupSupport,
     InfoBarNotifications,
     IPTVInfoBarShowHide,
-    IPTVInfoBarPVRState
+    IPTVInfoBarPVRState,
+    Screen
 ):
 
     def __init__(self, session, streamurl, servicetype):
@@ -615,7 +615,6 @@ class XStreamity_StreamPlayer(
 
 
 class XStreamity_VodPlayer(
-    Screen,
     InfoBarBase,
     InfoBarMenu,
     InfoBarSeek,
@@ -628,7 +627,8 @@ class XStreamity_VodPlayer(
     IPTVInfoBarShowHide,
     IPTVInfoBarPVRState,
     SubsSupportStatus,
-    SubsSupport
+    SubsSupport,
+    Screen
 ):
 
     def __init__(self, session, streamurl, servicetype):
@@ -863,7 +863,6 @@ class XStreamity_VodPlayer(
 
 
 class XStreamity_CatchupPlayer(
-    Screen,
     InfoBarBase,
     InfoBarMenu,
     InfoBarSeek,
@@ -876,7 +875,8 @@ class XStreamity_CatchupPlayer(
     IPTVInfoBarShowHide,
     IPTVInfoBarPVRState,
     SubsSupportStatus,
-    SubsSupport
+    SubsSupport,
+    Screen
 ):
 
     def __init__(self, session, streamurl, servicetype):
@@ -949,7 +949,7 @@ class XStreamity_CatchupPlayer(
             self["extension"].setText(str(os.path.splitext(streamurl)[-1]))
         except:
             pass
-            
+
         print("streamurl %s " % streamurl)
 
         self.reference = eServiceReference(int(servicetype), 0, streamurl)
