@@ -153,7 +153,6 @@ class IPTVInfoBarShowHide():
         self.hideTimer.stop()
         if self.__state == self.STATE_SHOWN:
             self.hide()
-        # IPTVInfoBarShowHide.__init__(self)
 
     def toggleShow(self):
         if self.skipToggleShow:
@@ -259,7 +258,6 @@ class IPTVInfoBarPVRState:
 
 
 class XStreamity_StreamPlayer(
-    Screen,
     InfoBarBase,
     InfoBarMenu,
     InfoBarSeek,
@@ -270,13 +268,18 @@ class XStreamity_StreamPlayer(
     InfoBarServiceErrorPopupSupport,
     InfoBarNotifications,
     IPTVInfoBarShowHide,
-    IPTVInfoBarPVRState
+    IPTVInfoBarPVRState,
+    Screen
 ):
 
     def __init__(self, session, streamurl, servicetype):
         Screen.__init__(self, session)
 
         self.session = session
+
+        if str(os.path.splitext(streamurl)[-1]) == ".m3u8":
+            if servicetype == "1":
+                servicetype = "4097"
 
         for x in InfoBarBase, \
                 InfoBarMenu, \
@@ -291,9 +294,6 @@ class XStreamity_StreamPlayer(
             x.__init__(self)
 
         IPTVInfoBarPVRState.__init__(self, PVRState, True)
-
-        # config.av.aspect.value = "16:9"
-        # config.av.aspect.save()
 
         self.streamurl = streamurl
         self.servicetype = servicetype
@@ -528,16 +528,29 @@ class XStreamity_StreamPlayer(
             self.timerstream.start(2000, True)
 
     def __evTuneFailed(self):
+        self.stopStream()
         self.back()
 
     def __evUpdatedInfo(self):
         if self.servicetype == "1":
             self.hasStreamData = True
 
+    """
     def __evEOF(self):
         if self.servicetype == "1":
             self.session.nav.stopService()
             self.session.nav.playService(self.reference, forceRestart=True)
+            """
+
+    def __evEOF(self):
+        if self.servicetype == "1":
+            self.retries += 1
+            if self.retries > 3:
+                self.retries = 0
+                # self.session.open(MessageBox, _("multiple url redirects - unable to run streamtype '1', trying streamtype '4097'."), MessageBox.TYPE_INFO, timeout=3)
+                self.session.nav.stopService()
+                self.servicetype = "4097"
+                self.playStream(self.servicetype, self.streamurl)
 
     def checkStream(self):
         if self.hasStreamData is False:
@@ -599,7 +612,7 @@ class XStreamity_StreamPlayer(
     # play original channel
     def stopStream(self):
         if glob.currentPlayingServiceRefString != glob.newPlayingServiceRefString:
-            if glob.newPlayingServiceRefString != '':
+            if glob.currentPlayingServiceRefString:
                 self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
 
     def toggleAspectRatio(self):
@@ -615,7 +628,6 @@ class XStreamity_StreamPlayer(
 
 
 class XStreamity_VodPlayer(
-    Screen,
     InfoBarBase,
     InfoBarMenu,
     InfoBarSeek,
@@ -628,7 +640,8 @@ class XStreamity_VodPlayer(
     IPTVInfoBarShowHide,
     IPTVInfoBarPVRState,
     SubsSupportStatus,
-    SubsSupport
+    SubsSupport,
+    Screen
 ):
 
     def __init__(self, session, streamurl, servicetype):
@@ -652,9 +665,6 @@ class XStreamity_VodPlayer(
         if cfg.subs.value is True:
             SubsSupport.__init__(self, searchSupport=True, embeddedSupport=True)
             SubsSupportStatus.__init__(self)
-
-        # config.av.aspect.value = "16:9"
-        # config.av.aspect.save()
 
         self.streamurl = streamurl
         self.servicetype = servicetype
@@ -863,7 +873,6 @@ class XStreamity_VodPlayer(
 
 
 class XStreamity_CatchupPlayer(
-    Screen,
     InfoBarBase,
     InfoBarMenu,
     InfoBarSeek,
@@ -876,7 +885,8 @@ class XStreamity_CatchupPlayer(
     IPTVInfoBarShowHide,
     IPTVInfoBarPVRState,
     SubsSupportStatus,
-    SubsSupport
+    SubsSupport,
+    Screen
 ):
 
     def __init__(self, session, streamurl, servicetype):
@@ -901,9 +911,6 @@ class XStreamity_CatchupPlayer(
         if cfg.subs.value is True:
             SubsSupport.__init__(self, searchSupport=True, embeddedSupport=True)
             SubsSupportStatus.__init__(self)
-
-        # config.av.aspect.value = "16:9"
-        # config.av.aspect.save()
 
         self.streamurl = streamurl
         self.servicetype = servicetype
@@ -949,8 +956,6 @@ class XStreamity_CatchupPlayer(
             self["extension"].setText(str(os.path.splitext(streamurl)[-1]))
         except:
             pass
-            
-        print("streamurl %s " % streamurl)
 
         self.reference = eServiceReference(int(servicetype), 0, streamurl)
         self.reference.setName(glob.catchupdata[0])
