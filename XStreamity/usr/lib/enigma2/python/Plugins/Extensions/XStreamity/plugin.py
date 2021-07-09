@@ -11,7 +11,7 @@ from Components.config import config, ConfigSubsection, ConfigSelection, ConfigD
 import os
 import shutil
 
-VERSION = "2.97-20210702"
+VERSION = "2.98-20210709"
 screenwidth = getDesktop(0).size()
 
 dir_dst = "/etc/enigma2/xstreamity/"
@@ -27,10 +27,6 @@ else:
 folders = os.listdir(skin_directory)
 if "common" in folders:
     folders.remove("common")
-
-for folder in folders:
-    skinlist = folder
-
 
 languages = [
     ('en', 'English'),
@@ -104,8 +100,6 @@ cfg.catchupend = ConfigSelectionNumber(0, 30, 1, default=0)
 cfg.subs = ConfigYesNo(default=False)
 cfg.XMLTVStart = ConfigNumber()
 cfg.skipplaylistsscreen = ConfigYesNo(default=False)
-
-skin_path = skin_directory + cfg.skin.value + '/'
 
 skin_path = '%s%s/' % (skin_directory, cfg.skin.value)
 common_path = '%scommon/' % (skin_directory)
