@@ -467,7 +467,7 @@ class XStreamity_Categories(Screen):
             editmode = False
             hidden = False
 
-            if 'name' in item:
+            if 'name' in item and item['name']:
                 name = item['name']
 
                 # restyle bouquet markers
@@ -476,7 +476,7 @@ class XStreamity_Categories(Screen):
                     name = re.sub(r'_', '', re.sub(pattern, '', name))
                     name = "** " + str(name) + " **"
 
-            if 'stream_id' in item:
+            if 'stream_id' in item and item['stream_id']:
                 stream_id = item['stream_id']
 
                 if str(stream_id) in glob.current_playlist['player_info']['channelshidden']:
@@ -490,16 +490,16 @@ class XStreamity_Categories(Screen):
                     if "scale-to-width-down" not in stream_icon:
                         stream_icon = str(stream_icon) + "/revision/latest/scale-to-width-down/220"
 
-            if 'epg_channel_id' in item:
+            if 'epg_channel_id' in item and item['epg_channel_id']:
                 epg_channel_id = item['epg_channel_id']
 
                 if epg_channel_id and "&" in epg_channel_id:
                     epg_channel_id = epg_channel_id.replace("&", "&amp;")
 
-            if 'added' in item:
+            if 'added' in item and item['added']:
                 added = item['added']
 
-            if 'category_id' in item:
+            if 'category_id' in item and item['category_id']:
                 category_id = item['category_id']
 
             bouquet_id = 0
@@ -509,7 +509,7 @@ class XStreamity_Categories(Screen):
             unique_ref = 999 + int(glob.current_playlist['playlist_info']['index'])
             serviceref = '1:0:1:' + str(format(bouquet_id, '04x')) + ":" + str(format(bouquet_stream_id, '04x')) + ":" + str(format(unique_ref, '08x')) + ":0:0:0:0:" + "http%3a//example.m3u8"
 
-            if 'custom_sid' in item:
+            if 'custom_sid' in item and item['custom_sid']:
                 custom_sid = item['custom_sid']
 
                 if custom_sid and custom_sid != "None":
@@ -1306,6 +1306,9 @@ class XStreamity_Categories(Screen):
                 self.createSetup()
 
             elif self.level == 2:
+
+                if self.selectedlist == self["epg_short_list"]:
+                    self.shortEPG()
 
                 streamtype = glob.current_playlist["player_info"]["livetype"]
                 self.reference = eServiceReference(int(streamtype), 0, next_url)
