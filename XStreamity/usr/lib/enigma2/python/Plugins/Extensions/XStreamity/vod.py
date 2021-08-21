@@ -1,9 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# for localized messages
 from . import _
-
 from . import streamplayer
 from . import xstreamity_globals as glob
 
@@ -27,11 +25,6 @@ from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Tools.LoadPixmap import LoadPixmap
 from twisted.web.client import downloadPage
 
-try:
-    from urllib import unquote
-except:
-    from urllib.parse import unquote
-
 import base64
 import codecs
 import json
@@ -40,6 +33,7 @@ import os
 import re
 import requests
 import sys
+import time
 import zlib
 
 
@@ -327,7 +321,7 @@ class XStreamity_Categories(Screen):
             except Exception as e:
                 print(e)
 
-    def processChannels(self, response):
+    def processChannels(self, response=None):
         # print("*** processChannels ***")
         index = 0
 
@@ -537,13 +531,15 @@ class XStreamity_Categories(Screen):
             self.page = int(math.ceil(float(self.position) / float(self.itemsperpage)))
             self.pageall = int(math.ceil(float(self.positionall) / float(self.itemsperpage)))
 
-            self["page"].setText('Page: ' + str(self.page) + " of " + str(self.pageall))
+            self["page"].setText(_('Page: ') + str(self.page) + _(" of ") + str(self.pageall))
             self["listposition"].setText(str(self.position) + "/" + str(self.positionall))
 
             self["channel"].setText(self.main_title + ": " + str(channeltitle))
 
             if self.level == 2:
+                self.loadDefaultImage()
                 self.timerVOD = eTimer()
+                self.timerVOD.stop
                 try:
                     self.timerVOD.callback.append(self.downloadVodData)
                 except:
@@ -555,7 +551,7 @@ class XStreamity_Categories(Screen):
             self.page = 0
             self.pageall = 0
 
-            self["page"].setText('Page: ' + str(self.page) + " of " + str(self.pageall))
+            self["page"].setText(_('Page: ') + str(self.page) + _(" of ") + str(self.pageall))
             self["listposition"].setText(str(self.position) + "/" + str(self.positionall))
 
             self["key_yellow"].setText('')
@@ -591,70 +587,60 @@ class XStreamity_Categories(Screen):
                     self.downloadImage()
                     self.displayVod()
 
-            except requests.exceptions.ConnectionError as e:
-                print(("Error Connecting: %s" % e))
-
-            except requests.exceptions.RequestException as e:
+            except Exception as e:
                 print(e)
 
     def downloadImage(self):
-        # print("*** downloadImage ***")
         if self["channel_list"].getCurrent():
             try:
                 os.remove(str(dir_tmp) + 'original.jpg')
+                os.remove(str(dir_tmp) + 'temp.jpg')
             except:
                 pass
-
-            size = [267, 400]
-            if screenwidth.width() > 1280:
-                size = [400, 600]
 
             original = str(dir_tmp) + 'original.jpg'
             desc_image = ''
 
-            try:
-                desc_image = self["channel_list"].getCurrent()[5]
+            desc_image = self["channel_list"].getCurrent()[5]
 
-                if self.info:  # tmbdb
-                    if 'cover_big' in self.info and self.info["cover_big"] and self.info["cover_big"] != "null":
-                        desc_image = str(self.info["cover_big"]).strip()
-                    else:
-                        self.loadDefaultImage()
-                        return
+            if self.info:  # tmbdb
+                if 'cover_big' in self.info and self.info["cover_big"] and self.info["cover_big"] != "null":
+                    desc_image = str(self.info["cover_big"]).strip()
 
-                if desc_image and desc_image != "n/A":
-
+            if desc_image and desc_image != "n/A":
+                temp = dir_tmp + 'temp.jpg'
+                try:
                     if desc_image.startswith("https") and sslverify:
                         parsed_uri = urlparse(desc_image)
                         domain = parsed_uri.hostname
                         sniFactory = SNIFactory(domain)
                         if pythonVer == 3:
                             desc_image = desc_image.encode()
-                        downloadPage(desc_image, original, sniFactory, timeout=5).addCallback(self.resizeImage, size).addErrback(self.loadDefaultImage)
+                        downloadPage(desc_image, temp, sniFactory, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
                     else:
                         if pythonVer == 3:
                             desc_image = desc_image.encode()
-                        downloadPage(desc_image, original, timeout=5).addCallback(self.resizeImage, size).addErrback(self.loadDefaultImage)
-                else:
+                        downloadPage(desc_image, temp, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
+                except:
                     self.loadDefaultImage()
+            else:
+                self.loadDefaultImage()
 
-            except Exception as e:
-                print("* image error ** %s" % e)
-
-    def loadDefaultImage(self, failure=None):
+    def loadDefaultImage(self, data=None):
         # print("*** loadDefaultImage ***")
-        print("*** failure *** %s" % failure)
+        if data:
+            print(data)
         if self["vod_cover"].instance:
             self["vod_cover"].instance.setPixmapFromFile(skin_path + "images/vod_cover.png")
 
-    def resizeImage(self, data, size):
+    def resizeImage(self, data=None):
         # print("*** resizeImage ***")
         if self["channel_list"].getCurrent():
             if self["vod_cover"].instance:
-                preview = str(dir_tmp) + 'original.jpg'
+                preview = str(dir_tmp) + 'temp.jpg'
+
                 width = 267
                 height = 400
-
                 if screenwidth.width() > 1280:
                     width = 400
                     height = 600
@@ -905,7 +891,7 @@ class XStreamity_Categories(Screen):
             else:
                 self.resetSearch()
 
-    def filterChannels(self, result):
+    def filterChannels(self, result=None):
         # print("*** filterChannels ***")
         if result or self.filterresult:
             self.filterresult = result
@@ -952,12 +938,13 @@ class XStreamity_Categories(Screen):
 
         self.buildLists()
 
-    def pinEntered(self, result):
+    def pinEntered(self, result=None):
         # print("*** pinEntered ***")
         if not result:
             self.pin = False
             self.session.open(MessageBox, _("Incorrect pin code."), type=MessageBox.TYPE_ERROR, timeout=5)
         if self.pin is True:
+            glob.pintime = time.time()
             self.next()
         else:
             return
@@ -967,9 +954,9 @@ class XStreamity_Categories(Screen):
         if self.editmode is False:
             self.pin = True
             if self.level == 1:
-                if cfg.parental.getValue() is True:
-                    adult = "all", "+18", "adult", "18+", "18 rated", "xxx", "sex", "porn", "pink", "blue"
-                    if any(s in str(self["channel_list"].getCurrent()[0]).lower() for s in adult):
+                if cfg.parental.getValue() is True and int(time.time()) - int(glob.pintime) > 900:
+                    adult = _("all"), "all", "+18", "adult", "18+", "18 rated", "xxx", "sex", "porn", "pink", "blue"
+                    if any(s in str(self["channel_list"].getCurrent()[0]).lower() and str(self["channel_list"].getCurrent()[0]).lower() != "Allgemeines" for s in adult):
                         from Screens.InputBox import PinInput
                         self.session.openWithCallback(self.pinEntered, PinInput, pinList=[config.ParentalControl.setuppin.value], triesEntry=config.ParentalControl.retries.servicepin, title=_("Please enter the parental control pin code"), windowTitle=_("Enter pin code"))
                     else:
@@ -986,8 +973,8 @@ class XStreamity_Categories(Screen):
             currentindex = self["channel_list"].getIndex()
             next_url = self["channel_list"].getCurrent()[3]
             glob.nextlist[-1]['index'] = currentindex
-            glob.currentchannelist = self.channelList[:]
-            glob.currentchannelistindex = currentindex
+            glob.currentchannellist = self.channelList[:]
+            glob.currentchannellistindex = currentindex
 
             if self.level == 1:
                 self.level += 1
@@ -1002,11 +989,12 @@ class XStreamity_Categories(Screen):
             elif self.level == 2:
                 streamtype = glob.current_playlist["player_info"]["vodtype"]
                 self.reference = eServiceReference(int(streamtype), 0, next_url)
+                self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
                 self.session.openWithCallback(self.setIndex, streamplayer.XStreamity_VodPlayer, str(next_url), str(streamtype))
 
     def setIndex(self):
         # print("*** set index ***")
-        self["channel_list"].setIndex(glob.currentchannelistindex)
+        self["channel_list"].setIndex(glob.currentchannellistindex)
         self.selectionChanged()
         self.buildLists()
 
@@ -1080,7 +1068,7 @@ class XStreamity_Categories(Screen):
         except:
             pass
 
-        isIMDB = False
+        self.isIMDB = False
 
         if self["channel_list"].getCurrent():
 
@@ -1100,7 +1088,7 @@ class XStreamity_Categories(Screen):
                             self.getTMDBDetails(self.info["tmdb_id"])
                             return
                         else:
-                            isIMDB = True
+                            self.isIMDB = True
 
                 searchtitle = title.lower()
 
@@ -1145,21 +1133,26 @@ class XStreamity_Categories(Screen):
                 searchtitle = searchtitle.replace(' ', '%20')
                 searchtitle = searchtitle.strip()
 
-                if isIMDB is False:
+                if self.isIMDB is False:
                     searchurl = 'http://api.themoviedb.org/3/search/movie?api_key=' + str(self.check(self.token)) + '&query=%22' + str(searchtitle) + '%22'
                 else:
                     searchurl = 'http://api.themoviedb.org/3/find/' + str(self.info["tmdb_id"]) + '?api_key=' + str(self.check(self.token)) + '&external_source=imdb_id'
+
                 if pythonVer == 3:
                     searchurl = searchurl.encode()
 
+                filepath = str(dir_tmp) + 'search.txt'
                 try:
-                    downloadPage(searchurl, str(dir_tmp) + 'search.txt', timeout=10).addCallback(self.processTMDB, isIMDB).addErrback(self.printError)
+                    downloadPage(searchurl, filepath, timeout=10).addCallback(self.processTMDB).addErrback(self.failed)
                 except Exception as e:
                     print(("download TMDB error %s" % e))
-                except:
-                    pass
 
-    def processTMDB(self, result, IMDB):
+    def failed(self, data=None):
+        if data:
+            print(data)
+
+    def processTMDB(self, result=None):
+        IMDB = self.isIMDB
         with codecs.open(str(dir_tmp) + 'search.txt', 'r', encoding='utf-8') as f:
             response = f.read()
 
@@ -1183,7 +1176,7 @@ class XStreamity_Categories(Screen):
             except:
                 pass
 
-    def getTMDBDetails(self, resultid):
+    def getTMDBDetails(self, resultid=None):
         try:
             os.remove(str(dir_tmp) + 'movie.txt')
         except:
@@ -1197,14 +1190,14 @@ class XStreamity_Categories(Screen):
         detailsurl = "http://api.themoviedb.org/3/movie/" + str(resultid) + "?api_key=" + str(self.check(self.token)) + "&append_to_response=credits&language=" + str(language)
         if pythonVer == 3:
             detailsurl = detailsurl.encode()
+
+        filepath = str(dir_tmp) + 'movie.txt'
         try:
-            downloadPage(detailsurl, str(dir_tmp) + 'movie.txt', timeout=10).addCallback(self.processTMDBDetails).addErrback(self.printError)
+            downloadPage(detailsurl, filepath, timeout=10).addCallback(self.processTMDBDetails).addErrback(self.failed)
         except Exception as e:
             print(("download TMDB details error %s" % e))
-        except:
-            pass
 
-    def processTMDBDetails(self, result):
+    def processTMDBDetails(self, result=None):
         valid = False
         response = ''
 
@@ -1214,8 +1207,11 @@ class XStreamity_Categories(Screen):
         director = []
         cast = []
 
-        with codecs.open(str(dir_tmp) + 'movie.txt', 'r', encoding='utf-8') as f:
-            response = f.read()
+        try:
+            with codecs.open(str(dir_tmp) + 'movie.txt', 'r', encoding='utf-8') as f:
+                response = f.read()
+        except:
+            pass
 
         if response != '':
             valid = False
@@ -1269,14 +1265,14 @@ class XStreamity_Categories(Screen):
                 if "credits" in self.detailsresult:
                     if "cast" in self.detailsresult["credits"]:
                         for actor in self.detailsresult["credits"]["cast"]:
-                            if "character" in actor:
+                            if "character" in actor and 'name' in actor:
                                 cast.append(str(actor["name"]))
-                        cast = ", ".join(map(str, cast))
+                        cast = ", ".join(map(str, cast[:10]))
                         self.info['cast'] = cast
 
                 if "credits" in self.detailsresult and "crew" in self.detailsresult["credits"]:
                     for actor in self.detailsresult["credits"]["crew"]:
-                        if "job" in actor:
+                        if "job" in actor and actor['job'] == "Director":
                             director.append(str(actor["name"]))
 
                     director = ", ".join(map(str, director))
@@ -1284,10 +1280,6 @@ class XStreamity_Categories(Screen):
 
                 self.downloadImage()
                 self.displayVod()
-
-    def printError(self, failure):
-        print(("********* error ******** %s" % failure))
-        pass
 
     def openIMDb(self):
         try:

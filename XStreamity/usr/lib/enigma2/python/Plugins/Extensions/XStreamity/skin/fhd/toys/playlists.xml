@@ -15,14 +15,19 @@
 
 			<!-- Authorised -->
 			MultiContentEntryText(pos = (453, 18), size = (224, 27), font=3,  color = 0x00ffffff, color_sel = 0x00004e98, backcolor_sel = 0x009f0f5ff, flags = RT_HALIGN_RIGHT, text = 4),
+			
 			<!-- Authorised LED -->
 			MultiContentEntryPixmapAlphaBlend(pos = (690, 21), size = (23, 24), png = 5),
+			
 			<!-- Active Conn -->
 			MultiContentEntryText(pos = (453, 48), size = (224, 27), font=3,  color = 0x00ffffff, color_sel = 0x00004e98, backcolor_sel = 0x00f0f5ff, flags = RT_HALIGN_RIGHT, text = 6),
+			
 			<!-- Active Conn Num -->
 			MultiContentEntryText(pos = (678, 48), size = (30, 27), font=3,  color = 0x00ffffff, color_sel = 0x00004e98, backcolor_sel = 0x00f0f5ff, flags = RT_HALIGN_RIGHT, text = 7),
+			
 			<!-- Max Conn -->
 			MultiContentEntryText(pos = (453, 75), size = (224, 27), font=3,  color = 0x00ffffff, color_sel = 0x00004e98, backcolor_sel = 0x00f0f5ff, flags = RT_HALIGN_RIGHT, text = 8),
+			
 			<!-- Max Conn Num -->
 			MultiContentEntryText(pos = (678, 75), size = (30, 27), font=3,  color = 0x00ffffff, color_sel = 0x00004e98, backcolor_sel = 0x00f0f5ff, flags = RT_HALIGN_RIGHT, text = 9),
 			],
@@ -34,6 +39,7 @@
 	</widget>
 	<widget name="scroll_up" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/toys/images/up.png" position="center,237" size="36,36" alphatest="blend" zPosition="2" />
 	<widget name="scroll_down" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/toys/images/down.png" position="center,978" size="36,36" alphatest="blend" zPosition="2" />
+	
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="center,448" size="738,4" alphatest="blend" zPosition="1" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="center,568" size="738,4" alphatest="blend" zPosition="1" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="center,688" size="738,4" alphatest="blend" zPosition="1" />

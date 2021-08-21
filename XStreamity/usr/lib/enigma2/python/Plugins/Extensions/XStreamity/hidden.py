@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# for localized messages
 from . import _
 from . import xstreamity_globals as glob
 
@@ -148,31 +147,32 @@ class XStreamity_HiddenCategories(Screen):
         username = glob.current_playlist['playlist_info']['username']
         password = glob.current_playlist['playlist_info']['password']
 
-        if self.category_type == "live":
-            if self.level == 1:
-                glob.current_playlist['player_info']['livehidden'] = []
+        for item in self.startList:
 
-                for item in self.startList:
-                    if item[2] is True:
+            if self.category_type == "live":
+                if self.level == 1:
+                    if item[2] is True and item[1] not in glob.current_playlist['player_info']['livehidden']:
                         glob.current_playlist['player_info']['livehidden'].append(item[1])
-            if self.level == 2:
-                glob.current_playlist['player_info']['channelshidden'] = []
+                    elif item[2] is False and item[1] in glob.current_playlist['player_info']['livehidden']:
+                        glob.current_playlist['player_info']['livehidden'].remove(item[1])
 
-                for item in self.startList:
-                    if item[2] is True:
+                if self.level == 2:
+                    if item[2] is True and item[1] not in glob.current_playlist['player_info']['channelshidden']:
                         glob.current_playlist['player_info']['channelshidden'].append(item[1])
+                    elif item[2] is False and item[1] in glob.current_playlist['player_info']['channelshidden']:
+                        glob.current_playlist['player_info']['channelshidden'].remove(item[1])
 
-        elif self.category_type == "vod":
-            glob.current_playlist['player_info']['vodhidden'] = []
-            for item in self.startList:
-                if item[2] is True:
+            elif self.category_type == "vod":
+                if item[2] is True and item[1] not in glob.current_playlist['player_info']['vodhidden']:
                     glob.current_playlist['player_info']['vodhidden'].append(item[1])
+                elif item[2] is False and item[1] in glob.current_playlist['player_info']['vodhidden']:
+                    glob.current_playlist['player_info']['vodhidden'].remove(item[1])
 
-        elif self.category_type == "series":
-            glob.current_playlist['player_info']['serieshidden'] = []
-            for item in self.startList:
-                if item[2] is True:
+            elif self.category_type == "series":
+                if item[2] is True and item[1] not in glob.current_playlist['player_info']['serieshidden']:
                     glob.current_playlist['player_info']['serieshidden'].append(item[1])
+                elif item[2] is False and item[1] in glob.current_playlist['player_info']['serieshidden']:
+                    glob.current_playlist['player_info']['serieshidden'].remove(item[1])
 
         self.playlists_all = []
 

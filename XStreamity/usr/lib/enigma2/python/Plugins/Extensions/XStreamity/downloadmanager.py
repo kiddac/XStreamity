@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# for localized messages
 from . import _
 from .downloader import downloadWithProgress
 from .plugin import skin_path, json_downloadfile, cfg
@@ -124,7 +123,7 @@ class XStreamity_DownloadManager(Screen):
             free = "-?-"
             total = "-?-"
 
-        self["diskspace"].setText(_('Free Space:') + " " + str(free) + " " + _("of") + " " + str(total) + " " + _("GB"))
+        self["diskspace"].setText(_('Free Space:') + " " + str(free) + " " + _("of") + " " + str(total) + " " + "GB")
 
     def selectionChanged(self):
         if self["downloadlist"].getCurrent():

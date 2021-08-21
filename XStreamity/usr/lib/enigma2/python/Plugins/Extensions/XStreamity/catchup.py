@@ -1,11 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-
-# for localized messages
 from . import _
-
-from . import imagedownload
 from . import streamplayer
 from . import xstreamity_globals as glob
 
@@ -16,8 +12,9 @@ from Components.ActionMap import ActionMap
 from Components.Sources.List import List
 from Components.Pixmap import Pixmap
 from Components.config import config
-from datetime import datetime
+from datetime import datetime, timedelta
 from enigma import eTimer, eServiceReference
+from PIL import Image, ImageChops, ImageFile, PngImagePlugin
 from requests.adapters import HTTPAdapter
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
@@ -40,8 +37,7 @@ except:
 
 # https twisted client hack #
 try:
-    from OpenSSL import SSL
-    from twisted.internet import ssl, reactor
+    from twisted.internet import ssl
     from twisted.internet._sslverify import ClientTLSOptions
     sslverify = True
 except:
@@ -49,9 +45,9 @@ except:
 
 if sslverify:
     try:
-        from urlparse import urlparse, parse_qs
+        from urlparse import urlparse
     except:
-        from urllib.parse import urlparse, parse_qs
+        from urllib.parse import urlparse
 
     class SNIFactory(ssl.ClientContextFactory):
         def __init__(self, hostname=None):
@@ -62,6 +58,54 @@ if sslverify:
             if self.hostname:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
+
+
+def mycall(self, cid, pos, length):
+    if cid.decode("ascii") == "tRNS":
+        return self.chunk_TRNS(pos, length)
+    else:
+        return getattr(self, "chunk_" + cid.decode("ascii"))(pos, length)
+
+
+def mychunk_TRNS(self, pos, length):
+    _simple_palette = re.compile(b"^\xff*\x00\xff*$")
+    s = ImageFile._safe_read(self.fp, length)
+    if self.im_mode == "P":
+        if _simple_palette.match(s):
+            i = s.find(b"\0")
+            if i >= 0:
+                self.im_info["transparency"] = i
+        else:
+            self.im_info["transparency"] = s
+    elif self.im_mode in ("1", "L", "I"):
+        self.im_info["transparency"] = i16(s)
+    elif self.im_mode == "RGB":
+        self.im_info["transparency"] = i16(s), i16(s, 2), i16(s, 4)
+    return s
+
+
+if pythonVer != 2:
+    PngImagePlugin.ChunkStream.call = mycall
+    PngImagePlugin.PngStream.chunk_TRNS = mychunk_TRNS
+
+
+_initialized = 0
+
+
+def _mypreinit():
+    global _initialized
+    if _initialized >= 1:
+        return
+    try:
+        from . import MyPngImagePlugin
+        assert MyPngImagePlugin
+    except ImportError:
+        pass
+
+    _initialized = 1
+
+
+Image.preinit = _mypreinit
 
 
 class XStreamity_Catchup(Screen):
@@ -81,7 +125,6 @@ class XStreamity_Catchup(Screen):
         url = str(glob.current_playlist['playlist_info']['player_api']) + "&action=get_live_categories"
 
         self.level = 1
-        self.category = 0
 
         glob.nextlist = []
         glob.nextlist.append({"playlist_url": url, "index": 0, "level": self.level})
@@ -109,6 +152,7 @@ class XStreamity_Catchup(Screen):
 
         self["key_red"] = StaticText(_('Back'))
         self["key_green"] = StaticText(_('OK'))
+        self["key_yellow"] = StaticText('')
         self["key_rec"] = StaticText('')
 
         self.isStream = False
@@ -141,8 +185,9 @@ class XStreamity_Catchup(Screen):
         self["actions"] = ActionMap(["XStreamityActions"], {
             'red': self.back,
             'cancel': self.back,
-            'ok': self.__next__,
-            'green': self.__next__,
+            'ok': self.parentalCheck,
+            'green': self.parentalCheck,
+            'yellow': self.reverse,
             "left": self.pageUp,
             "right": self.pageDown,
             "up": self.goUp,
@@ -191,8 +236,7 @@ class XStreamity_Catchup(Screen):
 
         if self.level == 1:
             url = glob.nextlist[-1]['playlist_url']
-            if self.category == 0:
-                response = glob.current_playlist['data']['live_categories']
+            response = glob.current_playlist['data']['live_categories']
 
             self.processData(response, url)
         else:
@@ -219,10 +263,7 @@ class XStreamity_Catchup(Screen):
 
                     self.processData(content, url)
 
-            except requests.exceptions.ConnectionError as e:
-                print(("Error Connecting: %s" % e))
-
-            except requests.exceptions.RequestException as e:
+            except Exception as e:
                 print(e)
         else:
             with open(levelpath, "r") as f:
@@ -280,22 +321,23 @@ class XStreamity_Catchup(Screen):
                 if 'tv_archive' in item and 'tv_archive_duration' in item:
                     if item['tv_archive'] == 1 and item['tv_archive_duration'] != "0":
 
-                        if 'name' in item:
+                        if 'name' in item and item['name']:
                             name = item['name']
-                        if 'stream_id' in item:
+                        if 'stream_id' in item and item['stream_id']:
                             stream_id = item['stream_id']
                         if 'stream_icon' in item and item['stream_icon']:
-                            if stream_icon.startswith("http"):
+                            if item['stream_icon'].startswith("http"):
                                 stream_icon = item['stream_icon']
-                        if 'epg_channel_id' in item:
+                        if 'epg_channel_id' in item and item['epg_channel_id']:
                             epg_channel_id = item['epg_channel_id']
-                        if 'added' in item:
-                            added = item['added']
 
+                            if epg_channel_id and "&" in epg_channel_id:
+                                epg_channel_id = epg_channel_id.replace("&", "&amp;")
+                        if 'added' in item and item['added']:
+                            added = item['added']
                         epgnowtitle = epgnowtime = epgnowdescription = epgnexttitle = epgnexttime = epgnextdescription = ''
 
                         next_url = "%s/live/%s/%s/%s.%s" % (self.host, self.username, self.password, stream_id, self.output)
-
                         self.list.append([
                             index, str(name), str(stream_id), str(stream_icon), str(epg_channel_id), str(added), str(next_url),
                             epgnowtime, epgnowtitle, epgnowdescription, epgnexttime, epgnexttitle, epgnextdescription
@@ -330,7 +372,6 @@ class XStreamity_Catchup(Screen):
         url = self.live_streams
 
         self.streams = ''
-        self.live_list_all = []
         self.live_list_archive = []
 
         adapter = HTTPAdapter(max_retries=0)
@@ -343,13 +384,10 @@ class XStreamity_Catchup(Screen):
             if r.status_code == requests.codes.ok:
                 self.streams = r.json()
 
-        except requests.exceptions.ConnectionError as e:
-            print(("Error Connecting: %s" % e))
-
-        except requests.exceptions.RequestException as e:
+        except Exception as e:
             print(e)
 
-        if self.streams != '':
+        if self.streams:
             for item in self.streams:
                 if "tv_archive" and "tv_archive_duration" in item:
                     if int(item["tv_archive"]) == 1 and int(item["tv_archive_duration"]) > 0:
@@ -389,41 +427,42 @@ class XStreamity_Catchup(Screen):
                 self.level -= 1
                 self.createSetup()
 
-    def pinEntered(self, result):
+    def pinEntered(self, result=None):
         # print("*** pinEntered ***")
         if not result:
             self.pin = False
             self.session.open(MessageBox, _("Incorrect pin code."), type=MessageBox.TYPE_ERROR, timeout=5)
 
         if self.pin is True:
-            self.next2()
+            glob.pintime = time.time()
+            self.next()
         else:
             return
 
-    def __next__(self):
+    def parentalCheck(self):
         self.pin = True
         if self.level == 1:
-            if cfg.parental.getValue() is True:
-                adult = "all", "+18", "adult", "18+", "18 rated", "xxx", "sex", "porn", "pink", "blue"
-                if any(s in str(self["channel_list"].getCurrent()[0]).lower() for s in adult):
+
+            if cfg.parental.getValue() is True and int(time.time()) - int(glob.pintime) > 900:
+                adult = _("all"), "all", "+18", "adult", "18+", "18 rated", "xxx", "sex", "porn", "pink", "blue"
+                if any(s in str(self["channel_list"].getCurrent()[0]).lower() and str(self["channel_list"].getCurrent()[0]).lower() != "Allgemeines" for s in adult):
                     from Screens.InputBox import PinInput
                     self.session.openWithCallback(self.pinEntered, PinInput, pinList=[config.ParentalControl.setuppin.value], triesEntry=config.ParentalControl.retries.servicepin, title=_("Please enter the parental control pin code"), windowTitle=_("Enter pin code"))
                 else:
-                    self.next2()
+                    self.next()
             else:
-                self.next2()
+                self.next()
         else:
-            self.next2()
+            self.next()
 
-    def next2(self):
-
+    def next(self):
         if self["channel_list"].getCurrent():
             self.currentindex = self["channel_list"].getCurrent()[2]
             next_url = self["channel_list"].getCurrent()[3]
 
             glob.nextlist[-1]['index'] = self.currentindex
-            glob.currentchannelist = self.channelList
-            glob.currentchannelistindex = self.currentindex
+            glob.currentchannellist = self.channelList
+            glob.currentchannellistindex = self.currentindex
 
             if self.level == 1:
                 glob.nextlist.append({"playlist_url": next_url, "index": 0})
@@ -445,7 +484,6 @@ class XStreamity_Catchup(Screen):
 
             if next_url != 'None':
                 if "/live/" in next_url:
-
                     stream_id = next_url.rpartition("/")[-1].partition(".")[0]
                     response = ''
                     shortEPGJson = []
@@ -465,11 +503,7 @@ class XStreamity_Catchup(Screen):
                             except:
                                 response = ''
 
-                    except requests.exceptions.ConnectionError as e:
-                        print(("Error Connecting: %s" % e))
-                        response = ''
-
-                    except requests.exceptions.RequestException as e:
+                    except Exception as e:
                         print(e)
                         response = ''
 
@@ -477,85 +511,72 @@ class XStreamity_Catchup(Screen):
                         shortEPGJson = response
                         index = 0
                         self.epgshortlist = []
+                        duplicatecheck = []
 
                         if "epg_listings" in shortEPGJson:
                             if shortEPGJson["epg_listings"]:
                                 for listing in shortEPGJson["epg_listings"]:
-                                    if 'has_archive' in listing:
-                                        if listing['has_archive'] == 1:
+                                    if 'has_archive' in listing and listing['has_archive'] == 1:
 
-                                            epg_title = ""
-                                            epg_description = ""
+                                        epg_title = ""
+                                        epg_description = ""
+                                        epg_date_all = ""
+                                        epg_time_all = ""
+                                        start = ""
+                                        end = ""
 
-                                            shift = 0
+                                        catchupstart = int(cfg.catchupstart.getValue())
+                                        catchupend = int(cfg.catchupend.getValue())
 
-                                            start = ""
-                                            start_timestamp_o = ""
+                                        if 'title' in listing:
+                                            epg_title = base64.b64decode(listing['title']).decode('utf-8')
 
-                                            end = ""
-                                            stop_timestamp_o = ""
+                                        if 'description' in listing:
+                                            epg_description = base64.b64decode(listing['description']).decode('utf-8')
 
-                                            start_timestamp = ""
-                                            start_timestamp_datestamp = ""
+                                        shift = 0
 
-                                            stop_timestamp = ""
-                                            stop_timestamp_datestamp = ""
+                                        if "serveroffset" in glob.current_playlist["player_info"]:
+                                            shift = int(glob.current_playlist["player_info"]["serveroffset"])
 
-                                            epg_date_all = ""
-                                            epg_time_all = ""
+                                        if listing['start'] and listing['end']:
 
-                                            catchupstart = ""
-                                            catchupend = ""
+                                            start = listing['start']
+                                            end = listing['end']
 
-                                            epg_duration = ""
+                                            start_datetime_original = datetime.strptime(start, "%Y-%m-%d %H:%M:%S")
+                                            start_datetime_offset = datetime.strptime(start, "%Y-%m-%d %H:%M:%S") + timedelta(hours=shift)
+                                            start_datetime_margin = datetime.strptime(start, "%Y-%m-%d %H:%M:%S") + timedelta(hours=shift) - timedelta(minutes=catchupstart)
 
-                                            if 'title' in listing:
-                                                epg_title = base64.b64decode(listing['title']).decode('utf-8')
+                                            try:
+                                                # end_datetime_original = datetime.strptime(end, "%Y-%m-%d %H:%M:%S")
+                                                end_datetime_offset = datetime.strptime(end, "%Y-%m-%d %H:%M:%S") + timedelta(hours=shift)
+                                                end_datetime_margin = datetime.strptime(end, "%Y-%m-%d %H:%M:%S") + timedelta(hours=shift) + timedelta(minutes=catchupend)
+                                            except:
+                                                try:
+                                                    end = listing['stop']
+                                                    # end_datetime_original = datetime.strptime(end, "%Y-%m-%d %H:%M:%S")
+                                                    end_datetime_offset = datetime.strptime(end, "%Y-%m-%d %H:%M:%S") + timedelta(hours=shift)
+                                                    end_datetime_margin = datetime.strptime(end, "%Y-%m-%d %H:%M:%S") + timedelta(hours=shift) + timedelta(minutes=catchupend)
+                                                except:
+                                                    return
 
-                                            if 'description' in listing:
-                                                epg_description = base64.b64decode(listing['description']).decode('utf-8')
+                                            epg_date_all = start_datetime_offset.strftime('%a %d/%m')
+                                            epg_time_all = str(start_datetime_offset.strftime('%H:%M')) + " - " + str(end_datetime_offset.strftime('%H:%M'))
 
-                                            if "catchupshift" in glob.current_playlist["player_info"]:
-                                                shift = int(glob.current_playlist["player_info"]["catchupshift"])
+                                        epg_duration = int((end_datetime_margin - start_datetime_margin).total_seconds() / 60.0)
 
-                                            if 'start' in listing:
-                                                start = listing['start']
-                                                start_timestamp_o = int(time.mktime(time.strptime(start, "%Y-%m-%d %H:%M:%S")))
+                                        url_datestring = str(start_datetime_original.strftime('%Y-%m-%d:%H-%M'))
 
-                                            if 'end' in listing:
-                                                end = listing['end']
-                                                stop_timestamp_o = int(time.mktime(time.strptime(end, "%Y-%m-%d %H:%M:%S")))
-
-                                            if 'start_timestamp' in listing:
-                                                start_timestamp = int(listing['start_timestamp'])
-                                                start_timestamp_datestamp = datetime.fromtimestamp(start_timestamp)
-
-                                            if 'stop_timestamp' in listing:
-                                                stop_timestamp = int(listing['stop_timestamp'])
-                                                stop_timestamp_datestamp = datetime.fromtimestamp(stop_timestamp)
-
-                                            epg_date_all = "%s %s" % (start_timestamp_datestamp.strftime("%a"), start_timestamp_datestamp.strftime("%d/%m"))
-
-                                            epg_time_all = "%s - %s" % (start_timestamp_datestamp.strftime("%H:%M"), stop_timestamp_datestamp.strftime("%H:%M"))
-
-                                            # add catchup buffer
-                                            catchupstart = int(cfg.catchupstart.getValue())
-                                            catchupend = int(cfg.catchupend.getValue())
-
-                                            start_timestamp_o -= (catchupstart * 60)
-                                            stop_timestamp_o += (catchupend * 60)
-
-                                            epg_duration = int(stop_timestamp_o - start_timestamp_o) / 60
-
-                                            start_timestamp_o += (shift * 60 * 60)
-
-                                            url_datestring = str((datetime.fromtimestamp(start_timestamp_o).strftime("%Y-%m-%d %H:%M:%S")).replace(":", "-").replace(" ", ":"))[0:16]
-
+                                        if [epg_date_all, epg_time_all] not in duplicatecheck:
+                                            duplicatecheck.append([epg_date_all, epg_time_all])
                                             self.epgshortlist.append(buildShortEPGListEntry(str(epg_date_all), str(epg_time_all), str(epg_title), str(epg_description), str(url_datestring), str(epg_duration), index))
+
                                             index += 1
 
                                 self.epgshortlist.reverse()
                                 self["epg_short_list"].setList(self.epgshortlist)
+                                duplicatecheck = []
 
                                 if self["epg_short_list"].getCurrent():
                                     glob.catchupdata = [str(self["epg_short_list"].getCurrent()[0]), str(self["epg_short_list"].getCurrent()[3])]
@@ -582,12 +603,8 @@ class XStreamity_Catchup(Screen):
         next_url = self["channel_list"].getCurrent()[3]
         stream = next_url.rpartition('/')[-1]
 
-        """
-        if stream.endswith(".ts"):
-            stream = stream.replace(".ts", ".m3u8")
-            """
-
         date = str(self["epg_short_list"].getCurrent()[4])
+
         duration = str(self["epg_short_list"].getCurrent()[5])
 
         playurl = "%s/timeshift/%s/%s/%s/%s/%s" % (self.host, self.username, self.password, duration, date, stream)
@@ -611,7 +628,6 @@ class XStreamity_Catchup(Screen):
     def selectionChanged(self):
         if self["channel_list"].getCurrent():
             channeltitle = self["channel_list"].getCurrent()[0]
-            stream_url = self["channel_list"].getCurrent()[3]
             currentindex = self["channel_list"].getIndex()
 
             self.position = currentindex + 1
@@ -619,102 +635,109 @@ class XStreamity_Catchup(Screen):
             self.page = int(math.ceil(float(self.position) / float(self.itemsperpage)))
             self.pageall = int(math.ceil(float(self.positionall) / float(self.itemsperpage)))
 
-            self["page"].setText('Page: ' + str(self.page) + " of " + str(self.pageall))
+            self["page"].setText(_('Page: ') + str(self.page) + _(" of ") + str(self.pageall))
             self["listposition"].setText(str(self.position) + "/" + str(self.positionall))
 
             self["channel"].setText(self.main_title + ": " + str(channeltitle))
-
-            if stream_url != 'None':
-                if "/live/" in stream_url:
-
-                    self.timerpicon = eTimer()
-                    try:
-                        self.timerpicon.callback.append(self.downloadPicon)
-                    except:
-                        self.timerpicon_conn = self.timerpicon.timeout.connect(self.downloadPicon)
-                    self.timerpicon.start(200, True)
-
-    def downloadPicon(self):
-        if self["channel_list"].getCurrent():
-            next_url = self["channel_list"].getCurrent()[3]
-            if next_url != 'None' and "/live/" in next_url:
-
+            if self.level >= 2:
+                self.timerimage = eTimer()
                 try:
-                    os.remove(str(dir_tmp) + 'original.png')
+                    self.timerimage.callback.append(self.downloadImage)
                 except:
-                    pass
+                    self.timerimage_conn = self.timerimage.timeout.connect(self.downloadImage)
+                self.timerimage.start(250, True)
+        else:
+            self.position = 0
+            self.positionall = 0
+            self.page = 0
+            self.pageall = 0
 
-                url = ''
-                size = []
-                if self["channel_list"].getCurrent():
+            self["page"].setText(_('Page: ') + str(self.page) + _(" of ") + str(self.pageall))
+            self["listposition"].setText(str(self.position) + "/" + str(self.positionall))
 
-                    desc_image = ''
-                    try:
-                        desc_image = self["channel_list"].getCurrent()[5]
-                    except Exception as e:
-                        print(("* picon error ** %s" % e))
-                        pass
+    def downloadImage(self):
+        if self["channel_list"].getCurrent():
+            try:
+                os.remove(str(dir_tmp) + 'original.png')
+                os.remove(str(dir_tmp) + 'temp.png')
+            except:
+                pass
 
-                    imagetype = "picon"
-                    url = desc_image
-                    size = [147, 88]
-                    if screenwidth.width() > 1280:
-                        size = [220, 130]
+            original = str(dir_tmp) + 'original.png'
+            desc_image = ''
+            try:
+                desc_image = self["channel_list"].getCurrent()[5]
+            except:
+                pass
 
-                    if url and url != "n/A":
-                        original = str(dir_tmp) + 'original.png'
-
-                        try:
-                            if url.startswith("https") and sslverify:
-                                parsed_uri = urlparse(url)
-                                domain = parsed_uri.hostname
-                                sniFactory = SNIFactory(domain)
-
-                                if pythonVer == 3:
-                                    url = url.encode()
-                                downloadPage(url, original, sniFactory, timeout=5).addCallback(self.checkdownloaded, size, imagetype).addErrback(self.ebPrintError)
-                            else:
-                                if pythonVer == 3:
-                                    url = url.encode()
-                                downloadPage(url, original, timeout=5).addCallback(self.checkdownloaded, size, imagetype).addErrback(self.ebPrintError)
-                        except:
-                            self.loadDefaultImage()
+            if desc_image and desc_image != "n/A":
+                temp = dir_tmp + 'temp.png'
+                try:
+                    if desc_image.startswith("https") and sslverify:
+                        parsed_uri = urlparse(desc_image)
+                        domain = parsed_uri.hostname
+                        sniFactory = SNIFactory(domain)
+                        if pythonVer == 3:
+                            desc_image = desc_image.encode()
+                        downloadPage(desc_image, temp, sniFactory, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
                     else:
-                        self.loadDefaultImage()
+                        if pythonVer == 3:
+                            desc_image = desc_image.encode()
+                        downloadPage(desc_image, temp, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
+                except:
+                    self.loadDefaultImage()
+            else:
+                self.loadDefaultImage()
 
-    def ebPrintError(self, failure):
-        self.loadDefaultImage()
-        pass
-
-    def loadDefaultImage(self):
+    def loadDefaultImage(self, data=None):
+        # print("*** loadDefaultImage ***")
+        if data:
+            print(data)
         if self["epg_picon"].instance:
             self["epg_picon"].instance.setPixmapFromFile(common_path + "picon.png")
 
-    def checkdownloaded(self, data, piconSize, imageType):
+    def resizeImage(self, data=None):
+        # print("*** resizeImage ***")
         if self["channel_list"].getCurrent():
-            if imageType == "picon":
+            original = str(dir_tmp) + 'temp.png'
 
-                original = str(dir_tmp) + 'original.png'
-                if os.path.exists(original):
-                    try:
-                        imagedownload.updatePreview(piconSize, imageType, original)
-                        self.displayImage()
-                    except Exception as e:
-                        print(("* error ** %s" % e))
-                        pass
-                    except:
-                        pass
-                else:
-                    self.loadDefaultImage()
+            size = [147, 88]
+            if screenwidth.width() > 1280:
+                size = [220, 130]
 
-    def displayImage(self):
-        preview = str(dir_tmp) + 'original.png'
-        if self["epg_picon"].instance:
-            self["epg_picon"].instance.setPixmapFromFile(preview)
+            if os.path.exists(original):
+                try:
+                    im = Image.open(original).convert('RGBA')
+                    im.thumbnail(size, Image.ANTIALIAS)
+
+                    # crop and center image
+                    bg = Image.new('RGBA', size, (255, 255, 255, 0))
+
+                    imagew, imageh = im.size
+                    im_alpha = im.convert('RGBA').split()[-1]
+                    bgwidth, bgheight = bg.size
+                    bg_alpha = bg.convert('RGBA').split()[-1]
+                    temp = Image.new('L', (bgwidth, bgheight), 0)
+                    temp.paste(im_alpha, (int((bgwidth - imagew) / 2), int((bgheight - imageh) / 2)), im_alpha)
+                    bg_alpha = ImageChops.screen(bg_alpha, temp)
+                    bg.paste(im, (int((bgwidth - imagew) / 2), int((bgheight - imageh) / 2)))
+                    im = bg
+
+                    im.save(original, 'PNG')
+
+                    if self["epg_picon"].instance:
+                        self["epg_picon"].instance.setPixmapFromFile(original)
+
+                except Exception as e:
+                    print("******* picon resize failed *******")
+                    print(e)
+            else:
+                self.loadDefaultImage()
 
     def showEPGElements(self):
         self["epg_picon"].show()
         self["epg_bg"].show()
+        self["key_yellow"].setText(_('Reverse'))
 
     def hideEPG(self):
         self["epg_short_list"].setList([])
@@ -722,6 +745,7 @@ class XStreamity_Catchup(Screen):
         self["epg_bg"].hide()
         self["epg_title"].setText('')
         self["epg_description"].setText('')
+        self["key_yellow"].setText('')
 
     # record button download video file
 
@@ -736,7 +760,6 @@ class XStreamity_Catchup(Screen):
                 date = str(self["epg_short_list"].getCurrent()[4])
                 duration = str(self["epg_short_list"].getCurrent()[5])
                 playurl = "%s/timeshift/%s/%s/%s/%s/%s" % (self.host, self.username, self.password, duration, date, stream)
-                extension = str(os.path.splitext(next_url)[-1])
 
                 date_all = str(self["epg_short_list"].getCurrent()[1]).strip()
                 time_all = str(self["epg_short_list"].getCurrent()[2]).strip()
@@ -746,11 +769,7 @@ class XStreamity_Catchup(Screen):
 
                 otitle = str(self["epg_short_list"].getCurrent()[0])
                 channel = str(self["channel_list"].getCurrent()[0])
-
                 title = str(date) + " - " + str(channel) + " - " + str(otitle)
-
-                fileTitle = re.sub(r'[\<\>\:\"\/\\\|\?\*\[\]]', '_', title)
-                fileTitle = re.sub(r'_+', '_', fileTitle)
 
                 downloads_all = []
                 if os.path.isfile(json_downloadfile):
@@ -769,6 +788,10 @@ class XStreamity_Catchup(Screen):
                     self.session.open(MessageBox, _(title) + "\n\n" + _("Added to download manager"), MessageBox.TYPE_INFO, timeout=5)
                 else:
                     self.session.open(MessageBox, _(title) + "\n\n" + _("Already added to download manager"), MessageBox.TYPE_ERROR, timeout=5)
+
+    def reverse(self):
+        self.epgshortlist.reverse()
+        self["epg_short_list"].setList(self.epgshortlist)
 
 
 def buildCategoryList(index, title, next_url, category_id):

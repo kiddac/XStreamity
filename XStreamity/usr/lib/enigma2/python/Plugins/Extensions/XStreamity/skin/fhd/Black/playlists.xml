@@ -13,10 +13,7 @@
 			{"template": [
 			<!-- name -->
 			MultiContentEntryText(pos = (21, 9), size = (432, 42), font=0,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 1),
-			
-			<!-- url -->
-			<!-- MultiContentEntryText(pos = (21, 48), size = (525, 27), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 2), -->
-			
+
 			<!-- Authorised LED -->
 			MultiContentEntryPixmapAlphaBlend(pos = (699, 24), size = (23, 24), png = 5),
 			
@@ -35,13 +32,8 @@
 			<!-- Max Conn Num --> 
 			MultiContentEntryText(pos = (639, 75), size = (78, 30), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_RIGHT, text = 9),
 			
-			
 			<!-- Expires -->
 			MultiContentEntryText(pos = (21, 75), size = (240, 30), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 3),
-			
-			<!-- Timeshift -->
-			MultiContentEntryText(pos = (21, 48), size = (240, 30), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 10),
-		
 			],
 			"fonts": [gFont("xstreamityregular", 30), gFont("xstreamityregular", 21)],
 			"itemHeight": 120,

@@ -22,13 +22,13 @@
 	<!-- right divider -->
 	<eLabel position="1008,596" size="1,104" backgroundColor="#fffffff" zPosition="1" />
 	<widget source="session.CurrentService" render="Progress" position="214,668" size="762,8" borderWidth="1" borderColor="#ffffff" foregroundColor="#003d68" backgroundColor="#1a000000" zPosition="3">
-		<convert type="ServicePosition">Position</convert>
+		<convert type="xServicePosition">Position</convert>
 	</widget>
 	<widget source="session.CurrentService" render="Label" position="214,638" size="600,32" font="xstreamityregular;20" noWrap="1" foregroundColor="#ffffff" backgroundColor="#40000000" halign="left" transparent="1" zPosition="3">
-		<convert type="ServicePosition">Position</convert>
+		<convert type="xServicePosition">Position,ShowHours</convert>
 	</widget>
 	<widget source="session.CurrentService" render="Label" position="896,638" size="80,32" font="xstreamityregular;20" noWrap="1" foregroundColor="#ffffff" backgroundColor="#40000000" halign="right" transparent="1" zPosition="3">
-		<convert type="ServicePosition">Length</convert>
+		<convert type="xServicePosition">Length,ShowHours</convert>
 	</widget>
 	<!-- date -->
 	<widget source="global.CurrentTime" render="Label" position="1040,592" size="212,32" font="xstreamityregular;20" foregroundColor="#ffffff" backgroundColor="#40000000" transparent="1" zPosition="2">

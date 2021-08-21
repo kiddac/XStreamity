@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# for localized messages
 from . import _
 
 from Plugins.Plugin import PluginDescriptor
@@ -11,7 +10,7 @@ from Components.config import config, ConfigSubsection, ConfigSelection, ConfigD
 import os
 import shutil
 
-VERSION = "2.98-20210709"
+VERSION = "3.05-20210821"
 screenwidth = getDesktop(0).size()
 
 dir_dst = "/etc/enigma2/xstreamity/"
@@ -73,7 +72,6 @@ if os.path.exists("/usr/bin/apt-get"):
 
 cfg.livetype = ConfigSelection(default='1', choices=streamtypechoices)
 cfg.vodtype = ConfigSelection(default='4097', choices=streamtypechoices)
-# cfg.catchuptype = ConfigSelection(default='4097', choices=streamtypechoices)
 downloadpath = None
 
 try:
@@ -86,13 +84,12 @@ except:
 
 
 cfg.location = ConfigDirectory(default=dir_dst)
-cfg.main = ConfigYesNo(default=False)
+cfg.main = ConfigYesNo(default=True)
 cfg.livepreview = ConfigYesNo(default=False)
 cfg.stopstream = ConfigYesNo(default=False)
 cfg.skin = ConfigSelection(default='default', choices=folders)
 cfg.parental = ConfigYesNo(default=False)
-cfg.timeout = ConfigSelectionNumber(1, 20, 1, default=3)
-# cfg.downloadlocation = ConfigDirectory(default=downloadpath)
+cfg.timeout = ConfigSelectionNumber(1, 20, 1, default=6)
 cfg.refreshTMDB = ConfigYesNo(default=True)
 cfg.TMDBLanguage = ConfigSelection(default='en', choices=languages)
 cfg.catchupstart = ConfigSelectionNumber(0, 30, 1, default=0)

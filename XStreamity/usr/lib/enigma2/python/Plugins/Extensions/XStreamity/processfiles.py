@@ -53,7 +53,7 @@ def processfiles():
             type = 'm3u_plus'
             output = 'ts'
 
-            epgshift = 0
+            # epgshift = 0
             catchupshift = 0
             livehidden = []
             vodhidden = []
@@ -66,6 +66,7 @@ def processfiles():
             showcatchup = True
             livefavourites = []
             vodfavourites = []
+
             serveroffset = 0
 
             if not line.startswith("#") and line.startswith('http'):
@@ -106,19 +107,20 @@ def processfiles():
                 if "output" in query:
                     output = query['output'][0].strip()
 
-                epgshiftexists = False
+                # epgshiftexists = False
+                """
                 if "timeshift" in query:
                     try:
                         epgshiftexists = True
                         epgshift = int(query['timeshift'][0].strip())
                     except:
                         pass
+                        """
 
                 player_api = "%s/player_api.php?username=%s&password=%s" % (host, username, password)
                 enigma2_api = "%s/enigma2.php?username=%s&password=%s" % (host, username, password)
                 xmltv_api = "%s/xmltv.php?username=%s&password=%s" % (host, username, password)
                 full_url = "%s/get.php?username=%s&password=%s&type=%s&output=%s" % (host, username, password, type, output)
-                
 
                 playlist_exists = False
 
@@ -134,15 +136,14 @@ def processfiles():
                                 if "channelshidden" not in playlists["player_info"]:
                                     playlists["player_info"]["channelshidden"] = channelshidden
 
-                                if "serveroffset" not in playlists["player_info"]:
-                                    playlists["player_info"]["serveroffset"] = serveroffset
-
                                 if "catchupshift" not in playlists["player_info"]:
                                     playlists["player_info"]["catchupshift"] = catchupshift
-                                    
+
                                 if "xmltv_api" not in playlists["player_info"]:
                                     playlists["player_info"]["xmltv_api"] = xmltv_api
-                                    
+
+                                if "serveroffset" not in playlists["player_info"]:
+                                    playlists["player_info"]["serveroffset"] = serveroffset
 
                                 playlists["playlist_info"]["name"] = name
                                 playlists["playlist_info"]["type"] = type
@@ -150,17 +151,10 @@ def processfiles():
                                 playlists["playlist_info"]["full_url"] = full_url  # get.php
                                 playlists["playlist_info"]["index"] = index
                                 playlists["data"]["data_downloaded"] = False
+                                """
                                 if epgshiftexists:
                                     playlists["player_info"]["epgshift"] = epgshift
-
-                                """
-                                if "epgtype" not in playlists["player_info"]:
-                                    playlists["player_info"]["epgtype"] = epgtype
-
-                                if "epgquickshift" not in playlists["player_info"]:
-                                    playlists["player_info"]["epgquickshift"] = epgquickshift
                                     """
-                                # break
 
                 if not playlist_exists:
                     playlists_all.append({
@@ -180,11 +174,11 @@ def processfiles():
                             ("xmltv_api", xmltv_api),
                             ("full_url", full_url),
                         ]),
+
                         "player_info": OrderedDict([
                             ("livetype", livetype),
                             ("vodtype", vodtype),
-                            # ("catchuptype", catchuptype),
-                            ("epgshift", epgshift),
+                            # ("epgshift", epgshift),
                             ("catchupshift", catchupshift),
                             ("livehidden", livehidden),
                             ("vodhidden", vodhidden),
@@ -204,10 +198,7 @@ def processfiles():
                             ("live_categories", []),
                             ("vod_categories", []),
                             ("series_categories", []),
-                            ("live_streams", []),
                             ("catchup", False),
-                            ("catchup_checked", False),
-                            ("last_check", ''),
                             ("epg_date", ''),
                             ("data_downloaded", False),
                             ("epg_importer_files", False)

@@ -1,9 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# for localized messages
 from . import _
-
 from . import streamplayer
 from . import xstreamity_globals as glob
 
@@ -27,12 +25,6 @@ from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Tools.LoadPixmap import LoadPixmap
 from twisted.web.client import downloadPage
 
-try:
-    from urllib import unquote
-except:
-    from urllib.parse import unquote
-
-
 import base64
 import codecs
 import json
@@ -40,6 +32,7 @@ import math
 import os
 import re
 import requests
+import time
 import sys
 import zlib
 
@@ -152,11 +145,11 @@ class XStreamity_Categories(Screen):
         self["vod_cast"] = StaticText()
 
         self.isStream = False
+        self.filterresult = ""
         self.pin = False
         self.info = ""
         self.storedtitle = ""
         self.storedseason = ""
-        self.filterresult = ""
 
         self.protocol = glob.current_playlist['playlist_info']['protocol']
         self.domain = glob.current_playlist['playlist_info']['domain']
@@ -727,7 +720,7 @@ class XStreamity_Categories(Screen):
             self.page = int(math.ceil(float(self.position) / float(self.itemsperpage)))
             self.pageall = int(math.ceil(float(self.positionall) / float(self.itemsperpage)))
 
-            self["page"].setText('Page: ' + str(self.page) + " of " + str(self.pageall))
+            self["page"].setText(_('Page: ') + str(self.page) + _(" of ") + str(self.pageall))
             self["listposition"].setText(str(self.position) + "/" + str(self.positionall))
 
             self["channel"].setText(self.main_title + ": " + str(channeltitle))
@@ -738,81 +731,70 @@ class XStreamity_Categories(Screen):
                     self.timerSeries.callback.append(self.displaySeriesData)
                 except:
                     self.timerSeries_conn = self.timerSeries.timeout.connect(self.displaySeriesData)
-                self.timerSeries.start(50, True)
+                self.timerSeries.start(300, True)
         else:
             self.position = 0
             self.positionall = 0
             self.page = 0
             self.pageall = 0
 
-            self["page"].setText('Page: ' + str(self.page) + " of " + str(self.pageall))
+            self["page"].setText(_('Page: ') + str(self.page) + _(" of ") + str(self.pageall))
             self["listposition"].setText(str(self.position) + "/" + str(self.positionall))
 
             self["key_yellow"].setText('')
             self["key_blue"].setText('')
 
     def downloadImage(self):
-        # print("*** downloadImage ***")
         if self["channel_list"].getCurrent():
-
             try:
                 os.remove(str(dir_tmp) + 'original.jpg')
+                os.remove(str(dir_tmp) + 'temp.jpg')
             except:
                 pass
-
-            size = [267, 400]
-            if screenwidth.width() > 1280:
-                size = [400, 600]
 
             original = str(dir_tmp) + 'original.jpg'
             desc_image = ''
 
-            try:
-                desc_image = self["channel_list"].getCurrent()[5]
+            desc_image = self["channel_list"].getCurrent()[5]
 
-                if self.info:  # tmbdb
-                    if 'cover_big' in self.info and self.info["cover_big"] and self.info["cover_big"] != "null":
-                        desc_image = str(self.info["cover_big"]).strip()
-                    else:
-                        self.loadDefaultImage()
-                        return
+            if self.info:  # tmbdb
+                if 'cover_big' in self.info and self.info["cover_big"] and self.info["cover_big"] != "null":
+                    desc_image = str(self.info["cover_big"]).strip()
 
-                if desc_image and desc_image != "n/A":
-
+            if desc_image and desc_image != "n/A":
+                temp = dir_tmp + 'temp.jpg'
+                try:
                     if desc_image.startswith("https") and sslverify:
                         parsed_uri = urlparse(desc_image)
                         domain = parsed_uri.hostname
                         sniFactory = SNIFactory(domain)
-
                         if pythonVer == 3:
                             desc_image = desc_image.encode()
-                        downloadPage(desc_image, original, sniFactory, timeout=5).addCallback(self.resizeImage, size).addErrback(self.loadDefaultImage)
+                        downloadPage(desc_image, temp, sniFactory, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
                     else:
                         if pythonVer == 3:
                             desc_image = desc_image.encode()
-                        downloadPage(desc_image, original, timeout=5).addCallback(self.resizeImage, size).addErrback(self.loadDefaultImage)
-                else:
+                        downloadPage(desc_image, temp, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
+                except:
                     self.loadDefaultImage()
+            else:
+                self.loadDefaultImage()
 
-            except Exception as e:
-                print("* image error ** %s" % e)
-
-    def loadDefaultImage(self, failure=None):
+    def loadDefaultImage(self, data=None):
         # print("*** loadDefaultImage ***")
-
-        print("*** failure *** %s" % failure)
-
+        if data:
+            print(data)
         if self["vod_cover"].instance:
             self["vod_cover"].instance.setPixmapFromFile(skin_path + "images/vod_cover.png")
 
-    def resizeImage(self, data, size):
+    def resizeImage(self, data=None):
         # print("*** resizeImage ***")
         if self["channel_list"].getCurrent():
             if self["vod_cover"].instance:
-                preview = str(dir_tmp) + 'original.jpg'
+                preview = str(dir_tmp) + 'temp.jpg'
+
                 width = 267
                 height = 400
-
                 if screenwidth.width() > 1280:
                     width = 400
                     height = 600
@@ -998,7 +980,7 @@ class XStreamity_Categories(Screen):
         else:
             self.resetSearch()
 
-    def filterChannels(self, result):
+    def filterChannels(self, result=None):
         # print("*** filterChannels ***")
         if result or self.filterresult:
             self.filterresult = result
@@ -1045,13 +1027,14 @@ class XStreamity_Categories(Screen):
 
         self.buildLists()
 
-    def pinEntered(self, result):
+    def pinEntered(self, result=None):
         # print("*** pinEntered ***")
         if not result:
             self.pin = False
             self.session.open(MessageBox, _("Incorrect pin code."), type=MessageBox.TYPE_ERROR, timeout=5)
 
         if self.pin is True:
+            glob.pintime = time.time()
             self.next()
         else:
             return
@@ -1060,10 +1043,11 @@ class XStreamity_Categories(Screen):
         # print("*** parentalCheck ***")
 
         self.pin = True
+
         if self.level == 1:
-            if cfg.parental.getValue() is True:
-                adult = "all", "+18", "adult", "18+", "18 rated", "xxx", "sex", "porn", "pink", "blue"
-                if any(s in str(self["channel_list"].getCurrent()[0]).lower() for s in adult):
+            if cfg.parental.getValue() is True and int(time.time()) - int(glob.pintime) > 900:
+                adult = _("all"), "all", "+18", "adult", "18+", "18 rated", "xxx", "sex", "porn", "pink", "blue"
+                if any(s in str(self["channel_list"].getCurrent()[0]).lower() and str(self["channel_list"].getCurrent()[0]).lower() != "Allgemeines" for s in adult):
                     from Screens.InputBox import PinInput
                     self.session.openWithCallback(self.pinEntered, PinInput, pinList=[config.ParentalControl.setuppin.value], triesEntry=config.ParentalControl.retries.servicepin, title=_("Please enter the parental control pin code"), windowTitle=_("Enter pin code"))
                 else:
@@ -1080,8 +1064,8 @@ class XStreamity_Categories(Screen):
             currentindex = self["channel_list"].getIndex()
             next_url = self["channel_list"].getCurrent()[3]
             glob.nextlist[-1]['index'] = currentindex
-            glob.currentchannelist = self.channelList[:]
-            glob.currentchannelistindex = currentindex
+            glob.currentchannellist = self.channelList[:]
+            glob.currentchannellistindex = currentindex
 
             if self.level == 1:
                 self.level += 1
@@ -1114,11 +1098,12 @@ class XStreamity_Categories(Screen):
                 streamtype = glob.current_playlist["player_info"]["vodtype"]
 
                 self.reference = eServiceReference(int(streamtype), 0, next_url)
+                self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
                 self.session.openWithCallback(self.setIndex, streamplayer.XStreamity_VodPlayer, str(next_url), str(streamtype))
 
     def setIndex(self):
         # print("*** set index ***")
-        self["channel_list"].setIndex(glob.currentchannelistindex)
+        self["channel_list"].setIndex(glob.currentchannellistindex)
         self.selectionChanged()
 
     def back(self):
@@ -1167,6 +1152,7 @@ class XStreamity_Categories(Screen):
                 fileTitle = re.sub(r'[\<\>\:\"\/\\\|\?\*\[\]]', '', title)
 
                 try:
+                    filepath = str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension)
                     if stream_url.startswith("https") and sslverify:
                         parsed_uri = urlparse(stream_url)
                         domain = parsed_uri.hostname
@@ -1174,27 +1160,31 @@ class XStreamity_Categories(Screen):
 
                         if pythonVer == 3:
                             stream_url = stream_url.encode()
-                        downloadPage(stream_url, str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension), sniFactory).addErrback(self.printError)
+                        downloadPage(stream_url, filepath, sniFactory).addErrback(self.failed)
                     else:
 
                         if pythonVer == 3:
                             stream_url = stream_url.encode()
-                        downloadPage(stream_url, str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension)).addErrback(self.printError)
+                        downloadPage(stream_url, filepath).addErrback(self.self.failed)
 
-                    self.session.open(MessageBox, _('Downloading \n\n' + title + "\n\n" + str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension)), MessageBox.TYPE_INFO)
+                    self.session.open(MessageBox, _('Downloading') + '\n\n' + str(title) + "\n\n" + str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension), MessageBox.TYPE_INFO)
                 except Exception as e:
                     print(("download series error %s" % e))
 
                 except:
-                    self.session.open(MessageBox, _('Download Failed\n\n' + title + "\n\n" + str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension)), MessageBox.TYPE_WARNING)
+                    self.session.open(MessageBox, _('Download Failed') + '\n\n' + str(title) + "\n\n" + str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension), MessageBox.TYPE_WARNING)
 
+    def failed(self, data=None):
+        if data:
+            print(data)
+            
     def getTMDB(self):
-        # print("*** getTMDB ***")
         try:
             os.remove(str(dir_tmp) + 'search.txt')
         except:
             pass
 
+        self.isIMDB = False
         if self["channel_list"].getCurrent():
 
             title = ''
@@ -1252,18 +1242,16 @@ class XStreamity_Categories(Screen):
 
             searchurl = 'http://api.themoviedb.org/3/search/tv?api_key=' + str(self.check(self.token)) + '&query=%22' + str(searchtitle) + '%22'
 
+            filepath = str(dir_tmp) + 'search.txt'
+
             if pythonVer == 3:
                 searchurl = searchurl.encode()
-
             try:
-                downloadPage(searchurl, str(dir_tmp) + 'search.txt', timeout=10).addCallback(self.processTMDB).addErrback(self.printError)
+                downloadPage(searchurl, filepath, timeout=10).addCallback(self.processTMDB).addErrback(self.failed)
             except Exception as e:
                 print(("download TMDB error %s" % e))
-            except:
-                pass
 
-    def processTMDB(self, result):
-        # print("*** process TMDB ***")
+    def processTMDB(self, result=None):
         with codecs.open(str(dir_tmp) + 'search.txt', 'r', encoding='utf-8') as f:
             response = f.read()
 
@@ -1279,8 +1267,7 @@ class XStreamity_Categories(Screen):
             except:
                 pass
 
-    def getTMDBDetails(self, resultid):
-        # print("*** getTMDBDetails ***")
+    def getTMDBDetails(self, resultid=None):
         try:
             os.remove(str(dir_tmp) + 'series.txt')
         except:
@@ -1298,16 +1285,17 @@ class XStreamity_Categories(Screen):
         if self.level == 3 or self.level == 4:
             detailsurl = "http://api.themoviedb.org/3/tv/" + str(resultid) + "/season/" + str(self.storedseason) + "?api_key=" + str(self.check(self.token)) + "&append_to_response=credits&language=" + str(language)
 
+        filepath = str(dir_tmp) + 'series.txt'
+
         if pythonVer == 3:
             detailsurl = detailsurl.encode()
-        try:
-            downloadPage(detailsurl, str(dir_tmp) + 'series.txt', timeout=10).addCallback(self.processTMDBDetails).addErrback(self.printError)
-        except Exception as e:
-            print(("download TMDB details %s" % e))
-        except:
-            pass
 
-    def processTMDBDetails(self, result):
+        try:
+            downloadPage(detailsurl, filepath, timeout=10).addCallback(self.processTMDBDetails).addErrback(self.failed)
+        except Exception as e:
+            print(("download TMDB details error %s" % e))
+
+    def processTMDBDetails(self, result=None):
         valid = False
         response = ''
 
@@ -1378,13 +1366,6 @@ class XStreamity_Categories(Screen):
                     genre = " / ".join(map(str, genre))
                     self.info['genre'] = genre
 
-                """
-                if "production_countries" in self.detailsresult and self.detailsresult["production_countries"]:
-                    for pcountry in self.detailsresult["production_countries"]:
-                        country.append(str(pcountry["name"]))
-                    country = ", ".join(map(str, country))
-                    self.info['country'] = country
-                    """
                 if "first_air_date" in self.detailsresult and self.detailsresult["first_air_date"]:
                     self.info['releasedate'] = str(self.detailsresult["first_air_date"])
 
@@ -1394,14 +1375,14 @@ class XStreamity_Categories(Screen):
                 if "credits" in self.detailsresult:
                     if "cast" in self.detailsresult["credits"]:
                         for actor in self.detailsresult["credits"]["cast"]:
-                            if "character" in actor:
+                            if "character" in actor and 'name' in actor:
                                 cast.append(str(actor["name"]))
-                        cast = ", ".join(map(str, cast))
+                        cast = ", ".join(map(str, cast[:10]))
                         self.info['cast'] = cast
 
                 if "credits" in self.detailsresult and "crew" in self.detailsresult["credits"]:
                     for actor in self.detailsresult["credits"]["crew"]:
-                        if "job" in actor:
+                        if "job" in actor and actor['job'] == "Director":
                             director.append(str(actor["name"]))
 
                     director = ", ".join(map(str, director))
@@ -1442,13 +1423,6 @@ class XStreamity_Categories(Screen):
             else:
                 self["vod_rating"].setText('')
 
-            """
-            if 'country' in self.info:
-                self["vod_country"].setText(str(self.info["country"]).strip())
-            else:
-                self["vod_country"].setText('')
-                """
-
             if 'releasedate' in self.info and self.info["releasedate"]:
                 try:
                     self["vod_release_date"].setText(datetime.strptime(self.info["releasedate"], "%Y-%m-%d").strftime("%d-%m-%Y"))
@@ -1468,10 +1442,6 @@ class XStreamity_Categories(Screen):
                 self["vod_cast"].setText(str(self.info["actors"]).strip())
             else:
                 self["vod_cast"].setText('')
-
-    def printError(self, failure):
-        print(("********* error ******** %s" % failure))
-        pass
 
     def check(self, token):
         result = base64.b64decode(token)

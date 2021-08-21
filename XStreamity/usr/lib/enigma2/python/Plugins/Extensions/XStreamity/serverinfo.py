@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# for localized messages
 from . import _
 from . import xstreamity_globals as glob
 from .plugin import skin_path
@@ -38,7 +37,6 @@ class XStreamity_UserInfo(Screen):
         self['formats'] = Label('')
         self['realurl'] = Label('')
         self['timezone'] = Label('')
-        self['fullurl'] = Label('')
 
         self['actions'] = ActionMap(['XStreamityActions'], {
             'ok': self.quit,
@@ -90,9 +88,6 @@ class XStreamity_UserInfo(Screen):
 
         if 'timezone' in glob.current_playlist['server_info']:
             self['timezone'].setText(str(glob.current_playlist['server_info']['timezone']))
-
-        if 'full_url' in glob.current_playlist['playlist_info']:
-            self['fullurl'].setText(str(glob.current_playlist['playlist_info']['full_url']))
 
     def quit(self):
         self.close()

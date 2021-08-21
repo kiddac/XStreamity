@@ -1,15 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# for localized messages
 from . import _
 from . import xstreamity_globals as glob
-from . import imagedownload
+
 from .plugin import skin_path, screenwidth, common_path, cfg, dir_tmp
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
 from Components.AVSwitch import AVSwitch
+from enigma import eAVSwitch
 from Components.config import config, NoSave, ConfigText, ConfigClock
 from Components.Label import Label
 from Components.ProgressBar import ProgressBar
@@ -17,8 +17,8 @@ from Components.Pixmap import Pixmap, MultiPixmap
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 from datetime import datetime, timedelta
 from enigma import eTimer, eServiceReference, iPlayableService, ePicLoad
-
 from itertools import cycle, islice
+from PIL import Image, ImageChops, ImageFile, PngImagePlugin
 from RecordTimer import RecordTimerEntry
 
 from Screens.InfoBarGenerics import InfoBarMenu, InfoBarSeek, InfoBarAudioSelection, InfoBarMoviePlayerSummarySupport, \
@@ -31,6 +31,9 @@ from ServiceReference import ServiceReference
 from time import time
 from Tools.BoundFunction import boundFunction
 from twisted.web.client import downloadPage
+
+import re
+import requests
 
 if cfg.subs.getValue() is True:
     try:
@@ -83,6 +86,66 @@ if sslverify:
             if self.hostname:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
+
+
+# png hack
+def mycall(self, cid, pos, length):
+    if cid.decode("ascii") == "tRNS":
+        return self.chunk_TRNS(pos, length)
+    else:
+        return getattr(self, "chunk_" + cid.decode("ascii"))(pos, length)
+
+
+def mychunk_TRNS(self, pos, length):
+    _simple_palette = re.compile(b"^\xff*\x00\xff*$")
+    s = ImageFile._safe_read(self.fp, length)
+    if self.im_mode == "P":
+        if _simple_palette.match(s):
+            i = s.find(b"\0")
+            if i >= 0:
+                self.im_info["transparency"] = i
+        else:
+            self.im_info["transparency"] = s
+    elif self.im_mode in ("1", "L", "I"):
+        self.im_info["transparency"] = i16(s)
+    elif self.im_mode == "RGB":
+        self.im_info["transparency"] = i16(s), i16(s, 2), i16(s, 4)
+    return s
+
+
+if pythonVer != 2:
+    PngImagePlugin.ChunkStream.call = mycall
+    PngImagePlugin.PngStream.chunk_TRNS = mychunk_TRNS
+
+
+_initialized = 0
+
+
+def _mypreinit():
+    global _initialized
+    if _initialized >= 1:
+        return
+    try:
+        from . import MyPngImagePlugin
+        assert MyPngImagePlugin
+    except ImportError:
+        pass
+
+    _initialized = 1
+
+
+Image.preinit = _mypreinit
+
+
+VIDEO_ASPECT_RATIO_MAP = {
+    0: '4:3 Letterbox',
+    1: '4:3 PanScan',
+    2: '16:9',
+    3: '16:9 Always',
+    4: '16:10 Letterbox',
+    5: '16:10 PanScan',
+    6: '16:9 Letterbox'
+}
 
 
 class IPTVInfoBarShowHide():
@@ -322,6 +385,8 @@ class XStreamity_StreamPlayer(
         self["PTSSeekBack"] = Pixmap()
         self["PTSSeekPointer"] = Pixmap()
 
+        self.ar_id_player = 0
+
         with open(skin, 'r') as f:
             self.skin = f.read()
 
@@ -329,16 +394,17 @@ class XStreamity_StreamPlayer(
 
         self['actions'] = ActionMap(["XStreamityActions"], {
             'cancel': self.back,
-            'tv': self.toggleStreamType,
-            'info': self.toggleStreamType,
+            "stop": self.back,
+            "red": self.back,
+
             "channelUp": self.__next__,
+            "down": self.__next__,
             "channelDown": self.prev,
             "up": self.prev,
-            "down": self.__next__,
-            "stop": self.back,
+            'tv': self.toggleStreamType,
+            'info': self.toggleStreamType,
+            "green": self.nextAR,
             "rec": self.IPTVstartInstantRecording,
-            "red": self.back,
-            "green": self.toggleAspectRatio
         }, -2)
 
         self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl))
@@ -348,10 +414,10 @@ class XStreamity_StreamPlayer(
         begin = int(time())
         end = begin + 3600
 
-        if glob.currentepglist[glob.currentchannelistindex][3]:
-            name = glob.currentepglist[glob.currentchannelistindex][3]
+        if glob.currentepglist[glob.currentchannellistindex][3]:
+            name = glob.currentepglist[glob.currentchannellistindex][3]
         else:
-            name = glob.currentchannelist[glob.currentchannelistindex][0]
+            name = glob.currentchannellist[glob.currentchannellistindex][0]
 
         self.name = NoSave(ConfigText(default=name, fixed_size=False))
         self.date = time()
@@ -365,7 +431,7 @@ class XStreamity_StreamPlayer(
             end = ret[2]
             name = ret[3]
 
-            description = glob.currentepglist[glob.currentchannelistindex][4]
+            description = glob.currentepglist[glob.currentchannellistindex][4]
             eventid = int(self.streamurl.rpartition('/')[-1].partition('.')[0])
             serviceref = eServiceReference(1, 0, self.streamurl)
 
@@ -388,12 +454,12 @@ class XStreamity_StreamPlayer(
             return
 
     def playStream(self, servicetype, streamurl):
-        self["epg_description"].setText(glob.currentepglist[glob.currentchannelistindex][4])
-        self["nowchannel"].setText(glob.currentchannelist[glob.currentchannelistindex][0])
-        self["nowtitle"].setText(glob.currentepglist[glob.currentchannelistindex][3])
-        self["nexttitle"].setText(glob.currentepglist[glob.currentchannelistindex][6])
-        self["nowtime"].setText(glob.currentepglist[glob.currentchannelistindex][2])
-        self["nexttime"].setText(glob.currentepglist[glob.currentchannelistindex][5])
+        self["epg_description"].setText(glob.currentepglist[glob.currentchannellistindex][4])
+        self["nowchannel"].setText(glob.currentchannellist[glob.currentchannellistindex][0])
+        self["nowtitle"].setText(glob.currentepglist[glob.currentchannellistindex][3])
+        self["nexttitle"].setText(glob.currentepglist[glob.currentchannellistindex][6])
+        self["nowtime"].setText(glob.currentepglist[glob.currentchannellistindex][2])
+        self["nexttime"].setText(glob.currentepglist[glob.currentchannellistindex][5])
         self["streamcat"].setText("Live")
         self["streamtype"].setText(str(servicetype))
 
@@ -406,11 +472,11 @@ class XStreamity_StreamPlayer(
         end = ''
         percent = 0
 
-        if glob.currentepglist[glob.currentchannelistindex][2] != '':
-            start = glob.currentepglist[glob.currentchannelistindex][2]
+        if glob.currentepglist[glob.currentchannellistindex][2] != '':
+            start = glob.currentepglist[glob.currentchannellistindex][2]
 
-        if glob.currentepglist[glob.currentchannelistindex][5] != '':
-            end = glob.currentepglist[glob.currentchannelistindex][5]
+        if glob.currentepglist[glob.currentchannellistindex][5] != '':
+            end = glob.currentepglist[glob.currentchannellistindex][5]
 
         if start != '' and end != '':
             self["progress"].show()
@@ -449,33 +515,33 @@ class XStreamity_StreamPlayer(
             self["progress"].hide()
 
         self.reference = eServiceReference(int(self.servicetype), 0, self.streamurl)
+        self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
 
-        self.session.nav.playService(self.reference)
+        if self.session.nav.getCurrentlyPlayingServiceReference():
+            if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString():
+                self.session.nav.stopService()
+                self.session.nav.playService(self.reference)
+        else:
+            self.session.nav.playService(self.reference)
 
         if self.session.nav.getCurrentlyPlayingServiceReference():
             glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
             glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
+        self.downloadImage()
 
-        self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
-            iPlayableService.evTunedIn: self.__evTunedIn,
-            iPlayableService.evTuneFailed: self.__evTuneFailed,
-            iPlayableService.evUpdatedInfo: self.__evUpdatedInfo,
-            iPlayableService.evEOF: self.__evEOF,
-        })
+    def downloadImage(self):
+        try:
+            os.remove(str(dir_tmp) + 'original.png')
+            os.remove(str(dir_tmp) + 'temp.png')
+        except:
+            pass
 
-        self.downloadPicon()
-
-    def downloadPicon(self):
-        size = [147, 88]
-        if screenwidth.width() > 1280:
-            size = [220, 130]
-
-        if glob.currentchannelist:
-            stream_url = glob.currentchannelist[glob.currentchannelistindex][3]
-            desc_image = glob.currentchannelist[glob.currentchannelistindex][5]
-
-        if stream_url != 'None':
-            imagetype = "picon"
+        original = str(dir_tmp) + 'original.png'
+        desc_image = ''
+        try:
+            desc_image = glob.currentchannellist[glob.currentchannellistindex][5]
+        except:
+            pass
 
         if desc_image and desc_image != "n/A":
             temp = dir_tmp + 'temp.png'
@@ -486,81 +552,59 @@ class XStreamity_StreamPlayer(
                     sniFactory = SNIFactory(domain)
                     if pythonVer == 3:
                         desc_image = desc_image.encode()
-                    downloadPage(desc_image, temp, sniFactory, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
+                    downloadPage(desc_image, temp, sniFactory, timeout=5).addCallback(self.resizeImage)
                 else:
                     if pythonVer == 3:
                         desc_image = desc_image.encode()
-                    downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
+                    downloadPage(desc_image, temp, timeout=5).addCallback(self.resizeImage)
             except:
                 self.loadDefaultImage()
         else:
             self.loadDefaultImage()
 
-    def checkdownloaded(self, data, piconSize, imageType, temp):
-        preview = ''
-        if os.path.exists(temp):
-            try:
-                preview = imagedownload.updatePreview(piconSize, imageType, temp)
-            except:
-                pass
-
-            if preview != '':
-                if self["epg_picon"].instance:
-                    self["epg_picon"].instance.setPixmapFromFile(preview)
-            else:
-                self.loadDefaultImage()
-        else:
-            print("file does not exist")
-        return preview
-
     def loadDefaultImage(self):
         if self["epg_picon"].instance:
             self["epg_picon"].instance.setPixmapFromFile(common_path + "picon.png")
 
-    def __evTunedIn(self):
-        if self.servicetype == "1":
-            self.hasStreamData = False
-            self.timerstream = eTimer()
+    def resizeImage(self, data=None):
+        # print("*** resizeImage ***")
+        original = str(dir_tmp) + 'temp.png'
+
+        size = [147, 88]
+        if screenwidth.width() > 1280:
+            size = [220, 130]
+
+        if os.path.exists(original):
             try:
-                self.timerstream.callback.append(self.checkStream)
-            except:
-                self.timerstream_conn = self.timerstream.timeout.connect(self.checkStream)
-            self.timerstream.start(2000, True)
+                im = Image.open(original).convert('RGBA')
+                im.thumbnail(size, Image.ANTIALIAS)
 
-    def __evTuneFailed(self):
-        self.stopStream()
-        self.back()
+                # crop and center image
+                bg = Image.new('RGBA', size, (255, 255, 255, 0))
 
-    def __evUpdatedInfo(self):
-        if self.servicetype == "1":
-            self.hasStreamData = True
+                imagew, imageh = im.size
+                im_alpha = im.convert('RGBA').split()[-1]
+                bgwidth, bgheight = bg.size
+                bg_alpha = bg.convert('RGBA').split()[-1]
+                temp = Image.new('L', (bgwidth, bgheight), 0)
+                temp.paste(im_alpha, (int((bgwidth - imagew) / 2), int((bgheight - imageh) / 2)), im_alpha)
+                bg_alpha = ImageChops.screen(bg_alpha, temp)
+                bg.paste(im, (int((bgwidth - imagew) / 2), int((bgheight - imageh) / 2)))
+                im = bg
 
-    """
-    def __evEOF(self):
-        if self.servicetype == "1":
-            self.session.nav.stopService()
-            self.session.nav.playService(self.reference, forceRestart=True)
-            """
+                im.save(original, 'PNG')
 
-    def __evEOF(self):
-        if self.servicetype == "1":
-            self.retries += 1
-            if self.retries > 3:
-                self.retries = 0
-                # self.session.open(MessageBox, _("multiple url redirects - unable to run streamtype '1', trying streamtype '4097'."), MessageBox.TYPE_INFO, timeout=3)
-                self.session.nav.stopService()
-                self.servicetype = "4097"
-                self.playStream(self.servicetype, self.streamurl)
+                if self["epg_picon"].instance:
+                    self["epg_picon"].instance.setPixmapFromFile(original)
 
-    def checkStream(self):
-        if self.hasStreamData is False:
-            if self.retries < 2:
-                self.retries += 1
-                self.session.nav.stopService()
-                self.session.nav.playService(self.reference, forceRestart=True)
+            except Exception as e:
+                print("******* picon resize failed *******")
+                print(e)
+        else:
+            self.loadDefaultImage()
 
     def back(self):
-        glob.nextlist[-1]['index'] = glob.currentchannelistindex
+        glob.nextlist[-1]['index'] = glob.currentchannellistindex
         self.close()
 
     def toggleStreamType(self):
@@ -590,41 +634,41 @@ class XStreamity_StreamPlayer(
 
     def __next__(self):
         self.retries = 0
-        if glob.currentchannelist:
-            listlength = len(glob.currentchannelist)
-            glob.currentchannelistindex += 1
-            if glob.currentchannelistindex + 1 > listlength:
-                glob.currentchannelistindex = 0
-            self.streamurl = glob.currentchannelist[glob.currentchannelistindex][3]
+        if glob.currentchannellist:
+            listlength = len(glob.currentchannellist)
+            glob.currentchannellistindex += 1
+            if glob.currentchannellistindex + 1 > listlength:
+                glob.currentchannellistindex = 0
+            self.streamurl = glob.currentchannellist[glob.currentchannellistindex][3]
+
             self.playStream(self.servicetype, self.streamurl)
 
     def prev(self):
         self.retries = 0
-        if glob.currentchannelist:
-            listlength = len(glob.currentchannelist)
-            glob.currentchannelistindex -= 1
-            if glob.currentchannelistindex + 1 == 0:
-                glob.currentchannelistindex = listlength - 1
+        if glob.currentchannellist:
+            listlength = len(glob.currentchannellist)
+            glob.currentchannellistindex -= 1
+            if glob.currentchannellistindex + 1 == 0:
+                glob.currentchannellistindex = listlength - 1
 
-            self.streamurl = glob.currentchannelist[glob.currentchannelistindex][3]
+            self.streamurl = glob.currentchannellist[glob.currentchannellistindex][3]
             self.playStream(self.servicetype, self.streamurl)
 
-    # play original channel
-    def stopStream(self):
-        if glob.currentPlayingServiceRefString != glob.newPlayingServiceRefString:
-            if glob.currentPlayingServiceRefString:
-                self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
+    def nextARfunction(self):
+        try:
+            self.ar_id_player += 1
+            if self.ar_id_player > 6:
+                self.ar_id_player = 0
+            eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
+            print('self.ar_id_player NEXT %s' % VIDEO_ASPECT_RATIO_MAP[self.ar_id_player])
+            return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
+        except Exception as ex:
+            print(ex)
+            return 'nextAR ERROR %s' % ex
 
-    def toggleAspectRatio(self):
-        ASPECT = ["auto", "16:9", "4:3"]
-        ASPECT_MSG = {"auto": "Auto", "16:9": "16:9", "4:3": "4:3"}
-        if config.av.aspect.value in ASPECT:
-            index = ASPECT.index(config.av.aspect.value)
-            config.av.aspect.value = ASPECT[(index + 1) % 3]
-        else:
-            config.av.aspect.value = "auto"
-        config.av.aspect.save()
-        self.session.open(MessageBox, _("AV aspect is %s.") % ASPECT_MSG[config.av.aspect.value], MessageBox.TYPE_INFO, timeout=3)
+    def nextAR(self):
+        message = self.nextARfunction()
+        self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO, timeout=3)
 
 
 class XStreamity_VodPlayer(
@@ -692,6 +736,8 @@ class XStreamity_VodPlayer(
         self["PTSSeekBack"] = Pixmap()
         self["PTSSeekPointer"] = Pixmap()
 
+        self.ar_id_player = 0
+
         with open(skin, 'r') as f:
             self.skin = f.read()
 
@@ -699,15 +745,11 @@ class XStreamity_VodPlayer(
 
         self['actions'] = ActionMap(["XStreamityActions"], {
             'cancel': self.back,
-            'tv': self.toggleStreamType,
-            'info': self.toggleStreamType,
-            "channelUp": self.__next__,
-            "channelDown": self.prev,
-            "up": self.prev,
-            "down": self.__next__,
             "stop": self.back,
             "red": self.back,
-            "green": self.toggleAspectRatio,
+            'tv': self.toggleStreamType,
+            'info': self.toggleStreamType,
+            "green": self.nextAR,
         }, -2)
 
         self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl))
@@ -725,36 +767,35 @@ class XStreamity_VodPlayer(
             pass
 
         self.reference = eServiceReference(int(self.servicetype), 0, self.streamurl)
-        self.reference.setName(glob.currentchannelist[glob.currentchannelistindex][0])
+        self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
 
-        self.session.nav.playService(self.reference)
+        if self.session.nav.getCurrentlyPlayingServiceReference():
+            if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString():
+                self.session.nav.stopService()
+                self.session.nav.playService(self.reference)
+        else:
+            self.session.nav.playService(self.reference)
 
         if self.session.nav.getCurrentlyPlayingServiceReference():
             glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
             glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
 
-        self.downloadCover()
+        self.downloadImage()
 
-    def downloadCover(self):
+    def downloadImage(self):
         try:
-            os.remove(dir_tmp + 'original.jpg')
+            os.remove(str(dir_tmp) + 'original.jpg')
+            os.remove(str(dir_tmp) + 'temp.jpg')
         except:
             pass
 
-        size = [147, 220]
-        if screenwidth.width() > 1280:
-            size = [220, 330]
+        original = str(dir_tmp) + 'original.jpg'
+        desc_image = ''
 
-        if glob.currentchannelist:
-            stream_url = glob.currentchannelist[glob.currentchannelistindex][3]
-            desc_image = glob.currentchannelist[glob.currentchannelistindex][5]
-
-        if stream_url != 'None':
-            imagetype = "cover"
+        desc_image = glob.currentchannellist[glob.currentchannellistindex][5]
 
         if desc_image and desc_image != "n/A":
             temp = dir_tmp + 'temp.jpg'
-
             try:
                 if desc_image.startswith("https") and sslverify:
                     parsed_uri = urlparse(desc_image)
@@ -762,46 +803,42 @@ class XStreamity_VodPlayer(
                     sniFactory = SNIFactory(domain)
                     if pythonVer == 3:
                         desc_image = desc_image.encode()
-                    downloadPage(desc_image, temp, sniFactory, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
+                    downloadPage(desc_image, temp, sniFactory, timeout=5).addCallback(self.resizeImage)
                 else:
                     if pythonVer == 3:
                         desc_image = desc_image.encode()
-                    downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
+                    downloadPage(desc_image, temp, timeout=5).addCallback(self.resizeImage)
             except:
                 self.loadDefaultImage()
         else:
             self.loadDefaultImage()
 
-    def checkdownloaded(self, data, piconSize, imageType, temp):
-        if imageType == "cover":
-            if self["cover"].instance:
-                self.displayVodImage()
-
     def loadDefaultImage(self):
         if self["cover"].instance:
-            self["cover"].instance.setPixmapFromFile(common_path + "cover.png")
+            self["cover"].instance.setPixmapFromFile(skin_path + "images/vod_cover.png")
 
-    def displayVodImage(self):
-        preview = dir_tmp + 'temp.jpg'
-        width = 147
-        height = 220
+    def resizeImage(self, data=None):
+        if self["cover"].instance:
+            preview = str(dir_tmp) + 'temp.jpg'
 
-        if screenwidth.width() > 1280:
-            width = 220
-            height = 330
+            width = 147
+            height = 220
+            if screenwidth.width() > 1280:
+                width = 220
+                height = 330
 
-        self.PicLoad.setPara([width, height, self.Scale[0], self.Scale[1], 0, 1, "FF000000"])
-
-        if self.PicLoad.startDecode(preview):
-            # if this has failed, then another decode is probably already in progress
-            # throw away the old picload and try again immediately
-            self.PicLoad = ePicLoad()
-            try:
-                self.PicLoad.PictureData.get().append(self.DecodePicture)
-            except:
-                self.PicLoad_conn = self.PicLoad.PictureData.connect(self.DecodePicture)
             self.PicLoad.setPara([width, height, self.Scale[0], self.Scale[1], 0, 1, "FF000000"])
-            self.PicLoad.startDecode(preview)
+
+            if self.PicLoad.startDecode(preview):
+                # if this has failed, then another decode is probably already in progress
+                # throw away the old picload and try again immediately
+                self.PicLoad = ePicLoad()
+                try:
+                    self.PicLoad.PictureData.get().append(self.DecodePicture)
+                except:
+                    self.PicLoad_conn = self.PicLoad.PictureData.connect(self.DecodePicture)
+                self.PicLoad.setPara([width, height, self.Scale[0], self.Scale[1], 0, 1, "FF000000"])
+                self.PicLoad.startDecode(preview)
 
     def DecodePicture(self, PicInfo=None):
         ptr = self.PicLoad.getData()
@@ -810,7 +847,7 @@ class XStreamity_VodPlayer(
             self["cover"].instance.show()
 
     def back(self):
-        glob.nextlist[-1]['index'] = glob.currentchannelistindex
+        glob.nextlist[-1]['index'] = glob.currentchannellistindex
         self.close()
 
     def toggleStreamType(self):
@@ -834,42 +871,21 @@ class XStreamity_VodPlayer(
         self.servicetype = int(next(nextStreamType))
         self.playStream(self.servicetype, self.streamurl)
 
-    def __next__(self):
-        if glob.currentchannelist:
+    def nextARfunction(self):
+        try:
+            self.ar_id_player += 1
+            if self.ar_id_player > 6:
+                self.ar_id_player = 0
+            eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
+            print('self.ar_id_player NEXT %s' % VIDEO_ASPECT_RATIO_MAP[self.ar_id_player])
+            return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
+        except Exception as ex:
+            print(ex)
+            return 'nextAR ERROR %s' % ex
 
-            listlength = len(glob.currentchannelist)
-            glob.currentchannelistindex += 1
-            if glob.currentchannelistindex + 1 > listlength:
-                glob.currentchannelistindex = 0
-            self.playStream(self.servicetype, self.streamurl)
-
-    def prev(self):
-        if glob.currentchannelist:
-
-            listlength = len(glob.currentchannelist)
-            glob.currentchannelistindex -= 1
-            if glob.currentchannelistindex + 1 == 0:
-                glob.currentchannelistindex = listlength - 1
-            self.playStream(self.servicetype, self.streamurl)
-
-    # play original channel
-    def stopStream(self):
-        if glob.currentPlayingServiceRefString != glob.newPlayingServiceRefString:
-            if glob.newPlayingServiceRefString != '':
-                if self.session.nav.getCurrentlyPlayingServiceReference():
-                    self.session.nav.stopService()
-                self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
-
-    def toggleAspectRatio(self):
-        ASPECT = ["auto", "16:9", "4:3"]
-        ASPECT_MSG = {"auto": "Auto", "16:9": "16:9", "4:3": "4:3"}
-        if config.av.aspect.value in ASPECT:
-            index = ASPECT.index(config.av.aspect.value)
-            config.av.aspect.value = ASPECT[(index + 1) % 3]
-        else:
-            config.av.aspect.value = "auto"
-        config.av.aspect.save()
-        self.session.open(MessageBox, _("AV aspect is %s.") % ASPECT_MSG[config.av.aspect.value], MessageBox.TYPE_INFO, timeout=3)
+    def nextAR(self):
+        message = self.nextARfunction()
+        self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO, timeout=3)
 
 
 class XStreamity_CatchupPlayer(
@@ -893,6 +909,10 @@ class XStreamity_CatchupPlayer(
         Screen.__init__(self, session)
 
         self.session = session
+
+        if str(os.path.splitext(streamurl)[-1]) == ".m3u8":
+            if servicetype == "1":
+                servicetype = "4097"
 
         for x in InfoBarBase, \
                 InfoBarMenu, \
@@ -930,6 +950,8 @@ class XStreamity_CatchupPlayer(
         self["PTSSeekBack"] = Pixmap()
         self["PTSSeekPointer"] = Pixmap()
 
+        self.ar_id_player = 0
+
         with open(skin, 'r') as f:
             self.skin = f.read()
 
@@ -938,11 +960,10 @@ class XStreamity_CatchupPlayer(
         self['actions'] = ActionMap(["XStreamityActions"], {
             'cancel': self.back,
             'red': self.back,
+            "stop": self.back,
             'tv': self.toggleStreamType,
             'info': self.toggleStreamType,
-            "stop": self.back,
-            "green": self.toggleAspectRatio
-
+            "green": self.nextAR,
         }, -2)
 
         self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl))
@@ -959,28 +980,38 @@ class XStreamity_CatchupPlayer(
 
         self.reference = eServiceReference(int(servicetype), 0, streamurl)
         self.reference.setName(glob.catchupdata[0])
-
-        self.session.nav.playService(self.reference)
+        if self.session.nav.getCurrentlyPlayingServiceReference():
+            if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString():
+                self.session.nav.stopService()
+                self.session.nav.playService(self.reference)
+        else:
+            self.session.nav.playService(self.reference)
 
         if self.session.nav.getCurrentlyPlayingServiceReference():
             glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
             glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
 
-        self.downloadPicon()
+        if self.session.nav.getCurrentlyPlayingServiceReference():
+            glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
+            glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
 
-    def downloadPicon(self):
-        size = [147, 88]
-        if screenwidth.width() > 1280:
-            size = [220, 130]
+        self.downloadImage()
 
-        if glob.currentchannelist:
-            stream_url = glob.currentchannelist[glob.currentchannelistindex][3]
-            desc_image = glob.currentchannelist[glob.currentchannelistindex][5]
+    def downloadImage(self):
+        try:
+            os.remove(str(dir_tmp) + 'original.png')
+            os.remove(str(dir_tmp) + 'temp.png')
+        except:
+            pass
 
-        if stream_url != 'None':
-            imagetype = "picon"
+        original = str(dir_tmp) + 'original.png'
+        desc_image = ''
+        try:
+            desc_image = glob.currentchannellist[glob.currentchannellistindex][5]
+        except:
+            pass
 
-        if desc_image and desc_image != "n/A" and desc_image != "":
+        if desc_image and desc_image != "n/A":
             temp = dir_tmp + 'temp.png'
             try:
                 if desc_image.startswith("https") and sslverify:
@@ -989,39 +1020,61 @@ class XStreamity_CatchupPlayer(
                     sniFactory = SNIFactory(domain)
                     if pythonVer == 3:
                         desc_image = desc_image.encode()
-                    downloadPage(desc_image, temp, sniFactory, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
+                    downloadPage(desc_image, temp, sniFactory, timeout=3).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
                 else:
                     if pythonVer == 3:
                         desc_image = desc_image.encode()
-                    downloadPage(desc_image, temp, timeout=3).addCallback(self.checkdownloaded, size, imagetype, temp)
+                    downloadPage(desc_image, temp, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
             except:
                 self.loadDefaultImage()
         else:
             self.loadDefaultImage()
 
-    def checkdownloaded(self, data, piconSize, imageType, temp):
-        preview = ''
-        if os.path.exists(temp):
-            try:
-                preview = imagedownload.updatePreview(piconSize, imageType, temp)
-            except:
-                pass
-
-            if preview != '':
-                if self["epg_picon"].instance:
-                    self["epg_picon"].instance.setPixmapFromFile(preview)
-            else:
-                self.loadDefaultImage()
-        else:
-            print("file does not exist")
-        return preview
-
-    def loadDefaultImage(self):
+    def loadDefaultImage(self, data=None):
+        if data:
+            print(data)
         if self["epg_picon"].instance:
             self["epg_picon"].instance.setPixmapFromFile(common_path + "picon.png")
 
+    def resizeImage(self, data=None):
+        # print("*** resizeImage ***")
+        original = str(dir_tmp) + 'temp.png'
+
+        size = [147, 88]
+        if screenwidth.width() > 1280:
+            size = [220, 130]
+
+        if os.path.exists(original):
+            try:
+                im = Image.open(original).convert('RGBA')
+                im.thumbnail(size, Image.ANTIALIAS)
+
+                # crop and center image
+                bg = Image.new('RGBA', size, (255, 255, 255, 0))
+
+                imagew, imageh = im.size
+                im_alpha = im.convert('RGBA').split()[-1]
+                bgwidth, bgheight = bg.size
+                bg_alpha = bg.convert('RGBA').split()[-1]
+                temp = Image.new('L', (bgwidth, bgheight), 0)
+                temp.paste(im_alpha, (int((bgwidth - imagew) / 2), int((bgheight - imageh) / 2)), im_alpha)
+                bg_alpha = ImageChops.screen(bg_alpha, temp)
+                bg.paste(im, (int((bgwidth - imagew) / 2), int((bgheight - imageh) / 2)))
+                im = bg
+
+                im.save(original, 'PNG')
+
+                if self["epg_picon"].instance:
+                    self["epg_picon"].instance.setPixmapFromFile(original)
+
+            except Exception as e:
+                print("******* picon resize failed *******")
+                print(e)
+        else:
+            self.loadDefaultImage()
+
     def back(self):
-        glob.nextlist[-1]['index'] = glob.currentchannelistindex
+        glob.nextlist[-1]['index'] = glob.currentchannellistindex
         self.close()
 
     def toggleStreamType(self):
@@ -1045,21 +1098,18 @@ class XStreamity_CatchupPlayer(
         self.servicetype = int(next(nextStreamType))
         self.playStream(self.servicetype, self.streamurl)
 
-    # play original channel
-    def stopStream(self):
-        if glob.currentPlayingServiceRefString != glob.newPlayingServiceRefString:
-            if glob.newPlayingServiceRefString != '':
-                if self.session.nav.getCurrentlyPlayingServiceReference():
-                    self.session.nav.stopService()
-                self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
+    def nextARfunction(self):
+        try:
+            self.ar_id_player += 1
+            if self.ar_id_player > 6:
+                self.ar_id_player = 0
+            eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
+            print('self.ar_id_player NEXT %s' % VIDEO_ASPECT_RATIO_MAP[self.ar_id_player])
+            return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
+        except Exception as ex:
+            print(ex)
+            return 'nextAR ERROR %s' % ex
 
-    def toggleAspectRatio(self):
-        ASPECT = ["auto", "16:9", "4:3"]
-        ASPECT_MSG = {"auto": "Auto", "16:9": "16:9", "4:3": "4:3"}
-        if config.av.aspect.value in ASPECT:
-            index = ASPECT.index(config.av.aspect.value)
-            config.av.aspect.value = ASPECT[(index + 1) % 3]
-        else:
-            config.av.aspect.value = "auto"
-        config.av.aspect.save()
-        self.session.open(MessageBox, _("AV aspect is %s.") % ASPECT_MSG[config.av.aspect.value], MessageBox.TYPE_INFO, timeout=3)
+    def nextAR(self):
+        message = self.nextARfunction()
+        self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO, timeout=3)

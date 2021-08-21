@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from twisted.web import client
 from twisted.internet import reactor, defer, ssl
-from OpenSSL import SSL
-import os
 import sys
 
 # remove factory starting/stopping from logs
@@ -112,14 +110,6 @@ class downloadWithProgress:
                 self.connection = reactor.connectTCP(host, port, self.factory)
             except:
                 self.connection = reactor.connectSSL(host, port, self.factory, sniFactory)
-
-        """
-        self.factory = HTTPProgressDownloader(url, outputfile, *args, **kwargs)
-        if scheme == "https":
-            self.connection = reactor.connectSSL(host, port, self.factory, ssl.ClientContextFactory())
-        else:
-            self.connection = reactor.connectTCP(host, port, self.factory)
-            """
 
     def start(self):
         return self.factory.deferred

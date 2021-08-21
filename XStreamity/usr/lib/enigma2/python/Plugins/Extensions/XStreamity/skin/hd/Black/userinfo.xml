@@ -24,7 +24,7 @@
 	<widget name="formats" position="639,460" size="246,40" font="xstreamityregular;18" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2" />
 	<widget name="realurl" position="639,500" size="246,40" font="xstreamityregular;18" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2" />
 	<widget name="timezone" position="639,540" size="246,40" font="xstreamityregular;18" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2" />
-	<widget name="fullurl" position="393,586" size="492,40" font="xstreamityregular;14" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" halign="left" transparent="1" zPosition="2" />
+
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/divider.png" position="center,259" size="492,2" alphatest="blend" zPosition="1" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/divider.png" position="center,299" size="492,2" alphatest="blend" zPosition="1" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/divider.png" position="center,339" size="492,2" alphatest="blend" zPosition="1" />

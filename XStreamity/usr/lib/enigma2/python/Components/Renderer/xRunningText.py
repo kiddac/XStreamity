@@ -103,7 +103,7 @@ class xRunningText(Renderer):
             # from boxbranding import getImageDistro, getImageVersion, getOEVersion
             self.mTimer.callback.remove(self.movingLoop)
         except:
-            if getMachineBrand() == "Dream Multimedia" or getOEVersion() == "OE 2.2":
+            if xowibranding.getMachineBrand() == "Dream Multimedia" or xowibranding.getOEVersion() == "OE 2.2":
                 self.mTimer_conn = self.mTimer.timeout.disconnect(self.movingLoop)
 
         self.mTimer = None

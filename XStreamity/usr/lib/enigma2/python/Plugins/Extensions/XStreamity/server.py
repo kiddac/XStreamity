@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# for localized messages
 from . import _
 
 from .plugin import skin_path, playlist_path
@@ -81,7 +80,7 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 
     def initConfig(self):
         self.nameCfg = NoSave(ConfigText(default="IPTV", fixed_size=False))
-        self.protocolCfg = NoSave(ConfigSelection(default=self.protocol, choices=[('http://', _('http://')), ('https://', _('https://'))]))
+        self.protocolCfg = NoSave(ConfigSelection(default=self.protocol, choices=[('http://', 'http://'), ('https://', 'https://')]))
         self.serverCfg = NoSave(ConfigText(default=self.server, fixed_size=False))
         self.portCfg = NoSave(ConfigNumber(default=self.port))
         self.usernameCfg = NoSave(ConfigText(default=self.username, fixed_size=False))
@@ -144,7 +143,7 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
             valid = self.checkline()
 
             if not valid:
-                self.session.open(MessageBox, _("URL is not a valid or unauthorised"), type=MessageBox.TYPE_INFO, timeout=5)
+                self.session.open(MessageBox, _("Details are not a valid or unauthorised"), type=MessageBox.TYPE_INFO, timeout=5)
                 return
 
             # update playlists.txt file
@@ -187,10 +186,7 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
                         if response['user_info']['auth'] == 1:
                             valid = True
 
-        except requests.exceptions.ConnectionError as e:
+        except Exception as e:
             print(("Error Connecting: %s" % e))
-
-        except requests.exceptions.RequestException as e:
-            print(e)
 
         return valid

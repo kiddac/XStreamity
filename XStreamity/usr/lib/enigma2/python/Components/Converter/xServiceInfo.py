@@ -160,8 +160,6 @@ class xServiceInfo(Converter, object):
             return video_aspect in WIDESCREEN
         elif self.type == self.IS_NOT_WIDESCREEN:
             return video_aspect not in WIDESCREEN
-        elif self.type == self.SUBSERVICES_AVAILABLE:
-            return hasActiveSubservicesForCurrentChannel(':'.join(info.getInfoString(iServiceInformation.sServiceref).split(':')[:11]))
         elif self.type == self.AUDIOTRACKS_AVAILABLE:
             audio = service.audioTracks()
             return audio and audio.getNumberOfTracks() > 1
@@ -310,20 +308,6 @@ class xServiceInfo(Converter, object):
                 video_height = info.getInfo(iServiceInformation.sVideoHeight)
             return str(video_height)
         elif self.type == self.FRAMERATE:
-
-            """
-            if path.exists('/proc/stb/vmpeg/0/framerate'):
-                f = open('/proc/stb/vmpeg/0/framerate', 'r')
-                try:
-                    video_rate = f.read()
-                except:
-                    pass
-                f.close()
-            if not video_rate:
-                video_rate = info.getInfo(iServiceInformation.sFrameRate)
-            return str(video_rate)
-            """
-
             if path.exists("/proc/stb/vmpeg/0/framerate"):
                 f = open("/proc/stb/vmpeg/0/framerate", "r")
                 try:

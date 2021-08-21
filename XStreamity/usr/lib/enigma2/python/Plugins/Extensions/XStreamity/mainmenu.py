@@ -18,7 +18,6 @@ from Tools.LoadPixmap import LoadPixmap
 import json
 import os
 import sys
-import re
 
 try:
     pythonVer = sys.version_info.major
@@ -75,10 +74,17 @@ class XStreamity_MainMenu(Screen):
 
         try:
             import requests
-            from multiprocessing.pool import ThreadPool
             from PIL import Image
         except:
             dependencies = False
+
+        try:
+            from concurrent.futures import ThreadPoolExecutor
+        except:
+            try:
+                from multiprocessing.pool import ThreadPool
+            except:
+                dependencies = False
 
         if dependencies is False:
             chmod("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/dependencies.sh", 0o0755)
@@ -111,16 +117,13 @@ class XStreamity_MainMenu(Screen):
                     pass
 
         if self.playlists_all:
-            self.list.append([1, "Playlists"])
-            self.list.append([3, "Add Playlist"])
-            self.list.append([2, "Main Settings"])
-            if downloads_all:
-                self.list.append([4, "Download Mngr."])
-        else:
-            self.list.append([3, "Add Playlist"])
-            self.list.append([2, "Main Settings"])
-            if downloads_all:
-                self.list.append([4, "Download Mngr."])
+            self.list.append([1, _("Playlists")])
+
+        self.list.append([3, _("Add Playlist")])
+
+        self.list.append([2, _("Main Settings")])
+        if downloads_all:
+            self.list.append([4, _("Download Manager")])
 
         self.drawList = []
         self.drawList = [buildListEntry(x[0], x[1]) for x in self.list]
@@ -163,7 +166,7 @@ class XStreamity_MainMenu(Screen):
 
     def playOriginalChannel(self):
         if glob.currentPlayingServiceRefString != glob.newPlayingServiceRefString:
-            if glob.newPlayingServiceRefString != '':
+            if glob.newPlayingServiceRefString and glob.currentPlayingServiceRefString:
                 self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
         self.close()
 
