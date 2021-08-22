@@ -4,6 +4,7 @@
 from . import _
 from . import streamplayer
 from . import xstreamity_globals as glob
+from . import bgdownloader as bgd
 
 from .plugin import skin_path, screenwidth, hdr, cfg, common_path, dir_tmp, json_file, dir_dst
 from .xStaticText import StaticText
@@ -25,6 +26,7 @@ from ServiceReference import ServiceReference
 from time import strftime, time
 from Tools.LoadPixmap import LoadPixmap
 from xml.etree.cElementTree import iterparse
+from twisted.internet import reactor, threads
 from twisted.web.client import downloadPage
 
 import base64
@@ -38,6 +40,7 @@ import requests
 import sys
 import time
 import threading
+import twisted.python.runtime
 
 try:
     pythonVer = sys.version_info.major
@@ -365,19 +368,22 @@ class XStreamity_Categories(Screen):
     def downloadxmltv(self, url):
         # print("**** downloadxmltv ***")
         try:
-            if url.startswith("https") and sslverify:
-                parsed_uri = urlparse(url)
-                domain = parsed_uri.hostname
-                sniFactory = SNIFactory(domain)
-                if pythonVer == 3:
-                    url = url.encode()
-                downloadPage(url, self.epgxmlfile, sniFactory, timeout=30).addCallback(self.downloadComplete).addErrback(self.downloadFailed)
-                # thread = BaseThread(target=self.backgroundDownloaderUrl, callback=self.downloadComplete, myarg=(url, self.epgxmlfile, 5))
-                # thread.start()
+            
+            if twisted.python.runtime.platform.supportsThreads():
+                 bgd.backgroundDownloader(self, url=url, location=self.epgxmlfile, timeout=5, callback="downloadComplete", errback="downloadFailed")
             else:
-                if pythonVer == 3:
-                    url = url.encode()
-                downloadPage(url, self.epgxmlfile, timeout=30).addCallback(self.downloadComplete).addErrback(self.downloadFailed)
+                if url.startswith("https") and sslverify:
+                    parsed_uri = urlparse(url)
+                    domain = parsed_uri.hostname
+                    sniFactory = SNIFactory(domain)
+                    if pythonVer == 3:
+                        url = url.encode()
+                    downloadPage(url, self.epgxmlfile, sniFactory, timeout=120).addCallback(self.downloadComplete).addErrback(self.downloadFailed)
+
+                else:
+                    if pythonVer == 3:
+                        url = url.encode()
+                    downloadPage(url, self.epgxmlfile, timeout=120).addCallback(self.downloadComplete).addErrback(self.downloadFailed)
         except Exception as e:
             print(e)
             os.remove(self.epgxmlfile)
@@ -395,11 +401,20 @@ class XStreamity_Categories(Screen):
 
     def downloadComplete(self, data=None):
         # print("**** downloadComplete ***")
-        try:
-            self.buildjson()
-        except Exception as e:
-            print(e)
-            self.createJsonFail(e)
+        if twisted.python.runtime.platform.supportsThreads():
+            print("****** platform supports threading ****")
+            try:
+                d = threads.deferToThread(self.buildjson)
+                d.addErrback(self.createJsonFail)
+            except Exception as e:
+                print(e)
+        else:
+            print("****** platform does not supports threading ****")
+            try:
+                self.buildjson()
+            except Exception as e:
+                print(e)
+                self.createJsonFail(e)
 
     def downloadFailed(self, data=None):
         print(data)
@@ -497,6 +512,7 @@ class XStreamity_Categories(Screen):
                         self["downloading"].show()
                     except:
                         pass
+                        
                     try:
                         thread = BaseThread(target=self.downloadxmltv, myarg=(str(self.xmltv),))
                         thread.start()
