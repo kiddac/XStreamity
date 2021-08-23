@@ -162,7 +162,7 @@ class XStreamity_Playlists(Screen):
             if concurrent is False:
                 try:
                     print("********** multiprocessing threadpool *******")
-                    pool = ThreadPool(processes=5)
+                    pool = ThreadPool(processes=threads)
                     results = pool.imap_unordered(self.download_url, self.url_list)
                     for index, response in results:
                         if response != '':
