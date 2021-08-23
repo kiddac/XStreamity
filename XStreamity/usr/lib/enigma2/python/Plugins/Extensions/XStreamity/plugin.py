@@ -10,7 +10,9 @@ from Components.config import config, ConfigSubsection, ConfigSelection, ConfigD
 import os
 import shutil
 
-VERSION = "3.06-20210822"
+with open("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/version.txt", 'r') as f:
+    VERSION = f.readline()
+
 screenwidth = getDesktop(0).size()
 
 dir_dst = "/etc/enigma2/xstreamity/"
