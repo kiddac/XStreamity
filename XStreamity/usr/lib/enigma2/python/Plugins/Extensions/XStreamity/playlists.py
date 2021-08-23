@@ -4,7 +4,7 @@
 
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import skin_path, playlists_json, hdr, playlist_file, cfg, common_path, VERSION, dir_dst
+from .plugin import skin_path, playlists_json, hdr, playlist_file, cfg, common_path, version, dir_dst
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -86,7 +86,7 @@ class XStreamity_Playlists(Screen):
         self.setTitle(self.setup_title)
 
     def start(self):
-        self['version'].setText(VERSION)
+        self['version'].setText(version)
 
         self.playlists_all = []
 

@@ -4,7 +4,7 @@
 from . import _
 from . import xstreamity_globals as glob
 from . import processfiles as xfiles
-from .plugin import skin_path, common_path, VERSION, downloads_json
+from .plugin import skin_path, common_path, version, downloads_json
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -55,7 +55,7 @@ class XStreamity_MainMenu(Screen):
         }, -2)
 
         self.clear_caches()
-        self['version'].setText(VERSION)
+        self['version'].setText(version)
 
         if self.session.nav.getCurrentlyPlayingServiceReference():
             glob.currentPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
