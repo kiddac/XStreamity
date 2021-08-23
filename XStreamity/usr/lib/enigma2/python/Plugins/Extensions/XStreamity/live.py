@@ -6,7 +6,7 @@ from . import streamplayer
 from . import xstreamity_globals as glob
 from . import bgdownloader as bgd
 
-from .plugin import skin_path, screenwidth, hdr, cfg, common_path, dir_tmp, json_file, dir_dst
+from .plugin import skin_path, screenwidth, hdr, cfg, common_path, dir_tmp, json_file, dir_etc
 from .xStaticText import StaticText
 from Components.ActionMap import ActionMap
 from Components.config import config, ConfigClock, NoSave, ConfigText
@@ -251,7 +251,7 @@ class XStreamity_Categories(Screen):
         self.output = glob.current_playlist['playlist_info']['output']
 
         self.xmltv = glob.current_playlist['playlist_info']['xmltv_api'] + str('&next_days=2')
-        self.epgfolder = str(dir_dst) + "epg/" + str(self.domain)
+        self.epgfolder = str(dir_etc) + "epg/" + str(self.domain)
 
         self.epgxmlfile = str(self.epgfolder) + "/" + str("epg.xml")
         self.epgjsonfile = str(self.epgfolder) + "/" + str("epg.json")

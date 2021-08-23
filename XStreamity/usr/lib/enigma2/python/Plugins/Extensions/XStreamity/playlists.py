@@ -4,7 +4,7 @@
 
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import skin_path, json_file, hdr, playlist_file, cfg, common_path, VERSION, dir_dst
+from .plugin import skin_path, json_file, hdr, playlist_file, cfg, common_path, VERSION, dir_etc
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -349,7 +349,7 @@ class XStreamity_Playlists(Screen):
         if data is None:
             self.session.openWithCallback(self.deleteEpgData, MessageBox, _('Delete providers EPG data?'))
         else:
-            epgfolder = str(dir_dst) + "epg/" + str(self.currentplaylist['playlist_info']['domain'])
+            epgfolder = str(dir_etc) + "epg/" + str(self.currentplaylist['playlist_info']['domain'])
 
             try:
                 shutil.rmtree(epgfolder)

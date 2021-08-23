@@ -15,7 +15,7 @@ with open("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/version.txt", '
 
 screenwidth = getDesktop(0).size()
 
-dir_dst = "/etc/enigma2/xstreamity/"
+dir_etc = "/etc/enigma2/xstreamity/"
 dir_tmp = "/tmp/xstreamity/"
 dir_plugins = "/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/"
 
@@ -85,7 +85,7 @@ except:
         cfg.downloadlocation = ConfigDirectory(default='/media/hdd/movie/')
 
 
-cfg.location = ConfigDirectory(default=dir_dst)
+cfg.location = ConfigDirectory(default=dir_etc)
 cfg.main = ConfigYesNo(default=True)
 cfg.livepreview = ConfigYesNo(default=False)
 cfg.stopstream = ConfigYesNo(default=False)
@@ -102,9 +102,9 @@ cfg.skipplaylistsscreen = ConfigYesNo(default=False)
 
 skin_path = '%s%s/' % (skin_directory, cfg.skin.value)
 common_path = '%scommon/' % (skin_directory)
-json_file = "%sx-playlists.json" % (dir_dst)
-json_downloadfile = "%sx-downloads.json" % (dir_dst)
-playlist_file = "%splaylists.txt" % (dir_dst)
+json_file = "%sx-playlists.json" % (dir_etc)
+json_downloadfile = "%sx-downloads.json" % (dir_etc)
+playlist_file = "%splaylists.txt" % (dir_etc)
 
 if cfg.location.value:
     playlist_file = "%s/playlists.txt" % (cfg.location.value)
@@ -128,8 +128,8 @@ hdr = {'User-Agent': 'Enigma2 - XStreamity Plugin'}
 
 
 # create folder for working files
-if not os.path.exists(dir_dst):
-    os.makedirs(dir_dst)
+if not os.path.exists(dir_etc):
+    os.makedirs(dir_etc)
 
 # delete temporary folder and contents
 if os.path.exists(dir_tmp):
