@@ -822,7 +822,7 @@ class XStreamity_Categories(Screen):
     def displaySeriesData(self):
         if self.level == 2 or self.level == 3:
 
-            if cfg.refreshTMDB.value is True:
+            if cfg.TMDB.value is True:
                 self.downloadImage()
                 self.getTMDB()
             else:
@@ -1275,7 +1275,7 @@ class XStreamity_Categories(Screen):
 
         language = "en"
 
-        if cfg.refreshTMDB.value is True:
+        if cfg.TMDB.value is True:
             language = cfg.TMDBLanguage.value
 
         detailsurl = ''

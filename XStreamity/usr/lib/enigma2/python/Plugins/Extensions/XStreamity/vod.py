@@ -579,7 +579,7 @@ class XStreamity_Categories(Screen):
                 else:
                     self.info = None
 
-                if cfg.refreshTMDB.value is True:
+                if cfg.TMDB.value is True:
                     # self.downloadImage()
                     # self.displayVod()
                     self.getTMDB()
@@ -1184,7 +1184,7 @@ class XStreamity_Categories(Screen):
 
         language = "en"
 
-        if cfg.refreshTMDB.value is True:
+        if cfg.TMDB.value is True:
             language = cfg.TMDBLanguage.value
 
         detailsurl = "http://api.themoviedb.org/3/movie/" + str(resultid) + "?api_key=" + str(self.check(self.token)) + "&append_to_response=credits&language=" + str(language)
