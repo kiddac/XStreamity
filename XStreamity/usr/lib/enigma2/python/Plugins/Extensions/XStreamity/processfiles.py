@@ -1,5 +1,5 @@
 
-from .plugin import json_file, playlist_path, cfg
+from .plugin import json_file, playlist_file, cfg
 from collections import OrderedDict
 
 import json
@@ -22,7 +22,7 @@ def processfiles():
                 os.remove(json_file)
 
     # check playlist.txt entries are valid
-    with open(playlist_path, 'r+') as f:
+    with open(playlist_file, 'r+') as f:
         lines = f.readlines()
         f.seek(0)
         f.writelines((line.strip(' ') for line in lines if line.strip()))

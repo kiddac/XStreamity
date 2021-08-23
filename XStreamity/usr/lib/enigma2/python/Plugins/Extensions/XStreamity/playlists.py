@@ -4,7 +4,7 @@
 
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import skin_path, json_file, hdr, playlist_path, cfg, common_path, VERSION, dir_dst
+from .plugin import skin_path, json_file, hdr, playlist_file, cfg, common_path, VERSION, dir_dst
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -99,7 +99,7 @@ class XStreamity_Playlists(Screen):
                 except:
                     os.remove(json_file)
 
-        if self.playlists_all and os.path.isfile(playlist_path) and os.stat(playlist_path).st_size > 0:
+        if self.playlists_all and os.path.isfile(playlist_file) and os.stat(playlist_file).st_size > 0:
             self.delayedDownload()
         else:
             self.close()
@@ -328,7 +328,7 @@ class XStreamity_Playlists(Screen):
             if answer is None:
                 self.session.openWithCallback(self.deleteServer, MessageBox, _('Delete selected playlist?'))
             elif answer:
-                with open(playlist_path, 'r+') as f:
+                with open(playlist_file, 'r+') as f:
                     lines = f.readlines()
                     f.seek(0)
                     for line in lines:

@@ -3,7 +3,7 @@
 
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import skin_path, playlist_path, json_file
+from .plugin import skin_path, playlist_file, json_file
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -227,11 +227,11 @@ class XStreamity_Settings(ConfigListScreen, Screen):
             glob.current_playlist["playlist_info"]["full_url"] = self.full_url
 
             # update playlists.txt file
-            if not os.path.isfile(playlist_path):
-                with open(playlist_path, 'w+') as f:
+            if not os.path.isfile(playlist_file):
+                with open(playlist_file, 'w+') as f:
                     f.close()
 
-            with open(playlist_path, 'r+') as f:
+            with open(playlist_file, 'r+') as f:
                 lines = f.readlines()
                 f.seek(0)
                 exists = False

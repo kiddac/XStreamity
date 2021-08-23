@@ -104,10 +104,10 @@ skin_path = '%s%s/' % (skin_directory, cfg.skin.value)
 common_path = '%scommon/' % (skin_directory)
 json_file = "%sx-playlists.json" % (dir_dst)
 json_downloadfile = "%sx-downloads.json" % (dir_dst)
-playlist_path = "%splaylists.txt" % (dir_dst)
+playlist_file = "%splaylists.txt" % (dir_dst)
 
 if cfg.location.value:
-    playlist_path = "%s/playlists.txt" % (cfg.location.value)
+    playlist_file = "%s/playlists.txt" % (cfg.location.value)
 
 fontfolder = "%sfonts/" % (dir_plugins)
 iconfolder = "%sicons/" % (dir_plugins)
@@ -140,8 +140,8 @@ if not os.path.exists(dir_tmp):
     os.makedirs(dir_tmp)
 
 # check if playlists.txt file exists in specified location
-if not os.path.isfile(playlist_path):
-    open(playlist_path, 'a').close()
+if not os.path.isfile(playlist_file):
+    open(playlist_file, 'a').close()
 
 # check if x-playlists.json file exists in specified location
 if not os.path.isfile(json_file):
