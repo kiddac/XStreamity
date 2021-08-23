@@ -3,7 +3,7 @@
 
 from . import _
 from .downloader import downloadWithProgress
-from .plugin import skin_path, json_downloadfile, cfg
+from .plugin import skin_path, downloads_json, cfg
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -76,8 +76,8 @@ class XStreamity_DownloadManager(Screen):
         self.diskspace()
 
     def readJsonFile(self):
-        if os.path.isfile(json_downloadfile):
-            with open(json_downloadfile, "r") as f:
+        if os.path.isfile(downloads_json):
+            with open(downloads_json, "r") as f:
                 try:
                     self.downloads_all = json.load(f)
                 except:
@@ -95,7 +95,7 @@ class XStreamity_DownloadManager(Screen):
         self.updateList()
 
     def saveJson(self):
-        with open(json_downloadfile, 'w') as f:
+        with open(downloads_json, 'w') as f:
             json.dump(self.downloads_all, f)
 
     def updateList(self):

@@ -75,16 +75,16 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         return
 
     def initConfig(self):
-        streamtypechoices = [('1', 'DVB(1)'), ('4097', 'IPTV(4097)')]
+        streamtype_choices = [('1', 'DVB(1)'), ('4097', 'IPTV(4097)')]
 
         if os.path.exists("/usr/bin/gstplayer"):
-            streamtypechoices.append(('5001', 'GStreamer(5001)'))
+            streamtype_choices.append(('5001', 'GStreamer(5001)'))
 
         if os.path.exists("/usr/bin/exteplayer3"):
-            streamtypechoices.append(('5002', 'ExtePlayer(5002)'))
+            streamtype_choices.append(('5002', 'ExtePlayer(5002)'))
 
         if os.path.exists("/usr/bin/apt-get"):
-            streamtypechoices.append(('8193', 'DreamOS GStreamer(8193)'))
+            streamtype_choices.append(('8193', 'DreamOS GStreamer(8193)'))
 
         self.name = str(glob.current_playlist['playlist_info']['name'])
         self.output = str(glob.current_playlist['playlist_info']['output'])
@@ -100,8 +100,8 @@ class XStreamity_Settings(ConfigListScreen, Screen):
 
         self.nameCfg = NoSave(ConfigText(default=self.name, fixed_size=False))
         self.outputCfg = NoSave(ConfigSelection(default=self.output, choices=[('ts', 'ts'), ('m3u8', 'm3u8')]))
-        self.liveTypeCfg = NoSave(ConfigSelection(default=self.liveType, choices=streamtypechoices))
-        self.vodTypeCfg = NoSave(ConfigSelection(default=self.vodType, choices=streamtypechoices))
+        self.liveTypeCfg = NoSave(ConfigSelection(default=self.liveType, choices=streamtype_choices))
+        self.vodTypeCfg = NoSave(ConfigSelection(default=self.vodType, choices=streamtype_choices))
 
         self.epgUrlCfg = NoSave(ConfigText(default=self.epgUrl))
 

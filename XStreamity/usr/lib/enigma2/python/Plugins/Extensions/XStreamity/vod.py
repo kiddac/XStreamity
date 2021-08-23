@@ -5,7 +5,7 @@ from . import _
 from . import streamplayer
 from . import xstreamity_globals as glob
 
-from .plugin import skin_path, screenwidth, hdr, cfg, common_path, dir_tmp, playlists_json, json_downloadfile
+from .plugin import skin_path, screenwidth, hdr, cfg, common_path, dir_tmp, playlists_json, downloads_json
 from .xStaticText import StaticText
 
 from collections import OrderedDict
@@ -1045,8 +1045,8 @@ class XStreamity_Categories(Screen):
             title = self["channel_list"].getCurrent()[0]
             stream_url = self["channel_list"].getCurrent()[3]
             downloads_all = []
-            if os.path.isfile(json_downloadfile):
-                with open(json_downloadfile, "r") as f:
+            if os.path.isfile(downloads_json):
+                with open(downloads_json, "r") as f:
                     try:
                         downloads_all = json.load(f)
                     except:
@@ -1055,7 +1055,7 @@ class XStreamity_Categories(Screen):
             if [_("Movie"), title, stream_url, _("Not Started"), 0] not in downloads_all:
                 downloads_all.append([_("Movie"), title, stream_url, _("Not Started"), 0])
 
-                with open(json_downloadfile, 'w') as f:
+                with open(downloads_json, 'w') as f:
                     json.dump(downloads_all, f)
 
                 self.session.open(MessageBox, _(title) + "\n\n" + _("Added to download manager"), MessageBox.TYPE_INFO, timeout=5)

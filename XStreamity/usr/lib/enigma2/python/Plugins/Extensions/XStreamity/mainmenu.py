@@ -4,7 +4,7 @@
 from . import _
 from . import xstreamity_globals as glob
 from . import processfiles as xfiles
-from .plugin import skin_path, common_path, VERSION, json_downloadfile
+from .plugin import skin_path, common_path, VERSION, downloads_json
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -109,8 +109,8 @@ class XStreamity_MainMenu(Screen):
         self.list = []
         downloads_all = []
 
-        if os.path.isfile(json_downloadfile):
-            with open(json_downloadfile, "r") as f:
+        if os.path.isfile(downloads_json):
+            with open(downloads_json, "r") as f:
                 try:
                     downloads_all = json.load(f)
                 except:

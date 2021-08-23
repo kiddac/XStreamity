@@ -60,20 +60,20 @@ config.plugins.XStreamity = ConfigSubsection()
 
 cfg = config.plugins.XStreamity
 
-streamtypechoices = [('1', 'DVB(1)'), ('4097', 'IPTV(4097)')]
+streamtype_choices = [('1', 'DVB(1)'), ('4097', 'IPTV(4097)')]
 
 if os.path.exists("/usr/bin/gstplayer"):
-    streamtypechoices.append(('5001', 'GStreamer(5001)'))
+    streamtype_choices.append(('5001', 'GStreamer(5001)'))
 
 if os.path.exists("/usr/bin/exteplayer3"):
-    streamtypechoices.append(('5002', 'ExtePlayer(5002)'))
+    streamtype_choices.append(('5002', 'ExtePlayer(5002)'))
 
 if os.path.exists("/usr/bin/apt-get"):
-    streamtypechoices.append(('8193', 'GStreamer(8193)'))
+    streamtype_choices.append(('8193', 'GStreamer(8193)'))
 
 
-cfg.livetype = ConfigSelection(default='1', choices=streamtypechoices)
-cfg.vodtype = ConfigSelection(default='4097', choices=streamtypechoices)
+cfg.livetype = ConfigSelection(default='1', choices=streamtype_choices)
+cfg.vodtype = ConfigSelection(default='4097', choices=streamtype_choices)
 downloadpath = None
 
 try:
@@ -102,15 +102,15 @@ cfg.skipplaylistsscreen = ConfigYesNo(default=False)
 skin_path = '%s%s/' % (skin_directory, cfg.skin.value)
 common_path = '%scommon/' % (skin_directory)
 playlists_json = "%sx-playlists.json" % (dir_dst)
-json_downloadfile = "%sx-downloads.json" % (dir_dst)
+downloads_json = "%sx-downloads.json" % (dir_dst)
 playlist_file = "%splaylists.txt" % (dir_dst)
 
 if cfg.location.value:
     playlist_file = "%s/playlists.txt" % (cfg.location.value)
 
-fontfolder = "%sfonts/" % (dir_plugins)
-iconfolder = "%sicons/" % (dir_plugins)
-imagefolder = "%s/images/" % (skin_path)
+font_folder = "%sfonts/" % (dir_plugins)
+icon_folder = "%sicons/" % (dir_plugins)
+image_folder = "%s/images/" % (skin_path)
 
 
 """
@@ -147,8 +147,8 @@ if not os.path.isfile(playlists_json):
     open(playlists_json, 'a').close()
 
 # check if x-downloads.json file exists in specified location
-if not os.path.isfile(json_downloadfile):
-    open(json_downloadfile, 'a').close()
+if not os.path.isfile(downloads_json):
+    open(downloads_json, 'a').close()
 
 
 def main(session, **kwargs):
@@ -157,8 +157,8 @@ def main(session, **kwargs):
     return
 
 
-def mainmenu(menuid, **kwargs):
-    if menuid == 'mainmenu':
+def mainmenu(menu_id, **kwargs):
+    if menu_id == 'mainmenu':
         return [(_('XStreamity'), main, 'XStreamity', 50)]
     else:
         return []
@@ -171,8 +171,8 @@ def extensionsmenu(session, **kwargs):
 
 
 def Plugins(**kwargs):
-    addFont(fontfolder + 'm-plus-rounded-1c-regular.ttf', 'xstreamityregular', 100, 0)
-    addFont(fontfolder + 'm-plus-rounded-1c-medium.ttf', 'xstreamitybold', 100, 0)
+    addFont(font_folder + 'm-plus-rounded-1c-regular.ttf', 'xstreamityregular', 100, 0)
+    addFont(font_folder + 'm-plus-rounded-1c-medium.ttf', 'xstreamitybold', 100, 0)
 
     iconFile = 'icons/plugin-icon_sd.png'
     if screenwidth.width() > 1280:
