@@ -97,7 +97,6 @@ cfg.TMDBLanguage = ConfigSelection(default='en', choices=languages)
 cfg.catchupstart = ConfigSelectionNumber(0, 30, 1, default=0)
 cfg.catchupend = ConfigSelectionNumber(0, 30, 1, default=0)
 cfg.subs = ConfigYesNo(default=False)
-cfg.XMLTVStart = ConfigNumber()
 cfg.skipplaylistsscreen = ConfigYesNo(default=False)
 
 skin_path = '%s%s/' % (skin_directory, cfg.skin.value)
