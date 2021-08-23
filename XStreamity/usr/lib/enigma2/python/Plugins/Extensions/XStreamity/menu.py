@@ -3,7 +3,7 @@
 
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import skin_path, hdr, cfg, common_path, json_file
+from .plugin import skin_path, hdr, cfg, common_path, playlists_json
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -240,11 +240,11 @@ class XStreamity_Menu(Screen):
         self.createSetup()
 
     def writeJsonFile(self):
-        with open(json_file, "r") as f:
+        with open(playlists_json, "r") as f:
             self.playlists_all = json.load(f)
             self.playlists_all[glob.current_selection] = glob.current_playlist
 
-        with open(json_file, "w") as f:
+        with open(playlists_json, "w") as f:
             json.dump(self.playlists_all, f)
 
     def createSetup(self):

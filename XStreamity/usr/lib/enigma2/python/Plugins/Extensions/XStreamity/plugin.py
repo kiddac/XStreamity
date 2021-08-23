@@ -101,7 +101,7 @@ cfg.skipplaylistsscreen = ConfigYesNo(default=False)
 
 skin_path = '%s%s/' % (skin_directory, cfg.skin.value)
 common_path = '%scommon/' % (skin_directory)
-json_file = "%sx-playlists.json" % (dir_dst)
+playlists_json = "%sx-playlists.json" % (dir_dst)
 json_downloadfile = "%sx-downloads.json" % (dir_dst)
 playlist_file = "%splaylists.txt" % (dir_dst)
 
@@ -143,8 +143,8 @@ if not os.path.isfile(playlist_file):
     open(playlist_file, 'a').close()
 
 # check if x-playlists.json file exists in specified location
-if not os.path.isfile(json_file):
-    open(json_file, 'a').close()
+if not os.path.isfile(playlists_json):
+    open(playlists_json, 'a').close()
 
 # check if x-downloads.json file exists in specified location
 if not os.path.isfile(json_downloadfile):

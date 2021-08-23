@@ -5,7 +5,7 @@ from . import _
 from . import streamplayer
 from . import xstreamity_globals as glob
 
-from .plugin import skin_path, screenwidth, hdr, cfg, common_path, dir_tmp, json_file, json_downloadfile
+from .plugin import skin_path, screenwidth, hdr, cfg, common_path, dir_tmp, playlists_json, json_downloadfile
 from .xStaticText import StaticText
 
 from collections import OrderedDict
@@ -1336,11 +1336,11 @@ class XStreamity_Categories(Screen):
                     ("container_extension", self.list2[currentindex][9]),
                 ]))
 
-            with open(json_file, "r") as f:
+            with open(playlists_json, "r") as f:
                 try:
                     self.playlists_all = json.load(f)
                 except:
-                    os.remove(json_file)
+                    os.remove(playlists_json)
 
             if self.playlists_all:
                 x = 0
@@ -1349,7 +1349,7 @@ class XStreamity_Categories(Screen):
                         self.playlists_all[x] = glob.current_playlist
                         break
                     x += 1
-            with open(json_file, 'w') as f:
+            with open(playlists_json, 'w') as f:
                 json.dump(self.playlists_all, f)
 
             self.createSetup()
@@ -1359,11 +1359,11 @@ class XStreamity_Categories(Screen):
             self.editmode = not self.editmode
             if self.editmode is False:
 
-                with open(json_file, "r") as f:
+                with open(playlists_json, "r") as f:
                     try:
                         self.playlists_all = json.load(f)
                     except:
-                        os.remove(json_file)
+                        os.remove(playlists_json)
 
                 if self.playlists_all:
                     x = 0
@@ -1372,7 +1372,7 @@ class XStreamity_Categories(Screen):
                             self.playlists_all[x] = glob.current_playlist
                             break
                         x += 1
-                with open(json_file, 'w') as f:
+                with open(playlists_json, 'w') as f:
                     json.dump(self.playlists_all, f)
 
                 glob.nextlist[-1]['index'] = 0

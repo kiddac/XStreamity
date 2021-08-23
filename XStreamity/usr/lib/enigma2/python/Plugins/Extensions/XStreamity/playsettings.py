@@ -3,7 +3,7 @@
 
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import skin_path, playlist_file, json_file
+from .plugin import skin_path, playlist_file, playlists_json
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -246,12 +246,12 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.getPlaylistUserFile()
 
     def getPlaylistUserFile(self):
-        if os.path.isfile(json_file):
-            with open(json_file, "r") as f:
+        if os.path.isfile(playlists_json):
+            with open(playlists_json, "r") as f:
                 try:
                     self.playlists_all = json.load(f)
                 except:
-                    os.remove(json_file)
+                    os.remove(playlists_json)
 
         if self.playlists_all:
             x = 0
@@ -266,6 +266,6 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.writeJsonFile()
 
     def writeJsonFile(self):
-        with open(json_file, 'w') as f:
+        with open(playlists_json, 'w') as f:
             json.dump(self.playlists_all, f)
         self.close()

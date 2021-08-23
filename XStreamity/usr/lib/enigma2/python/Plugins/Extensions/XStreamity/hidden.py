@@ -4,7 +4,7 @@
 from . import _
 from . import xstreamity_globals as glob
 
-from .plugin import skin_path, common_path, json_file
+from .plugin import skin_path, common_path, playlists_json
 from .xStaticText import StaticText
 
 from collections import OrderedDict
@@ -176,7 +176,7 @@ class XStreamity_HiddenCategories(Screen):
 
         self.playlists_all = []
 
-        with open(json_file) as f:
+        with open(playlists_json) as f:
             self.playlists_all = json.load(f, object_pairs_hook=OrderedDict)
 
         x = 0
@@ -186,7 +186,7 @@ class XStreamity_HiddenCategories(Screen):
                 break
             x += 1
 
-        with open(json_file, 'w') as f:
+        with open(playlists_json, 'w') as f:
             json.dump(self.playlists_all, f)
 
         self.close()
