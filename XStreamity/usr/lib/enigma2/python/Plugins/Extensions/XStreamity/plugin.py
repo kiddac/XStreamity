@@ -11,7 +11,7 @@ import os
 import shutil
 
 with open("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/version.txt", 'r') as f:
-    VERSION = f.readline()
+    version = f.readline()
 
 screenwidth = getDesktop(0).size()
 
