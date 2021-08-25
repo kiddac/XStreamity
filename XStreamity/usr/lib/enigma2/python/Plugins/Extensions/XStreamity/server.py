@@ -17,7 +17,6 @@ import os
 
 
 class XStreamity_AddServer(ConfigListScreen, Screen):
-
     def __init__(self, session):
         Screen.__init__(self, session)
         self.session = session
@@ -57,6 +56,7 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
             'cancel': self.cancel,
             'red': self.cancel,
             'green': self.save,
+            'ok': self.void,
         }, -2)
 
         self.onFirstExecBegin.append(self.initConfig)
@@ -77,6 +77,11 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 
             self.close()
         return
+
+    def void(self):
+        currConfig = self["config"].getCurrent()
+        if isinstance(currConfig[1], ConfigNumber):
+            pass
 
     def initConfig(self):
         self.nameCfg = NoSave(ConfigText(default="IPTV", fixed_size=False))
@@ -111,18 +116,28 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
             if isinstance(currConfig[1], ConfigText):
                 if 'VKeyIcon' in self:
                     if isinstance(currConfig[1], ConfigNumber):
-                        self['VirtualKB'].setEnabled(False)
+                        try:
+                            self['VirtualKB'].setEnabled(False)
+                        except:
+                            pass
                         self['VKeyIcon'].hide()
                     else:
-                        self['VirtualKB'].setEnabled(True)
+                        try:
+                            self['VirtualKB'].setEnabled(True)
+                        except:
+                            pass
                         self['VKeyIcon'].show()
 
                 if "HelpWindow" in self and currConfig[1].help_window and currConfig[1].help_window.instance is not None:
                     helpwindowpos = self["HelpWindow"].getPosition()
                     currConfig[1].help_window.instance.move(ePoint(helpwindowpos[0], helpwindowpos[1]))
+
             else:
                 if 'VKeyIcon' in self:
-                    self['VirtualKB'].setEnabled(False)
+                    try:
+                        self['VirtualKB'].setEnabled(False)
+                    except:
+                        pass
                     self['VKeyIcon'].hide()
 
     def save(self):
