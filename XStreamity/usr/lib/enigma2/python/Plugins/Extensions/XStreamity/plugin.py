@@ -5,7 +5,7 @@ from . import _
 
 from Plugins.Plugin import PluginDescriptor
 from enigma import getDesktop, addFont
-from Components.config import config, ConfigSubsection, ConfigSelection, ConfigDirectory, ConfigYesNo, ConfigNumber, ConfigSelectionNumber
+from Components.config import config, ConfigSubsection, ConfigSelection, ConfigDirectory, ConfigYesNo, ConfigSelectionNumber
 
 import os
 import shutil

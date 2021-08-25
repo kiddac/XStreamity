@@ -8,7 +8,7 @@ from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
 from Components.ConfigList import ConfigListScreen
-from Components.config import getConfigListEntry, ConfigText, ConfigNumber
+from Components.config import getConfigListEntry, ConfigText
 from Components.Pixmap import Pixmap
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
@@ -106,19 +106,13 @@ class RecordDateInput(ConfigListScreen, Screen):
         if currConfig is not None:
             if isinstance(currConfig[1], ConfigText):
                 if 'VKeyIcon' in self:
-                    if isinstance(currConfig[1], ConfigNumber):
-                        self['VirtualKB'].setEnabled(False)
-                        self['VKeyIcon'].hide()
-                    else:
-                        self['VirtualKB'].setEnabled(True)
-                        self['VKeyIcon'].show()
+                    self['VKeyIcon'].show()
 
                 if "HelpWindow" in self and currConfig[1].help_window and currConfig[1].help_window.instance is not None:
                     helpwindowpos = self["HelpWindow"].getPosition()
                     currConfig[1].help_window.instance.move(ePoint(helpwindowpos[0], helpwindowpos[1]))
             else:
                 if 'VKeyIcon' in self:
-                    self['VirtualKB'].setEnabled(False)
                     self['VKeyIcon'].hide()
 
     def getTimestamp(self, date, mytime):
