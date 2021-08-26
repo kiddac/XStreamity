@@ -527,6 +527,14 @@ class XStreamity_StreamPlayer(
         if self.session.nav.getCurrentlyPlayingServiceReference():
             glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
             glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
+            
+        self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
+            iPlayableService.evTunedIn: self.__evTunedIn,
+            iPlayableService.evTuneFailed: self.__evTuneFailed,
+            iPlayableService.evUpdatedInfo: self.__evUpdatedInfo,
+            iPlayableService.evEOF: self.__evEOF,
+        })
+
         self.downloadImage()
 
     def downloadImage(self):
@@ -602,7 +610,50 @@ class XStreamity_StreamPlayer(
                 print(e)
         else:
             self.loadDefaultImage()
+            
+    def __evTunedIn(self):
+        if self.servicetype == "1":
+            self.hasStreamData = False
+            self.timerstream = eTimer()
+            try:
+                self.timerstream.callback.append(self.checkStream)
+            except:
+                self.timerstream_conn = self.timerstream.timeout.connect(self.checkStream)
+            self.timerstream.start(2000, True)
 
+    def __evTuneFailed(self):
+        self.stopStream()
+        self.back()
+
+    def __evUpdatedInfo(self):
+        if self.servicetype == "1":
+            self.hasStreamData = True
+
+    """
+    def __evEOF(self):
+        if self.servicetype == "1":
+            self.session.nav.stopService()
+            self.session.nav.playService(self.reference, forceRestart=True)
+            """
+
+    def __evEOF(self):
+        if self.servicetype == "1":
+            self.retries += 1
+            if self.retries > 3:
+                self.retries = 0
+                # self.session.open(MessageBox, _("multiple url redirects - unable to run streamtype '1', trying streamtype '4097'."), MessageBox.TYPE_INFO, timeout=2)
+                self.session.nav.stopService()
+                self.originalservicetype = self.servicetype
+                self.servicetype = "4097"
+                self.playStream(self.servicetype, self.streamurl)
+                
+    def checkStream(self):
+        if self.hasStreamData is False:
+            if self.retries < 2:
+                self.retries += 1
+                self.session.nav.stopService()
+                self.session.nav.playService(self.reference, forceRestart=True)
+                
     def back(self):
         glob.nextlist[-1]['index'] = glob.currentchannellistindex
         self.close()
@@ -634,6 +685,7 @@ class XStreamity_StreamPlayer(
 
     def __next__(self):
         self.retries = 0
+        self.servicetype = self.originalservicetype
         if glob.currentchannellist:
             listlength = len(glob.currentchannellist)
             glob.currentchannellistindex += 1
@@ -645,6 +697,7 @@ class XStreamity_StreamPlayer(
 
     def prev(self):
         self.retries = 0
+        self.servicetype = self.originalservicetype
         if glob.currentchannellist:
             listlength = len(glob.currentchannellist)
             glob.currentchannellistindex -= 1
