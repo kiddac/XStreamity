@@ -4,6 +4,7 @@ from collections import OrderedDict
 
 import json
 import os
+import re
 
 
 try:
@@ -24,10 +25,11 @@ def processfiles():
     # check playlist.txt entries are valid
     with open(playlist_file, 'r+') as f:
         lines = f.readlines()
-        f.seek(0)
-        f.writelines((line.strip(' ') for line in lines if line.strip()))
-        f.seek(0)
+
+    with open(playlist_file, 'w') as f:
         for line in lines:
+            line = re.sub(' +', ' ', line)
+            line = line.strip(' ')
             if not line.startswith('http://') and not line.startswith('https://') and not line.startswith('#'):
                 line = '# ' + line
             if "=mpegts" in line:
@@ -36,8 +38,8 @@ def processfiles():
                 line = line.replace("=hls", "=m3u8")
             if line.strip() == "#":
                 line = ""
-            f.write(line)
-        f.seek(0)
+            if line != "":
+                f.write(line)
 
         # read entries from playlists.txt
         index = 0
@@ -223,8 +225,6 @@ def processfiles():
             index += 1
 
         # remove old playlists from x-playlists.json
-        f.seek(0)
-
         if playlists_all:
             newList = []
 
