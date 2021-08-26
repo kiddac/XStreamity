@@ -44,7 +44,6 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self['key_red'] = StaticText(_('Back'))
         self['key_green'] = StaticText(_('Save'))
 
-        # self['VirtualKB'].setEnabled(False)
         self['VKeyIcon'] = Pixmap()
         self['VKeyIcon'].hide()
         self['HelpWindow'] = Pixmap()
