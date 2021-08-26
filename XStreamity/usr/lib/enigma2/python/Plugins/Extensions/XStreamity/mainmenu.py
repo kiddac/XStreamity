@@ -118,9 +118,7 @@ class XStreamity_MainMenu(Screen):
 
         if self.playlists_all:
             self.list.append([1, _("Playlists")])
-
         self.list.append([3, _("Add Playlist")])
-
         self.list.append([2, _("Main Settings")])
         if downloads_all:
             self.list.append([4, _("Download Manager")])
