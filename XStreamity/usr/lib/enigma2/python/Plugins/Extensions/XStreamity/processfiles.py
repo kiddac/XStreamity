@@ -66,6 +66,9 @@ def processfiles():
             showcatchup = True
             livefavourites = []
             vodfavourites = []
+            live_streams = []
+            catchup_checked = False
+            last_check = ''
 
             serveroffset = 0
 
@@ -145,6 +148,15 @@ def processfiles():
                                 if "serveroffset" not in playlists["player_info"]:
                                     playlists["player_info"]["serveroffset"] = serveroffset
 
+                                if "live_streams" not in playlists["data"]:
+                                    playlists["data"]["live_streams"] = serveroffset
+
+                                if "catchup_checked" not in playlists["data"]:
+                                    playlists["data"]["catchup_checked"] = serveroffset
+
+                                if "last_check" not in playlists["data"]:
+                                    playlists["data"]["last_check"] = serveroffset
+
                                 playlists["playlist_info"]["name"] = name
                                 playlists["playlist_info"]["type"] = type
                                 playlists["playlist_info"]["output"] = output
@@ -198,7 +210,10 @@ def processfiles():
                             ("live_categories", []),
                             ("vod_categories", []),
                             ("series_categories", []),
+                            ("live_streams", []),
                             ("catchup", False),
+                            ("catchup_checked", False),
+                            ("last_check", ''),
                             ("epg_date", ''),
                             ("data_downloaded", False),
                             ("epg_importer_files", False)
