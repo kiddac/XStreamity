@@ -120,10 +120,21 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
                             self['VirtualKB'].setEnabled(False)
                         except:
                             pass
+                            
+                        try:
+                            self["virtualKeyBoardActions"].setEnabled(False)
+                        except:
+                            pass
+                            
                         self['VKeyIcon'].hide()
                     else:
                         try:
                             self['VirtualKB'].setEnabled(True)
+                        except:
+                            pass
+                            
+                        try:
+                            self["virtualKeyBoardActions"].setEnabled(True)
                         except:
                             pass
                         self['VKeyIcon'].show()

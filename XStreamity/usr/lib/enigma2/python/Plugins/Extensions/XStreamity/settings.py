@@ -151,13 +151,32 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         if currConfig is not None:
             if isinstance(currConfig[1], ConfigText):
                 if 'VKeyIcon' in self:
+                    try:
+                        self['VirtualKB'].setEnabled(True)
+                    except:
+                        pass
+
+                    try:
+                        self["virtualKeyBoardActions"].setEnabled(True)
+                    except:
+                        pass
                     self['VKeyIcon'].show()
 
                 if "HelpWindow" in self and currConfig[1].help_window and currConfig[1].help_window.instance is not None:
                     helpwindowpos = self["HelpWindow"].getPosition()
                     currConfig[1].help_window.instance.move(ePoint(helpwindowpos[0], helpwindowpos[1]))
+
             else:
                 if 'VKeyIcon' in self:
+                    try:
+                        self['VirtualKB'].setEnabled(False)
+                    except:
+                        pass
+
+                    try:
+                        self["virtualKeyBoardActions"].setEnabled(False)
+                    except:
+                        pass
                     self['VKeyIcon'].hide()
 
     def changedEntry(self):
