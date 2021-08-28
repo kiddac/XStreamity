@@ -1,8 +1,8 @@
 Package: enigma2-plugin-extensions-xstreamity
-Version: 3.10-20210828
+Version: 3.11-20210828
 Section: misc
 Priority: optional
 Architecture: all
 Maintainer: kiddac
-Description: IPTV Xtream Codes playlists player by KiddaC
+Description: IPTV Xtream Codes/XUI One playlists player by KiddaC
 Source: https://www.linuxsat-support.com
