@@ -4,7 +4,6 @@
 from . import _
 from . import streamplayer
 from . import xstreamity_globals as glob
-from . import bgdownloader as bgd
 
 from .plugin import skin_path, screenwidth, hdr, cfg, common_path, dir_tmp, playlists_json, dir_etc
 from .xStaticText import StaticText
@@ -136,6 +135,7 @@ def get_time_utc(timestring, fdateparse):
         return 0
 
 
+"""
 class BaseThread(threading.Thread):
     def __init__(self, myarg=None, callback=None, *args, **kwargs):
         target = kwargs.pop('target')
@@ -153,6 +153,7 @@ class BaseThread(threading.Thread):
 
         if self.callback is not None:
             self.callback(data)
+            """
 
 
 class XStreamity_Categories(Screen):
@@ -368,53 +369,40 @@ class XStreamity_Categories(Screen):
     def downloadxmltv(self, url):
         # print("**** downloadxmltv ***")
         try:
-            
-            if twisted.python.runtime.platform.supportsThreads():
-                 bgd.backgroundDownloader(self, url=url, location=self.epgxmlfile, timeout=5, callback="downloadComplete", errback="downloadFailed")
+            if url.startswith("https") and sslverify:
+                parsed_uri = urlparse(url)
+                domain = parsed_uri.hostname
+                sniFactory = SNIFactory(domain)
+                if pythonVer == 3:
+                    url = url.encode()
+                downloadPage(url, self.epgxmlfile, sniFactory, timeout=120).addCallback(self.downloadComplete).addErrback(self.downloadFailed)
+
             else:
-                if url.startswith("https") and sslverify:
-                    parsed_uri = urlparse(url)
-                    domain = parsed_uri.hostname
-                    sniFactory = SNIFactory(domain)
-                    if pythonVer == 3:
-                        url = url.encode()
-                    downloadPage(url, self.epgxmlfile, sniFactory, timeout=120).addCallback(self.downloadComplete).addErrback(self.downloadFailed)
-
-                else:
-                    if pythonVer == 3:
-                        url = url.encode()
-                    downloadPage(url, self.epgxmlfile, timeout=120).addCallback(self.downloadComplete).addErrback(self.downloadFailed)
+                if pythonVer == 3:
+                    url = url.encode()
+                downloadPage(url, self.epgxmlfile, timeout=120).addCallback(self.downloadComplete).addErrback(self.downloadFailed)
         except Exception as e:
             print(e)
-            os.remove(self.epgxmlfile)
+            try:
+                os.remove(self.epgxmlfile)
+            except Exception as e:
+                print(e)
+
             self.downloadFailed()
-
-    def backgroundDownloaderUrl(self, url, location, timeout):
-        try:
-            with requests.get(url, stream=True, timeout=timeout) as r:
-                r.raise_for_status()
-                with open(location, 'wb') as f:
-                    for chunk in r.iter_content(chunk_size=8192):
-                        f.write(chunk)
-        except Exception as e:
-            print(e)
 
     def downloadComplete(self, data=None):
         # print("**** downloadComplete ***")
-        if twisted.python.runtime.platform.supportsThreads():
-            print("****** platform supports threading ****")
-            try:
-                d = threads.deferToThread(self.buildjson)
-                d.addErrback(self.createJsonFail)
-            except Exception as e:
-                print(e)
-        else:
-            print("****** platform does not supports threading ****")
+        try:
+            d = threads.deferToThread(self.buildjson)
+            d.addErrback(self.createJsonFail)
+        except Exception as e:
             try:
                 self.buildjson()
             except Exception as e:
                 print(e)
                 self.createJsonFail(e)
+
+            self.createJsonFail(e)
 
     def downloadFailed(self, data=None):
         print(data)
@@ -425,7 +413,10 @@ class XStreamity_Categories(Screen):
 
     def createJsonFail(self, data=None):
         print(("Create Json failed:", data))
-        os.remove(self.epgjsonfile)
+        try:
+            os.remove(self.epgjsonfile)
+        except:
+            pass
         try:
             self["downloading"].hide()
         except:
@@ -450,7 +441,10 @@ class XStreamity_Categories(Screen):
             with open(self.epgjsonfile, "w") as jsonFile:
                 json.dump(epgitems, jsonFile, ensure_ascii=False)
 
-        os.remove(self.epgxmlfile)
+        try:
+            os.remove(self.epgxmlfile)
+        except:
+            pass
         epgitems.clear()
 
         try:
@@ -459,7 +453,10 @@ class XStreamity_Categories(Screen):
             pass
 
         if self.level == 2:
-            self.addEPG()
+            try:
+                self.addEPG()
+            except:
+                pass
 
     def buildjson2(self):
         # print("***** buildjson *****")
@@ -512,10 +509,11 @@ class XStreamity_Categories(Screen):
                         self["downloading"].show()
                     except:
                         pass
-                        
+
                     try:
-                        thread = BaseThread(target=self.downloadxmltv, myarg=(str(self.xmltv),))
-                        thread.start()
+                        # thread = BaseThread(target=self.downloadxmltv, myarg=(str(self.xmltv),))
+                        # thread.start()
+                        self.downloadxmltv(self.xmltv)
                     except Exception as e:
                         print(e)
             else:
@@ -525,8 +523,9 @@ class XStreamity_Categories(Screen):
                     pass
 
                 try:
-                    thread = BaseThread(target=self.downloadxmltv, myarg=(str(self.xmltv),))
-                    thread.start()
+                    # thread = BaseThread(target=self.downloadxmltv, myarg=(str(self.xmltv),))
+                    # thread.start()
+                    self.downloadxmltv(self.xmltv)
                 except Exception as e:
                     print(e)
 
@@ -577,10 +576,6 @@ class XStreamity_Categories(Screen):
     def downloadChannels(self):
         # print("*** downloadChannels ***")
         url = glob.nextlist[-1]["playlist_url"]
-
-        self.favourites_category = False
-        if url.endswith("00"):
-            self.favourites_category = True
 
         levelpath = str(dir_tmp) + 'level' + str(self.level) + '.json'
 
@@ -1006,7 +1001,7 @@ class XStreamity_Categories(Screen):
             descriptionnow = self["epg_list"].getCurrent()[4]
             startnexttime = self["epg_list"].getCurrent()[5]
 
-            if titlenow and not self.editmode:
+            if titlenow and self.editmode is False:
                 nowTitle = "%s - %s  %s" % (startnowtime, startnexttime, titlenow)
                 self["key_epg"].setText(_("Next Info"))
 
@@ -1306,15 +1301,19 @@ class XStreamity_Categories(Screen):
             glob.currentchannellistindex = currentindex
             glob.currentepglist = self.epglist[:]
 
+            if next_url.endswith("00"):
+                self.favourites_category = True
+            else:
+                self.favourites_category = False
+
             if self.level == 1:
                 self.level += 1
                 self["channel_list"].setIndex(0)
                 self["category_actions"].setEnabled(False)
 
-                if self.favourites_category:
+                if self.favourites_category is True:
                     self["channel_actions"].setEnabled(False)
                     self["favourites_actions"].setEnabled(True)
-
                 else:
                     self["channel_actions"].setEnabled(True)
                     self["favourites_actions"].setEnabled(False)
@@ -1324,7 +1323,6 @@ class XStreamity_Categories(Screen):
                 self.createSetup()
 
             elif self.level == 2:
-
                 if self.selectedlist == self["epg_short_list"]:
                     self.shortEPG()
 
@@ -1553,8 +1551,6 @@ class XStreamity_Categories(Screen):
                                         index += 1
 
                             self["epg_short_list"].setList(self.epgshortlist)
-
-                            self.epgshortlist = []
                             duplicatecheck = []
 
                             instance = self["epg_short_list"].master.master.instance
@@ -1599,6 +1595,7 @@ class XStreamity_Categories(Screen):
     # record button download video file
     def downloadStream(self, limitEvent=True):
         # print("*** downloadStream ***")
+
         from . import record
 
         currentindex = self["channel_list"].getIndex()
@@ -1746,10 +1743,10 @@ class XStreamity_Categories(Screen):
             self.createSetup()
 
     def editfav(self):
+        print("*** edit fav ***")
         if self.favourites_category:
             self.editmode = not self.editmode
             if self.editmode is False:
-
                 with open(playlists_json, "r") as f:
                     try:
                         self.playlists_all = json.load(f)
@@ -1772,9 +1769,8 @@ class XStreamity_Categories(Screen):
                 currentindex = self["channel_list"].getIndex()
                 self.list2[currentindex][18] = not self.list2[currentindex][18]
 
-        else:
-            return
-        self.buildLists()
+        self.createSetup()
+        self.selectionChanged()
 
 
 def buildEPGListEntry(index, title, epgNowTime, epgNowTitle, epgNowDesc, epgNextTime, epgNextTitle, epgNextDesc, hidden):

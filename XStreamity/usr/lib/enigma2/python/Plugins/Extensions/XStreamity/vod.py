@@ -292,10 +292,6 @@ class XStreamity_Categories(Screen):
         # print("*** downloadChannels ***")
         url = glob.nextlist[-1]["playlist_url"]
 
-        self.favourites_category = False
-        if url.endswith("00"):
-            self.favourites_category = True
-
         levelpath = str(dir_tmp) + 'level' + str(self.level) + '.json'
 
         if self.favourites_category:
@@ -975,6 +971,11 @@ class XStreamity_Categories(Screen):
             glob.nextlist[-1]['index'] = currentindex
             glob.currentchannellist = self.channelList[:]
             glob.currentchannellistindex = currentindex
+            
+            if next_url.endswith("00"):
+                self.favourites_category = True
+            else:
+                self.favourites_category = False
 
             if self.level == 1:
                 self.level += 1
