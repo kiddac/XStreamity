@@ -2,17 +2,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: XStreamity\n"
 "POT-Creation-Date: 2020-02-29 22:09+0100\n"
-"PO-Revision-Date: 2020-05-12 13:39+0200\n"
+"PO-Revision-Date: 2021-01-24 22:03+0100\n"
 "Last-Translator: @Kqiqi1\n"
 "Language-Team: \n"
 "Language: al_AL\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.3\n"
-"X-Poedit-Basepath: ../Downloads/enigma2-plugin-extensions-"
-"xstreamity_1.0022.20200229_all/data/usr/lib/enigma2/python/Plugins/"
-"Extensions/XStreamity\n"
+"X-Generator: Poedit 2.4.2\n"
+"X-Poedit-Basepath: ../Downloads/enigma2-plugin-extensions-xstreamity_1.0022.20200229_all/data/"
+"usr/lib/enigma2/python/Plugins/Extensions/XStreamity\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SearchPath-0: .\n"
 
@@ -95,6 +94,10 @@ msgstr "Regjistrimi sa po filloi"
 msgid "Release Date:"
 msgstr "Data rilascio:"
 
+#: playlists.py:45
+msgid "Select Playlist"
+msgstr "Zgjidhni një list"
+
 #: RecordDateInput.py:68
 msgid "Date"
 msgstr "Data"
@@ -102,6 +105,14 @@ msgstr "Data"
 #: RecordDateInput.py:69
 msgid "Start Time"
 msgstr "Koha startuese"
+
+#: settings.py:125
+msgid "Margin before catchup (mins)"
+msgstr "Margjina para Arkivit të TV-së (minuta)"
+
+#: settings.py:126
+msgid "Margin after catchup (mins)"
+msgstr "Margjina mbas Arkivit të TV-së (minuta)"
 
 #: RecordDateInput.py:70
 msgid "End Time"
@@ -119,6 +130,10 @@ msgstr "Dosja:"
 msgid "Cast:"
 msgstr "Aktorët:"
 
+#: server.py:34
+msgid "Add Xtream Codes Playlist"
+msgstr "Vendos kodet e listës"
+
 #: categories.py:749 categories.py:756
 msgid "Sort: Z-A"
 msgstr "Dosja: Z-A"
@@ -129,7 +144,7 @@ msgstr "Dosja: Standard"
 
 #: categories.py:772 categories.py:785
 msgid "Reset Search"
-msgstr "Rivendosni kërkimin"
+msgstr "Rikthe kërkimin"
 
 #: categories.py:776
 msgid "Filter this category..."
@@ -142,6 +157,10 @@ msgstr "Vendose Serverin"
 #: main.py:52
 msgid "Add"
 msgstr "Vendos"
+
+#: record.py:56
+msgid "Please enter recording end time"
+msgstr "Ju lutem vendoseni kohen regjistruese"
 
 #: main.py:57
 msgid "About"
@@ -165,7 +184,7 @@ msgstr "Jo aktiv"
 
 #: main.py:354 main.py:369 main.py:391
 msgid "Server Not Responding"
-msgstr "Serveri nuk është aktiv"
+msgstr "Serveri jo funksional"
 
 #: main.py:356 main.py:371 main.py:404
 msgid "Not Authorised"
@@ -243,13 +262,13 @@ msgstr "Emri i përdoruesit"
 msgid "password"
 msgstr "Fjalkalimi i perdoruesit"
 
-#: server.py:119 server.py:120 server.py:125 server.py:130 server.py:159
-#: server.py:160 server.py:164 server.py:169
+#: server.py:119 server.py:120 server.py:125 server.py:130 server.py:159 server.py:160
+#: server.py:164 server.py:169
 msgid "DVB(1)"
 msgstr ""
 
-#: server.py:119 server.py:120 server.py:126 server.py:131 server.py:159
-#: server.py:160 server.py:165 server.py:170
+#: server.py:119 server.py:120 server.py:126 server.py:131 server.py:159 server.py:160
+#: server.py:165 server.py:170
 msgid "IPTV(4097)"
 msgstr ""
 
@@ -321,14 +340,18 @@ msgstr "Data realizuese"
 msgid "Page: %d of %d"
 msgstr "Faqja %d nga %d"
 
+#: settings.py:39
 msgid "Main Settings"
-msgstr "Konfigurimet Personale"
+msgstr "Konfigurimet"
 
 msgid "URL Server:"
 msgstr "Adresa e Kompanis"
 
 msgid "playlists.txt location"
 msgstr "lokacioni tekst i listes"
+
+msgid "default"
+msgstr "Standard"
 
 msgid "VOD download folder"
 msgstr "Dosja për shkarkimet VOD"
@@ -351,11 +374,15 @@ msgstr "Trego pikonët në kategorit drejtpërdrejt"
 msgid "Show covers in VOD categories"
 msgstr "Trego pikonët në kategorit e filmave"
 
+#: mainmenu.py:43
+msgid "Main Menu"
+msgstr "Menyja"
+
 msgid "Download Hi-Res VOD Covers"
 msgstr "Shkarko Posteret me kfalitet për filma"
 
 msgid "Show in main menu *Restart GUI Required"
-msgstr "Trego në menyn kryësore startim i detyrueshë i paisjes"
+msgstr "Trego në meny startim i detyrueshë i paisjes"
 
 msgid "Parental control"
 msgstr "Kontrolli prindëror"
@@ -459,3 +486,118 @@ msgstr "Për shije para se të luani videon"
 
 msgid "Show picons in Live categories"
 msgstr "Trego pikonët e kanaleve direkte"
+
+msgid "Hide 'All' category from category list"
+msgstr "Fshih të gjitha kategoritë nga kategoria"
+
+#: settings.py:117
+msgid "VOD Movie Database language"
+msgstr "Gjuha e të dhënave të Filmit VOD"
+
+#: settings.py:110
+msgid "Preview LIVE streams in mini tv before playing"
+msgstr "Për shije LIVE streaming në mini TV para se të luani"
+
+#: settings.py:108
+msgid "Default CATCHUP stream type"
+msgstr "Lloji i paracaktuar i rrjedhës CATCHUP"
+
+#: server.py:176
+msgid "Stream Type VOD/SERIES:"
+msgstr "Lloi transmetues VOD/SERIES:"
+
+#: server.py:179
+msgid "Stream Type CATCHUP:"
+msgstr "Lloi transmetues CATCHUP:"
+
+#: server.py:167
+msgid "Show LIVE category:"
+msgstr "Trego kategorit drejtpërdrejt:"
+
+#: server.py:168
+msgid "Show VOD category:"
+msgstr "Trego kategorit VOD:"
+
+#: server.py:169
+msgid "Show SERIES category:"
+msgstr "Trego kategorit Seriale:"
+
+#: server.py:170
+msgid "Show CATCHUP category:"
+msgstr "Trego kategorit CATCHUP:"
+
+#: menu.py:48 menu.py:92 menu.py:263
+msgid "Lists updated: "
+msgstr "Lista u aktualizua:"
+
+#: menu.py:229
+msgid "No data, blocked or playlist not compatible with XStreamity plugin."
+msgstr "Asnjë të dhënë, bllokuar ose listë dëgjimi nuk është e përputhshme me shtojcën XStreamity"
+
+#: hidden.py:143
+msgid "Error: All categories hidden. Please amend your selection."
+msgstr "Gabim: Të gjitha kategoritë janë të fshehura. Ju lutemi ndryshoni zgjedhjen tuaj."
+
+#: categories.py:1949
+msgid ""
+"The IMDb plugin is not installed!\n"
+"Please install it."
+msgstr ""
+"Zgjëruesi IMDb nuk është e instaluar!\n"
+"Ju lutem instaloni atë."
+
+#: catchup.py:552
+msgid "Catchup error. No data for this slot"
+msgstr "Gabim në Catchup. Nuk ka të dhëna për këtë slot"
+
+#: catchup.py:704 categories.py:1659
+msgid ""
+"Downloading \n"
+"\n"
+msgstr "Shkarkuar\n"
+
+#: catchup.py:709 categories.py:1664
+msgid ""
+"Download Failed\n"
+"\n"
+msgstr "Shkarkimi dështoi\n"
+
+#: catchup.py:367 categories.py:850
+msgid "Incorrect pin code."
+msgstr "Kodi i pasaktë i pinit"
+
+#: settings.py:107
+msgid "Movie Database language"
+msgstr "Gjuha baz"
+
+#: settings.py:106
+msgid "Use Movie Database(TMDB) for VOD"
+msgstr "Merr bazen(TMDB) për VOD"
+
+#: settings.py:106
+msgid "Use Movie Database(TMDB) for VOD & Series"
+msgstr "Merr bazen(TMDB) për VOD & Seriale"
+
+#: settings.py:99
+msgid "Preview LIVE streams in mini tv"
+msgstr "Trego transmetimin LIVE në ekranin e vogel"
+
+#: settings.py:96
+msgid "Default VOD/SERIES stream type"
+msgstr "Lloi standard i luajtjes së VOD/SERIALEVE"
+
+#: settings.py:96
+msgid "Default LIVE stream type"
+msgstr "Lloi standard i transmetimit LIVE"
+
+#: settings.py:39
+msgid "Add Playlist"
+msgstr "Vendos listen"
+
+#: settings.py:39
+msgid "Playlists"
+msgstr "Lista"
+
+#: playsettings.py:121 server.py:93
+msgid "Short name or provider name:"
+msgstr "Vendos emrin ose kompanin"
