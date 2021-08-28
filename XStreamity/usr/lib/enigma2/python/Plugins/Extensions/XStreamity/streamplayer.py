@@ -360,6 +360,7 @@ class XStreamity_StreamPlayer(
 
         self.streamurl = streamurl
         self.servicetype = servicetype
+        self.originalservicetype = self.servicetype
         self.retries = 0
 
         skin = skin_path + 'streamplayer.xml'
@@ -680,6 +681,8 @@ class XStreamity_StreamPlayer(
 
         nextStreamType = islice(cycle(streamtypelist), currentindex + 1, None)
         self.servicetype = int(next(nextStreamType))
+        
+        self.originalservicetype = self.servicetype
 
         self.playStream(self.servicetype, self.streamurl)
 
