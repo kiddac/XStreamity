@@ -412,7 +412,7 @@ class XStreamity_Categories(Screen):
             pass
 
     def createJsonFail(self, data=None):
-        print(("Create Json failed:", data))
+        # print(("Create Json failed:", data))
         try:
             os.remove(self.epgjsonfile)
         except:
@@ -459,7 +459,7 @@ class XStreamity_Categories(Screen):
                 pass
 
     def buildjson2(self):
-        # print("***** buildjson *****")
+        # print("***** buildjson2 *****")
 
         fileobj = self.epgxmlfile
 
@@ -511,9 +511,7 @@ class XStreamity_Categories(Screen):
                         pass
 
                     try:
-                        # thread = BaseThread(target=self.downloadxmltv, myarg=(str(self.xmltv),))
-                        # thread.start()
-                        self.downloadxmltv(self.xmltv)
+                        self.downloadxmltv(str(self.xmltv))
                     except Exception as e:
                         print(e)
             else:
@@ -523,9 +521,7 @@ class XStreamity_Categories(Screen):
                     pass
 
                 try:
-                    # thread = BaseThread(target=self.downloadxmltv, myarg=(str(self.xmltv),))
-                    # thread.start()
-                    self.downloadxmltv(self.xmltv)
+                    self.downloadxmltv(str(self.xmltv))
                 except Exception as e:
                     print(e)
 
@@ -785,7 +781,6 @@ class XStreamity_Categories(Screen):
         self.selectionChanged()
 
     def addEPG(self):
-
         if self["channel_list"].getCurrent():
             now = time.time()
             with open(self.epgjsonfile, "rb") as f:
