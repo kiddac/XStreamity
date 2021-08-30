@@ -36,8 +36,6 @@ from enigma import eWidget, eLabel, eTimer, ePoint, eSize, gFont, \
 from Components.Renderer.Renderer import Renderer
 from skin import parseColor, parseFont
 
-import Plugins.Extensions.XStreamity.owibranding as xowibranding
-
 
 # scroll type:
 NONE = 0
@@ -87,12 +85,10 @@ class xRunningText(Renderer):
         self.mTimer = eTimer()
 
         try:
-            # from boxbranding import getImageDistro, getImageVersion, getOEVersion
             self.mTimer.callback.append(self.movingLoop)
         except:
             try:
-                if xowibranding.getMachineBrand() == "Dream Multimedia" or xowibranding.getOEVersion() == "OE 2.2":
-                    self.mTimer_conn = self.mTimer.timeout.connect(self.movingLoop)
+                self.mTimer_conn = self.mTimer.timeout.connect(self.movingLoop)
             except:
                 pass
 
@@ -100,11 +96,9 @@ class xRunningText(Renderer):
         self.mTimer.stop()
 
         try:
-            # from boxbranding import getImageDistro, getImageVersion, getOEVersion
             self.mTimer.callback.remove(self.movingLoop)
         except:
-            if xowibranding.getMachineBrand() == "Dream Multimedia" or xowibranding.getOEVersion() == "OE 2.2":
-                self.mTimer_conn = self.mTimer.timeout.disconnect(self.movingLoop)
+            self.mTimer_conn = self.mTimer.timeout.disconnect(self.movingLoop)
 
         self.mTimer = None
         self.scroll_label = None

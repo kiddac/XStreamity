@@ -391,18 +391,31 @@ class XStreamity_Categories(Screen):
             self.downloadFailed()
 
     def downloadComplete(self, data=None):
-        # print("**** downloadComplete ***")
-        try:
-            d = threads.deferToThread(self.buildjson)
-            d.addErrback(self.createJsonFail)
-        except Exception as e:
+        # print("**** DreamOS downloadComplete ***")
+        if os.path.exists('/var/lib/dpkg/status'):
             try:
-                self.buildjson()
+                d = reactor.callFromThread(self.buildjson)
             except Exception as e:
-                print(e)
-                self.createJsonFail(e)
+                try:
+                    self.buildjson()
+                except Exception as e:
+                    print(e)
+                    self.createJsonFail(e)
 
-            self.createJsonFail(e)
+        else:
+            if twisted.python.runtime.platform.supportsThreads():
+                # print("**** downloadComplete ***")
+                try:
+                    d = threads.deferToThread(self.buildjson)
+                    d.addErrback(self.createJsonFail)
+                except Exception as e:
+                    print(e)
+            else:
+                try:
+                    self.buildjson()
+                except Exception as e:
+                    print(e)
+                    self.createJsonFail(e)
 
     def downloadFailed(self, data=None):
         print(data)

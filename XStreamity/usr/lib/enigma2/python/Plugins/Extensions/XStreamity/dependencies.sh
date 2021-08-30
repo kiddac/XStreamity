@@ -2,53 +2,56 @@
 pyv="$(python -V 2>&1)"
 echo "$pyv"
 echo "Checking Dependencies"
-echo
+echo ""
 if [ -d /etc/opkg ]; then
+    echo "updating feeds"
+    opkg update
+    echo ""
     if [[ $pyv =~ "Python 3" ]]; then
         echo "checking python3-requests"
         opkg install python3-requests
-        echo
+        echo ""
         echo "checking python3-multiprocessing"
         opkg install python3-multiprocessing
-        echo
+        echo ""
     else
         echo "checking python-image"
         opkg install python-image
-        echo
+        echo ""
         echo "checking python-imaging"
         opkg install python-imaging
-        echo
+        echo ""
         echo "checking python-requests"
         opkg install python-requests
-        echo
+        echo ""
         echo "checking python-multiprocessing"
         opkg install python-multiprocessing
-        echo
+        echo ""
     fi
 else
     echo "updating feeds"
     apt-get update
-    echo
+    echo ""
     if [[ $pyv =~ "Python 3" ]]; then
         echo "checking python3-requests"
         apt-get -y install python3-requests
-        echo
+        echo ""
         echo "checking python3-multiprocessing"
         apt-get -y install python3-multiprocessing
-        echo
+        echo ""
     else
         echo "checking python-image"
         apt-get -y install python-image
-        echo
+        echo ""
         echo "checking python-imaging"
         apt-get -y install python-imaging
-        echo
+        echo ""
         echo "checking python-requests"
         apt-get -y install python-requests
-        echo
+        echo ""
         echo "checking python-multiprocessing"
         apt-get -y install python-multiprocessing
-        echo
+        echo ""
     fi
 fi
 exit 0
