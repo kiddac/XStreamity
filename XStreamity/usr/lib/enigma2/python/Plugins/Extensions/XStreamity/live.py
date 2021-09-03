@@ -24,8 +24,6 @@ from Screens.VirtualKeyBoard import VirtualKeyBoard
 from ServiceReference import ServiceReference
 from time import strftime, time
 from Tools.LoadPixmap import LoadPixmap
-from xml.etree.cElementTree import iterparse
-from twisted.internet import reactor, threads
 from twisted.web.client import downloadPage
 
 import base64
@@ -38,8 +36,6 @@ import re
 import requests
 import sys
 import time
-import threading
-import twisted.python.runtime
 
 try:
     pythonVer = sys.version_info.major
@@ -133,27 +129,6 @@ def get_time_utc(timestring, fdateparse):
     except Exception as e:
         print("[XMLTVConverter] get_time_utc error:", e)
         return 0
-
-
-"""
-class BaseThread(threading.Thread):
-    def __init__(self, myarg=None, callback=None, *args, **kwargs):
-        target = kwargs.pop('target')
-        super(BaseThread, self).__init__(target=self.target_with_callback)
-
-        self.myarg = myarg
-        self.callback = callback
-        self.method = target
-
-    def target_with_callback(self):
-        if self.myarg:
-            data = self.method(*self.myarg)
-        else:
-            data = None
-
-        if self.callback is not None:
-            self.callback(data)
-            """
 
 
 class XStreamity_Categories(Screen):
@@ -365,179 +340,13 @@ class XStreamity_Categories(Screen):
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
 
-    # new epg code
-    def downloadxmltv(self, url):
-        # print("**** downloadxmltv ***")
-        try:
-            if url.startswith("https") and sslverify:
-                parsed_uri = urlparse(url)
-                domain = parsed_uri.hostname
-                sniFactory = SNIFactory(domain)
-                if pythonVer == 3:
-                    url = url.encode()
-                downloadPage(url, self.epgxmlfile, sniFactory, timeout=120).addCallback(self.downloadComplete).addErrback(self.downloadFailed)
-
-            else:
-                if pythonVer == 3:
-                    url = url.encode()
-                downloadPage(url, self.epgxmlfile, timeout=120).addCallback(self.downloadComplete).addErrback(self.downloadFailed)
-        except Exception as e:
-            print(e)
-            try:
-                os.remove(self.epgxmlfile)
-            except Exception as e:
-                print(e)
-
-            self.downloadFailed()
-
-    def downloadComplete(self, data=None):
-        # print("**** DreamOS downloadComplete ***")
-        if os.path.exists('/var/lib/dpkg/status'):
-            try:
-                d = reactor.callFromThread(self.buildjson)
-            except Exception as e:
-                try:
-                    self.buildjson()
-                except Exception as e:
-                    print(e)
-                    self.createJsonFail(e)
-
-        else:
-            if twisted.python.runtime.platform.supportsThreads():
-                # print("**** downloadComplete ***")
-                try:
-                    d = threads.deferToThread(self.buildjson)
-                    d.addErrback(self.createJsonFail)
-                except Exception as e:
-                    print(e)
-            else:
-                try:
-                    self.buildjson()
-                except Exception as e:
-                    print(e)
-                    self.createJsonFail(e)
-
-    def downloadFailed(self, data=None):
-        print(data)
-        try:
-            self["downloading"].hide()
-        except:
-            pass
-
-    def createJsonFail(self, data=None):
-        # print(("Create Json failed:", data))
-        try:
-            os.remove(self.epgjsonfile)
-        except:
-            pass
-        try:
-            self["downloading"].hide()
-        except:
-            pass
-
-    def buildjson(self):
-        # print("**** buildjson ***")
-        epgitems = {}
-        nowtime = calendar.timegm(time.gmtime())
-
-        for channel, start, stop, title, desc in self.buildjson2():
-            start = get_time_utc(start, quickptime)
-            stop = get_time_utc(stop, quickptime)
-
-            if start < nowtime + (3600 * 24) and stop > start and stop > nowtime:
-                if channel in epgitems:
-                    epgitems[channel].append([start, stop, title, desc])
-                else:
-                    epgitems[channel] = [[start, stop, title, desc]]
-
-        if epgitems and epgitems != {}:
-            with open(self.epgjsonfile, "w") as jsonFile:
-                json.dump(epgitems, jsonFile, ensure_ascii=False)
-
-        try:
-            os.remove(self.epgxmlfile)
-        except:
-            pass
-        epgitems.clear()
-
-        try:
-            self["downloading"].hide()
-        except:
-            pass
-
-        if self.level == 2:
-            try:
-                self.addEPG()
-            except:
-                pass
-
-    def buildjson2(self):
-        # print("***** buildjson2 *****")
-
-        fileobj = self.epgxmlfile
-
-        for event, elem in iterparse(fileobj):
-
-            if elem.tag == 'channel':
-                elem.clear()
-
-            if elem.tag == 'programme':
-                channel = elem.get('channel')
-                if channel:
-                    try:
-                        start = elem.get('start')
-                        stop = elem.get('stop')
-                    except:
-                        continue
-
-                    try:
-                        title = elem.find('title').text
-                    except:
-                        title = ''
-
-                    try:
-                        desc = elem.find('desc').text
-                    except:
-                        desc = ''
-
-                    if channel and start and stop:
-                        yield channel.lower(), start, stop, title or "", desc or ""
-                elem.clear()
-
     def createSetup(self):
         # print("*** createSetup ***")
 
         self["epg_title"].setText('')
         self["epg_description"].setText('')
-        nowtime = time.time()
-
-        if not os.path.exists(self.epgfolder):
-            os.makedirs(self.epgfolder)
 
         if self.level == 1:  # category list
-            if os.path.isfile(self.epgjsonfile) and os.stat(self.epgjsonfile).st_size > 0:
-                xmltvmodified = os.path.getctime(self.epgjsonfile)
-                if int(nowtime) - int(xmltvmodified) > 28800:
-                    try:
-                        self["downloading"].show()
-                    except:
-                        pass
-
-                    try:
-                        self.downloadxmltv(str(self.xmltv))
-                    except Exception as e:
-                        print(e)
-            else:
-                try:
-                    self["downloading"].show()
-                except:
-                    pass
-
-                try:
-                    self.downloadxmltv(str(self.xmltv))
-                except Exception as e:
-                    print(e)
-
             self.processCategories()
 
         elif self.level == 2:  # channel list
@@ -926,7 +735,6 @@ class XStreamity_Categories(Screen):
             except:
                 pass
 
-            original = str(dir_tmp) + 'original.png'
             desc_image = ''
             try:
                 desc_image = self["channel_list"].getCurrent()[5]

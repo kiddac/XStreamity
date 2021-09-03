@@ -13,6 +13,7 @@ from enigma import eServiceReference
 from os import system, chmod
 from Screens.Console import Console
 from Screens.Screen import Screen
+from Screens.MessageBox import MessageBox
 from Tools.LoadPixmap import LoadPixmap
 
 import json
@@ -120,6 +121,7 @@ class XStreamity_MainMenu(Screen):
             self.list.append([1, _("Playlists")])
         self.list.append([3, _("Add Playlist")])
         self.list.append([2, _("Main Settings")])
+        self.list.append([5, _("Manual EPG Update")])
         if downloads_all:
             self.list.append([4, _("Download Manager")])
 
@@ -146,6 +148,12 @@ class XStreamity_MainMenu(Screen):
         self.session.openWithCallback(self.start, downloadmanager.XStreamity_DownloadManager)
         return
 
+    def updateEPG(self):
+        from . import update
+        epg = update.XStreamity_Update()
+        self.session.open(MessageBox, _("EPGs downloading."), type=MessageBox.TYPE_INFO, timeout=5)
+        return
+
     def __next__(self):
         index = self["list"].getCurrent()[0]
 
@@ -158,6 +166,8 @@ class XStreamity_MainMenu(Screen):
                 self.addServer()
             if index == 4:
                 self.downloadManager()
+            if index == 5:
+                self.updateEPG()
 
     def quit(self):
         self.playOriginalChannel()
@@ -180,4 +190,7 @@ def buildListEntry(index, title):
         png = LoadPixmap(common_path + "addplaylist.png")
     if index == 4:
         png = LoadPixmap(common_path + "vod_download.png")
+    if index == 5:
+        png = LoadPixmap(common_path + "epg_download.png")
+
     return (index, str(title), png)

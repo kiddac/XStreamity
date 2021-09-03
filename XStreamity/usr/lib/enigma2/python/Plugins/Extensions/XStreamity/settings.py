@@ -110,6 +110,8 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
         self.cfg_skipplaylistsscreen = getConfigListEntry(_('Skip playlist selection screen if only 1 playlist'), cfg.skipplaylistsscreen)
 
+        self.cfg_wakeup = getConfigListEntry(_('Automatic EPG download time'), cfg.wakeup)
+
         self.createSetup()
 
     def createSetup(self):
@@ -125,6 +127,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
         self.list.append(self.cfg_livepreview)
         self.list.append(self.cfg_stopstream)
+        self.list.append(self.cfg_wakeup)
 
         self.list.append(self.cfg_downloadlocation)
 

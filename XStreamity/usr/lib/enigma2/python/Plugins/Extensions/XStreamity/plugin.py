@@ -4,11 +4,13 @@
 from . import _
 
 from Plugins.Plugin import PluginDescriptor
-from enigma import getDesktop, addFont
-from Components.config import config, ConfigSubsection, ConfigSelection, ConfigDirectory, ConfigYesNo, ConfigSelectionNumber
+from enigma import eTimer, getDesktop, addFont
+from Components.config import config, ConfigSubsection, ConfigSelection, ConfigDirectory, ConfigYesNo, ConfigSelectionNumber, ConfigClock
 
 import os
 import shutil
+
+autoStartTimer = None
 
 with open("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/version.txt", 'r') as f:
     version = f.readline()
@@ -98,6 +100,7 @@ cfg.catchupstart = ConfigSelectionNumber(0, 30, 1, default=0)
 cfg.catchupend = ConfigSelectionNumber(0, 30, 1, default=0)
 cfg.subs = ConfigYesNo(default=False)
 cfg.skipplaylistsscreen = ConfigYesNo(default=False)
+cfg.wakeup = ConfigClock(default=((9 * 60) + 9) * 60)  # 7:00
 
 skin_path = '%s%s/' % (skin_directory, cfg.skin.value)
 common_path = '%scommon/' % (skin_directory)
@@ -170,6 +173,68 @@ def extensionsmenu(session, **kwargs):
     return
 
 
+class AutoStartTimer:
+    def __init__(self, session):
+        self.session = session
+        self.timer = eTimer()
+        try:  # DreamOS fix
+            self.timer_conn = self.timer.timeout.connect(self.onTimer)
+        except:
+            self.timer.callback.append(self.onTimer)
+        self.update()
+
+    def getWakeTime(self):
+        import time
+        clock = cfg.wakeup.value
+        nowt = time.time()
+        now = time.localtime(nowt)
+        return int(time.mktime((now.tm_year, now.tm_mon, now.tm_mday, clock[0], clock[1], 0, now.tm_wday, now.tm_yday, now.tm_isdst)))
+
+    def update(self, atLeast=0):
+        import time
+        self.timer.stop()
+        wake = self.getWakeTime()
+        nowtime = time.time()
+        if wake > 0:
+            if wake < nowtime + atLeast:
+                # Tomorrow.
+                wake += 24 * 3600
+            next = wake - int(nowtime)
+            if next > 3600:
+                next = 3600
+            if next <= 0:
+                next = 60
+            self.timer.startLongTimer(next)
+        else:
+            wake = -1
+        return wake
+
+    def onTimer(self):
+        import time
+        self.timer.stop()
+        now = int(time.time())
+        wake = self.getWakeTime()
+        atLeast = 0
+        if abs(wake - now) < 60:
+            self.runUpdate()
+            atLeast = 60
+        self.update(atLeast)
+
+    def runUpdate(self):
+        print('\n *********** Updating XStreamity EPG ************ \n')
+        from . import update
+        epg = update.XStreamity_Update()
+
+
+def autostart(reason, session=None, **kwargs):
+    global autoStartTimer
+    if reason == 0:
+        if session is not None:
+            if autoStartTimer is None:
+                autoStartTimer = AutoStartTimer(session)
+    return
+
+
 def Plugins(**kwargs):
     addFont(font_folder + 'm-plus-rounded-1c-regular.ttf', 'xstreamityregular', 100, 0)
     addFont(font_folder + 'm-plus-rounded-1c-medium.ttf', 'xstreamitybold', 100, 0)
@@ -184,7 +249,8 @@ def Plugins(**kwargs):
 
     extensions_menu = PluginDescriptor(name=pluginname, description=description, where=PluginDescriptor.WHERE_EXTENSIONSMENU, fnc=extensionsmenu, needsRestart=True)
 
-    result = [PluginDescriptor(name=pluginname, description=description, where=PluginDescriptor.WHERE_PLUGINMENU, icon=iconFile, fnc=main)]
+    result = [PluginDescriptor(name=pluginname, description=description, where=[PluginDescriptor.WHERE_AUTOSTART, PluginDescriptor.WHERE_SESSIONSTART], fnc=autostart),
+              PluginDescriptor(name=pluginname, description=description, where=PluginDescriptor.WHERE_PLUGINMENU, icon=iconFile, fnc=main)]
 
     result.append(extensions_menu)
 
