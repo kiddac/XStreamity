@@ -121,7 +121,8 @@ class XStreamity_MainMenu(Screen):
             self.list.append([1, _("Playlists")])
         self.list.append([3, _("Add Playlist")])
         self.list.append([2, _("Main Settings")])
-        self.list.append([5, _("Manual EPG Update")])
+        if self.playlists_all:
+            self.list.append([5, _("Manual EPG Update")])
         if downloads_all:
             self.list.append([4, _("Download Manager")])
 
@@ -149,11 +150,12 @@ class XStreamity_MainMenu(Screen):
         return
 
     def updateEPG(self):
+        self.session.openWithCallback(self.updateEPG2, MessageBox, _("EPGs downloading."), type=MessageBox.TYPE_INFO, timeout=5)
+
+    def updateEPG2(self, data=None):
         from . import update
         epg = update.XStreamity_Update()
-        self.session.open(MessageBox, _("EPGs downloading."), type=MessageBox.TYPE_INFO, timeout=5)
-        return
-
+        
     def __next__(self):
         index = self["list"].getCurrent()[0]
 

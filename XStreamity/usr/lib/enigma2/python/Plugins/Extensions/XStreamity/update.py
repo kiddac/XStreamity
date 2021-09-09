@@ -12,6 +12,7 @@ from twisted.web.client import downloadPage
 import calendar
 import json
 import os
+import requests
 import sys
 import time
 import twisted.python.runtime
@@ -65,16 +66,19 @@ def get_time_utc(timestring, fdateparse):
 class XStreamity_Update:
 
     def __init__(self):
-
-        # self.session = session
-
+        # print("****** update ****")
         self.epgfolder = ""
         self.epgxmlfile = ""
         self.epgjsonfile = ""
-
-        # print("********** updating ***")
-
         self.processJsonFile()
+
+    def checkRedirect(self, url):
+        x = requests.get(url, timeout=20, verify=False, stream=True)
+        x.raise_for_status()
+        if x.status_code == requests.codes.ok:
+            return str(x.url)
+        else:
+            return str(url)
 
     def processJsonFile(self):
         with open(playlists_json, "r") as f:
@@ -83,17 +87,16 @@ class XStreamity_Update:
         self.urllist = []
 
         for playlist in self.playlists_all:
-            if "auth" in playlist["user_info"]:
-                if str(playlist["user_info"]["auth"]) == "1":
-                    domain = playlist["playlist_info"]["domain"]
-                    xmltv = playlist["playlist_info"]["xmltv_api"]
-                    epgfolder = str(dir_etc) + "epg/" + str(domain)
-                    epgxmlfile = str(epgfolder) + "/" + str("epg.xml")
-                    epgjsonfile = str(epgfolder) + "/" + str("epg.json")
-                    self.urllist.append([domain, xmltv, epgxmlfile, epgjsonfile])
+            if "user_info" in playlist and "auth" in playlist["user_info"] and str(playlist["user_info"]["auth"]) == "1":
+                domain = playlist["playlist_info"]["domain"]
+                xmltv = playlist["playlist_info"]["xmltv_api"]
+                epgfolder = str(dir_etc) + "epg/" + str(domain)
+                epgxmlfile = str(epgfolder) + "/" + str("epg.xml")
+                epgjsonfile = str(epgfolder) + "/" + str("epg.json")
+                self.urllist.append([domain, xmltv, epgxmlfile, epgjsonfile])
 
-            if not os.path.exists(epgfolder):
-                os.makedirs(epgfolder)
+                if not os.path.exists(epgfolder):
+                    os.makedirs(epgfolder)
 
         self.processPlaylist()
 
@@ -110,6 +113,8 @@ class XStreamity_Update:
     def downloadxmltv(self, url):
         # print("**** downloadxmltv ***")
         epgxmlfile = self.urllist[0][2]
+
+        url = self.checkRedirect(url)
 
         try:
             if url.startswith("https") and sslverify:
@@ -135,32 +140,25 @@ class XStreamity_Update:
             self.downloadFailed()
 
     def downloadComplete(self, data=None):
-        # print("**** DreamOS downloadComplete ***")
-        if os.path.exists('/var/lib/dpkg/status'):
+        # print("**** downloadComplete ***")
+        if twisted.python.runtime.platform.supportsThreads():
             try:
-                d = reactor.callFromThread(self.buildjson)
+                d = threads.deferToThread(self.buildjson)
+                d.addErrback(self.createJsonFail)
             except Exception as e:
                 print(e)
-                try:
-                    self.buildjson()
-                except Exception as e:
-                    print(e)
-                    self.createJsonFail(e)
 
-        else:
-            if twisted.python.runtime.platform.supportsThreads():
-                # print("**** downloadComplete ***")
-                try:
-                    d = threads.deferToThread(self.buildjson)
-                    d.addErrback(self.createJsonFail)
-                except Exception as e:
-                    print(e)
-            else:
                 try:
                     self.buildjson()
                 except Exception as e:
                     print(e)
                     self.createJsonFail(e)
+        else:
+            try:
+                self.buildjson()
+            except Exception as e:
+                print(e)
+                self.createJsonFail(e)
 
     def downloadFailed(self, data=None):
         print(data)
@@ -184,7 +182,6 @@ class XStreamity_Update:
             return
 
     def buildjson(self):
-        # print("**** buildjson ***")
         epgitems = {}
         nowtime = calendar.timegm(time.gmtime())
         epgjsonfile = self.urllist[0][3]
@@ -200,9 +197,8 @@ class XStreamity_Update:
                 else:
                     epgitems[channel] = [[start, stop, title, desc]]
 
-        if epgitems and epgitems != {}:
-            with open(epgjsonfile, "w") as jsonFile:
-                json.dump(epgitems, jsonFile, ensure_ascii=False)
+        with open(epgjsonfile, "w") as jsonFile:
+            json.dump(epgitems, jsonFile, ensure_ascii=False)
 
         try:
             os.remove(epgxmlfile)
@@ -218,31 +214,33 @@ class XStreamity_Update:
     def buildjson2(self):
         # print("***** buildjson2 *****")
         fileobj = self.urllist[0][2]
+        try:
+            for event, elem in iterparse(fileobj):
 
-        for event, elem in iterparse(fileobj):
+                if elem.tag == 'channel':
+                    elem.clear()
 
-            if elem.tag == 'channel':
-                elem.clear()
+                if elem.tag == 'programme':
+                    channel = elem.get('channel')
+                    if channel:
+                        try:
+                            start = elem.get('start')
+                            stop = elem.get('stop')
+                        except:
+                            continue
 
-            if elem.tag == 'programme':
-                channel = elem.get('channel')
-                if channel:
-                    try:
-                        start = elem.get('start')
-                        stop = elem.get('stop')
-                    except:
-                        continue
+                        try:
+                            title = elem.find('title').text
+                        except:
+                            title = ''
 
-                    try:
-                        title = elem.find('title').text
-                    except:
-                        title = ''
+                        try:
+                            desc = elem.find('desc').text
+                        except:
+                            desc = ''
 
-                    try:
-                        desc = elem.find('desc').text
-                    except:
-                        desc = ''
-
-                    if channel and start and stop:
-                        yield channel.lower(), start, stop, title or "", desc or ""
-                elem.clear()
+                        if channel and start and stop:
+                            yield channel.lower(), start, stop, title or "", desc or ""
+                    elem.clear()
+        except Exception as e:
+            print("*** bad data in xml file *** %s" % fileobj)
