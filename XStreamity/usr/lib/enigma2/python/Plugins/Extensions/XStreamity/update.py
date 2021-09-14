@@ -26,6 +26,7 @@ try:
 except:
     pythonVer = 2
 
+
 # https twisted client hack #
 class SNIFactory(ssl.ClientContextFactory):
     def __init__(self, hostname=None):

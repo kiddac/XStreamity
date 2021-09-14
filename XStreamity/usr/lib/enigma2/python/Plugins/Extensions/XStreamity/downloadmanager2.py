@@ -259,9 +259,9 @@ class XStreamity_DownloadManager(Screen):
     def download(self):
         if self["downloadlist"].getCurrent():
             self.url = self["downloadlist"].getCurrent()[2]
-            
+
             currentindex = self["downloadlist"].getIndex()
-            
+
             if self.downloads_all[currentindex][3] == _("Finished"):
                 self.session.open(MessageBox, _('File already downloaded.'), type=MessageBox.TYPE_INFO)
                 return
@@ -281,7 +281,7 @@ class XStreamity_DownloadManager(Screen):
                 if self.downloads_all[currentindex][3] == _("Not Started"):
                     self.downloads_all[currentindex][3] = _("Downloading")
                     self.downloads_all[currentindex][4] = 0
-                    
+
                     self.downloadingindex = currentindex
 
                     self.progress = 0
@@ -321,7 +321,7 @@ class XStreamity_DownloadManager(Screen):
                     except Exception as e:
                         self.downloading = False
                         print(e)
-                        
+
             elif self.downloading is True:
                 if self.downloads_all[currentindex][3] == _("Downloading"):
                     self.cancelDownload()

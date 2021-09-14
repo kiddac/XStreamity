@@ -743,7 +743,7 @@ class XStreamity_VodPlayer(
 
     ENABLE_RESUME_SUPPORT = True
     ALLOW_SUSPEND = True
-    
+
     def __init__(self, session, streamurl, servicetype):
         Screen.__init__(self, session)
         self.session = session
