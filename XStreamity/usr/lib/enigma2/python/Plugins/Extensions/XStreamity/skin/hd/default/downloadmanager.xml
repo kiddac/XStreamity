@@ -11,10 +11,11 @@
 		<convert type="TemplatedMultiContent">
 			{"template": [
 				MultiContentEntryText(pos = (10, 0), size = (130, 40), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 0), # index 0 is the type
-				MultiContentEntryText(pos = (140, 0), size = (576, 40), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1), # index 0 is the name
-				MultiContentEntryText(pos = (746, 0), size = (160, 40), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 3), # index 3 is the state
-				MultiContentEntryProgress(pos = (906, 15), size = (100, 10), percent = -4), # index 4 should be progress
-				MultiContentEntryText(pos = (1010, 0), size = (60, 40), font=0, flags = RT_HALIGN_RIGHT|RT_VALIGN_CENTER, text = 5), # index 5 is the percentage
+				MultiContentEntryText(pos = (140, 0), size = (476, 40), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1), # index 0 is the name
+				MultiContentEntryText(pos = (646, 0), size = (160, 40), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 3), # index 3 is the state
+				MultiContentEntryProgress(pos = (806, 15), size = (100, 10), percent = -4), # index 4 should be progress
+				MultiContentEntryText(pos = (910, 0), size = (60, 40), font=0, flags = RT_HALIGN_RIGHT|RT_VALIGN_CENTER, text = 5), # index 5 is the percentage
+				MultiContentEntryText(pos = (970, 0), size = (100, 40), font=0, flags = RT_HALIGN_RIGHT|RT_VALIGN_CENTER, text = 6), # index 6 is the size
 				],
 				"fonts": [gFont("Regular", 18)],
 				"itemHeight": 40
