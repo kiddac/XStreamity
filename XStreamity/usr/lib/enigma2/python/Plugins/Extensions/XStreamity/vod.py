@@ -23,7 +23,14 @@ from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Tools.LoadPixmap import LoadPixmap
+from twisted.internet import ssl
+from twisted.internet._sslverify import ClientTLSOptions
 from twisted.web.client import downloadPage
+
+try:
+    from urlparse import urlparse
+except:
+    from urllib.parse import urlparse
 
 import base64
 import codecs
@@ -42,29 +49,17 @@ try:
 except:
     pythonVer = 2
 
+
 # https twisted client hack #
-try:
-    from twisted.internet import ssl
-    from twisted.internet._sslverify import ClientTLSOptions
-    sslverify = True
-except:
-    sslverify = False
+class SNIFactory(ssl.ClientContextFactory):
+    def __init__(self, hostname=None):
+        self.hostname = hostname
 
-if sslverify:
-    try:
-        from urlparse import urlparse
-    except:
-        from urllib.parse import urlparse
-
-    class SNIFactory(ssl.ClientContextFactory):
-        def __init__(self, hostname=None):
-            self.hostname = hostname
-
-        def getContext(self):
-            ctx = self._contextFactory(self.method)
-            if self.hostname:
-                ClientTLSOptions(self.hostname, ctx)
-            return ctx
+    def getContext(self):
+        ctx = self._contextFactory(self.method)
+        if self.hostname:
+            ClientTLSOptions(self.hostname, ctx)
+        return ctx
 
 
 class XStreamity_Categories(Screen):
@@ -593,11 +588,10 @@ class XStreamity_Categories(Screen):
                 os.remove(str(dir_tmp) + 'temp.jpg')
             except:
                 pass
-
-            original = str(dir_tmp) + 'original.jpg'
-            desc_image = ''
-
-            desc_image = self["channel_list"].getCurrent()[5]
+            try:
+                desc_image = self["channel_list"].getCurrent()[5]
+            except:
+                desc_image = ''
 
             if self.info:  # tmbdb
                 if 'cover_big' in self.info and self.info["cover_big"] and self.info["cover_big"] != "null":
@@ -606,16 +600,17 @@ class XStreamity_Categories(Screen):
             if desc_image and desc_image != "n/A":
                 temp = dir_tmp + 'temp.jpg'
                 try:
-                    if desc_image.startswith("https") and sslverify:
-                        parsed_uri = urlparse(desc_image)
-                        domain = parsed_uri.hostname
+                    parsed = urlparse(desc_image)
+                    domain = parsed.hostname
+                    scheme = parsed.scheme
+
+                    if pythonVer == 3:
+                        desc_image = desc_image.encode()
+
+                    if scheme == "https":
                         sniFactory = SNIFactory(domain)
-                        if pythonVer == 3:
-                            desc_image = desc_image.encode()
                         downloadPage(desc_image, temp, sniFactory, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
                     else:
-                        if pythonVer == 3:
-                            desc_image = desc_image.encode()
                         downloadPage(desc_image, temp, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
                 except:
                     self.loadDefaultImage()
@@ -971,7 +966,7 @@ class XStreamity_Categories(Screen):
             glob.nextlist[-1]['index'] = currentindex
             glob.currentchannellist = self.channelList[:]
             glob.currentchannellistindex = currentindex
-            
+
             if next_url.endswith("00"):
                 self.favourites_category = True
             else:
@@ -1053,8 +1048,14 @@ class XStreamity_Categories(Screen):
                     except:
                         pass
 
-            if [_("Movie"), title, stream_url, _("Not Started"), 0] not in downloads_all:
-                downloads_all.append([_("Movie"), title, stream_url, _("Not Started"), 0])
+            exists = False
+            for video in downloads_all:
+                url = video[2]
+                if stream_url == url:
+                    exists = True
+
+            if exists is False:
+                downloads_all.append([_("Movie"), title, stream_url, _("Not Started"), 0, 0])
 
                 with open(downloads_json, 'w') as f:
                     json.dump(downloads_all, f)

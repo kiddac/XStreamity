@@ -145,8 +145,8 @@ class XStreamity_MainMenu(Screen):
         return
 
     def downloadManager(self):
-        from . import downloadmanager
-        self.session.openWithCallback(self.start, downloadmanager.XStreamity_DownloadManager)
+        from . import downloadmanager2
+        self.session.openWithCallback(self.start, downloadmanager2.XStreamity_DownloadManager)
         return
 
     def updateEPG(self):

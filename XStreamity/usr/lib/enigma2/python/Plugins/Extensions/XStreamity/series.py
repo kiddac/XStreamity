@@ -23,7 +23,14 @@ from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Tools.LoadPixmap import LoadPixmap
+from twisted.internet import ssl
+from twisted.internet._sslverify import ClientTLSOptions
 from twisted.web.client import downloadPage
+
+try:
+    from urlparse import urlparse
+except:
+    from urllib.parse import urlparse
 
 import base64
 import codecs
@@ -42,29 +49,17 @@ try:
 except:
     pythonVer = 2
 
+
 # https twisted client hack #
-try:
-    from twisted.internet import ssl
-    from twisted.internet._sslverify import ClientTLSOptions
-    sslverify = True
-except:
-    sslverify = False
+class SNIFactory(ssl.ClientContextFactory):
+    def __init__(self, hostname=None):
+        self.hostname = hostname
 
-if sslverify:
-    try:
-        from urlparse import urlparse
-    except:
-        from urllib.parse import urlparse
-
-    class SNIFactory(ssl.ClientContextFactory):
-        def __init__(self, hostname=None):
-            self.hostname = hostname
-
-        def getContext(self):
-            ctx = self._contextFactory(self.method)
-            if self.hostname:
-                ClientTLSOptions(self.hostname, ctx)
-            return ctx
+    def getContext(self):
+        ctx = self._contextFactory(self.method)
+        if self.hostname:
+            ClientTLSOptions(self.hostname, ctx)
+        return ctx
 
 
 class XStreamity_Categories(Screen):
@@ -752,10 +747,10 @@ class XStreamity_Categories(Screen):
             except:
                 pass
 
-            original = str(dir_tmp) + 'original.jpg'
-            desc_image = ''
-
-            desc_image = self["channel_list"].getCurrent()[5]
+            try:
+                desc_image = self["channel_list"].getCurrent()[5]
+            except:
+                desc_image = ''
 
             if self.info:  # tmbdb
                 if 'cover_big' in self.info and self.info["cover_big"] and self.info["cover_big"] != "null":
@@ -764,16 +759,17 @@ class XStreamity_Categories(Screen):
             if desc_image and desc_image != "n/A":
                 temp = dir_tmp + 'temp.jpg'
                 try:
-                    if desc_image.startswith("https") and sslverify:
-                        parsed_uri = urlparse(desc_image)
-                        domain = parsed_uri.hostname
+                    parsed = urlparse(desc_image)
+                    domain = parsed.hostname
+                    scheme = parsed.scheme
+
+                    if pythonVer == 3:
+                        desc_image = desc_image.encode()
+
+                    if scheme == "https":
                         sniFactory = SNIFactory(domain)
-                        if pythonVer == 3:
-                            desc_image = desc_image.encode()
                         downloadPage(desc_image, temp, sniFactory, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
                     else:
-                        if pythonVer == 3:
-                            desc_image = desc_image.encode()
                         downloadPage(desc_image, temp, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
                 except:
                     self.loadDefaultImage()
@@ -1150,21 +1146,20 @@ class XStreamity_Categories(Screen):
                     title = str(self["channel_list"].getCurrent()[15]) + " " + str(self["channel_list"].getCurrent()[0])
 
                 fileTitle = re.sub(r'[\<\>\:\"\/\\\|\?\*\[\]]', '', title)
+                filepath = str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension)
 
                 try:
-                    filepath = str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension)
-                    if stream_url.startswith("https") and sslverify:
-                        parsed_uri = urlparse(stream_url)
-                        domain = parsed_uri.hostname
-                        sniFactory = SNIFactory(domain)
+                    parsed = urlparse(stream_url)
+                    domain = parsed.hostname
+                    scheme = parsed.scheme
 
-                        if pythonVer == 3:
-                            stream_url = stream_url.encode()
+                    if pythonVer == 3:
+                        stream_url = stream_url.encode()
+
+                    if scheme == "https":
+                        sniFactory = SNIFactory(domain)
                         downloadPage(stream_url, filepath, sniFactory).addErrback(self.failed)
                     else:
-
-                        if pythonVer == 3:
-                            stream_url = stream_url.encode()
                         downloadPage(stream_url, filepath).addErrback(self.self.failed)
 
                     self.session.open(MessageBox, _('Downloading') + '\n\n' + str(title) + "\n\n" + str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension), MessageBox.TYPE_INFO)
@@ -1177,7 +1172,7 @@ class XStreamity_Categories(Screen):
     def failed(self, data=None):
         if data:
             print(data)
-            
+
     def getTMDB(self):
         try:
             os.remove(str(dir_tmp) + 'search.txt')

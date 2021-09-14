@@ -105,7 +105,7 @@ cfg.wakeup = ConfigClock(default=((9 * 60) + 9) * 60)  # 7:00
 skin_path = '%s%s/' % (skin_directory, cfg.skin.value)
 common_path = '%scommon/' % (skin_directory)
 playlists_json = "%sx-playlists.json" % (dir_etc)
-downloads_json = "%sx-downloads.json" % (dir_etc)
+downloads_json = "%sdownloads.json" % (dir_etc)
 playlist_file = "%splaylists.txt" % (dir_etc)
 
 if cfg.location.value:

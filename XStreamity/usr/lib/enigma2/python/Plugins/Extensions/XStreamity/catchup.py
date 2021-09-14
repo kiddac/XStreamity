@@ -19,7 +19,15 @@ from requests.adapters import HTTPAdapter
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools.LoadPixmap import LoadPixmap
+from twisted.internet import ssl
+from twisted.internet._sslverify import ClientTLSOptions
 from twisted.web.client import downloadPage
+
+try:
+    from urlparse import urlparse
+except:
+    from urllib.parse import urlparse
+
 
 import base64
 import json
@@ -35,29 +43,16 @@ try:
 except:
     pythonVer = 2
 
-# https twisted client hack #
-try:
-    from twisted.internet import ssl
-    from twisted.internet._sslverify import ClientTLSOptions
-    sslverify = True
-except:
-    sslverify = False
 
-if sslverify:
-    try:
-        from urlparse import urlparse
-    except:
-        from urllib.parse import urlparse
+class SNIFactory(ssl.ClientContextFactory):
+    def __init__(self, hostname=None):
+        self.hostname = hostname
 
-    class SNIFactory(ssl.ClientContextFactory):
-        def __init__(self, hostname=None):
-            self.hostname = hostname
-
-        def getContext(self):
-            ctx = self._contextFactory(self.method)
-            if self.hostname:
-                ClientTLSOptions(self.hostname, ctx)
-            return ctx
+    def getContext(self):
+        ctx = self._contextFactory(self.method)
+        if self.hostname:
+            ClientTLSOptions(self.hostname, ctx)
+        return ctx
 
 
 def mycall(self, cid, pos, length):
@@ -68,6 +63,7 @@ def mycall(self, cid, pos, length):
 
 
 def mychunk_TRNS(self, pos, length):
+    i16 = PngImagePlugin.i16
     _simple_palette = re.compile(b"^\xff*\x00\xff*$")
     s = ImageFile._safe_read(self.fp, length)
     if self.im_mode == "P":
@@ -663,26 +659,25 @@ class XStreamity_Catchup(Screen):
             except:
                 pass
 
-            original = str(dir_tmp) + 'original.png'
-            desc_image = ''
             try:
                 desc_image = self["channel_list"].getCurrent()[5]
             except:
-                pass
+                desc_image = ''
 
             if desc_image and desc_image != "n/A":
                 temp = dir_tmp + 'temp.png'
                 try:
-                    if desc_image.startswith("https") and sslverify:
-                        parsed_uri = urlparse(desc_image)
-                        domain = parsed_uri.hostname
+                    parsed = urlparse(desc_image)
+                    domain = parsed.hostname
+                    scheme = parsed.scheme
+
+                    if pythonVer == 3:
+                        desc_image = desc_image.encode()
+
+                    if scheme == "https":
                         sniFactory = SNIFactory(domain)
-                        if pythonVer == 3:
-                            desc_image = desc_image.encode()
                         downloadPage(desc_image, temp, sniFactory, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
                     else:
-                        if pythonVer == 3:
-                            desc_image = desc_image.encode()
                         downloadPage(desc_image, temp, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
                 except:
                     self.loadDefaultImage()
@@ -779,8 +774,14 @@ class XStreamity_Catchup(Screen):
                         except:
                             pass
 
-                if [_("Movie"), title, playurl, _("Not Started"), 0] not in downloads_all:
-                    downloads_all.append([_("Catch-up"), title, playurl, _("Not Started"), 0])
+                exists = False
+                for video in downloads_all:
+                    url = video[2]
+                    if playurl == url:
+                        exists = True
+
+                if exists is False:
+                    downloads_all.append([_("Catch-up"), title, playurl, _("Not Started"), 0, 0])
 
                     with open(downloads_json, 'w') as f:
                         json.dump(downloads_all, f)

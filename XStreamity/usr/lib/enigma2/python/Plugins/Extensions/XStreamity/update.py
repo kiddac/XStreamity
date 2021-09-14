@@ -3,11 +3,15 @@
 
 
 from .plugin import playlists_json, dir_etc
-from Screens.Screen import Screen
-from time import time
 from xml.etree.cElementTree import iterparse
-from twisted.internet import reactor, threads
+from twisted.internet import threads, ssl
+from twisted.internet._sslverify import ClientTLSOptions
 from twisted.web.client import downloadPage
+
+try:
+    from urlparse import urlparse
+except:
+    from urllib.parse import urlparse
 
 import calendar
 import json
@@ -23,28 +27,15 @@ except:
     pythonVer = 2
 
 # https twisted client hack #
-try:
-    from twisted.internet import ssl
-    from twisted.internet._sslverify import ClientTLSOptions
-    sslverify = True
-except:
-    sslverify = False
+class SNIFactory(ssl.ClientContextFactory):
+    def __init__(self, hostname=None):
+        self.hostname = hostname
 
-if sslverify:
-    try:
-        from urlparse import urlparse
-    except:
-        from urllib.parse import urlparse
-
-    class SNIFactory(ssl.ClientContextFactory):
-        def __init__(self, hostname=None):
-            self.hostname = hostname
-
-        def getContext(self):
-            ctx = self._contextFactory(self.method)
-            if self.hostname:
-                ClientTLSOptions(self.hostname, ctx)
-            return ctx
+    def getContext(self):
+        ctx = self._contextFactory(self.method)
+        if self.hostname:
+            ClientTLSOptions(self.hostname, ctx)
+        return ctx
 
 
 def quickptime(str):
@@ -117,17 +108,17 @@ class XStreamity_Update:
         url = self.checkRedirect(url)
 
         try:
-            if url.startswith("https") and sslverify:
-                parsed_uri = urlparse(url)
-                domain = parsed_uri.hostname
-                sniFactory = SNIFactory(domain)
-                if pythonVer == 3:
-                    url = url.encode()
-                downloadPage(url, epgxmlfile, sniFactory, timeout=120).addCallback(self.downloadComplete).addErrback(self.downloadFailed)
+            parsed = urlparse(url)
+            domain = parsed.hostname
+            scheme = parsed.scheme
 
+            if pythonVer == 3:
+                url = url.encode()
+
+            if scheme == "https":
+                sniFactory = SNIFactory(domain)
+                downloadPage(url, epgxmlfile, sniFactory, timeout=120).addCallback(self.downloadComplete).addErrback(self.downloadFailed)
             else:
-                if pythonVer == 3:
-                    url = url.encode()
                 downloadPage(url, epgxmlfile, timeout=120).addCallback(self.downloadComplete).addErrback(self.downloadFailed)
 
         except Exception as e:
@@ -244,3 +235,4 @@ class XStreamity_Update:
                     elem.clear()
         except Exception as e:
             print("*** bad data in xml file *** %s" % fileobj)
+            print(e)

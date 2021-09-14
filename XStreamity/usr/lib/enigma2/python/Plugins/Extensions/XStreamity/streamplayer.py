@@ -22,7 +22,7 @@ from PIL import Image, ImageChops, ImageFile, PngImagePlugin
 from RecordTimer import RecordTimerEntry
 
 from Screens.InfoBarGenerics import InfoBarMenu, InfoBarSeek, InfoBarAudioSelection, InfoBarMoviePlayerSummarySupport, \
-    InfoBarSubtitleSupport, InfoBarSummarySupport, InfoBarServiceErrorPopupSupport, InfoBarNotifications
+    InfoBarSubtitleSupport, InfoBarSummarySupport, InfoBarServiceErrorPopupSupport, InfoBarNotifications, setResumePoint, InfoBarCueSheetSupport
 
 from Screens.MessageBox import MessageBox
 from Screens.PVRState import PVRState
@@ -30,10 +30,17 @@ from Screens.Screen import Screen
 from ServiceReference import ServiceReference
 from time import time
 from Tools.BoundFunction import boundFunction
+from twisted.internet import ssl
+from twisted.internet._sslverify import ClientTLSOptions
 from twisted.web.client import downloadPage
 
+try:
+    from urlparse import urlparse
+except:
+    from urllib.parse import urlparse
+
 import re
-import requests
+
 
 if cfg.subs.getValue() is True:
     try:
@@ -63,29 +70,17 @@ try:
 except:
     pythonVer = 2
 
+
 # https twisted client hack #
-try:
-    from twisted.internet import ssl
-    from twisted.internet._sslverify import ClientTLSOptions
-    sslverify = True
-except:
-    sslverify = False
+class SNIFactory(ssl.ClientContextFactory):
+    def __init__(self, hostname=None):
+        self.hostname = hostname
 
-if sslverify:
-    try:
-        from urlparse import urlparse
-    except:
-        from urllib.parse import urlparse
-
-    class SNIFactory(ssl.ClientContextFactory):
-        def __init__(self, hostname=None):
-            self.hostname = hostname
-
-        def getContext(self):
-            ctx = self._contextFactory(self.method)
-            if self.hostname:
-                ClientTLSOptions(self.hostname, ctx)
-            return ctx
+    def getContext(self):
+        ctx = self._contextFactory(self.method)
+        if self.hostname:
+            ClientTLSOptions(self.hostname, ctx)
+        return ctx
 
 
 # png hack
@@ -97,6 +92,7 @@ def mycall(self, cid, pos, length):
 
 
 def mychunk_TRNS(self, pos, length):
+    i16 = PngImagePlugin.i16
     _simple_palette = re.compile(b"^\xff*\x00\xff*$")
     s = ImageFile._safe_read(self.fp, length)
     if self.im_mode == "P":
@@ -528,7 +524,7 @@ class XStreamity_StreamPlayer(
         if self.session.nav.getCurrentlyPlayingServiceReference():
             glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
             glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
-            
+
         self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
             iPlayableService.evTunedIn: self.__evTunedIn,
             iPlayableService.evTuneFailed: self.__evTuneFailed,
@@ -545,7 +541,6 @@ class XStreamity_StreamPlayer(
         except:
             pass
 
-        original = str(dir_tmp) + 'original.png'
         desc_image = ''
         try:
             desc_image = glob.currentchannellist[glob.currentchannellistindex][5]
@@ -555,17 +550,18 @@ class XStreamity_StreamPlayer(
         if desc_image and desc_image != "n/A":
             temp = dir_tmp + 'temp.png'
             try:
-                if desc_image.startswith("https") and sslverify:
-                    parsed_uri = urlparse(desc_image)
-                    domain = parsed_uri.hostname
+                parsed = urlparse(desc_image)
+                domain = parsed.hostname
+                scheme = parsed.scheme
+
+                if pythonVer == 3:
+                    desc_image = desc_image.encode()
+
+                if scheme == "https":
                     sniFactory = SNIFactory(domain)
-                    if pythonVer == 3:
-                        desc_image = desc_image.encode()
-                    downloadPage(desc_image, temp, sniFactory, timeout=5).addCallback(self.resizeImage)
+                    downloadPage(desc_image, temp, sniFactory, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
                 else:
-                    if pythonVer == 3:
-                        desc_image = desc_image.encode()
-                    downloadPage(desc_image, temp, timeout=5).addCallback(self.resizeImage)
+                    downloadPage(desc_image, temp, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
             except:
                 self.loadDefaultImage()
         else:
@@ -611,7 +607,7 @@ class XStreamity_StreamPlayer(
                 print(e)
         else:
             self.loadDefaultImage()
-            
+
     def __evTunedIn(self):
         if self.servicetype == "1":
             self.hasStreamData = False
@@ -647,14 +643,14 @@ class XStreamity_StreamPlayer(
                 self.originalservicetype = self.servicetype
                 self.servicetype = "4097"
                 self.playStream(self.servicetype, self.streamurl)
-                
+
     def checkStream(self):
         if self.hasStreamData is False:
             if self.retries < 2:
                 self.retries += 1
                 self.session.nav.stopService()
                 self.session.nav.playService(self.reference, forceRestart=True)
-                
+
     def back(self):
         glob.nextlist[-1]['index'] = glob.currentchannellistindex
         self.close()
@@ -681,7 +677,7 @@ class XStreamity_StreamPlayer(
 
         nextStreamType = islice(cycle(streamtypelist), currentindex + 1, None)
         self.servicetype = int(next(nextStreamType))
-        
+
         self.originalservicetype = self.servicetype
 
         self.playStream(self.servicetype, self.streamurl)
@@ -739,11 +735,15 @@ class XStreamity_VodPlayer(
     InfoBarNotifications,
     IPTVInfoBarShowHide,
     IPTVInfoBarPVRState,
+    InfoBarCueSheetSupport,
     SubsSupportStatus,
     SubsSupport,
     Screen
 ):
 
+    ENABLE_RESUME_SUPPORT = True
+    ALLOW_SUSPEND = True
+    
     def __init__(self, session, streamurl, servicetype):
         Screen.__init__(self, session)
         self.session = session
@@ -757,6 +757,7 @@ class XStreamity_VodPlayer(
                 InfoBarSummarySupport, \
                 InfoBarServiceErrorPopupSupport, \
                 InfoBarNotifications, \
+                InfoBarCueSheetSupport, \
                 IPTVInfoBarShowHide:
             x.__init__(self)
 
@@ -845,7 +846,6 @@ class XStreamity_VodPlayer(
         except:
             pass
 
-        original = str(dir_tmp) + 'original.jpg'
         desc_image = ''
 
         desc_image = glob.currentchannellist[glob.currentchannellistindex][5]
@@ -853,17 +853,18 @@ class XStreamity_VodPlayer(
         if desc_image and desc_image != "n/A":
             temp = dir_tmp + 'temp.jpg'
             try:
-                if desc_image.startswith("https") and sslverify:
-                    parsed_uri = urlparse(desc_image)
-                    domain = parsed_uri.hostname
+                parsed = urlparse(desc_image)
+                domain = parsed.hostname
+                scheme = parsed.scheme
+
+                if pythonVer == 3:
+                    desc_image = desc_image.encode()
+
+                if scheme == "https":
                     sniFactory = SNIFactory(domain)
-                    if pythonVer == 3:
-                        desc_image = desc_image.encode()
-                    downloadPage(desc_image, temp, sniFactory, timeout=5).addCallback(self.resizeImage)
+                    downloadPage(desc_image, temp, sniFactory, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
                 else:
-                    if pythonVer == 3:
-                        desc_image = desc_image.encode()
-                    downloadPage(desc_image, temp, timeout=5).addCallback(self.resizeImage)
+                    downloadPage(desc_image, temp, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
             except:
                 self.loadDefaultImage()
         else:
@@ -904,6 +905,7 @@ class XStreamity_VodPlayer(
 
     def back(self):
         glob.nextlist[-1]['index'] = glob.currentchannellistindex
+        setResumePoint(self.session)
         self.close()
 
     def toggleStreamType(self):
@@ -956,6 +958,7 @@ class XStreamity_CatchupPlayer(
     InfoBarNotifications,
     IPTVInfoBarShowHide,
     IPTVInfoBarPVRState,
+    InfoBarCueSheetSupport,
     SubsSupportStatus,
     SubsSupport,
     Screen
@@ -979,6 +982,7 @@ class XStreamity_CatchupPlayer(
                 InfoBarSummarySupport, \
                 InfoBarServiceErrorPopupSupport, \
                 InfoBarNotifications, \
+                InfoBarCueSheetSupport, \
                 IPTVInfoBarShowHide:
             x.__init__(self)
 
@@ -1060,26 +1064,26 @@ class XStreamity_CatchupPlayer(
         except:
             pass
 
-        original = str(dir_tmp) + 'original.png'
-        desc_image = ''
         try:
             desc_image = glob.currentchannellist[glob.currentchannellistindex][5]
         except:
             pass
+            desc_image = ''
 
         if desc_image and desc_image != "n/A":
             temp = dir_tmp + 'temp.png'
             try:
-                if desc_image.startswith("https") and sslverify:
-                    parsed_uri = urlparse(desc_image)
-                    domain = parsed_uri.hostname
+                parsed = urlparse(desc_image)
+                domain = parsed.hostname
+                scheme = parsed.scheme
+
+                if pythonVer == 3:
+                    desc_image = desc_image.encode()
+
+                if scheme == "https":
                     sniFactory = SNIFactory(domain)
-                    if pythonVer == 3:
-                        desc_image = desc_image.encode()
-                    downloadPage(desc_image, temp, sniFactory, timeout=3).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
+                    downloadPage(desc_image, temp, sniFactory, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
                 else:
-                    if pythonVer == 3:
-                        desc_image = desc_image.encode()
                     downloadPage(desc_image, temp, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
             except:
                 self.loadDefaultImage()
@@ -1131,6 +1135,7 @@ class XStreamity_CatchupPlayer(
 
     def back(self):
         glob.nextlist[-1]['index'] = glob.currentchannellistindex
+        setResumePoint(self.session)
         self.close()
 
     def toggleStreamType(self):

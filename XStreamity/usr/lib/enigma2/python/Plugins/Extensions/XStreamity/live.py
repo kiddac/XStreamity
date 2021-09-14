@@ -7,6 +7,7 @@ from . import xstreamity_globals as glob
 
 from .plugin import skin_path, screenwidth, hdr, cfg, common_path, dir_tmp, playlists_json, dir_etc
 from .xStaticText import StaticText
+
 from Components.ActionMap import ActionMap
 from Components.config import config, ConfigClock, NoSave, ConfigText
 from Components.Pixmap import Pixmap
@@ -22,9 +23,15 @@ from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from ServiceReference import ServiceReference
-from time import strftime, time
 from Tools.LoadPixmap import LoadPixmap
+from twisted.internet import ssl
+from twisted.internet._sslverify import ClientTLSOptions
 from twisted.web.client import downloadPage
+
+try:
+    from urlparse import urlparse
+except:
+    from urllib.parse import urlparse
 
 import base64
 import calendar
@@ -43,29 +50,17 @@ try:
 except:
     pythonVer = 2
 
+
 # https twisted client hack #
-try:
-    from twisted.internet import ssl
-    from twisted.internet._sslverify import ClientTLSOptions
-    sslverify = True
-except:
-    sslverify = False
+class SNIFactory(ssl.ClientContextFactory):
+    def __init__(self, hostname=None):
+        self.hostname = hostname
 
-if sslverify:
-    try:
-        from urlparse import urlparse
-    except:
-        from urllib.parse import urlparse
-
-    class SNIFactory(ssl.ClientContextFactory):
-        def __init__(self, hostname=None):
-            self.hostname = hostname
-
-        def getContext(self):
-            ctx = self._contextFactory(self.method)
-            if self.hostname:
-                ClientTLSOptions(self.hostname, ctx)
-            return ctx
+    def getContext(self):
+        ctx = self._contextFactory(self.method)
+        if self.hostname:
+            ClientTLSOptions(self.hostname, ctx)
+        return ctx
 
 
 def mycall(self, cid, pos, length):
@@ -76,6 +71,7 @@ def mycall(self, cid, pos, length):
 
 
 def mychunk_TRNS(self, pos, length):
+    i16 = PngImagePlugin.i16
     _simple_palette = re.compile(b"^\xff*\x00\xff*$")
     s = ImageFile._safe_read(self.fp, length)
     if self.im_mode == "P":
@@ -653,11 +649,11 @@ class XStreamity_Categories(Screen):
 
                                     if int(entry[0]) < now and int(entry[1]) > now:
 
-                                        channel[9] = str(strftime("%H:%M", time.localtime(int(entry[0]))))
+                                        channel[9] = str(time.strftime("%H:%M", time.localtime(int(entry[0]))))
                                         channel[10] = str(entry[2])
                                         channel[11] = str(entry[3])
 
-                                        channel[12] = str(strftime("%H:%M", time.localtime(int(next_el[0]))))
+                                        channel[12] = str(time.strftime("%H:%M", time.localtime(int(next_el[0]))))
                                         channel[13] = str(next_el[2])
                                         channel[14] = str(next_el[3])
 
@@ -680,7 +676,7 @@ class XStreamity_Categories(Screen):
                                     try:
                                         # start time
                                         if self.eventslist[0][1]:
-                                            channel[9] = str(strftime("%H:%M", time.localtime(self.eventslist[0][1])))
+                                            channel[9] = str(time.strftime("%H:%M", time.localtime(self.eventslist[0][1])))
 
                                         # title
                                         if self.eventslist[0][3]:
@@ -697,7 +693,7 @@ class XStreamity_Categories(Screen):
                                 try:
                                     # next start time
                                     if self.eventslist[1][1]:
-                                        channel[12] = str(strftime("%H:%M", time.localtime(self.eventslist[1][1])))
+                                        channel[12] = str(time.strftime("%H:%M", time.localtime(self.eventslist[1][1])))
 
                                     # next title
                                     if self.eventslist[1][3]:
@@ -817,25 +813,25 @@ class XStreamity_Categories(Screen):
             except:
                 pass
 
-            desc_image = ''
             try:
                 desc_image = self["channel_list"].getCurrent()[5]
             except:
-                pass
+                desc_image = ''
 
             if desc_image and desc_image != "n/A":
                 temp = dir_tmp + 'temp.png'
                 try:
-                    if desc_image.startswith("https") and sslverify:
-                        parsed_uri = urlparse(desc_image)
-                        domain = parsed_uri.hostname
+                    parsed = urlparse(desc_image)
+                    domain = parsed.hostname
+                    scheme = parsed.scheme
+
+                    if pythonVer == 3:
+                        desc_image = desc_image.encode()
+
+                    if scheme == "https":
                         sniFactory = SNIFactory(domain)
-                        if pythonVer == 3:
-                            desc_image = desc_image.encode()
                         downloadPage(desc_image, temp, sniFactory, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
                     else:
-                        if pythonVer == 3:
-                            desc_image = desc_image.encode()
                         downloadPage(desc_image, temp, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
                 except:
                     self.loadDefaultImage()
@@ -1679,18 +1675,17 @@ class XStreamity_Categories(Screen):
         url = str(glob.current_playlist['playlist_info']['player_api']) + "&action=get_live_streams"
         tmpfd, tempfilename = tempfile.mkstemp()
 
-        if url.startswith("https") and sslverify:
-            parsed_uri = urlparse(url)
-            domain = parsed_uri.hostname
+        parsed = urlparse(url)
+        domain = parsed.hostname
+        scheme = parsed.scheme
+
+        if pythonVer == 3:
+            url = url.encode()
+
+        if scheme == "https":
             sniFactory = SNIFactory(domain)
-
-            if pythonVer == 3:
-                url = url.encode()
-
-            downloadPage(url, tempfilename, sniFactory).addCallback(self.downloadcomplete, tempfilename).addErrback(self.downloadFail)
+            downloadPage(url, tempfilename, sniFactory).addCallback(self.downloadComplete).addErrback(self.downloadFailed)
         else:
-            if pythonVer == 3:
-                url = url.encode()
             downloadPage(url, tempfilename).addCallback(self.downloadcomplete, tempfilename).addErrback(self.downloadFail)
 
         os.close(tmpfd)
