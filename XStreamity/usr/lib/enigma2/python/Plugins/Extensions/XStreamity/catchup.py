@@ -19,15 +19,12 @@ from requests.adapters import HTTPAdapter
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools.LoadPixmap import LoadPixmap
-from twisted.internet import ssl
-from twisted.internet._sslverify import ClientTLSOptions
 from twisted.web.client import downloadPage
 
 try:
     from urlparse import urlparse
 except:
     from urllib.parse import urlparse
-
 
 import base64
 import json
@@ -43,16 +40,24 @@ try:
 except:
     pythonVer = 2
 
+# https twisted client hack #
+try:
+    from twisted.internet import ssl
+    from twisted.internet._sslverify import ClientTLSOptions
+    sslverify = True
+except:
+    sslverify = False
 
-class SNIFactory(ssl.ClientContextFactory):
-    def __init__(self, hostname=None):
-        self.hostname = hostname
+if sslverify:
+    class SNIFactory(ssl.ClientContextFactory):
+        def __init__(self, hostname=None):
+            self.hostname = hostname
 
-    def getContext(self):
-        ctx = self._contextFactory(self.method)
-        if self.hostname:
-            ClientTLSOptions(self.hostname, ctx)
-        return ctx
+        def getContext(self):
+            ctx = self._contextFactory(self.method)
+            if self.hostname:
+                ClientTLSOptions(self.hostname, ctx)
+            return ctx
 
 
 def mycall(self, cid, pos, length):
@@ -659,10 +664,11 @@ class XStreamity_Catchup(Screen):
             except:
                 pass
 
+            desc_image = ''
             try:
                 desc_image = self["channel_list"].getCurrent()[5]
             except:
-                desc_image = ''
+                pass
 
             if desc_image and desc_image != "n/A":
                 temp = dir_tmp + 'temp.png'
@@ -674,7 +680,7 @@ class XStreamity_Catchup(Screen):
                     if pythonVer == 3:
                         desc_image = desc_image.encode()
 
-                    if scheme == "https":
+                    if scheme == "https" and sslverify:
                         sniFactory = SNIFactory(domain)
                         downloadPage(desc_image, temp, sniFactory, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
                     else:

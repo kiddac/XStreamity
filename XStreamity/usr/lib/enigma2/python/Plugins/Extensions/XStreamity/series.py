@@ -23,8 +23,6 @@ from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Tools.LoadPixmap import LoadPixmap
-from twisted.internet import ssl
-from twisted.internet._sslverify import ClientTLSOptions
 from twisted.web.client import downloadPage
 
 try:
@@ -51,15 +49,23 @@ except:
 
 
 # https twisted client hack #
-class SNIFactory(ssl.ClientContextFactory):
-    def __init__(self, hostname=None):
-        self.hostname = hostname
+try:
+    from twisted.internet import ssl
+    from twisted.internet._sslverify import ClientTLSOptions
+    sslverify = True
+except:
+    sslverify = False
 
-    def getContext(self):
-        ctx = self._contextFactory(self.method)
-        if self.hostname:
-            ClientTLSOptions(self.hostname, ctx)
-        return ctx
+if sslverify:
+    class SNIFactory(ssl.ClientContextFactory):
+        def __init__(self, hostname=None):
+            self.hostname = hostname
+
+        def getContext(self):
+            ctx = self._contextFactory(self.method)
+            if self.hostname:
+                ClientTLSOptions(self.hostname, ctx)
+            return ctx
 
 
 class XStreamity_Categories(Screen):
@@ -766,7 +772,7 @@ class XStreamity_Categories(Screen):
                     if pythonVer == 3:
                         desc_image = desc_image.encode()
 
-                    if scheme == "https":
+                    if scheme == "https" and sslverify:
                         sniFactory = SNIFactory(domain)
                         downloadPage(desc_image, temp, sniFactory, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
                     else:
@@ -1156,7 +1162,7 @@ class XStreamity_Categories(Screen):
                     if pythonVer == 3:
                         stream_url = stream_url.encode()
 
-                    if scheme == "https":
+                    if scheme == "https" and sslverify:
                         sniFactory = SNIFactory(domain)
                         downloadPage(stream_url, filepath, sniFactory).addErrback(self.failed)
                     else:

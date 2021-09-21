@@ -7,6 +7,7 @@ from . import xstreamity_globals as glob
 from .plugin import skin_path, screenwidth, common_path, cfg, dir_tmp
 from .xStaticText import StaticText
 
+
 from Components.ActionMap import ActionMap
 from Components.AVSwitch import AVSwitch
 from enigma import eAVSwitch
@@ -16,13 +17,20 @@ from Components.ProgressBar import ProgressBar
 from Components.Pixmap import Pixmap, MultiPixmap
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 from datetime import datetime, timedelta
-from enigma import eTimer, eServiceReference, iPlayableService, ePicLoad
+from enigma import eTimer, eServiceReference, iPlayableService, ePicLoad, iServiceInformation
 from itertools import cycle, islice
 from PIL import Image, ImageChops, ImageFile, PngImagePlugin
 from RecordTimer import RecordTimerEntry
+from Tools import Notifications
 
 from Screens.InfoBarGenerics import InfoBarMenu, InfoBarSeek, InfoBarAudioSelection, InfoBarMoviePlayerSummarySupport, \
-    InfoBarSubtitleSupport, InfoBarSummarySupport, InfoBarServiceErrorPopupSupport, InfoBarNotifications, setResumePoint, InfoBarCueSheetSupport
+    InfoBarSubtitleSupport, InfoBarSummarySupport, InfoBarServiceErrorPopupSupport, InfoBarNotifications
+
+try:
+    from .resumepoints import setResumePoint, getResumePoint
+except Exception as e:
+    print(e)
+
 
 from Screens.MessageBox import MessageBox
 from Screens.PVRState import PVRState
@@ -30,8 +38,6 @@ from Screens.Screen import Screen
 from ServiceReference import ServiceReference
 from time import time
 from Tools.BoundFunction import boundFunction
-from twisted.internet import ssl
-from twisted.internet._sslverify import ClientTLSOptions
 from twisted.web.client import downloadPage
 
 try:
@@ -72,16 +78,23 @@ except:
 
 
 # https twisted client hack #
-class SNIFactory(ssl.ClientContextFactory):
-    def __init__(self, hostname=None):
-        self.hostname = hostname
+try:
+    from twisted.internet import ssl
+    from twisted.internet._sslverify import ClientTLSOptions
+    sslverify = True
+except:
+    sslverify = False
 
-    def getContext(self):
-        ctx = self._contextFactory(self.method)
-        if self.hostname:
-            ClientTLSOptions(self.hostname, ctx)
-        return ctx
+if sslverify:
+    class SNIFactory(ssl.ClientContextFactory):
+        def __init__(self, hostname=None):
+            self.hostname = hostname
 
+        def getContext(self):
+            ctx = self._contextFactory(self.method)
+            if self.hostname:
+                ClientTLSOptions(self.hostname, ctx)
+            return ctx
 
 # png hack
 def mycall(self, cid, pos, length):
@@ -314,6 +327,74 @@ class IPTVInfoBarPVRState:
 
             for cb in self.onChangedEntry:
                 cb(state_summary, speed_summary, statusicon_summary)
+
+
+class XStreamityCueSheetSupport:
+    ENABLE_RESUME_SUPPORT = False
+
+    def __init__(self):
+        self.cut_list = []
+        self.is_closing = False
+        self.started = False
+        self.resume_point = ""
+        if not os.path.exists('/etc/enigma2/xstreamity/resumepoints.pkl'):
+            with open('/etc/enigma2/xstreamity/resumepoints.pkl', "w"):
+                pass
+
+        self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
+            iPlayableService.evUpdatedInfo: self.__serviceStarted,
+        })
+
+    def __serviceStarted(self):
+        if self.is_closing:
+            return
+
+        if self.ENABLE_RESUME_SUPPORT and not self.started:
+
+            self.started = True
+            last = None
+
+            service = self.session.nav.getCurrentService()
+
+            if service is None:
+                return
+
+            seekable = service.seek()
+
+            if seekable is None:
+                return  # Should not happen?
+
+            length = seekable.getLength() or (None, 0)
+            length[1] = abs(length[1])
+
+            try:
+                last = getResumePoint(self.session, True)
+            except Exception as e:
+                print(e)
+                return
+
+            if last is None:
+                return
+
+            if (last > 900000) and (not length[1] or (last < length[1] - 900000)):
+                self.resume_point = last
+                l = last // 90000
+                Notifications.AddNotificationWithCallback(self.playLastCB, MessageBox, _("Do you want to resume this playback?") + "\n" + (_("Resume position at %s") % ("%d:%02d:%02d" % (l // 3600, l % 3600 // 60, l % 60))), MessageBox.TYPE_YESNO, 10)
+
+    def playLastCB(self, answer):
+        if answer is True and self.resume_point:
+            service = self.session.nav.getCurrentService()
+            seekable = service.seek()
+            if seekable is not None:
+                seekable.seekTo(self.resume_point)
+        self.hideAfterResume()
+
+    def hideAfterResume(self):
+        if isinstance(self, IPTVInfoBarShowHide):
+            try:
+                self.hide()
+            except Exception as e:
+                print(e)
 
 
 class XStreamity_StreamPlayer(
@@ -557,7 +638,7 @@ class XStreamity_StreamPlayer(
                 if pythonVer == 3:
                     desc_image = desc_image.encode()
 
-                if scheme == "https":
+                if scheme == "https" and sslverify:
                     sniFactory = SNIFactory(domain)
                     downloadPage(desc_image, temp, sniFactory, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
                 else:
@@ -712,7 +793,7 @@ class XStreamity_StreamPlayer(
             if self.ar_id_player > 6:
                 self.ar_id_player = 0
             eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
-            print('self.ar_id_player NEXT %s' % VIDEO_ASPECT_RATIO_MAP[self.ar_id_player])
+            # print('self.ar_id_player NEXT %s' % VIDEO_ASPECT_RATIO_MAP[self.ar_id_player])
             return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
         except Exception as ex:
             print(ex)
@@ -735,7 +816,7 @@ class XStreamity_VodPlayer(
     InfoBarNotifications,
     IPTVInfoBarShowHide,
     IPTVInfoBarPVRState,
-    InfoBarCueSheetSupport,
+    XStreamityCueSheetSupport,
     SubsSupportStatus,
     SubsSupport,
     Screen
@@ -757,9 +838,13 @@ class XStreamity_VodPlayer(
                 InfoBarSummarySupport, \
                 InfoBarServiceErrorPopupSupport, \
                 InfoBarNotifications, \
-                InfoBarCueSheetSupport, \
                 IPTVInfoBarShowHide:
             x.__init__(self)
+
+        try:
+            XStreamityCueSheetSupport.__init__(self)
+        except Exception as e:
+            print(e)
 
         IPTVInfoBarPVRState.__init__(self, PVRState, True)
 
@@ -860,7 +945,7 @@ class XStreamity_VodPlayer(
                 if pythonVer == 3:
                     desc_image = desc_image.encode()
 
-                if scheme == "https":
+                if scheme == "https" and sslverify:
                     sniFactory = SNIFactory(domain)
                     downloadPage(desc_image, temp, sniFactory, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
                 else:
@@ -904,8 +989,16 @@ class XStreamity_VodPlayer(
             self["cover"].instance.show()
 
     def back(self):
+        print("*** back ***")
         glob.nextlist[-1]['index'] = glob.currentchannellistindex
-        setResumePoint(self.session)
+        try:
+            print("**** back 1 ***")
+            setResumePoint(self.session)
+            print("**** back 2 ***")
+
+        except Exception as e:
+            print("*** back failed ***")
+            print(e)
         self.close()
 
     def toggleStreamType(self):
@@ -935,7 +1028,7 @@ class XStreamity_VodPlayer(
             if self.ar_id_player > 6:
                 self.ar_id_player = 0
             eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
-            print('self.ar_id_player NEXT %s' % VIDEO_ASPECT_RATIO_MAP[self.ar_id_player])
+            # print('self.ar_id_player NEXT %s' % VIDEO_ASPECT_RATIO_MAP[self.ar_id_player])
             return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
         except Exception as ex:
             print(ex)
@@ -958,7 +1051,7 @@ class XStreamity_CatchupPlayer(
     InfoBarNotifications,
     IPTVInfoBarShowHide,
     IPTVInfoBarPVRState,
-    InfoBarCueSheetSupport,
+    XStreamityCueSheetSupport,
     SubsSupportStatus,
     SubsSupport,
     Screen
@@ -982,9 +1075,13 @@ class XStreamity_CatchupPlayer(
                 InfoBarSummarySupport, \
                 InfoBarServiceErrorPopupSupport, \
                 InfoBarNotifications, \
-                InfoBarCueSheetSupport, \
                 IPTVInfoBarShowHide:
             x.__init__(self)
+
+        try:
+            XStreamityCueSheetSupport.__init__(self)
+        except:
+            pass
 
         IPTVInfoBarPVRState.__init__(self, PVRState, True)
 
@@ -1080,7 +1177,7 @@ class XStreamity_CatchupPlayer(
                 if pythonVer == 3:
                     desc_image = desc_image.encode()
 
-                if scheme == "https":
+                if scheme == "https" and sslverify:
                     sniFactory = SNIFactory(domain)
                     downloadPage(desc_image, temp, sniFactory, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
                 else:
@@ -1135,7 +1232,10 @@ class XStreamity_CatchupPlayer(
 
     def back(self):
         glob.nextlist[-1]['index'] = glob.currentchannellistindex
-        setResumePoint(self.session)
+        try:
+            setResumePoint(self.session)
+        except Exception as e:
+            print(e)
         self.close()
 
     def toggleStreamType(self):
@@ -1165,7 +1265,7 @@ class XStreamity_CatchupPlayer(
             if self.ar_id_player > 6:
                 self.ar_id_player = 0
             eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
-            print('self.ar_id_player NEXT %s' % VIDEO_ASPECT_RATIO_MAP[self.ar_id_player])
+            # print('self.ar_id_player NEXT %s' % VIDEO_ASPECT_RATIO_MAP[self.ar_id_player])
             return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
         except Exception as ex:
             print(ex)

@@ -27,15 +27,18 @@ try:
 except:
     concurrent = False
 
-retryfailed = False
+try:
+    pythonVer = sys.version_info.major
+except:
+    pythonVer = 2
+
+if pythonVer == 2 or concurrent is False:
+    from multiprocessing.pool import ThreadPool
 
 try:
     from requests.packages.urllib3.util.retry import Retry
 except:
-    try:
-        from urllib3.util import Retry
-    except:
-        retryfailed = True
+    from urllib3.util import Retry
 
 
 class XStreamity_Menu(Screen):
@@ -135,11 +138,7 @@ class XStreamity_Menu(Screen):
         category = url[1]
         r = ''
 
-        if retryfailed is False:
-            retries = Retry(total=1, status_forcelist=[429, 503, 504], backoff_factor=1)
-        else:
-            retries = 1
-
+        retries = Retry(total=1, status_forcelist=[429, 503, 504], backoff_factor=1)
         adapter = HTTPAdapter(max_retries=retries)
         http = requests.Session()
         http.mount("http://", adapter)
@@ -165,28 +164,8 @@ class XStreamity_Menu(Screen):
             threads = 10
 
         if threads:
-            if concurrent is True and not os.path.exists('/var/lib/dpkg/status'):
 
-                try:
-                    print("******* menu concurrent futures ******")
-                    executor = ThreadPoolExecutor(max_workers=threads)
-
-                    with executor:
-                        results = executor.map(self.download_url, self.url_list)
-                    for category, response in results:
-                        if response != '':
-                            if category == 0:
-                                glob.current_playlist['data']['live_categories'] = response
-                            elif category == 1:
-                                glob.current_playlist['data']['vod_categories'] = response
-                            elif category == 2:
-                                glob.current_playlist['data']['series_categories'] = response
-                            elif category == 3:
-                                glob.current_playlist['data']['live_streams'] = response
-                except Exception as e:
-                    print(e)
-
-            else:
+            if concurrent is False or pythonVer == 2 or os.path.exists('/var/lib/dpkg/status'):
                 try:
                     print("******* menu multiprocessing ******")
                     from multiprocessing.pool import ThreadPool
@@ -208,7 +187,40 @@ class XStreamity_Menu(Screen):
 
                     pool.close()
                     pool.join()
+                except Exception as e:
+                    print(e)
+                    for url in self.url_list:
+                        result = self.download_url(url)
+                        category = result[0]
+                        response = result[1]
+                        if response != '':
+                            # add categories to main json file
+                            if category == 0:
+                                glob.current_playlist['data']['live_categories'] = response
+                            elif category == 1:
+                                glob.current_playlist['data']['vod_categories'] = response
+                            elif category == 2:
+                                glob.current_playlist['data']['series_categories'] = response
+                            elif category == 3:
+                                glob.current_playlist['data']['live_streams'] = response
 
+            elif concurrent is True:
+                try:
+                    print("******* menu concurrent futures ******")
+                    executor = ThreadPoolExecutor(max_workers=threads)
+
+                    with executor:
+                        results = executor.map(self.download_url, self.url_list)
+                    for category, response in results:
+                        if response != '':
+                            if category == 0:
+                                glob.current_playlist['data']['live_categories'] = response
+                            elif category == 1:
+                                glob.current_playlist['data']['vod_categories'] = response
+                            elif category == 2:
+                                glob.current_playlist['data']['series_categories'] = response
+                            elif category == 3:
+                                glob.current_playlist['data']['live_streams'] = response
                 except Exception as e:
                     print(e)
                     for url in self.url_list:

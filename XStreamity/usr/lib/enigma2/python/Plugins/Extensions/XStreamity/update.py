@@ -4,8 +4,6 @@
 
 from .plugin import playlists_json, dir_etc
 from xml.etree.cElementTree import iterparse
-from twisted.internet import threads, ssl
-from twisted.internet._sslverify import ClientTLSOptions
 from twisted.web.client import downloadPage
 
 try:
@@ -28,15 +26,23 @@ except:
 
 
 # https twisted client hack #
-class SNIFactory(ssl.ClientContextFactory):
-    def __init__(self, hostname=None):
-        self.hostname = hostname
+try:
+    from twisted.internet import ssl
+    from twisted.internet._sslverify import ClientTLSOptions
+    sslverify = True
+except:
+    sslverify = False
 
-    def getContext(self):
-        ctx = self._contextFactory(self.method)
-        if self.hostname:
-            ClientTLSOptions(self.hostname, ctx)
-        return ctx
+if sslverify:
+    class SNIFactory(ssl.ClientContextFactory):
+        def __init__(self, hostname=None):
+            self.hostname = hostname
+
+        def getContext(self):
+            ctx = self._contextFactory(self.method)
+            if self.hostname:
+                ClientTLSOptions(self.hostname, ctx)
+            return ctx
 
 
 def quickptime(str):
@@ -116,7 +122,7 @@ class XStreamity_Update:
             if pythonVer == 3:
                 url = url.encode()
 
-            if scheme == "https":
+            if scheme == "https" and sslverify:
                 sniFactory = SNIFactory(domain)
                 downloadPage(url, epgxmlfile, sniFactory, timeout=120).addCallback(self.downloadComplete).addErrback(self.downloadFailed)
             else:

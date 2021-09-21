@@ -11,9 +11,8 @@ from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from enigma import eTimer
 
-from twisted.internet import ssl
-from twisted.internet._sslverify import ClientTLSOptions
 from twisted.web.client import downloadPage
+
 try:
     from urlparse import urlparse
 except:
@@ -34,15 +33,23 @@ except:
 
 
 # https twisted client hack #
-class SNIFactory(ssl.ClientContextFactory):
-    def __init__(self, hostname=None):
-        self.hostname = hostname
+try:
+    from twisted.internet import ssl
+    from twisted.internet._sslverify import ClientTLSOptions
+    sslverify = True
+except:
+    sslverify = False
 
-    def getContext(self):
-        ctx = self._contextFactory(self.method)
-        if self.hostname:
-            ClientTLSOptions(self.hostname, ctx)
-        return ctx
+if sslverify:
+    class SNIFactory(ssl.ClientContextFactory):
+        def __init__(self, hostname=None):
+            self.hostname = hostname
+
+        def getContext(self):
+            ctx = self._contextFactory(self.method)
+            if self.hostname:
+                ClientTLSOptions(self.hostname, ctx)
+            return ctx
 
 
 def convert_size(size_bytes):
@@ -309,7 +316,7 @@ class XStreamity_DownloadManager(Screen):
                         if pythonVer == 3:
                             self.url = self.url.encode()
 
-                        if scheme == "https":
+                        if scheme == "https" and sslverify:
                             sniFactory = SNIFactory(domain)
                             self.downloadfile = downloadPage(self.url, self.path, sniFactory)
                             self.downloadfile.addCallback(self.download_finished)
