@@ -32,9 +32,6 @@ try:
 except:
     pythonVer = 2
 
-if pythonVer == 2 or concurrent is False:
-    from multiprocessing.pool import ThreadPool
-
 try:
     from requests.packages.urllib3.util.retry import Retry
 except:

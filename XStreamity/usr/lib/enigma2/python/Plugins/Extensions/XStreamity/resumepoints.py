@@ -40,9 +40,6 @@ def setResumePoint(session):
 def getResumePoint(session, failed=False):
     global resumePointCache
     resumePointCache = loadResumePoints()
-    
-    print(resumePointCache)
-
     service = session.nav.getCurrentService()
 
     ref = None
@@ -59,7 +56,6 @@ def getResumePoint(session, failed=False):
 
 def saveResumePoints():
     global resumePointCache
-
     try:
         f = open('/etc/enigma2/xstreamity/resumepoints.pkl', 'wb')
         cPickle.dump(resumePointCache, f, cPickle.HIGHEST_PROTOCOL)

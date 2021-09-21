@@ -159,7 +159,35 @@ class XStreamity_Playlists(Screen):
 
         if threads:
 
-            if concurrent is True and not os.path.exists('/var/lib/dpkg/status'):
+            if concurrent is False or pythonVer == 2 or os.path.exists('/var/lib/dpkg/status'):
+                try:
+                    print("********** playlists multiprocessing *******")
+                    from multiprocessing.pool import ThreadPool
+                    pool = ThreadPool(processes=threads)
+                    
+                    results = pool.imap_unordered(self.download_url, self.url_list)
+                    
+                    for index, response in results:
+                        if response != '':
+                            self.playlists_all[index].update(response)
+                        else:
+                            self.playlists_all[index]['user_info'] = []
+                    pool.close()
+                    pool.join()
+
+                except Exception as e:
+                    print(e)
+                    print("********** sequential download *******")
+                    for url in self.url_list:
+                        result = self.download_url(url)
+                        index = result[0]
+                        response = result[1]
+                        if response != '':
+                            self.playlists_all[index].update(response)
+                        else:
+                            self.playlists_all[index]['user_info'] = []
+                
+            if concurrent is True:
                 print("******* playlists concurrent futures ******")
                 try:
                     executor = ThreadPoolExecutor(max_workers=threads)
@@ -171,22 +199,6 @@ class XStreamity_Playlists(Screen):
                             self.playlists_all[index].update(response)
                         else:
                             self.playlists_all[index]['user_info'] = []
-                except Exception as e:
-                    print(e)
-            else:
-                try:
-                    print("********** playlists multiprocessing *******")
-                    from multiprocessing.pool import ThreadPool
-                    pool = ThreadPool(processes=threads)
-                    results = pool.imap_unordered(self.download_url, self.url_list)
-                    for index, response in results:
-                        if response != '':
-                            self.playlists_all[index].update(response)
-                        else:
-                            self.playlists_all[index]['user_info'] = []
-                    pool.close()
-                    pool.join()
-
                 except Exception as e:
                     print(e)
                     print("********** sequential download *******")
