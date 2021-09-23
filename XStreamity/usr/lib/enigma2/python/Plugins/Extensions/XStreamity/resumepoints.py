@@ -9,7 +9,7 @@ import os
 try:
     import cPickle
 except:
-    import _pickle as cPickle
+    import pickle as cPickle
 
 
 def setResumePoint(session):
