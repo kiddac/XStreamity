@@ -38,6 +38,7 @@ class XStreamity_MainMenu(Screen):
 
         self.list = []
         self.drawList = []
+        self.playlists_all = []
         self["list"] = List(self.drawList, enableWrapAround=True)
 
         self.setup_title = (_('Main Menu'))
@@ -79,14 +80,6 @@ class XStreamity_MainMenu(Screen):
         except:
             dependencies = False
 
-        try:
-            from concurrent.futures import ThreadPoolExecutor
-        except:
-            try:
-                from multiprocessing.pool import ThreadPool
-            except:
-                dependencies = False
-
         if dependencies is False:
             chmod("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/dependencies.sh", 0o0755)
             cmd1 = ". /usr/lib/enigma2/python/Plugins/Extensions/XStreamity/dependencies.sh"
@@ -119,12 +112,17 @@ class XStreamity_MainMenu(Screen):
 
         if self.playlists_all:
             self.list.append([1, _("Playlists")])
-        self.list.append([3, _("Add Playlist")])
-        self.list.append([2, _("Main Settings")])
-        if self.playlists_all:
+            self.list.append([3, _("Add Playlist")])
+            self.list.append([2, _("Main Settings")])
             self.list.append([5, _("Manual EPG Update")])
-        if downloads_all:
-            self.list.append([4, _("Download Manager")])
+            if downloads_all:
+                self.list.append([4, "Download Mngr."])
+
+        else:
+            self.list.append([3, _("Add Playlist")])
+            self.list.append([2, _("Main Settings")])
+            if downloads_all:
+                self.list.append([4, _("Download Manager")])
 
         self.drawList = []
         self.drawList = [buildListEntry(x[0], x[1]) for x in self.list]
@@ -155,7 +153,7 @@ class XStreamity_MainMenu(Screen):
     def updateEPG2(self, data=None):
         from . import update
         epg = update.XStreamity_Update()
-        
+
     def __next__(self):
         index = self["list"].getCurrent()[0]
 

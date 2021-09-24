@@ -20,13 +20,6 @@ import json
 import os
 import requests
 
-
-try:
-    from concurrent.futures import ThreadPoolExecutor
-    concurrent = True
-except:
-    concurrent = False
-
 try:
     pythonVer = sys.version_info.major
 except:
@@ -156,84 +149,20 @@ class XStreamity_Menu(Screen):
         glob.current_playlist['data']['vod_categories'] = []
         glob.current_playlist['data']['series_categories'] = []
 
-        threads = len(self.url_list)
-        if threads > 10:
-            threads = 10
-
-        if threads:
-
-            if concurrent is False or pythonVer == 2 or os.path.exists('/var/lib/dpkg/status'):
-                try:
-                    print("******* menu multiprocessing ******")
-                    from multiprocessing.pool import ThreadPool
-                    pool = ThreadPool(threads)
-
-                    results = pool.imap_unordered(self.download_url, self.url_list)
-
-                    for category, response in results:
-                        if response != '':
-                            # add categories to main json file
-                            if category == 0:
-                                glob.current_playlist['data']['live_categories'] = response
-                            elif category == 1:
-                                glob.current_playlist['data']['vod_categories'] = response
-                            elif category == 2:
-                                glob.current_playlist['data']['series_categories'] = response
-                            elif category == 3:
-                                glob.current_playlist['data']['live_streams'] = response
-
-                    pool.close()
-                    pool.join()
-                except Exception as e:
-                    print(e)
-                    for url in self.url_list:
-                        result = self.download_url(url)
-                        category = result[0]
-                        response = result[1]
-                        if response != '':
-                            # add categories to main json file
-                            if category == 0:
-                                glob.current_playlist['data']['live_categories'] = response
-                            elif category == 1:
-                                glob.current_playlist['data']['vod_categories'] = response
-                            elif category == 2:
-                                glob.current_playlist['data']['series_categories'] = response
-                            elif category == 3:
-                                glob.current_playlist['data']['live_streams'] = response
-
-            elif concurrent is True:
-                try:
-                    print("******* menu concurrent futures ******")
-                    executor = ThreadPoolExecutor(max_workers=threads)
-
-                    with executor:
-                        results = executor.map(self.download_url, self.url_list)
-                    for category, response in results:
-                        if response != '':
-                            if category == 0:
-                                glob.current_playlist['data']['live_categories'] = response
-                            elif category == 1:
-                                glob.current_playlist['data']['vod_categories'] = response
-                            elif category == 2:
-                                glob.current_playlist['data']['series_categories'] = response
-                            elif category == 3:
-                                glob.current_playlist['data']['live_streams'] = response
-                except Exception as e:
-                    print(e)
-                    for url in self.url_list:
-                        result = self.download_url(url)
-                        category = result[0]
-                        response = result[1]
-                        if response != '':
-                            # add categories to main json file
-                            if category == 0:
-                                glob.current_playlist['data']['live_categories'] = response
-                            elif category == 1:
-                                glob.current_playlist['data']['vod_categories'] = response
-                            elif category == 2:
-                                glob.current_playlist['data']['series_categories'] = response
-                            elif category == 3:
-                                glob.current_playlist['data']['live_streams'] = response
+        for url in self.url_list:
+            result = self.download_url(url)
+            category = result[0]
+            response = result[1]
+            if response != '':
+                # add categories to main json file
+                if category == 0:
+                    glob.current_playlist['data']['live_categories'] = response
+                elif category == 1:
+                    glob.current_playlist['data']['vod_categories'] = response
+                elif category == 2:
+                    glob.current_playlist['data']['series_categories'] = response
+                elif category == 3:
+                    glob.current_playlist['data']['live_streams'] = response
 
         self["splash"].hide()
         glob.current_playlist['data']['data_downloaded'] = True

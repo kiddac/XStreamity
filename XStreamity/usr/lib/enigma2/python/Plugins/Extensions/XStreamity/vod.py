@@ -1312,6 +1312,7 @@ class XStreamity_Categories(Screen):
             currentindex = self["channel_list"].getIndex()
 
             favExists = False
+            favStream_id = None
 
             for fav in glob.current_playlist['player_info']['vodfavourites']:
                 if self["channel_list"].getCurrent()[4] == fav['stream_id']:
@@ -1319,10 +1320,11 @@ class XStreamity_Categories(Screen):
                     favStream_id = fav['stream_id']
                     break
 
+            self.list2[currentindex][7] = not self.list2[currentindex][7]
+
             if favExists:
                 glob.current_playlist['player_info']['vodfavourites'][:] = [x for x in glob.current_playlist['player_info']['vodfavourites'] if str(x['stream_id']) != str(favStream_id)]
             else:
-                self.list2[currentindex][7] = not self.list2[currentindex][7]
 
                 # index = 0
                 # name = 1
@@ -1360,7 +1362,10 @@ class XStreamity_Categories(Screen):
             with open(playlists_json, 'w') as f:
                 json.dump(self.playlists_all, f)
 
-            self.createSetup()
+            if self.favourites_category:
+                del self.list2[currentindex]
+
+            self.buildLists()
 
     def editfav(self):
         if self.favourites_category:

@@ -24,13 +24,6 @@ import requests
 import sys
 import shutil
 
-
-try:
-    from concurrent.futures import ThreadPoolExecutor
-    concurrent = True
-except:
-    concurrent = False
-
 try:
     pythonVer = sys.version_info.major
 except:
@@ -133,12 +126,8 @@ class XStreamity_Playlists(Screen):
     def download_url(self, url):
         index = url[1]
         r = ''
-        adapter = HTTPAdapter()
-        http = requests.Session()
-        http.mount("http://", adapter)
-        http.mount("https://", adapter)
         try:
-            r = http.get(url[0], headers=hdr, stream=True, timeout=10, verify=False)
+            r = requests.get(url[0], headers=hdr, stream=True, timeout=10, verify=False)
             r.raise_for_status()
             if r.status_code == requests.codes.ok:
                 try:
@@ -153,63 +142,15 @@ class XStreamity_Playlists(Screen):
         return index, ''
 
     def process_downloads(self):
-        threads = len(self.url_list)
-        if threads > 10:
-            threads = 10
 
-        if threads:
-
-            if concurrent is False or pythonVer == 2 or os.path.exists('/var/lib/dpkg/status'):
-                try:
-                    print("********** playlists multiprocessing *******")
-                    from multiprocessing.pool import ThreadPool
-                    pool = ThreadPool(processes=threads)
-                    
-                    results = pool.imap_unordered(self.download_url, self.url_list)
-                    
-                    for index, response in results:
-                        if response != '':
-                            self.playlists_all[index].update(response)
-                        else:
-                            self.playlists_all[index]['user_info'] = []
-                    pool.close()
-                    pool.join()
-
-                except Exception as e:
-                    print(e)
-                    print("********** sequential download *******")
-                    for url in self.url_list:
-                        result = self.download_url(url)
-                        index = result[0]
-                        response = result[1]
-                        if response != '':
-                            self.playlists_all[index].update(response)
-                        else:
-                            self.playlists_all[index]['user_info'] = []
-                
-            if concurrent is True:
-                print("******* playlists concurrent futures ******")
-                try:
-                    executor = ThreadPoolExecutor(max_workers=threads)
-
-                    with executor:
-                        results = executor.map(self.download_url, self.url_list)
-                    for index, response in results:
-                        if response != '':
-                            self.playlists_all[index].update(response)
-                        else:
-                            self.playlists_all[index]['user_info'] = []
-                except Exception as e:
-                    print(e)
-                    print("********** sequential download *******")
-                    for url in self.url_list:
-                        result = self.download_url(url)
-                        index = result[0]
-                        response = result[1]
-                        if response != '':
-                            self.playlists_all[index].update(response)
-                        else:
-                            self.playlists_all[index]['user_info'] = []
+        for url in self.url_list:
+            result = self.download_url(url)
+            index = result[0]
+            response = result[1]
+            if response != '':
+                self.playlists_all[index].update(response)
+            else:
+                self.playlists_all[index]['user_info'] = []
 
         self.buildPlaylistList()
 

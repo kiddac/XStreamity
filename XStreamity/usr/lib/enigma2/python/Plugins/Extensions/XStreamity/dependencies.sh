@@ -11,9 +11,6 @@ if [ -d /etc/opkg ]; then
         echo "checking python3-requests"
         opkg install python3-requests
         echo ""
-        echo "checking python3-multiprocessing"
-        opkg install python3-multiprocessing
-        echo ""
     else
         echo "checking python-image"
         opkg install python-image
@@ -24,9 +21,6 @@ if [ -d /etc/opkg ]; then
         echo "checking python-requests"
         opkg install python-requests
         echo ""
-        echo "checking python-multiprocessing"
-        opkg install python-multiprocessing
-        echo ""
     fi
 else
     echo "updating feeds"
@@ -35,9 +29,6 @@ else
     if [[ $pyv =~ "Python 3" ]]; then
         echo "checking python3-requests"
         apt-get -y install python3-requests
-        echo ""
-        echo "checking python3-multiprocessing"
-        apt-get -y install python3-multiprocessing
         echo ""
     else
         echo "checking python-image"
@@ -48,9 +39,6 @@ else
         echo ""
         echo "checking python-requests"
         apt-get -y install python-requests
-        echo ""
-        echo "checking python-multiprocessing"
-        apt-get -y install python-multiprocessing
         echo ""
     fi
 fi

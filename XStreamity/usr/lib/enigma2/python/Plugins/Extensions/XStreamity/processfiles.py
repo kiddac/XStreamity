@@ -151,13 +151,13 @@ def processfiles():
                                     playlists["player_info"]["serveroffset"] = serveroffset
 
                                 if "live_streams" not in playlists["data"]:
-                                    playlists["data"]["live_streams"] = serveroffset
+                                    playlists["data"]["live_streams"] = live_streams
 
                                 if "catchup_checked" not in playlists["data"]:
-                                    playlists["data"]["catchup_checked"] = serveroffset
+                                    playlists["data"]["catchup_checked"] = catchup_checked
 
                                 if "last_check" not in playlists["data"]:
-                                    playlists["data"]["last_check"] = serveroffset
+                                    playlists["data"]["last_check"] = last_check
 
                                 playlists["playlist_info"]["name"] = name
                                 playlists["playlist_info"]["type"] = type
@@ -192,7 +192,6 @@ def processfiles():
                         "player_info": OrderedDict([
                             ("livetype", livetype),
                             ("vodtype", vodtype),
-                            # ("epgshift", epgshift),
                             ("catchupshift", catchupshift),
                             ("livehidden", livehidden),
                             ("vodhidden", vodhidden),
