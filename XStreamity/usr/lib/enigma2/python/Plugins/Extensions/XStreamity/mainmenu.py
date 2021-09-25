@@ -116,7 +116,7 @@ class XStreamity_MainMenu(Screen):
             self.list.append([2, _("Main Settings")])
             self.list.append([5, _("Manual EPG Update")])
             if downloads_all:
-                self.list.append([4, "Download Mngr."])
+                self.list.append([4, "Download Manager"])
 
         else:
             self.list.append([3, _("Add Playlist")])
