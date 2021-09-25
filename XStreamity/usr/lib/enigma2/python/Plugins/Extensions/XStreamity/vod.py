@@ -308,8 +308,7 @@ class XStreamity_Categories(Screen):
             http.mount("http://", adapter)
             try:
                 r = http.get(url, headers=hdr, stream=True, timeout=10, verify=False)
-                r.raise_for_status()
-                if r.status_code == requests.codes.ok:
+                if r.status_code == 200:
                     content = r.json()
                     with codecs.open(levelpath, 'w', encoding='utf-8') as f:
                         f.write(json.dumps(content))

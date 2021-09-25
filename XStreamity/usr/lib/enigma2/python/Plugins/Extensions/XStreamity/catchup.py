@@ -255,9 +255,7 @@ class XStreamity_Catchup(Screen):
 
             try:
                 r = http.get(url, headers=hdr, stream=True, timeout=10, verify=False)
-                r.raise_for_status()
-                if r.status_code == requests.codes.ok:
-
+                if r.status_code == 200:
                     content = r.json()
                     with open(levelpath, 'w') as f:
                         f.write(json.dumps(content))
@@ -381,8 +379,7 @@ class XStreamity_Catchup(Screen):
 
         try:
             r = http.get(url, headers=hdr, stream=True, timeout=10, verify=False)
-            r.raise_for_status()
-            if r.status_code == requests.codes.ok:
+            if r.status_code == 200:
                 self.streams = r.json()
 
         except Exception as e:
@@ -497,8 +494,7 @@ class XStreamity_Catchup(Screen):
 
                     try:
                         r = http.get(url, headers=hdr, stream=True, timeout=10, verify=False)
-                        r.raise_for_status()
-                        if r.status_code == requests.codes.ok:
+                        if r.status_code == 200:
                             try:
                                 response = r.json()
                             except:

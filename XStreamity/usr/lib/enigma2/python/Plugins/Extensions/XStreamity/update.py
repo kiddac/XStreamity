@@ -71,14 +71,18 @@ class XStreamity_Update:
         self.processJsonFile()
 
     def checkRedirect(self, url):
-        x = requests.get(url, timeout=20, verify=False, stream=True)
-        x.raise_for_status()
-        if x.status_code == requests.codes.ok:
+        # print("*** check redirect ***")
+        try:
+            x = requests.get(url, timeout=20, verify=False, stream=True)
+            # print("**** redirect url 1 *** %s" % x.url)
             return str(x.url)
-        else:
+        except Exception as e:
+            print(e)
+            # print("**** redirect url 2 *** %s" % url)
             return str(url)
 
     def processJsonFile(self):
+        # print("*** processJsonFile ***")
         with open(playlists_json, "r") as f:
             self.playlists_all = json.load(f)
 
@@ -140,6 +144,7 @@ class XStreamity_Update:
     def downloadComplete(self, data=None):
         # print("**** downloadComplete ***")
         if twisted.python.runtime.platform.supportsThreads():
+            from twisted.internet import threads
             try:
                 d = threads.deferToThread(self.buildjson)
                 d.addErrback(self.createJsonFail)
@@ -159,6 +164,7 @@ class XStreamity_Update:
                 self.createJsonFail(e)
 
     def downloadFailed(self, data=None):
+        # print("*** downloadFailed ***")
         print(data)
         self.urllist.pop(0)
         if self.urllist:
@@ -167,6 +173,7 @@ class XStreamity_Update:
             return
 
     def createJsonFail(self, data=None):
+        # print("**** createjsonfail ***")
         epgjsonfile = self.urllist[0][3]
         print(("Create Json failed:", data))
         try:
@@ -180,6 +187,7 @@ class XStreamity_Update:
             return
 
     def buildjson(self):
+        # print("*** buildjson ***")
         epgitems = {}
         nowtime = calendar.timegm(time.gmtime())
         epgjsonfile = self.urllist[0][3]

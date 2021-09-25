@@ -128,8 +128,7 @@ class XStreamity_Playlists(Screen):
         r = ''
         try:
             r = requests.get(url[0], headers=hdr, stream=True, timeout=10, verify=False)
-            r.raise_for_status()
-            if r.status_code == requests.codes.ok:
+            if r.status_code == 200:
                 try:
                     response = r.json()
                     return index, response

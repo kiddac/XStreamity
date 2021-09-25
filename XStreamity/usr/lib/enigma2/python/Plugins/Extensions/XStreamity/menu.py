@@ -135,8 +135,7 @@ class XStreamity_Menu(Screen):
 
         try:
             r = http.get(url[0], headers=hdr, stream=False, timeout=timeout, verify=False)
-            r.raise_for_status()
-            if r.status_code == requests.codes.ok:
+            if r.status_code == 200:
                 # response = r.json()
                 return category, r.json()
         except Exception as e:
