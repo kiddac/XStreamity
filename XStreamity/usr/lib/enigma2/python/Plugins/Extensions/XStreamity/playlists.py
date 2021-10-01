@@ -4,7 +4,7 @@
 
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import skin_path, playlists_json, hdr, playlist_file, cfg, common_path, version, dir_etc
+from .plugin import skin_path, playlists_json, hdr, playlist_file, cfg, common_path, version, dir_etc, pythonVer, hasConcurrent, hasMultiprocessing
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -23,11 +23,6 @@ import os
 import requests
 import sys
 import shutil
-
-try:
-    pythonVer = sys.version_info.major
-except:
-    pythonVer = 2
 
 
 class XStreamity_Playlists(Screen):
@@ -126,9 +121,14 @@ class XStreamity_Playlists(Screen):
     def download_url(self, url):
         index = url[1]
         r = ''
+        adapter = HTTPAdapter()
+        http = requests.Session()
+        http.mount("http://", adapter)
+        http.mount("https://", adapter)
         try:
-            r = requests.get(url[0], headers=hdr, stream=True, timeout=10, verify=False)
-            if r.status_code == 200:
+            r = http.get(url[0], headers=hdr, stream=True, timeout=10, verify=False)
+            r.raise_for_status()
+            if r.status_code == requests.codes.ok:
                 try:
                     response = r.json()
                     return index, response
@@ -141,7 +141,52 @@ class XStreamity_Playlists(Screen):
         return index, ''
 
     def process_downloads(self):
+        threads = len(self.url_list)
+        if threads > 10:
+            threads = 10
 
+        if hasConcurrent:
+            print("******* trying concurrent futures ******")
+            try:
+                from concurrent.futures import ThreadPoolExecutor
+                executor = ThreadPoolExecutor(max_workers=threads)
+
+                with executor:
+                    results = executor.map(self.download_url, self.url_list)
+                for index, response in results:
+                    if response != '':
+                        self.playlists_all[index].update(response)
+                    else:
+                        self.playlists_all[index]['user_info'] = []
+
+                self.buildPlaylistList()
+                return
+
+            except Exception as e:
+                print(e)
+                concurrent = False
+
+        if hasMultiprocessing:
+            print("********** trying multiprocessing threadpool *******")
+            try:
+                from multiprocessing.pool import ThreadPool
+                pool = ThreadPool(5)
+                results = pool.imap_unordered(self.download_url, self.url_list)
+                for index, response in results:
+                    if response != '':
+                        self.playlists_all[index].update(response)
+                    else:
+                        self.playlists_all[index]['user_info'] = []
+                pool.close()
+                pool.join()
+
+                self.buildPlaylistList()
+                return
+
+            except Exception as e:
+                print(e)
+
+        print("********** trying sequential download *******")
         for url in self.url_list:
             result = self.download_url(url)
             index = result[0]
@@ -152,6 +197,7 @@ class XStreamity_Playlists(Screen):
                 self.playlists_all[index]['user_info'] = []
 
         self.buildPlaylistList()
+        return
 
     def buildPlaylistList(self):
         for playlists in self.playlists_all:
@@ -308,13 +354,14 @@ class XStreamity_Playlists(Screen):
         if data is None:
             self.session.openWithCallback(self.deleteEpgData, MessageBox, _('Delete providers EPG data?'))
         else:
+            self["splash"].show()
             epgfolder = str(dir_etc) + "epg/" + str(self.currentplaylist['playlist_info']['domain'])
 
             try:
                 shutil.rmtree(epgfolder)
             except:
                 pass
-
+            self["splash"].show()
             self.start()
 
     def getCurrentEntry(self):

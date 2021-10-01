@@ -120,19 +120,19 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
                             self['VirtualKB'].setEnabled(False)
                         except:
                             pass
-                            
+
                         try:
                             self["virtualKeyBoardActions"].setEnabled(False)
                         except:
                             pass
-                            
+
                         self['VKeyIcon'].hide()
                     else:
                         try:
                             self['VirtualKB'].setEnabled(True)
                         except:
                             pass
-                            
+
                         try:
                             self["virtualKeyBoardActions"].setEnabled(True)
                         except:
@@ -205,7 +205,8 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
         valid = False
         try:
             r = requests.get(self.apiline, allow_redirects=True)
-            if r.status_code == 200:
+            r.raise_for_status()
+            if r.status_code == requests.codes.ok:
                 response = r.json()
                 if 'user_info' in response:
                     if 'auth' in response['user_info']:

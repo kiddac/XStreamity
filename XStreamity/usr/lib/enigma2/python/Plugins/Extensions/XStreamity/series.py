@@ -5,7 +5,7 @@ from . import _
 from . import streamplayer
 from . import xstreamity_globals as glob
 
-from .plugin import skin_path, screenwidth, hdr, cfg, common_path, dir_tmp
+from .plugin import skin_path, screenwidth, hdr, cfg, common_path, dir_tmp, pythonVer
 from .xStaticText import StaticText
 
 from collections import OrderedDict
@@ -40,12 +40,6 @@ import requests
 import time
 import sys
 import zlib
-
-
-try:
-    pythonVer = sys.version_info.major
-except:
-    pythonVer = 2
 
 
 # https twisted client hack #
@@ -257,7 +251,8 @@ class XStreamity_Categories(Screen):
             http.mount("http://", adapter)
             try:
                 r = http.get(url, headers=hdr, stream=True, timeout=10, verify=False)
-                if r.status_code == 200:
+                r.raise_for_status()
+                if r.status_code == requests.codes.ok:
 
                     content = r.json()
                     with codecs.open(levelpath, 'w', encoding='utf-8') as f:

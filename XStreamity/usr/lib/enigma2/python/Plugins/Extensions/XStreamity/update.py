@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-from .plugin import playlists_json, dir_etc
+from .plugin import playlists_json, dir_etc, pythonVer
 from xml.etree.cElementTree import iterparse
 from twisted.web.client import downloadPage
 
@@ -18,11 +18,6 @@ import requests
 import sys
 import time
 import twisted.python.runtime
-
-try:
-    pythonVer = sys.version_info.major
-except:
-    pythonVer = 2
 
 
 # https twisted client hack #
@@ -83,8 +78,12 @@ class XStreamity_Update:
 
     def processJsonFile(self):
         # print("*** processJsonFile ***")
-        with open(playlists_json, "r") as f:
-            self.playlists_all = json.load(f)
+        try:
+            with open(playlists_json, "r") as f:
+                self.playlists_all = json.load(f)
+        except Exception as e:
+            print(e)
+            return
 
         self.urllist = []
 

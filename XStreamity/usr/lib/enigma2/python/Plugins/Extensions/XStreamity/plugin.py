@@ -7,10 +7,36 @@ from Plugins.Plugin import PluginDescriptor
 from enigma import eTimer, getDesktop, addFont
 from Components.config import config, ConfigSubsection, ConfigSelection, ConfigDirectory, ConfigYesNo, ConfigSelectionNumber, ConfigClock
 
+import twisted.python.runtime
+
+try:
+    from multiprocessing.pool import ThreadPool
+    hasMultiprocessing = True
+except:
+    hasMultiprocessing = False
+
+try:
+    from concurrent.futures import ThreadPoolExecutor
+    if twisted.python.runtime.platform.supportsThreads():
+        hasConcurrent = True
+    else:
+        hasConcurrent = False
+except:
+    hasConcurrent = False
+
 import os
 import shutil
+import sys
+
+pythonFull = float(str(sys.version_info.major) + "." + str(sys.version_info.minor))
+pythonVer = sys.version_info.major
+
+isDreambox = False
+if os.path.exists("/usr/bin/apt-get"):
+    isDreambox = True
 
 autoStartTimer = None
+
 
 with open("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/version.txt", 'r') as f:
     version = f.readline()

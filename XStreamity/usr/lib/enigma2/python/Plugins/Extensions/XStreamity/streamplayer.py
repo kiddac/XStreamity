@@ -4,7 +4,7 @@
 from . import _
 from . import xstreamity_globals as glob
 
-from .plugin import skin_path, screenwidth, common_path, cfg, dir_tmp
+from .plugin import skin_path, screenwidth, common_path, cfg, dir_tmp, pythonVer
 from .xStaticText import StaticText
 
 
@@ -71,11 +71,6 @@ else:
 import os
 import sys
 
-try:
-    pythonVer = sys.version_info.major
-except:
-    pythonVer = 2
-
 
 # https twisted client hack #
 try:
@@ -95,6 +90,7 @@ if sslverify:
             if self.hostname:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
+
 
 # png hack
 def mycall(self, cid, pos, length):

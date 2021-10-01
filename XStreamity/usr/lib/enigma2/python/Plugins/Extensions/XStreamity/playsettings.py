@@ -90,8 +90,6 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.liveType = str(glob.current_playlist['player_info']['livetype'])
         self.vodType = str(glob.current_playlist['player_info']['vodtype'])
         self.epgUrl = str(glob.current_playlist['player_info']['xmltv_api'])
-        # self.epgshift = str(glob.current_playlist['player_info']['epgshift'])
-        # self.catchupshift = str(glob.current_playlist['player_info']['catchupshift'])
         self.showlive = glob.current_playlist['player_info']['showlive']
         self.showvod = glob.current_playlist['player_info']['showvod']
         self.showseries = glob.current_playlist['player_info']['showseries']
@@ -101,11 +99,7 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.outputCfg = NoSave(ConfigSelection(default=self.output, choices=[('ts', 'ts'), ('m3u8', 'm3u8')]))
         self.liveTypeCfg = NoSave(ConfigSelection(default=self.liveType, choices=streamtype_choices))
         self.vodTypeCfg = NoSave(ConfigSelection(default=self.vodType, choices=streamtype_choices))
-
         self.epgUrlCfg = NoSave(ConfigText(default=self.epgUrl))
-
-        # self.epgShiftCfg = NoSave(ConfigSelectionNumber(min=-9, max=9, stepwidth=1, default=self.epgshift))
-        # self.catchupShiftCfg = NoSave(ConfigSelectionNumber(min=-9, max=9, stepwidth=1, default=self.catchupshift))
         self.showliveCfg = NoSave(ConfigYesNo(default=self.showlive))
         self.showvodCfg = NoSave(ConfigYesNo(default=self.showvod))
         self.showseriesCfg = NoSave(ConfigYesNo(default=self.showseries))
@@ -128,11 +122,6 @@ class XStreamity_Settings(ConfigListScreen, Screen):
 
         if self.showvodCfg.value is True or self.showseriesCfg.value is True:
             self.list.append(getConfigListEntry(_('Stream Type VOD/SERIES:'), self.vodTypeCfg))
-
-        # if self.showliveCfg.value is True:
-            # self.list.append(getConfigListEntry(_('Full EPG Timeshift:'), self.epgShiftCfg))
-            # self.list.append(getConfigListEntry(_('Catchup Timeshift:'), self.catchupShiftCfg))
-            # self.list.append(getConfigListEntry(_('XMLTV EPG Url:'), self.epgUrlCfg))
 
         self['config'].list = self.list
         self['config'].l.setList(self.list)
@@ -213,9 +202,6 @@ class XStreamity_Settings(ConfigListScreen, Screen):
                 livetype = "4097"
 
             vodtype = self.vodTypeCfg.value
-
-            # epgshift = self.epgShiftCfg.value
-            # catchupshift = self.catchupShiftCfg.value
             epgurl = self.epgUrlCfg.value
 
             glob.current_playlist['playlist_info']['name'] = self.name
@@ -229,10 +215,6 @@ class XStreamity_Settings(ConfigListScreen, Screen):
 
             glob.current_playlist['player_info']['xmltv_api'] = epgurl
 
-            # glob.current_playlist['player_info']['epgshift'] = epgshift
-            # glob.current_playlist['player_info']['catchupshift'] = catchupshift
-
-            # playlistline = '%s%s:%s/get.php?username=%s&password=%s&type=%s&output=%s&timeshift=%s #%s' % (self.protocol, self.domain, self.port, self.username, self.password, self.listtype, output, epgshift, self.name)
             playlistline = '%s%s:%s/get.php?username=%s&password=%s&type=%s&output=%s #%s' % (self.protocol, self.domain, self.port, self.username, self.password, self.listtype, output, self.name)
 
             self.full_url = "%s/get.php?username=%s&password=%s&type=%s&output=%s" % (self.host, self.username, self.password, self.listtype, self.output)

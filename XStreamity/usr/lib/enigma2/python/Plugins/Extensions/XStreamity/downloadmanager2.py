@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from . import _
-from .plugin import skin_path, downloads_json, cfg
+from .plugin import skin_path, downloads_json, cfg, pythonVer
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -25,11 +25,6 @@ import re
 import requests
 import sys
 import time
-
-try:
-    pythonVer = sys.version_info.major
-except:
-    pythonVer = 2
 
 
 # https twisted client hack #

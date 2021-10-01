@@ -15,12 +15,12 @@ except:
 def setResumePoint(session):
     global resumePointCache
     service = session.nav.getCurrentService()
-    
+
     ref = None
     if session.nav.getCurrentlyPlayingServiceReference():
         if "http" in session.nav.getCurrentlyPlayingServiceReference().toString():
             ref = session.nav.getCurrentlyPlayingServiceReference()
-    
+
     if (service is not None) and (ref is not None):
         seek = service.seek()
         if seek:

@@ -3,7 +3,7 @@
 
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import skin_path, hdr, cfg, common_path, playlists_json
+from .plugin import skin_path, hdr, cfg, common_path, playlists_json, pythonVer, hasConcurrent, hasMultiprocessing
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -20,10 +20,6 @@ import json
 import os
 import requests
 
-try:
-    pythonVer = sys.version_info.major
-except:
-    pythonVer = 2
 
 try:
     from requests.packages.urllib3.util.retry import Retry
@@ -88,7 +84,7 @@ class XStreamity_Menu(Screen):
     # delay to allow splash screen to show
     def start(self):
         if glob.current_playlist['data']['data_downloaded'] is False:
-            # glob.current_playlist['data']['last_check'] = datetime.now().strftime("%d/%m/%Y %H:%M")
+            glob.current_playlist['data']['last_check'] = datetime.now().strftime("%d/%m/%Y %H:%M")
             self['lastchecked'].setText(_("Last catchup check: ") + str(glob.current_playlist['data']['last_check']))
 
             self.timer = eTimer()
@@ -107,8 +103,7 @@ class XStreamity_Menu(Screen):
     def makeUrlList(self):
         self.url_list = []
 
-        if glob.current_playlist['player_info']['showlive'] is True:
-            self.url_list.append([self.p_live_categories_url, 0])
+        self.url_list.append([self.p_live_categories_url, 0])
 
         if glob.current_playlist['player_info']['showvod'] is True:
             self.url_list.append([self.p_vod_categories_url, 1])
@@ -135,7 +130,8 @@ class XStreamity_Menu(Screen):
 
         try:
             r = http.get(url[0], headers=hdr, stream=False, timeout=timeout, verify=False)
-            if r.status_code == 200:
+            r.raise_for_status()
+            if r.status_code == requests.codes.ok:
                 # response = r.json()
                 return category, r.json()
         except Exception as e:
@@ -144,6 +140,7 @@ class XStreamity_Menu(Screen):
 
     def process_downloads(self):
 
+        """
         glob.current_playlist['data']['live_categories'] = []
         glob.current_playlist['data']['vod_categories'] = []
         glob.current_playlist['data']['series_categories'] = []
@@ -165,6 +162,68 @@ class XStreamity_Menu(Screen):
 
         self["splash"].hide()
         glob.current_playlist['data']['data_downloaded'] = True
+        self.createSetup()
+        """
+
+        glob.current_playlist['data']['live_categories'] = []
+        glob.current_playlist['data']['vod_categories'] = []
+        glob.current_playlist['data']['series_categories'] = []
+
+        threads = len(self.url_list)
+        if threads > 10:
+            threads = 10
+
+        try:
+            print("*** trying multiprocessing ThreadPool ***")
+            from multiprocessing.pool import ThreadPool
+            pool = ThreadPool(threads)
+            results = pool.imap_unordered(self.download_url, self.url_list)
+
+            for category, response in results:
+                if response != '':
+                    # add categories to main json file
+                    if category == 0:
+                        glob.current_playlist['data']['live_categories'] = response
+                        for item in glob.current_playlist['data']['live_categories']:
+                            del item['parent_id']
+                    if category == 1:
+                        glob.current_playlist['data']['vod_categories'] = response
+                        for item in glob.current_playlist['data']['vod_categories']:
+                            del item['parent_id']
+                    if category == 2:
+                        glob.current_playlist['data']['series_categories'] = response
+                        for item in glob.current_playlist['data']['series_categories']:
+                            del item['parent_id']
+                    if category == 3:
+                        glob.current_playlist['data']['live_streams'] = response
+
+            pool.close()
+            pool.join()
+        except Exception as e:
+            print(e)
+            print("*** multiprocessing failed trying sequential ***")
+            for url in self.url_list:
+                result = self.download_url(url)
+                category = result[0]
+                response = result[1]
+                if response != '':
+                    # add categories to main json file
+                    if category == 0:
+                        glob.current_playlist['data']['live_categories'] = response
+                        for item in glob.current_playlist['data']['live_categories']:
+                            del item['parent_id']
+                    if category == 1:
+                        glob.current_playlist['data']['vod_categories'] = response
+                        for item in glob.current_playlist['data']['vod_categories']:
+                            del item['parent_id']
+                    if category == 2:
+                        glob.current_playlist['data']['series_categories'] = response
+                        for item in glob.current_playlist['data']['series_categories']:
+                            del item['parent_id']
+                    if category == 3:
+                        glob.current_playlist['data']['live_streams'] = response
+
+        self["splash"].hide()
         self.createSetup()
 
     def writeJsonFile(self):

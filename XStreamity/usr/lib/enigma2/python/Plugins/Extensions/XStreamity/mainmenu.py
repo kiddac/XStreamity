@@ -4,7 +4,7 @@
 from . import _
 from . import xstreamity_globals as glob
 from . import processfiles as xfiles
-from .plugin import skin_path, common_path, version, downloads_json
+from .plugin import skin_path, common_path, version, downloads_json, pythonVer
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -19,11 +19,7 @@ from Tools.LoadPixmap import LoadPixmap
 import json
 import os
 import sys
-
-try:
-    pythonVer = sys.version_info.major
-except:
-    pythonVer = 2
+# import re
 
 
 class XStreamity_MainMenu(Screen):
@@ -77,6 +73,7 @@ class XStreamity_MainMenu(Screen):
         try:
             import requests
             from PIL import Image
+            from multiprocessing.pool import ThreadPool
         except:
             dependencies = False
 
@@ -116,7 +113,7 @@ class XStreamity_MainMenu(Screen):
             self.list.append([2, _("Main Settings")])
             self.list.append([5, _("Manual EPG Update")])
             if downloads_all:
-                self.list.append([4, "Download Manager"])
+                self.list.append([4, _("Download Manager")])
 
         else:
             self.list.append([3, _("Add Playlist")])
