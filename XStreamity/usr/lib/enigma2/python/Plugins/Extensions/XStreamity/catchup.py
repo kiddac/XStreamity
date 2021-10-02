@@ -247,6 +247,7 @@ class XStreamity_Catchup(Screen):
             adapter = HTTPAdapter(max_retries=0)
             http = requests.Session()
             http.mount("http://", adapter)
+            http.mount("https://", adapter)
 
             try:
                 r = http.get(url, headers=hdr, stream=True, timeout=10, verify=False)
@@ -372,6 +373,7 @@ class XStreamity_Catchup(Screen):
         adapter = HTTPAdapter(max_retries=0)
         http = requests.Session()
         http.mount("http://", adapter)
+        http.mount("https://", adapter)
 
         try:
             r = http.get(url, headers=hdr, stream=True, timeout=10, verify=False)
@@ -488,6 +490,7 @@ class XStreamity_Catchup(Screen):
                     adapter = HTTPAdapter(max_retries=0)
                     http = requests.Session()
                     http.mount("http://", adapter)
+                    http.mount("https://", adapter)
 
                     try:
                         r = http.get(url, headers=hdr, stream=True, timeout=10, verify=False)

@@ -20,7 +20,7 @@ class xServiceInfo(Converter, object):
     IS_SD = 8
     IS_HD = 9
 
-    def __init__(seFlf, type):
+    def __init__(self, type):
         Converter.__init__(self, type)
         self.type, self.interesting_events = {
 
@@ -186,11 +186,18 @@ class xServiceInfo(Converter, object):
                 except:
                     return ""
             return "%d" % video_height
-            
+
         elif self.type == self.FRAMERATE:
             video_rate = None
             if path.exists("/proc/stb/vmpeg/0/framerate"):
                 f = open("/proc/stb/vmpeg/0/framerate", "r")
+                try:
+                    video_rate = int(f.read())
+                except:
+                    pass
+                f.close()
+            elif path.exists("/proc/stb/vmpeg/0/frame_rate"):
+                f = open("/proc/stb/vmpeg/0/frame_rate", "r")
                 try:
                     video_rate = int(f.read())
                 except:
@@ -250,6 +257,14 @@ class xServiceInfo(Converter, object):
                 except:
                     pass
                 f.close()
+            elif path.exists("/proc/stb/vmpeg/0/frame_rate"):
+                f = open("/proc/stb/vmpeg/0/frame_rate", "r")
+                try:
+                    video_rate = int(f.read())
+                except:
+                    pass
+                f.close()
+
             if not video_rate:
                 video_rate = info.getInfo(iServiceInformation.sFrameRate)
             return str(video_rate)

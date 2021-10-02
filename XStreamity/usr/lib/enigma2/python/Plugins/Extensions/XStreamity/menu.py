@@ -127,6 +127,7 @@ class XStreamity_Menu(Screen):
         adapter = HTTPAdapter(max_retries=retries)
         http = requests.Session()
         http.mount("http://", adapter)
+        http.mount("https://", adapter)
 
         try:
             r = http.get(url[0], headers=hdr, stream=False, timeout=timeout, verify=False)
@@ -184,16 +185,10 @@ class XStreamity_Menu(Screen):
                     # add categories to main json file
                     if category == 0:
                         glob.current_playlist['data']['live_categories'] = response
-                        for item in glob.current_playlist['data']['live_categories']:
-                            del item['parent_id']
                     if category == 1:
                         glob.current_playlist['data']['vod_categories'] = response
-                        for item in glob.current_playlist['data']['vod_categories']:
-                            del item['parent_id']
                     if category == 2:
                         glob.current_playlist['data']['series_categories'] = response
-                        for item in glob.current_playlist['data']['series_categories']:
-                            del item['parent_id']
                     if category == 3:
                         glob.current_playlist['data']['live_streams'] = response
 
@@ -210,16 +205,10 @@ class XStreamity_Menu(Screen):
                     # add categories to main json file
                     if category == 0:
                         glob.current_playlist['data']['live_categories'] = response
-                        for item in glob.current_playlist['data']['live_categories']:
-                            del item['parent_id']
                     if category == 1:
                         glob.current_playlist['data']['vod_categories'] = response
-                        for item in glob.current_playlist['data']['vod_categories']:
-                            del item['parent_id']
                     if category == 2:
                         glob.current_playlist['data']['series_categories'] = response
-                        for item in glob.current_playlist['data']['series_categories']:
-                            del item['parent_id']
                     if category == 3:
                         glob.current_playlist['data']['live_streams'] = response
 
@@ -239,17 +228,17 @@ class XStreamity_Menu(Screen):
         self.index = 0
 
         if glob.current_playlist['player_info']['showlive'] is True:
-            if glob.current_playlist['data']['live_categories'] != []:
+            if glob.current_playlist['data']['live_categories'] != [] and "user_info" not in glob.current_playlist['data']['live_categories']:
                 self.index += 1
                 self.list.append([self.index, _("Live Streams"), 0, ""])
 
         if glob.current_playlist['player_info']['showvod'] is True:
-            if glob.current_playlist['data']['vod_categories'] != []:
+            if glob.current_playlist['data']['vod_categories'] != [] and "user_info" not in glob.current_playlist['data']['vod_categories']:
                 self.index += 1
                 self.list.append([self.index, _("Vod"), 1, ""])
 
         if glob.current_playlist['player_info']['showseries'] is True:
-            if glob.current_playlist['data']['series_categories'] != []:
+            if glob.current_playlist['data']['series_categories'] != [] and "user_info" not in glob.current_playlist['data']['series_categories']:
                 self.index += 1
                 self.list.append([self.index, _("TV Series"), 2, ""])
 

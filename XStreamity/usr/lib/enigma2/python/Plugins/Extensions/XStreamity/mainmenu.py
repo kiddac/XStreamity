@@ -4,7 +4,7 @@
 from . import _
 from . import xstreamity_globals as glob
 from . import processfiles as xfiles
-from .plugin import skin_path, common_path, version, downloads_json, pythonVer
+from .plugin import skin_path, common_path, version, downloads_json, pythonVer, pythonFull
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -73,7 +73,8 @@ class XStreamity_MainMenu(Screen):
         try:
             import requests
             from PIL import Image
-            from multiprocessing.pool import ThreadPool
+            if int(pythonFull) < 3.9:
+                from multiprocessing.pool import ThreadPool
         except:
             dependencies = False
 
