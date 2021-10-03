@@ -103,6 +103,7 @@ class xServiceInfo(Converter, object):
                 idx = 0
                 while idx < n:
                     i = audio.getTrackInfo(idx)
+                    description = i.getDescription()
                     if description and description.split()[0] in ("AC3", "AC-3", "AC3+", "DTS"):
                         if self.type == self.IS_MULTICHANNEL:
                             return True
@@ -203,6 +204,14 @@ class xServiceInfo(Converter, object):
                 except:
                     pass
                 f.close()
+            elif path.exists("/proc/stb/vmpeg/0/fallback_framerate"):
+                f = open("/proc/stb/vmpeg/0/fallback_framerate", "r")
+                try:
+                    video_rate = int(f.read())
+                except:
+                    pass
+                f.close()
+
             if not video_rate:
                 try:
                     video_rate = int(self.getServiceInfoString(info, iServiceInformation.sFrameRate))
@@ -259,6 +268,13 @@ class xServiceInfo(Converter, object):
                 f.close()
             elif path.exists("/proc/stb/vmpeg/0/frame_rate"):
                 f = open("/proc/stb/vmpeg/0/frame_rate", "r")
+                try:
+                    video_rate = int(f.read())
+                except:
+                    pass
+                f.close()
+            elif path.exists("/proc/stb/vmpeg/0/fallback_framerate"):
+                f = open("/proc/stb/vmpeg/0/fallback_framerate", "r")
                 try:
                     video_rate = int(f.read())
                 except:

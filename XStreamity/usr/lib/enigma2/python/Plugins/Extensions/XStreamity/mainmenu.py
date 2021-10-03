@@ -73,9 +73,13 @@ class XStreamity_MainMenu(Screen):
         try:
             import requests
             from PIL import Image
-            if int(pythonFull) < 3.9:
+            print("***** python version *** %s" % pythonFull)
+            if pythonFull < 3.9:
+                print("*** checking multiprocessing ***")
                 from multiprocessing.pool import ThreadPool
-        except:
+        except Exception as e:
+            print("**** missing dependencies ***")
+            print(e)
             dependencies = False
 
         if dependencies is False:
