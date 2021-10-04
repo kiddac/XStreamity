@@ -1722,6 +1722,7 @@ class XStreamity_Categories(Screen):
 
     def buildXMLTV(self):
         # print("***** buildXMLTV ****")
+
         cleanName = re.sub(r'[\<\>\:\"\/\\\|\?\*]', '_', str(glob.current_playlist['playlist_info']['name']))
         cleanName = re.sub(r' ', '_', cleanName)
         cleanName = re.sub(r'_+', '_', cleanName)
@@ -1751,6 +1752,79 @@ class XStreamity_Categories(Screen):
             xml_str += '</sourcecat>\n'
             xml_str += '</sources>\n'
             f.write(xml_str)
+
+        # new xml code
+        """
+        print("*** new xml code ***")
+
+        reparsed = ""
+        sourcefile = "/etc/epgimport/xstreamity.sources.xml"
+
+        try:
+            import xml.etree.ElementTree as ET
+        except Exception as e:
+            print("*** a **")
+            print(e)
+
+        try:
+            from xml.dom import minidom
+        except Exception as e:
+            print("*** b **")
+            print(e)
+
+        try:
+            tree = ET.parse(sourcefile)
+        except Exception as e:
+            print("*** 1 **")
+            print(e)
+
+        try:
+            root = tree.getroot()
+        except Exception as e:
+            print("*** 2 ***")
+            print(e)
+
+        try:
+            sourcecat = ET.Element("sourcecat")
+        except Exception as e:
+                print("*** 3 **")
+                print(e)
+
+
+        source = ET.SubElement(sourcecat, "source", type="gen_xmltv", nocheck="1", channels=channelpath)
+
+        description = ET.SubElement(sourcecat, "description")
+        description.text = str(cleanName)
+
+        url = ET.Element("url")
+        if str(glob.current_playlist['player_info']['xmltv_api']) == str(glob.current_playlist['playlist_info']['xmltv_api']):
+            url.text="<![CDATA[' + str(glob.current_playlist['player_info']['xmltv_api']) + '&next_days=2]]>"
+        else:
+            url.text="<![CDATA[' + str(glob.current_playlist['player_info']['xmltv_api']) + ']]>"
+
+        # tree.write(open(sourcefile, 'w'), encoding='utf-8')
+
+        try:
+            doc = minidom.parseString(ET.tostring(root))
+        except Exception as e:
+            print("*** 4 ***")
+            print(e)
+
+
+        try:
+            reparsed = doc.toprettyxml(encoding='utf8').decode()
+            print(reparsed)
+        except Exception as e:
+            print("*** 5 **")
+            print(e)
+
+        try:
+            with open(sourcefile, "w") as f:
+                f.write(reparsed.encode('utf-8'))
+        except Exception as e:
+            print(e)
+            print("*** 6 ***")
+            """
 
         # buildXMLTVChannelFile
         with open(channelpath, 'w') as f:
@@ -1787,13 +1861,6 @@ class XStreamity_Categories(Screen):
 
             xml_str += '</channels>\n'
             f.write(xml_str)
-
-        """
-        if self["downloading"].instance:
-            self["downloading"].hide()
-            """
-
-        # self.xmltvdownloaded = True
 
         self.buildLists()
 

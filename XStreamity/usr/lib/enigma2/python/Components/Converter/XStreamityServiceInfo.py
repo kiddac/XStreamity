@@ -7,7 +7,7 @@ from os import path
 WIDESCREEN = [1, 3, 4, 7, 8, 0xB, 0xC, 0xF, 0x10]
 
 
-class xServiceInfo(Converter, object):
+class XstreamityServiceInfo(Converter, object):
 
     IS_MULTICHANNEL = 0
     AUDIO_STEREO = 1

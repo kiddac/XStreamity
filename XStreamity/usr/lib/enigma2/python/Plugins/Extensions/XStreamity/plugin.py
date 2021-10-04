@@ -5,7 +5,7 @@ from . import _
 
 from Plugins.Plugin import PluginDescriptor
 from enigma import eTimer, getDesktop, addFont
-from Components.config import config, ConfigSubsection, ConfigSelection, ConfigDirectory, ConfigYesNo, ConfigSelectionNumber, ConfigClock
+from Components.config import config, ConfigSubsection, ConfigSelection, ConfigDirectory, ConfigYesNo, ConfigSelectionNumber, ConfigClock, configfile
 
 import twisted.python.runtime
 
@@ -102,17 +102,7 @@ if os.path.exists("/usr/bin/apt-get"):
 
 cfg.livetype = ConfigSelection(default='1', choices=streamtype_choices)
 cfg.vodtype = ConfigSelection(default='4097', choices=streamtype_choices)
-downloadpath = None
-
-try:
-    from Components.UsageConfig import defaultMoviePath
-    downloadpath = defaultMoviePath()
-    cfg.downloadlocation = ConfigDirectory(default=downloadpath)
-except:
-    if os.path.exists("/usr/bin/apt-get"):
-        cfg.downloadlocation = ConfigDirectory(default='/media/hdd/movie/')
-
-
+cfg.downloadlocation = ConfigDirectory(default='/media/hdd/movie/')
 cfg.location = ConfigDirectory(default=dir_etc)
 cfg.main = ConfigYesNo(default=True)
 cfg.livepreview = ConfigYesNo(default=False)

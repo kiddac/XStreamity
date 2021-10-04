@@ -52,7 +52,7 @@ CENTER = 2
 BLOCK = 3
 
 
-class xRunningText(Renderer):
+class XStreamityRunningText(Renderer):
     def __init__(self):
         Renderer.__init__(self)
         self.type = NONE

@@ -32,7 +32,7 @@
 	<!-- epg section -->
 	<widget name="epg_bg" position="340,200" size="920,480" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/epg-bg.png" alphatest="blend" zPosition="2" />
 	<widget source="epg_title" render="Label" position="340,54" size="740,28" font="xstreamitybold;20" foregroundColor="#ffffff" backgroundColor="#2a70a4" halign="left" noWrap="1" transparent="1" zPosition="2" />
-	<widget source="epg_description" render="xRunningText" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" position="340,96" size="740,80" font="xstreamityregular;18" foregroundColor="#ffffff" backgroundColor="#2a70a4" halign="left" transparent="1" zPosition="2" />
+	<widget source="epg_description" render="XStreamityRunningText" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" position="340,96" size="740,80" font="xstreamityregular;18" foregroundColor="#ffffff" backgroundColor="#2a70a4" halign="left" transparent="1" zPosition="2" />
 
 	<widget source="epg_list" render="Listbox" position="340,200" size="920,480" foregroundColor="#ffffff" backgroundColor="#2a70a4" foregroundColorSelected="#ffffff" backgroundColorSelected="#102e4b" scrollbarMode="showNever"
 			itemHeight="48" transparent="1" zPosition="3" >
@@ -64,7 +64,7 @@
 	<widget name="progress" position="1093,170" size="147,8" borderWidth="1" borderColor="#ffffff" foregroundColor="#2a70a4" backgroundColor="#102e4b" zPosition="3" />
 	<!-- vod section -->
 	<widget source="vod_title" render="Label" position="340,54" size="740,28" font="xstreamitybold;20" foregroundColor="#ffffff" backgroundColor="#2a70a4" halign="left" noWrap="1" transparent="1" zPosition="2" />
-	<widget source="vod_description" render="xRunningText" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" position="340,96" size="740,80" font="xstreamityregular;18" foregroundColor="#ffffff" backgroundColor="#2a70a4" halign="left" transparent="1" zPosition="2" />
+	<widget source="vod_description" render="XStreamityRunningText" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" position="340,96" size="740,80" font="xstreamityregular;18" foregroundColor="#ffffff" backgroundColor="#2a70a4" halign="left" transparent="1" zPosition="2" />
 	<widget name="vod_cover" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/default/images/vod_cover.png" alphatest="off" position="347,200" size="267,400" zPosition="2" />
 	<widget name="vod_background" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/vod_background.png" position="653,200" size="587,400" alphatest="blend" zPosition="2" />
 	

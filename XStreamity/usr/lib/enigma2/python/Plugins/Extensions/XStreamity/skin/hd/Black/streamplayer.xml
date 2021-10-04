@@ -5,7 +5,7 @@
 	<!-- logo -->
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/logo.png" position="28,24" size="134,98" alphatest="blend" zPosition="1" />
 	<!-- epg description -->
-	<widget source="epg_description" render="xRunningText" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" position="214,24" size="1039,88" font="xstreamityregular;20" foregroundColor="#ffffff" backgroundColor="#000000" halign="left" transparent="1" zPosition="2" />
+	<widget source="epg_description" render="XStreamityRunningText" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" position="214,24" size="1039,88" font="xstreamityregular;20" foregroundColor="#ffffff" backgroundColor="#000000" halign="left" transparent="1" zPosition="2" />
 	<!-- bottom background -->
 	<eLabel position="0,576" size="1280,144" backgroundColor="#40000000" zPosition="1" />
 	<eLabel position="0,575" size="1280,1" backgroundColor="#fffffff" zPosition="1" />
@@ -54,42 +54,42 @@
 	<widget source="extension" render="Label" position="1040,682" size="60,24" font="xstreamitybold;18" foregroundColor="#ffffff" backgroundColor="#40000000" valign="center" halign="center" transparent="1" zPosition="3" />
 	<!-- resolution -->
 	<widget source="session.CurrentService" render="Label" position="1104,626" size="60,24" font="xstreamitybold;18" foregroundColor="#ffffff" backgroundColor="#40000000" valign="center" halign="center" transparent="1" zPosition="3">
-		<convert type="xServiceInfo">VideoWidth</convert>
+		<convert type="XStreamityServiceInfo">VideoWidth</convert>
 	</widget>
 	<widget source="session.CurrentService" render="Label" position="1104,654" size="60,24" font="xstreamitybold;18" foregroundColor="#ffffff" backgroundColor="#40000000" valign="center" halign="center" transparent="1" zPosition="3">
-		<convert type="xServiceInfo">VideoHeight</convert>
+		<convert type="XStreamityServiceInfo">VideoHeight</convert>
 	</widget>
 	<widget source="session.CurrentService" render="Label" position="1104,682" size="60,24" font="xstreamitybold;16" foregroundColor="#ffffff" backgroundColor="#40000000" valign="center" halign="center" transparent="1" zPosition="3">
-		<convert type="xServiceInfo">Framerate</convert>
+		<convert type="XStreamityServiceInfo">Framerate</convert>
 	</widget>
 	<!-- infos -->
 	<widget text="HD" render="FixedLabel" source="session.CurrentService" position="1168,626" size="60,24" font="xstreamitybold;18" foregroundColor="#ffffff" backgroundColor="#40000000" valign="center" halign="center" transparent="1" zPosition="3">
-		<convert type="xServiceInfo">IsHD</convert>
+		<convert type="XStreamityServiceInfo">IsHD</convert>
 		<convert type="ConditionalShowHide" />
 	</widget>
 	<widget text="SD" render="FixedLabel" source="session.CurrentService" position="1168,626" size="60,24" font="xstreamitybold;18" foregroundColor="#ffffff" backgroundColor="#40000000" valign="center" halign="center" transparent="1" zPosition="3">
-		<convert type="xServiceInfo">IsSD</convert>
+		<convert type="XStreamityServiceInfo">IsSD</convert>
 		<convert type="ConditionalShowHide" />
 	</widget>
 	<widget text="16:9" render="FixedLabel" source="session.CurrentService" position="1168,654" size="60,24" font="xstreamitybold;18" foregroundColor="#ffffff" backgroundColor="#40000000" valign="center" halign="center" transparent="1" zPosition="3">
-		<convert type="xServiceInfo">IsWidescreen</convert>
+		<convert type="XStreamityServiceInfo">IsWidescreen</convert>
 		<convert type="ConditionalShowHide" />
 	</widget>
 	<widget text="4:3" render="FixedLabel" source="session.CurrentService" position="1168,654" size="60,24" font="xstreamitybold;18" foregroundColor="#ffffff" backgroundColor="#40000000" valign="center" halign="center" transparent="1" zPosition="3">
-		<convert type="xServiceInfo">IsWidescreen</convert>
+		<convert type="XStreamityServiceInfo">IsWidescreen</convert>
 		<convert type="ConditionalShowHide">Invert</convert>
 	</widget>
 	<widget source="session.CurrentService" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/dolby.png" position="1168,682" size="60,24" alphatest="blend" zPosition="2">
-		<convert type="xServiceInfo">IsMultichannel</convert>
+		<convert type="XStreamityServiceInfo">IsMultichannel</convert>
 		<convert type="ConditionalShowHide" />
 	</widget>
 	<!-- buttons -->
 	<widget source="session.CurrentService" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/key_audio.png" position="1232,626" size="25,25" alphatest="blend" zPosition="2">
-		<convert type="xServiceInfo">AudioTracksAvailable</convert>
+		<convert type="XStreamityServiceInfo">AudioTracksAvailable</convert>
 		<convert type="ConditionalShowHide" />
 	</widget>
 	<widget source="session.CurrentService" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/key_subs.png" position="1232,654" size="25,25" alphatest="blend" zPosition="2">
-		<convert type="xServiceInfo">SubtitlesAvailable</convert>
+		<convert type="XStreamityServiceInfo">SubtitlesAvailable</convert>
 		<convert type="ConditionalShowHide" />
 	</widget>
 </screen>

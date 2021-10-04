@@ -14,9 +14,9 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: usr/lib/enigma2/python/Components/Converter/xServicePosition.py:147
-#: usr/lib/enigma2/python/Components/Converter/xServicePosition.py:149
-#: usr/lib/enigma2/python/Components/Converter/xServicePosition.py:151
+#: usr/lib/enigma2/python/Components/Converter/XStreamityServicePosition.py:147
+#: usr/lib/enigma2/python/Components/Converter/XStreamityServicePosition.py:149
+#: usr/lib/enigma2/python/Components/Converter/XStreamityServicePosition.py:151
 #, python-format
 msgid "%d Min"
 msgid_plural "%d Mins"

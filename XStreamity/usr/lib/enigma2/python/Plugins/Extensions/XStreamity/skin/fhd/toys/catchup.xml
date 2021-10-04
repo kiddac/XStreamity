@@ -32,7 +32,7 @@
 	<!-- epg section -->
 	<widget name="epg_bg" position="480,270" size="1440,750" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/toys/images/epg-bg.png" alphatest="blend" zPosition="2" />
 	<widget source="epg_title" render="Label" position="510,81" size="1110,42" font="xstreamitybold;30" foregroundColor="#ffffff" backgroundColor="#4c82cd" halign="left" noWrap="1" transparent="1" zPosition="2" />
-	<widget source="epg_description" render="xRunningText" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" position="510,144" size="1110,120" font="xstreamitybold;27" foregroundColor="#ffffff" backgroundColor="#4c82cd" halign="left" transparent="1" zPosition="2" />
+	<widget source="epg_description" render="XStreamityRunningText" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" position="510,144" size="1110,120" font="xstreamitybold;27" foregroundColor="#ffffff" backgroundColor="#4c82cd" halign="left" transparent="1" zPosition="2" />
 
 	<widget source="epg_short_list" render="Listbox" position="510,300" size="1380,720"  foregroundColor="#ffffff" backgroundColor="#0945b8" foregroundColorSelected="#004e98" backgroundColorSelected="#9bb1e6" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/toys/images/selection5.png" backgroundPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/toys/images/blank.png" scrollbarMode="showNever"
 			itemHeight="72" transparent="1" zPosition="3" >

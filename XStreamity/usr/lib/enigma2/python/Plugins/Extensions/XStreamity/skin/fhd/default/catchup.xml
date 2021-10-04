@@ -32,7 +32,7 @@
 	<!-- epg section -->
 	<widget name="epg_bg" position="510,300" size="1380,720" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/epg-bg.png" alphatest="blend" zPosition="2" />
 	<widget source="epg_title" render="Label" position="510,81" size="1110,42" font="xstreamitybold;30" foregroundColor="#ffffff" backgroundColor="#2a70a4" halign="left" noWrap="1" transparent="1" zPosition="2" />
-	<widget source="epg_description" render="xRunningText" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" position="510,144" size="1110,120" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" halign="left" transparent="1" zPosition="2" />
+	<widget source="epg_description" render="XStreamityRunningText" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" position="510,144" size="1110,120" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" halign="left" transparent="1" zPosition="2" />
 	
 	<widget source="epg_short_list" render="Listbox" position="510,300" size="1380,720" foregroundColor="#ffffff" backgroundColor="#2a70a4" foregroundColorSelected="#ffffff" backgroundColorSelected="#102e4b" scrollbarMode="showOnDemand"  itemHeight="72" transparent="1" zPosition="4" >
 		<convert type="TemplatedMultiContent">{"template": [

@@ -133,7 +133,9 @@ class XStreamity_DownloadManager(Screen):
             stat = os.statvfs(cfg.downloadlocation.value)
             free = convert_size(float(stat.f_bfree * stat.f_bsize))
             total = convert_size(float(stat.f_blocks * stat.f_bsize))
-        except:
+        except Exception as e:
+            print("** diskspace failed **")
+            print(e)
             free = "-?-"
             total = "-?-"
 
@@ -145,8 +147,12 @@ class XStreamity_DownloadManager(Screen):
             url = video[2]
             length = video[5]
             if length == 0:
-                r = requests.get(url, timeout=10, verify=False, stream=True).headers['Content-length']
-                video[5] = float(r)
+                r = requests.get(url, timeout=10, verify=False, stream=True)
+                try:
+                    video[5] = float(r.headers['Content-length'])
+                except Exception as e:
+                    print(e)
+                    video[5] = 0
                 x += 1
                 if x == 3:
                     x = 0
@@ -199,9 +205,10 @@ class XStreamity_DownloadManager(Screen):
         if os.path.exists(self.path):
             totalbytes = self.downloads_all[self.downloadingindex][5]
             recbytes = os.path.getsize(self.path)
-            self.progress = int(100 * (float(recbytes) / totalbytes))
-            self.downloads_all[self.downloadingindex][4] = self.progress
-            self.buildList()
+            if self.downloads_all[self.downloadingindex][5] != 0:
+                self.progress = int(100 * (float(recbytes) / totalbytes))
+                self.downloads_all[self.downloadingindex][4] = self.progress
+                self.buildList()
 
     def saveJson(self):
         with open(downloads_json, 'w') as f:
@@ -237,7 +244,8 @@ class XStreamity_DownloadManager(Screen):
 
             del self.downloads_all[currentindex]
             self.saveJson()
-
+            self.start()
+            
     def download_cancelled(self, data=None):
         self.progress = 0
         if self.downloading:
@@ -246,7 +254,6 @@ class XStreamity_DownloadManager(Screen):
                     self.downloadfile = None
                 except Exception as e:
                     print(e)
-
         try:
             os.remove(self.path)
         except:
@@ -259,6 +266,10 @@ class XStreamity_DownloadManager(Screen):
         self.buildList()
 
     def download(self):
+        if not os.path.exists(cfg.downloadlocation.value) or cfg.downloadlocation.value is None:
+            self.session.open(MessageBox, _('Vod Download folder location does not exist.\n\n' + str(cfg.downloadlocation.value) + 'Please set download folder in Main Settings.'), type=MessageBox.TYPE_WARNING)
+            return
+
         if self["downloadlist"].getCurrent():
             self.url = self["downloadlist"].getCurrent()[2]
 

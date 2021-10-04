@@ -10,6 +10,7 @@ from Components.ActionMap import ActionMap
 from Components.ConfigList import ConfigListScreen
 from Components.config import config, configfile, getConfigListEntry, ConfigText, ConfigSelection, ConfigYesNo, ConfigDirectory
 from Components.Pixmap import Pixmap
+from Screens.MessageBox import MessageBox
 from Screens.LocationBox import LocationBox
 from Screens.ParentalControlSetup import ProtectedScreen
 from Screens.Screen import Screen
@@ -63,7 +64,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.setTitle(self.setup_title)
 
     def cancel(self, answer=None):
-        from Screens.MessageBox import MessageBox
+        
         if answer is None:
             if self['config'].isChanged():
                 self.session.openWithCallback(self.cancel, MessageBox, _('Really close without saving settings?'))
@@ -77,14 +78,20 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         return
 
     def save(self):
-        glob.changed = False
-        if self['config'].isChanged():
-            glob.changed = True
-            for x in self['config'].list:
-                x[1].save()
-            cfg.save()
-            configfile.save()
-        self.close()
+            
+        if cfg.parental.getValue() is True and (config.ParentalControl.setuppin.value == 0 or config.ParentalControl.setuppin.value == 1234):
+            self.session.open(MessageBox, _('Please change default parental pin before turning on XStreamity parental control.\n\nPin cannot be 0000 or 1234'), MessageBox.TYPE_WARNING)
+            return
+        else:
+            glob.changed = False
+            if self['config'].isChanged():
+                glob.changed = True
+                for x in self['config'].list:
+                    x[1].save()
+                cfg.save()
+                configfile.save()
+            self.close()
+            
 
     def initConfig(self):
         self.cfg_skin = getConfigListEntry(_('Select skin *Restart GUI Required'), cfg.skin)
