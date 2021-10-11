@@ -13,8 +13,6 @@ from enigma import eTimer, eServiceReference
 
 from Components.Task import Task, Job, job_manager as JobManager, Condition
 
-# from twisted.web.client import downloadPage
-
 try:
     from urlparse import urlparse
 except:
@@ -25,28 +23,7 @@ import math
 import os
 import re
 import requests
-# import sys
 import time
-
-
-# https twisted client hack #
-try:
-    from twisted.internet import ssl
-    from twisted.internet._sslverify import ClientTLSOptions
-    sslverify = True
-except:
-    sslverify = False
-
-if sslverify:
-    class SNIFactory(ssl.ClientContextFactory):
-        def __init__(self, hostname=None):
-            self.hostname = hostname
-
-        def getContext(self):
-            ctx = self._contextFactory(self.method)
-            if self.hostname:
-                ClientTLSOptions(self.hostname, ctx)
-            return ctx
 
 
 def convert_size(size_bytes):
@@ -76,7 +53,7 @@ class downloadJob(Job):
         self.abort()
 
 
-# downloadtask code borrowed from MyStreamVod
+# downloadtask code borrowed from nStreamVod old pli plugin
 class downloadTask(Task):
     # print("***downloadTask***")
     if pythonVer == 3:
@@ -95,7 +72,6 @@ class downloadTask(Task):
         return
 
     def processOutput(self, data):
-
         if pythonVer == 3:
             data = str(data)
         try:
@@ -137,7 +113,7 @@ class downloadTask(Task):
         print("**** after run ***")
         if self.getProgress() == 0:
             try:
-                self.toolbox. download_failed()
+                self.toolbox.download_failed()
             except:
                 pass
         elif self.getProgress() == 100:
@@ -400,6 +376,7 @@ class XStreamity_DownloadManager(Screen):
 
         try:
             os.remove(self.path)
+            os.remove(self.path + ".meta")
         except:
             pass
 
@@ -460,7 +437,7 @@ class XStreamity_DownloadManager(Screen):
                     self.buildList()
 
                     try:
-                        cmd = "wget --tries=1 -c '%s' -O '%s%s'" % (self.url, self.shortpath, filename)
+                        cmd = "wget -U 'Enigma2 - XStreamity Plugin' -c '%s' -O '%s%s'" % (self.url, self.shortpath, filename)
                         JobManager.AddJob(downloadJob(self, cmd, self.path, cleanName))
                         self.createMetaFile(filename, cleanName)
                     except Exception as e:
@@ -478,7 +455,6 @@ class XStreamity_DownloadManager(Screen):
     def createMetaFile(self, filename, cleanName):
         try:
             serviceref = eServiceReference(4097, 0, self.shortpath + filename)
-            metafile = open('%s/%s.meta' % (self.shortpath, filename), 'w')
             with open('%s/%s.meta' % (self.shortpath, filename), 'w') as f:
                 f.write('%s\n%s\n%s\n%i\n' % (serviceref.toString(), cleanName, "", time.time()))
         except Exception as e:
