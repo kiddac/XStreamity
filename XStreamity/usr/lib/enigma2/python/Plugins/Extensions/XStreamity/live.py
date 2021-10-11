@@ -1689,9 +1689,9 @@ class XStreamity_Categories(Screen):
 
         if scheme == "https" and sslverify:
             sniFactory = SNIFactory(domain)
-            downloadPage(url, tempfilename, sniFactory).addCallback(self.downloadComplete).addErrback(self.downloadFailed)
+            downloadPage(url, tempfilename, sniFactory).addCallback(self.downloadComplete).addErrback(self.downloadFail)
         else:
-            downloadPage(url, tempfilename).addCallback(self.downloadcomplete, tempfilename).addErrback(self.downloadFail)
+            downloadPage(url, tempfilename).addCallback(self.downloadComplete, tempfilename).addErrback(self.downloadFail)
 
         os.close(tmpfd)
 
@@ -1704,7 +1704,7 @@ class XStreamity_Categories(Screen):
             self["downloading"].hide()
             """
 
-    def downloadcomplete(self, data, filename):
+    def downloadComplete(self, data, filename):
         # print("***** download complete ****")
         channellist_all = []
         with open(filename, "r+b") as f:
