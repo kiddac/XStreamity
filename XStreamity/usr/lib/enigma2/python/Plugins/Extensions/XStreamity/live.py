@@ -302,6 +302,7 @@ class XStreamity_Categories(Screen):
             "channelUp": self.pageUp,
             "channelDown": self.pageDown,
             "rec": self.downloadStream,
+            "5": self.downloadStream,
             "tv": self.favourite,
             "stop": self.favourite,
             "0": self.reset,
@@ -1196,7 +1197,7 @@ class XStreamity_Categories(Screen):
             glob.currentchannellistindex = currentindex
             glob.currentepglist = self.epglist[:]
 
-            if next_url.endswith("00"):
+            if next_url.endswith("id=00"):
                 self.favourites_category = True
             else:
                 self.favourites_category = False

@@ -5,7 +5,7 @@ from . import _
 from . import streamplayer
 from . import xstreamity_globals as glob
 
-from .plugin import skin_path, screenwidth, hdr, cfg, common_path, dir_tmp, pythonVer
+from .plugin import skin_path, screenwidth, hdr, cfg, common_path, dir_tmp, downloads_json, pythonVer
 from .xStaticText import StaticText
 
 from collections import OrderedDict
@@ -38,7 +38,6 @@ import os
 import re
 import requests
 import time
-import sys
 import zlib
 
 
@@ -208,6 +207,7 @@ class XStreamity_Categories(Screen):
             "channelUp": self.pageUp,
             "channelDown": self.pageDown,
             "rec": self.downloadVideo,
+            "5": self.downloadVideo,
             "0": self.reset,
         }, -1)
 
@@ -1137,38 +1137,34 @@ class XStreamity_Categories(Screen):
 
     # record button download video file
     def downloadVideo(self):
-        if self.level == 4:
-            from Screens.MessageBox import MessageBox
-            if self["channel_list"].getCurrent():
-                stream_url = self["channel_list"].getCurrent()[3]
-                extension = str(os.path.splitext(stream_url)[-1])
-                title = self["channel_list"].getCurrent()[0]
-                if "/series/" in stream_url:
-                    title = str(self["channel_list"].getCurrent()[15]) + " " + str(self["channel_list"].getCurrent()[0])
+        # load x-downloadlist.json file
 
-                fileTitle = re.sub(r'[\<\>\:\"\/\\\|\?\*\[\]]', '', title)
-                filepath = str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension)
+        if self["channel_list"].getCurrent():
+            title = self["channel_list"].getCurrent()[0]
+            stream_url = self["channel_list"].getCurrent()[3]
+            downloads_all = []
+            if os.path.isfile(downloads_json):
+                with open(downloads_json, "r") as f:
+                    try:
+                        downloads_all = json.load(f)
+                    except:
+                        pass
 
-                try:
-                    parsed = urlparse(stream_url)
-                    domain = parsed.hostname
-                    scheme = parsed.scheme
+            exists = False
+            for video in downloads_all:
+                url = video[2]
+                if stream_url == url:
+                    exists = True
 
-                    if pythonVer == 3:
-                        stream_url = stream_url.encode()
+            if exists is False:
+                downloads_all.append([_("Series"), title, stream_url, _("Not Started"), 0, 0])
 
-                    if scheme == "https" and sslverify:
-                        sniFactory = SNIFactory(domain)
-                        downloadPage(stream_url, filepath, sniFactory).addErrback(self.failed)
-                    else:
-                        downloadPage(stream_url, filepath).addErrback(self.self.failed)
+                with open(downloads_json, 'w') as f:
+                    json.dump(downloads_all, f)
 
-                    self.session.open(MessageBox, _('Downloading') + '\n\n' + str(title) + "\n\n" + str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension), MessageBox.TYPE_INFO)
-                except Exception as e:
-                    print(("download series error %s" % e))
-
-                except:
-                    self.session.open(MessageBox, _('Download Failed') + '\n\n' + str(title) + "\n\n" + str(cfg.downloadlocation.getValue()) + str(fileTitle) + str(extension), MessageBox.TYPE_WARNING)
+                self.session.open(MessageBox, _(title) + "\n\n" + _("Added to download manager"), MessageBox.TYPE_INFO, timeout=5)
+            else:
+                self.session.open(MessageBox, _(title) + "\n\n" + _("Already added to download manager"), MessageBox.TYPE_ERROR, timeout=5)
 
     def failed(self, data=None):
         if data:

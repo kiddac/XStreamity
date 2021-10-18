@@ -192,6 +192,7 @@ class XStreamity_Catchup(Screen):
             "channelDown": self.pageDown,
             "0": self.reset,
             "rec": self.downloadVideo,
+            "5": self.downloadVideo,
         }, -2)
 
         self.onFirstExecBegin.append(self.createSetup)
@@ -514,7 +515,7 @@ class XStreamity_Catchup(Screen):
                         if "epg_listings" in shortEPGJson:
                             if shortEPGJson["epg_listings"]:
                                 for listing in shortEPGJson["epg_listings"]:
-                                    if 'has_archive' in listing and listing['has_archive'] == 1:
+                                    if ('has_archive' in listing and listing['has_archive'] == 1) or ('now_playing' in listing and listing['now_playing'] == 1):
 
                                         epg_title = ""
                                         epg_description = ""

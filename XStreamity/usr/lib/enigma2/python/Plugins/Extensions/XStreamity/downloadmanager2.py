@@ -23,6 +23,7 @@ import math
 import os
 import re
 import requests
+import subprocess
 import time
 
 
@@ -39,7 +40,7 @@ def convert_size(size_bytes):
 class downloadJob(Job):
     def __init__(self, toolbox, cmdline, filename, filetitle):
         print("**** downloadJob init ***")
-        Job.__init__(self, _('Download:') + ' %s' % filetitle)
+        Job.__init__(self, _('XDownload:') + ' %s' % filetitle)
         self.filename = filename
         self.toolbox = toolbox
         self.retrycount = 0
@@ -227,27 +228,12 @@ class XStreamity_DownloadManager(Screen):
             print(e)
             free = "-?-"
             total = "-?-"
-
         self["diskspace"].setText(_('Free Space:') + " " + str(free) + " " + _("of") + " " + str(total))
-
-    def checkRedirect(self, url):
-        # print("*** check redirect ***")
-        try:
-            x = requests.get(url, timeout=20, verify=False, stream=True)
-            # print("**** redirect url 1 *** %s" % x.url)
-            return str(x.url)
-        except Exception as e:
-            print(e)
-            # print("**** redirect url 2 *** %s" % url)
-            return str(url)
 
     def getDownloadSize(self):
         x = 0
         for video in self.downloads_all:
             url = video[2]
-
-            url = self.checkRedirect(url)
-
             length = video[5]
 
             if length == 0:
@@ -256,11 +242,10 @@ class XStreamity_DownloadManager(Screen):
                     video[5] = float(r.headers['content-length'])
                 except Exception as e:
                     print(e)
-                    self.session.open(MessageBox, _('Download Error') + "\n\n" + str(url) + "\n\n" + str(e), type=MessageBox.TYPE_ERROR)
                     video[5] = 0
                     continue
                 x += 1
-                if x == 3:
+                if x == 5:
                     x = 0
                     time.sleep(1)
         self.saveJson()
@@ -268,6 +253,7 @@ class XStreamity_DownloadManager(Screen):
     def checkactivedownloads(self):
         self.downloading = False
         x = 0
+        recbytes = 0
         for video in self.downloads_all:
             if video[3] == _("Downloading"):
                 self.downloading = True
@@ -288,7 +274,12 @@ class XStreamity_DownloadManager(Screen):
                 self.downloadingindex = x
 
                 totalbytes = self.downloads_all[self.downloadingindex][5]
-                recbytes = os.path.getsize(self.path)
+                try:
+                    recbytes = os.path.getsize(self.path)
+                except:
+                    video[3] = _("Not Started")
+                    self.downloading = False
+
                 if totalbytes == recbytes:
                     self.downloads_all[self.downloadingindex][3] = _("Finished")
                     self.downloads_all[self.downloadingindex][4] = 100
@@ -308,19 +299,21 @@ class XStreamity_DownloadManager(Screen):
             self.getprogress()
 
     def getprogress(self):
-        if os.path.exists(self.path):
-            totalbytes = self.downloads_all[self.downloadingindex][5]
-            recbytes = os.path.getsize(self.path)
-            if self.downloads_all[self.downloadingindex][5] != 0:
-                self.progress = int(100 * (float(recbytes) / totalbytes))
-                if self.progress == 100:
-                    try:
-                        self.download_finished()
-                        return
-                    except:
-                        pass
-                self.downloads_all[self.downloadingindex][4] = self.progress
-                self.buildList()
+        jobs = JobManager.getPendingJobs()
+        if len(jobs) >= 1:
+            for job in jobs:
+                jobname = str(job.name)
+                if "XDownload:" in jobname:
+                    self.progress = job.progress
+                    if self.progress == 100:
+                        try:
+                            self.download_finished()
+                            return
+                        except:
+                            pass
+                    self.downloads_all[self.downloadingindex][4] = self.progress
+                    self.buildList()
+                    break
 
     def saveJson(self):
         with open(downloads_json, 'w') as f:
@@ -367,12 +360,15 @@ class XStreamity_DownloadManager(Screen):
                 except Exception as e:
                     print(e)
 
-        try:
-            print("*** killing wget downloads ***")
-            cmd = 'pkill -9 wget'
-            os.popen(cmd)
-        except Exception as e:
-            print(e)
+        print("**** Aborting download ***")
+
+        jobs = JobManager.getPendingJobs()
+        if len(jobs) >= 1:
+            for job in jobs:
+                jobname = str(job.name)
+                if "XDownload: " in jobname:
+                    job.cancel()
+                    break
 
         try:
             os.remove(self.path)
@@ -387,6 +383,7 @@ class XStreamity_DownloadManager(Screen):
         self.buildList()
 
     def download(self):
+        print("*** downloading ***")
         if not os.path.exists(cfg.downloadlocation.value) or cfg.downloadlocation.value is None:
             self.session.open(MessageBox, _('Vod Download folder location does not exist.\n\n' + str(cfg.downloadlocation.value) + 'Please set download folder in Main Settings.'), type=MessageBox.TYPE_WARNING)
             return
@@ -428,22 +425,31 @@ class XStreamity_DownloadManager(Screen):
 
                     self.filmtitle = self["downloadlist"].getCurrent()[1]
 
-                    cleanName = re.sub(r'[\<\>\:\"\/\\\|\?\*]', ' ', str(self.filmtitle))
-                    cleanName = re.sub(r'  ', ' ', cleanName)
-                    filename = str(cleanName) + str(self.extension)
+                    self.cleanName = re.sub(r'[\<\>\:\"\/\\\|\?\*]', ' ', str(self.filmtitle))
+                    self.cleanName = re.sub(r'  ', ' ', self.cleanName)
+                    filename = str(self.cleanName) + str(self.extension)
                     self.shortpath = str(cfg.downloadlocation.getValue())
                     self.path = str(cfg.downloadlocation.getValue()) + str(filename)
 
-                    self.buildList()
+                    cmd = "wget -U 'Enigma2 - XStreamity Plugin' -c '%s' -O '%s%s'" % (self.url, self.shortpath, filename)
+
+                    if "https" in str(self.url):
+                        checkcmd = "strings $(which wget) | grep no-check-certificate"
+                        result = subprocess.run(checkcmd, shell=True)
+                        if result.returncode == 0:
+                            cmd = "wget --no-check-certificate -U 'Enigma2 - XStreamity Plugin' -c '%s' -O '%s%s'" % (self.url, self.shortpath, filename)
+                        else:
+                            self.session.open(MessageBox, _('Please update your wget library to download https lines\n\nopkg update\nopkg install wget'), type=MessageBox.TYPE_INFO)
 
                     try:
-                        cmd = "wget -U 'Enigma2 - XStreamity Plugin' -c '%s' -O '%s%s'" % (self.url, self.shortpath, filename)
-                        JobManager.AddJob(downloadJob(self, cmd, self.path, cleanName))
-                        self.createMetaFile(filename, cleanName)
+                        JobManager.AddJob(downloadJob(self, cmd, self.path, self.cleanName))
+                        self.createMetaFile(filename, self.cleanName)
                     except Exception as e:
                         print("**** download error ***")
                         self.downloading = False
                         print(e)
+
+                    self.buildList()
 
             elif self.downloading is True:
                 if self.downloads_all[currentindex][3] == _("Downloading"):
@@ -472,7 +478,7 @@ class XStreamity_DownloadManager(Screen):
         self.download_cancelled()
 
     def download_finished(self, string=""):
-        print("**** download finished ***")
+        # print("**** download finished ***")
         self.downloads_all[self.downloadingindex][3] = _("Finished")
         self.downloads_all[self.downloadingindex][4] = 100
         self.downloading = False
