@@ -8,7 +8,7 @@ from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
 from Components.ConfigList import ConfigListScreen
-from Components.config import getConfigListEntry, ConfigText, ConfigSelection, ConfigYesNo, ConfigEnableDisable, NoSave
+from Components.config import getConfigListEntry, ConfigText, ConfigSelection, ConfigYesNo, ConfigEnableDisable, NoSave, ConfigSelectionNumber
 from Components.Pixmap import Pixmap
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
@@ -94,6 +94,7 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.showvod = glob.current_playlist['player_info']['showvod']
         self.showseries = glob.current_playlist['player_info']['showseries']
         self.showcatchup = glob.current_playlist['player_info']['showcatchup']
+        self.epgoffset = glob.current_playlist['player_info']['epgoffset']
 
         self.nameCfg = NoSave(ConfigText(default=self.name, fixed_size=False))
         self.outputCfg = NoSave(ConfigSelection(default=self.output, choices=[('ts', 'ts'), ('m3u8', 'm3u8')]))
@@ -104,6 +105,7 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.showvodCfg = NoSave(ConfigYesNo(default=self.showvod))
         self.showseriesCfg = NoSave(ConfigYesNo(default=self.showseries))
         self.showcatchupCfg = NoSave(ConfigYesNo(default=self.showcatchup))
+        self.epgoffsetCfg = NoSave(ConfigSelectionNumber(-9, 9, 1, default=self.epgoffset))
 
         self.createSetup()
 
@@ -116,6 +118,7 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.list.append(getConfigListEntry(_('Show VOD category:'), self.showvodCfg))
         self.list.append(getConfigListEntry(_('Show SERIES category:'), self.showseriesCfg))
         self.list.append(getConfigListEntry(_('Show CATCHUP category:'), self.showcatchupCfg))
+        self.list.append(getConfigListEntry(_('EPG offset:'), self.epgoffsetCfg))
 
         if self.showliveCfg.value is True:
             self.list.append(getConfigListEntry(_('Stream Type LIVE:'), self.liveTypeCfg))
@@ -203,6 +206,7 @@ class XStreamity_Settings(ConfigListScreen, Screen):
 
             vodtype = self.vodTypeCfg.value
             epgurl = self.epgUrlCfg.value
+            epgoffset = self.epgoffsetCfg.value
 
             glob.current_playlist['playlist_info']['name'] = self.name
             glob.current_playlist['playlist_info']['output'] = output
@@ -214,6 +218,7 @@ class XStreamity_Settings(ConfigListScreen, Screen):
             glob.current_playlist['player_info']['vodtype'] = vodtype
 
             glob.current_playlist['player_info']['xmltv_api'] = epgurl
+            glob.current_playlist['player_info']['epgoffset'] = epgoffset
 
             playlistline = '%s%s:%s/get.php?username=%s&password=%s&type=%s&output=%s #%s' % (self.protocol, self.domain, self.port, self.username, self.password, self.listtype, output, self.name)
 

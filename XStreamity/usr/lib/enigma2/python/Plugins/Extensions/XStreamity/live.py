@@ -193,6 +193,8 @@ class XStreamity_Categories(Screen):
         self.epg_channel_list = []
         self.favourites_category = False
 
+        self.epgtimeshift = 0
+
         # vod variables
         self["vod_background"] = Pixmap()
         self["vod_background"].hide()
@@ -307,6 +309,9 @@ class XStreamity_Categories(Screen):
             "stop": self.favourite,
             "0": self.reset,
             "menu": self.showHiddenList,
+            "7": self.epgminus,
+            "8": self.epgreset,
+            "9": self.epgplus,
         }, -1)
 
         self["favourites_actions"] = ActionMap(["XStreamityActions"], {
@@ -632,7 +637,7 @@ class XStreamity_Categories(Screen):
 
     def addEPG(self):
         if self["channel_list"].getCurrent():
-            now = time.time()
+            now = time.time() + (self.epgtimeshift * 3600)
 
             self.epgcache = eEPGCache.getInstance()
             offset = 0
@@ -649,13 +654,16 @@ class XStreamity_Categories(Screen):
                                 if (index + 1 < len(self.epgJson[epg_channel_id])):
                                     next_el = self.epgJson[epg_channel_id][index + 1]
 
+                                    entry[0] = int(entry[0]) + (int(glob.current_playlist["player_info"]["epgoffset"]) * 3600)
+                                    entry[1] = int(entry[1]) + (int(glob.current_playlist["player_info"]["epgoffset"]) * 3600)
+
                                     if int(entry[0]) < now and int(entry[1]) > now:
 
                                         channel[9] = str(time.strftime("%H:%M", time.localtime(int(entry[0]))))
                                         channel[10] = str(entry[2])
                                         channel[11] = str(entry[3])
 
-                                        channel[12] = str(time.strftime("%H:%M", time.localtime(int(next_el[0]))))
+                                        channel[12] = str(time.strftime("%H:%M", time.localtime(int(entry[1]))))
                                         channel[13] = str(next_el[2])
                                         channel[14] = str(next_el[3])
 
@@ -1739,93 +1747,39 @@ class XStreamity_Categories(Screen):
             open(channelpath, 'a').close()
 
         # buildXMLTVSourceFile
-        with open(sourcepath, 'w') as f:
-            xml_str = '<?xml version="1.0" encoding="utf-8"?>\n'
-            xml_str += '<sources>\n'
-            xml_str += '<sourcecat sourcecatname="XStreamity ' + str(cleanName) + '">\n'
-            xml_str += '<source type="gen_xmltv" nocheck="1" channels="' + channelpath + '">\n'
-            xml_str += '<description>' + str(cleanName) + '</description>\n'
-            if str(glob.current_playlist['player_info']['xmltv_api']) == str(glob.current_playlist['playlist_info']['xmltv_api']):
-                xml_str += '<url><![CDATA[' + str(glob.current_playlist['player_info']['xmltv_api']) + '&next_days=2]]></url>\n'
-            else:
-                xml_str += '<url><![CDATA[' + str(glob.current_playlist['player_info']['xmltv_api']) + ']]></url>\n'
-            xml_str += '</source>\n'
-            xml_str += '</sourcecat>\n'
-            xml_str += '</sources>\n'
-            f.write(xml_str)
-
-        # new xml code
-        """
         print("*** new xml code ***")
 
-        reparsed = ""
         sourcefile = "/etc/epgimport/xstreamity.sources.xml"
+        if not os.path.isfile(sourcefile) or os.stat(sourcefile).st_size == 0:
+            with open(sourcefile, 'w') as f:
+                xml_str = '<?xml version="1.0" encoding="utf-8"?>\n'
+                xml_str += '<sources>\n'
+                xml_str += '<sourcecat sourcecatname="XStreamity EPG">\n'
+                xml_str += '</sourcecat>\n'
+                xml_str += '</sources>\n'
+                f.write(xml_str)
 
-        try:
-            import xml.etree.ElementTree as ET
-        except Exception as e:
-            print("*** a **")
-            print(e)
+        import xml.etree.ElementTree as ET
 
-        try:
-            from xml.dom import minidom
-        except Exception as e:
-            print("*** b **")
-            print(e)
+        tree = ET.parse(sourcefile)
+        root = tree.getroot()
+        sourcecat = root.find('sourcecat')
 
-        try:
-            tree = ET.parse(sourcefile)
-        except Exception as e:
-            print("*** 1 **")
-            print(e)
+        exists = False
+        for sourceitem in sourcecat:
+            if channelpath in sourceitem.attrib['channels']:
+                exists = True
+                break
 
-        try:
-            root = tree.getroot()
-        except Exception as e:
-            print("*** 2 ***")
-            print(e)
+        if exists is False:
+            source = ET.SubElement(sourcecat, "source", type="gen_xmltv", nocheck="1", channels=channelpath)
+            description = ET.SubElement(source, "description")
+            description.text = str(cleanName)
 
-        try:
-            sourcecat = ET.Element("sourcecat")
-        except Exception as e:
-                print("*** 3 **")
-                print(e)
+            url = ET.SubElement(source, "url")
+            url.text = str(glob.current_playlist['player_info']['xmltv_api'])
 
-
-        source = ET.SubElement(sourcecat, "source", type="gen_xmltv", nocheck="1", channels=channelpath)
-
-        description = ET.SubElement(sourcecat, "description")
-        description.text = str(cleanName)
-
-        url = ET.Element("url")
-        if str(glob.current_playlist['player_info']['xmltv_api']) == str(glob.current_playlist['playlist_info']['xmltv_api']):
-            url.text="<![CDATA[' + str(glob.current_playlist['player_info']['xmltv_api']) + '&next_days=2]]>"
-        else:
-            url.text="<![CDATA[' + str(glob.current_playlist['player_info']['xmltv_api']) + ']]>"
-
-        # tree.write(open(sourcefile, 'w'), encoding='utf-8')
-
-        try:
-            doc = minidom.parseString(ET.tostring(root))
-        except Exception as e:
-            print("*** 4 ***")
-            print(e)
-
-
-        try:
-            reparsed = doc.toprettyxml(encoding='utf8').decode()
-            print(reparsed)
-        except Exception as e:
-            print("*** 5 **")
-            print(e)
-
-        try:
-            with open(sourcefile, "w") as f:
-                f.write(reparsed.encode('utf-8'))
-        except Exception as e:
-            print(e)
-            print("*** 6 ***")
-            """
+            tree.write(sourcefile)
 
         # buildXMLTVChannelFile
         with open(channelpath, 'w') as f:
@@ -1864,6 +1818,20 @@ class XStreamity_Categories(Screen):
             f.write(xml_str)
 
         self.buildLists()
+
+    def epgminus(self):
+        self.epgtimeshift -= 1
+        if self.epgtimeshift <= 0:
+            self.epgtimeshift = 0
+        self.addEPG()
+
+    def epgplus(self):
+        self.epgtimeshift += 1
+        self.addEPG()
+
+    def epgreset(self):
+        self.epgtimeshift = 0
+        self.addEPG()
 
 
 def buildEPGListEntry(index, title, epgNowTime, epgNowTitle, epgNowDesc, epgNextTime, epgNextTitle, epgNextDesc, hidden):

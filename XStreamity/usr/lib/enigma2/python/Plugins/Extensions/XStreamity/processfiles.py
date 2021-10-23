@@ -73,6 +73,7 @@ def processfiles():
             last_check = ''
 
             serveroffset = 0
+            epgoffset = 0
 
             if not line.startswith("#") and line.startswith('http'):
                 line = line.strip()
@@ -149,6 +150,9 @@ def processfiles():
 
                                 if "serveroffset" not in playlists["player_info"]:
                                     playlists["player_info"]["serveroffset"] = serveroffset
+                                    
+                                if "epgoffset" not in playlists["player_info"]:
+                                    playlists["player_info"]["epgoffset"] = serveroffset
 
                                 if "live_streams" not in playlists["data"]:
                                     playlists["data"]["live_streams"] = live_streams
@@ -204,6 +208,7 @@ def processfiles():
                             ("showseries", showseries),
                             ("showcatchup", showcatchup),
                             ("serveroffset", serveroffset),
+                            ("epgoffset", serveroffset),
                             ("xmltv_api", xmltv_api),
                         ]),
 

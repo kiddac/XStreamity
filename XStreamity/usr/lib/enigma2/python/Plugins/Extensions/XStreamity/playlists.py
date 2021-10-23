@@ -19,10 +19,16 @@ from Screens.Screen import Screen
 from Tools.LoadPixmap import LoadPixmap
 
 import json
+import glob as pythonglob
 import os
+import re
 import requests
 import sys
 import shutil
+
+epgimporter = False
+if os.path.isdir('/usr/lib/enigma2/python/Plugins/Extensions/EPGImport'):
+    epgimporter = True
 
 
 class XStreamity_Playlists(Screen):
@@ -74,6 +80,9 @@ class XStreamity_Playlists(Screen):
 
     def start(self):
         self['version'].setText(version)
+
+        if epgimporter:
+            self.epgimportcleanup()
 
         self.playlists_all = []
 
@@ -401,3 +410,70 @@ class XStreamity_Playlists(Screen):
     def checkoneplaylist(self):
         if len(self.list) == 1 and cfg.skipplaylistsscreen.getValue() is True:
             self.quit()
+
+    def epgimportcleanup(self):
+        # print("*** epgimportcleanup ***")
+
+        channelfilelist = []
+        oldsourcefiles = pythonglob.glob('/etc/epgimport/xstreamity.*.sources.xml')
+        oldchannelfiles = pythonglob.glob('/etc/epgimport/xstreamity.*.channels.xml')
+
+        # delete old xmltv source files
+        for filePath in oldsourcefiles:
+            try:
+                os.remove(filePath)
+            except:
+                print("Error while deleting file : ", filePath)
+
+        with open(playlists_json, "r") as f:
+            self.playlists_all = json.load(f)
+
+        for playlist in self.playlists_all:
+            cleanName = re.sub(r'[\<\>\:\"\/\\\|\?\*]', '_', str(playlist['playlist_info']['name']))
+            cleanName = re.sub(r' ', '_', cleanName)
+            cleanName = re.sub(r'_+', '_', cleanName)
+            filepath = '/etc/epgimport/'
+            channelfilename = 'xstreamity.' + str(cleanName) + '.channels.xml'
+            channelpath = filepath + channelfilename
+
+            channelfilelist.append(cleanName)
+
+        # delete old xmltv channel files
+        for filePath in oldchannelfiles:
+            exists = False
+            for cfile in channelfilelist:
+                if cfile in filePath:
+                    exists = True
+
+            if exists is False:
+                try:
+                    os.remove(filePath)
+                except:
+                    print("Error while deleting file : ", filePath)
+
+        # remove sources from source file
+        sourcefile = "/etc/epgimport/xstreamity.sources.xml"
+
+        if os.path.isfile(sourcefile):
+
+            import xml.etree.ElementTree as ET
+            tree = ET.parse(sourcefile)
+            root = tree.getroot()
+
+            for elem in root.iter():
+                for child in list(elem):
+                    exists = False
+                    description = ""
+                    if child.tag == 'source':
+                        try:
+                            description = child.find('description').text
+                            for cfile in channelfilelist:
+                                if cfile in description:
+                                    exists = True
+                        except:
+                            pass
+
+                        if exists is False:
+                            elem.remove(child)
+
+            tree.write(sourcefile)
