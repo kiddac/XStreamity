@@ -39,7 +39,7 @@ def convert_size(size_bytes):
 
 class downloadJob(Job):
     def __init__(self, toolbox, cmdline, filename, filetitle):
-        print("**** downloadJob init ***")
+        # print("**** downloadJob init ***")
         Job.__init__(self, _('XDownload:') + ' %s' % filetitle)
         self.filename = filename
         self.toolbox = toolbox
@@ -111,7 +111,7 @@ class downloadTask(Task):
             self.error = self.ERROR_SEGFAULT
 
     def afterRun(self):
-        print("**** after run ***")
+        # print("**** after run ***")
         if self.getProgress() == 0:
             try:
                 self.toolbox.download_failed()
@@ -360,7 +360,7 @@ class XStreamity_DownloadManager(Screen):
                 except Exception as e:
                     print(e)
 
-        print("**** Aborting download ***")
+        # print("**** Aborting download ***")
 
         jobs = JobManager.getPendingJobs()
         if len(jobs) >= 1:
@@ -383,7 +383,7 @@ class XStreamity_DownloadManager(Screen):
         self.buildList()
 
     def download(self):
-        print("*** downloading ***")
+        # print("*** downloading ***")
         if not os.path.exists(cfg.downloadlocation.value) or cfg.downloadlocation.value is None:
             self.session.open(MessageBox, _('Vod Download folder location does not exist.\n\n' + str(cfg.downloadlocation.value) + 'Please set download folder in Main Settings.'), type=MessageBox.TYPE_WARNING)
             return
