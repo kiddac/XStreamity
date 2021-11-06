@@ -4,7 +4,7 @@
 
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import skin_path, playlists_json, hdr, playlist_file, cfg, common_path, version, dir_etc, pythonVer, hasConcurrent, hasMultiprocessing
+from .plugin import skin_path, playlists_json, hdr, playlist_file, cfg, common_path, version, hasConcurrent, hasMultiprocessing
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -23,7 +23,6 @@ import glob as pythonglob
 import os
 import re
 import requests
-import sys
 import shutil
 
 epgimporter = False
@@ -135,7 +134,7 @@ class XStreamity_Playlists(Screen):
         http.mount("http://", adapter)
         http.mount("https://", adapter)
         try:
-            r = http.get(url[0], headers=hdr, stream=True, timeout=10, verify=False)
+            r = http.get(url[0], headers=hdr, timeout=10, verify=False)
             r.raise_for_status()
             if r.status_code == requests.codes.ok:
                 try:
@@ -163,7 +162,7 @@ class XStreamity_Playlists(Screen):
                 with executor:
                     results = executor.map(self.download_url, self.url_list)
                 for index, response in results:
-                    if response != '':
+                    if response:
                         self.playlists_all[index].update(response)
                     else:
                         self.playlists_all[index]['user_info'] = []
@@ -173,7 +172,6 @@ class XStreamity_Playlists(Screen):
 
             except Exception as e:
                 print(e)
-                concurrent = False
 
         if hasMultiprocessing:
             print("********** trying multiprocessing threadpool *******")
@@ -181,13 +179,14 @@ class XStreamity_Playlists(Screen):
                 from multiprocessing.pool import ThreadPool
                 pool = ThreadPool(5)
                 results = pool.imap_unordered(self.download_url, self.url_list)
+                pool.close()
+                pool.join()
+
                 for index, response in results:
-                    if response != '':
+                    if response:
                         self.playlists_all[index].update(response)
                     else:
                         self.playlists_all[index]['user_info'] = []
-                pool.close()
-                pool.join()
 
                 self.buildPlaylistList()
                 return
@@ -200,7 +199,7 @@ class XStreamity_Playlists(Screen):
             result = self.download_url(url)
             index = result[0]
             response = result[1]
-            if response != '':
+            if response:
                 self.playlists_all[index].update(response)
             else:
                 self.playlists_all[index]['user_info'] = []
@@ -364,7 +363,10 @@ class XStreamity_Playlists(Screen):
             self.session.openWithCallback(self.deleteEpgData, MessageBox, _('Delete providers EPG data?'))
         else:
             self["splash"].show()
-            epgfolder = str(dir_etc) + "epg/" + str(self.currentplaylist['playlist_info']['domain'])
+            epglocation = str(cfg.epglocation.value)
+            if not epglocation.endswith("/"):
+                epglocation = epglocation + str("/")
+            epgfolder = epglocation + str(self.currentplaylist['playlist_info']['domain'])
 
             try:
                 shutil.rmtree(epgfolder)
@@ -434,8 +436,6 @@ class XStreamity_Playlists(Screen):
             cleanName = re.sub(r'_+', '_', cleanName)
             filepath = '/etc/epgimport/'
             channelfilename = 'xstreamity.' + str(cleanName) + '.channels.xml'
-            channelpath = filepath + channelfilename
-
             channelfilelist.append(cleanName)
 
         # delete old xmltv channel files
