@@ -4,7 +4,7 @@
 from . import _
 from . import xstreamity_globals as glob
 from . import processfiles as xfiles
-from .plugin import skin_path, common_path, version, downloads_json, pythonVer, pythonFull
+from .plugin import skin_path, common_path, version, downloads_json, pythonFull
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -18,8 +18,6 @@ from Tools.LoadPixmap import LoadPixmap
 
 import json
 import os
-import sys
-# import re
 
 
 class XStreamity_MainMenu(Screen):
@@ -154,7 +152,7 @@ class XStreamity_MainMenu(Screen):
 
     def updateEPG2(self, data=None):
         from . import update
-        epg = update.XStreamity_Update()
+        update.XStreamity_Update()
 
     def __next__(self):
         index = self["list"].getCurrent()[0]
