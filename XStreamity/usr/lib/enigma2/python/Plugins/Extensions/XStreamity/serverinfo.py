@@ -11,7 +11,6 @@ from Components.ActionMap import ActionMap
 from datetime import datetime
 from Screens.Screen import Screen
 
-
 import json
 
 
