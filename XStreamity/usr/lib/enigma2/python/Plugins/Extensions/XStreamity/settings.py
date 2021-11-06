@@ -8,14 +8,33 @@ from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
 from Components.ConfigList import ConfigListScreen
-from Components.config import config, configfile, getConfigListEntry, ConfigText, ConfigSelection, ConfigYesNo, ConfigDirectory
+from Components.config import config, configfile, getConfigListEntry, ConfigText, ConfigSelection, ConfigYesNo
 from Components.Pixmap import Pixmap
+from Screens.InputBox import PinInput
 from Screens.MessageBox import MessageBox
 from Screens.LocationBox import LocationBox
-from Screens.ParentalControlSetup import ProtectedScreen
 from Screens.Screen import Screen
+from Tools.BoundFunction import boundFunction
 
 import os
+
+
+class ProtectedScreen:
+    def __init__(self):
+        if self.isProtected():
+            self.onFirstExecBegin.append(boundFunction(self.session.openWithCallback, self.pinEntered, PinInput, pinList=[cfg.adultpin.value], triesEntry=cfg.retries.adultpin, title=_("Please enter the correct pin code"), windowTitle=_("Enter pin code")))
+
+    def isProtected(self):
+        return (config.plugins.XStreamity.adult.value)
+
+    def pinEntered(self, result):
+        if result is None:
+            self.closeProtectedScreen()
+        elif not result:
+            self.session.openWithCallback(self.closeProtectedScreen, MessageBox, _("The pin code you entered is wrong."), MessageBox.TYPE_ERROR)
+
+    def closeProtectedScreen(self, result=None):
+        self.close(None)
 
 
 class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
@@ -23,8 +42,9 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
     def __init__(self, session):
         Screen.__init__(self, session)
 
-        if cfg.parental.getValue() is True:
+        if cfg.adult.getValue() is True:
             ProtectedScreen.__init__(self)
+
         self.session = session
 
         skin = skin_path + 'settings.xml'
@@ -57,14 +77,14 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
             'ok': self.ok,
         }, -2)
 
-        self.onFirstExecBegin.append(self.initConfig)
+        self.initConfig()
         self.onLayoutFinish.append(self.__layoutFinished)
 
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
 
     def cancel(self, answer=None):
-        
+
         if answer is None:
             if self['config'].isChanged():
                 self.session.openWithCallback(self.cancel, MessageBox, _('Really close without saving settings?'))
@@ -78,9 +98,8 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         return
 
     def save(self):
-            
-        if cfg.parental.getValue() is True and (config.ParentalControl.setuppin.value == 0 or config.ParentalControl.setuppin.value == 1234):
-            self.session.open(MessageBox, _('Please change default parental pin before turning on XStreamity parental control.\n\nPin cannot be 0000 or 1234'), MessageBox.TYPE_WARNING)
+        if cfg.adult.value is True and (cfg.adultpin.value == 0 or cfg.adultpin.value == 0000 or cfg.adultpin.value == 1111 or cfg.adultpin.value == 1234):
+            self.session.open(MessageBox, _('Please change default parental pin.\n\nPin cannot be 0000, 1111 or 1234'), MessageBox.TYPE_WARNING)
             return
         else:
             glob.changed = False
@@ -91,11 +110,13 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
                 cfg.save()
                 configfile.save()
             self.close()
-            
 
     def initConfig(self):
+        # print("*** init config ***")
         self.cfg_skin = getConfigListEntry(_('Select skin *Restart GUI Required'), cfg.skin)
         self.cfg_location = getConfigListEntry(_('playlists.txt location'), cfg.location)
+        self.cfg_epglocation = getConfigListEntry(_('EPG download location'), cfg.epglocation)
+        self.cfg_downloadlocation = getConfigListEntry(_('VOD download folder'), cfg.downloadlocation)
         self.cfg_timeout = getConfigListEntry(_('Server timeout (seconds)'), cfg.timeout)
 
         self.cfg_livetype = getConfigListEntry(_('Default LIVE stream type'), cfg.livetype)
@@ -103,8 +124,8 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
         self.cfg_livepreview = getConfigListEntry(_('Preview LIVE streams in mini tv'), cfg.livepreview)
         self.cfg_stopstream = getConfigListEntry(_('Stop stream on back button'), cfg.stopstream)
-        self.cfg_downloadlocation = getConfigListEntry(_('VOD download folder'), cfg.downloadlocation)
-        self.cfg_parental = getConfigListEntry(_('Parental control'), cfg.parental)
+        self.cfg_adult = getConfigListEntry(_('XStreamity parental control'), cfg.adult)
+        self.cfg_adultpin = getConfigListEntry(_('XStreamity parental pin'), cfg.adultpin)
         self.cfg_main = getConfigListEntry(_('Show in main menu *Restart GUI Required'), cfg.main)
 
         self.cfg_TMDB = getConfigListEntry(_('Use Movie Database(TMDB) for VOD & Series'), cfg.TMDB)
@@ -125,6 +146,9 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.list = []
         self.list.append(self.cfg_skin)
         self.list.append(self.cfg_location)
+        self.list.append(self.cfg_epglocation)
+        self.list.append(self.cfg_downloadlocation)
+
         self.list.append(self.cfg_timeout)
 
         self.list.append(self.cfg_skipplaylistsscreen)
@@ -136,8 +160,6 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.list.append(self.cfg_stopstream)
         self.list.append(self.cfg_wakeup)
 
-        self.list.append(self.cfg_downloadlocation)
-
         self.list.append(self.cfg_TMDB)
         if cfg.TMDB.value is True:
             self.list.append(self.cfg_TMDBLanguage)
@@ -145,7 +167,11 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.list.append(self.cfg_catchupstart)
         self.list.append(self.cfg_catchupend)
 
-        self.list.append(self.cfg_parental)
+        # self.list.append(self.cfg_parental)
+        self.list.append(self.cfg_adult)
+        if cfg.adult.value is True:
+            self.list.append(self.cfg_adultpin)
+
         if os.path.isdir('/usr/lib/enigma2/python/Plugins/Extensions/SubsSupport'):
             self.list.append(self.cfg_subs)
 
@@ -212,6 +238,8 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
             self.openDirectoryBrowser(cfg.location.value, "location")
         elif sel and sel == cfg.downloadlocation:
             self.openDirectoryBrowser(cfg.downloadlocation.value, "downloadlocation")
+        elif sel and sel == cfg.epglocation:
+            self.openDirectoryBrowser(cfg.epglocation.value, "epglocation")
         else:
             pass
         ConfigListScreen.keyOK(self)
@@ -232,7 +260,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
                     bookmarks=config.movielist.videodirs)
             except Exception as e:
                 print(e)
-        ConfigListScreen.keyOK(self)
+            ConfigListScreen.keyOK(self)
 
         if cfgitem == "downloadlocation":
             try:
@@ -245,7 +273,20 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
                     bookmarks=config.movielist.videodirs)
             except Exception as e:
                 print(e)
-        ConfigListScreen.keyOK(self)
+            ConfigListScreen.keyOK(self)
+
+        if cfgitem == "epglocation":
+            try:
+                self.session.openWithCallback(
+                    self.openDirectoryBrowserCB3,
+                    LocationBox,
+                    windowTitle=_('Choose Directory:'),
+                    text=_('Choose directory'),
+                    currDir=path,
+                    bookmarks=config.movielist.videodirs)
+            except Exception as e:
+                print(e)
+            ConfigListScreen.keyOK(self)
 
     def openDirectoryBrowserCB(self, path):
         if path is not None:
@@ -255,4 +296,9 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
     def openDirectoryBrowserCB2(self, path):
         if path is not None:
             cfg.downloadlocation.setValue(path)
+        return
+
+    def openDirectoryBrowserCB3(self, path):
+        if path is not None:
+            cfg.epglocation.setValue(path)
         return
