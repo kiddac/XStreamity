@@ -54,13 +54,14 @@ def processfiles():
             password = ''
             type = 'm3u_plus'
             output = 'ts'
-
-            # epgshift = 0
-            catchupshift = 0
             livehidden = []
-            vodhidden = []
-            serieshidden = []
             channelshidden = []
+            vodhidden = []
+            vodstreamshidden = []
+            serieshidden = []
+            seriestitleshidden = []
+            seriesseasonshidden = []
+            seriesepisodeshidden = []
 
             showlive = True
             showvod = True
@@ -113,15 +114,11 @@ def processfiles():
                 if "output" in query:
                     output = query['output'][0].strip()
 
-                # epgshiftexists = False
-                """
                 if "timeshift" in query:
                     try:
-                        epgshiftexists = True
-                        epgshift = int(query['timeshift'][0].strip())
+                        epgoffset = int(query['timeshift'][0].strip())
                     except:
                         pass
-                        """
 
                 player_api = "%s/player_api.php?username=%s&password=%s" % (host, username, password)
                 enigma2_api = "%s/enigma2.php?username=%s&password=%s" % (host, username, password)
@@ -142,17 +139,23 @@ def processfiles():
                                 if "channelshidden" not in playlists["player_info"]:
                                     playlists["player_info"]["channelshidden"] = channelshidden
 
-                                if "catchupshift" not in playlists["player_info"]:
-                                    playlists["player_info"]["catchupshift"] = catchupshift
+                                if "vodstreamshidden" not in playlists["player_info"]:
+                                    playlists["player_info"]["vodstreamshidden"] = vodstreamshidden
 
-                                if "xmltv_api" not in playlists["player_info"]:
-                                    playlists["player_info"]["xmltv_api"] = xmltv_api
+                                if "seriestitleshidden" not in playlists["player_info"]:
+                                    playlists["player_info"]["seriestitleshidden"] = seriestitleshidden
+
+                                if "seriesseasonshidden" not in playlists["player_info"]:
+                                    playlists["player_info"]["seriesseasonshidden"] = seriesseasonshidden
+
+                                if "seriesepisodeshidden" not in playlists["player_info"]:
+                                    playlists["player_info"]["seriesepisodeshidden"] = seriesepisodeshidden
 
                                 if "serveroffset" not in playlists["player_info"]:
                                     playlists["player_info"]["serveroffset"] = serveroffset
-                                    
+
                                 if "epgoffset" not in playlists["player_info"]:
-                                    playlists["player_info"]["epgoffset"] = serveroffset
+                                    playlists["player_info"]["epgoffset"] = epgoffset
 
                                 if "live_streams" not in playlists["data"]:
                                     playlists["data"]["live_streams"] = live_streams
@@ -169,10 +172,7 @@ def processfiles():
                                 playlists["playlist_info"]["full_url"] = full_url  # get.php
                                 playlists["playlist_info"]["index"] = index
                                 playlists["data"]["data_downloaded"] = False
-                                """
-                                if epgshiftexists:
-                                    playlists["player_info"]["epgshift"] = epgshift
-                                    """
+                                playlists["player_info"]["epgoffset"] = epgoffset
 
                 if not playlist_exists:
                     playlists_all.append({
@@ -196,11 +196,14 @@ def processfiles():
                         "player_info": OrderedDict([
                             ("livetype", livetype),
                             ("vodtype", vodtype),
-                            ("catchupshift", catchupshift),
                             ("livehidden", livehidden),
-                            ("vodhidden", vodhidden),
-                            ("serieshidden", serieshidden),
                             ("channelshidden", channelshidden),
+                            ("vodhidden", vodhidden),
+                            ("vodstreamshidden", vodstreamshidden),
+                            ("serieshidden", serieshidden),
+                            ("seriestitleshidden", seriestitleshidden),
+                            ("seriesseasonshidden", seriesseasonshidden),
+                            ("seriesepisodeshidden", seriesepisodeshidden),
                             ("livefavourites", livefavourites),
                             ("vodfavourites", vodfavourites),
                             ("showlive", showlive),
@@ -209,7 +212,6 @@ def processfiles():
                             ("showcatchup", showcatchup),
                             ("serveroffset", serveroffset),
                             ("epgoffset", serveroffset),
-                            ("xmltv_api", xmltv_api),
                         ]),
 
                         "data": dict([
