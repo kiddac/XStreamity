@@ -5,7 +5,7 @@ from . import _
 
 from Plugins.Plugin import PluginDescriptor
 from enigma import eTimer, getDesktop, addFont
-from Components.config import config, ConfigSubsection, ConfigSelection, ConfigDirectory, ConfigYesNo, ConfigSelectionNumber, ConfigClock, configfile
+from Components.config import config, ConfigSubsection, ConfigSelection, ConfigDirectory, ConfigYesNo, ConfigSelectionNumber, ConfigClock, ConfigPIN, ConfigInteger
 
 import twisted.python.runtime
 
@@ -103,6 +103,7 @@ if os.path.exists("/usr/bin/apt-get"):
 cfg.livetype = ConfigSelection(default='1', choices=streamtype_choices)
 cfg.vodtype = ConfigSelection(default='4097', choices=streamtype_choices)
 cfg.downloadlocation = ConfigDirectory(default='/media/hdd/movie/')
+cfg.epglocation = ConfigDirectory(default='/etc/enigma2/xstreamity/epg/')
 cfg.location = ConfigDirectory(default=dir_etc)
 cfg.main = ConfigYesNo(default=True)
 cfg.livepreview = ConfigYesNo(default=False)
@@ -117,6 +118,13 @@ cfg.catchupend = ConfigSelectionNumber(0, 30, 1, default=0)
 cfg.subs = ConfigYesNo(default=False)
 cfg.skipplaylistsscreen = ConfigYesNo(default=False)
 cfg.wakeup = ConfigClock(default=((9 * 60) + 9) * 60)  # 7:00
+
+cfg.adult = ConfigYesNo(default=False)
+cfg.adultpin = ConfigPIN(default=0000)
+cfg.retries = ConfigSubsection()
+cfg.retries.adultpin = ConfigSubsection()
+cfg.retries.adultpin.tries = ConfigInteger(default=3)
+cfg.retries.adultpin.time = ConfigInteger(default=3)
 
 skin_path = '%s%s/' % (skin_directory, cfg.skin.value)
 common_path = '%scommon/' % (skin_directory)
@@ -168,6 +176,14 @@ if not os.path.isfile(playlists_json):
 # check if x-downloads.json file exists in specified location
 if not os.path.isfile(downloads_json):
     open(downloads_json, 'a').close()
+
+
+# try and override epgimport settings
+try:
+    config.plugins.epgimport.import_onlybouquet.value = False
+    config.plugins.epgimport.import_onlybouquet.save()
+except:
+    pass
 
 
 def main(session, **kwargs):
@@ -239,7 +255,7 @@ class AutoStartTimer:
     def runUpdate(self):
         print('\n *********** Updating XStreamity EPG ************ \n')
         from . import update
-        epg = update.XStreamity_Update()
+        update.XStreamity_Update()
 
 
 def autostart(reason, session=None, **kwargs):
