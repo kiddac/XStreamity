@@ -5,12 +5,12 @@
 	<!-- logo -->
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/logo.png" position="28,24" size="134,98" alphatest="blend" zPosition="1" />
 	<!-- epg description -->
-	<widget source="epg_description" render="XStreamityRunningText" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" position="214,24" size="1039,88" font="xstreamityregular;20" foregroundColor="#ffffff" backgroundColor="#000000" halign="left" transparent="1" zPosition="2" />
+	<widget source="x_description" render="XStreamityRunningText" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" position="214,24" size="1039,88" font="xstreamityregular;20" foregroundColor="#ffffff" backgroundColor="#000000" halign="left" transparent="1" zPosition="2" />
 	<!-- bottom background -->
 	<eLabel position="0,576" size="1280,144" backgroundColor="#40000000" zPosition="1" />
 	<eLabel position="0,575" size="1280,1" backgroundColor="#fffffff" zPosition="1" />
 	<!-- picon -->
-	<widget name="epg_picon" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/picon.png" position="20,596" size="147,88" alphatest="blend" zPosition="2" />
+	<widget name="picon" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/picon.png" position="20,596" size="147,88" alphatest="blend" zPosition="2" />
 	<!-- channel -->
 	<widget source="session.CurrentService" render="Label" position="214,592" size="600,32" font="xstreamitybold;24" noWrap="1" foregroundColor="#ffffff" backgroundColor="#40000000" transparent="1" zPosition="3">
 		<convert type="ServiceName">Name</convert>
