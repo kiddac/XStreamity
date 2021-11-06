@@ -2,10 +2,8 @@
 # -*- coding: utf-8 -*-
 
 
-from enigma import eServiceReference, iServiceInformation
 from time import time
 
-import os
 try:
     import cPickle
 except:
@@ -40,7 +38,6 @@ def setResumePoint(session):
 def getResumePoint(session, failed=False):
     global resumePointCache
     resumePointCache = loadResumePoints()
-    service = session.nav.getCurrentService()
 
     ref = None
     if session.nav.getCurrentlyPlayingServiceReference():
@@ -48,7 +45,6 @@ def getResumePoint(session, failed=False):
             ref = session.nav.getCurrentlyPlayingServiceReference()
 
     if (ref is not None) and (ref.type != 1):
-        print(resumePointCache[ref.toString()])
         entry = resumePointCache[ref.toString()]
         entry[0] = int(time())  # update LRU timestamp
         return entry[1]
