@@ -20,6 +20,7 @@ import json
 class XStreamity_HiddenCategories(Screen):
 
     def __init__(self, session, category_type, channellist, level=1):
+
         Screen.__init__(self, session)
         self.session = session
 
@@ -43,7 +44,7 @@ class XStreamity_HiddenCategories(Screen):
         self["key_red"] = StaticText(_('Cancel'))
         self["key_green"] = StaticText(_('Save'))
         self['key_yellow'] = StaticText(_('Invert'))
-        self['key_blue'] = StaticText(_('Clear All'))
+        self['key_blue'] = StaticText(_('Reset'))
 
         self.protocol = glob.current_playlist['playlist_info']['protocol']
         self.domain = glob.current_playlist['playlist_info']['domain']
@@ -73,27 +74,34 @@ class XStreamity_HiddenCategories(Screen):
         self.startList = []
 
         if self.category_type == "live":
-            self.hidelist = glob.current_playlist['player_info']['livehidden']
+            if self.level == 1:
+                self.hidelist = glob.current_playlist['player_info']['livehidden']
+            else:
+                self.hidelist = glob.current_playlist['player_info']['channelshidden']
 
         elif self.category_type == "vod":
-            self.hidelist = glob.current_playlist['player_info']['vodhidden']
+            if self.level == 1:
+                self.hidelist = glob.current_playlist['player_info']['vodhidden']
+            else:
+                self.hidelist = glob.current_playlist['player_info']['vodstreamshidden']
 
         elif self.category_type == "series":
-            self.hidelist = glob.current_playlist['player_info']['serieshidden']
+            if self.level == 1:
+                self.hidelist = glob.current_playlist['player_info']['serieshidden']
+            elif self.level == 2:
+                self.hidelist = glob.current_playlist['player_info']['seriestitleshidden']
 
-        self.hidechannellist = glob.current_playlist['player_info']['channelshidden']
+            elif self.level == 3:
+                self.hidelist = glob.current_playlist['player_info']['seriesseasonshidden']
+
+            elif self.level == 4:
+                self.hidelist = glob.current_playlist['player_info']['seriesepisodeshidden']
 
         for item in self.channellist:
-            if self.level == 1:
-                if item[3] not in self.hidelist:
-                    self.startList.append([item[1], item[3], False])
-                elif item[3] in self.hidelist:
-                    self.startList.append([item[1], item[3], True])
-            if self.level == 2:
-                if item[2] not in self.hidechannellist:
-                    self.startList.append([item[1], item[2], False])
-                elif item[2] in self.hidechannellist:
-                    self.startList.append([item[1], item[2], True])
+            if item[2] not in self.hidelist:
+                self.startList.append([item[1], item[2], False])
+            elif item[2] in self.hidelist:
+                self.startList.append([item[1], item[2], True])
 
         self.drawList = []
         self.drawList = [self.buildListEntry(x[0], x[1], x[2]) for x in self.startList]
@@ -156,24 +164,48 @@ class XStreamity_HiddenCategories(Screen):
                     elif item[2] is False and item[1] in glob.current_playlist['player_info']['livehidden']:
                         glob.current_playlist['player_info']['livehidden'].remove(item[1])
 
-                if self.level == 2:
+                elif self.level == 2:
                     if item[2] is True and item[1] not in glob.current_playlist['player_info']['channelshidden']:
                         glob.current_playlist['player_info']['channelshidden'].append(item[1])
                     elif item[2] is False and item[1] in glob.current_playlist['player_info']['channelshidden']:
                         glob.current_playlist['player_info']['channelshidden'].remove(item[1])
 
             elif self.category_type == "vod":
-                if item[2] is True and item[1] not in glob.current_playlist['player_info']['vodhidden']:
-                    glob.current_playlist['player_info']['vodhidden'].append(item[1])
-                elif item[2] is False and item[1] in glob.current_playlist['player_info']['vodhidden']:
-                    glob.current_playlist['player_info']['vodhidden'].remove(item[1])
+                if self.level == 1:
+                    if item[2] is True and item[1] not in glob.current_playlist['player_info']['vodhidden']:
+                        glob.current_playlist['player_info']['vodhidden'].append(item[1])
+                    elif item[2] is False and item[1] in glob.current_playlist['player_info']['vodhidden']:
+                        glob.current_playlist['player_info']['vodhidden'].remove(item[1])
+
+                elif self.level == 2:
+                    if item[2] is True and item[1] not in glob.current_playlist['player_info']['vodstreamshidden']:
+                        glob.current_playlist['player_info']['vodstreamshidden'].append(item[1])
+                    elif item[2] is False and item[1] in glob.current_playlist['player_info']['vodstreamshidden']:
+                        glob.current_playlist['player_info']['vodstreamshidden'].remove(item[1])
 
             elif self.category_type == "series":
-                if item[2] is True and item[1] not in glob.current_playlist['player_info']['serieshidden']:
-                    glob.current_playlist['player_info']['serieshidden'].append(item[1])
-                elif item[2] is False and item[1] in glob.current_playlist['player_info']['serieshidden']:
-                    glob.current_playlist['player_info']['serieshidden'].remove(item[1])
+                if self.level == 1:
+                    if item[2] is True and item[1] not in glob.current_playlist['player_info']['serieshidden']:
+                        glob.current_playlist['player_info']['serieshidden'].append(item[1])
+                    elif item[2] is False and item[1] in glob.current_playlist['player_info']['serieshidden']:
+                        glob.current_playlist['player_info']['serieshidden'].remove(item[1])
+                if self.level == 2:
+                    if item[2] is True and item[1] not in glob.current_playlist['player_info']['seriestitleshidden']:
+                        glob.current_playlist['player_info']['seriestitleshidden'].append(item[1])
+                    elif item[2] is False and item[1] in glob.current_playlist['player_info']['seriestitleshidden']:
+                        glob.current_playlist['player_info']['seriestitleshidden'].remove(item[1])
 
+                if self.level == 3:
+                    if item[2] is True and item[1] not in glob.current_playlist['player_info']['seriesseasonshidden']:
+                        glob.current_playlist['player_info']['seriesseasonshidden'].append(item[1])
+                    elif item[2] is False and item[1] in glob.current_playlist['player_info']['seriesseasonshidden']:
+                        glob.current_playlist['player_info']['seriesseasonshidden'].remove(item[1])
+
+                if self.level == 4:
+                    if item[2] is True and item[1] not in glob.current_playlist['player_info']['seriesepisodeshidden']:
+                        glob.current_playlist['player_info']['seriesepisodeshidden'].append(item[1])
+                    elif item[2] is False and item[1] in glob.current_playlist['player_info']['seriesepisodeshidden']:
+                        glob.current_playlist['player_info']['seriesepisodeshidden'].remove(item[1])
         self.playlists_all = []
 
         with open(playlists_json) as f:
