@@ -17,7 +17,7 @@ from Components.ProgressBar import ProgressBar
 from Components.Pixmap import Pixmap, MultiPixmap
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 from datetime import datetime, timedelta
-from enigma import eTimer, eServiceReference, iPlayableService, ePicLoad, iServiceInformation
+from enigma import eTimer, eServiceReference, iPlayableService, ePicLoad
 from itertools import cycle, islice
 from PIL import Image, ImageChops, ImageFile, PngImagePlugin
 from RecordTimer import RecordTimerEntry
@@ -69,7 +69,6 @@ else:
             pass
 
 import os
-import sys
 
 
 # https twisted client hack #
@@ -438,7 +437,7 @@ class XStreamity_StreamPlayer(
 
         skin = skin_path + 'streamplayer.xml'
 
-        self["epg_description"] = StaticText()
+        self["x_description"] = StaticText()
         self["nowchannel"] = StaticText()
         self["nowtitle"] = StaticText()
         self["nexttitle"] = StaticText()
@@ -449,7 +448,7 @@ class XStreamity_StreamPlayer(
         self["extension"] = StaticText()
         self["progress"] = ProgressBar()
         self["progress"].hide()
-        self["epg_picon"] = Pixmap()
+        self["picon"] = Pixmap()
 
         self["eventname"] = Label()
         self["state"] = Label()
@@ -528,7 +527,7 @@ class XStreamity_StreamPlayer(
             return
 
     def playStream(self, servicetype, streamurl):
-        self["epg_description"].setText(glob.currentepglist[glob.currentchannellistindex][4])
+        self["x_description"].setText(glob.currentepglist[glob.currentchannellistindex][4])
         self["nowchannel"].setText(glob.currentchannellist[glob.currentchannellistindex][0])
         self["nowtitle"].setText(glob.currentepglist[glob.currentchannellistindex][3])
         self["nexttitle"].setText(glob.currentepglist[glob.currentchannellistindex][6])
@@ -645,8 +644,8 @@ class XStreamity_StreamPlayer(
             self.loadDefaultImage()
 
     def loadDefaultImage(self):
-        if self["epg_picon"].instance:
-            self["epg_picon"].instance.setPixmapFromFile(common_path + "picon.png")
+        if self["picon"].instance:
+            self["picon"].instance.setPixmapFromFile(common_path + "picon.png")
 
     def resizeImage(self, data=None):
         # print("*** resizeImage ***")
@@ -676,8 +675,8 @@ class XStreamity_StreamPlayer(
 
                 im.save(original, 'PNG')
 
-                if self["epg_picon"].instance:
-                    self["epg_picon"].instance.setPixmapFromFile(original)
+                if self["picon"].instance:
+                    self["picon"].instance.setPixmapFromFile(original)
 
             except Exception as e:
                 print("******* picon resize failed *******")
@@ -1089,11 +1088,11 @@ class XStreamity_CatchupPlayer(
         self.servicetype = servicetype
 
         skin = skin_path + 'catchupplayer.xml'
-        self["epg_description"] = StaticText()
+        self["x_description"] = StaticText()
         self["streamcat"] = StaticText()
         self["streamtype"] = StaticText()
         self["extension"] = StaticText()
-        self["epg_picon"] = Pixmap()
+        self["picon"] = Pixmap()
 
         self["eventname"] = Label()
         self["state"] = Label()
@@ -1122,7 +1121,7 @@ class XStreamity_CatchupPlayer(
         self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl))
 
     def playStream(self, servicetype, streamurl):
-        self["epg_description"].setText(glob.catchupdata[1])
+        self["x_description"].setText(glob.catchupdata[1])
         self["streamcat"].setText("Catch")
         self["streamtype"].setText(str(servicetype))
 
@@ -1186,8 +1185,8 @@ class XStreamity_CatchupPlayer(
     def loadDefaultImage(self, data=None):
         if data:
             print(data)
-        if self["epg_picon"].instance:
-            self["epg_picon"].instance.setPixmapFromFile(common_path + "picon.png")
+        if self["picon"].instance:
+            self["picon"].instance.setPixmapFromFile(common_path + "picon.png")
 
     def resizeImage(self, data=None):
         # print("*** resizeImage ***")
@@ -1217,8 +1216,8 @@ class XStreamity_CatchupPlayer(
 
                 im.save(original, 'PNG')
 
-                if self["epg_picon"].instance:
-                    self["epg_picon"].instance.setPixmapFromFile(original)
+                if self["picon"].instance:
+                    self["picon"].instance.setPixmapFromFile(original)
 
             except Exception as e:
                 print("******* picon resize failed *******")
