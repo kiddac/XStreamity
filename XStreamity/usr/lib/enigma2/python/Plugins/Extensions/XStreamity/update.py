@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-from .plugin import playlists_json, dir_etc, pythonVer
+from .plugin import playlists_json, pythonVer, cfg
 from xml.etree.cElementTree import iterparse
 from twisted.web.client import downloadPage
 
@@ -15,7 +15,6 @@ import calendar
 import json
 import os
 import requests
-import sys
 import time
 import twisted.python.runtime
 
@@ -69,11 +68,9 @@ class XStreamity_Update:
         # print("*** check redirect ***")
         try:
             x = requests.get(url, timeout=20, verify=False, stream=True)
-            # print("**** redirect url 1 *** %s" % x.url)
             return str(x.url)
         except Exception as e:
             print(e)
-            # print("**** redirect url 2 *** %s" % url)
             return str(url)
 
     def processJsonFile(self):
@@ -91,7 +88,10 @@ class XStreamity_Update:
             if "user_info" in playlist and "auth" in playlist["user_info"] and str(playlist["user_info"]["auth"]) == "1":
                 domain = playlist["playlist_info"]["domain"]
                 xmltv = playlist["playlist_info"]["xmltv_api"]
-                epgfolder = str(dir_etc) + "epg/" + str(domain)
+                epglocation = str(cfg.epglocation.value)
+                if not epglocation.endswith("/"):
+                    epglocation = epglocation + str("/")
+                epgfolder = epglocation + str(domain)
                 epgxmlfile = str(epgfolder) + "/" + str("epg.xml")
                 epgjsonfile = str(epgfolder) + "/" + str("epg.json")
                 self.urllist.append([domain, xmltv, epgxmlfile, epgjsonfile])
