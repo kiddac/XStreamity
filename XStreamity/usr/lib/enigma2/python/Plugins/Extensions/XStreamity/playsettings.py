@@ -16,6 +16,11 @@ from Screens.Screen import Screen
 import os
 import json
 
+try:
+    from urlparse import urlparse, parse_qs
+except:
+    from urllib.parse import urlparse, parse_qs
+
 
 class XStreamity_Settings(ConfigListScreen, Screen):
 
@@ -89,7 +94,6 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.output = str(glob.current_playlist['playlist_info']['output'])
         self.liveType = str(glob.current_playlist['player_info']['livetype'])
         self.vodType = str(glob.current_playlist['player_info']['vodtype'])
-        self.epgUrl = str(glob.current_playlist['player_info']['xmltv_api'])
         self.showlive = glob.current_playlist['player_info']['showlive']
         self.showvod = glob.current_playlist['player_info']['showvod']
         self.showseries = glob.current_playlist['player_info']['showseries']
@@ -100,7 +104,6 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.outputCfg = NoSave(ConfigSelection(default=self.output, choices=[('ts', 'ts'), ('m3u8', 'm3u8')]))
         self.liveTypeCfg = NoSave(ConfigSelection(default=self.liveType, choices=streamtype_choices))
         self.vodTypeCfg = NoSave(ConfigSelection(default=self.vodType, choices=streamtype_choices))
-        self.epgUrlCfg = NoSave(ConfigText(default=self.epgUrl))
         self.showliveCfg = NoSave(ConfigYesNo(default=self.showlive))
         self.showvodCfg = NoSave(ConfigYesNo(default=self.showvod))
         self.showseriesCfg = NoSave(ConfigYesNo(default=self.showseries))
@@ -205,7 +208,6 @@ class XStreamity_Settings(ConfigListScreen, Screen):
                 livetype = "4097"
 
             vodtype = self.vodTypeCfg.value
-            epgurl = self.epgUrlCfg.value
             epgoffset = self.epgoffsetCfg.value
 
             glob.current_playlist['playlist_info']['name'] = self.name
@@ -216,11 +218,9 @@ class XStreamity_Settings(ConfigListScreen, Screen):
             glob.current_playlist['player_info']['showcatchup'] = showcatchup
             glob.current_playlist['player_info']['livetype'] = livetype
             glob.current_playlist['player_info']['vodtype'] = vodtype
-
-            glob.current_playlist['player_info']['xmltv_api'] = epgurl
             glob.current_playlist['player_info']['epgoffset'] = epgoffset
 
-            playlistline = '%s%s:%s/get.php?username=%s&password=%s&type=%s&output=%s #%s' % (self.protocol, self.domain, self.port, self.username, self.password, self.listtype, output, self.name)
+            playlistline = '%s%s:%s/get.php?username=%s&password=%s&type=%s&output=%s&timeshift=%s #%s' % (self.protocol, self.domain, self.port, self.username, self.password, self.listtype, output, epgoffset, self.name)
 
             self.full_url = "%s/get.php?username=%s&password=%s&type=%s&output=%s" % (self.host, self.username, self.password, self.listtype, self.output)
             glob.current_playlist["playlist_info"]["full_url"] = self.full_url
@@ -229,6 +229,45 @@ class XStreamity_Settings(ConfigListScreen, Screen):
             if not os.path.isfile(playlist_file):
                 with open(playlist_file, 'w+') as f:
                     f.close()
+
+            with open(playlist_file, 'r+') as f:
+                lines = f.readlines()
+                f.seek(0)
+                exists = False
+                for line in lines:
+                    hastimeshift = False
+                    if self.domain in line and self.username in line and self.password in line:
+                        parsed_uri = urlparse(line)
+                        protocol = parsed_uri.scheme + "://"
+                        domain = parsed_uri.hostname
+
+                        if parsed_uri.port:
+                            port = parsed_uri.port
+
+                        query = parse_qs(parsed_uri.query, keep_blank_values=True)
+
+                        if "username" in query:
+                            username = query['username'][0].strip()
+                        else:
+                            continue
+
+                        if "password" in query:
+                            password = query['password'][0].strip()
+                        else:
+                            continue
+                        if "timeshift" in query:
+                            hastimeshift = True
+
+                        if hastimeshift or int(epgoffset) != 0:
+                            playlistline = '%s%s:%s/get.php?username=%s&password=%s&type=%s&output=%s&timeshift=%s #%s' % (protocol, domain, port, username, password, self.listtype, output, epgoffset, self.name)
+                        else:
+                            playlistline = '%s%s:%s/get.php?username=%s&password=%s&type=%s&output=%s #%s' % (protocol, domain, port, username, password, self.listtype, output, self.name)
+
+                        line = str(playlistline) + "\n"
+                        exists = True
+                    f.write(line)
+                if exists is False:
+                    f.write("\n" + str(playlistline) + "\n")
 
             with open(playlist_file, 'r+') as f:
                 lines = f.readlines()
