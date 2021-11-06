@@ -3,7 +3,7 @@
 
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import skin_path, hdr, cfg, common_path, playlists_json, pythonVer, hasConcurrent, hasMultiprocessing
+from .plugin import skin_path, hdr, cfg, common_path, playlists_json, hasConcurrent, hasMultiprocessing
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -17,7 +17,6 @@ from Screens.Screen import Screen
 from Tools.LoadPixmap import LoadPixmap
 
 import json
-import os
 import requests
 
 
@@ -104,17 +103,12 @@ class XStreamity_Menu(Screen):
         self.url_list = []
 
         self.url_list.append([self.p_live_categories_url, 0])
-
-        if glob.current_playlist['player_info']['showvod'] is True:
-            self.url_list.append([self.p_vod_categories_url, 1])
-
-        if glob.current_playlist['player_info']['showseries'] is True:
-            self.url_list.append([self.p_series_categories_url, 2])
+        self.url_list.append([self.p_vod_categories_url, 1])
+        self.url_list.append([self.p_series_categories_url, 2])
 
         if glob.current_playlist['player_info']['showcatchup'] is True:
-            if glob.current_playlist['data']['catchup_checked'] is False:
+            if glob.current_playlist['data']['catchup_checked'] is False or glob.current_playlist['data']['catchup'] is False:
                 self.url_list.append([self.p_live_streams_url, 3])
-                glob.current_playlist['data']['catchup_checked'] = True
 
         self.process_downloads()
 
@@ -123,96 +117,104 @@ class XStreamity_Menu(Screen):
         category = url[1]
         r = ''
 
-        retries = Retry(total=1, status_forcelist=[429, 503, 504], backoff_factor=1)
-        adapter = HTTPAdapter(max_retries=retries)
+        adapter = HTTPAdapter()
         http = requests.Session()
         http.mount("http://", adapter)
         http.mount("https://", adapter)
 
         try:
-            r = http.get(url[0], headers=hdr, stream=False, timeout=timeout, verify=False)
-            r.raise_for_status()
-            if r.status_code == requests.codes.ok:
-                # response = r.json()
-                return category, r.json()
+            r = http.get(url[0], headers=hdr, timeout=20, verify=False)
+            response = r.json()
+            return category, response
+
         except Exception as e:
             print(e)
             return category, ''
 
     def process_downloads(self):
-
-        """
-        glob.current_playlist['data']['live_categories'] = []
-        glob.current_playlist['data']['vod_categories'] = []
-        glob.current_playlist['data']['series_categories'] = []
-
-        for url in self.url_list:
-            result = self.download_url(url)
-            category = result[0]
-            response = result[1]
-            if response != '':
-                # add categories to main json file
-                if category == 0:
-                    glob.current_playlist['data']['live_categories'] = response
-                elif category == 1:
-                    glob.current_playlist['data']['vod_categories'] = response
-                elif category == 2:
-                    glob.current_playlist['data']['series_categories'] = response
-                elif category == 3:
-                    glob.current_playlist['data']['live_streams'] = response
-
-        self["splash"].hide()
-        glob.current_playlist['data']['data_downloaded'] = True
-        self.createSetup()
-        """
-
+        self.retry = 0
         glob.current_playlist['data']['live_categories'] = []
         glob.current_playlist['data']['vod_categories'] = []
         glob.current_playlist['data']['series_categories'] = []
 
         threads = len(self.url_list)
-        if threads > 10:
-            threads = 10
 
-        try:
-            print("*** trying multiprocessing ThreadPool ***")
-            from multiprocessing.pool import ThreadPool
-            pool = ThreadPool(threads)
-            results = pool.imap_unordered(self.download_url, self.url_list)
+        if hasConcurrent:
+            print("******* trying concurrent futures ******")
+            try:
+                from concurrent.futures import ThreadPoolExecutor
+                executor = ThreadPoolExecutor(max_workers=threads)
 
-            for category, response in results:
-                if response != '':
-                    # add categories to main json file
-                    if category == 0:
-                        glob.current_playlist['data']['live_categories'] = response
-                    if category == 1:
-                        glob.current_playlist['data']['vod_categories'] = response
-                    if category == 2:
-                        glob.current_playlist['data']['series_categories'] = response
-                    if category == 3:
-                        glob.current_playlist['data']['live_streams'] = response
+                with executor:
+                    results = executor.map(self.download_url, self.url_list)
+                for category, response in results:
+                    if response:
+                        if category == 0:
+                            glob.current_playlist['data']['live_categories'] = response
+                        if category == 1:
+                            glob.current_playlist['data']['vod_categories'] = response
+                        if category == 2:
+                            glob.current_playlist['data']['series_categories'] = response
+                        if category == 3:
+                            glob.current_playlist['data']['live_streams'] = response
+                            glob.current_playlist['data']['catchup_checked'] = True
 
-            pool.close()
-            pool.join()
-        except Exception as e:
-            print(e)
-            print("*** multiprocessing failed trying sequential ***")
-            for url in self.url_list:
-                result = self.download_url(url)
-                category = result[0]
-                response = result[1]
-                if response != '':
-                    # add categories to main json file
-                    if category == 0:
-                        glob.current_playlist['data']['live_categories'] = response
-                    if category == 1:
-                        glob.current_playlist['data']['vod_categories'] = response
-                    if category == 2:
-                        glob.current_playlist['data']['series_categories'] = response
-                    if category == 3:
-                        glob.current_playlist['data']['live_streams'] = response
+                self["splash"].hide()
+                glob.current_playlist['data']['data_downloaded'] = True
+                self.createSetup()
+                return
+            except Exception as e:
+                print(e)
+
+        if hasMultiprocessing:
+            try:
+                print("*** trying multiprocessing ThreadPool ***")
+                from multiprocessing.pool import ThreadPool
+                pool = ThreadPool(threads)
+                results = pool.imap(self.download_url, self.url_list)
+
+                pool.close()
+                pool.join()
+
+                for category, response in results:
+                    if response:
+                        # add categories to main json file
+                        if category == 0:
+                            glob.current_playlist['data']['live_categories'] = response
+                        if category == 1:
+                            glob.current_playlist['data']['vod_categories'] = response
+                        if category == 2:
+                            glob.current_playlist['data']['series_categories'] = response
+                        if category == 3:
+                            glob.current_playlist['data']['live_streams'] = response
+                            glob.current_playlist['data']['catchup_checked'] = True
+
+                self["splash"].hide()
+                glob.current_playlist['data']['data_downloaded'] = True
+                self.createSetup()
+                return
+            except Exception as e:
+                print(e)
+
+        print("*** trying sequential ***")
+        for url in self.url_list:
+            result = self.download_url(url)
+            category = result[0]
+            response = result[1]
+            if response:
+                # add categories to main json file
+                if category == 0:
+                    glob.current_playlist['data']['live_categories'] = response
+                if category == 1:
+                    glob.current_playlist['data']['vod_categories'] = response
+                if category == 2:
+                    glob.current_playlist['data']['series_categories'] = response
+                if category == 3:
+                    glob.current_playlist['data']['live_streams'] = response
+                    glob.current_playlist['data']['catchup_checked'] = True
 
         self["splash"].hide()
+        glob.current_playlist['data']['data_downloaded'] = True
         self.createSetup()
 
     def writeJsonFile(self):
@@ -254,8 +256,6 @@ class XStreamity_Menu(Screen):
                 self.index += 1
                 self.list.append([self.index, _("Catch Up TV"), 3, ""])
 
-        glob.current_playlist['data']['data_downloaded'] = True
-
         self.index += 1
         self.list.append([self.index, _("Playlist Settings"), 4, ""])
 
@@ -274,19 +274,15 @@ class XStreamity_Menu(Screen):
     def __next__(self):
         category = self["list"].getCurrent()[2]
         if self["list"].getCurrent():
+            from . import channels
             if category == 0:
-                from . import live
-                self.session.open(live.XStreamity_Categories)
-
+                self.session.open(channels.XStreamity_Categories, "live")
             elif category == 1:
-                from . import vod
-                self.session.open(vod.XStreamity_Categories)
+                self.session.open(channels.XStreamity_Categories, "vod")
             elif category == 2:
-                from . import series
-                self.session.open(series.XStreamity_Categories)
+                self.session.open(channels.XStreamity_Categories, "series")
             elif category == 3:
-                from . import catchup
-                self.session.open(catchup.XStreamity_Catchup)
+                self.session.open(channels.XStreamity_Categories, "catchup")
             elif category == 4:
                 self.settings()
 
