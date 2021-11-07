@@ -230,7 +230,7 @@ class XStreamity_Categories(Screen):
         self.storedtitle = ""
         self.storedseason = ""
         self.sortindex = 0
-        self.sortText = "Sort: A-Z"
+        self.sortText = (_("Sort: A-Z"))
         self.storedcover = ""
 
         self.epgtimeshift = 0
@@ -275,7 +275,7 @@ class XStreamity_Categories(Screen):
         # buttons / keys
         self["key_red"] = StaticText(_('Back'))
         self["key_green"] = StaticText(_('OK'))
-        self["key_yellow"] = StaticText(_('Sort: A-Z'))
+        self["key_yellow"] = StaticText(self.sortText)
         self["key_blue"] = StaticText(_('Search'))
         self["key_epg"] = StaticText('')
         self["key_menu"] = StaticText('')
@@ -432,7 +432,7 @@ class XStreamity_Categories(Screen):
             }, -1)
 
         glob.nextlist = []
-        glob.nextlist.append({"next_url": nexturl, "index": 0, "level": self.level, "sort": "Sort: A-Z", "filter": ""})
+        glob.nextlist.append({"next_url": nexturl, "index": 0, "level": self.level, "sort": self.sortText, "filter": ""})
 
         self.PicLoad = ePicLoad()
         self.Scale = AVSwitch().getFramebufferScale()
@@ -442,13 +442,13 @@ class XStreamity_Categories(Screen):
         except:
             self.PicLoad_conn = self.PicLoad.PictureData.connect(self.DecodePicture)
 
-        self.onFirstExecBegin.append(self.createSetup2)
+        self.onFirstExecBegin.append(self.createSetup)
         self.onLayoutFinish.append(self.__layoutFinished)
 
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
 
-    def createSetup2(self):
+    def createSetup(self):
         self["x_title"].setText('')
         self["x_description"].setText('')
 
@@ -466,9 +466,9 @@ class XStreamity_Categories(Screen):
         elif self.level == 4:
             self.getLevel4()
 
-        self.buildListsXXX()
+        self.buildLists()
 
-    def buildListsXXX(self):
+    def buildLists(self):
         if self.level == 1:
             self.buildList1()
 
@@ -1234,7 +1234,7 @@ class XStreamity_Categories(Screen):
                     self.back()
                 else:
                     self["main_list"].setIndex(glob.nextlist[-1]['index'])
-                    self.next2()
+                    self.next()
             else:
                 self.back()
 
@@ -1518,19 +1518,13 @@ class XStreamity_Categories(Screen):
             activeoriginal = glob.originalChannelList4[:]
 
         if self.level == 1:
-            sortlist = ["Sort: A-Z", "Sort: Z-A", "Sort: Original"]
+            sortlist = [(_("Sort: A-Z")), (_("Sort: Z-A")), (_("Sort: Original"))]
 
-        elif self.level != 1 and self.categoryname == "live":
-            sortlist = ["Sort: A-Z", "Sort: Z-A", "Sort: Added", "Sort: Original"]
+        elif self.level != 1 and (self.categoryname == "live" or self.categoryname == "catchup"):
+            sortlist = [(_("Sort: A-Z")), (_("Sort: Z-A")), (_("Sort: Added")), (_("Sort: Original"))]
 
-        elif self.level != 1 and self.categoryname == "vod":
-            sortlist = ["Sort: A-Z", "Sort: Z-A", "Sort: Added", "Sort: Year", "Sort: Original"]
-
-        elif self.level != 1 and self.categoryname == "series":
-            sortlist = ["Sort: A-Z", "Sort: Z-A", "Sort: Added", "Sort: Year", "Sort: Original"]
-
-        elif self.level != 1 and self.categoryname == "catchup":
-            sortlist = ["Sort: A-Z", "Sort: Z-A", "Sort: Added", "Sort: Original"]
+        elif self.level != 1 and (self.categoryname == "vod" or self.categoryname == "series"):
+            sortlist = [(_("Sort: A-Z")), (_("Sort: Z-A")), (_("Sort: Added")), (_("Sort: Year")), (_("Sort: Original"))]
 
         for index, item in enumerate(sortlist, start=0):
             if str(item) == str(self.sortText):
@@ -1579,7 +1573,7 @@ class XStreamity_Categories(Screen):
             elif current_sort == (_('Sort: Original')):
                 activelist = activeoriginal
 
-            self["key_yellow"].setText(_(self.sortText))
+            self["key_yellow"].setText(self.sortText)
 
             if current_sort:
                 glob.nextlist[-1]["sort"] = self["key_yellow"].getText()
@@ -1596,7 +1590,7 @@ class XStreamity_Categories(Screen):
         elif self.level == 4:
             self.list4 = activelist
 
-        self.buildListsXXX()
+        self.buildLists()
 
     def search(self):
         # print("*** search ***")
@@ -1644,12 +1638,12 @@ class XStreamity_Categories(Screen):
             elif self.level == 4:
                 self.list4 = activelist
 
-            self.buildListsXXX()
+            self.buildLists()
 
     def resetSearch(self):
         # print("*** resetSearch ***")
-        self["key_blue"].setText(_('Search'))
-        self["key_yellow"].setText(_('Sort: A-Z'))
+        self["key_blue"].setText(_('Sort: A-Z'))
+        self["key_yellow"].setText(self.sortText)
 
         if self.level == 1:
             activeoriginal = glob.originalChannelList1[:]
@@ -1678,7 +1672,7 @@ class XStreamity_Categories(Screen):
         self.filterresult = ""
         glob.nextlist[-1]["filter"] = self.filterresult
 
-        self.buildListsXXX()
+        self.buildLists()
 
     def pinEntered(self, result=None):
         # print("*** pinEntered ***")
@@ -1688,7 +1682,7 @@ class XStreamity_Categories(Screen):
 
         if self.pin is True:
             glob.pintime = time.time()
-            self.next2()
+            self.next()
         else:
             return
 
@@ -1702,14 +1696,14 @@ class XStreamity_Categories(Screen):
                     from Screens.InputBox import PinInput
                     self.session.openWithCallback(self.pinEntered, PinInput, pinList=[cfg.adultpin.value], triesEntry=cfg.retries.adultpin, title=_("Please enter the parental control pin code"), windowTitle=_("Enter pin code"))
                 else:
-                    self.next2()
+                    self.next()
             else:
-                self.next2()
+                self.next()
         else:
-            self.next2()
+            self.next()
 
-    def next2(self):
-        # print("*** next2 ***")
+    def next(self):
+        # print("*** next ***")
         if self["main_list"].getCurrent():
 
             currentindex = self["main_list"].getIndex()
@@ -1741,10 +1735,10 @@ class XStreamity_Categories(Screen):
                 self["category_actions"].setEnabled(False)
                 self["channel_actions"].setEnabled(True)
 
-                self["key_yellow"].setText(_('Sort: A-Z'))
+                self["key_yellow"].setText(self.sortText)
                 glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self["key_yellow"].getText(), "filter": ""})
 
-                self.createSetup2()
+                self.createSetup()
                 return
 
             elif self.level == 2:
@@ -1778,7 +1772,7 @@ class XStreamity_Categories(Screen):
                                     channel[17] = True  # set watching icon
                                 else:
                                     channel[17] = False
-                            self.buildListsXXX()
+                            self.buildLists()
 
                         else:
                             # return to last played stream
@@ -1803,7 +1797,7 @@ class XStreamity_Categories(Screen):
                                     channel[17] = True  # set watching icon
                                 else:
                                     channel[17] = False
-                            self.buildListsXXX()
+                            self.buildLists()
 
                             self.session.openWithCallback(self.setIndex, streamplayer.XStreamity_StreamPlayer, str(next_url), str(streamtype))
                     else:
@@ -1827,7 +1821,7 @@ class XStreamity_Categories(Screen):
                     self["category_actions"].setEnabled(False)
                     self["channel_actions"].setEnabled(True)
                     glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self["key_yellow"].getText(), "filter": ""})
-                    self.createSetup2()
+                    self.createSetup()
                     return
 
                 elif self.categoryname == "catchup":
@@ -1847,7 +1841,7 @@ class XStreamity_Categories(Screen):
                     self["category_actions"].setEnabled(False)
                     self["channel_actions"].setEnabled(True)
                     glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self["key_yellow"].getText(), "filter": ""})
-                    self.createSetup2()
+                    self.createSetup()
                     return
 
             elif self.level == 4:
@@ -1863,7 +1857,7 @@ class XStreamity_Categories(Screen):
         if self.categoryname == "live":
             self["epg_list"].setIndex(glob.currentchannellistindex)
         self.selectionChanged()
-        self.buildListsXXX()
+        self.buildLists()
 
     def back(self):
         # print("*** back ***")
@@ -1910,7 +1904,7 @@ class XStreamity_Categories(Screen):
                 self["category_actions"].setEnabled(True)
                 self["channel_actions"].setEnabled(False)
 
-                self.buildListsXXX()
+                self.buildLists()
         else:
             self.hideEPG()
 
@@ -1940,7 +1934,7 @@ class XStreamity_Categories(Screen):
                     except:
                         pass
                     self.level -= 1
-                    self.createSetup2()
+                    self.createSetup()
 
     def showHiddenList(self):
         # print("*** showHiddenList ***")
@@ -1949,23 +1943,23 @@ class XStreamity_Categories(Screen):
             if self["main_list"].getCurrent():
                 if self.categoryname == "live":
                     if self.level == 1:
-                        self.session.openWithCallback(self.createSetup2, hidden.XStreamity_HiddenCategories, "live", self.list1, self.level)
+                        self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "live", self.list1, self.level)
                     elif self.level == 2 and not self.favourites_category:
-                        self.session.openWithCallback(self.createSetup2, hidden.XStreamity_HiddenCategories, "live", self.list2, self.level)
+                        self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "live", self.list2, self.level)
                 elif self.categoryname == "vod":
                     if self.level == 1:
-                        self.session.openWithCallback(self.createSetup2, hidden.XStreamity_HiddenCategories, "vod", self.list1, self.level)
+                        self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "vod", self.list1, self.level)
                     elif self.level == 2 and not self.favourites_category:
-                        self.session.openWithCallback(self.createSetup2, hidden.XStreamity_HiddenCategories, "vod", self.list2, self.level)
+                        self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "vod", self.list2, self.level)
                 elif self.categoryname == "series":
                     if self.level == 1:
-                        self.session.openWithCallback(self.createSetup2, hidden.XStreamity_HiddenCategories, "series", self.list1, self.level)
+                        self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "series", self.list1, self.level)
                     elif self.level == 2:
-                        self.session.openWithCallback(self.createSetup2, hidden.XStreamity_HiddenCategories, "series", self.list2, self.level)
+                        self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "series", self.list2, self.level)
                     elif self.level == 3:
-                        self.session.openWithCallback(self.createSetup2, hidden.XStreamity_HiddenCategories, "series", self.list3, self.level)
+                        self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "series", self.list3, self.level)
                     elif self.level == 4:
-                        self.session.openWithCallback(self.createSetup2, hidden.XStreamity_HiddenCategories, "series", self.list4, self.level)
+                        self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "series", self.list4, self.level)
 
     def favourite(self):
         # print("**** favourite ***")
@@ -2046,7 +2040,7 @@ class XStreamity_Categories(Screen):
             if self.favourites_category:
                 del self.list2[currentindex]
 
-            self.buildListsXXX()
+            self.buildLists()
 
     def addEPG(self):
         # print("*** addEPG ***")
@@ -2348,7 +2342,7 @@ class XStreamity_Categories(Screen):
             self["epg_short_list"].setList([])
 
             self.selectedlist = self["main_list"]
-            self.buildListsXXX()
+            self.buildLists()
         return
 
     def displayShortEPG(self):
@@ -2594,7 +2588,7 @@ class XStreamity_Categories(Screen):
             xml_str += '</channels>\n'
             f.write(xml_str)
 
-        self.buildListsXXX()
+        self.buildLists()
 
     def epgminus(self):
         self.epgtimeshift -= 1
@@ -3150,7 +3144,7 @@ class XStreamity_Categories(Screen):
             streamtype = "4097"
             self.reference = eServiceReference(int(streamtype), 0, str(playurl))
             glob.catchupdata = [str(self["epg_short_list"].getCurrent()[0]), str(self["epg_short_list"].getCurrent()[3])]
-            self.session.openWithCallback(self.createSetup2, streamplayer.XStreamity_CatchupPlayer, str(playurl), str(streamtype))
+            self.session.openWithCallback(self.createSetup, streamplayer.XStreamity_CatchupPlayer, str(playurl), str(streamtype))
         else:
             from Screens.MessageBox import MessageBox
             self.session.open(MessageBox, _('Catchup error. No data for this slot'), MessageBox.TYPE_WARNING, timeout=5)
