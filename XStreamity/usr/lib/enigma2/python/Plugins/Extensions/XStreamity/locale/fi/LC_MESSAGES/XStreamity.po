@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: XStreamity\n"
-"POT-Creation-Date: 2021-08-26 21:15+0100\n"
-"PO-Revision-Date: 2021-08-27 10:54+0100\n"
+"POT-Creation-Date: 2021-10-28 21:15+0100\n"
+"PO-Revision-Date: 2021-10-28 03:37+0300\n"
 "Last-Translator: Tomppaa www.huoltovalikko.com\n"
 "Language-Team: tomppaa\n"
 "Language: fi\n"
@@ -18,7 +18,7 @@ msgstr "TV Sarjat"
 
 #: catchup.py:84 catchup.py:85
 msgid "Catch Up TV"
-msgstr "Mediakirjasto TV"
+msgstr "Kirjasto TV"
 
 #: catchup.py:116 downloadmanager.py:52 live.py:231 live.py:691 mainmenu.py:47
 #: menu.py:47 playlists.py:47 playsettings.py:44 series.py:186 server.py:41
@@ -36,6 +36,10 @@ msgid "Incorrect pin code."
 msgstr "Väärä pin koodi."
 
 #: catchup.py:418 live.py:1224 series.py:1080 vod.py:993
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:954
+msgid "all"
+msgstr "kaikki"
+
 msgid "Please enter the parental control pin code"
 msgstr "Anna lapsilukon pin koodi"
 
@@ -47,6 +51,10 @@ msgstr "Syötä PIN koodi"
 #: vod.py:420
 msgid "Download"
 msgstr "Lataa"
+
+#: vod.py:421
+msgid "Remove"
+msgstr "Poista"
 
 #: catchup.py:557
 msgid "Catchup currently not available. Missing EPG data"
@@ -74,7 +82,7 @@ msgstr ""
 
 #: downloadmanager.py:33
 msgid "VOD Download Manager"
-msgstr "VOD Lataus Manageri"
+msgstr "Latauksien Hallinta"
 
 #: downloadmanager.py:54 downloadmanager.py:93 downloadmanager.py:171
 msgid "Download All"
@@ -88,7 +96,7 @@ msgstr "Poista"
 #: downloadmanager.py:232 downloadmanager.py:297 downloadmanager.py:329
 #: vod.py:1143 vod.py:1144
 msgid "Not Started"
-msgstr "Ei Alkanut"
+msgstr "Ei Ladattu"
 
 #: downloadmanager.py:124
 msgid "Free Space:"
@@ -233,9 +241,21 @@ msgstr "Päävalikko"
 msgid "Settings"
 msgstr "Asetukset"
 
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:126
+msgid "Download Manager"
+msgstr "Latauksien Hallinta"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:154
+msgid "EPGs downloading."
+msgstr "Ohjelmaopasta ladataan."
+
 #: menu.py:50
 msgid "Update"
 msgstr "Päivitä"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:316
+msgid "Last catchup check: "
+msgstr "Lista päivitetty: "
 
 #: menu.py:52 menu.py:93 menu.py:251
 msgid "Lists updated: "
@@ -277,9 +297,17 @@ msgstr "Poistettu"
 msgid "Expired"
 msgstr "Päättynyt"
 
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:291
+msgid "Expires: "
+msgstr "Päättyy: "
+
 #: playlists.py:281
 msgid "Delete selected playlist?"
 msgstr "Poista valittu Toistolista?"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:357
+msgid "Delete providers EPG data?"
+msgstr "Poistetaanko palveluntarjoajien EPG tiedot?"
 
 #: playsettings.py:37
 msgid "Playlist Settings"
@@ -312,6 +340,10 @@ msgstr "Näytä Sarjat kategoriat:"
 #: playsettings.py:131
 msgid "Show CATCHUP category:"
 msgstr "Näytä Mediakirjasto kategoriat:"
+
+#: playsettings.py:132
+msgid "EPG offset"
+msgstr "EPG poikkeama"
 
 #: playsettings.py:134
 msgid "Stream Type LIVE:"
@@ -465,9 +497,13 @@ msgstr "Lisää Toistolista"
 msgid "Main Settings"
 msgstr "Asetukset"
 
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:124
+msgid "Manual EPG Update"
+msgstr "EPG Käsin Päivitys"
+
 #: settings.py:93
 msgid "Select skin *Restart GUI Required"
-msgstr "Valitse teema*Uudelleen käynnistys tarvittaan"
+msgstr "Valitse teema *Uudelleen käynnistys vaaditaan"
 
 #: settings.py:94
 msgid "playlists.txt location"
@@ -499,7 +535,7 @@ msgstr "Pysäytä toisto takaisin näppäimellä"
 
 #: settings.py:103
 msgid "VOD download folder"
-msgstr "VOD lataus kansio"
+msgstr "Tallennus kansio ladatuille ohjelmille"
 
 #: settings.py:104
 msgid "Parental control"
@@ -534,6 +570,9 @@ msgid "Skip playlist selection screen if only 1 playlist"
 msgstr "Ohita toistolistan valintaikkuna jos on vain 1 toistolista"
 
 #: settings.py:211 settings.py:224
+msgid "Automatic EPG download time *Restart GUI Required"
+msgstr "Automaattinen EPG latausaika *Uudelleen käynnistys vaaditaan"
+
 msgid "Choose Directory:"
 msgstr "Valitse hakemisto:"
 
@@ -559,7 +598,7 @@ msgstr "Elokuva"
 
 #: vod.py:1149
 msgid "Added to download manager"
-msgstr "Lisätty latauksenhallintaan"
+msgstr "Lisätty lataus listaan"
 
 #: vod.py:1151
 msgid "Already added to download manager"
