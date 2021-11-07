@@ -435,11 +435,18 @@ class XStreamity_DownloadManager(Screen):
 
                     if "https" in str(self.url):
                         checkcmd = "strings $(which wget) | grep no-check-certificate"
-                        result = subprocess.run(checkcmd, shell=True)
-                        if result.returncode == 0:
-                            cmd = "wget --no-check-certificate -U 'Enigma2 - XStreamity Plugin' -c '%s' -O '%s%s'" % (self.url, self.shortpath, filename)
+                        if pythonVer == 2:
+                            result = subprocess.call(checkcmd, shell=True)
+                            if result == 0:
+                                cmd = "wget --no-check-certificate -U 'Enigma2 - XStreamity Plugin' -c '%s' -O '%s%s'" % (self.url, self.shortpath, filename)
+                            else:
+                                self.session.open(MessageBox, _('Please update your wget library to download https lines\n\nopkg update\nopkg install wget'), type=MessageBox.TYPE_INFO)
                         else:
-                            self.session.open(MessageBox, _('Please update your wget library to download https lines\n\nopkg update\nopkg install wget'), type=MessageBox.TYPE_INFO)
+                            result = subprocess.run(checkcmd, shell=True)
+                            if result.returncode == 0:
+                                cmd = "wget --no-check-certificate -U 'Enigma2 - XStreamity Plugin' -c '%s' -O '%s%s'" % (self.url, self.shortpath, filename)
+                            else:
+                                self.session.open(MessageBox, _('Please update your wget library to download https lines\n\nopkg update\nopkg install wget'), type=MessageBox.TYPE_INFO)
 
                     try:
                         JobManager.AddJob(downloadJob(self, cmd, self.path, self.cleanName))
