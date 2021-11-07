@@ -8,7 +8,7 @@
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/toys/images/background2.jpg" backgroundColor="#ffffff" alphatest="off" position="0,0" size="1920,1080" zPosition="-1" />
 	<widget source="list" render="Listbox" position="center,330" size="738,600" foregroundColor="#ffffff" backgroundColor="#0945b8" foregroundColorSelected="#004e98" backgroundColorSelected="#9bb1e6" 
 			selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/toys/images/selection2.png" backgroundPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/toys/images/blank.png"
-			itemHeight="120" scrollbarMode="showNever" transparent="1" zPosition="2" >
+			itemHeight="120" scrollbarMode="showNever" enableWrapAround="1" transparent="1" zPosition="2" >
 		<convert type="TemplatedMultiContent">{"template": [
 			MultiContentEntryPixmapAlphaBlend(pos=(90, 20), size=(122, 80), png = 2),
 			MultiContentEntryText(pos=(248, 0), size=(430, 120), font=0, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1),

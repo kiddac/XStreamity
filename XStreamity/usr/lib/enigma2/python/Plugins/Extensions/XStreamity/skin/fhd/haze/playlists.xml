@@ -17,7 +17,7 @@
 	
 	<widget source="playlists" render="Listbox" position="0,136" size="480,840" foregroundColor="#ffffff" backgroundColor="#1a242b34" foregroundColorSelected="#ffffff" backgroundColorSelected="#1a000000" 
 	selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/haze/images/menu-select.png"
-	itemHeight="120" scrollbarMode="showOnDemand" transparent="1" zPosition="2">
+	itemHeight="120" scrollbarMode="showOnDemand" enableWrapAround="1" transparent="1" zPosition="2">
 	
 		<convert type="TemplatedMultiContent">
 			{"template": [

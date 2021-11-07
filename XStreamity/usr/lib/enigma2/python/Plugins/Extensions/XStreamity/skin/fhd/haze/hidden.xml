@@ -32,7 +32,7 @@
 	<widget source="hidden_list" render="Listbox" position="0,92" size="480,928" 
 	foregroundColor="#ffffff" backgroundColor="#1a242b34" foregroundColorSelected="#ffffff" backgroundColorSelected="#1a000000" 
 	selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/haze/images/menu-select.png"
-			scrollbarMode="showOnDemand" itemHeight="58" transparent="1" zPosition="2" >
+			scrollbarMode="showOnDemand" itemHeight="58" enableWrapAround="1" transparent="1" zPosition="2" >
 		<convert type="TemplatedMultiContent">{"template": [
 			MultiContentEntryPixmapAlphaBlend(pos = (18, 12), size = (38, 36), png = 0),
 			MultiContentEntryText(pos = (69,0), size = (381, 58), font=0, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1),

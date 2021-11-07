@@ -18,7 +18,7 @@
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="30,1018" size="420,4" alphatest="blend" zPosition="1" />
 
 	<widget source="main_list" render="Listbox" position="0,300" size="480,720" foregroundColor="#ffffff" backgroundColor="#000000" foregroundColorSelected="#ffffff" backgroundColorSelected="#003d68"
-			scrollbarMode="showOnDemand" itemHeight="72" transparent="1" zPosition="3" >
+			scrollbarMode="showOnDemand" itemHeight="72" enableWrapAround="1" transparent="1" zPosition="3" >
 		<convert type="TemplatedMultiContent">{"template": [
 			MultiContentEntryText(pos=(18, 0), size = (402, 72), font=0, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 0),
 			MultiContentEntryPixmapAlphaBlend(pos=(438, 25), size=(27, 25), png = 1),
@@ -36,7 +36,7 @@
 	<widget source="x_description" render="XStreamityRunningText" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" position="510,144" size="1110,120" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#000000" halign="left" transparent="1" zPosition="2" />
 
 	<widget source="epg_list" render="Listbox" position="510,300" size="1380,720" foregroundColor="#ffffff" backgroundColor="#000000" foregroundColorSelected="#ffffff" backgroundColorSelected="#003d68" scrollbarMode="showNever"
-			itemHeight="72" transparent="1" zPosition="3" >
+			itemHeight="72" enableWrapAround="1" transparent="1" zPosition="3" >
 		<convert type="TemplatedMultiContent">{"template": [
 			MultiContentEntryText(pos = (15, 0), size = (90, 72), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 2),
 			MultiContentEntryText(pos = (105, 0), size = (525, 72), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 3),
@@ -49,7 +49,7 @@
 			}</convert>
 	</widget>
 
-	<widget source="epg_short_list" render="Listbox" position="510,300" size="1380,720" foregroundColor="#ffffff" backgroundColor="#000000" foregroundColorSelected="#ffffff" backgroundColorSelected="#003d68" scrollbarMode="showOnDemand" itemHeight="72" transparent="1" zPosition="4" >
+	<widget source="epg_short_list" render="Listbox" position="510,300" size="1380,720" foregroundColor="#ffffff" backgroundColor="#000000" foregroundColorSelected="#ffffff" backgroundColorSelected="#003d68" scrollbarMode="showOnDemand" itemHeight="72" enableWrapAround="1" transparent="1" zPosition="4" >
 		<convert type="TemplatedMultiContent">{"template": [
 			MultiContentEntryText(pos = (15, 0), size = (213, 72), font=0, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1 ),
 			MultiContentEntryText(pos = (240, 0), size = (240, 72), font=0, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 2),

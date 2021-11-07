@@ -18,7 +18,7 @@
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="30,958" size="420,4" alphatest="blend" zPosition="1" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="30,1018" size="420,4" alphatest="blend" zPosition="1" />
 	<widget source="hidden_list" render="Listbox" position="0,300" size="480,720" foregroundColor="#ffffff" backgroundColor="#2a70a4" foregroundColorSelected="#ffffff"
-			backgroundColorSelected="#296fa3" scrollbarMode="showOnDemand" itemHeight="60" transparent="1" zPosition="2" >
+			backgroundColorSelected="#296fa3" scrollbarMode="showOnDemand" itemHeight="60" enableWrapAround="1" transparent="1" zPosition="2" >
 		<convert type="TemplatedMultiContent">{"template": [
 			MultiContentEntryPixmapAlphaBlend(pos = (18, 12), size = (38, 36), png = 0),
 			MultiContentEntryText(pos = (69,0), size = (381, 60), font=0,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1),

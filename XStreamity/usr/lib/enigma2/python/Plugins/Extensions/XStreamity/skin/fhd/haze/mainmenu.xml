@@ -15,7 +15,7 @@
 		
 	<widget source="list" render="Listbox" position="0,96" size="480,288" foregroundColor="#ffffff" backgroundColor="#1a242b34" foregroundColorSelected="#fffffff" backgroundColorSelected="#1a000000" 
 	selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/haze/images/menu-select.png"
-	itemHeight="72" scrollbarMode="showNever" transparent="1" zPosition="2">
+	itemHeight="72" scrollbarMode="showNever" enableWrapAround="1" transparent="1" zPosition="2">
 		<convert type="TemplatedMultiContent">{"template": [
 			MultiContentEntryText(pos=(30, 0), size=(420, 72), font=0, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1),
 			],
