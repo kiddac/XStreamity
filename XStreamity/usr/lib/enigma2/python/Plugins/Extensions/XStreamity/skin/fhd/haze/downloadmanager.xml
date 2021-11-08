@@ -13,10 +13,8 @@
 	
 	<eLabel position="0,92" size="1920,928" backgroundColor="#1a242b34" zPosition="-1" />
 	
-	<widget source="downloadlist" render="Listbox" position="center,111" size="1620,840" font="xstreamityregular;27" secondfont="xstreamityregular;27"
-	foregroundColor="#ffffff" backgroundColor="#1a242b34" foregroundColorSelected="#ffffff" backgroundColorSelected="#1a000000" 
-	selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/haze/images/menu-select.png"
-	scrollbarMode="showOnDemand" enableWrapAround="1" transparent="0" zPosition="2" >
+	<widget source="downloadlist" render="Listbox" position="center,111" size="1620,840"  foregroundColor="#ffffff" backgroundColor="#1a242b34" foregroundColorSelected="#ffffff" backgroundColorSelected="#1a000000" 
+	selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/haze/images/menu-select.png" scrollbarMode="showOnDemand" enableWrapAround="1" transparent="0" zPosition="2" >
 		<convert type="TemplatedMultiContent">
 			{"template": [
 				MultiContentEntryText(pos = (15, 0), size = (195, 60), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 0), # index 0 is the type
@@ -26,7 +24,7 @@
 				MultiContentEntryText(pos = (1365, 0), size = (90, 60), font=0, flags = RT_HALIGN_RIGHT|RT_VALIGN_CENTER, text = 5), # index 5 is the percentage
 				MultiContentEntryText(pos = (1455, 0), size = (150, 60), font=0, flags = RT_HALIGN_RIGHT|RT_VALIGN_CENTER, text = 6), # index 6 is the size
 				],
-				"fonts": [gFont("Regular", 27)],
+				"fonts": [gFont("xstreamityregular", 27)],
 				"itemHeight": 60
 			}
 		</convert>
