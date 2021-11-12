@@ -99,7 +99,6 @@ if os.path.exists("/usr/bin/exteplayer3"):
 if os.path.exists("/usr/bin/apt-get"):
     streamtype_choices.append(('8193', 'GStreamer(8193)'))
 
-
 cfg.livetype = ConfigSelection(default='1', choices=streamtype_choices)
 cfg.vodtype = ConfigSelection(default='4097', choices=streamtype_choices)
 cfg.downloadlocation = ConfigDirectory(default='/media/hdd/movie/')
@@ -118,7 +117,6 @@ cfg.catchupend = ConfigSelectionNumber(0, 30, 1, default=0)
 cfg.subs = ConfigYesNo(default=False)
 cfg.skipplaylistsscreen = ConfigYesNo(default=False)
 cfg.wakeup = ConfigClock(default=((9 * 60) + 9) * 60)  # 7:00
-
 cfg.adult = ConfigYesNo(default=False)
 cfg.adultpin = ConfigPIN(default=0000)
 cfg.retries = ConfigSubsection()
