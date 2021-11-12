@@ -452,6 +452,8 @@ class XStreamity_Categories(Screen):
         self["x_title"].setText('')
         self["x_description"].setText('')
 
+        self.clear_caches()
+
         if self.level == 1:
             self.getCategories()
             if self.categoryname == "live":
@@ -1531,52 +1533,51 @@ class XStreamity_Categories(Screen):
                 self.sortindex = index
                 break
 
+        if self["main_list"].getCurrent():
+            self["main_list"].setIndex(0)
+
+        current_sort = self["key_yellow"].getText()
+
+        if current_sort == (_('Sort: A-Z')):
+            activelist.sort(key=lambda x: x[1], reverse=False)
+
+        elif current_sort == (_('Sort: Z-A')):
+            activelist.sort(key=lambda x: x[1], reverse=True)
+
+        elif current_sort == (_('Sort: Added')):
+            if self.categoryname == "live":
+                activelist.sort(key=lambda x: x[5], reverse=True)
+            elif self.categoryname == "vod":
+                activelist.sort(key=lambda x: x[4], reverse=True)
+            elif self.categoryname == "series":
+                if self.level == 2:
+                    activelist.sort(key=lambda x: x[10], reverse=True)
+                if self.level == 3:
+                    activelist.sort(key=lambda x: x[12], reverse=True)
+                if self.level == 4:
+                    activelist.sort(key=lambda x: x[15], reverse=True)
+            elif self.categoryname == "catchup":
+                activelist.sort(key=lambda x: x[5], reverse=True)
+
+        elif current_sort == (_('Sort: Year')):
+            if self.categoryname == "vod":
+                activelist.sort(key=lambda x: x[9], reverse=True)
+            elif self.categoryname == "series":
+                if self.level == 2:
+                    activelist.sort(key=lambda x: x[8], reverse=True)
+                if self.level == 3:
+                    activelist.sort(key=lambda x: x[8], reverse=True)
+                if self.level == 4:
+                    activelist.sort(key=lambda x: x[8], reverse=True)
+
+        elif current_sort == (_('Sort: Original')):
+            activelist = activeoriginal
+
         nextSortType = islice(cycle(sortlist), self.sortindex + 1, None)
         self.sortText = str(next(nextSortType))
 
-        if self["main_list"].getCurrent():
-            self["main_list"].setIndex(0)
-            current_sort = self["key_yellow"].getText()
-
-            if current_sort == (_('Sort: A-Z')):
-                activelist.sort(key=lambda x: x[1], reverse=False)
-
-            elif current_sort == (_('Sort: Z-A')):
-                activelist.sort(key=lambda x: x[1], reverse=True)
-
-            elif current_sort == (_('Sort: Added')):
-                if self.categoryname == "live":
-                    activelist.sort(key=lambda x: x[5], reverse=True)
-                elif self.categoryname == "vod":
-                    activelist.sort(key=lambda x: x[4], reverse=True)
-                elif self.categoryname == "series":
-                    if self.level == 2:
-                        activelist.sort(key=lambda x: x[10], reverse=True)
-                    if self.level == 3:
-                        activelist.sort(key=lambda x: x[12], reverse=True)
-                    if self.level == 4:
-                        activelist.sort(key=lambda x: x[15], reverse=True)
-                elif self.categoryname == "catchup":
-                    activelist.sort(key=lambda x: x[5], reverse=True)
-
-            elif current_sort == (_('Sort: Year')):
-                if self.categoryname == "vod":
-                    activelist.sort(key=lambda x: x[9], reverse=True)
-                elif self.categoryname == "series":
-                    if self.level == 2:
-                        activelist.sort(key=lambda x: x[8], reverse=True)
-                    if self.level == 3:
-                        activelist.sort(key=lambda x: x[8], reverse=True)
-                    if self.level == 4:
-                        activelist.sort(key=lambda x: x[8], reverse=True)
-
-            elif current_sort == (_('Sort: Original')):
-                activelist = activeoriginal
-
-            self["key_yellow"].setText(self.sortText)
-
-            if current_sort:
-                glob.nextlist[-1]["sort"] = self["key_yellow"].getText()
+        self["key_yellow"].setText(self.sortText)
+        glob.nextlist[-1]["sort"] = self["key_yellow"].getText()
 
         if self.level == 1:
             self.list1 = activelist
@@ -1735,7 +1736,7 @@ class XStreamity_Categories(Screen):
                 self["category_actions"].setEnabled(False)
                 self["channel_actions"].setEnabled(True)
 
-                self["key_yellow"].setText(self.sortText)
+                self["key_yellow"].setText(_('Sort: A-Z'))
                 glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self["key_yellow"].getText(), "filter": ""})
 
                 self.createSetup()
