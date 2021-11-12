@@ -790,9 +790,9 @@ class XStreamity_StreamPlayer(
             eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
             # print('self.ar_id_player NEXT %s' % VIDEO_ASPECT_RATIO_MAP[self.ar_id_player])
             return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
-        except Exception as ex:
+        except Exception as e:
             print(ex)
-            return 'nextAR ERROR %s' % ex
+            return 'nextAR ERROR %s' % e
 
     def nextAR(self):
         message = self.nextARfunction()
@@ -984,15 +984,11 @@ class XStreamity_VodPlayer(
             self["cover"].instance.show()
 
     def back(self):
-        print("*** back ***")
         glob.nextlist[-1]['index'] = glob.currentchannellistindex
         try:
-            print("**** back 1 ***")
             setResumePoint(self.session)
-            print("**** back 2 ***")
 
         except Exception as e:
-            print("*** back failed ***")
             print(e)
         self.close()
 
@@ -1025,9 +1021,9 @@ class XStreamity_VodPlayer(
             eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
             # print('self.ar_id_player NEXT %s' % VIDEO_ASPECT_RATIO_MAP[self.ar_id_player])
             return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
-        except Exception as ex:
+        except Exception as e:
             print(ex)
-            return 'nextAR ERROR %s' % ex
+            return 'nextAR ERROR %s' % e
 
     def nextAR(self):
         message = self.nextARfunction()
@@ -1262,9 +1258,9 @@ class XStreamity_CatchupPlayer(
             eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
             # print('self.ar_id_player NEXT %s' % VIDEO_ASPECT_RATIO_MAP[self.ar_id_player])
             return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
-        except Exception as ex:
+        except Exception as e:
             print(ex)
-            return 'nextAR ERROR %s' % ex
+            return 'nextAR ERROR %s' % e
 
     def nextAR(self):
         message = self.nextARfunction()
