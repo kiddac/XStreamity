@@ -56,8 +56,8 @@ def saveResumePoints():
         f = open('/etc/enigma2/xstreamity/resumepoints.pkl', 'wb')
         cPickle.dump(resumePointCache, f, cPickle.HIGHEST_PROTOCOL)
         f.close()
-    except Exception as ex:
-        print("[XStreamity] Failed to write resumepoints:", ex)
+    except Exception as e:
+        print("[XStreamity] Failed to write resumepoints:", e)
 
 
 def loadResumePoints():
@@ -66,8 +66,8 @@ def loadResumePoints():
         PickleFile = cPickle.load(f)
         f.close()
         return PickleFile
-    except Exception as ex:
-        print("[XStreamity] Failed to load resumepoints:", ex)
+    except Exception as e:
+        print("[XStreamity] Failed to load resumepoints:", e)
         return {}
 
 
