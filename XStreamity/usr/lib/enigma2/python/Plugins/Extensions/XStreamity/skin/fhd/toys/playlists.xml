@@ -14,7 +14,7 @@
 			MultiContentEntryText(pos = (42, 20), size = (504, 80), font=2,  color = 0x00ffffff, color_sel = 0x00004e98, backcolor_sel = 0x009bb1e6, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1),
 
 			<!-- Authorised -->
-			MultiContentEntryText(pos = (453, 18), size = (224, 27), font=3,  color = 0x00ffffff, color_sel = 0x00004e98, backcolor_sel = 0x009f0f5ff, flags = RT_HALIGN_RIGHT, text = 4),
+			MultiContentEntryText(pos = (441, 18), size = (236, 27), font=3,  color = 0x00ffffff, color_sel = 0x00004e98, backcolor_sel = 0x009f0f5ff, flags = RT_HALIGN_RIGHT, text = 4),
 			
 			<!-- Authorised LED -->
 			MultiContentEntryPixmapAlphaBlend(pos = (690, 21), size = (23, 24), png = 5),
