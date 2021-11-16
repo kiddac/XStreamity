@@ -97,6 +97,12 @@ class XStreamity_HiddenCategories(Screen):
             elif self.level == 4:
                 self.hidelist = glob.current_playlist['player_info']['seriesepisodeshidden']
 
+        elif self.category_type == "catchup":
+            if self.level == 1:
+                self.hidelist = glob.current_playlist['player_info']['catchuphidden']
+            else:
+                self.hidelist = glob.current_playlist['player_info']['catchupchannelshidden']
+
         for item in self.channellist:
             if item[2] not in self.hidelist:
                 self.startList.append([item[1], item[2], False])
@@ -206,6 +212,20 @@ class XStreamity_HiddenCategories(Screen):
                         glob.current_playlist['player_info']['seriesepisodeshidden'].append(item[1])
                     elif item[2] is False and item[1] in glob.current_playlist['player_info']['seriesepisodeshidden']:
                         glob.current_playlist['player_info']['seriesepisodeshidden'].remove(item[1])
+
+            elif self.category_type == "catchup":
+                if self.level == 1:
+                    if item[2] is True and item[1] not in glob.current_playlist['player_info']['catchuphidden']:
+                        glob.current_playlist['player_info']['catchuphidden'].append(item[1])
+                    elif item[2] is False and item[1] in glob.current_playlist['player_info']['catchuphidden']:
+                        glob.current_playlist['player_info']['catchuphidden'].remove(item[1])
+
+                elif self.level == 2:
+                    if item[2] is True and item[1] not in glob.current_playlist['player_info']['catchupchannelshidden']:
+                        glob.current_playlist['player_info']['catchupchannelshidden'].append(item[1])
+                    elif item[2] is False and item[1] in glob.current_playlist['player_info']['catchupchannelshidden']:
+                        glob.current_playlist['player_info']['catchupchannelshidden'].remove(item[1])
+
         self.playlists_all = []
 
         with open(playlists_json) as f:

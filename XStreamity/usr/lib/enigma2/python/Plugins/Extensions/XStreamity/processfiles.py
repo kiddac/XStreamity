@@ -62,6 +62,8 @@ def processfiles():
             seriestitleshidden = []
             seriesseasonshidden = []
             seriesepisodeshidden = []
+            catchuphidden = []
+            catchupchannelshidden = []
 
             showlive = True
             showvod = True
@@ -151,6 +153,12 @@ def processfiles():
                                 if "seriesepisodeshidden" not in playlists["player_info"]:
                                     playlists["player_info"]["seriesepisodeshidden"] = seriesepisodeshidden
 
+                                if "catchuphidden" not in playlists["player_info"]:
+                                    playlists["player_info"]["catchuphidden"] = catchuphidden
+
+                                if "catchupchannelshidden" not in playlists["player_info"]:
+                                    playlists["player_info"]["catchupchannelshidden"] = catchupchannelshidden
+
                                 if "serveroffset" not in playlists["player_info"]:
                                     playlists["player_info"]["serveroffset"] = serveroffset
 
@@ -204,6 +212,10 @@ def processfiles():
                             ("seriestitleshidden", seriestitleshidden),
                             ("seriesseasonshidden", seriesseasonshidden),
                             ("seriesepisodeshidden", seriesepisodeshidden),
+
+                            ("catchuphidden", catchuphidden),
+                            ("catchupchannelshidden", catchupchannelshidden),
+
                             ("livefavourites", livefavourites),
                             ("vodfavourites", vodfavourites),
                             ("showlive", showlive),

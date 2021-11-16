@@ -411,6 +411,7 @@ class XStreamity_Categories(Screen):
                 "channelUp": self.pageUp,
                 "channelDown": self.pageDown,
                 "0": self.reset,
+                "menu": self.showHiddenList,
             }, -1)
 
             self["channel_actions"] = ActionMap(["XStreamityActions"], {
@@ -429,6 +430,7 @@ class XStreamity_Categories(Screen):
                 "rec": self.downloadVideo,
                 "5": self.downloadVideo,
                 "0": self.reset,
+                "menu": self.showHiddenList,
             }, -1)
 
         glob.nextlist = []
@@ -484,10 +486,11 @@ class XStreamity_Categories(Screen):
             self.buildList4()
 
     def getCategories(self):
+        # print("*** getCategories **")
         index = 0
         self.list1 = []
 
-        if self.categoryname == "live" or self.categoryname == "catchup":
+        if self.categoryname == "live":
             currentCategoryList = glob.current_playlist['data']['live_categories']
             currentHidden = glob.current_playlist['player_info']['livehidden']
 
@@ -499,8 +502,12 @@ class XStreamity_Categories(Screen):
             currentCategoryList = glob.current_playlist['data']['series_categories']
             currentHidden = glob.current_playlist['player_info']['serieshidden']
 
+        elif self.categoryname == "catchup":
+            currentCategoryList = glob.current_playlist['data']['live_categories']
+            currentHidden = glob.current_playlist['player_info']['catchuphidden']
+
         hidden = False
-        # add FAVOURITES category to list
+
         if (self.categoryname == "live" or self.categoryname == "vod") and ("-1" in currentHidden):
             hidden = True
 
@@ -518,15 +525,15 @@ class XStreamity_Categories(Screen):
         if self.categoryname == "catchup":
             if not self.liveStreamsData:
                 self.liveStreamsData = self.downloadApiData(self.liveStreamsUrl)
-                tempList = []
-                archivelist = [x for x in self.liveStreamsData if x['tv_archive'] == 1 and x['tv_archive_duration'] != "0"]
+            tempList = []
+            archivelist = [x for x in self.liveStreamsData if x['tv_archive'] == 1 and x['tv_archive_duration'] != "0" and x['category_id'] not in glob.current_playlist['player_info']['livehidden']]
 
-                for item in currentCategoryList:
-                    for archive in archivelist:
-                        if item['category_id'] == archive['category_id'] or ('category_ids' in archive and item['category_id'] in archive['category_ids']):
-                            tempList.append(item)
-                            break
-                currentCategoryList = tempList
+            for item in currentCategoryList:
+                for archive in archivelist:
+                    if item['category_id'] == archive['category_id'] or ('category_ids' in archive and item['category_id'] in archive['category_ids']):
+                        tempList.append(item)
+                        break
+            currentCategoryList = tempList[:]
 
         for item in currentCategoryList:
             hidden = False
@@ -799,6 +806,7 @@ class XStreamity_Categories(Screen):
                 stream_icon = ''
                 epg_channel_id = ''
                 added = ''
+                hidden = False
 
                 if 'tv_archive' in item and 'tv_archive_duration' in item:
                     if item['tv_archive'] == 1 and item['tv_archive_duration'] != "0":
@@ -807,6 +815,8 @@ class XStreamity_Categories(Screen):
                             name = item['name']
                         if 'stream_id' in item and item['stream_id']:
                             stream_id = item['stream_id']
+                            if str(stream_id) in glob.current_playlist['player_info']['catchupchannelshidden']:
+                                hidden = True
                         if 'stream_icon' in item and item['stream_icon']:
                             if item['stream_icon'].startswith("http"):
                                 stream_icon = item['stream_icon']
@@ -822,10 +832,12 @@ class XStreamity_Categories(Screen):
                         next_url = "%s/live/%s/%s/%s.%s" % (self.host, self.username, self.password, stream_id, self.output)
                         self.list2.append([
                             index, str(name), str(stream_id), str(stream_icon), str(epg_channel_id), str(added), str(next_url),
-                            epgnowtime, epgnowtitle, epgnowdescription, epgnexttime, epgnexttitle, epgnextdescription
+                            epgnowtime, epgnowtitle, epgnowdescription, epgnexttime, epgnexttitle, epgnextdescription, hidden
                         ])
 
                         index += 1
+
+            glob.originalChannelList2 = self.list2[:]
 
     def getLevel3(self):
         # print("**** getLevel3 ****")
@@ -1165,7 +1177,7 @@ class XStreamity_Categories(Screen):
             self.showVod()
 
         elif self.categoryname == "catchup":
-            self.main_list = [buildCatchupStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6]) for x in self.list2]
+            self.main_list = [buildCatchupStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[13]) for x in self.list2 if x[13] is False]
             self["main_list"].setList(self.main_list)
             self["picon"].show()
 
@@ -1216,13 +1228,14 @@ class XStreamity_Categories(Screen):
             if self.categoryname == "catchup" and self.selectedlist == self["epg_short_list"]:
                 self["key_blue"].setText('')
                 self["key_yellow"].setText(_('Reverse'))
+                self["key_menu"].setText(_("Hide/Show"))
 
             else:
                 self["key_blue"].setText(_('Search'))
                 self["key_yellow"].setText(_(glob.nextlist[-1]['sort']))
                 self["key_menu"].setText(_("Hide/Show"))
 
-                if self.categoryname == "catchup" or self.favourites_category:
+                if self.favourites_category:
                     self["key_menu"].setText('')
 
     def playStream(self):
@@ -1961,6 +1974,11 @@ class XStreamity_Categories(Screen):
                         self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "series", self.list3, self.level)
                     elif self.level == 4:
                         self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "series", self.list4, self.level)
+                elif self.categoryname == "catchup":
+                    if self.level == 1:
+                        self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "catchup", self.list1, self.level)
+                    elif self.level == 2 and not self.favourites_category:
+                        self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "catchup", self.list2, self.level)
 
     def favourite(self):
         # print("**** favourite ***")
@@ -3311,9 +3329,9 @@ def buildSeriesEpisodesList(index, title, series_id, cover, plot, cast, director
     return (title, png, index, next_url, series_id, cover, plot, cast, director, genre, releaseDate, rating, duration, container_extension, tmdb_id, shorttitle, lastmodified, hidden)
 
 
-def buildCatchupStreamList(index, title, stream_id, stream_icon, epg_channel_id, added, next_url):
+def buildCatchupStreamList(index, title, stream_id, stream_icon, epg_channel_id, added, next_url, hidden):
     png = LoadPixmap(common_path + "more.png")
-    return (title, png, index, next_url, stream_id, stream_icon, epg_channel_id, added)
+    return (title, png, index, next_url, stream_id, stream_icon, epg_channel_id, added, hidden)
 
 
 def buildCatchupEPGListEntry(date_all, time_all, title, description, start, duration, index):
