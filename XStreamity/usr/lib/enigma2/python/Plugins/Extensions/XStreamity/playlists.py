@@ -41,7 +41,6 @@ class XStreamity_Playlists(Screen):
             self.skin = f.read()
 
         self.list = []
-        self['menu'] = List(self.list, enableWrapAround=True)
         self.setup_title = (_('Select Playlist'))
 
         self['key_red'] = StaticText(_('Back'))
@@ -52,7 +51,7 @@ class XStreamity_Playlists(Screen):
 
         self.list = []
         self.drawList = []
-        self["playlists"] = List(self.drawList)
+        self["playlists"] = List(self.drawList, enableWrapAround=True)
         self['playlists'].onSelectionChanged.append(self.getCurrentEntry)
         self["splash"] = Pixmap()
         self["splash"].show()
