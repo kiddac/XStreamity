@@ -14,6 +14,14 @@ except:
 
 
 def processfiles():
+    # check if playlists.txt file exists in specified location
+    if not os.path.isfile(playlist_file):
+        open(playlist_file, 'a').close()
+
+    # check if x-playlists.json file exists in specified location
+    if not os.path.isfile(playlists_json):
+        open(playlists_json, 'a').close()
+
     playlists_all = []
     if os.path.isfile(playlists_json):
         with open(playlists_json, "r") as f:
@@ -91,7 +99,7 @@ def processfiles():
                 domain = parsed_uri.hostname
                 name = domain
                 if line.partition(" #")[-1]:
-                    name = line.partition(" #")[-1]
+                    name = line.partition(" #")[-1].strip()
 
                 if parsed_uri.port:
                     port = parsed_uri.port
@@ -123,7 +131,6 @@ def processfiles():
                         pass
 
                 player_api = "%s/player_api.php?username=%s&password=%s" % (host, username, password)
-                enigma2_api = "%s/enigma2.php?username=%s&password=%s" % (host, username, password)
                 xmltv_api = "%s/xmltv.php?username=%s&password=%s" % (host, username, password)
                 full_url = "%s/get.php?username=%s&password=%s&type=%s&output=%s" % (host, username, password, type, output)
 
@@ -196,7 +203,6 @@ def processfiles():
                             ("output", output),
                             ("host", host),
                             ("player_api", player_api),
-                            ("enigma2_api", enigma2_api),
                             ("xmltv_api", xmltv_api),
                             ("full_url", full_url),
                         ]),
