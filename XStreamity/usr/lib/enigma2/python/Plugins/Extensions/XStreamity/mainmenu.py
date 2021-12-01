@@ -10,10 +10,9 @@ from .xStaticText import StaticText
 from Components.ActionMap import ActionMap
 from Components.Sources.List import List
 from enigma import eServiceReference
-from os import system, chmod
 from Screens.Console import Console
-from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
+from Screens.Screen import Screen
 from Tools.LoadPixmap import LoadPixmap
 
 import json
@@ -81,7 +80,7 @@ class XStreamity_MainMenu(Screen):
             dependencies = False
 
         if dependencies is False:
-            chmod("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/dependencies.sh", 0o0755)
+            os.chmod("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/dependencies.sh", 0o0755)
             cmd1 = ". /usr/lib/enigma2/python/Plugins/Extensions/XStreamity/dependencies.sh"
             self.session.openWithCallback(self.start, Console, title="Checking Python Dependencies", cmdlist=[cmd1], closeOnSuccess=False)
         else:
@@ -89,9 +88,9 @@ class XStreamity_MainMenu(Screen):
 
     def clear_caches(self):
         try:
-            system("echo 1 > /proc/sys/vm/drop_caches")
-            system("echo 2 > /proc/sys/vm/drop_caches")
-            system("echo 3 > /proc/sys/vm/drop_caches")
+            os.system("echo 1 > /proc/sys/vm/drop_caches")
+            os.system("echo 2 > /proc/sys/vm/drop_caches")
+            os.system("echo 3 > /proc/sys/vm/drop_caches")
         except:
             pass
 
