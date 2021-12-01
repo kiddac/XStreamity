@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from . import _
-
 from .plugin import skin_path, playlist_file
 from .xStaticText import StaticText
 
