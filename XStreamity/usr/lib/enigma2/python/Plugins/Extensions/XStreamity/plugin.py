@@ -3,9 +3,9 @@
 
 from . import _
 
-from Plugins.Plugin import PluginDescriptor
-from enigma import eTimer, getDesktop, addFont
 from Components.config import config, ConfigSubsection, ConfigSelection, ConfigDirectory, ConfigYesNo, ConfigSelectionNumber, ConfigClock, ConfigPIN, ConfigInteger
+from enigma import eTimer, getDesktop, addFont
+from Plugins.Plugin import PluginDescriptor
 
 import twisted.python.runtime
 
@@ -34,9 +34,6 @@ pythonVer = sys.version_info.major
 isDreambox = False
 if os.path.exists("/usr/bin/apt-get"):
     isDreambox = True
-
-autoStartTimer = None
-
 
 with open("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/version.txt", 'r') as f:
     version = f.readline()
@@ -134,8 +131,6 @@ if cfg.location.value:
     playlist_file = "%s/playlists.txt" % (cfg.location.value)
 
 font_folder = "%sfonts/" % (dir_plugins)
-icon_folder = "%sicons/" % (dir_plugins)
-image_folder = "%s/images/" % (skin_path)
 
 
 """
@@ -203,11 +198,14 @@ def extensionsmenu(session, **kwargs):
     return
 
 
+autoStartTimer = None
+
+
 class AutoStartTimer:
     def __init__(self, session):
         self.session = session
         self.timer = eTimer()
-        try:  # DreamOS fix
+        try: 
             self.timer_conn = self.timer.timeout.connect(self.onTimer)
         except:
             self.timer.callback.append(self.onTimer)
