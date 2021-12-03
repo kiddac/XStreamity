@@ -13,7 +13,7 @@
 	
 	<eLabel position="0,92" size="480,928" backgroundColor="#1a242b34" zPosition="-1" />
 		
-	<widget source="list" render="Listbox" position="0,96" size="480,360" foregroundColor="#ffffff" backgroundColor="#1a242b34" foregroundColorSelected="#fffffff" backgroundColorSelected="#1a000000" 
+	<widget source="list" render="Listbox" position="0,96" size="480,864" foregroundColor="#ffffff" backgroundColor="#1a242b34" foregroundColorSelected="#fffffff" backgroundColorSelected="#1a000000" 
 	selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/haze/images/menu-select.png"
 	itemHeight="72" scrollbarMode="showOnDemand" enableWrapAround="1" transparent="1" zPosition="2">
 		<convert type="TemplatedMultiContent">{"template": [
