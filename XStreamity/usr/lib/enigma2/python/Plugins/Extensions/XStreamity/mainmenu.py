@@ -182,16 +182,12 @@ class XStreamity_MainMenu(Screen):
 
     def resetData(self, answer=None):
         if answer is None:
-            self.session.openWithCallback(self.resetData, MessageBox, _('Warning: delete stored json data for all playlists. Settings, favourites etc. Playlists will not be deleted.\nDo you wish to continue?'))
+            self.session.openWithCallback(self.resetData, MessageBox, _('Warning: delete stored json data for all playlists... Settings, favourites etc. Playlists will not be deleted.\nDo you wish to continue?'))
         elif answer:
-            print("***deleteing json **")
             os.remove(playlists_json)
-            print("*** done **")
-
-        if not os.path.isfile(playlists_json):
-            open(playlists_json, 'a').close()
-
-        self.quit()
+            if not os.path.isfile(playlists_json):
+                open(playlists_json, 'a').close()
+            self.quit()
 
 
 def buildListEntry(index, title):
