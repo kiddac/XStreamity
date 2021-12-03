@@ -240,6 +240,7 @@ class XStreamity_Settings(ConfigListScreen, Screen):
                         parsed_uri = urlparse(line)
                         protocol = parsed_uri.scheme + "://"
                         domain = parsed_uri.hostname
+                        port = 80
 
                         if parsed_uri.port:
                             port = parsed_uri.port

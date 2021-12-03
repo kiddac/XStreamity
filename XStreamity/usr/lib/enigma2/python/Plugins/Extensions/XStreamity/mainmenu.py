@@ -4,7 +4,7 @@
 from . import _
 from . import xstreamity_globals as glob
 from . import processfiles as xfiles
-from .plugin import skin_path, common_path, version, downloads_json, pythonFull
+from .plugin import skin_path, common_path, version, downloads_json, pythonFull, playlists_json
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -114,14 +114,15 @@ class XStreamity_MainMenu(Screen):
             self.list.append([3, _("Add Playlist")])
             self.list.append([2, _("Main Settings")])
             self.list.append([5, _("Manual EPG Update")])
-            if downloads_all:
-                self.list.append([4, _("Download Manager")])
 
         else:
             self.list.append([3, _("Add Playlist")])
             self.list.append([2, _("Main Settings")])
-            if downloads_all:
-                self.list.append([4, _("Download Manager")])
+
+        if downloads_all:
+            self.list.append([4, _("Download Manager")])
+
+        self.list.append([6, _("Reset Stored Data")])
 
         self.drawList = []
         self.drawList = [buildListEntry(x[0], x[1]) for x in self.list]
@@ -167,8 +168,10 @@ class XStreamity_MainMenu(Screen):
                 self.downloadManager()
             if index == 5:
                 self.updateEPG()
+            if index == 6:
+                self.resetData()
 
-    def quit(self):
+    def quit(self, data=None):
         self.playOriginalChannel()
 
     def playOriginalChannel(self):
@@ -176,6 +179,19 @@ class XStreamity_MainMenu(Screen):
             if glob.newPlayingServiceRefString and glob.currentPlayingServiceRefString:
                 self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
         self.close()
+
+    def resetData(self, answer=None):
+        if answer is None:
+            self.session.openWithCallback(self.resetData, MessageBox, _('Warning: delete stored json data for all playlists. Settings, favourites etc. Playlists will not be deleted.\nDo you wish to continue?'))
+        elif answer:
+            print("***deleteing json **")
+            os.remove(playlists_json)
+            print("*** done **")
+
+        if not os.path.isfile(playlists_json):
+            open(playlists_json, 'a').close()
+
+        self.quit()
 
 
 def buildListEntry(index, title):
@@ -191,5 +207,7 @@ def buildListEntry(index, title):
         png = LoadPixmap(common_path + "vod_download.png")
     if index == 5:
         png = LoadPixmap(common_path + "epg_download.png")
+    if index == 6:
+        png = LoadPixmap(common_path + "reset.png")
 
     return (index, str(title), png)

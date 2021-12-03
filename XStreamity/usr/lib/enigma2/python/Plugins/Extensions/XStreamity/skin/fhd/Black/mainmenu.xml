@@ -7,14 +7,14 @@
 	<widget source="version" render="Label" position="center, 150" size="1920,27" font="xstreamityregular;18" foregroundColor="#ffffff" backgroundColor="#000000" halign="center" valign="center" transparent="1" />
 	<widget source="Title" render="Label" position="center,210" size="1920,70" foregroundColor="#ffffff" backgroundColor="#000000" halign="center" font="xstreamityregular;48" transparent="1" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/panel.png" position="center,300" size="800,660" alphatest="blend" zPosition="1" />
-	<widget source="list" render="Listbox" position="center,330" size="738,600" foregroundColor="#ffffff" backgroundColor="#000000" foregroundColorSelected="#ffffff" backgroundColorSelected="#003d68" itemHeight="120" scrollbarMode="showNever" enableWrapAround="1" transparent="1" zPosition="2">
+	<widget source="list" render="Listbox" position="center,330" size="738,600" foregroundColor="#ffffff" backgroundColor="#000000" foregroundColorSelected="#ffffff" backgroundColorSelected="#003d68" itemHeight="120" scrollbarMode="showOnDemand" enableWrapAround="1" transparent="1" zPosition="2">
 		<convert type="TemplatedMultiContent">{"template": [
 			MultiContentEntryPixmapAlphaBlend(pos=(60, 20), size=(122, 80), png = 2),
 			MultiContentEntryText(pos=(218, 0), size=(460, 120), font=0, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1),
 			],
 			"fonts": [gFont("xstreamityregular", 48)],
 			"itemHeight": 120,
-			"scrollbarMode": "showNever"
+			"scrollbarMode": "showOnDemand"
 			}</convert>
 	</widget>
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="center,448" size="738,4" alphatest="blend" zPosition="1" />
