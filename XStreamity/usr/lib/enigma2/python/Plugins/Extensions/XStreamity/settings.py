@@ -14,6 +14,7 @@ from Screens.InputBox import PinInput
 from Screens.MessageBox import MessageBox
 from Screens.LocationBox import LocationBox
 from Screens.Screen import Screen
+from Screens import Standby
 from Tools.BoundFunction import boundFunction
 
 import os
@@ -109,6 +110,19 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
                     x[1].save()
                 cfg.save()
                 configfile.save()
+
+                if self.org_skin != cfg.skin.getValue() or self.org_main != cfg.main.getValue() or self.org_wakeup != cfg.wakeup.getValue():
+                    self.changedFinished()
+            self.close()
+
+    def changedFinished(self):
+        self.session.openWithCallback(self.ExecuteRestart, MessageBox, _('You need to restart the GUI') + '\n' + _('Do you want to restart now?'), MessageBox.TYPE_YESNO)
+        self.close()
+
+    def ExecuteRestart(self, result):
+        if result:
+            Standby.quitMainloop(3)
+        else:
             self.close()
 
     def initConfig(self):
@@ -139,6 +153,10 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.cfg_skipplaylistsscreen = getConfigListEntry(_('Skip playlist selection screen if only 1 playlist'), cfg.skipplaylistsscreen)
 
         self.cfg_wakeup = getConfigListEntry(_('Automatic EPG download time *Restart GUI Required'), cfg.wakeup)
+
+        self.org_skin = cfg.skin.getValue()
+        self.org_main = cfg.main.getValue()
+        self.org_wakeup = cfg.wakeup.getValue()
 
         self.createSetup()
 
