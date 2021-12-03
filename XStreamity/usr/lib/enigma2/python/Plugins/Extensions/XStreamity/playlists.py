@@ -40,7 +40,6 @@ class XStreamity_Playlists(Screen):
         with open(skin, 'r') as f:
             self.skin = f.read()
 
-        self.list = []
         self.setup_title = (_('Select Playlist'))
 
         self['key_red'] = StaticText(_('Back'))
