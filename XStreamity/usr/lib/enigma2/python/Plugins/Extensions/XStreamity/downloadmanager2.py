@@ -40,7 +40,7 @@ def convert_size(size_bytes):
 class downloadJob(Job):
     def __init__(self, toolbox, cmdline, filename, filetitle):
         # print("**** downloadJob init ***")
-        Job.__init__(self, _('XDownload:') + ' %s' % filetitle)
+        Job.__init__(self, 'XDownload:' + ' %s' % filetitle)
         self.filename = filename
         self.toolbox = toolbox
         self.retrycount = 0
@@ -63,7 +63,7 @@ class downloadTask(Task):
         ERROR_CORRUPT_FILE, ERROR_RTMP_ReadPacket, ERROR_SEGFAULT, ERROR_SERVER, ERROR_UNKNOWN = range(5)
 
     def __init__(self, job, cmdline, filename):
-        Task.__init__(self, job, _("Downloading ..."))
+        Task.__init__(self, job, "Downloading ...")
         self.postconditions.append(downloadTaskPostcondition())
         self.setCmdline(cmdline)
         self.filename = filename
@@ -224,7 +224,6 @@ class XStreamity_DownloadManager(Screen):
             free = convert_size(float(stat.f_bfree * stat.f_bsize))
             total = convert_size(float(stat.f_blocks * stat.f_bsize))
         except Exception as e:
-            print("** diskspace failed **")
             print(e)
             free = "-?-"
             total = "-?-"
@@ -452,7 +451,6 @@ class XStreamity_DownloadManager(Screen):
                         JobManager.AddJob(downloadJob(self, cmd, self.path, self.cleanName))
                         self.createMetaFile(filename, self.cleanName)
                     except Exception as e:
-                        print("**** download error ***")
                         self.downloading = False
                         print(e)
 
@@ -472,7 +470,6 @@ class XStreamity_DownloadManager(Screen):
                 f.write('%s\n%s\n%s\n%i\n' % (serviceref.toString(), cleanName, "", time.time()))
         except Exception as e:
             print(e)
-            print('ERROR metaFile')
         return
 
     def download_failed(self, data=None):
