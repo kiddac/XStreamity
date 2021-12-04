@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: XStreamity V_3.0\n"
-"POT-Creation-Date: 2021-08-16 20:13+0200\n"
-"PO-Revision-Date: 2021-08-16 22:00+0200\n"
+"POT-Creation-Date: 2021-12-04 15:08+0000\n"
+"PO-Revision-Date: 2021-12-04 15:08+0000\n"
 "Last-Translator: \n"
 "Language-Team: @biko_73\n"
 "Language: ar\n"
@@ -14,141 +14,303 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: catchup.py:99 catchup.py:100 menu.py:205
-msgid "Catch Up TV"
-msgstr "إعادة مشاهدة البث التلفزيوني"
+#: channels.py:233 channels.py:1536 channels.py:1539 channels.py:1542
+#: channels.py:1554 channels.py:1659 channels.py:1752
+msgid "Sort: A-Z"
+msgstr "الترتيب: أ-ي"
 
-#: catchup.py:130 downloadmanager.py:52 live.py:236 live.py:684 mainmenu.py:44
-#: menu.py:50 playlists.py:46 playsettings.py:43 series.py:153 server.py:41
-#: settings.py:45 vod.py:155 vod.py:427
+#: channels.py:276 downloadmanager2.py:178 mainmenu.py:39 menu.py:45
+#: playlists.py:45 playsettings.py:47 server.py:38 settings.py:66
 msgid "Back"
 msgstr "رجوع"
 
-#: catchup.py:131 live.py:237 live.py:685 mainmenu.py:45 menu.py:51
-#: playlists.py:47 series.py:154 vod.py:156 vod.py:428
+#: channels.py:277 mainmenu.py:40 menu.py:46 playlists.py:46
 msgid "OK"
 msgstr "موافق"
 
-#: catchup.py:417 live.py:1157 series.py:1004 vod.py:915
-msgid "Incorrect pin code."
-msgstr "الرمز السري غير صحيح."
+#: channels.py:279 channels.py:1234
+msgid "Search"
+msgstr "البحث"
 
-#: catchup.py:430 live.py:1171 series.py:1019 vod.py:928
-msgid "all"
+#: channels.py:302
+msgid "Live Categories"
+msgstr ""
+
+#: channels.py:303 menu.py:235
+msgid "Live Streams"
+msgstr "البث المباشر"
+
+#: channels.py:339
+msgid "Vod Categories"
+msgstr ""
+
+#: channels.py:340 menu.py:240
+msgid "Vod"
+msgstr "الفيديو حسب الطلب"
+
+#: channels.py:370
+msgid "Series Categories"
+msgstr ""
+
+#: channels.py:371 channels.py:2749
+msgid "Series"
+msgstr ""
+
+#: channels.py:396
+msgid "Catch Up Categories"
+msgstr ""
+
+#: channels.py:397 menu.py:257
+msgid "Catch Up TV"
+msgstr "إعادة مشاهدة البث التلفزيوني"
+
+#: channels.py:515
+msgid "FAVOURITES"
+msgstr "المفضلات"
+
+#: channels.py:522
+msgid "ALL"
 msgstr "الكل"
 
-#: catchup.py:433 live.py:1174 series.py:1022 vod.py:931
-msgid "Please enter the parental control pin code"
-msgstr "الرجاء إدخال الرمز السري للرقابة الأبوية"
+#: channels.py:908
+msgid "Season "
+msgstr "الموسم "
 
-#: catchup.py:433 live.py:1174 series.py:1022 vod.py:931
-msgid "Enter pin code"
-msgstr "أدخل الرمز السري"
+#: channels.py:1224 channels.py:1615 channels.py:1639
+msgid "Reset Search"
+msgstr "إعادة البحث"
 
-#: catchup.py:574 downloadmanager.py:53 downloadmanager.py:136 series.py:589
-#: vod.py:379
-msgid "Download"
-msgstr "تحميل"
-
-#: catchup.py:577
-msgid "Catchup currently not available. Missing EPG data"
-msgstr "اللحاق غير متوفر حاليا. تاريخ دليل البرامج الإلكتروني مفقود"
-
-#: catchup.py:606
-msgid "Catchup error. No data for this slot"
-msgstr "خطأ اللحاق. لا توجد بيانات لهذا المدخل"
-
-#: catchup.py:625 catchup.py:642 live.py:785 live.py:814 series.py:699
-#: series.py:717 vod.py:510 vod.py:530
-msgid "Page: "
-msgstr "صفحه "
-
-#: catchup.py:625 catchup.py:642 live.py:785 live.py:814 series.py:699
-#: series.py:717 vod.py:510 vod.py:530
-msgid " of "
-msgstr " من "
-
-#: catchup.py:712
+#: channels.py:1230 channels.py:1516
 msgid "Reverse"
 msgstr "يعكس"
 
-#: catchup.py:754 vod.py:1025 vod.py:1026
+#: channels.py:1231 channels.py:1236
+msgid "Hide/Show"
+msgstr "إخفاء / إظهار"
+
+#: channels.py:1277 channels.py:1335
+msgid "Page: "
+msgstr "صفحه "
+
+#: channels.py:1277 channels.py:1335
+msgid " of "
+msgstr " من "
+
+#: channels.py:1536 channels.py:1539 channels.py:1542 channels.py:1557
+msgid "Sort: Z-A"
+msgstr "الترتيب: ي-أ"
+
+#: channels.py:1536 channels.py:1539 channels.py:1542 channels.py:1586
+msgid "Sort: Original"
+msgstr "الترتيب: الأصلي"
+
+#: channels.py:1539 channels.py:1542 channels.py:1560
+msgid "Sort: Added"
+msgstr ""
+
+#: channels.py:1542 channels.py:1575
+msgid "Sort: Year"
+msgstr ""
+
+#: channels.py:1616
+msgid "Filter this category..."
+msgstr "تصفية هذه الفئة ..."
+
+#: channels.py:1695
+msgid "Incorrect pin code."
+msgstr "الرمز السري غير صحيح."
+
+#: channels.py:1708
+msgid "all"
+msgstr "الكل"
+
+#: channels.py:1711
+msgid "Please enter the parental control pin code"
+msgstr "الرجاء إدخال الرمز السري للرقابة الأبوية"
+
+#: channels.py:1711 settings.py:26
+msgid "Enter pin code"
+msgstr "أدخل الرمز السري"
+
+#: channels.py:2185 channels.py:2244 channels.py:2253
+msgid "Next Info"
+msgstr "المعلومات التالية"
+
+#: channels.py:2248
+msgid "Now Info"
+msgstr "معلومات الأن"
+
+#: channels.py:2476 streamplayer.py:522
+msgid "Recording Timer Set."
+msgstr "ضبط مؤقت التسجيل."
+
+#: channels.py:2478 streamplayer.py:524
+msgid "Recording Failed."
+msgstr "فشل التسجيل."
+
+#: channels.py:2653
+msgid "Video Type:"
+msgstr "نوع الفيديو:"
+
+#: channels.py:2654
+msgid "Rating:"
+msgstr "التقييم:"
+
+#: channels.py:2655
+msgid "Genre:"
+msgstr "النوع:"
+
+#: channels.py:2656
+msgid "Duration:"
+msgstr "المدة:"
+
+#: channels.py:2657
+msgid "Release Date:"
+msgstr "تاريخ الإصدار:"
+
+#: channels.py:2658
+msgid "Cast:"
+msgstr "طاقم الممثلين:"
+
+#: channels.py:2659
+msgid "Director:"
+msgstr "المخرج:"
+
+#: channels.py:2660
+msgid "Country:"
+msgstr "الدولة:"
+
+#: channels.py:2747
 msgid "Movie"
 msgstr "فيلم"
 
-#: catchup.py:754 catchup.py:755 downloadmanager.py:90 downloadmanager.py:133
-#: downloadmanager.py:229 downloadmanager.py:238 downloadmanager.py:303
-#: downloadmanager.py:335 vod.py:1025 vod.py:1026
+#: channels.py:2747 channels.py:2749 channels.py:2751 downloadmanager2.py:279
+#: downloadmanager2.py:325 downloadmanager2.py:378 downloadmanager2.py:411
+#: downloadmanager2.py:462
 msgid "Not Started"
 msgstr "لم يبدأ"
 
-#: catchup.py:755
+#: channels.py:2751
 msgid "Catch-up"
 msgstr "اللحاق"
 
-#: catchup.py:760 vod.py:1031
+#: channels.py:2756
 msgid "Added to download manager"
 msgstr "تمت إضافته إلى مدير التنزيل"
 
-#: catchup.py:762 vod.py:1033
+#: channels.py:2758
 msgid "Already added to download manager"
 msgstr "تمت إضافته بالفعل إلى مدير التنزيل"
 
-#: downloadmanager.py:33
+#: channels.py:3108
+msgid ""
+"The IMDb plugin is not installed!\n"
+"Please install it."
+msgstr ""
+"البلوجين IMDB غير مثبت!\n"
+"الرجاء تثبيته."
+
+#: channels.py:3169
+msgid "Catchup error. No data for this slot"
+msgstr "خطأ اللحاق. لا توجد بيانات لهذا المدخل"
+
+#: channels.py:3280
+msgid "Catchup currently not available. Missing EPG data"
+msgstr "اللحاق غير متوفر حاليا. تاريخ دليل البرامج الإلكتروني مفقود"
+
+#: downloadmanager2.py:142 downloadmanager2.py:143 downloadmanager2.py:144
+#: downloadmanager2.py:145 downloadmanager2.py:146
+msgid "MOVIE DOWNLOAD FAILED!"
+msgstr ""
+
+#: downloadmanager2.py:142
+msgid "DOWNLOADED FILE CORRUPTED:"
+msgstr ""
+
+#: downloadmanager2.py:143
+msgid "COULD NOT READ RTMP PACKET:"
+msgstr ""
+
+#: downloadmanager2.py:144
+msgid "SEGMENTATION FAULT:"
+msgstr ""
+
+#: downloadmanager2.py:145
+msgid "SERVER RETURNED ERROR:"
+msgstr ""
+
+#: downloadmanager2.py:146
+msgid "UNKNOWN ERROR:"
+msgstr ""
+
+#: downloadmanager2.py:161
 msgid "VOD Download Manager"
 msgstr "مدير تنزيل الفيديو عند الطلب"
 
-#: downloadmanager.py:54 downloadmanager.py:93 downloadmanager.py:174
-msgid "Download All"
-msgstr "تحميل الكل"
+#: downloadmanager2.py:179 downloadmanager2.py:328
+msgid "Download"
+msgstr "تحميل"
 
-#: downloadmanager.py:55 playlists.py:48
-msgid "Delete"
-msgstr "حذف"
+#: downloadmanager2.py:180
+msgid "Remove"
+msgstr ""
 
-#: downloadmanager.py:127
+#: downloadmanager2.py:230
 msgid "Free Space:"
 msgstr "مساحة فارغة:"
 
-#: downloadmanager.py:127
+#: downloadmanager2.py:230
 msgid "of"
 msgstr "من"
 
-#: downloadmanager.py:134 hidden.py:44
-msgid "Cancel"
-msgstr "يلغي"
-
-#: downloadmanager.py:141
-msgid "Cancel all downloads and exit?"
-msgstr "إلغاء جميع التنزيلات والخروج؟"
-
-#: downloadmanager.py:157 downloadmanager.py:177 downloadmanager.py:216
-#: downloadmanager.py:234 series.py:1128
+#: downloadmanager2.py:257 downloadmanager2.py:346 downloadmanager2.py:412
+#: downloadmanager2.py:460
 msgid "Downloading"
 msgstr "جارى التحميل"
 
-#: downloadmanager.py:180 downloadmanager.py:230 downloadmanager.py:237
-#: downloadmanager.py:334
-msgid "Waiting..."
-msgstr "منتظر ..."
+#: downloadmanager2.py:283 downloadmanager2.py:395 downloadmanager2.py:486
+msgid "Finished"
+msgstr ""
 
-#: downloadmanager.py:182
-msgid "Reset All"
-msgstr "إعادة ضبط الجميع"
+#: downloadmanager2.py:326 hidden.py:44
+msgid "Cancel"
+msgstr "يلغي"
 
-#: downloadmanager.py:261
-msgid "Download Failed!\n"
-msgstr "فشل التحميل !\n"
-
-#: downloadmanager.py:312
+#: downloadmanager2.py:336
 msgid "Cancel this download?"
 msgstr "هل تريد إلغاء هذا التنزيل؟"
+
+#: downloadmanager2.py:387
+msgid ""
+"Vod Download folder location does not exist.\n"
+"\n"
+msgstr ""
+
+#: downloadmanager2.py:396
+msgid "File already downloaded."
+msgstr ""
+
+#: downloadmanager2.py:442 downloadmanager2.py:448
+msgid ""
+"Please update your wget library to download https lines\n"
+"\n"
+"opkg update\n"
+"opkg install wget"
+msgstr ""
+
+#: downloadmanager2.py:463
+msgid "Multiple downloads not allowed. Please wait or cancel download."
+msgstr ""
+
+#: downloadmanager2.py:478
+msgid "Download Failed!\n"
+msgstr "فشل التحميل !\n"
 
 #: hidden.py:35
 msgid "Hidden Categories"
 msgstr "الفئات المخفية"
 
-#: hidden.py:45 playsettings.py:44 record.py:40 server.py:42 settings.py:46
+#: hidden.py:45 playsettings.py:48 record.py:39 server.py:39 settings.py:67
 msgid "Save"
 msgstr "حفظ"
 
@@ -157,88 +319,14 @@ msgid "Invert"
 msgstr "عكس"
 
 #: hidden.py:47
-msgid "Clear All"
-msgstr "امسح الكل"
+msgid "Reset"
+msgstr ""
 
-#: hidden.py:144
+#: hidden.py:157
 msgid "Error: All categories hidden. Please amend your selection."
 msgstr "خطأ: جميع الفئات مخفية. يرجى تعديل اختيارك."
 
-#: live.py:127 series.py:61 vod.py:61
-msgid "Categories"
-msgstr "فئات"
-
-#: live.py:128 menu.py:190
-msgid "Live Streams"
-msgstr "البث المباشر"
-
-#: live.py:238 live.py:1060 live.py:1078 live.py:1134 live.py:1209
-#: series.py:155 series.py:909 series.py:927 series.py:981 series.py:1045
-#: vod.py:157 vod.py:818 vod.py:836 vod.py:892 vod.py:954
-msgid "Sort: A-Z"
-msgstr "الترتيب: أ-ي"
-
-#: live.py:239 live.py:673 live.py:1133 series.py:156 series.py:609
-#: series.py:980 vod.py:158 vod.py:415 vod.py:891
-msgid "Search"
-msgstr "البحث"
-
-#: live.py:452 vod.py:240
-msgid "FAVOURITES"
-msgstr "المفضلات"
-
-#: live.py:459 vod.py:247
-msgid "ALL"
-msgstr "الكل"
-
-#: live.py:612 live.py:620 live.py:675 series.py:560 series.py:620 vod.py:370
-#: vod.py:418
-msgid "Hide/Show"
-msgstr "إخفاء / إظهار"
-
-#: live.py:669 live.py:1101 live.py:1119 series.py:611 series.py:948
-#: series.py:966 vod.py:411 vod.py:859 vod.py:877
-msgid "Reset Search"
-msgstr "إعادة البحث"
-
-#: live.py:898 live.py:1341 live.py:1350
-msgid "Next Info"
-msgstr "المعلومات التالية"
-
-#: live.py:1061 live.py:1064 series.py:910 series.py:913 vod.py:819 vod.py:822
-msgid "Sort: Z-A"
-msgstr "الترتيب: ي-أ"
-
-#: live.py:1066 live.py:1071 series.py:915 series.py:920 vod.py:824 vod.py:829
-msgid "Sort: Newest"
-msgstr "الترتيب: الأحدث"
-
-#: live.py:1068 live.py:1075 live.py:1077 series.py:917 series.py:924
-#: series.py:926 vod.py:826 vod.py:833 vod.py:835
-msgid "Sort: Original"
-msgstr "الترتيب: الأصلي"
-
-#: live.py:1102 series.py:949 vod.py:860
-msgid "Filter this category..."
-msgstr "تصفية هذه الفئة ..."
-
-#: live.py:1345
-msgid "Now Info"
-msgstr "معلومات الأن"
-
-#: live.py:1478
-msgid "Record"
-msgstr "تسجيل"
-
-#: live.py:1589 streamplayer.py:424
-msgid "Recording Timer Set."
-msgstr "ضبط مؤقت التسجيل."
-
-#: live.py:1591 streamplayer.py:426
-msgid "Recording Failed."
-msgstr "فشل التسجيل."
-
-#: mainmenu.py:42
+#: mainmenu.py:37
 msgid "Main Menu"
 msgstr "القائمة الرئيسيه"
 
@@ -246,325 +334,372 @@ msgstr "القائمة الرئيسيه"
 msgid "Playlists"
 msgstr "قوائم التشغيل"
 
-#: mainmenu.py:115
+#: mainmenu.py:114 mainmenu.py:119
 msgid "Add Playlist"
 msgstr "إضافة قوائم التشغيل"
 
-#: mainmenu.py:117 settings.py:38
+#: mainmenu.py:115 mainmenu.py:120 settings.py:59
 msgid "Main Settings"
 msgstr "الإعدادات الرئيسية"
 
-#: mainmenu.py:119
+#: mainmenu.py:116
+msgid "Manual EPG Update"
+msgstr ""
+
+#: mainmenu.py:123
 msgid "Download Manager"
 msgstr "مدير التحميل"
 
-#: menu.py:195 series.py:62 vod.py:62
-msgid "Vod"
-msgstr "الفيديو حسب الطلب"
+#: mainmenu.py:125
+msgid "Reset Stored Data"
+msgstr ""
 
-#: menu.py:200
+#: mainmenu.py:151
+msgid "EPGs downloading."
+msgstr ""
+
+#: mainmenu.py:185
+msgid ""
+"Warning: delete stored json data for all playlists... Settings, favourites etc. Playlists will not be deleted.\n"
+"Do you wish to continue?"
+msgstr ""
+
+#: menu.py:47
+msgid "Update"
+msgstr ""
+
+#: menu.py:49
+msgid "Catchup channel check updated: "
+msgstr ""
+
+#: menu.py:87 menu.py:297
+msgid "Last catchup check: "
+msgstr ""
+
+#: menu.py:245
 msgid "TV Series"
 msgstr "مسلسل تلفزيوني"
 
-#: menu.py:208 playsettings.py:36
+#: menu.py:260 playsettings.py:40
 msgid "Playlist Settings"
 msgstr "إعدادات قائمة التشغيل"
 
-#: menu.py:217
+#: menu.py:269
 msgid "No data, blocked or playlist not compatible with XStreamity plugin."
 msgstr "لا توجد بيانات أو محظورة أو قائمة تشغيل غير متوافقة مع المكون الإضافي اكستريمتي."
 
-#: playlists.py:44
+#: playlists.py:43
 msgid "Select Playlist"
 msgstr "حدد قائمة التشغيل"
 
-#: playlists.py:49
+#: playlists.py:47
+msgid "Delete"
+msgstr "حذف"
+
+#: playlists.py:48
 msgid "Info"
 msgstr "معلومات"
 
-#: playlists.py:236 playlists.py:296
+#: playlists.py:265 playlists.py:325
 msgid "Server Not Responding"
 msgstr "الخادم (السيرفر) لا يستجيب"
 
-#: playlists.py:248 playlists.py:298
+#: playlists.py:277 playlists.py:327
 msgid "Not Authorised"
 msgstr "غير مصرح به"
 
-#: playlists.py:253 playlists.py:261 playlists.py:285
+#: playlists.py:282 playlists.py:290 playlists.py:314
 msgid "Active"
 msgstr "نشيط"
 
-#: playlists.py:255 playlists.py:290
+#: playlists.py:284 playlists.py:319
 msgid "Banned"
 msgstr "محظور"
 
-#: playlists.py:257 playlists.py:294
+#: playlists.py:286 playlists.py:323
 msgid "Disabled"
 msgstr "تعطيل"
 
-#: playlists.py:259 playlists.py:292
+#: playlists.py:288 playlists.py:321
 msgid "Expired"
 msgstr "منتهي الصلاحية"
 
-#: playlists.py:264 playlists.py:266
+#: playlists.py:293 playlists.py:295
 msgid "Expires: "
 msgstr "تنتهي: "
 
-#: playlists.py:268
+#: playlists.py:297
 msgid "Active Conn:"
 msgstr "اتصال نشط:"
 
-#: playlists.py:271
+#: playlists.py:300
 msgid "Max Conn:"
 msgstr "الحد الأقصى للأتصال:"
 
-#: playlists.py:311
+#: playlists.py:340
 msgid "Delete selected playlist?"
 msgstr "هل تريد حذف قائمة التشغيل المحددة؟"
 
-#: playlists.py:332
+#: playlists.py:361
 msgid "Delete providers EPG data?"
 msgstr "هل تريد حذف بيانات دليل البرامج الإلكتروني لمقدمي الخدمة؟"
 
-#: playsettings.py:68 record.py:73 server.py:72 settings.py:72
+#: playsettings.py:71 record.py:72 server.py:70 settings.py:91
 msgid "Really close without saving settings?"
 msgstr "أتريد الإغلاق دون حفظ الإعدادات؟"
 
-#: playsettings.py:120 server.py:95
+#: playsettings.py:117 server.py:98
 msgid "Short name or provider name:"
 msgstr "الاسم المختصر أو اسم المزود:"
 
-#: playsettings.py:121 server.py:101
+#: playsettings.py:118 server.py:104
 msgid "Output:"
 msgstr "المخرجات:"
 
-#: playsettings.py:123
+#: playsettings.py:120
 msgid "Show LIVE category:"
 msgstr "عرض فئة البث المباشر:"
 
-#: playsettings.py:124
+#: playsettings.py:121
 msgid "Show VOD category:"
 msgstr "عرض فئة الفيديو عند الطلب:"
 
-#: playsettings.py:125
+#: playsettings.py:122
 msgid "Show SERIES category:"
 msgstr "عرض فئه المسلسلات:"
 
-#: playsettings.py:126
+#: playsettings.py:123
 msgid "Show CATCHUP category:"
 msgstr "عرض فئه الملتقطة:"
 
-#: playsettings.py:129
+#: playsettings.py:124
+msgid "EPG offset:"
+msgstr ""
+
+#: playsettings.py:127
 msgid "Stream Type LIVE:"
 msgstr "نوع البث المباشر:"
 
-#: playsettings.py:132
+#: playsettings.py:130
 msgid "Stream Type VOD/SERIES:"
 msgstr "نوع البث فيديو حسب الطلب/مسلسلات:"
 
-#: plugin.py:162 plugin.py:181
+#: plugin.py:190 plugin.py:274
 msgid "XStreamity"
 msgstr "اكستريمتي"
 
-#: plugin.py:180
+#: plugin.py:273
 msgid "IPTV Xtream Codes playlists player by KiddaC"
 msgstr "مشغل قوائم تشغيل أكواد خدمة بث تلفزيوني رقمية باستخدام بروتوكول الإنترنت (أي بي) بواسطة كيداك"
 
-#: record.py:39 serverinfo.py:48
+#: record.py:38 serverinfo.py:46
 msgid "Close"
 msgstr "إغلاق"
 
-#: record.py:53
+#: record.py:52
 msgid "Please enter recording time"
 msgstr "الرجاء إدخال وقت التسجيل"
 
-#: record.py:56
+#: record.py:55
 msgid "Please enter recording end time"
 msgstr "الرجاء إدخال وقت انتهاء التسجيل"
 
-#: record.py:93
+#: record.py:92
 msgid "Name"
 msgstr "الأسم"
 
-#: record.py:95
+#: record.py:94
 msgid "Start Time"
 msgstr "وقت البدء"
 
-#: record.py:97
+#: record.py:96
 msgid "End Time"
 msgstr "وقت الانتهاء"
 
-#: series.py:270
-msgid "All"
-msgstr "الكل"
-
-#: series.py:407
-msgid "Season "
-msgstr "الموسم "
-
-#: series.py:656 vod.py:464
-msgid "Video Type:"
-msgstr "نوع الفيديو:"
-
-#: series.py:657 vod.py:465
-msgid "Rating:"
-msgstr "التقييم:"
-
-#: series.py:658 vod.py:466
-msgid "Genre:"
-msgstr "النوع:"
-
-#: series.py:659 vod.py:467
-msgid "Duration:"
-msgstr "المدة:"
-
-#: series.py:660 vod.py:468
-msgid "Release Date:"
-msgstr "تاريخ الإصدار:"
-
-#: series.py:661 vod.py:469
-msgid "Cast:"
-msgstr "طاقم الممثلين:"
-
-#: series.py:662 vod.py:470
-msgid "Director:"
-msgstr "المخرج:"
-
-#: series.py:663 vod.py:471
-msgid "Country:"
-msgstr "الدولة:"
-
-#: series.py:1133
-msgid "Download Failed"
-msgstr "فشل التحميل"
-
-#: server.py:34
+#: server.py:31
 msgid "Add Xtream Codes Playlist"
 msgstr "أضف قائمة تشغيل أكواد الاكستريم"
 
-#: server.py:96
+#: server.py:99
 msgid "Protocol:"
 msgstr "بروتوكول:"
 
-#: server.py:97
+#: server.py:100
 msgid "Server URL:"
 msgstr "عنوان رابط الخادم (السيرفر):"
 
-#: server.py:98
+#: server.py:101
 msgid "Port:"
 msgstr "البورت:"
 
-#: server.py:99
+#: server.py:102
 msgid "Username:"
 msgstr "اسم المستخدم:"
 
-#: server.py:100
+#: server.py:103
 msgid "Password:"
 msgstr "كلمه السر:"
 
-#: server.py:147
+#: server.py:171
 msgid "Details are not a valid or unauthorised"
 msgstr "التفاصيل ليست صالحة أو غير مصرح بها"
 
-#: server.py:165
+#: server.py:189
 msgid "Playlist added successfully."
 msgstr "تمت إضافة قائمة التشغيل بنجاح."
 
-#: serverinfo.py:29
+#: serverinfo.py:27
 msgid "User Information"
 msgstr "معلومات المستخدم"
 
-#: settings.py:93
+#: settings.py:26
+msgid "Please enter the correct pin code"
+msgstr ""
+
+#: settings.py:35
+msgid "The pin code you entered is wrong."
+msgstr ""
+
+#: settings.py:103
+msgid ""
+"Please change default parental pin.\n"
+"\n"
+"Pin cannot be 0000, 1111 or 1234"
+msgstr ""
+
+#: settings.py:119
+msgid "You need to restart the GUI"
+msgstr ""
+
+#: settings.py:119
+msgid "Do you want to restart now?"
+msgstr ""
+
+#: settings.py:130
 msgid "Select skin *Restart GUI Required"
 msgstr "اختيار الإسكين * يلزم إعادة تشغيل الاينجما"
 
-#: settings.py:94
+#: settings.py:131
 msgid "playlists.txt location"
 msgstr "مكان ملف قوائم التشغيل.txt"
 
-#: settings.py:95
-msgid "Server timeout (seconds)"
-msgstr "مهلة الخادم (بالثواني)"
+#: settings.py:132
+msgid "EPG download location"
+msgstr ""
 
-#: settings.py:97
-msgid "Default LIVE stream type"
-msgstr "نوع البث المباشر الافتراضي"
-
-#: settings.py:98
-msgid "Default VOD/SERIES stream type"
-msgstr "نوع بث الفيديو حسب الطلب / المسلسلات الافتراضي"
-
-#: settings.py:100
-msgid "Preview LIVE streams in mini tv"
-msgstr "معاينة البث المباشر في تلفزيون صغير"
-
-#: settings.py:101
-msgid "Stop stream on back button"
-msgstr "وقف البث بالضغط على زر الرجوع"
-
-#: settings.py:102
+#: settings.py:133
 msgid "VOD download folder"
 msgstr "مجلد تحميل الفيديو حسب الطلب"
 
-#: settings.py:103
-msgid "Parental control"
-msgstr "مراقبة اهلية"
+#: settings.py:134
+msgid "Server timeout (seconds)"
+msgstr "مهلة الخادم (بالثواني)"
 
-#: settings.py:104
+#: settings.py:136
+msgid "Default LIVE stream type"
+msgstr "نوع البث المباشر الافتراضي"
+
+#: settings.py:137
+msgid "Default VOD/SERIES stream type"
+msgstr "نوع بث الفيديو حسب الطلب / المسلسلات الافتراضي"
+
+#: settings.py:139
+msgid "Preview LIVE streams in mini tv"
+msgstr "معاينة البث المباشر في تلفزيون صغير"
+
+#: settings.py:140
+msgid "Stop stream on back button"
+msgstr "وقف البث بالضغط على زر الرجوع"
+
+#: settings.py:141
+msgid "XStreamity parental control"
+msgstr ""
+
+#: settings.py:142
+msgid "XStreamity parental pin"
+msgstr ""
+
+#: settings.py:143
 msgid "Show in main menu *Restart GUI Required"
 msgstr "إظهار في القائمة الرئيسية * يلزم إعادة تشغيل الاينجما"
 
-#: settings.py:106
+#: settings.py:145
 msgid "Use Movie Database(TMDB) for VOD & Series"
 msgstr "استخدام قاعده بيانات  (TMDB) للفيديو تحت الطلب والمسلسلات"
 
-#: settings.py:107
+#: settings.py:146
 msgid "Movie Database language"
 msgstr "لغة قاعدة بيانات الأفلام"
 
-#: settings.py:109
+#: settings.py:148
 msgid "Margin before catchup (mins)"
 msgstr "الهامش قبل اللحاق بالركب (بالدقائق)"
 
-#: settings.py:110
+#: settings.py:149
 msgid "Margin after catchup (mins)"
 msgstr "الهامش بعد اللحاق بالركب (بالدقائق)"
 
-#: settings.py:112
+#: settings.py:151
 msgid "Allow SubsSupport plugin in VOD"
 msgstr "السماح لبلوجين الترجمه في الفيديو تحت الطلب"
 
-#: settings.py:114
+#: settings.py:153
 msgid "Skip playlist selection screen if only 1 playlist"
 msgstr "تخطي شاشة اختيار قائمة التشغيل في حالة وجود قائمة تشغيل واحدة فقط"
 
-#: settings.py:209 settings.py:222
+#: settings.py:155
+msgid "Automatic EPG download time *Restart GUI Required"
+msgstr ""
+
+#: settings.py:275 settings.py:288 settings.py:301
 msgid "Choose Directory:"
 msgstr "اختر الدليل:"
 
-#: settings.py:210 settings.py:223
+#: settings.py:276 settings.py:289 settings.py:302
 msgid "Choose directory"
 msgstr "Choose directory"
 
-#: streamplayer.py:368
+#: streamplayer.py:377
+msgid "Do you want to resume this playback?"
+msgstr ""
+
+#: streamplayer.py:377
+#, python-format
+msgid "Resume position at %s"
+msgstr ""
+
+#: streamplayer.py:466
 msgid "TV"
 msgstr "تلفزيون"
 
-#: streamplayer.py:774
+#: streamplayer.py:881
 msgid "VOD"
 msgstr "الفيديو تحت الطلب"
 
-#: streamplayer.py:988
+#: streamplayer.py:1106
 msgid "Catch Up"
 msgstr "اللحاق"
 
-#: vod.py:1261
-msgid ""
-"The IMDb plugin is not installed!\n"
-"Please install it."
-msgstr ""
-"البلوجين IMDB غير مثبت!\n"
-"الرجاء تثبيته."
+#~ msgid "Download All"
+#~ msgstr "تحميل الكل"
+
+#~ msgid "Cancel all downloads and exit?"
+#~ msgstr "إلغاء جميع التنزيلات والخروج؟"
+
+#~ msgid "Waiting..."
+#~ msgstr "منتظر ..."
+
+#~ msgid "Clear All"
+#~ msgstr "امسح الكل"
+
+#~ msgid "Record"
+#~ msgstr "تسجيل"
+
+#~ msgid "All"
+#~ msgstr "الكل"
+
+#~ msgid "Download Failed"
+#~ msgstr "فشل التحميل"
 
 #~ msgid "Date"
 #~ msgstr "Data"
