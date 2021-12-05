@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2021-12-04 15:09+0000\n"
-"PO-Revision-Date: 2021-12-04 15:09+0000\n"
+"PO-Revision-Date: 2021-12-05 12:58+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -34,7 +34,7 @@ msgstr "Suchen"
 
 #: channels.py:302
 msgid "Live Categories"
-msgstr ""
+msgstr "Live Kategorien"
 
 #: channels.py:303 menu.py:235
 msgid "Live Streams"
@@ -42,7 +42,7 @@ msgstr "Live Streams"
 
 #: channels.py:339
 msgid "Vod Categories"
-msgstr ""
+msgstr "Vod Kategorien"
 
 #: channels.py:340 menu.py:240
 msgid "Vod"
@@ -50,15 +50,15 @@ msgstr "Video-on-Demand"
 
 #: channels.py:370
 msgid "Series Categories"
-msgstr ""
+msgstr "Serien Kategorien"
 
 #: channels.py:371 channels.py:2749
 msgid "Series"
-msgstr ""
+msgstr "Serien"
 
 #: channels.py:396
 msgid "Catch Up Categories"
-msgstr ""
+msgstr "Mediathek Kategorien"
 
 #: channels.py:397 menu.py:257
 msgid "Catch Up TV"
@@ -82,7 +82,7 @@ msgstr "Suche zurücksetzen"
 
 #: channels.py:1230 channels.py:1516
 msgid "Reverse"
-msgstr ""
+msgstr "Rückwärts"
 
 #: channels.py:1231 channels.py:1236
 msgid "Hide/Show"
@@ -90,11 +90,11 @@ msgstr "Verstecken/Zeigen"
 
 #: channels.py:1277 channels.py:1335
 msgid "Page: "
-msgstr ""
+msgstr "Seite: "
 
 #: channels.py:1277 channels.py:1335
 msgid " of "
-msgstr ""
+msgstr " von"
 
 #: channels.py:1536 channels.py:1539 channels.py:1542 channels.py:1557
 msgid "Sort: Z-A"
@@ -106,11 +106,11 @@ msgstr "Sortieren: Original"
 
 #: channels.py:1539 channels.py:1542 channels.py:1560
 msgid "Sort: Added"
-msgstr ""
+msgstr " Sortierung: Hinzugefügt"
 
 #: channels.py:1542 channels.py:1575
 msgid "Sort: Year"
-msgstr ""
+msgstr "Sortierung: Jahr"
 
 #: channels.py:1616
 msgid "Filter this category..."
@@ -122,7 +122,7 @@ msgstr "Falscher PIN-Code."
 
 #: channels.py:1708
 msgid "all"
-msgstr ""
+msgstr "alle"
 
 #: channels.py:1711
 msgid "Please enter the parental control pin code"
@@ -192,7 +192,7 @@ msgstr "Noch nicht angefangen"
 
 #: channels.py:2751
 msgid "Catch-up"
-msgstr ""
+msgstr "Mediathek"
 
 #: channels.py:2756
 msgid "Added to download manager"
@@ -221,27 +221,27 @@ msgstr "Mediathek derzeit nicht verfügbar. Fehlende EPG-Daten"
 #: downloadmanager2.py:142 downloadmanager2.py:143 downloadmanager2.py:144
 #: downloadmanager2.py:145 downloadmanager2.py:146
 msgid "MOVIE DOWNLOAD FAILED!"
-msgstr ""
+msgstr "FILM DOWNLOAD FEHLGESCHLAGEN"
 
 #: downloadmanager2.py:142
 msgid "DOWNLOADED FILE CORRUPTED:"
-msgstr ""
+msgstr "HERUNTERGELADENE DATEI KORRUPT"
 
 #: downloadmanager2.py:143
 msgid "COULD NOT READ RTMP PACKET:"
-msgstr ""
+msgstr "KONNTE DAS RTMP-PAKET NICHT LESEN:"
 
 #: downloadmanager2.py:144
 msgid "SEGMENTATION FAULT:"
-msgstr ""
+msgstr "SEGMENTIERUNGSFEHLER"
 
 #: downloadmanager2.py:145
 msgid "SERVER RETURNED ERROR:"
-msgstr ""
+msgstr "SERVER MELDET FEHLER:"
 
 #: downloadmanager2.py:146
 msgid "UNKNOWN ERROR:"
-msgstr ""
+msgstr "UNBEKANNTER FEHLER"
 
 #: downloadmanager2.py:161
 msgid "VOD Download Manager"
@@ -253,7 +253,7 @@ msgstr "Herunterladen"
 
 #: downloadmanager2.py:180
 msgid "Remove"
-msgstr ""
+msgstr "Entfernen"
 
 #: downloadmanager2.py:230
 msgid "Free Space:"
@@ -270,7 +270,7 @@ msgstr "Herunterladen"
 
 #: downloadmanager2.py:283 downloadmanager2.py:395 downloadmanager2.py:486
 msgid "Finished"
-msgstr ""
+msgstr "Fertig"
 
 #: downloadmanager2.py:326 hidden.py:44
 msgid "Cancel"
@@ -285,10 +285,12 @@ msgid ""
 "Vod Download folder location does not exist.\n"
 "\n"
 msgstr ""
+"VOD Download Verzeichnis existiert nicht.\n"
+"\n"
 
 #: downloadmanager2.py:396
 msgid "File already downloaded."
-msgstr ""
+msgstr "Datei bereits heruntergeladen."
 
 #: downloadmanager2.py:442 downloadmanager2.py:448
 msgid ""
@@ -297,10 +299,14 @@ msgid ""
 "opkg update\n"
 "opkg install wget"
 msgstr ""
+"Die Wget Bibliothek muss aktualisiert werden, um https Zeilen herunterladen zu können\n"
+"\n"
+"opkg update\n"
+"opkg install wget"
 
 #: downloadmanager2.py:463
 msgid "Multiple downloads not allowed. Please wait or cancel download."
-msgstr ""
+msgstr "Mehrfache Downloads sind nicht erlaubt. Warte bitte oder breche den Download ab."
 
 #: downloadmanager2.py:478
 msgid "Download Failed!\n"
@@ -320,7 +326,7 @@ msgstr "Umkehren"
 
 #: hidden.py:47
 msgid "Reset"
-msgstr ""
+msgstr "Zurücksetzen"
 
 #: hidden.py:157
 msgid "Error: All categories hidden. Please amend your selection."
@@ -332,11 +338,11 @@ msgstr "Hauptmenü"
 
 #: mainmenu.py:113
 msgid "Playlists"
-msgstr ""
+msgstr "Playlisten"
 
 #: mainmenu.py:114 mainmenu.py:119
 msgid "Add Playlist"
-msgstr ""
+msgstr "Playlist hinzufügen"
 
 #: mainmenu.py:115 mainmenu.py:120 settings.py:59
 msgid "Main Settings"
@@ -344,25 +350,27 @@ msgstr "Allgemeine Einstellungen"
 
 #: mainmenu.py:116
 msgid "Manual EPG Update"
-msgstr ""
+msgstr "Manuelle EPG Aktualisierung"
 
 #: mainmenu.py:123
 msgid "Download Manager"
-msgstr ""
+msgstr "Download Manager"
 
 #: mainmenu.py:125
 msgid "Reset Stored Data"
-msgstr ""
+msgstr "Gespeicherte Daten zurücksetzen"
 
 #: mainmenu.py:151
 msgid "EPGs downloading."
-msgstr ""
+msgstr "EPGs werden heruntergeladen."
 
 #: mainmenu.py:185
 msgid ""
 "Warning: delete stored json data for all playlists... Settings, favourites etc. Playlists will not be deleted.\n"
 "Do you wish to continue?"
 msgstr ""
+"Warnung: lösche gepeicherte json Daten für alle Wiedergabelisten... Einstellungen, Favoriten etc. Wiedergabelisten werden nicht gelöscht.\n"
+"Möchten Sie fortfahren?"
 
 #: menu.py:47
 msgid "Update"
@@ -370,15 +378,15 @@ msgstr "Update"
 
 #: menu.py:49
 msgid "Catchup channel check updated: "
-msgstr ""
+msgstr "Mediatheken Kanalprüfung aktualisiert: "
 
 #: menu.py:87 menu.py:297
 msgid "Last catchup check: "
-msgstr ""
+msgstr "Letzte Mediatheken Überprüfung: "
 
 #: menu.py:245
 msgid "TV Series"
-msgstr ""
+msgstr "TV Serien"
 
 #: menu.py:260 playsettings.py:40
 msgid "Playlist Settings"
@@ -434,7 +442,7 @@ msgstr "Aktiv:"
 
 #: playlists.py:300
 msgid "Max Conn:"
-msgstr ""
+msgstr "Max Verbindungen:"
 
 #: playlists.py:340
 msgid "Delete selected playlist?"
@@ -442,7 +450,7 @@ msgstr "Ausgewählte Playlist löschen?"
 
 #: playlists.py:361
 msgid "Delete providers EPG data?"
-msgstr ""
+msgstr "Lösche die EPG Daten des Anbieters?"
 
 #: playsettings.py:71 record.py:72 server.py:70 settings.py:91
 msgid "Really close without saving settings?"
@@ -474,7 +482,7 @@ msgstr "Zeige MEDIATHEK Kategorie:"
 
 #: playsettings.py:124
 msgid "EPG offset:"
-msgstr ""
+msgstr "EPG Versatz:"
 
 #: playsettings.py:127
 msgid "Stream Type LIVE:"
@@ -542,7 +550,7 @@ msgstr "Passwort:"
 
 #: server.py:171
 msgid "Details are not a valid or unauthorised"
-msgstr ""
+msgstr "Die Angaben sind nicht gültig oder unzulässig"
 
 #: server.py:189
 msgid "Playlist added successfully."
@@ -554,11 +562,11 @@ msgstr "Benutzerinformation"
 
 #: settings.py:26
 msgid "Please enter the correct pin code"
-msgstr ""
+msgstr "Bitte korrekten PIN eingeben"
 
 #: settings.py:35
 msgid "The pin code you entered is wrong."
-msgstr ""
+msgstr "Der eingebebene PIN ist falsch"
 
 #: settings.py:103
 msgid ""
@@ -566,14 +574,17 @@ msgid ""
 "\n"
 "Pin cannot be 0000, 1111 or 1234"
 msgstr ""
+"Bitte Standard-Kindersicherungs-PIN ändern.\n"
+"\n"
+"Pin kann nicht 0000, 1111 or 1234 sein"
 
 #: settings.py:119
 msgid "You need to restart the GUI"
-msgstr ""
+msgstr "Bitte die GUI neu laden."
 
 #: settings.py:119
 msgid "Do you want to restart now?"
-msgstr ""
+msgstr "Möchten Sie neu starten?"
 
 #: settings.py:130
 msgid "Select skin *Restart GUI Required"
@@ -585,7 +596,7 @@ msgstr "Ort der playlists.txt"
 
 #: settings.py:132
 msgid "EPG download location"
-msgstr ""
+msgstr "EPG Download Verzeichnis"
 
 #: settings.py:133
 msgid "VOD download folder"
@@ -613,11 +624,11 @@ msgstr "Stream abbrechen mittels Zurück-Taste"
 
 #: settings.py:141
 msgid "XStreamity parental control"
-msgstr ""
+msgstr "XStreamity Kindersicherung"
 
 #: settings.py:142
 msgid "XStreamity parental pin"
-msgstr ""
+msgstr "XStreamity Kindersicherungs-PIN"
 
 #: settings.py:143
 msgid "Show in main menu *Restart GUI Required"
@@ -645,11 +656,11 @@ msgstr "SubsSupport Plugin in Filmen benutzen"
 
 #: settings.py:153
 msgid "Skip playlist selection screen if only 1 playlist"
-msgstr ""
+msgstr "Auswahl Wiedergabeliste überspringen, wenn nur eine Wiedergabeliste existiert"
 
 #: settings.py:155
 msgid "Automatic EPG download time *Restart GUI Required"
-msgstr ""
+msgstr "Zeit für automatisches Herunterladen des EPG *GUI muss neu gestartet werden*"
 
 #: settings.py:275 settings.py:288 settings.py:301
 msgid "Choose Directory:"
@@ -661,12 +672,12 @@ msgstr "Verzeichnis auswählen"
 
 #: streamplayer.py:377
 msgid "Do you want to resume this playback?"
-msgstr ""
+msgstr "Wiedergabe fortsetzen?"
 
 #: streamplayer.py:377
 #, python-format
 msgid "Resume position at %s"
-msgstr ""
+msgstr "Position bei %s fortsetzen"
 
 #: streamplayer.py:466
 msgid "TV"
