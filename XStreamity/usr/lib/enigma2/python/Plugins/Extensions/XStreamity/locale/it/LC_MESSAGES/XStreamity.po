@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2021-12-04 15:14+0000\n"
-"PO-Revision-Date: 2021-12-04 15:15+0000\n"
+"PO-Revision-Date: 2021-12-10 16:13+0000\n"
 "Last-Translator: \n"
-"Language-Team: @lululla\n"
+"Language-Team: @lululla @alexsanders\n"
 "Language: it_IT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -35,51 +35,51 @@ msgstr "Cerca"
 #: channels.py:302
 #| msgid "Hidden Categories"
 msgid "Live Categories"
-msgstr ""
+msgstr "Categorie in Diretta"
 
 #: channels.py:303 menu.py:235
 msgid "Live Streams"
-msgstr ""
+msgstr "In Diretta"
 
 #: channels.py:339
 #| msgid "Categories"
 msgid "Vod Categories"
-msgstr ""
+msgstr "Categorie VOD"
 
 #: channels.py:340 menu.py:240
 msgid "Vod"
-msgstr ""
+msgstr "VOD"
 
 #: channels.py:370
 #| msgid "Hidden Categories"
 msgid "Series Categories"
-msgstr ""
+msgstr "Categorie SerieTv"
 
 #: channels.py:371 channels.py:2749
 #| msgid "Categories"
 msgid "Series"
-msgstr ""
+msgstr "SerieTV"
 
 #: channels.py:396
 #| msgid "Categories"
 msgid "Catch Up Categories"
-msgstr ""
+msgstr "Raggiungi le Categorie"
 
 #: channels.py:397 menu.py:257
 msgid "Catch Up TV"
-msgstr "Catch Up TV"
+msgstr "Raggiungi TV"
 
 #: channels.py:515
 msgid "FAVOURITES"
-msgstr ""
+msgstr "FAVORITI"
 
 #: channels.py:522
 msgid "ALL"
-msgstr ""
+msgstr "TUTTO"
 
 #: channels.py:908
 msgid "Season "
-msgstr ""
+msgstr "Stagione "
 
 #: channels.py:1224 channels.py:1615 channels.py:1639
 msgid "Reset Search"
@@ -87,7 +87,7 @@ msgstr "Azzera Ricerca"
 
 #: channels.py:1230 channels.py:1516
 msgid "Reverse"
-msgstr ""
+msgstr "Torna Indietro"
 
 #: channels.py:1231 channels.py:1236
 msgid "Hide/Show"
@@ -95,11 +95,11 @@ msgstr "Nascondi/Mostra"
 
 #: channels.py:1277 channels.py:1335
 msgid "Page: "
-msgstr ""
+msgstr "Pagina: "
 
 #: channels.py:1277 channels.py:1335
 msgid " of "
-msgstr ""
+msgstr " di "
 
 #: channels.py:1536 channels.py:1539 channels.py:1542 channels.py:1557
 msgid "Sort: Z-A"
@@ -112,12 +112,12 @@ msgstr "Ordine: Originale"
 #: channels.py:1539 channels.py:1542 channels.py:1560
 #| msgid "Sort: A-Z"
 msgid "Sort: Added"
-msgstr ""
+msgstr "Ordine: Aggiunto"
 
 #: channels.py:1542 channels.py:1575
 #| msgid "Sort: A-Z"
 msgid "Sort: Year"
-msgstr ""
+msgstr "Ordine: Anno"
 
 #: channels.py:1616
 msgid "Filter this category..."
@@ -129,7 +129,7 @@ msgstr "Codice pin non corretto."
 
 #: channels.py:1708
 msgid "all"
-msgstr ""
+msgstr "tutto"
 
 #: channels.py:1711
 msgid "Please enter the parental control pin code"
@@ -149,7 +149,7 @@ msgstr "Info Adesso"
 
 #: channels.py:2476 streamplayer.py:522
 msgid "Recording Timer Set."
-msgstr "Configura tempo Registrazione"
+msgstr "Configura tempo Registrazione."
 
 #: channels.py:2478 streamplayer.py:524
 msgid "Recording Failed."
@@ -173,7 +173,7 @@ msgstr "Durata:"
 
 #: channels.py:2657
 msgid "Release Date:"
-msgstr "Date Produzione:"
+msgstr "Data Produzione:"
 
 #: channels.py:2658
 msgid "Cast:"
@@ -189,13 +189,13 @@ msgstr "Paese:"
 
 #: channels.py:2747
 msgid "Movie"
-msgstr ""
+msgstr "Film"
 
 #: channels.py:2747 channels.py:2749 channels.py:2751 downloadmanager2.py:279
 #: downloadmanager2.py:325 downloadmanager2.py:378 downloadmanager2.py:411
 #: downloadmanager2.py:462
 msgid "Not Started"
-msgstr ""
+msgstr "Non Partito"
 
 #: channels.py:2751
 msgid "Catch-up"
@@ -223,36 +223,36 @@ msgstr "Catchup error. Nessun dato per questo slot"
 
 #: channels.py:3280
 msgid "Catchup currently not available. Missing EPG data"
-msgstr ""
+msgstr "Recupero Dati Epg al momento non disponibile. Dati EPG mancanti"
 
 #: downloadmanager2.py:142 downloadmanager2.py:143 downloadmanager2.py:144
 #: downloadmanager2.py:145 downloadmanager2.py:146
 msgid "MOVIE DOWNLOAD FAILED!"
-msgstr ""
+msgstr "SCARICAMENTO FILM FALLITO!"
 
 #: downloadmanager2.py:142
 msgid "DOWNLOADED FILE CORRUPTED:"
-msgstr ""
+msgstr "FILE SCARICATO CORROTTO:"
 
 #: downloadmanager2.py:143
 msgid "COULD NOT READ RTMP PACKET:"
-msgstr ""
+msgstr "IMPOSSIBILE LEGGERE IL PACCHETTO RTMP:"
 
 #: downloadmanager2.py:144
 msgid "SEGMENTATION FAULT:"
-msgstr ""
+msgstr "ERRORE SEGMENTAZIONE:"
 
 #: downloadmanager2.py:145
 msgid "SERVER RETURNED ERROR:"
-msgstr ""
+msgstr "ERRORE RESTITUITO DAL SERVER:"
 
 #: downloadmanager2.py:146
 msgid "UNKNOWN ERROR:"
-msgstr ""
+msgstr "ERRORE SCONOSCIUTO:"
 
 #: downloadmanager2.py:161
 msgid "VOD Download Manager"
-msgstr ""
+msgstr "Download Manager VOD"
 
 #: downloadmanager2.py:179 downloadmanager2.py:328
 msgid "Download"
@@ -260,24 +260,24 @@ msgstr "Download"
 
 #: downloadmanager2.py:180
 msgid "Remove"
-msgstr ""
+msgstr "Rimuovi"
 
 #: downloadmanager2.py:230
 msgid "Free Space:"
-msgstr ""
+msgstr "Spazio Libero:"
 
 #: downloadmanager2.py:230
 msgid "of"
-msgstr ""
+msgstr "di"
 
 #: downloadmanager2.py:257 downloadmanager2.py:346 downloadmanager2.py:412
 #: downloadmanager2.py:460
 msgid "Downloading"
-msgstr ""
+msgstr "In Scaricamento"
 
 #: downloadmanager2.py:283 downloadmanager2.py:395 downloadmanager2.py:486
 msgid "Finished"
-msgstr ""
+msgstr "Finito"
 
 #: downloadmanager2.py:326 hidden.py:44
 msgid "Cancel"
@@ -285,17 +285,17 @@ msgstr "Annulla"
 
 #: downloadmanager2.py:336
 msgid "Cancel this download?"
-msgstr ""
+msgstr "Annullare questo Scaricamento?"
 
 #: downloadmanager2.py:387
 msgid ""
 "Vod Download folder location does not exist.\n"
 "\n"
-msgstr ""
+msgstr "La cartella per scaricare i VOD, non esiste.\n"
 
 #: downloadmanager2.py:396
 msgid "File already downloaded."
-msgstr ""
+msgstr "File gia' scaricato."
 
 #: downloadmanager2.py:442 downloadmanager2.py:448
 msgid ""
@@ -304,14 +304,18 @@ msgid ""
 "opkg update\n"
 "opkg install wget"
 msgstr ""
+"Aggiorna la tua libreria wget per scaricare da https\n"
+"\n"
+"opkg update\n"
+"opkg install wget"
 
 #: downloadmanager2.py:463
 msgid "Multiple downloads not allowed. Please wait or cancel download."
-msgstr ""
+msgstr "Scaricamenti multipli non sono consentiti. Attendi o cancella quello in corso."
 
 #: downloadmanager2.py:478
 msgid "Download Failed!\n"
-msgstr ""
+msgstr "Scaricamento Fallito!\n"
 
 #: hidden.py:35
 msgid "Hidden Categories"
@@ -327,7 +331,7 @@ msgstr "Inverti"
 
 #: hidden.py:47
 msgid "Reset"
-msgstr ""
+msgstr "Ripristina"
 
 #: hidden.py:157
 msgid "Error: All categories hidden. Please amend your selection."
@@ -335,7 +339,7 @@ msgstr "Errore: tutte le categorie nascoste. Modifica la selezione."
 
 #: mainmenu.py:37
 msgid "Main Menu"
-msgstr ""
+msgstr "Menu Principale"
 
 #: mainmenu.py:113
 msgid "Playlists"
@@ -343,7 +347,7 @@ msgstr ""
 
 #: mainmenu.py:114 mainmenu.py:119
 msgid "Add Playlist"
-msgstr ""
+msgstr "Aggiunti Playlist"
 
 #: mainmenu.py:115 mainmenu.py:120 settings.py:59
 msgid "Main Settings"
@@ -351,49 +355,47 @@ msgstr "Impostazioni Principali"
 
 #: mainmenu.py:116
 msgid "Manual EPG Update"
-msgstr ""
+msgstr "Aggiornamento EPG Manuale"
 
 #: mainmenu.py:123
 msgid "Download Manager"
 msgstr ""
 
 #: mainmenu.py:125
-#, fuzzy
 #| msgid "Reset Search"
 msgid "Reset Stored Data"
-msgstr "Azzera Ricerca"
+msgstr ""
 
 #: mainmenu.py:151
-#, fuzzy
 #| msgid ""
 #| "Downloading \n"
 #| "\n"
 msgid "EPGs downloading."
 msgstr ""
-"Downloading \n"
-"\n"
 
 #: mainmenu.py:185
 msgid ""
 "Warning: delete stored json data for all playlists... Settings, favourites etc. Playlists will not be deleted.\n"
 "Do you wish to continue?"
 msgstr ""
+"Attenzione: Stai per cancellare i dati Json di tutte le playlist...Impostazioni, favoriti, etc. Le Playlist non verranno cancellate.\n"
+"Continuare?"
 
 #: menu.py:47
 msgid "Update"
-msgstr ""
+msgstr "Aggiorna"
 
 #: menu.py:49
 msgid "Catchup channel check updated: "
-msgstr ""
+msgstr "Ricerca Aggiornamenti canale: "
 
 #: menu.py:87 menu.py:297
 msgid "Last catchup check: "
-msgstr ""
+msgstr "Ultima Ricerca: "
 
 #: menu.py:245
 msgid "TV Series"
-msgstr ""
+msgstr "Serie TV"
 
 #: menu.py:260 playsettings.py:40
 msgid "Playlist Settings"
@@ -441,15 +443,15 @@ msgstr "Scaduto"
 
 #: playlists.py:293 playlists.py:295
 msgid "Expires: "
-msgstr ""
+msgstr "Scadenza: "
 
 #: playlists.py:297
 msgid "Active Conn:"
-msgstr ""
+msgstr "Connessioni Attive:"
 
 #: playlists.py:300
 msgid "Max Conn:"
-msgstr ""
+msgstr "Connessioni Massime:"
 
 #: playlists.py:340
 msgid "Delete selected playlist?"
@@ -457,7 +459,7 @@ msgstr "Cancellare la Playlist selezionata?"
 
 #: playlists.py:361
 msgid "Delete providers EPG data?"
-msgstr ""
+msgstr "Cancellare i dati EPG?"
 
 #: playsettings.py:71 record.py:72 server.py:70 settings.py:91
 msgid "Really close without saving settings?"
@@ -521,7 +523,7 @@ msgstr "Inserisci il tempo di fine registrazione"
 
 #: record.py:92
 msgid "Name"
-msgstr ""
+msgstr "Nome"
 
 #: record.py:94
 msgid "Start Time"
@@ -570,11 +572,11 @@ msgstr "Informazioni Utente"
 #: settings.py:26
 #| msgid "Please enter the parental control pin code"
 msgid "Please enter the correct pin code"
-msgstr ""
+msgstr "Per favore inserire il Codice PIN corretto"
 
 #: settings.py:35
 msgid "The pin code you entered is wrong."
-msgstr ""
+msgstr "Il codice PIN inserito e' sbagliato."
 
 #: settings.py:103
 msgid ""
@@ -582,14 +584,17 @@ msgid ""
 "\n"
 "Pin cannot be 0000, 1111 or 1234"
 msgstr ""
+"Per favore cambiare il PIN predefinito.\n"
+"\n"
+"Il Pin non puo' essere 0000, 1111 o 1234"
 
 #: settings.py:119
 msgid "You need to restart the GUI"
-msgstr ""
+msgstr "Devi riavviare la schermata GUI"
 
 #: settings.py:119
 msgid "Do you want to restart now?"
-msgstr ""
+msgstr "Vuoi riavviare ora?"
 
 #: settings.py:130
 msgid "Select skin *Restart GUI Required"
@@ -601,7 +606,7 @@ msgstr "Percorso playlists.txt"
 
 #: settings.py:132
 msgid "EPG download location"
-msgstr ""
+msgstr "Posizione scaricamento EPG"
 
 #: settings.py:133
 msgid "VOD download folder"
@@ -680,12 +685,12 @@ msgstr "Scegli cartella"
 
 #: streamplayer.py:377
 msgid "Do you want to resume this playback?"
-msgstr ""
+msgstr "Vuoi riprendere dov'eri arrivato?"
 
 #: streamplayer.py:377
 #, python-format
 msgid "Resume position at %s"
-msgstr ""
+msgstr "Riprendi nella posizione %s"
 
 #: streamplayer.py:466
 msgid "TV"
@@ -709,7 +714,7 @@ msgstr ""
 #~ "Download Failed\n"
 #~ "\n"
 #~ msgstr ""
-#~ "Download Failed\n"
+#~ "Download Fallito\n"
 #~ "\n"
 
 #~ msgid "Select Server"

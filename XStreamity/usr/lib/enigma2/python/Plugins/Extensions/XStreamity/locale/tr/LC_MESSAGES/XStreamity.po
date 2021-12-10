@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: XStreamity\n"
 "POT-Creation-Date: 2021-12-04 15:26+0000\n"
-"PO-Revision-Date: 2021-12-04 15:28+0000\n"
+"PO-Revision-Date: 2021-12-10 16:08+0000\n"
 "Last-Translator: @Kqiqi1\n"
 "Language-Team: biperva @ Dreamosat\n"
 "Language: tr_TR\n"
@@ -14,6 +14,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SearchPath-0: .\n"
 
+# Translated by Levi45
 #: channels.py:233 channels.py:1536 channels.py:1539 channels.py:1542
 #: channels.py:1554 channels.py:1659 channels.py:1752
 msgid "Sort: A-Z"
@@ -35,52 +36,52 @@ msgstr "Arama"
 #: channels.py:302
 #| msgid "Categories"
 msgid "Live Categories"
-msgstr ""
+msgstr "Canlı Kategoriler"
 
 #: channels.py:303 menu.py:235
 #| msgid "Live Streams:"
 msgid "Live Streams"
-msgstr ""
+msgstr "Canlı Yayınlar"
 
 #: channels.py:339
 #| msgid "Categories"
 msgid "Vod Categories"
-msgstr ""
+msgstr "Sec Izle Kategoriler"
 
 #: channels.py:340 menu.py:240
 msgid "Vod"
-msgstr ""
+msgstr "Sec Izle"
 
 #: channels.py:370
 #| msgid "Display Series categories"
 msgid "Series Categories"
-msgstr ""
+msgstr "Seri Kategorileri"
 
 #: channels.py:371 channels.py:2749
 #| msgid "Categories"
 msgid "Series"
-msgstr ""
+msgstr "Seri"
 
 #: channels.py:396
 #| msgid "Categories"
 msgid "Catch Up Categories"
-msgstr ""
+msgstr "Geri Izleme Katogorileri"
 
 #: channels.py:397 menu.py:257
 msgid "Catch Up TV"
-msgstr "Catch Up TV"
+msgstr "Geri Izleme TV"
 
 #: channels.py:515
 msgid "FAVOURITES"
-msgstr ""
+msgstr "FAFORILER"
 
 #: channels.py:522
 msgid "ALL"
-msgstr ""
+msgstr "HEPSI"
 
 #: channels.py:908
 msgid "Season "
-msgstr ""
+msgstr "Sezon "
 
 #: channels.py:1224 channels.py:1615 channels.py:1639
 msgid "Reset Search"
@@ -88,7 +89,7 @@ msgstr "Aramayı Sıfırla"
 
 #: channels.py:1230 channels.py:1516
 msgid "Reverse"
-msgstr ""
+msgstr "Geri"
 
 #: channels.py:1231 channels.py:1236
 msgid "Hide/Show"
@@ -97,11 +98,11 @@ msgstr "Göster/Gizle"
 #: channels.py:1277 channels.py:1335
 #| msgid "Page: %d of %d"
 msgid "Page: "
-msgstr ""
+msgstr "Sayfa: "
 
 #: channels.py:1277 channels.py:1335
 msgid " of "
-msgstr ""
+msgstr " ile "
 
 #: channels.py:1536 channels.py:1539 channels.py:1542 channels.py:1557
 msgid "Sort: Z-A"
@@ -114,12 +115,12 @@ msgstr "Sırala: Orijinal"
 #: channels.py:1539 channels.py:1542 channels.py:1560
 #| msgid "Sort: A-Z"
 msgid "Sort: Added"
-msgstr ""
+msgstr "Sirala: Eklendi"
 
 #: channels.py:1542 channels.py:1575
 #| msgid "Sort: A-Z"
 msgid "Sort: Year"
-msgstr ""
+msgstr "Sirala: Yil"
 
 #: channels.py:1616
 msgid "Filter this category..."
@@ -127,11 +128,11 @@ msgstr "Kategoriyi filtrele..."
 
 #: channels.py:1695
 msgid "Incorrect pin code."
-msgstr ""
+msgstr "Yanlis pin kodu."
 
 #: channels.py:1708
 msgid "all"
-msgstr ""
+msgstr "hepsi"
 
 #: channels.py:1711
 msgid "Please enter the parental control pin code"
@@ -139,20 +140,20 @@ msgstr "Lütfen ebeveyn kontrolü pin kodunu girin"
 
 #: channels.py:1711 settings.py:26
 msgid "Enter pin code"
-msgstr ""
+msgstr "Pin kodu gir"
 
 #: channels.py:2185 channels.py:2244 channels.py:2253
 msgid "Next Info"
-msgstr "Sonraki"
+msgstr "Sonraki bilgi"
 
 #: channels.py:2248
 msgid "Now Info"
-msgstr "Şimdi"
+msgstr "Şimdiki bilgi"
 
 #: channels.py:2476 streamplayer.py:522
 #| msgid "Recording Failed."
 msgid "Recording Timer Set."
-msgstr ""
+msgstr "Kayit Zamani Ayarlandi."
 
 #: channels.py:2478 streamplayer.py:524
 msgid "Recording Failed."
@@ -192,71 +193,73 @@ msgstr "Ülke:"
 
 #: channels.py:2747
 msgid "Movie"
-msgstr ""
+msgstr "Film"
 
 #: channels.py:2747 channels.py:2749 channels.py:2751 downloadmanager2.py:279
 #: downloadmanager2.py:325 downloadmanager2.py:378 downloadmanager2.py:411
 #: downloadmanager2.py:462
 #| msgid "Not Authorised"
 msgid "Not Started"
-msgstr ""
+msgstr "Baslamadi"
 
 #: channels.py:2751
 #| msgid "Catch Up TV"
 msgid "Catch-up"
-msgstr ""
+msgstr "Geri-izleme"
 
 #: channels.py:2756
 msgid "Added to download manager"
-msgstr ""
+msgstr "Indirme yöneticisine eklendi"
 
 #: channels.py:2758
 msgid "Already added to download manager"
-msgstr ""
+msgstr "İndirme yöneticisine zaten ekli"
 
 #: channels.py:3108
 msgid ""
 "The IMDb plugin is not installed!\n"
 "Please install it."
 msgstr ""
+"IMDb eklentisi kurulu değil!\n"
+"Lütfen kurun."
 
 #: channels.py:3169
 msgid "Catchup error. No data for this slot"
-msgstr ""
+msgstr "Geri izleme hatasi . Bu bolum icin veri yok"
 
 #: channels.py:3280
 msgid "Catchup currently not available. Missing EPG data"
-msgstr ""
+msgstr "Geri izleme  şu anda mevcut değil.  EPG verileri eksik"
 
 #: downloadmanager2.py:142 downloadmanager2.py:143 downloadmanager2.py:144
 #: downloadmanager2.py:145 downloadmanager2.py:146
 msgid "MOVIE DOWNLOAD FAILED!"
-msgstr ""
+msgstr "FİLM İNDİRME BAŞARISIZ!"
 
 #: downloadmanager2.py:142
 msgid "DOWNLOADED FILE CORRUPTED:"
-msgstr ""
+msgstr "İNDİRİLEN DOSYA BOZUK:"
 
 #: downloadmanager2.py:143
 msgid "COULD NOT READ RTMP PACKET:"
-msgstr ""
+msgstr "RTMP PAKETİ OKUNAMADI:"
 
 #: downloadmanager2.py:144
 msgid "SEGMENTATION FAULT:"
-msgstr ""
+msgstr "SEGMENTASYON HATASI:"
 
 #: downloadmanager2.py:145
 msgid "SERVER RETURNED ERROR:"
-msgstr ""
+msgstr "SUNUCU GERİ DÖNDÜ HATASI:"
 
 #: downloadmanager2.py:146
 msgid "UNKNOWN ERROR:"
-msgstr ""
+msgstr "BİLİNMEYEN HATA:"
 
 #: downloadmanager2.py:161
 #| msgid "VOD download folder"
 msgid "VOD Download Manager"
-msgstr ""
+msgstr "Sec Izle İndirme Yöneticisi"
 
 #: downloadmanager2.py:179 downloadmanager2.py:328
 msgid "Download"
@@ -264,25 +267,25 @@ msgstr "İndir"
 
 #: downloadmanager2.py:180
 msgid "Remove"
-msgstr ""
+msgstr "Kaldırmak"
 
 #: downloadmanager2.py:230
 msgid "Free Space:"
-msgstr ""
+msgstr "Boş alan:"
 
 #: downloadmanager2.py:230
 msgid "of"
-msgstr ""
+msgstr "ile"
 
 #: downloadmanager2.py:257 downloadmanager2.py:346 downloadmanager2.py:412
 #: downloadmanager2.py:460
 #| msgid "Download"
 msgid "Downloading"
-msgstr ""
+msgstr "Indiriliyor"
 
 #: downloadmanager2.py:283 downloadmanager2.py:395 downloadmanager2.py:486
 msgid "Finished"
-msgstr ""
+msgstr "Bitti"
 
 #: downloadmanager2.py:326 hidden.py:44
 msgid "Cancel"
@@ -290,17 +293,17 @@ msgstr "İptal"
 
 #: downloadmanager2.py:336
 msgid "Cancel this download?"
-msgstr ""
+msgstr "Bu indirme iptal edilsin mi?"
 
 #: downloadmanager2.py:387
 msgid ""
 "Vod Download folder location does not exist.\n"
 "\n"
-msgstr ""
+msgstr "Sec izle İndirme klasörü konumu mevcut değil.\n"
 
 #: downloadmanager2.py:396
 msgid "File already downloaded."
-msgstr ""
+msgstr "Dosya zaten indirildi."
 
 #: downloadmanager2.py:442 downloadmanager2.py:448
 msgid ""
@@ -309,20 +312,24 @@ msgid ""
 "opkg update\n"
 "opkg install wget"
 msgstr ""
+"Dikkat https satırlarını indirmek için lütfen wget arsivinizi güncelleyin\n"
+"\n"
+"opkg update\n"
+"opkg install wget"
 
 #: downloadmanager2.py:463
 msgid "Multiple downloads not allowed. Please wait or cancel download."
-msgstr ""
+msgstr "Çoklu indirmeye izin verilmez. Lütfen bekleyin veya indirmeyi iptal edin."
 
 #: downloadmanager2.py:478
 #| msgid "Download"
 msgid "Download Failed!\n"
-msgstr ""
+msgstr "Yükleme başarısız!\n"
 
 #: hidden.py:35
 #| msgid "Categories"
 msgid "Hidden Categories"
-msgstr ""
+msgstr "Gizli Kategoriler"
 
 #: hidden.py:45 playsettings.py:48 record.py:39 server.py:39 settings.py:67
 msgid "Save"
@@ -334,24 +341,24 @@ msgstr "Ters Çevir"
 
 #: hidden.py:47
 msgid "Reset"
-msgstr ""
+msgstr "Sıfırla"
 
 #: hidden.py:157
 msgid "Error: All categories hidden. Please amend your selection."
-msgstr ""
+msgstr "Hata: Tüm kategoriler gizlendi. Lütfen seçiminizi değiştirin."
 
 #: mainmenu.py:37
 #| msgid "Main Settings"
 msgid "Main Menu"
-msgstr ""
+msgstr "Ana menü"
 
 #: mainmenu.py:113
 msgid "Playlists"
-msgstr ""
+msgstr "Oynatma listesi"
 
 #: mainmenu.py:114 mainmenu.py:119
 msgid "Add Playlist"
-msgstr ""
+msgstr "Oynatma Listesi Ekle"
 
 #: mainmenu.py:115 mainmenu.py:120 settings.py:59
 msgid "Main Settings"
@@ -359,58 +366,60 @@ msgstr "Ana Ayarlar"
 
 #: mainmenu.py:116
 msgid "Manual EPG Update"
-msgstr ""
+msgstr "Manuel EPG Güncellemesi"
 
 #: mainmenu.py:123
 #| msgid "Download"
 msgid "Download Manager"
-msgstr ""
+msgstr "İndirme yöneticisi"
 
 #: mainmenu.py:125
 #| msgid "Reset Search"
 msgid "Reset Stored Data"
-msgstr ""
+msgstr "Depolanan Verileri Sıfırla"
 
 #: mainmenu.py:151
 msgid "EPGs downloading."
-msgstr ""
+msgstr "EPG'ler indiriliyor."
 
 #: mainmenu.py:185
 msgid ""
 "Warning: delete stored json data for all playlists... Settings, favourites etc. Playlists will not be deleted.\n"
 "Do you wish to continue?"
 msgstr ""
+"Uyarı: tüm oynatma listeleri için saklanan json verilerini silin... Ayarlar, favoriler vb. Oynatma listeleri silinmeyecek.\n"
+"Devam etmek istiyor musunuz?"
 
 #: menu.py:47
 msgid "Update"
-msgstr ""
+msgstr "Güncelle"
 
 #: menu.py:49
 msgid "Catchup channel check updated: "
-msgstr ""
+msgstr "Geri izleme kanal kontrolü güncellendi : "
 
 #: menu.py:87 menu.py:297
 msgid "Last catchup check: "
-msgstr ""
+msgstr "Son Sec izle kontrolü: "
 
 #: menu.py:245
 msgid "TV Series"
-msgstr ""
+msgstr "Televizyon dizisi"
 
 #: menu.py:260 playsettings.py:40
 #| msgid "Main Settings"
 msgid "Playlist Settings"
-msgstr ""
+msgstr "Oynatma Listesi Ayarları"
 
 #: menu.py:269
 #| msgid "No data or playlist not compatible with X-Streamity plugin."
 msgid "No data, blocked or playlist not compatible with XStreamity plugin."
-msgstr ""
+msgstr "Veri yok, engellendi veya oynatma listesi XStreamity eklentisiyle uyumlu değil."
 
 #: playlists.py:43
 #| msgid "Delete selected playlist?"
 msgid "Select Playlist"
-msgstr ""
+msgstr "Oynatma Listesini Seç"
 
 #: playlists.py:47
 msgid "Delete"
@@ -447,17 +456,17 @@ msgstr "Süresi Dolmuş"
 #: playlists.py:293 playlists.py:295
 #| msgid "Expired"
 msgid "Expires: "
-msgstr ""
+msgstr "Bitis tarihi "
 
 #: playlists.py:297
 #| msgid "Active Connections:"
 msgid "Active Conn:"
-msgstr ""
+msgstr "Aktif Bağlantı :"
 
 #: playlists.py:300
 #| msgid "Max Connections:"
 msgid "Max Conn:"
-msgstr ""
+msgstr "Maksimum Bağlantı :"
 
 #: playlists.py:340
 msgid "Delete selected playlist?"
@@ -465,7 +474,7 @@ msgstr "Seçilen oynatma listesi silinsin mi?"
 
 #: playlists.py:361
 msgid "Delete providers EPG data?"
-msgstr ""
+msgstr "Sağlayıcıların EPG verileri silinsin mi ?"
 
 #: playsettings.py:71 record.py:72 server.py:70 settings.py:91
 msgid "Really close without saving settings?"
@@ -473,7 +482,7 @@ msgstr "Ayarları kaydetmeden gerçekten kapatmak istiyor musunuz?"
 
 #: playsettings.py:117 server.py:98
 msgid "Short name or provider name:"
-msgstr ""
+msgstr "Kısa ad veya sağlayıcı adı :"
 
 #: playsettings.py:118 server.py:104
 msgid "Output:"
@@ -481,34 +490,34 @@ msgstr "Çıktı:"
 
 #: playsettings.py:120
 msgid "Show LIVE category:"
-msgstr ""
+msgstr "CANLI kategoriyi göster :"
 
 #: playsettings.py:121
 #| msgid "Show covers in VOD categories"
 msgid "Show VOD category:"
-msgstr ""
+msgstr "Sec izle kategorisini göster :"
 
 #: playsettings.py:122
 msgid "Show SERIES category:"
-msgstr ""
+msgstr "SERİSİ kategorisini göster :"
 
 #: playsettings.py:123
 msgid "Show CATCHUP category:"
-msgstr ""
+msgstr "Sec izle kategorisini göster :"
 
 #: playsettings.py:124
 msgid "EPG offset:"
-msgstr ""
+msgstr "EPG verileri sil:"
 
 #: playsettings.py:127
 #| msgid "Stream Type VOD:"
 msgid "Stream Type LIVE:"
-msgstr ""
+msgstr "Yayin Türü CANLI :"
 
 #: playsettings.py:130
 #| msgid "Stream Type VOD:"
 msgid "Stream Type VOD/SERIES:"
-msgstr ""
+msgstr "Yayin Türü SEC IZLE/SERİ  :"
 
 #: plugin.py:190 plugin.py:274
 msgid "XStreamity"
@@ -529,11 +538,11 @@ msgstr "Lütfen kayıt süresini girin"
 #: record.py:55
 #| msgid "Please enter recording time"
 msgid "Please enter recording end time"
-msgstr ""
+msgstr "Lütfen kayıt bitiş zamanını girin"
 
 #: record.py:92
 msgid "Name"
-msgstr ""
+msgstr "Isim"
 
 #: record.py:94
 msgid "Start Time"
@@ -546,7 +555,7 @@ msgstr "Bitiş Zamanı"
 #: server.py:31
 #| msgid "IPTV Xtream Codes playlists player by KiddaC"
 msgid "Add Xtream Codes Playlist"
-msgstr ""
+msgstr "Xtream Kodları Oynatma Listesi Ekle"
 
 #: server.py:99
 msgid "Protocol:"
@@ -570,11 +579,11 @@ msgstr "Şifre:"
 
 #: server.py:171
 msgid "Details are not a valid or unauthorised"
-msgstr ""
+msgstr "Bilgileriniz geçerli degil veya yetkisiz yok"
 
 #: server.py:189
 msgid "Playlist added successfully."
-msgstr ""
+msgstr "Oynatma listesi başarıyla eklendi ."
 
 #: serverinfo.py:27
 msgid "User Information"
@@ -583,11 +592,11 @@ msgstr "Kullanıcı Bilgisi"
 #: settings.py:26
 #| msgid "Please enter the parental control pin code"
 msgid "Please enter the correct pin code"
-msgstr ""
+msgstr "Lütfen doğru pin kodunu girin"
 
 #: settings.py:35
 msgid "The pin code you entered is wrong."
-msgstr ""
+msgstr "Girdiğiniz pin kodu yanlış."
 
 #: settings.py:103
 msgid ""
@@ -595,14 +604,17 @@ msgid ""
 "\n"
 "Pin cannot be 0000, 1111 or 1234"
 msgstr ""
+"Lütfen varsayılan ebeveyn pinini değiştirin.\n"
+"\n"
+"Pin 0000, 1111 veya 1234 olamaz"
 
 #: settings.py:119
 msgid "You need to restart the GUI"
-msgstr ""
+msgstr "GUI'yi yeniden başlatmanız gerekiyor"
 
 #: settings.py:119
 msgid "Do you want to restart now?"
-msgstr ""
+msgstr "Şimdi yeniden başlatmak istiyor musunuz ?"
 
 #: settings.py:130
 msgid "Select skin *Restart GUI Required"
@@ -614,11 +626,11 @@ msgstr "playlists txt konumu"
 
 #: settings.py:132
 msgid "EPG download location"
-msgstr ""
+msgstr "EPG indirme yolu"
 
 #: settings.py:133
 msgid "VOD download folder"
-msgstr "VOD İndirme Klasörü"
+msgstr "SEC IZLE İndirme Klasörü"
 
 #: settings.py:134
 msgid "Server timeout (seconds)"
@@ -627,17 +639,17 @@ msgstr "Sunucu zaman aşımı (Saniye)"
 #: settings.py:136
 #| msgid "Default VOD stream type"
 msgid "Default LIVE stream type"
-msgstr ""
+msgstr "Varsayılan CANLI yayın türü"
 
 #: settings.py:137
 #| msgid "Default VOD stream type"
 msgid "Default VOD/SERIES stream type"
-msgstr ""
+msgstr "Varsayılan SEC IZLE/SERI  akış türü"
 
 #: settings.py:139
 #| msgid "Preview streams in mini tv before playing"
 msgid "Preview LIVE streams in mini tv"
-msgstr ""
+msgstr "Mini TV'de CANLI yayınları önizleyin"
 
 #: settings.py:140
 msgid "Stop stream on back button"
@@ -646,12 +658,12 @@ msgstr "Geri düğmesiyle akışı durdur"
 #: settings.py:141
 #| msgid "Parental control"
 msgid "XStreamity parental control"
-msgstr ""
+msgstr "XStreamity ebeveyn kontrolü"
 
 #: settings.py:142
 #| msgid "XStreamity"
 msgid "XStreamity parental pin"
-msgstr ""
+msgstr "XStreamity ebeveyn pini"
 
 #: settings.py:143
 msgid "Show in main menu *Restart GUI Required"
@@ -659,32 +671,32 @@ msgstr "Ana menüde göster *GUI Yeniden Başlatma Gerekli"
 
 #: settings.py:145
 msgid "Use Movie Database(TMDB) for VOD & Series"
-msgstr ""
+msgstr "Sec Izle ve Diziler için (TMDB) Film Veritabanını Kullanın"
 
 #: settings.py:146
 msgid "Movie Database language"
-msgstr ""
+msgstr "Film Veritabanı dili"
 
 #: settings.py:148
 msgid "Margin before catchup (mins)"
-msgstr ""
+msgstr "Geri Izleme yapmadan önce birlestir (dakika)"
 
 #: settings.py:149
 msgid "Margin after catchup (mins)"
-msgstr ""
+msgstr "Geri Izle yaptikdan  sonra birlestir (dakika)"
 
 #: settings.py:151
 msgid "Allow SubsSupport plugin in VOD"
-msgstr ""
+msgstr "SEC IZLE'de SubsSupport eklentisine izin ver"
 
 #: settings.py:153
 msgid "Skip playlist selection screen if only 1 playlist"
-msgstr ""
+msgstr "Yalnızca 1 oynatma listesi varsa oynatma listesi seçim ekranını atla"
 
 #: settings.py:155
 #| msgid "Show in main menu *Restart GUI Required"
 msgid "Automatic EPG download time *Restart GUI Required"
-msgstr ""
+msgstr "Otomatik EPG indirme zamani *GUI'yi Yeniden Başlatma Gerekli"
 
 #: settings.py:275 settings.py:288 settings.py:301
 msgid "Choose Directory:"
@@ -696,25 +708,25 @@ msgstr "Dizin Seçin"
 
 #: streamplayer.py:377
 msgid "Do you want to resume this playback?"
-msgstr ""
+msgstr "Bu oynatmaya devam etmek istiyor musunuz?"
 
 #: streamplayer.py:377
 #, python-format
 msgid "Resume position at %s"
-msgstr ""
+msgstr "%s konumunda devam ettir"
 
 #: streamplayer.py:466
 msgid "TV"
-msgstr ""
+msgstr "TV"
 
 #: streamplayer.py:881
 msgid "VOD"
-msgstr ""
+msgstr "SEC IZLE"
 
 #: streamplayer.py:1106
 #| msgid "Catch Up TV"
 msgid "Catch Up"
-msgstr ""
+msgstr "Geri Izleme"
 
 #~ msgid "Recording Started."
 #~ msgstr "Kayıt Başladı."
