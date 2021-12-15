@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2021-12-04 15:09+0000\n"
-"PO-Revision-Date: 2021-12-15 15:10+0000\n"
+"PO-Revision-Date: 2021-12-15 15:59+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -215,7 +215,7 @@ msgstr "Durée :"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2657
 msgid "Release Date:"
-msgstr "Date de sortie :"
+msgstr "Date de Sortie :"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2658
 msgid "Cast:"
@@ -398,7 +398,7 @@ msgstr "Erreur: Toutes les catégories sont cachées. Veuillez modifier votre s�
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:37
 msgid "Main Menu"
-msgstr "Menu principal traduit en FR par Jakarta"
+msgstr "Menu principal"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:113
 msgid "Playlists"
@@ -544,7 +544,7 @@ msgstr "Nom abrégé ou nom du fournisseur:"
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:118
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:104
 msgid "Output:"
-msgstr "Sortie :"
+msgstr "Type de fichier:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:120
 msgid "Show LIVE category:"
@@ -556,11 +556,11 @@ msgstr "Afficher catégories Films:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:122
 msgid "Show SERIES category:"
-msgstr "Afficher la catégorie SÉRIE:"
+msgstr "Afficher la catégorie Séries:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:123
 msgid "Show CATCHUP category:"
-msgstr "Afficher la catégorie RATTRAPAGE:"
+msgstr "Afficher la catégorie Rattrapage:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:124
 msgid "EPG offset:"
@@ -572,7 +572,7 @@ msgstr "Type de Flux des Chaînes:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:130
 msgid "Stream Type VOD/SERIES:"
-msgstr "Type de Flux FILMS/SERIES:"
+msgstr "Type de Flux des Films/Séries:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:190
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:274
@@ -680,11 +680,11 @@ msgstr "emplacement playlists.txt"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:132
 msgid "EPG download location"
-msgstr "Dossier des fichiers EPG"
+msgstr "Dossier de téléchargement EPG"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:133
 msgid "VOD download folder"
-msgstr "Dossier téléchargement Films"
+msgstr "Dossier de téléchargement Films"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:134
 msgid "Server timeout (seconds)"
