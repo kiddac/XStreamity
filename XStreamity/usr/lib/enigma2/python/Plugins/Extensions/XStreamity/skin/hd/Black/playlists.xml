@@ -33,7 +33,7 @@
 			MultiContentEntryText(pos = (426, 50), size = (52, 20), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_RIGHT, text = 9),
 			
 			<!-- Expires -->
-			MultiContentEntryText(pos = (14, 50), size = (160, 20), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 3),
+			MultiContentEntryText(pos = (14, 50), size = (288, 20), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 3),
 			],
 			"fonts": [gFont("xstreamityregular", 20), gFont("xstreamityregular", 14)],
 			"itemHeight": 80,

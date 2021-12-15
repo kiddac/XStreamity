@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2021-12-04 15:14+0000\n"
-"PO-Revision-Date: 2021-12-10 16:13+0000\n"
+"PO-Revision-Date: 2021-12-15 14:58+0000\n"
 "Last-Translator: \n"
 "Language-Team: @lululla @alexsanders\n"
 "Language: it_IT\n"
@@ -53,7 +53,7 @@ msgstr "VOD"
 #: channels.py:370
 #| msgid "Hidden Categories"
 msgid "Series Categories"
-msgstr "Categorie SerieTv"
+msgstr "Categorie SerieTV"
 
 #: channels.py:371 channels.py:2749
 #| msgid "Categories"
@@ -63,11 +63,11 @@ msgstr "SerieTV"
 #: channels.py:396
 #| msgid "Categories"
 msgid "Catch Up Categories"
-msgstr "Raggiungi le Categorie"
+msgstr "Categorie REPLAY TV"
 
 #: channels.py:397 menu.py:257
 msgid "Catch Up TV"
-msgstr "Raggiungi TV"
+msgstr "REPLAY TV"
 
 #: channels.py:515
 msgid "FAVOURITES"
@@ -199,7 +199,7 @@ msgstr "Non Partito"
 
 #: channels.py:2751
 msgid "Catch-up"
-msgstr ""
+msgstr "Replay tv"
 
 #: channels.py:2756
 msgid "Added to download manager"
@@ -219,7 +219,7 @@ msgstr ""
 
 #: channels.py:3169
 msgid "Catchup error. No data for this slot"
-msgstr "Catchup error. Nessun dato per questo slot"
+msgstr "Replay error. Nessun dato per questo slot"
 
 #: channels.py:3280
 msgid "Catchup currently not available. Missing EPG data"
@@ -291,7 +291,9 @@ msgstr "Annullare questo Scaricamento?"
 msgid ""
 "Vod Download folder location does not exist.\n"
 "\n"
-msgstr "La cartella per scaricare i VOD, non esiste.\n"
+msgstr ""
+"La cartella per scaricare i VOD, non esiste.\n"
+"\v\n"
 
 #: downloadmanager2.py:396
 msgid "File already downloaded."
@@ -347,7 +349,7 @@ msgstr ""
 
 #: mainmenu.py:114 mainmenu.py:119
 msgid "Add Playlist"
-msgstr "Aggiunti Playlist"
+msgstr "Aggiungi Playlist"
 
 #: mainmenu.py:115 mainmenu.py:120 settings.py:59
 msgid "Main Settings"
@@ -362,16 +364,20 @@ msgid "Download Manager"
 msgstr ""
 
 #: mainmenu.py:125
+#, fuzzy
 #| msgid "Reset Search"
 msgid "Reset Stored Data"
-msgstr ""
+msgstr "Azzera dati memorizzati"
 
 #: mainmenu.py:151
+#, fuzzy
 #| msgid ""
 #| "Downloading \n"
 #| "\n"
 msgid "EPGs downloading."
 msgstr ""
+"Downloading \n"
+"\n"
 
 #: mainmenu.py:185
 msgid ""
@@ -387,11 +393,11 @@ msgstr "Aggiorna"
 
 #: menu.py:49
 msgid "Catchup channel check updated: "
-msgstr "Ricerca Aggiornamenti canale: "
+msgstr "Ricerca Aggiornamenti canale replay: "
 
 #: menu.py:87 menu.py:297
 msgid "Last catchup check: "
-msgstr "Ultima Ricerca: "
+msgstr "Ultima Ricerca Replay: "
 
 #: menu.py:245
 msgid "TV Series"
@@ -487,7 +493,7 @@ msgstr "Mostra categorie SERIE:"
 
 #: playsettings.py:123
 msgid "Show CATCHUP category:"
-msgstr "Mostra categorie CATCHUP:"
+msgstr "Mostra categorie ReplayTV:"
 
 #: playsettings.py:124
 msgid "EPG offset:"
@@ -511,7 +517,7 @@ msgstr "IPTV Xtream Codes playlists player by KiddaC"
 
 #: record.py:38 serverinfo.py:46
 msgid "Close"
-msgstr "Chudi"
+msgstr "Chiudi"
 
 #: record.py:52
 msgid "Please enter recording time"
@@ -702,7 +708,7 @@ msgstr ""
 
 #: streamplayer.py:1106
 msgid "Catch Up"
-msgstr ""
+msgstr "Replay TV"
 
 #~ msgid "Clear All"
 #~ msgstr "Cancella Tutto"
@@ -745,13 +751,13 @@ msgstr ""
 #~ msgstr "Nome visualizzato:"
 
 #~ msgid "Stream Type CATCHUP:"
-#~ msgstr "Tipo di stream CATCHUP:"
+#~ msgstr "Tipo di stream ReplayTV:"
 
 #~ msgid "EPG Timeshift:"
 #~ msgstr "Timeshift EPG:"
 
 #~ msgid "Default CATCHUP stream type"
-#~ msgstr "Tipo di flusso CATCHUP predefinito"
+#~ msgstr "Tipo di flusso ReplayTV predefinito"
 
 #~ msgid "Preview LIVE streams in mini tv before playing"
 #~ msgstr "Visualizza l'anteprima di streaming LIVE su mini tv prima di guardare"
@@ -766,4 +772,4 @@ msgstr ""
 #~ msgstr "Registrazione Avviata."
 
 #~ msgid "Refresh Lists"
-#~ msgstr "AGGiORNA LISTA"
+#~ msgstr "AGGIORNA LISTA"
