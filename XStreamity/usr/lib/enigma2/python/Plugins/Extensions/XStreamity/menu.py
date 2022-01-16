@@ -166,7 +166,7 @@ class XStreamity_Menu(Screen):
             except Exception as e:
                 print(e)
 
-        if hasMultiprocessing:
+        elif hasMultiprocessing:
             try:
                 print("*** trying multiprocessing ThreadPool ***")
                 from multiprocessing.pool import ThreadPool

@@ -189,6 +189,8 @@ def processfiles():
                                 playlists["data"]["data_downloaded"] = False
                                 playlists["player_info"]["epgoffset"] = epgoffset
 
+                                break
+
                 if not playlist_exists:
                     playlists_all.append({
                         "playlist_info": dict([
@@ -257,6 +259,7 @@ def processfiles():
                     if not line.startswith('#'):
                         if str(playlist["playlist_info"]["domain"]) in line and 'username=' + str(playlist["playlist_info"]["username"]) in line and 'password=' + str(playlist["playlist_info"]["password"]) in line:
                             newList.append(playlist)
+                            break
 
             playlists_all = newList
 

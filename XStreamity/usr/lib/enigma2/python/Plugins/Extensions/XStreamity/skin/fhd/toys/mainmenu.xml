@@ -10,8 +10,8 @@
 			selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/toys/images/selection2.png" backgroundPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/toys/images/blank.png"
 			itemHeight="120" scrollbarMode="showOnDemand" enableWrapAround="1" transparent="1" zPosition="2" >
 		<convert type="TemplatedMultiContent">{"template": [
-			MultiContentEntryPixmapAlphaBlend(pos=(90, 20), size=(122, 80), png = 2),
-			MultiContentEntryText(pos=(248, 0), size=(430, 120), font=0, color = 0x00ffffff, color_sel = 0x00004e98, backcolor_sel = None, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1),
+		
+			MultiContentEntryText(pos=(90, 0), size=(648, 120), font=0, color = 0x00ffffff, color_sel = 0x00004e98, backcolor_sel = None, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1),
 			],
 			"fonts": [gFont("xstreamityregular", 48)],
 			"itemHeight": 120,
@@ -30,5 +30,9 @@
 	<widget source="key_green" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/key_green.png" position="1050,1031" size="38,38" alphatest="blend" zPosition="2" />
 	<widget source="key_green" render="Label" position="1102,1020" size="240,60" font="xstreamitybold;24" foregroundColor="#ffffff" backgroundColor="#1f5792" valign="center" transparent="1" noWrap="1" zPosition="2" />
 
+	<widget source="key_blue" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/key_blue.png" position="1614,1031" size="38,38" alphatest="blend" zPosition="2">
+		<convert type="ConditionalShowHide" />
+	</widget>
+	<widget source="key_blue" render="Label" position="1665,1020" size="225,60" font="xstreamitybold;24" foregroundColor="#ffffff" backgroundColor="#1f5792" valign="center" transparent="1" zPosition="2" />
 
 </screen>

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2021-12-04 15:09+0000\n"
-"PO-Revision-Date: 2021-12-05 12:58+0000\n"
+"PO-Revision-Date: 2022-01-09 17:10+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -94,7 +94,7 @@ msgstr "Seite: "
 
 #: channels.py:1277 channels.py:1335
 msgid " of "
-msgstr " von"
+msgstr " von "
 
 #: channels.py:1536 channels.py:1539 channels.py:1542 channels.py:1557
 msgid "Sort: Z-A"
@@ -106,7 +106,7 @@ msgstr "Sortieren: Original"
 
 #: channels.py:1539 channels.py:1542 channels.py:1560
 msgid "Sort: Added"
-msgstr " Sortierung: Hinzugefügt"
+msgstr "Sortierung: Hinzugefügt"
 
 #: channels.py:1542 channels.py:1575
 msgid "Sort: Year"
@@ -221,11 +221,11 @@ msgstr "Mediathek derzeit nicht verfügbar. Fehlende EPG-Daten"
 #: downloadmanager2.py:142 downloadmanager2.py:143 downloadmanager2.py:144
 #: downloadmanager2.py:145 downloadmanager2.py:146
 msgid "MOVIE DOWNLOAD FAILED!"
-msgstr "FILM DOWNLOAD FEHLGESCHLAGEN"
+msgstr "FILM DOWNLOAD FEHLGESCHLAGEN!"
 
 #: downloadmanager2.py:142
 msgid "DOWNLOADED FILE CORRUPTED:"
-msgstr "HERUNTERGELADENE DATEI KORRUPT"
+msgstr "HERUNTERGELADENE DATEI KORRUPT:"
 
 #: downloadmanager2.py:143
 msgid "COULD NOT READ RTMP PACKET:"
@@ -233,7 +233,7 @@ msgstr "KONNTE DAS RTMP-PAKET NICHT LESEN:"
 
 #: downloadmanager2.py:144
 msgid "SEGMENTATION FAULT:"
-msgstr "SEGMENTIERUNGSFEHLER"
+msgstr "SEGMENTIERUNGSFEHLER:"
 
 #: downloadmanager2.py:145
 msgid "SERVER RETURNED ERROR:"
@@ -241,7 +241,7 @@ msgstr "SERVER MELDET FEHLER:"
 
 #: downloadmanager2.py:146
 msgid "UNKNOWN ERROR:"
-msgstr "UNBEKANNTER FEHLER"
+msgstr "UNBEKANNTER FEHLER:"
 
 #: downloadmanager2.py:161
 msgid "VOD Download Manager"
@@ -434,7 +434,7 @@ msgstr "Abgelaufen"
 
 #: playlists.py:293 playlists.py:295
 msgid "Expires: "
-msgstr "Abgelaufen: "
+msgstr "Enden: "
 
 #: playlists.py:297
 msgid "Active Conn:"
@@ -566,7 +566,7 @@ msgstr "Bitte korrekten PIN eingeben"
 
 #: settings.py:35
 msgid "The pin code you entered is wrong."
-msgstr "Der eingebebene PIN ist falsch"
+msgstr "Der eingebebene PIN ist falsch."
 
 #: settings.py:103
 msgid ""
@@ -580,7 +580,7 @@ msgstr ""
 
 #: settings.py:119
 msgid "You need to restart the GUI"
-msgstr "Bitte die GUI neu laden."
+msgstr "Bitte die GUI neu laden"
 
 #: settings.py:119
 msgid "Do you want to restart now?"

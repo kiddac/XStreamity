@@ -10,8 +10,8 @@
 	<widget source="list" render="Listbox" position="center,220" size="492,400" foregroundColor="#ffffff" backgroundColor="#2a70a4" foregroundColorSelected="#ffffff" backgroundColorSelected="#296fa3" itemHeight="80"
 	scrollbarMode="showOnDemand" transparent="1" zPosition="2">
 		<convert type="TemplatedMultiContent">{"template": [
-			MultiContentEntryPixmapAlphaBlend(pos=(40, 13), size=(82, 54), png = 2),
-			MultiContentEntryText(pos=(143, 0), size=(303, 80), font=0, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1),
+			MultiContentEntryPixmapAlphaBlend(pos=(20, 13), size=(82, 54), png = 2),
+			MultiContentEntryText(pos=(123, 0), size=(343, 80), font=0, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1),
 			],
 			"fonts": [gFont("xstreamityregular", 32)],
 			"itemHeight": 80,
@@ -30,5 +30,10 @@
 	
 	<widget source="key_green" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/key_green.png" position="700,687" size="25,25" alphatest="blend" zPosition="2" />
 	<widget source="key_green" render="Label" position="734,680" size="160,40" font="xstreamityregular;16" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="2" />
+	
+	<widget source="key_blue" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/key_blue.png" position="1121,687" size="25,25" alphatest="blend" zPosition="2">
+		<convert type="ConditionalShowHide" />
+	</widget>
+	<widget source="key_blue" render="Label" position="1153,680" size="150,40" font="xstreamityregular;16" foregroundColor="#ffffff" backgroundColor="#1f5792" valign="center" transparent="1" zPosition="2" />
 	
 </screen>

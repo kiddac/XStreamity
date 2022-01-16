@@ -407,7 +407,7 @@ class XStreamity_StreamPlayer(
     Screen
 ):
 
-    def __init__(self, session, streamurl, servicetype):
+    def __init__(self, session, streamurl, servicetype, direct_source=None):
         Screen.__init__(self, session)
 
         self.session = session
@@ -434,6 +434,7 @@ class XStreamity_StreamPlayer(
         self.servicetype = servicetype
         self.originalservicetype = self.servicetype
         self.retries = 0
+        self.direct_source = direct_source
 
         skin = skin_path + 'streamplayer.xml'
 
@@ -480,7 +481,7 @@ class XStreamity_StreamPlayer(
             "rec": self.IPTVstartInstantRecording,
         }, -2)
 
-        self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl))
+        self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl, self.direct_source))
 
     def IPTVstartInstantRecording(self, limitEvent=True):
         from . import record
@@ -526,7 +527,7 @@ class XStreamity_StreamPlayer(
         else:
             return
 
-    def playStream(self, servicetype, streamurl):
+    def playStream(self, servicetype, streamurl, direct_source):
         self["x_description"].setText(glob.currentepglist[glob.currentchannellistindex][4])
         self["nowchannel"].setText(glob.currentchannellist[glob.currentchannellistindex][0])
         self["nowtitle"].setText(glob.currentepglist[glob.currentchannellistindex][3])
@@ -587,7 +588,10 @@ class XStreamity_StreamPlayer(
         else:
             self["progress"].hide()
 
-        self.reference = eServiceReference(int(self.servicetype), 0, self.streamurl)
+        if direct_source:
+            streamurl = str(direct_source)
+
+        self.reference = eServiceReference(int(self.servicetype), 0, streamurl)
         self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
 
         if self.session.nav.getCurrentlyPlayingServiceReference():
@@ -718,7 +722,7 @@ class XStreamity_StreamPlayer(
                 self.session.nav.stopService()
                 self.originalservicetype = self.servicetype
                 self.servicetype = "4097"
-                self.playStream(self.servicetype, self.streamurl)
+                self.playStream(self.servicetype, self.streamurl, self.direct_source)
 
     def checkStream(self):
         if self.hasStreamData is False:
@@ -756,7 +760,7 @@ class XStreamity_StreamPlayer(
 
         self.originalservicetype = self.servicetype
 
-        self.playStream(self.servicetype, self.streamurl)
+        self.playStream(self.servicetype, self.streamurl, self.direct_source)
 
     def __next__(self):
         self.retries = 0
@@ -767,8 +771,8 @@ class XStreamity_StreamPlayer(
             if glob.currentchannellistindex + 1 > listlength:
                 glob.currentchannellistindex = 0
             self.streamurl = glob.currentchannellist[glob.currentchannellistindex][3]
-
-            self.playStream(self.servicetype, self.streamurl)
+            self.direct_source = glob.currentchannellist[glob.currentchannellistindex][7]
+            self.playStream(self.servicetype, self.streamurl, self.direct_source)
 
     def prev(self):
         self.retries = 0
@@ -780,7 +784,8 @@ class XStreamity_StreamPlayer(
                 glob.currentchannellistindex = listlength - 1
 
             self.streamurl = glob.currentchannellist[glob.currentchannellistindex][3]
-            self.playStream(self.servicetype, self.streamurl)
+            self.direct_source = glob.currentchannellist[glob.currentchannellistindex][7]
+            self.playStream(self.servicetype, self.streamurl, self.direct_source)
 
     def nextARfunction(self):
         try:
@@ -820,7 +825,7 @@ class XStreamity_VodPlayer(
     ENABLE_RESUME_SUPPORT = True
     ALLOW_SUSPEND = True
 
-    def __init__(self, session, streamurl, servicetype):
+    def __init__(self, session, streamurl, servicetype, direct_source=None):
         Screen.__init__(self, session)
         self.session = session
 
@@ -849,6 +854,7 @@ class XStreamity_VodPlayer(
 
         self.streamurl = streamurl
         self.servicetype = servicetype
+        self.direct_source = direct_source
 
         skin = skin_path + 'vodplayer.xml'
 
@@ -889,9 +895,9 @@ class XStreamity_VodPlayer(
             "green": self.nextAR,
         }, -2)
 
-        self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl))
+        self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl, self.direct_source))
 
-    def playStream(self, servicetype, streamurl):
+    def playStream(self, servicetype, streamurl, direct_source):
         if streamurl != 'None' and "/movie/" in streamurl:
             self["streamcat"].setText("VOD")
         else:
@@ -903,7 +909,9 @@ class XStreamity_VodPlayer(
         except:
             pass
 
-        self.reference = eServiceReference(int(self.servicetype), 0, self.streamurl)
+        if direct_source:
+            streamurl = direct_source
+        self.reference = eServiceReference(int(self.servicetype), 0, streamurl)
         self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
 
         if self.session.nav.getCurrentlyPlayingServiceReference():
@@ -1011,7 +1019,7 @@ class XStreamity_VodPlayer(
                 break
         nextStreamType = islice(cycle(streamtypelist), currentindex + 1, None)
         self.servicetype = int(next(nextStreamType))
-        self.playStream(self.servicetype, self.streamurl)
+        self.playStream(self.servicetype, self.streamurl, self.direct_source)
 
     def nextARfunction(self):
         try:

@@ -38,6 +38,7 @@ class XStreamity_MainMenu(Screen):
 
         self['key_red'] = StaticText(_('Back'))
         self['key_green'] = StaticText(_('OK'))
+        self['key_blue'] = StaticText(_('Reset JSON'))
 
         self['version'] = StaticText()
 
@@ -47,6 +48,8 @@ class XStreamity_MainMenu(Screen):
             'ok': self.__next__,
             'cancel': self.quit,
             'menu': self.settings,
+            'help': self.resetData,
+            'blue': self.resetData
         }, -2)
 
         self.clear_caches()
@@ -122,8 +125,6 @@ class XStreamity_MainMenu(Screen):
         if downloads_all:
             self.list.append([4, _("Download Manager")])
 
-        self.list.append([6, _("Reset Stored Data")])
-
         self.drawList = []
         self.drawList = [buildListEntry(x[0], x[1]) for x in self.list]
         self["list"].setList(self.drawList)
@@ -168,8 +169,6 @@ class XStreamity_MainMenu(Screen):
                 self.downloadManager()
             if index == 5:
                 self.updateEPG()
-            if index == 6:
-                self.resetData()
 
     def quit(self, data=None):
         self.playOriginalChannel()
@@ -182,7 +181,7 @@ class XStreamity_MainMenu(Screen):
 
     def resetData(self, answer=None):
         if answer is None:
-            self.session.openWithCallback(self.resetData, MessageBox, _('Warning: delete stored json data for all playlists... Settings, favourites etc. Playlists will not be deleted.\nDo you wish to continue?'))
+            self.session.openWithCallback(self.resetData, MessageBox, _('Warning: delete stored json data for all playlists... Settings, favourites etc. \nPlaylists will not be deleted.\nDo you wish to continue?'))
         elif answer:
             os.remove(playlists_json)
             if not os.path.isfile(playlists_json):
@@ -203,7 +202,5 @@ def buildListEntry(index, title):
         png = LoadPixmap(common_path + "vod_download.png")
     if index == 5:
         png = LoadPixmap(common_path + "epg_download.png")
-    if index == 6:
-        png = LoadPixmap(common_path + "reset.png")
 
     return (index, str(title), png)

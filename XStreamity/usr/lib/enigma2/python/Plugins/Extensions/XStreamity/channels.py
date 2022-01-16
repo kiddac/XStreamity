@@ -231,6 +231,7 @@ class XStreamity_Categories(Screen):
         self.storedseason = ""
         self.sortindex = 0
         self.sortText = (_("Sort: A-Z"))
+
         self.storedcover = ""
 
         self.epgtimeshift = 0
@@ -576,6 +577,7 @@ class XStreamity_Categories(Screen):
                 nexttime = ''
                 nextTitle = ''
                 nextDesc = ''
+                direct_source = ''
 
                 favourite = False
                 watching = False
@@ -616,6 +618,9 @@ class XStreamity_Categories(Screen):
                 if 'category_id' in item and item['category_id']:
                     category_id = item['category_id']
 
+                if 'direct_source' in item and item['direct_source']:
+                    direct_source = item['direct_source']
+
                 bouquet_id = 0
                 calc_remainder = int(stream_id) // 65535
                 bouquet_id = bouquet_id + calc_remainder
@@ -642,7 +647,7 @@ class XStreamity_Categories(Screen):
                     glob.current_playlist['player_info']['livefavourites'] = []
 
                 self.list2.append([index, str(name), str(stream_id), str(stream_icon), str(epg_channel_id), str(added), str(category_id), str(custom_sid), str(serviceref),
-                                  str(nowtime), str(nowTitle), str(nowDesc), str(nexttime), str(nextTitle), str(nextDesc), str(next_url), favourite, watching, hidden])
+                                  str(nowtime), str(nowTitle), str(nowDesc), str(nexttime), str(nextTitle), str(nextDesc), str(next_url), favourite, watching, hidden, str(direct_source)])
                 index += 1
 
             glob.originalChannelList2 = self.list2[:]
@@ -667,6 +672,7 @@ class XStreamity_Categories(Screen):
                 year = ''
                 favourite = False
                 hidden = False
+                direct_source = ''
 
                 if 'name' in item and item['name']:
                     name = item['name']
@@ -706,6 +712,9 @@ class XStreamity_Categories(Screen):
                 if 'year' in item and item['year']:
                     year = item['year']
 
+                if 'direct_source' in item and item['direct_source']:
+                    direct_source = item['direct_source']
+
                 next_url = "%s/movie/%s/%s/%s.%s" % (str(self.host), str(self.username), str(self.password), str(stream_id), str(container_extension))
 
                 if 'vodfavourites' in glob.current_playlist['player_info']:
@@ -716,7 +725,7 @@ class XStreamity_Categories(Screen):
                 else:
                     glob.current_playlist['player_info']['vodfavourites'] = []
 
-                self.list2.append([index, str(name), str(stream_id), str(stream_icon), str(added), str(rating), str(next_url), favourite, container_extension, year, hidden])
+                self.list2.append([index, str(name), str(stream_id), str(stream_icon), str(added), str(rating), str(next_url), favourite, container_extension, year, hidden, str(direct_source)])
                 index += 1
 
             glob.originalChannelList2 = self.list2[:]
@@ -1020,6 +1029,7 @@ class XStreamity_Categories(Screen):
                         tmdb_id = ''
                         duration = ''
                         hidden = False
+                        direct_source = ''
 
                         if 'id' in item:
                             stream_id = item['id']
@@ -1045,6 +1055,9 @@ class XStreamity_Categories(Screen):
                         if 'rating' in item['info']:
                             rating = item['info']['rating']
 
+                        if 'direct_source' in item and item['direct_source']:
+                            direct_source = item['direct_source']
+
                         if "seasons" in currentChannelList:
                             if currentChannelList['seasons']:
                                 for season in currentChannelList['seasons']:
@@ -1068,7 +1081,8 @@ class XStreamity_Categories(Screen):
                             hidden = True
 
                         next_url = "%s/series/%s/%s/%s.%s" % (self.host, self.username, self.password, stream_id, container_extension)
-                        self.list4.append([index, str(title), str(stream_id), str(cover), str(plot), str(cast), str(director), str(genre), str(releasedate), str(rating), str(duration), str(container_extension), str(tmdb_id), str(next_url), str(shorttitle), str(last_modified), hidden])
+
+                        self.list4.append([index, str(title), str(stream_id), str(cover), str(plot), str(cast), str(director), str(genre), str(releasedate), str(rating), str(duration), str(container_extension), str(tmdb_id), str(next_url), str(shorttitle), str(last_modified), hidden, str(direct_source)])
                         index += 1
 
             glob.originalChannelList4 = self.list4[:]
@@ -1149,25 +1163,24 @@ class XStreamity_Categories(Screen):
         if self.categoryname == "live":
             self.epglist = []
             # index = 0, name = 1, stream_id = 2, stream_icon = 3, epg_channel_id = 4, added = 5, category_id = 6, custom_sid = 7, nowtime = 9
-            # nowTitle = 10, nowDesc = 11, nexttime = 12, nextTitle = 13, nextDesc = 14, next_url = 15, favourite = 16, watching = 17, hidden = 18
+            # nowTitle = 10, nowDesc = 11, nexttime = 12, nextTitle = 13, nextDesc = 14, next_url = 15, favourite = 16, watching = 17, hidden = 18, direct_source = 19
             if self.favourites_category:
-                self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18]) for x in self.list2 if x[16] is True]
-                self.epglist = [buildEPGListEntry(x[0], x[2], x[9], x[10], x[11], x[12], x[13], x[14], x[18]) for x in self.list2 if x[16] is True]
+                self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18], x[19]) for x in self.list2 if x[16] is True]
+                self.epglist = [buildEPGListEntry(x[0], x[2], x[9], x[10], x[11], x[12], x[13], x[14], x[18], x[19]) for x in self.list2 if x[16] is True]
             else:
 
-                self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18]) for x in self.list2 if x[18] is False]
-                self.epglist = [buildEPGListEntry(x[0], x[2], x[9], x[10], x[11], x[12], x[13], x[14], x[18]) for x in self.list2 if x[18] is False]
+                self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18], x[19]) for x in self.list2 if x[18] is False]
+                self.epglist = [buildEPGListEntry(x[0], x[2], x[9], x[10], x[11], x[12], x[13], x[14], x[18], x[19]) for x in self.list2 if x[18] is False]
 
             self["main_list"].setList(self.main_list)
             self["epg_list"].setList(self.epglist)
             self.showEPG()
 
         elif self.categoryname == "vod":
-            # index = 0, name = 1, stream_id = 2, stream_icon = 3, added = 4, rating = 5,next_url = 6,favourite = 7, container_extension = 8, year = 9, hidden = 10
             if self.favourites_category:
-                self.main_list = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9]) for x in self.list2 if x[7] is True]
+                self.main_list = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[10], x[11]) for x in self.list2 if x[7] is True]
             else:
-                self.main_list = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9]) for x in self.list2 if x[10] is False]
+                self.main_list = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[10], x[11]) for x in self.list2 if x[10] is False]
             self["main_list"].setList(self.main_list)
             self.showVod()
 
@@ -1208,7 +1221,7 @@ class XStreamity_Categories(Screen):
         self.main_list = []
         if self.categoryname == "series":
             if self.list4:
-                self.main_list = [buildSeriesEpisodesList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9], x[10], x[11], x[12], x[13], x[14], x[15], x[16]) for x in self.list4 if x[16] is False]
+                self.main_list = [buildSeriesEpisodesList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9], x[10], x[11], x[12], x[13], x[14], x[15], x[16], x[17]) for x in self.list4 if x[16] is False]
                 self["main_list"].setList(self.main_list)
 
         if self["main_list"].getCurrent():
@@ -1232,6 +1245,10 @@ class XStreamity_Categories(Screen):
 
             else:
                 self["key_blue"].setText(_('Search'))
+                if not glob.nextlist[-1]['sort']:
+                    self.sortText = (_("Sort: A-Z"))
+                    glob.nextlist[-1]['sort'] = self.sortText
+
                 self["key_yellow"].setText(_(glob.nextlist[-1]['sort']))
                 self["key_menu"].setText(_("Hide/Show"))
 
@@ -1656,7 +1673,7 @@ class XStreamity_Categories(Screen):
 
     def resetSearch(self):
         # print("*** resetSearch ***")
-        self["key_blue"].setText(_('Sort: A-Z'))
+        self["key_blue"].setText(_('Search'))
         self["key_yellow"].setText(self.sortText)
 
         if self.level == 1:
@@ -1763,12 +1780,15 @@ class XStreamity_Categories(Screen):
                     streamtype = glob.current_playlist["player_info"]["livetype"]
                     next_url = self["main_list"].getCurrent()[3]
                     stream_id = self["main_list"].getCurrent()[4]
+                    direct_source = self["main_list"].getCurrent()[7]
 
                     if str(os.path.splitext(next_url)[-1]) == ".m3u8":
                         if streamtype == "1":
                             streamtype = "4097"
 
                     self.reference = eServiceReference(int(streamtype), 0, next_url)
+                    if direct_source:
+                        self.reference = eServiceReference(int(streamtype), 0, direct_source)
                     self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
 
                     if self.session.nav.getCurrentlyPlayingServiceReference():
@@ -1803,6 +1823,8 @@ class XStreamity_Categories(Screen):
 
                             else:
                                 self.lastviewed_url = next_url
+                                if direct_source:
+                                    self.lastviewed_url = direct_source
                                 self.lastviewed_id = stream_id
                                 self.lastviewed_index = self["main_list"].getIndex()
 
@@ -1813,18 +1835,22 @@ class XStreamity_Categories(Screen):
                                     channel[17] = False
                             self.buildLists()
 
-                            self.session.openWithCallback(self.setIndex, streamplayer.XStreamity_StreamPlayer, str(next_url), str(streamtype))
+                            self.session.openWithCallback(self.setIndex, streamplayer.XStreamity_StreamPlayer, str(next_url), str(streamtype), str(direct_source))
                     else:
-                        self.session.openWithCallback(self.setIndex, streamplayer.XStreamity_StreamPlayer, str(next_url), str(streamtype))
+                        self.session.openWithCallback(self.setIndex, streamplayer.XStreamity_StreamPlayer, str(next_url), str(streamtype), str(direct_source))
 
                     self["category_actions"].setEnabled(False)
 
                 elif self.categoryname == "vod":
                     streamtype = glob.current_playlist["player_info"]["vodtype"]
                     next_url = self["main_list"].getCurrent()[3]
+                    direct_source = self["main_list"].getCurrent()[10]
+
                     self.reference = eServiceReference(int(streamtype), 0, next_url)
+                    if direct_source:
+                        self.reference = eServiceReference(int(streamtype), 0, direct_source)
                     self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
-                    self.session.openWithCallback(self.setIndex, streamplayer.XStreamity_VodPlayer, str(next_url), str(streamtype))
+                    self.session.openWithCallback(self.setIndex, streamplayer.XStreamity_VodPlayer, str(next_url), str(streamtype), str(direct_source))
 
                 elif self.categoryname == "series":
                     next_url = self["main_list"].getCurrent()[3]
@@ -1861,9 +1887,10 @@ class XStreamity_Categories(Screen):
             elif self.level == 4:
                 streamtype = glob.current_playlist["player_info"]["vodtype"]
                 next_url = self["main_list"].getCurrent()[3]
+                direct_source = self["main_list"].getCurrent()[18]
                 self.reference = eServiceReference(int(streamtype), 0, next_url)
                 self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
-                self.session.openWithCallback(self.setIndex, streamplayer.XStreamity_VodPlayer, str(next_url), str(streamtype))
+                self.session.openWithCallback(self.setIndex, streamplayer.XStreamity_VodPlayer, str(next_url), str(streamtype), str(direct_source))
 
     def setIndex(self):
         # print("*** set index ***")
@@ -2141,7 +2168,7 @@ class XStreamity_Categories(Screen):
                                     print(e)
 
                     self.epglist = []
-                    self.epglist = [buildEPGListEntry(x[0], x[1], x[9], x[10], x[11], x[12], x[13], x[14], x[18]) for x in self.list2 if x[18] is False]
+                    self.epglist = [buildEPGListEntry(x[0], x[1], x[9], x[10], x[11], x[12], x[13], x[14], x[18], x[19]) for x in self.list2 if x[18] is False]
                     self["epg_list"].updateList(self.epglist)
 
                     instance = self["epg_list"].master.master.instance
@@ -2437,6 +2464,7 @@ class XStreamity_Categories(Screen):
             currentindex = self["main_list"].getIndex()
             description = ''
             streamurl = self["main_list"].getCurrent()[3]
+            direct_source = self["main_list"].getCurrent()[7]
             streamtype = 1
 
             if self.epglist[currentindex][4]:
@@ -2453,6 +2481,8 @@ class XStreamity_Categories(Screen):
                 streamtype = 4097
 
             self.reference = eServiceReference(streamtype, 0, streamurl)
+            if direct_source:
+                self.reference = eServiceReference(streamtype, 0, direct_source)
 
             # switch channel to prevent multi active users
             if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString():
@@ -2721,6 +2751,20 @@ class XStreamity_Categories(Screen):
             else:
                 title = self["main_list"].getCurrent()[0]
                 stream_url = self["main_list"].getCurrent()[3]
+
+                """
+                if self.categoryname == "live":
+                    direct_source = self["main_list"].getCurrent()[7]
+
+                if self.categoryname == "vod":
+                    direct_source = self["main_list"].getCurrent()[10]
+
+                if self.categoryname == "series":
+                    direct_source = self["main_list"].getCurrent()[18]
+
+                if direct_source:
+                    stream_url = direct_source
+                    """
 
             downloads_all = []
             if os.path.isfile(downloads_json):
@@ -3285,8 +3329,8 @@ class XStreamity_Categories(Screen):
         self["epg_short_list"].setList(self.epgshortlist)
 
 
-def buildEPGListEntry(index, title, epgNowTime, epgNowTitle, epgNowDesc, epgNextTime, epgNextTitle, epgNextDesc, hidden):
-    return (title, index, epgNowTime, epgNowTitle, epgNowDesc, epgNextTime, epgNextTitle, epgNextDesc, hidden)
+def buildEPGListEntry(index, title, epgNowTime, epgNowTitle, epgNowDesc, epgNextTime, epgNextTitle, epgNextDesc, hidden, direct_source):
+    return (title, index, epgNowTime, epgNowTitle, epgNowDesc, epgNextTime, epgNextTitle, epgNextDesc, hidden, direct_source)
 
 
 def buildShortEPGListEntry(date_all, time_all, title, description, index, start_datetime, end_datetime):
@@ -3298,20 +3342,20 @@ def buildCategoryList(index, title, category_id, hidden):
     return (title, png, index, category_id, hidden)
 
 
-def buildLiveStreamList(index, name, stream_id, stream_icon, next_url, favourite, watching, hidden):
+def buildLiveStreamList(index, name, stream_id, stream_icon, next_url, favourite, watching, hidden, direct_source):
     png = LoadPixmap(common_path + "play.png")
     if favourite:
         png = LoadPixmap(common_path + "favourite.png")
     if watching:
         png = LoadPixmap(common_path + "watching.png")
-    return (name, png, index, next_url, stream_id, stream_icon, hidden)
+    return (name, png, index, next_url, stream_id, stream_icon, hidden, direct_source)
 
 
-def buildVodStreamList(index, title, stream_id, stream_icon, added, rating, next_url, favourite, container_extension, hidden):
+def buildVodStreamList(index, title, stream_id, stream_icon, added, rating, next_url, favourite, container_extension, hidden, direct_source):
     png = LoadPixmap(common_path + "play.png")
     if favourite:
         png = LoadPixmap(common_path + "favourite.png")
-    return (title, png, index, next_url, stream_id, stream_icon, added, rating, container_extension, hidden)
+    return (title, png, index, next_url, stream_id, stream_icon, added, rating, container_extension, hidden, direct_source)
 
 
 def buildSeriesTitlesList(index, title, series_id, cover, plot, cast, director, genre, releaseDate, rating, lastmodified, next_url, hidden):
@@ -3324,9 +3368,9 @@ def buildSeriesSeasonsList(index, title, series_id, cover, plot, cast, director,
     return (title, png, index, next_url, series_id, cover, plot, cast, director, genre, airDate, rating, season_number, lastmodified, hidden)
 
 
-def buildSeriesEpisodesList(index, title, series_id, cover, plot, cast, director, genre, releaseDate, rating, duration, container_extension, tmdb_id, next_url, shorttitle, lastmodified, hidden):
+def buildSeriesEpisodesList(index, title, series_id, cover, plot, cast, director, genre, releaseDate, rating, duration, container_extension, tmdb_id, next_url, shorttitle, lastmodified, hidden, direct_source):
     png = LoadPixmap(common_path + "play.png")
-    return (title, png, index, next_url, series_id, cover, plot, cast, director, genre, releaseDate, rating, duration, container_extension, tmdb_id, shorttitle, lastmodified, hidden)
+    return (title, png, index, next_url, series_id, cover, plot, cast, director, genre, releaseDate, rating, duration, container_extension, tmdb_id, shorttitle, lastmodified, hidden, direct_source)
 
 
 def buildCatchupStreamList(index, title, stream_id, stream_icon, epg_channel_id, added, next_url, hidden):
