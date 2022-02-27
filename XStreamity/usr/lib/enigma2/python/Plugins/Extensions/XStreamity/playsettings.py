@@ -79,16 +79,20 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         return
 
     def initConfig(self):
-        streamtype_choices = [('1', 'DVB(1)'), ('4097', 'IPTV(4097)')]
+        live_streamtype_choices = [('1', 'DVB(1)'), ('4097', 'IPTV(4097)')]
+        vod_streamtype_choices = [('4097', 'IPTV(4097)')]
 
         if os.path.exists("/usr/bin/gstplayer"):
-            streamtype_choices.append(('5001', 'GStreamer(5001)'))
+            live_streamtype_choices.append(('5001', 'GStreamer(5001)'))
+            vod_streamtype_choices.append(('5001', 'GStreamer(5001)'))
 
         if os.path.exists("/usr/bin/exteplayer3"):
-            streamtype_choices.append(('5002', 'ExtePlayer(5002)'))
+            live_streamtype_choices.append(('5002', 'ExtePlayer(5002)'))
+            vod_streamtype_choices.append(('5002', 'ExtePlayer(5002)'))
 
         if os.path.exists("/usr/bin/apt-get"):
-            streamtype_choices.append(('8193', 'DreamOS GStreamer(8193)'))
+            live_streamtype_choices.append(('8193', 'DreamOS GStreamer(8193)'))
+            vod_streamtype_choices.append(('8193', 'DreamOS GStreamer(8193)'))
 
         self.name = str(glob.current_playlist['playlist_info']['name'])
         self.output = str(glob.current_playlist['playlist_info']['output'])
@@ -99,16 +103,20 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.showseries = glob.current_playlist['player_info']['showseries']
         self.showcatchup = glob.current_playlist['player_info']['showcatchup']
         self.epgoffset = glob.current_playlist['player_info']['epgoffset']
+        self.epgalternative = glob.current_playlist['player_info']['epgalternative']
+        self.epgalternativeurl = glob.current_playlist['player_info']['epgalternativeurl']
 
         self.nameCfg = NoSave(ConfigText(default=self.name, fixed_size=False))
         self.outputCfg = NoSave(ConfigSelection(default=self.output, choices=[('ts', 'ts'), ('m3u8', 'm3u8')]))
-        self.liveTypeCfg = NoSave(ConfigSelection(default=self.liveType, choices=streamtype_choices))
-        self.vodTypeCfg = NoSave(ConfigSelection(default=self.vodType, choices=streamtype_choices))
+        self.liveTypeCfg = NoSave(ConfigSelection(default=self.liveType, choices=live_streamtype_choices))
+        self.vodTypeCfg = NoSave(ConfigSelection(default=self.vodType, choices=vod_streamtype_choices))
         self.showliveCfg = NoSave(ConfigYesNo(default=self.showlive))
         self.showvodCfg = NoSave(ConfigYesNo(default=self.showvod))
         self.showseriesCfg = NoSave(ConfigYesNo(default=self.showseries))
         self.showcatchupCfg = NoSave(ConfigYesNo(default=self.showcatchup))
         self.epgoffsetCfg = NoSave(ConfigSelectionNumber(-9, 9, 1, default=self.epgoffset))
+        self.epgalternativeCfg = NoSave(ConfigYesNo(default=self.epgalternative))
+        self.epgalternativeurlCfg = NoSave(ConfigText(default=self.epgalternativeurl, fixed_size=False))
 
         self.createSetup()
 
@@ -122,7 +130,9 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.list.append(getConfigListEntry(_('Show SERIES category:'), self.showseriesCfg))
         self.list.append(getConfigListEntry(_('Show CATCHUP category:'), self.showcatchupCfg))
         self.list.append(getConfigListEntry(_('EPG offset:'), self.epgoffsetCfg))
-
+        self.list.append(getConfigListEntry(_('Use alternative EPG url as instructed by provider:'), self.epgalternativeCfg))
+        if self.epgalternativeCfg.value is True:
+            self.list.append(getConfigListEntry(_('Enter provided alternative EPG url:'), self.epgalternativeurlCfg))
         if self.showliveCfg.value is True:
             self.list.append(getConfigListEntry(_('Stream Type LIVE:'), self.liveTypeCfg))
 
@@ -210,6 +220,9 @@ class XStreamity_Settings(ConfigListScreen, Screen):
             vodtype = self.vodTypeCfg.value
             epgoffset = self.epgoffsetCfg.value
 
+            epgalternative = self.epgalternativeCfg.value
+            epgalternativeurl = self.epgalternativeurlCfg.value
+
             glob.current_playlist['playlist_info']['name'] = self.name
             glob.current_playlist['playlist_info']['output'] = output
             glob.current_playlist['player_info']['showlive'] = showlive
@@ -219,11 +232,15 @@ class XStreamity_Settings(ConfigListScreen, Screen):
             glob.current_playlist['player_info']['livetype'] = livetype
             glob.current_playlist['player_info']['vodtype'] = vodtype
             glob.current_playlist['player_info']['epgoffset'] = epgoffset
+            glob.current_playlist['player_info']['epgalternative'] = epgalternative
+            glob.current_playlist['player_info']['epgalternativeurl'] = epgalternativeurl
 
             playlistline = '%s%s:%s/get.php?username=%s&password=%s&type=%s&output=%s&timeshift=%s #%s' % (self.protocol, self.domain, self.port, self.username, self.password, self.listtype, output, epgoffset, self.name)
 
             self.full_url = "%s/get.php?username=%s&password=%s&type=%s&output=%s" % (self.host, self.username, self.password, self.listtype, self.output)
             glob.current_playlist["playlist_info"]["full_url"] = self.full_url
+            if epgalternativeurl:
+                glob.current_playlist["player_info"]["xmltv_api"] = epgalternativeurl
 
             # update playlists.txt file
             if not os.path.isfile(playlist_file):

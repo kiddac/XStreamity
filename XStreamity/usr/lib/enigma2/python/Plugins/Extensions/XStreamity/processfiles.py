@@ -85,6 +85,8 @@ def processfiles():
 
             serveroffset = 0
             epgoffset = 0
+            epgalternative = False
+            epgalternativeurl = ""
 
             if not line.startswith("#") and line.startswith('http'):
                 line = line.strip()
@@ -181,6 +183,12 @@ def processfiles():
                                 if "last_check" not in playlists["data"]:
                                     playlists["data"]["last_check"] = last_check
 
+                                if "epgalternative" not in playlists["player_info"]:
+                                    playlists["player_info"]["epgalternative"] = epgalternative
+
+                                if "epgalternativeurl" not in playlists["player_info"]:
+                                    playlists["player_info"]["epgalternativeurl"] = epgalternativeurl
+
                                 playlists["playlist_info"]["name"] = name
                                 playlists["playlist_info"]["type"] = type
                                 playlists["playlist_info"]["output"] = output
@@ -189,6 +197,11 @@ def processfiles():
                                 playlists["data"]["data_downloaded"] = False
                                 playlists["player_info"]["epgoffset"] = epgoffset
 
+                                if playlists["player_info"]["epgalternative"] is True:
+                                    if playlists["player_info"]["epgalternativeurl"]:
+                                        playlists["playlist_info"]["xmltv_api"] = playlists["player_info"]["epgalternativeurl"]
+                                else:
+                                    playlists["playlist_info"]["xmltv_api"] = xmltv_api
                                 break
 
                 if not playlist_exists:
@@ -232,6 +245,8 @@ def processfiles():
                             ("showcatchup", showcatchup),
                             ("serveroffset", serveroffset),
                             ("epgoffset", serveroffset),
+                            ("epgalternative", epgalternative),
+                            ("epgalternativeurl", epgalternativeurl),
                         ]),
 
                         "data": dict([
@@ -248,7 +263,7 @@ def processfiles():
                         ]),
                     })
 
-            index += 1
+                    index += 1
 
         # remove old playlists from x-playlists.json
         if playlists_all:

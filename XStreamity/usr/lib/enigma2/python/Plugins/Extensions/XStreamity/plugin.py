@@ -85,19 +85,24 @@ config.plugins.XStreamity = ConfigSubsection()
 
 cfg = config.plugins.XStreamity
 
-streamtype_choices = [('1', 'DVB(1)'), ('4097', 'IPTV(4097)')]
+
+live_streamtype_choices = [('1', 'DVB(1)'), ('4097', 'IPTV(4097)')]
+vod_streamtype_choices = [('4097', 'IPTV(4097)')]
 
 if os.path.exists("/usr/bin/gstplayer"):
-    streamtype_choices.append(('5001', 'GStreamer(5001)'))
+    live_streamtype_choices.append(('5001', 'GStreamer(5001)'))
+    vod_streamtype_choices.append(('5001', 'GStreamer(5001)'))
 
 if os.path.exists("/usr/bin/exteplayer3"):
-    streamtype_choices.append(('5002', 'ExtePlayer(5002)'))
+    live_streamtype_choices.append(('5002', 'ExtePlayer(5002)'))
+    vod_streamtype_choices.append(('5002', 'ExtePlayer(5002)'))
 
 if os.path.exists("/usr/bin/apt-get"):
-    streamtype_choices.append(('8193', 'GStreamer(8193)'))
+    live_streamtype_choices.append(('8193', 'DreamOS GStreamer(8193)'))
+    vod_streamtype_choices.append(('8193', 'DreamOS GStreamer(8193)'))
 
-cfg.livetype = ConfigSelection(default='1', choices=streamtype_choices)
-cfg.vodtype = ConfigSelection(default='4097', choices=streamtype_choices)
+cfg.livetype = ConfigSelection(default='4097', choices=live_streamtype_choices)
+cfg.vodtype = ConfigSelection(default='4097', choices=vod_streamtype_choices)
 cfg.downloadlocation = ConfigDirectory(default='/media/hdd/movie/')
 cfg.epglocation = ConfigDirectory(default='/etc/enigma2/xstreamity/epg/')
 cfg.location = ConfigDirectory(default=dir_etc)
@@ -205,7 +210,7 @@ class AutoStartTimer:
     def __init__(self, session):
         self.session = session
         self.timer = eTimer()
-        try: 
+        try:
             self.timer_conn = self.timer.timeout.connect(self.onTimer)
         except:
             self.timer.callback.append(self.onTimer)

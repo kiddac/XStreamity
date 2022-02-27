@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from __future__ import absolute_import, print_function
+
 from . import _
 from . import xstreamity_globals as glob
 
@@ -12,6 +14,7 @@ from Components.ActionMap import ActionMap
 from Components.AVSwitch import AVSwitch
 from enigma import eAVSwitch
 from Components.config import config, NoSave, ConfigText, ConfigClock
+from Components.Button import Button
 from Components.Label import Label
 from Components.ProgressBar import ProgressBar
 from Components.Pixmap import Pixmap, MultiPixmap
@@ -22,6 +25,7 @@ from itertools import cycle, islice
 from PIL import Image, ImageChops, ImageFile, PngImagePlugin
 from RecordTimer import RecordTimerEntry
 from Tools import Notifications
+from Components.ScrollLabel import ScrollLabel
 
 from Screens.InfoBarGenerics import InfoBarMenu, InfoBarSeek, InfoBarAudioSelection, InfoBarMoviePlayerSummarySupport, \
     InfoBarSubtitleSupport, InfoBarSummarySupport, InfoBarServiceErrorPopupSupport, InfoBarNotifications
@@ -45,8 +49,9 @@ try:
 except:
     from urllib.parse import urlparse
 
+from . import log
 import re
-
+import requests
 
 if cfg.subs.getValue() is True:
     try:
@@ -150,6 +155,22 @@ VIDEO_ASPECT_RATIO_MAP = {
     5: '16:10 PanScan',
     6: '16:9 Letterbox'
 }
+
+streamtypelist = ["1", "4097"]
+vodstreamtypelist = [('4097', 'IPTV(4097)')]
+
+if os.path.exists("/usr/bin/gstplayer"):
+    streamtypelist.append("5001")
+    vodstreamtypelist.append("5001")
+
+
+if os.path.exists("/usr/bin/exteplayer3"):
+    streamtypelist.append("5002")
+    vodstreamtypelist.append("5002")
+
+if os.path.exists("/usr/bin/apt-get"):
+    streamtypelist.append("8193")
+    vodstreamtypelist.append("8193")
 
 
 class IPTVInfoBarShowHide():
@@ -324,6 +345,441 @@ class IPTVInfoBarPVRState:
                 cb(state_summary, speed_summary, statusicon_summary)
 
 
+class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSelection, InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport, InfoBarSummarySupport, InfoBarServiceErrorPopupSupport, InfoBarNotifications, IPTVInfoBarShowHide, IPTVInfoBarPVRState, Screen):
+
+    def __init__(self, session, streamurl, servicetype, direct_source=None):
+        Screen.__init__(self, session)
+
+        self.session = session
+
+        if str(os.path.splitext(streamurl)[-1]) == ".m3u8":
+            if servicetype == "1":
+                servicetype = "4097"
+
+        for x in InfoBarBase, \
+                InfoBarMenu, \
+                InfoBarSeek, \
+                InfoBarAudioSelection, \
+                InfoBarMoviePlayerSummarySupport, \
+                InfoBarSubtitleSupport, \
+                InfoBarSummarySupport, \
+                InfoBarServiceErrorPopupSupport, \
+                InfoBarNotifications, \
+                IPTVInfoBarShowHide:
+            x.__init__(self)
+
+        IPTVInfoBarPVRState.__init__(self, PVRState, True)
+
+        self.streamurl = streamurl
+        self.servicetype = servicetype
+        self.originalservicetype = self.servicetype
+        self.direct_source = direct_source
+        self.hasStreamData = False
+
+        skin = skin_path + 'streamplayer.xml'
+
+        self["x_description"] = StaticText()
+        self["nowchannel"] = StaticText()
+        self["nowtitle"] = StaticText()
+        self["nexttitle"] = StaticText()
+        self["nowtime"] = StaticText()
+        self["nexttime"] = StaticText()
+        self["streamcat"] = StaticText()
+        self["streamtype"] = StaticText()
+        self["extension"] = StaticText()
+        self["progress"] = ProgressBar()
+        self["progress"].hide()
+        self["picon"] = Pixmap()
+
+        self["eventname"] = Label()
+        self["state"] = Label()
+        self["speed"] = Label()
+        self["statusicon"] = MultiPixmap()
+
+        self["PTSSeekBack"] = Pixmap()
+        self["PTSSeekPointer"] = Pixmap()
+
+        self.ar_id_player = 0
+
+        with open(skin, 'r') as f:
+            self.skin = f.read()
+
+        self.setup_title = _('TV')
+
+        self['actions'] = ActionMap(["XStreamityActions"], {
+            'cancel': self.back,
+            "stop": self.back,
+            "red": self.back,
+
+            "channelUp": self.__next__,
+            "down": self.__next__,
+            "channelDown": self.prev,
+            "up": self.prev,
+            'tv': self.toggleStreamType,
+            'info': self.toggleStreamType,
+            "green": self.nextAR,
+            "rec": self.IPTVstartInstantRecording,
+            "blue": self.showLog,
+        }, -2)
+
+        self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
+            iPlayableService.evStart: self.__evTunedStart,
+            iPlayableService.evStopped: self.__evTunedStopped,
+            iPlayableService.evTunedIn: self.__evTunedIn,
+            iPlayableService.evUpdatedInfo: self.__evUpdatedInfo,
+            iPlayableService.evEOF: self.__evEOF,
+            iPlayableService.evTuneFailed: self.__evTuneFailed
+        })
+
+        self.streamcheck = 0
+
+        # self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl, self.direct_source))
+        self.playStream(self.servicetype, self.streamurl, self.direct_source)
+
+    def IPTVstartInstantRecording(self, limitEvent=True):
+        from . import record
+        begin = int(time())
+        end = begin + 3600
+
+        if glob.currentepglist[glob.currentchannellistindex][3]:
+            name = glob.currentepglist[glob.currentchannellistindex][3]
+        else:
+            name = glob.currentchannellist[glob.currentchannellistindex][0]
+
+        self.name = NoSave(ConfigText(default=name, fixed_size=False))
+        self.date = time()
+        self.starttime = NoSave(ConfigClock(default=begin))
+        self.endtime = NoSave(ConfigClock(default=end))
+        self.session.openWithCallback(self.RecordDateInputClosed, record.RecordDateInput, self.name, self.date, self.starttime, self.endtime, True)
+
+    def RecordDateInputClosed(self, ret=None):
+        if ret:
+            begin = ret[1]
+            end = ret[2]
+            name = ret[3]
+
+            description = glob.currentepglist[glob.currentchannellistindex][4]
+            eventid = int(self.streamurl.rpartition('/')[-1].partition('.')[0])
+            serviceref = eServiceReference(1, 0, self.streamurl)
+
+            if isinstance(serviceref, eServiceReference):
+                serviceref = ServiceReference(serviceref)
+
+            recording = RecordTimerEntry(serviceref, begin, end, name, description, eventid, dirname=str(cfg.downloadlocation.getValue()))
+            recording.dontSave = True
+
+            simulTimerList = self.session.nav.RecordTimer.record(recording)
+
+            if simulTimerList is None:  # no conflict
+                recording.autoincrease = False
+
+                self.session.open(MessageBox, _('Recording Timer Set.'), MessageBox.TYPE_INFO, timeout=5)
+            else:
+                self.session.open(MessageBox, _('Recording Failed.'), MessageBox.TYPE_WARNING)
+                return
+        else:
+            return
+
+    def playStream(self, servicetype, streamurl, direct_source):
+
+        print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " Valid stream", file=log)
+
+        try:
+            self.session.nav.stopService()
+        except:
+            pass
+
+        self["x_description"].setText(glob.currentepglist[glob.currentchannellistindex][4])
+        self["nowchannel"].setText(glob.currentchannellist[glob.currentchannellistindex][0])
+        self["nowtitle"].setText(glob.currentepglist[glob.currentchannellistindex][3])
+        self["nexttitle"].setText(glob.currentepglist[glob.currentchannellistindex][6])
+        self["nowtime"].setText(glob.currentepglist[glob.currentchannellistindex][2])
+        self["nexttime"].setText(glob.currentepglist[glob.currentchannellistindex][5])
+        self["streamcat"].setText("Live")
+        self["streamtype"].setText(str(servicetype))
+
+        try:
+            self["extension"].setText(str(os.path.splitext(streamurl)[-1]))
+        except:
+            pass
+
+        start = ''
+        end = ''
+        percent = 0
+
+        if glob.currentepglist[glob.currentchannellistindex][2] != '':
+            start = glob.currentepglist[glob.currentchannellistindex][2]
+
+        if glob.currentepglist[glob.currentchannellistindex][5] != '':
+            end = glob.currentepglist[glob.currentchannellistindex][5]
+
+        if start != '' and end != '':
+            self["progress"].show()
+            start_time = datetime.strptime(start, "%H:%M")
+            end_time = datetime.strptime(end, "%H:%M")
+
+            if end_time < start_time:
+                end_time = datetime.strptime(end, "%H:%M") + timedelta(hours=24)
+
+            total_time = end_time - start_time
+
+            duration = 0
+
+            if total_time.total_seconds() > 0:
+                duration = total_time.total_seconds() / 60
+
+            now = datetime.now().strftime("%H:%M")
+            current_time = datetime.strptime(now, "%H:%M")
+            elapsed = current_time - start_time
+
+            if elapsed.days < 0:
+                elapsed = timedelta(days=0, seconds=elapsed.seconds)
+
+            elapsedmins = 0
+
+            if elapsed.total_seconds() > 0:
+                elapsedmins = elapsed.total_seconds() / 60
+
+            if duration > 0:
+                percent = int(elapsedmins / duration * 100)
+            else:
+                percent = 100
+
+            self["progress"].setValue(percent)
+        else:
+            self["progress"].hide()
+
+        if direct_source:
+            streamurl = str(direct_source)
+
+        self.reference = eServiceReference(int(self.servicetype), 0, streamurl)
+        self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
+        self.session.nav.playService(self.reference, forceRestart=True)
+
+        if self.session.nav.getCurrentlyPlayingServiceReference():
+            glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
+            glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
+
+        self.downloadImage()
+    else:
+        print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " Dead stream", file=log)
+        self.session.openWithCallback(self.streamFailed, MessageBox, _("Stream Url Error."), MessageBox.TYPE_INFO, timeout=3)
+
+    def __evTunedStart(self):
+        # print("__evTunedStart")
+        print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " evTunedStart", file=log)
+
+        if self.hasStreamData is False:
+            self.timerstream = eTimer()
+            try:
+                self.timerstream.callback.append(self.checkStream)
+            except:
+                self.timerstream_conn = self.timerstream.timeout.connect(self.checkStream2)
+            self.timerstream.start(10000, True)
+        else:
+            try:
+                self.timerstream.stop()
+            except:
+                pass
+
+    def __evTunedStopped(self):
+        # print("__evTunedStopped")
+        print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " evTunedStopped", file=log)
+
+        self.hasStreamData = False
+
+    def __evTunedIn(self):
+        # print("__evTunedIn")
+        print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " evTunedIn", file=log)
+
+    def __evTuneFailed(self):
+        # print("__evTuneFailed")
+        print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " evTunedFailed", file=log)
+        self.hasStreamData = False
+        try:
+            self.session.nav.stopService()
+        except:
+            pass
+        self.session.open(MessageBox, _("Stream Failed"), MessageBox.TYPE_INFO, timeout=1)
+
+    def __evUpdatedInfo(self):
+        self.originalservicetype = self.servicetype
+        # print("__evUpdatedInfo")
+        if not self.hasStreamData:
+            print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " evUpdatedInfo", file=log)
+        self.hasStreamData = True
+
+    def __evEOF(self):
+        self.hasStreamData = False
+        # print("__evEOF")
+        print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " evEOF", file=log)
+
+    def checkStream(self):
+        # print("checkStream")
+        if self.hasStreamData is False:
+            print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " Checking Stream", file=log)
+            if self.streamcheck == 0:
+                print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " Stream Failed 1. Reloading Stream.", file=log)
+                self.session.openWithCallback(self.streamFailed, MessageBox, _("Stream Failed 1. Reloading Stream."), MessageBox.TYPE_INFO, timeout=1)
+
+            elif self.streamcheck == 1:
+                print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " Stream Failed 2. Switching stream type.", file=log)
+                self.session.openWithCallback(self.streamTypeFailed, MessageBox, _("Stream Failed 2. Switching stream type."), MessageBox.TYPE_INFO, timeout=1)
+            else:
+                self.__evTuneFailed()
+        else:
+            print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " Stream OK", file=log)
+
+    def streamFailed(self, data=None):
+        self.streamcheck = 1
+        self.playStream(self.servicetype, self.streamurl, self.direct_source)
+
+    def streamTypeFailed(self, data=None):
+        if str(self.servicetype) == "1":
+            self.servicetype = "4097"
+        else:
+            self.servicetype = "1"
+        self.streamcheck = 2
+        self.playStream(self.servicetype, self.streamurl, self.direct_source)
+
+    def back(self):
+        glob.nextlist[-1]['index'] = glob.currentchannellistindex
+        self.close()
+
+    def toggleStreamType(self):
+        currentindex = 0
+        self.streamcheck = 0
+        self.hasStreamData = False
+        for index, item in enumerate(streamtypelist, start=0):
+            if str(item) == str(self.servicetype):
+                currentindex = index
+                break
+        nextStreamType = islice(cycle(streamtypelist), currentindex + 1, None)
+        self.servicetype = int(next(nextStreamType))
+        self.playStream(self.servicetype, self.streamurl, self.direct_source)
+
+    def downloadImage(self):
+        try:
+            os.remove(str(dir_tmp) + 'original.png')
+            os.remove(str(dir_tmp) + 'temp.png')
+        except:
+            pass
+
+        desc_image = ''
+        try:
+            desc_image = glob.currentchannellist[glob.currentchannellistindex][5]
+        except:
+            pass
+
+        if desc_image and desc_image != "n/A":
+            temp = dir_tmp + 'temp.png'
+            try:
+                parsed = urlparse(desc_image)
+                domain = parsed.hostname
+                scheme = parsed.scheme
+
+                if pythonVer == 3:
+                    desc_image = desc_image.encode()
+
+                if scheme == "https" and sslverify:
+                    sniFactory = SNIFactory(domain)
+                    downloadPage(desc_image, temp, sniFactory, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
+                else:
+                    downloadPage(desc_image, temp, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
+            except:
+                self.loadDefaultImage()
+        else:
+            self.loadDefaultImage()
+
+    def loadDefaultImage(self):
+        if self["picon"].instance:
+            self["picon"].instance.setPixmapFromFile(common_path + "picon.png")
+
+    def resizeImage(self, data=None):
+        original = str(dir_tmp) + 'temp.png'
+
+        size = [147, 88]
+        if screenwidth.width() > 1280:
+            size = [220, 130]
+
+        if os.path.exists(original):
+            try:
+                im = Image.open(original).convert('RGBA')
+                im.thumbnail(size, Image.ANTIALIAS)
+
+                # crop and center image
+                bg = Image.new('RGBA', size, (255, 255, 255, 0))
+
+                imagew, imageh = im.size
+                im_alpha = im.convert('RGBA').split()[-1]
+                bgwidth, bgheight = bg.size
+                bg_alpha = bg.convert('RGBA').split()[-1]
+                temp = Image.new('L', (bgwidth, bgheight), 0)
+                temp.paste(im_alpha, (int((bgwidth - imagew) / 2), int((bgheight - imageh) / 2)), im_alpha)
+                bg_alpha = ImageChops.screen(bg_alpha, temp)
+                bg.paste(im, (int((bgwidth - imagew) / 2), int((bgheight - imageh) / 2)))
+                im = bg
+
+                im.save(original, 'PNG')
+
+                if self["picon"].instance:
+                    self["picon"].instance.setPixmapFromFile(original)
+
+            except Exception as e:
+                print("******* picon resize failed *******")
+                print(e)
+        else:
+            self.loadDefaultImage()
+
+    def __next__(self):
+        self.servicetype = self.originalservicetype
+        self.streamcheck = 0
+        self.hasStreamData = False
+
+        if glob.currentchannellist:
+            listlength = len(glob.currentchannellist)
+            glob.currentchannellistindex += 1
+            if glob.currentchannellistindex + 1 > listlength:
+                glob.currentchannellistindex = 0
+            self.streamurl = glob.currentchannellist[glob.currentchannellistindex][3]
+            self.direct_source = glob.currentchannellist[glob.currentchannellistindex][7]
+            self.playStream(self.servicetype, self.streamurl, self.direct_source)
+
+    def prev(self):
+        self.servicetype = self.originalservicetype
+        self.streamcheck = 0
+        self.hasStreamData = False
+
+        if glob.currentchannellist:
+            listlength = len(glob.currentchannellist)
+            glob.currentchannellistindex -= 1
+            if glob.currentchannellistindex + 1 == 0:
+                glob.currentchannellistindex = listlength - 1
+
+            self.streamurl = glob.currentchannellist[glob.currentchannellistindex][3]
+            self.direct_source = glob.currentchannellist[glob.currentchannellistindex][7]
+            self.playStream(self.servicetype, self.streamurl, self.direct_source)
+
+    def nextARfunction(self):
+        try:
+            self.ar_id_player += 1
+            if self.ar_id_player > 6:
+                self.ar_id_player = 0
+            eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
+            # print('self.ar_id_player NEXT %s' % VIDEO_ASPECT_RATIO_MAP[self.ar_id_player])
+            return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
+        except Exception as e:
+            print(ex)
+            return 'nextAR ERROR %s' % e
+
+    def nextAR(self):
+        message = self.nextARfunction()
+        self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO, timeout=3)
+
+    def showLog(self):
+        self.session.open(XStreamityLog)
+
+
 class XStreamityCueSheetSupport:
     ENABLE_RESUME_SUPPORT = False
 
@@ -392,435 +848,7 @@ class XStreamityCueSheetSupport:
                 print(e)
 
 
-class XStreamity_StreamPlayer(
-    InfoBarBase,
-    InfoBarMenu,
-    InfoBarSeek,
-    InfoBarAudioSelection,
-    InfoBarMoviePlayerSummarySupport,
-    InfoBarSubtitleSupport,
-    InfoBarSummarySupport,
-    InfoBarServiceErrorPopupSupport,
-    InfoBarNotifications,
-    IPTVInfoBarShowHide,
-    IPTVInfoBarPVRState,
-    Screen
-):
-
-    def __init__(self, session, streamurl, servicetype, direct_source=None):
-        Screen.__init__(self, session)
-
-        self.session = session
-
-        if str(os.path.splitext(streamurl)[-1]) == ".m3u8":
-            if servicetype == "1":
-                servicetype = "4097"
-
-        for x in InfoBarBase, \
-                InfoBarMenu, \
-                InfoBarSeek, \
-                InfoBarAudioSelection, \
-                InfoBarMoviePlayerSummarySupport, \
-                InfoBarSubtitleSupport, \
-                InfoBarSummarySupport, \
-                InfoBarServiceErrorPopupSupport, \
-                InfoBarNotifications, \
-                IPTVInfoBarShowHide:
-            x.__init__(self)
-
-        IPTVInfoBarPVRState.__init__(self, PVRState, True)
-
-        self.streamurl = streamurl
-        self.servicetype = servicetype
-        self.originalservicetype = self.servicetype
-        self.retries = 0
-        self.direct_source = direct_source
-
-        skin = skin_path + 'streamplayer.xml'
-
-        self["x_description"] = StaticText()
-        self["nowchannel"] = StaticText()
-        self["nowtitle"] = StaticText()
-        self["nexttitle"] = StaticText()
-        self["nowtime"] = StaticText()
-        self["nexttime"] = StaticText()
-        self["streamcat"] = StaticText()
-        self["streamtype"] = StaticText()
-        self["extension"] = StaticText()
-        self["progress"] = ProgressBar()
-        self["progress"].hide()
-        self["picon"] = Pixmap()
-
-        self["eventname"] = Label()
-        self["state"] = Label()
-        self["speed"] = Label()
-        self["statusicon"] = MultiPixmap()
-
-        self["PTSSeekBack"] = Pixmap()
-        self["PTSSeekPointer"] = Pixmap()
-
-        self.ar_id_player = 0
-
-        with open(skin, 'r') as f:
-            self.skin = f.read()
-
-        self.setup_title = _('TV')
-
-        self['actions'] = ActionMap(["XStreamityActions"], {
-            'cancel': self.back,
-            "stop": self.back,
-            "red": self.back,
-
-            "channelUp": self.__next__,
-            "down": self.__next__,
-            "channelDown": self.prev,
-            "up": self.prev,
-            'tv': self.toggleStreamType,
-            'info': self.toggleStreamType,
-            "green": self.nextAR,
-            "rec": self.IPTVstartInstantRecording,
-        }, -2)
-
-        self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl, self.direct_source))
-
-    def IPTVstartInstantRecording(self, limitEvent=True):
-        from . import record
-        begin = int(time())
-        end = begin + 3600
-
-        if glob.currentepglist[glob.currentchannellistindex][3]:
-            name = glob.currentepglist[glob.currentchannellistindex][3]
-        else:
-            name = glob.currentchannellist[glob.currentchannellistindex][0]
-
-        self.name = NoSave(ConfigText(default=name, fixed_size=False))
-        self.date = time()
-        self.starttime = NoSave(ConfigClock(default=begin))
-        self.endtime = NoSave(ConfigClock(default=end))
-        self.session.openWithCallback(self.RecordDateInputClosed, record.RecordDateInput, self.name, self.date, self.starttime, self.endtime, True)
-
-    def RecordDateInputClosed(self, ret=None):
-        if ret:
-            begin = ret[1]
-            end = ret[2]
-            name = ret[3]
-
-            description = glob.currentepglist[glob.currentchannellistindex][4]
-            eventid = int(self.streamurl.rpartition('/')[-1].partition('.')[0])
-            serviceref = eServiceReference(1, 0, self.streamurl)
-
-            if isinstance(serviceref, eServiceReference):
-                serviceref = ServiceReference(serviceref)
-
-            recording = RecordTimerEntry(serviceref, begin, end, name, description, eventid, dirname=str(cfg.downloadlocation.getValue()))
-            recording.dontSave = True
-
-            simulTimerList = self.session.nav.RecordTimer.record(recording)
-
-            if simulTimerList is None:  # no conflict
-                recording.autoincrease = False
-
-                self.session.open(MessageBox, _('Recording Timer Set.'), MessageBox.TYPE_INFO, timeout=5)
-            else:
-                self.session.open(MessageBox, _('Recording Failed.'), MessageBox.TYPE_WARNING)
-                return
-        else:
-            return
-
-    def playStream(self, servicetype, streamurl, direct_source):
-        self["x_description"].setText(glob.currentepglist[glob.currentchannellistindex][4])
-        self["nowchannel"].setText(glob.currentchannellist[glob.currentchannellistindex][0])
-        self["nowtitle"].setText(glob.currentepglist[glob.currentchannellistindex][3])
-        self["nexttitle"].setText(glob.currentepglist[glob.currentchannellistindex][6])
-        self["nowtime"].setText(glob.currentepglist[glob.currentchannellistindex][2])
-        self["nexttime"].setText(glob.currentepglist[glob.currentchannellistindex][5])
-        self["streamcat"].setText("Live")
-        self["streamtype"].setText(str(servicetype))
-
-        try:
-            self["extension"].setText(str(os.path.splitext(streamurl)[-1]))
-        except:
-            pass
-
-        start = ''
-        end = ''
-        percent = 0
-
-        if glob.currentepglist[glob.currentchannellistindex][2] != '':
-            start = glob.currentepglist[glob.currentchannellistindex][2]
-
-        if glob.currentepglist[glob.currentchannellistindex][5] != '':
-            end = glob.currentepglist[glob.currentchannellistindex][5]
-
-        if start != '' and end != '':
-            self["progress"].show()
-            start_time = datetime.strptime(start, "%H:%M")
-            end_time = datetime.strptime(end, "%H:%M")
-
-            if end_time < start_time:
-                end_time = datetime.strptime(end, "%H:%M") + timedelta(hours=24)
-
-            total_time = end_time - start_time
-
-            duration = 0
-
-            if total_time.total_seconds() > 0:
-                duration = total_time.total_seconds() / 60
-
-            now = datetime.now().strftime("%H:%M")
-            current_time = datetime.strptime(now, "%H:%M")
-            elapsed = current_time - start_time
-
-            if elapsed.days < 0:
-                elapsed = timedelta(days=0, seconds=elapsed.seconds)
-
-            elapsedmins = 0
-
-            if elapsed.total_seconds() > 0:
-                elapsedmins = elapsed.total_seconds() / 60
-
-            if duration > 0:
-                percent = int(elapsedmins / duration * 100)
-            else:
-                percent = 100
-
-            self["progress"].setValue(percent)
-        else:
-            self["progress"].hide()
-
-        if direct_source:
-            streamurl = str(direct_source)
-
-        self.reference = eServiceReference(int(self.servicetype), 0, streamurl)
-        self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
-
-        if self.session.nav.getCurrentlyPlayingServiceReference():
-            if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString():
-                self.session.nav.stopService()
-                self.session.nav.playService(self.reference)
-        else:
-            self.session.nav.playService(self.reference)
-
-        if self.session.nav.getCurrentlyPlayingServiceReference():
-            glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
-            glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
-
-        self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
-            iPlayableService.evTunedIn: self.__evTunedIn,
-            iPlayableService.evTuneFailed: self.__evTuneFailed,
-            iPlayableService.evUpdatedInfo: self.__evUpdatedInfo,
-            iPlayableService.evEOF: self.__evEOF,
-        })
-
-        self.downloadImage()
-
-    def downloadImage(self):
-        try:
-            os.remove(str(dir_tmp) + 'original.png')
-            os.remove(str(dir_tmp) + 'temp.png')
-        except:
-            pass
-
-        desc_image = ''
-        try:
-            desc_image = glob.currentchannellist[glob.currentchannellistindex][5]
-        except:
-            pass
-
-        if desc_image and desc_image != "n/A":
-            temp = dir_tmp + 'temp.png'
-            try:
-                parsed = urlparse(desc_image)
-                domain = parsed.hostname
-                scheme = parsed.scheme
-
-                if pythonVer == 3:
-                    desc_image = desc_image.encode()
-
-                if scheme == "https" and sslverify:
-                    sniFactory = SNIFactory(domain)
-                    downloadPage(desc_image, temp, sniFactory, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
-                else:
-                    downloadPage(desc_image, temp, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
-            except:
-                self.loadDefaultImage()
-        else:
-            self.loadDefaultImage()
-
-    def loadDefaultImage(self):
-        if self["picon"].instance:
-            self["picon"].instance.setPixmapFromFile(common_path + "picon.png")
-
-    def resizeImage(self, data=None):
-        # print("*** resizeImage ***")
-        original = str(dir_tmp) + 'temp.png'
-
-        size = [147, 88]
-        if screenwidth.width() > 1280:
-            size = [220, 130]
-
-        if os.path.exists(original):
-            try:
-                im = Image.open(original).convert('RGBA')
-                im.thumbnail(size, Image.ANTIALIAS)
-
-                # crop and center image
-                bg = Image.new('RGBA', size, (255, 255, 255, 0))
-
-                imagew, imageh = im.size
-                im_alpha = im.convert('RGBA').split()[-1]
-                bgwidth, bgheight = bg.size
-                bg_alpha = bg.convert('RGBA').split()[-1]
-                temp = Image.new('L', (bgwidth, bgheight), 0)
-                temp.paste(im_alpha, (int((bgwidth - imagew) / 2), int((bgheight - imageh) / 2)), im_alpha)
-                bg_alpha = ImageChops.screen(bg_alpha, temp)
-                bg.paste(im, (int((bgwidth - imagew) / 2), int((bgheight - imageh) / 2)))
-                im = bg
-
-                im.save(original, 'PNG')
-
-                if self["picon"].instance:
-                    self["picon"].instance.setPixmapFromFile(original)
-
-            except Exception as e:
-                print("******* picon resize failed *******")
-                print(e)
-        else:
-            self.loadDefaultImage()
-
-    def __evTunedIn(self):
-        if self.servicetype == "1":
-            self.hasStreamData = False
-            self.timerstream = eTimer()
-            try:
-                self.timerstream.callback.append(self.checkStream)
-            except:
-                self.timerstream_conn = self.timerstream.timeout.connect(self.checkStream)
-            self.timerstream.start(2000, True)
-
-    def __evTuneFailed(self):
-        self.stopStream()
-        self.back()
-
-    def __evUpdatedInfo(self):
-        if self.servicetype == "1":
-            self.hasStreamData = True
-
-    """
-    def __evEOF(self):
-        if self.servicetype == "1":
-            self.session.nav.stopService()
-            self.session.nav.playService(self.reference, forceRestart=True)
-            """
-
-    def __evEOF(self):
-        if self.servicetype == "1":
-            self.retries += 1
-            if self.retries > 3:
-                self.retries = 0
-                # self.session.open(MessageBox, _("multiple url redirects - unable to run streamtype '1', trying streamtype '4097'."), MessageBox.TYPE_INFO, timeout=2)
-                self.session.nav.stopService()
-                self.originalservicetype = self.servicetype
-                self.servicetype = "4097"
-                self.playStream(self.servicetype, self.streamurl, self.direct_source)
-
-    def checkStream(self):
-        if self.hasStreamData is False:
-            if self.retries < 2:
-                self.retries += 1
-                self.session.nav.stopService()
-                self.session.nav.playService(self.reference, forceRestart=True)
-
-    def back(self):
-        glob.nextlist[-1]['index'] = glob.currentchannellistindex
-        self.close()
-
-    def toggleStreamType(self):
-        currentindex = 0
-        self.retries = 0
-
-        streamtypelist = ["1", "4097"]
-
-        if os.path.exists("/usr/bin/gstplayer"):
-            streamtypelist.append("5001")
-
-        if os.path.exists("/usr/bin/exteplayer3"):
-            streamtypelist.append("5002")
-
-        if os.path.exists("/usr/bin/apt-get"):
-            streamtypelist.append("8193")
-
-        for index, item in enumerate(streamtypelist, start=0):
-            if str(item) == str(self.servicetype):
-                currentindex = index
-                break
-
-        nextStreamType = islice(cycle(streamtypelist), currentindex + 1, None)
-        self.servicetype = int(next(nextStreamType))
-
-        self.originalservicetype = self.servicetype
-
-        self.playStream(self.servicetype, self.streamurl, self.direct_source)
-
-    def __next__(self):
-        self.retries = 0
-        self.servicetype = self.originalservicetype
-        if glob.currentchannellist:
-            listlength = len(glob.currentchannellist)
-            glob.currentchannellistindex += 1
-            if glob.currentchannellistindex + 1 > listlength:
-                glob.currentchannellistindex = 0
-            self.streamurl = glob.currentchannellist[glob.currentchannellistindex][3]
-            self.direct_source = glob.currentchannellist[glob.currentchannellistindex][7]
-            self.playStream(self.servicetype, self.streamurl, self.direct_source)
-
-    def prev(self):
-        self.retries = 0
-        self.servicetype = self.originalservicetype
-        if glob.currentchannellist:
-            listlength = len(glob.currentchannellist)
-            glob.currentchannellistindex -= 1
-            if glob.currentchannellistindex + 1 == 0:
-                glob.currentchannellistindex = listlength - 1
-
-            self.streamurl = glob.currentchannellist[glob.currentchannellistindex][3]
-            self.direct_source = glob.currentchannellist[glob.currentchannellistindex][7]
-            self.playStream(self.servicetype, self.streamurl, self.direct_source)
-
-    def nextARfunction(self):
-        try:
-            self.ar_id_player += 1
-            if self.ar_id_player > 6:
-                self.ar_id_player = 0
-            eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
-            # print('self.ar_id_player NEXT %s' % VIDEO_ASPECT_RATIO_MAP[self.ar_id_player])
-            return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
-        except Exception as e:
-            print(ex)
-            return 'nextAR ERROR %s' % e
-
-    def nextAR(self):
-        message = self.nextARfunction()
-        self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO, timeout=3)
-
-
-class XStreamity_VodPlayer(
-    InfoBarBase,
-    InfoBarMenu,
-    InfoBarSeek,
-    InfoBarAudioSelection,
-    InfoBarMoviePlayerSummarySupport,
-    InfoBarSubtitleSupport,
-    InfoBarSummarySupport,
-    InfoBarServiceErrorPopupSupport,
-    InfoBarNotifications,
-    IPTVInfoBarShowHide,
-    IPTVInfoBarPVRState,
-    XStreamityCueSheetSupport,
-    SubsSupportStatus,
-    SubsSupport,
-    Screen
-):
+class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSelection, InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport, InfoBarSummarySupport, InfoBarServiceErrorPopupSupport, InfoBarNotifications, IPTVInfoBarShowHide, IPTVInfoBarPVRState, XStreamityCueSheetSupport, SubsSupportStatus, SubsSupport, Screen):
 
     ENABLE_RESUME_SUPPORT = True
     ALLOW_SUSPEND = True
@@ -1002,22 +1030,12 @@ class XStreamity_VodPlayer(
 
     def toggleStreamType(self):
         currentindex = 0
-        streamtypelist = ["1", "4097"]
 
-        if os.path.exists("/usr/bin/gstplayer"):
-            streamtypelist.append("5001")
-
-        if os.path.exists("/usr/bin/exteplayer3"):
-            streamtypelist.append("5002")
-
-        if os.path.exists("/usr/bin/apt-get"):
-            streamtypelist.append("8193")
-
-        for index, item in enumerate(streamtypelist, start=0):
+        for index, item in enumerate(vodstreamtypelist, start=0):
             if str(item) == str(self.servicetype):
                 currentindex = index
                 break
-        nextStreamType = islice(cycle(streamtypelist), currentindex + 1, None)
+        nextStreamType = islice(cycle(vodstreamtypelist), currentindex + 1, None)
         self.servicetype = int(next(nextStreamType))
         self.playStream(self.servicetype, self.streamurl, self.direct_source)
 
@@ -1038,23 +1056,7 @@ class XStreamity_VodPlayer(
         self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO, timeout=3)
 
 
-class XStreamity_CatchupPlayer(
-    InfoBarBase,
-    InfoBarMenu,
-    InfoBarSeek,
-    InfoBarAudioSelection,
-    InfoBarMoviePlayerSummarySupport,
-    InfoBarSubtitleSupport,
-    InfoBarSummarySupport,
-    InfoBarServiceErrorPopupSupport,
-    InfoBarNotifications,
-    IPTVInfoBarShowHide,
-    IPTVInfoBarPVRState,
-    XStreamityCueSheetSupport,
-    SubsSupportStatus,
-    SubsSupport,
-    Screen
-):
+class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSelection, InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport, InfoBarSummarySupport, InfoBarServiceErrorPopupSupport, InfoBarNotifications, IPTVInfoBarShowHide, IPTVInfoBarPVRState, XStreamityCueSheetSupport, SubsSupportStatus, SubsSupport, Screen):
 
     def __init__(self, session, streamurl, servicetype):
         Screen.__init__(self, session)
@@ -1147,10 +1149,6 @@ class XStreamity_CatchupPlayer(
             glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
             glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
 
-        if self.session.nav.getCurrentlyPlayingServiceReference():
-            glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
-            glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
-
         self.downloadImage()
 
     def downloadImage(self):
@@ -1187,8 +1185,6 @@ class XStreamity_CatchupPlayer(
             self.loadDefaultImage()
 
     def loadDefaultImage(self, data=None):
-        if data:
-            print(data)
         if self["picon"].instance:
             self["picon"].instance.setPixmapFromFile(common_path + "picon.png")
 
@@ -1239,22 +1235,12 @@ class XStreamity_CatchupPlayer(
 
     def toggleStreamType(self):
         currentindex = 0
-        streamtypelist = ["1", "4097"]
 
-        if os.path.exists("/usr/bin/gstplayer"):
-            streamtypelist.append("5001")
-
-        if os.path.exists("/usr/bin/exteplayer3"):
-            streamtypelist.append("5002")
-
-        if os.path.exists("/usr/bin/apt-get"):
-            streamtypelist.append("8193")
-
-        for index, item in enumerate(streamtypelist, start=0):
+        for index, item in enumerate(vodstreamtypelist, start=0):
             if str(item) == str(self.servicetype):
                 currentindex = index
                 break
-        nextStreamType = islice(cycle(streamtypelist), currentindex + 1, None)
+        nextStreamType = islice(cycle(vodstreamtypelist), currentindex + 1, None)
         self.servicetype = int(next(nextStreamType))
         self.playStream(self.servicetype, self.streamurl)
 
@@ -1273,3 +1259,74 @@ class XStreamity_CatchupPlayer(
     def nextAR(self):
         message = self.nextARfunction()
         self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO, timeout=3)
+
+
+class XStreamityLog(Screen):
+    if screenwidth.width() > 1280:
+        skin = """
+            <screen position="center,center" size="1920,1080" title="EPG Import Log" flags="wfNoBorder" backgroundColor="#000000">
+                <widget name="list" position="30,30" size="1860,990" font="Console;24" foregroundColor="#ffffff" backgroundColor="#000000" scrollbarMode="showOnDemand" transparent="1" />
+
+                <eLabel position="0,1019" size="1920,1" backgroundColor="#ffffff" zPosition="1" />
+                <widget source="global.CurrentTime" render="Label" position="30,1020" size="400,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" halign="left" transparent="1">
+                    <convert type="ClockToText">Format:%H:%M | %A %-d %b</convert>
+                </widget>
+
+                <eLabel position="541,1020" size="9,60"  backgroundColor="#ff0011" zPosition="1" />
+                <eLabel position="807,1020" size="9,60"  backgroundColor="#307e13" zPosition="1" />
+
+                <widget source="key_red" render="Label" position="571,1020" size="165,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" transparent="1" noWrap="1" zPosition="2" />
+                <widget source="key_green" render="Label" position="837,1020" size="165,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" transparent="1" noWrap="1" zPosition="2" />
+
+            </screen>"""
+    else:
+        skin = """
+            <screen position="center,center" size="1280,720" title="EPG Import Log" flags="wfNoBorder" backgroundColor="#000000">
+                <widget name="list" position="20,20" size="1240,660" font="Console;18" foregroundColor="#ffffff" backgroundColor="#000000" scrollbarMode="showOnDemand" transparent="1" />
+
+                <eLabel position="0,679" size="1280,1" backgroundColor="#ffffff" zPosition="1" />
+                <widget source="global.CurrentTime" render="Label" position="20,680" size="260,40" font="xstreamityregular;18" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" halign="left" transparent="1">
+                    <convert type="ClockToText">Format:%H:%M | %A %-d %b</convert>
+                </widget>
+
+                <eLabel position="360,680" size="6,40"  backgroundColor="#ff0011" zPosition="1" />
+                <eLabel position="538,680" size="6,40"  backgroundColor="#307e13" zPosition="1" />
+
+                <widget source="key_red" render="Label" position="380,1020" size="110,40" font="xstreamityregular;16" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" transparent="1" noWrap="1" zPosition="2" />
+                <widget source="key_green" render="Label" position="558,1020" size="110,40" font="xstreamityregular;16" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" transparent="1" noWrap="1" zPosition="2" />
+
+            </screen>"""
+
+    def __init__(self, session):
+        self.session = session
+        Screen.__init__(self, session)
+        self.setTitle(_("Xstreamity Log"))
+        # self.skinName = "EPGImportLog"
+        self.skin = XStreamityLog.skin
+
+        self["key_red"] = Button(_("Close"))
+        self["key_green"] = Button(_("Clear"))
+        self["list"] = ScrollLabel(log.getvalue())
+        self["actions"] = ActionMap(["DirectionActions", "OkCancelActions", "ColorActions", "MenuActions"], {
+            "red": self.cancel,
+            "green": self.clear,
+            "ok": self.cancel,
+            "cancel": self.cancel,
+            "left": self["list"].pageUp,
+            "right": self["list"].pageDown,
+            "up": self["list"].pageUp,
+            "down": self["list"].pageDown,
+            "pageUp": self["list"].pageUp,
+            "pageDown": self["list"].pageDown,
+            "channelUp": self["list"].pageUp,
+            "channelDown": self["list"].pageDown,
+            "menu": self.cancel,
+        }, -2)
+
+    def cancel(self):
+        self.close(False)
+
+    def clear(self):
+        log.logfile.seek(0, 0)
+        log.logfile.truncate()
+        self.close(False)

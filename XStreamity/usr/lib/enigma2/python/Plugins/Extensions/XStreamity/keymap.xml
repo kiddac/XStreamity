@@ -10,6 +10,7 @@
         <key id="KEY_TEXT" mapto="text" flags="m"/>
         <key id="KEY_TEXT" mapto="text_long" flags="l"/>
         <key id="KEY_MENU" mapto="menu" flags="m"/>
+        <key id="KEY_MENU" mapto="menu_long" flags="l"/>
         <key id="KEY_HELP" mapto="help" flags="m"/>
         <key id="KEY_TV" mapto="tv" flags="m"/>
         <key id="KEY_FAVORITES" mapto="tv" flags="m" />
@@ -50,5 +51,9 @@
         <key id="KEY_AUDIO" mapto="audioSelection" flags="m" />
         <key id="KEY_AUDIO" mapto="audioSelectionLong" flags="l" />
         <key id="KEY_RECORD" mapto="rec" flags="m" />
+        <key id="KEY_PAGEUP" mapto="pageUp" flags="mr" />
+        <key id="KEY_PAGEDOWN" mapto="pageDown" flags="mr" />
+        <key id="KEY_DELETE" mapto="deleteForward" flags="mr" />
+        <key id="KEY_BACKSPACE" mapto="deleteBackward" flags="mr" />
     </map>
 </keymap>
