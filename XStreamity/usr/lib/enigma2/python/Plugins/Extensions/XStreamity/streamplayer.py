@@ -561,8 +561,7 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
 
         self.downloadImage()
-    else:
-        print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " Dead stream", file=log)
+
         self.session.openWithCallback(self.streamFailed, MessageBox, _("Stream Url Error."), MessageBox.TYPE_INFO, timeout=3)
 
     def __evTunedStart(self):
