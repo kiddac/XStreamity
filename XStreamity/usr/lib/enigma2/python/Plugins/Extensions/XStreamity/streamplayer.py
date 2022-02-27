@@ -562,7 +562,6 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
 
         self.downloadImage()
 
-        self.session.openWithCallback(self.streamFailed, MessageBox, _("Stream Url Error."), MessageBox.TYPE_INFO, timeout=3)
 
     def __evTunedStart(self):
         # print("__evTunedStart")
