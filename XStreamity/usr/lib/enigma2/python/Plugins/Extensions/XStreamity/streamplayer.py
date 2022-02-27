@@ -51,7 +51,6 @@ except:
 
 from . import log
 import re
-import requests
 
 if cfg.subs.getValue() is True:
     try:
@@ -562,7 +561,6 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
 
         self.downloadImage()
 
-
     def __evTunedStart(self):
         # print("__evTunedStart")
         print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " evTunedStart", file=log)
@@ -572,7 +570,7 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             try:
                 self.timerstream.callback.append(self.checkStream)
             except:
-                self.timerstream_conn = self.timerstream.timeout.connect(self.checkStream2)
+                self.timerstream_conn = self.timerstream.timeout.connect(self.checkStream)
             self.timerstream.start(10000, True)
         else:
             try:
