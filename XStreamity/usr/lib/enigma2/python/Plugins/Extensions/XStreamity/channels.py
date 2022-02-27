@@ -562,93 +562,94 @@ class XStreamity_Categories(Screen):
 
             self.list2 = []
             currentChannelList = response
-            for item in currentChannelList:
-                name = ''
-                stream_id = ''
-                stream_icon = ''
-                epg_channel_id = ''
-                added = ''
-                category_id = ''
-                custom_sid = ''
-                serviceref = ''
-                nowtime = ''
-                nowTitle = ''
-                nowDesc = ''
-                nexttime = ''
-                nextTitle = ''
-                nextDesc = ''
-                direct_source = ''
+            if currentChannelList:
+                for item in currentChannelList:
+                    name = ''
+                    stream_id = ''
+                    stream_icon = ''
+                    epg_channel_id = ''
+                    added = ''
+                    category_id = ''
+                    custom_sid = ''
+                    serviceref = ''
+                    nowtime = ''
+                    nowTitle = ''
+                    nowDesc = ''
+                    nexttime = ''
+                    nextTitle = ''
+                    nextDesc = ''
+                    direct_source = ''
 
-                favourite = False
-                watching = False
-                hidden = False
+                    favourite = False
+                    watching = False
+                    hidden = False
 
-                if 'name' in item and item['name']:
-                    name = item['name']
+                    if 'name' in item and item['name']:
+                        name = item['name']
 
-                    # restyle bouquet markers
-                    if 'stream_type' in item and item['stream_type'] and item['stream_type'] != "live":
-                        pattern = re.compile(r'[^\w\s()\[\]]', re.U)
-                        name = re.sub(r'_', '', re.sub(pattern, '', name))
-                        name = "** " + str(name) + " **"
+                        # restyle bouquet markers
+                        if 'stream_type' in item and item['stream_type'] and item['stream_type'] != "live":
+                            pattern = re.compile(r'[^\w\s()\[\]]', re.U)
+                            name = re.sub(r'_', '', re.sub(pattern, '', name))
+                            name = "** " + str(name) + " **"
 
-                if 'stream_id' in item and item['stream_id']:
-                    stream_id = item['stream_id']
+                    if 'stream_id' in item and item['stream_id']:
+                        stream_id = item['stream_id']
 
-                    if str(stream_id) in glob.current_playlist['player_info']['channelshidden']:
-                        hidden = True
+                        if str(stream_id) in glob.current_playlist['player_info']['channelshidden']:
+                            hidden = True
 
-                if 'stream_icon' in item and item['stream_icon']:
-                    if item['stream_icon'].startswith("http"):
-                        stream_icon = item['stream_icon']
+                    if 'stream_icon' in item and item['stream_icon']:
+                        if item['stream_icon'].startswith("http"):
+                            stream_icon = item['stream_icon']
 
-                    if stream_icon.startswith("https://vignette.wikia.nocookie.net/tvfanon6528"):
-                        if "scale-to-width-down" not in stream_icon:
-                            stream_icon = str(stream_icon) + "/revision/latest/scale-to-width-down/220"
+                        if stream_icon.startswith("https://vignette.wikia.nocookie.net/tvfanon6528"):
+                            if "scale-to-width-down" not in stream_icon:
+                                stream_icon = str(stream_icon) + "/revision/latest/scale-to-width-down/220"
 
-                if 'epg_channel_id' in item and item['epg_channel_id']:
-                    epg_channel_id = item['epg_channel_id']
+                    if 'epg_channel_id' in item and item['epg_channel_id']:
+                        epg_channel_id = item['epg_channel_id']
 
-                    if epg_channel_id and "&" in epg_channel_id:
-                        epg_channel_id = epg_channel_id.replace("&", "&amp;")
+                        if epg_channel_id and "&" in epg_channel_id:
+                            epg_channel_id = epg_channel_id.replace("&", "&amp;")
 
-                if 'added' in item and item['added']:
-                    added = item['added']
+                    if 'added' in item and item['added']:
+                        added = item['added']
 
-                if 'category_id' in item and item['category_id']:
-                    category_id = item['category_id']
+                    if 'category_id' in item and item['category_id']:
+                        category_id = item['category_id']
 
-                if 'direct_source' in item and item['direct_source']:
-                    direct_source = item['direct_source']
+                    if 'direct_source' in item and item['direct_source']:
+                        direct_source = item['direct_source']
 
-                bouquet_id = 0
-                calc_remainder = int(stream_id) // 65535
-                bouquet_id = bouquet_id + calc_remainder
-                bouquet_stream_id = int(stream_id) - int(calc_remainder * 65535)
-                unique_ref = 999 + int(glob.current_playlist['playlist_info']['index'])
-                serviceref = '1:0:1:' + str(format(bouquet_id, '04x')) + ":" + str(format(bouquet_stream_id, '04x')) + ":" + str(format(unique_ref, '08x')) + ":0:0:0:0:" + "http%3a//example.m3u8"
+                    bouquet_id = 0
+                    calc_remainder = int(stream_id) // 65535
+                    bouquet_id = bouquet_id + calc_remainder
+                    bouquet_stream_id = int(stream_id) - int(calc_remainder * 65535)
+                    unique_ref = 999 + int(glob.current_playlist['playlist_info']['index'])
+                    serviceref = '1:0:1:' + str(format(bouquet_id, '04x')) + ":" + str(format(bouquet_stream_id, '04x')) + ":" + str(format(unique_ref, '08x')) + ":0:0:0:0:" + "http%3a//example.m3u8"
 
-                if 'custom_sid' in item and item['custom_sid']:
-                    custom_sid = item['custom_sid']
+                    if 'custom_sid' in item and item['custom_sid']:
+                        custom_sid = item['custom_sid']
 
-                    if custom_sid and custom_sid != "None":
-                        if custom_sid.startswith(":"):
-                            custom_sid = "1" + str(custom_sid)
-                        serviceref = str(':'.join(custom_sid.split(":")[:7])) + ":0:0:0:" + "http%3a//example.m3u8"
+                        if custom_sid and custom_sid != "None":
+                            if custom_sid.startswith(":"):
+                                custom_sid = "1" + str(custom_sid)
+                            serviceref = str(':'.join(custom_sid.split(":")[:7])) + ":0:0:0:" + "http%3a//example.m3u8"
 
-                next_url = "%s/live/%s/%s/%s.%s" % (self.host, self.username, self.password, stream_id, self.output)
+                    next_url = "%s/live/%s/%s/%s.%s" % (self.host, self.username, self.password, stream_id, self.output)
 
-                if 'livefavourites' in glob.current_playlist['player_info']:
-                    for fav in glob.current_playlist['player_info']['livefavourites']:
-                        if str(stream_id) == str(fav['stream_id']):
-                            favourite = True
-                            break
-                else:
-                    glob.current_playlist['player_info']['livefavourites'] = []
+                    if 'livefavourites' in glob.current_playlist['player_info']:
+                        for fav in glob.current_playlist['player_info']['livefavourites']:
+                            if str(stream_id) == str(fav['stream_id']):
+                                favourite = True
+                                break
+                    else:
+                        glob.current_playlist['player_info']['livefavourites'] = []
 
-                self.list2.append([index, str(name), str(stream_id), str(stream_icon), str(epg_channel_id), str(added), str(category_id), str(custom_sid), str(serviceref),
-                                  str(nowtime), str(nowTitle), str(nowDesc), str(nexttime), str(nextTitle), str(nextDesc), str(next_url), favourite, watching, hidden, str(direct_source)])
-                index += 1
+                    self.list2.append([index, str(name), str(stream_id), str(stream_icon), str(epg_channel_id), str(added), str(category_id), str(custom_sid), str(serviceref),
+                                      str(nowtime), str(nowTitle), str(nowDesc), str(nexttime), str(nextTitle), str(nextDesc), str(next_url), favourite, watching, hidden, str(direct_source)])
+                    index += 1
 
             glob.originalChannelList2 = self.list2[:]
 
@@ -661,72 +662,72 @@ class XStreamity_Categories(Screen):
             index = 0
             self.list2 = []
             currentChannelList = response
+            if currentChannelList:
+                for item in currentChannelList:
+                    name = ''
+                    stream_id = ''
+                    stream_icon = ''
+                    added = ''
+                    container_extension = 'mp4'
+                    rating = ''
+                    year = ''
+                    favourite = False
+                    hidden = False
+                    direct_source = ''
 
-            for item in currentChannelList:
-                name = ''
-                stream_id = ''
-                stream_icon = ''
-                added = ''
-                container_extension = 'mp4'
-                rating = ''
-                year = ''
-                favourite = False
-                hidden = False
-                direct_source = ''
+                    if 'name' in item and item['name']:
+                        name = item['name']
 
-                if 'name' in item and item['name']:
-                    name = item['name']
+                        # restyle bouquet markers
+                        if 'stream_type' in item and item['stream_type'] and item['stream_type'] != "movie":
+                            pattern = re.compile(r'[^\w\s()\[\]]', re.U)
+                            name = re.sub(r'_', '', re.sub(pattern, '', name))
+                            name = "** " + str(name) + " **"
 
-                    # restyle bouquet markers
-                    if 'stream_type' in item and item['stream_type'] and item['stream_type'] != "movie":
-                        pattern = re.compile(r'[^\w\s()\[\]]', re.U)
-                        name = re.sub(r'_', '', re.sub(pattern, '', name))
-                        name = "** " + str(name) + " **"
+                    if 'stream_id' in item and item['stream_id']:
+                        stream_id = item['stream_id']
 
-                if 'stream_id' in item and item['stream_id']:
-                    stream_id = item['stream_id']
+                        if str(stream_id) in glob.current_playlist['player_info']['vodstreamshidden']:
+                            hidden = True
 
-                    if str(stream_id) in glob.current_playlist['player_info']['vodstreamshidden']:
-                        hidden = True
+                    if 'stream_icon' in item and item['stream_icon']:
+                        if item['stream_icon'].startswith("http"):
+                            stream_icon = item['stream_icon']
 
-                if 'stream_icon' in item and item['stream_icon']:
-                    if item['stream_icon'].startswith("http"):
-                        stream_icon = item['stream_icon']
+                            if stream_icon.startswith("https://image.tmdb.org/t/p/") or stream_icon.startswith("http://image.tmdb.org/t/p/"):
+                                dimensions = stream_icon.partition("/p/")[2].partition("/")[0]
+                                if screenwidth.width() <= 1280:
+                                    stream_icon = stream_icon.replace(dimensions, "w300")
+                                else:
+                                    stream_icon = stream_icon.replace(dimensions, "w400")
 
-                        if stream_icon.startswith("https://image.tmdb.org/t/p/") or stream_icon.startswith("http://image.tmdb.org/t/p/"):
-                            dimensions = stream_icon.partition("/p/")[2].partition("/")[0]
-                            if screenwidth.width() <= 1280:
-                                stream_icon = stream_icon.replace(dimensions, "w300")
-                            else:
-                                stream_icon = stream_icon.replace(dimensions, "w400")
+                    if 'added' in item and item['added']:
+                        added = item['added']
 
-                if 'added' in item and item['added']:
-                    added = item['added']
+                    if 'container_extension' in item and item['container_extension']:
+                        container_extension = item['container_extension']
 
-                if 'container_extension' in item and item['container_extension']:
-                    container_extension = item['container_extension']
+                    if 'rating' in item and item['rating']:
+                        rating = item['rating']
 
-                if 'rating' in item and item['rating']:
-                    rating = item['rating']
+                    if 'year' in item and item['year']:
+                        year = item['year']
 
-                if 'year' in item and item['year']:
-                    year = item['year']
+                    if 'direct_source' in item and item['direct_source']:
+                        direct_source = item['direct_source']
 
-                if 'direct_source' in item and item['direct_source']:
-                    direct_source = item['direct_source']
+                    next_url = "%s/movie/%s/%s/%s.%s" % (str(self.host), str(self.username), str(self.password), str(stream_id), str(container_extension))
 
-                next_url = "%s/movie/%s/%s/%s.%s" % (str(self.host), str(self.username), str(self.password), str(stream_id), str(container_extension))
+                    if 'vodfavourites' in glob.current_playlist['player_info']:
+                        for fav in glob.current_playlist['player_info']['vodfavourites']:
+                            if str(stream_id) == str(fav['stream_id']):
+                                favourite = True
+                                break
+                    else:
+                        glob.current_playlist['player_info']['vodfavourites'] = []
 
-                if 'vodfavourites' in glob.current_playlist['player_info']:
-                    for fav in glob.current_playlist['player_info']['vodfavourites']:
-                        if str(stream_id) == str(fav['stream_id']):
-                            favourite = True
-                            break
-                else:
-                    glob.current_playlist['player_info']['vodfavourites'] = []
-
-                self.list2.append([index, str(name), str(stream_id), str(stream_icon), str(added), str(rating), str(next_url), favourite, container_extension, year, hidden, str(direct_source)])
-                index += 1
+                    self.list2.append([index, str(name), str(stream_id), str(stream_icon), str(added), str(rating), str(next_url), favourite, container_extension, year, hidden, str(direct_source)])
+                    index += 1
 
             glob.originalChannelList2 = self.list2[:]
 
@@ -735,70 +736,70 @@ class XStreamity_Categories(Screen):
             index = 0
             self.list2 = []
             currentChannelList = response
+            if currentChannelList:
+                for item in currentChannelList:
+                    name = ''
+                    series_id = ''
+                    cover = ''
+                    plot = ''
+                    cast = self["vod_cast"].getText()
+                    director = self["vod_director"].getText()
+                    genre = self["vod_genre"].getText()
+                    releaseDate = self["vod_release_date"].getText()
+                    rating = self["vod_rating"].getText()
+                    last_modified = ''
+                    hidden = False
 
-            for item in currentChannelList:
-                name = ''
-                series_id = ''
-                cover = ''
-                plot = ''
-                cast = self["vod_cast"].getText()
-                director = self["vod_director"].getText()
-                genre = self["vod_genre"].getText()
-                releaseDate = self["vod_release_date"].getText()
-                rating = self["vod_rating"].getText()
-                last_modified = ''
-                hidden = False
+                    if 'name' in item and item['name']:
+                        name = item['name']
 
-                if 'name' in item and item['name']:
-                    name = item['name']
+                    if 'series_id' in item and item['series_id']:
+                        series_id = item['series_id']
 
-                if 'series_id' in item and item['series_id']:
-                    series_id = item['series_id']
+                        if str(series_id) in glob.current_playlist['player_info']['seriestitleshidden']:
+                            hidden = True
 
-                    if str(series_id) in glob.current_playlist['player_info']['seriestitleshidden']:
-                        hidden = True
+                    if 'cover' in item and item['cover']:
+                        if item['cover'].startswith("http"):
+                            cover = item['cover']
 
-                if 'cover' in item and item['cover']:
-                    if item['cover'].startswith("http"):
-                        cover = item['cover']
+                    if 'plot' in item and item['plot']:
+                        plot = item['plot']
 
-                if 'plot' in item and item['plot']:
-                    plot = item['plot']
+                    if 'cast' in item and item['cast']:
+                        cast = item['cast']
 
-                if 'cast' in item and item['cast']:
-                    cast = item['cast']
+                    if 'director' in item and item['director']:
+                        director = item['director']
 
-                if 'director' in item and item['director']:
-                    director = item['director']
+                    if 'genre' in item and item['genre']:
+                        genre = item['genre']
 
-                if 'genre' in item and item['genre']:
-                    genre = item['genre']
+                    if 'releaseDate' in item and item['releaseDate']:
+                        releaseDate = item['releaseDate']
 
-                if 'releaseDate' in item and item['releaseDate']:
-                    releaseDate = item['releaseDate']
+                    if 'releaseDate' not in item and 'release_date' in item and item['release_date']:
+                        releaseDate = item['release_date']
 
-                if 'releaseDate' not in item and 'release_date' in item and item['release_date']:
-                    releaseDate = item['release_date']
+                    if 'rating' in item and item['rating']:
+                        rating = item['rating']
 
-                if 'rating' in item and item['rating']:
-                    rating = item['rating']
+                    if 'last_modified' in item and item['last_modified']:
+                        last_modified = item['last_modified']
 
-                if 'last_modified' in item and item['last_modified']:
-                    last_modified = item['last_modified']
+                    if cover:
+                        if cover.startswith("https://image.tmdb.org/t/p/") or cover.startswith("http://image.tmdb.org/t/p/"):
+                            dimensions = cover.partition("/p/")[2].partition("/")[0]
+                            if screenwidth.width() <= 1280:
+                                cover = cover.replace(dimensions, "w300")
+                            else:
+                                cover = cover.replace(dimensions, "w400")
 
-                if cover:
-                    if cover.startswith("https://image.tmdb.org/t/p/") or cover.startswith("http://image.tmdb.org/t/p/"):
-                        dimensions = cover.partition("/p/")[2].partition("/")[0]
-                        if screenwidth.width() <= 1280:
-                            cover = cover.replace(dimensions, "w300")
-                        else:
-                            cover = cover.replace(dimensions, "w400")
+                    next_url = str(glob.current_playlist['playlist_info']['player_api']) + "&action=get_series_info&series_id=" + str(series_id)
 
-                next_url = str(glob.current_playlist['playlist_info']['player_api']) + "&action=get_series_info&series_id=" + str(series_id)
+                    self.list2.append([index, str(name), str(series_id), str(cover), str(plot), str(cast), str(director), str(genre), str(releaseDate), str(rating), str(last_modified), str(next_url), hidden])
 
-                self.list2.append([index, str(name), str(series_id), str(cover), str(plot), str(cast), str(director), str(genre), str(releaseDate), str(rating), str(last_modified), str(next_url), hidden])
-
-                index += 1
+                    index += 1
 
             glob.originalChannelList2 = self.list2[:]
 
@@ -809,42 +810,43 @@ class XStreamity_Categories(Screen):
 
             self.list2 = []
             currentChannelList = response
-            for item in currentChannelList:
-                name = ''
-                stream_id = ''
-                stream_icon = ''
-                epg_channel_id = ''
-                added = ''
-                hidden = False
+            if currentChannelList:
+                for item in currentChannelList:
+                    name = ''
+                    stream_id = ''
+                    stream_icon = ''
+                    epg_channel_id = ''
+                    added = ''
+                    hidden = False
 
-                if 'tv_archive' in item and 'tv_archive_duration' in item:
-                    if item['tv_archive'] == 1 and item['tv_archive_duration'] != "0":
+                    if 'tv_archive' in item and 'tv_archive_duration' in item:
+                        if item['tv_archive'] == 1 and item['tv_archive_duration'] != "0":
 
-                        if 'name' in item and item['name']:
-                            name = item['name']
-                        if 'stream_id' in item and item['stream_id']:
-                            stream_id = item['stream_id']
-                            if str(stream_id) in glob.current_playlist['player_info']['catchupchannelshidden']:
-                                hidden = True
-                        if 'stream_icon' in item and item['stream_icon']:
-                            if item['stream_icon'].startswith("http"):
-                                stream_icon = item['stream_icon']
-                        if 'epg_channel_id' in item and item['epg_channel_id']:
-                            epg_channel_id = item['epg_channel_id']
+                            if 'name' in item and item['name']:
+                                name = item['name']
+                            if 'stream_id' in item and item['stream_id']:
+                                stream_id = item['stream_id']
+                                if str(stream_id) in glob.current_playlist['player_info']['catchupchannelshidden']:
+                                    hidden = True
+                            if 'stream_icon' in item and item['stream_icon']:
+                                if item['stream_icon'].startswith("http"):
+                                    stream_icon = item['stream_icon']
+                            if 'epg_channel_id' in item and item['epg_channel_id']:
+                                epg_channel_id = item['epg_channel_id']
 
-                            if epg_channel_id and "&" in epg_channel_id:
-                                epg_channel_id = epg_channel_id.replace("&", "&amp;")
-                        if 'added' in item and item['added']:
-                            added = item['added']
-                        epgnowtitle = epgnowtime = epgnowdescription = epgnexttitle = epgnexttime = epgnextdescription = ''
+                                if epg_channel_id and "&" in epg_channel_id:
+                                    epg_channel_id = epg_channel_id.replace("&", "&amp;")
+                            if 'added' in item and item['added']:
+                                added = item['added']
+                            epgnowtitle = epgnowtime = epgnowdescription = epgnexttitle = epgnexttime = epgnextdescription = ''
 
-                        next_url = "%s/live/%s/%s/%s.%s" % (self.host, self.username, self.password, stream_id, self.output)
-                        self.list2.append([
-                            index, str(name), str(stream_id), str(stream_icon), str(epg_channel_id), str(added), str(next_url),
-                            epgnowtime, epgnowtitle, epgnowdescription, epgnexttime, epgnexttitle, epgnextdescription, hidden
-                        ])
+                            next_url = "%s/live/%s/%s/%s.%s" % (self.host, self.username, self.password, stream_id, self.output)
+                            self.list2.append([
+                                index, str(name), str(stream_id), str(stream_icon), str(epg_channel_id), str(added), str(next_url),
+                                epgnowtime, epgnowtitle, epgnowdescription, epgnexttime, epgnexttitle, epgnextdescription, hidden
+                            ])
 
-                        index += 1
+                            index += 1
 
             glob.originalChannelList2 = self.list2[:]
 
@@ -1407,8 +1409,6 @@ class XStreamity_Categories(Screen):
 
     def loadDefaultImage(self, data=None):
         # print("*** loadDefaultImage ***")
-        if data:
-            print(data)
         if self["picon"].instance:
             self["picon"].instance.setPixmapFromFile(common_path + "picon.png")
 
