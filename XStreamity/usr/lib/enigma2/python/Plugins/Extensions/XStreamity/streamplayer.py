@@ -596,7 +596,7 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             self.session.nav.stopService()
         except:
             pass
-        self.session.open(MessageBox, _("Stream Failed"), MessageBox.TYPE_INFO, timeout=1)
+        # self.session.open(MessageBox, _("Stream Failed"), MessageBox.TYPE_INFO, timeout=1)
 
     def __evUpdatedInfo(self):
         self.originalservicetype = self.servicetype
@@ -616,11 +616,13 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " Checking Stream", file=log)
             if self.streamcheck == 0:
                 print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " Stream Failed 1. Reloading Stream.", file=log)
-                self.session.openWithCallback(self.streamFailed, MessageBox, _("Stream Failed 1. Reloading Stream."), MessageBox.TYPE_INFO, timeout=1)
+                # self.session.openWithCallback(self.streamFailed, MessageBox, _("Stream Failed 1. Reloading Stream."), MessageBox.TYPE_INFO, timeout=1)
+                self.streamFailed()
 
             elif self.streamcheck == 1:
                 print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " Stream Failed 2. Switching stream type.", file=log)
-                self.session.openWithCallback(self.streamTypeFailed, MessageBox, _("Stream Failed 2. Switching stream type."), MessageBox.TYPE_INFO, timeout=1)
+                # self.session.openWithCallback(self.streamTypeFailed, MessageBox, _("Stream Failed 2. Switching stream type."), MessageBox.TYPE_INFO, timeout=1)
+                self.streamTypeFailed()
             else:
                 self.__evTuneFailed()
         else:
