@@ -7,30 +7,30 @@
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/logo.png" position="center,60" size="200,145" alphatest="blend" zPosition="1" />
 	<widget source="version" render="Label" position="center, 150" size="1920,27" font="xstreamityregular;18" foregroundColor="#ffffff" backgroundColor="#2a70a4" halign="center" valign="center" transparent="1" /> 
 	<widget source="Title" render="Label" position="center,210" size="1920,70" foregroundColor="#ffffff" backgroundColor="#2a70a4" halign="center" font="xstreamityregular;48" transparent="1" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/panel.png" position="center,300" size="800,660" alphatest="blend" zPosition="1" />
-	<widget source="playlists" render="Listbox" position="center,330" size="738,600" foregroundColor="#ffffff" backgroundColor="#2a70a4" foregroundColorSelected="#ffffff" backgroundColorSelected="#296fa3" itemHeight="120" scrollbarMode="showNever" enableWrapAround="1" transparent="1" zPosition="2">
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/panel-mid.png" position="center,300" size="984,660" alphatest="blend" zPosition="1" />
+	<widget source="playlists" render="Listbox" position="center,330" size="924,600" foregroundColor="#ffffff" backgroundColor="#2a70a4" foregroundColorSelected="#ffffff" backgroundColorSelected="#296fa3" itemHeight="120" scrollbarMode="showNever" enableWrapAround="1" transparent="1" zPosition="2">
 		<convert type="TemplatedMultiContent">
 			{"template": [
 			<!-- name -->
-			MultiContentEntryText(pos = (21, 9), size = (432, 42), font=0,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 1),
+			MultiContentEntryText(pos = (21, 9), size = (612, 42), font=0,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 1),
 
 			<!-- Authorised LED -->
-			MultiContentEntryPixmapAlphaBlend(pos = (699, 24), size = (23, 24), png = 5),
+			MultiContentEntryPixmapAlphaBlend(pos = (879, 24), size = (23, 24), png = 5),
 			
 			<!-- Authorised -->
-			MultiContentEntryText(pos = (465, 21), size = (472, 30), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 4),
+			MultiContentEntryText(pos = (645, 21), size = (472, 30), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 4),
 			
 			<!-- Active Conn -->
-			MultiContentEntryText(pos = (465, 48), size = (129, 30), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 6),
+			MultiContentEntryText(pos = (645, 48), size = (129, 30), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 6),
 			
 			<!-- Active Conn Num -->
-			MultiContentEntryText(pos = (639, 48), size = (78, 30), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_RIGHT, text = 7),
+			MultiContentEntryText(pos = (819, 48), size = (78, 30), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_RIGHT, text = 7),
 			
 			<!-- Max Conn -->
-			MultiContentEntryText(pos = (465, 75), size = (120, 30), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 8),
+			MultiContentEntryText(pos = (645, 75), size = (120, 30), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 8),
 			
 			<!-- Max Conn Num --> 
-			MultiContentEntryText(pos = (639, 75), size = (78, 30), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_RIGHT, text = 9),
+			MultiContentEntryText(pos = (819, 75), size = (78, 30), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_RIGHT, text = 9),
 			
 			<!-- Expires -->
 			MultiContentEntryText(pos = (21, 75), size = (432, 30), font=1,  color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 3),
@@ -44,10 +44,10 @@
 	<widget name="scroll_up" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/default/images/up.png" position="center,283" size="36,36" alphatest="blend" zPosition="2" />
 	<widget name="scroll_down" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/default/images/down.png" position="center,941" size="36,36" alphatest="blend" zPosition="2" />
 	
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="center,448" size="738,4" alphatest="blend" zPosition="1" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="center,568" size="738,4" alphatest="blend" zPosition="1" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="center,688" size="738,4" alphatest="blend" zPosition="1" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="center,808" size="738,4" alphatest="blend" zPosition="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="center,448" size="924,4" alphatest="blend" zPosition="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="center,568" size="924,4" alphatest="blend" zPosition="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="center,688" size="924,4" alphatest="blend" zPosition="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="center,808" size="924,4" alphatest="blend" zPosition="1" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/button-bg.png" position="0,1020" size="1920,60" alphatest="blend" zPosition="1" />
 	
 	<widget source="key_red" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/key_red.png" position="510,1031" size="38,38" alphatest="blend" zPosition="2" />

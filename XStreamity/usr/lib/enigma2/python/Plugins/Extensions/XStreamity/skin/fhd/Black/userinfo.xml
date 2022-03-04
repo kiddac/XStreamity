@@ -5,7 +5,7 @@
 	</widget>
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/logo.png" position="center,60" size="200,145" alphatest="blend" zPosition="1" />
 	<widget source="Title" render="Label" position="center,210" size="1920,70" foregroundColor="#ffffff" backgroundColor="#000000" halign="center" font="xstreamityregular;48" transparent="1" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/panel.png" position="center,300" size="800,660" alphatest="blend" zPosition="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/panel-mid.png" position="center,300" size="984,660" alphatest="blend" zPosition="1" />
 	<eLabel text="Status:" position="590,330" size="369,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2" />
 	<eLabel text="Is Trial:" position="590,390" size="369,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2" />
 	<eLabel text="Active Connections:" position="590,450" size="369,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2" />
