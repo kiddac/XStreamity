@@ -14,7 +14,6 @@ from Components.ActionMap import ActionMap
 from Components.AVSwitch import AVSwitch
 from enigma import eAVSwitch
 from Components.config import config, NoSave, ConfigText, ConfigClock
-from Components.Button import Button
 from Components.Label import Label
 from Components.ProgressBar import ProgressBar
 from Components.Pixmap import Pixmap, MultiPixmap
@@ -1302,8 +1301,8 @@ class XStreamityLog(Screen):
         # self.skinName = "EPGImportLog"
         self.skin = XStreamityLog.skin
 
-        self["key_red"] = Button(_("Close"))
-        self["key_green"] = Button(_("Clear"))
+        self["key_red"] = StaticText(_("Close"))
+        self["key_green"] = StaticText(_("Clear"))
         self["list"] = ScrollLabel(log.getvalue())
         self["actions"] = ActionMap(["DirectionActions", "OkCancelActions", "ColorActions", "MenuActions"], {
             "red": self.cancel,

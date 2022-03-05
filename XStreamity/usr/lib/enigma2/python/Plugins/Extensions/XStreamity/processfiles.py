@@ -202,6 +202,7 @@ def processfiles():
                                         playlists["playlist_info"]["xmltv_api"] = playlists["player_info"]["epgalternativeurl"]
                                 else:
                                     playlists["playlist_info"]["xmltv_api"] = xmltv_api
+                                index += 1
                                 break
 
                 if not playlist_exists:
