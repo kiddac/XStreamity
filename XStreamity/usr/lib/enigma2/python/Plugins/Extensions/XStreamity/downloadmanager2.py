@@ -40,7 +40,7 @@ def convert_size(size_bytes):
 class downloadJob(Job):
     def __init__(self, toolbox, cmdline, filename, filetitle):
         # print("**** downloadJob init ***")
-        Job.__init__(self, 'XDownload:' + ' %s' % filetitle)
+        Job.__init__(self, "XDownload:" + " %s" % filetitle)
         self.filename = filename
         self.toolbox = toolbox
         self.retrycount = 0
@@ -76,38 +76,38 @@ class downloadTask(Task):
         if pythonVer == 3:
             data = str(data)
         try:
-            if data.endswith('%)'):
-                startpos = data.rfind('sec (') + 5
+            if data.endswith("%)"):
+                startpos = data.rfind("sec (") + 5
                 if startpos and startpos != -1:
                     self.progress = int(float(data[startpos:-4]))
-            elif data.find('%') != -1:
-                tmpvalue = data[:data.find('%')]
-                tmpvalue = tmpvalue[tmpvalue.rfind(' '):].strip()
-                tmpvalue = tmpvalue[tmpvalue.rfind('(') + 1:].strip()
+            elif data.find("%") != -1:
+                tmpvalue = data[:data.find("%")]
+                tmpvalue = tmpvalue[tmpvalue.rfind(" "):].strip()
+                tmpvalue = tmpvalue[tmpvalue.rfind("(") + 1:].strip()
                 if pythonVer == 3:
                     tmpvalue = int(tmpvalue)
                 self.progress = int(float(tmpvalue))
             else:
                 Task.processOutput(self, data)
         except Exception as errormsg:
-            print('Error processOutput: ' + str(errormsg))
+            print("Error processOutput: " + str(errormsg))
             Task.processOutput(self, data)
 
     def processOutputLine(self, line):
         line = line[:-1]
         self.lasterrormsg = line
-        if line.startswith('ERROR:'):
-            if line.find('RTMP_ReadPacket') != -1:
+        if line.startswith("ERROR:"):
+            if line.find("RTMP_ReadPacket") != -1:
                 self.error = self.ERROR_RTMP_ReadPacket
-            elif line.find('corrupt file!') != -1:
+            elif line.find("corrupt file!") != -1:
                 self.error = self.ERROR_CORRUPT_FILE
-                os.system('rm -f %s' % self.filename)
+                os.system("rm -f %s" % self.filename)
             else:
                 self.error = self.ERROR_UNKNOWN
-        elif line.startswith('wget:'):
-            if line.find('server returned error') != -1:
+        elif line.startswith("wget:"):
+            if line.find("server returned error") != -1:
                 self.error = self.ERROR_SERVER
-        elif line.find('Segmentation fault') != -1:
+        elif line.find("Segmentation fault") != -1:
             self.error = self.ERROR_SEGFAULT
 
     def afterRun(self):
@@ -139,11 +139,11 @@ class downloadTaskPostcondition(Condition):
     def getErrorMessage(self, task):
         # print("*** get error message ***")
         return {
-            task.ERROR_CORRUPT_FILE: _("MOVIE DOWNLOAD FAILED!") + '\n\n' + _("DOWNLOADED FILE CORRUPTED:") + '\n%s' % task.lasterrormsg,
-            task.ERROR_RTMP_ReadPacket: _("MOVIE DOWNLOAD FAILED!") + '\n\n' + _("COULD NOT READ RTMP PACKET:") + '\n%s' % task.lasterrormsg,
-            task.ERROR_SEGFAULT: _("MOVIE DOWNLOAD FAILED!") + '\n\n' + _("SEGMENTATION FAULT:") + '\n%s' % task.lasterrormsg,
-            task.ERROR_SERVER: _("MOVIE DOWNLOAD FAILED!") + '\n\n' + _("SERVER RETURNED ERROR:") + '\n%s' % task.lasterrormsg,
-            task.ERROR_UNKNOWN: _("MOVIE DOWNLOAD FAILED!") + '\n\n' + _("UNKNOWN ERROR:") + '\n%s' % task.lasterrormsg
+            task.ERROR_CORRUPT_FILE: _("MOVIE DOWNLOAD FAILED!") + "\n\n" + _("DOWNLOADED FILE CORRUPTED:") + "\n%s" % task.lasterrormsg,
+            task.ERROR_RTMP_ReadPacket: _("MOVIE DOWNLOAD FAILED!") + "\n\n" + _("COULD NOT READ RTMP PACKET:") + "\n%s" % task.lasterrormsg,
+            task.ERROR_SEGFAULT: _("MOVIE DOWNLOAD FAILED!") + "\n\n" + _("SEGMENTATION FAULT:") + "\n%s" % task.lasterrormsg,
+            task.ERROR_SERVER: _("MOVIE DOWNLOAD FAILED!") + "\n\n" + _("SERVER RETURNED ERROR:") + "\n%s" % task.lasterrormsg,
+            task.ERROR_UNKNOWN: _("MOVIE DOWNLOAD FAILED!") + "\n\n" + _("UNKNOWN ERROR:") + "\n%s" % task.lasterrormsg
         }[task.error]
 
 
@@ -153,12 +153,12 @@ class XStreamity_DownloadManager(Screen):
         Screen.__init__(self, session)
 
         self.session = session
-        skin = skin_path + 'downloadmanager.xml'
+        skin = skin_path + "downloadmanager.xml"
 
-        with open(skin, 'r') as f:
+        with open(skin, "r") as f:
             self.skin = f.read()
 
-        self.setup_title = (_('VOD Download Manager'))
+        self.setup_title = (_("VOD Download Manager"))
         self.onChangedEntry = []
 
         self.list = []
@@ -173,20 +173,20 @@ class XStreamity_DownloadManager(Screen):
         self.timerDisplay = eTimer()
 
         self["downloadlist"] = List(self.drawList)
-        self['downloadlist'].onSelectionChanged.append(self.selectionChanged)
+        self["downloadlist"].onSelectionChanged.append(self.selectionChanged)
 
-        self["key_red"] = StaticText(_('Back'))
-        self["key_green"] = StaticText(_('Download'))
-        self['key_blue'] = StaticText(_('Remove'))
+        self["key_red"] = StaticText(_("Back"))
+        self["key_green"] = StaticText(_("Download"))
+        self["key_blue"] = StaticText(_("Remove"))
 
         self["diskspace"] = StaticText()
 
-        self['actions'] = ActionMap(['XStreamityActions'], {
-            'red': self.keyCancel,
-            'cancel': self.keyCancel,
-            'green': self.download,
-            'ok': self.download,
-            'blue': self.delete,
+        self["actions"] = ActionMap(["XStreamityActions"], {
+            "red": self.keyCancel,
+            "cancel": self.keyCancel,
+            "green": self.download,
+            "ok": self.download,
+            "blue": self.delete,
         }, -2)
 
         self.onFirstExecBegin.append(self.start)
@@ -227,7 +227,7 @@ class XStreamity_DownloadManager(Screen):
             print(e)
             free = "-?-"
             total = "-?-"
-        self["diskspace"].setText(_('Free Space:') + " " + str(free) + " " + _("of") + " " + str(total))
+        self["diskspace"].setText(_("Free Space:") + " " + str(free) + " " + _("of") + " " + str(total))
 
     def getDownloadSize(self):
         x = 0
@@ -238,7 +238,7 @@ class XStreamity_DownloadManager(Screen):
             if length == 0:
                 try:
                     r = requests.get(url, timeout=10, verify=False, stream=True)
-                    video[5] = float(r.headers['content-length'])
+                    video[5] = float(r.headers["content-length"])
                 except Exception as e:
                     print(e)
                     video[5] = 0
@@ -264,8 +264,8 @@ class XStreamity_DownloadManager(Screen):
 
                 self.filmtitle = video[1]
 
-                cleanName = re.sub(r'[\<\>\:\"\/\\\|\?\*]', ' ', str(self.filmtitle))
-                cleanName = re.sub(r'  ', ' ', cleanName)
+                cleanName = re.sub(r'[\<\>\:\"\/\\\|\?\*]', " ", str(self.filmtitle))
+                cleanName = re.sub(r"  ", " ", cleanName)
 
                 filename = str(cleanName) + str(self.extension)
 
@@ -315,7 +315,7 @@ class XStreamity_DownloadManager(Screen):
                     break
 
     def saveJson(self):
-        with open(downloads_json, 'w') as f:
+        with open(downloads_json, "w") as f:
             json.dump(self.downloads_all, f)
 
     def selectionChanged(self):
@@ -323,9 +323,9 @@ class XStreamity_DownloadManager(Screen):
             currentindex = self["downloadlist"].getIndex()
 
             if self.downloads_all[currentindex][3] != _("Not Started"):
-                self["key_green"].setText(_('Cancel'))
+                self["key_green"].setText(_("Cancel"))
             else:
-                self["key_green"].setText(_('Download'))
+                self["key_green"].setText(_("Download"))
 
     def keyCancel(self, answer=None):
         self.saveJson()
@@ -333,7 +333,7 @@ class XStreamity_DownloadManager(Screen):
 
     def cancelDownload(self, answer=None):
         if answer is None:
-            self.session.openWithCallback(self.cancelDownload, MessageBox, _('Cancel this download?'))
+            self.session.openWithCallback(self.cancelDownload, MessageBox, _("Cancel this download?"))
         elif answer:
             self.download_cancelled()
         else:
@@ -384,7 +384,7 @@ class XStreamity_DownloadManager(Screen):
     def download(self):
         # print("*** downloading ***")
         if not os.path.exists(cfg.downloadlocation.value) or cfg.downloadlocation.value is None:
-            self.session.open(MessageBox, _('Vod Download folder location does not exist.\n\n' + str(cfg.downloadlocation.value) + 'Please set download folder in Main Settings.'), type=MessageBox.TYPE_WARNING)
+            self.session.open(MessageBox, _("Vod Download folder location does not exist.\n\n" + str(cfg.downloadlocation.value) + "Please set download folder in Main Settings."), type=MessageBox.TYPE_WARNING)
             return
 
         if self["downloadlist"].getCurrent():
@@ -393,7 +393,7 @@ class XStreamity_DownloadManager(Screen):
             currentindex = self["downloadlist"].getIndex()
 
             if self.downloads_all[currentindex][3] == _("Finished"):
-                self.session.open(MessageBox, _('File already downloaded.'), type=MessageBox.TYPE_INFO)
+                self.session.open(MessageBox, _("File already downloaded."), type=MessageBox.TYPE_INFO)
                 return
 
             parsed_uri = urlparse(self.url)
@@ -424,8 +424,8 @@ class XStreamity_DownloadManager(Screen):
 
                     self.filmtitle = self["downloadlist"].getCurrent()[1]
 
-                    self.cleanName = re.sub(r'[\<\>\:\"\/\\\|\?\*]', ' ', str(self.filmtitle))
-                    self.cleanName = re.sub(r'  ', ' ', self.cleanName)
+                    self.cleanName = re.sub(r'[\<\>\:\"\/\\\|\?\*]', " ", str(self.filmtitle))
+                    self.cleanName = re.sub(r"  ", " ", self.cleanName)
                     filename = str(self.cleanName) + str(self.extension)
                     self.shortpath = str(cfg.downloadlocation.getValue())
                     self.path = str(cfg.downloadlocation.getValue()) + str(filename)
@@ -439,13 +439,13 @@ class XStreamity_DownloadManager(Screen):
                             if result == 0:
                                 cmd = "wget --no-check-certificate -U 'Enigma2 - XStreamity Plugin' -c '%s' -O '%s%s'" % (self.url, self.shortpath, filename)
                             else:
-                                self.session.open(MessageBox, _('Please update your wget library to download https lines\n\nopkg update\nopkg install wget'), type=MessageBox.TYPE_INFO)
+                                self.session.open(MessageBox, _("Please update your wget library to download https lines\n\nopkg update\nopkg install wget"), type=MessageBox.TYPE_INFO)
                         else:
                             result = subprocess.run(checkcmd, shell=True)
                             if result.returncode == 0:
                                 cmd = "wget --no-check-certificate -U 'Enigma2 - XStreamity Plugin' -c '%s' -O '%s%s'" % (self.url, self.shortpath, filename)
                             else:
-                                self.session.open(MessageBox, _('Please update your wget library to download https lines\n\nopkg update\nopkg install wget'), type=MessageBox.TYPE_INFO)
+                                self.session.open(MessageBox, _("Please update your wget library to download https lines\n\nopkg update\nopkg install wget"), type=MessageBox.TYPE_INFO)
 
                     try:
                         JobManager.AddJob(downloadJob(self, cmd, self.path, self.cleanName))
@@ -460,14 +460,14 @@ class XStreamity_DownloadManager(Screen):
                 if self.downloads_all[currentindex][3] == _("Downloading"):
                     self.cancelDownload()
                 elif self.downloads_all[currentindex][3] == _("Not Started"):
-                    self.session.open(MessageBox, _('Multiple downloads not allowed. Please wait or cancel download.'), type=MessageBox.TYPE_INFO)
+                    self.session.open(MessageBox, _("Multiple downloads not allowed. Please wait or cancel download."), type=MessageBox.TYPE_INFO)
                     return
 
     def createMetaFile(self, filename, cleanName):
         try:
             serviceref = eServiceReference(4097, 0, self.shortpath + filename)
-            with open('%s/%s.meta' % (self.shortpath, filename), 'w') as f:
-                f.write('%s\n%s\n%s\n%i\n' % (serviceref.toString(), cleanName, "", time.time()))
+            with open("%s/%s.meta" % (self.shortpath, filename), "w") as f:
+                f.write("%s\n%s\n%s\n%i\n" % (serviceref.toString(), cleanName, "", time.time()))
         except Exception as e:
             print(e)
         return
@@ -475,7 +475,7 @@ class XStreamity_DownloadManager(Screen):
     def download_failed(self, data=None):
         self.downloading = False
         if "400 Bad Request" not in str(data):
-            self.session.openWithCallback(self.download_failed_error, MessageBox, _('Download Failed!\n') + str(data), MessageBox.TYPE_WARNING, timeout=5)
+            self.session.openWithCallback(self.download_failed_error, MessageBox, _("Download Failed!\n") + str(data), MessageBox.TYPE_WARNING, timeout=5)
 
     def download_failed_error(self, data=None):
         print("**** download_failed_error %s" % data)

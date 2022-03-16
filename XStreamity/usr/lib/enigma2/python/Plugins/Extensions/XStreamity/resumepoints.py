@@ -53,7 +53,7 @@ def getResumePoint(session, failed=False):
 def saveResumePoints():
     global resumePointCache
     try:
-        f = open('/etc/enigma2/xstreamity/resumepoints.pkl', 'wb')
+        f = open("/etc/enigma2/xstreamity/resumepoints.pkl", "wb")
         cPickle.dump(resumePointCache, f, cPickle.HIGHEST_PROTOCOL)
         f.close()
     except Exception as e:
@@ -62,7 +62,7 @@ def saveResumePoints():
 
 def loadResumePoints():
     try:
-        f = open('/etc/enigma2/xstreamity/resumepoints.pkl', 'rb')
+        f = open("/etc/enigma2/xstreamity/resumepoints.pkl", "rb")
         PickleFile = cPickle.load(f)
         f.close()
         return PickleFile

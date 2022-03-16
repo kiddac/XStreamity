@@ -24,24 +24,24 @@ class RecordDateInput(ConfigListScreen, Screen):
         Screen.__init__(self, session)
         self.session = session
 
-        skin = skin_path + 'settings.xml'
+        skin = skin_path + "settings.xml"
 
-        if os.path.exists('/var/lib/dpkg/status'):
-            skin = skin_path + 'DreamOS/settings.xml'
+        if os.path.exists("/var/lib/dpkg/status"):
+            skin = skin_path + "DreamOS/settings.xml"
 
-        with open(skin, 'r') as f:
+        with open(skin, "r") as f:
             self.skin = f.read()
 
         self.list = []
         ConfigListScreen.__init__(self, self.list, session=self.session)
 
-        self['key_red'] = StaticText(_('Close'))
-        self['key_green'] = StaticText(_('Save'))
+        self["key_red"] = StaticText(_("Close"))
+        self["key_green"] = StaticText(_("Save"))
 
-        self['VKeyIcon'] = Pixmap()
-        self['VKeyIcon'].hide()
-        self['HelpWindow'] = Pixmap()
-        self['HelpWindow'].hide()
+        self["VKeyIcon"] = Pixmap()
+        self["VKeyIcon"].hide()
+        self["HelpWindow"] = Pixmap()
+        self["HelpWindow"].hide()
 
         self.conf_name = config_name
         self.conf_date = config_date
@@ -49,15 +49,15 @@ class RecordDateInput(ConfigListScreen, Screen):
         self.conf_endtime = config_endtime
         self.conf_instant = config_instant
 
-        self.setup_title = (_('Please enter recording time'))
+        self.setup_title = (_("Please enter recording time"))
 
         if self.conf_instant:
-            self.setup_title = (_('Please enter recording end time'))
+            self.setup_title = (_("Please enter recording end time"))
 
-        self['actions'] = ActionMap(['XStreamityActions'], {
-            'cancel': self.cancel,
-            'red': self.cancel,
-            'green': self.keyGo,
+        self["actions"] = ActionMap(["XStreamityActions"], {
+            "cancel": self.cancel,
+            "red": self.cancel,
+            "green": self.keyGo,
         }, -2)
 
         self.onFirstExecBegin.append(self.initConfig)
@@ -68,12 +68,12 @@ class RecordDateInput(ConfigListScreen, Screen):
 
     def cancel(self, answer=None):
         if answer is None:
-            if self['config'].isChanged():
-                self.session.openWithCallback(self.cancel, MessageBox, _('Really close without saving settings?'))
+            if self["config"].isChanged():
+                self.session.openWithCallback(self.cancel, MessageBox, _("Really close without saving settings?"))
             else:
                 self.close()
         elif answer:
-            for x in self['config'].list:
+            for x in self["config"].list:
                 x[1].cancel()
 
             self.close()
@@ -89,14 +89,14 @@ class RecordDateInput(ConfigListScreen, Screen):
     def createSetup(self):
         self.list = []
 
-        self.list.append(getConfigListEntry(_('Name'), self.timeinput_name))
+        self.list.append(getConfigListEntry(_("Name"), self.timeinput_name))
         if self.conf_instant is False:
-            self.list.append(getConfigListEntry(_('Start Time'), self.timeinput_starttime))
+            self.list.append(getConfigListEntry(_("Start Time"), self.timeinput_starttime))
 
-        self.list.append(getConfigListEntry(_('End Time'), self.timeinput_endtime))
+        self.list.append(getConfigListEntry(_("End Time"), self.timeinput_endtime))
 
-        self['config'].list = self.list
-        self['config'].l.setList(self.list)
+        self["config"].list = self.list
+        self["config"].l.setList(self.list)
         self.handleInputHelpers()
 
     def handleInputHelpers(self):
@@ -105,15 +105,15 @@ class RecordDateInput(ConfigListScreen, Screen):
 
         if currConfig is not None:
             if isinstance(currConfig[1], ConfigText):
-                if 'VKeyIcon' in self:
-                    self['VKeyIcon'].show()
+                if "VKeyIcon" in self:
+                    self["VKeyIcon"].show()
 
                 if "HelpWindow" in self and currConfig[1].help_window and currConfig[1].help_window.instance is not None:
                     helpwindowpos = self["HelpWindow"].getPosition()
                     currConfig[1].help_window.instance.move(ePoint(helpwindowpos[0], helpwindowpos[1]))
             else:
-                if 'VKeyIcon' in self:
-                    self['VKeyIcon'].hide()
+                if "VKeyIcon" in self:
+                    self["VKeyIcon"].hide()
 
     def getTimestamp(self, date, mytime):
         d = time.localtime(date)

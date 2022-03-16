@@ -16,13 +16,13 @@ class XStreamityServicePosition(Poll, Converter, object):
         Poll.__init__(self)
         Converter.__init__(self, type)
 
-        args = type.split(',')
+        args = type.split(",")
         type = args.pop(0)
 
-        self.negate = 'Negate' in args
-        self.detailed = 'Detailed' in args
-        self.showHours = 'ShowHours' in args
-        self.showNoSeconds = 'ShowNoSeconds' in args
+        self.negate = "Negate" in args
+        self.detailed = "Detailed" in args
+        self.showHours = "ShowHours" in args
+        self.showNoSeconds = "ShowNoSeconds" in args
 
         if type == "Length":
             self.type = self.TYPE_LENGTH

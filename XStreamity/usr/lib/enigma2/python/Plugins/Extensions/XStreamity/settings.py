@@ -48,34 +48,34 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
         self.session = session
 
-        skin = skin_path + 'settings.xml'
+        skin = skin_path + "settings.xml"
 
-        if os.path.exists('/var/lib/dpkg/status'):
-            skin = skin_path + 'DreamOS/settings.xml'
+        if os.path.exists("/var/lib/dpkg/status"):
+            skin = skin_path + "DreamOS/settings.xml"
 
-        with open(skin, 'r') as f:
+        with open(skin, "r") as f:
             self.skin = f.read()
 
-        self.setup_title = (_('Main Settings'))
+        self.setup_title = (_("Main Settings"))
 
         self.onChangedEntry = []
 
         self.list = []
         ConfigListScreen.__init__(self, self.list, session=self.session, on_change=self.changedEntry)
 
-        self['key_red'] = StaticText(_('Back'))
-        self['key_green'] = StaticText(_('Save'))
+        self["key_red"] = StaticText(_("Back"))
+        self["key_green"] = StaticText(_("Save"))
 
-        self['VKeyIcon'] = Pixmap()
-        self['VKeyIcon'].hide()
-        self['HelpWindow'] = Pixmap()
-        self['HelpWindow'].hide()
+        self["VKeyIcon"] = Pixmap()
+        self["VKeyIcon"].hide()
+        self["HelpWindow"] = Pixmap()
+        self["HelpWindow"].hide()
 
-        self['actions'] = ActionMap(['XStreamityActions'], {
-            'cancel': self.cancel,
-            'red': self.cancel,
-            'green': self.save,
-            'ok': self.ok,
+        self["actions"] = ActionMap(["XStreamityActions"], {
+            "cancel": self.cancel,
+            "red": self.cancel,
+            "green": self.save,
+            "ok": self.ok,
         }, -2)
 
         self.initConfig()
@@ -87,12 +87,12 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
     def cancel(self, answer=None):
 
         if answer is None:
-            if self['config'].isChanged():
-                self.session.openWithCallback(self.cancel, MessageBox, _('Really close without saving settings?'))
+            if self["config"].isChanged():
+                self.session.openWithCallback(self.cancel, MessageBox, _("Really close without saving settings?"))
             else:
                 self.close()
         elif answer:
-            for x in self['config'].list:
+            for x in self["config"].list:
                 x[1].cancel()
 
             self.close()
@@ -100,13 +100,13 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
     def save(self):
         if cfg.adult.value is True and (cfg.adultpin.value == 0 or cfg.adultpin.value == 0000 or cfg.adultpin.value == 1111 or cfg.adultpin.value == 1234):
-            self.session.open(MessageBox, _('Please change default parental pin.\n\nPin cannot be 0000, 1111 or 1234'), MessageBox.TYPE_WARNING)
+            self.session.open(MessageBox, _("Please change default parental pin.\n\nPin cannot be 0000, 1111 or 1234"), MessageBox.TYPE_WARNING)
             return
         else:
             glob.changed = False
-            if self['config'].isChanged():
+            if self["config"].isChanged():
                 glob.changed = True
-                for x in self['config'].list:
+                for x in self["config"].list:
                     x[1].save()
                 cfg.save()
                 configfile.save()
@@ -116,7 +116,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
             self.close()
 
     def changedFinished(self):
-        self.session.openWithCallback(self.ExecuteRestart, MessageBox, _('You need to restart the GUI') + '\n' + _('Do you want to restart now?'), MessageBox.TYPE_YESNO)
+        self.session.openWithCallback(self.ExecuteRestart, MessageBox, _("You need to restart the GUI") + "\n" + _("Do you want to restart now?"), MessageBox.TYPE_YESNO)
         self.close()
 
     def ExecuteRestart(self, result):
@@ -127,32 +127,32 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
     def initConfig(self):
         # print("*** init config ***")
-        self.cfg_skin = getConfigListEntry(_('Select skin *Restart GUI Required'), cfg.skin)
-        self.cfg_location = getConfigListEntry(_('playlists.txt location'), cfg.location)
-        self.cfg_epglocation = getConfigListEntry(_('EPG download location'), cfg.epglocation)
-        self.cfg_downloadlocation = getConfigListEntry(_('VOD download folder'), cfg.downloadlocation)
-        self.cfg_timeout = getConfigListEntry(_('Server timeout (seconds)'), cfg.timeout)
+        self.cfg_skin = getConfigListEntry(_("Select skin *Restart GUI Required"), cfg.skin)
+        self.cfg_location = getConfigListEntry(_("playlists.txt location"), cfg.location)
+        self.cfg_epglocation = getConfigListEntry(_("EPG download location"), cfg.epglocation)
+        self.cfg_downloadlocation = getConfigListEntry(_("VOD download folder"), cfg.downloadlocation)
+        self.cfg_timeout = getConfigListEntry(_("Server timeout (seconds)"), cfg.timeout)
 
-        self.cfg_livetype = getConfigListEntry(_('Default LIVE stream type'), cfg.livetype)
-        self.cfg_vodtype = getConfigListEntry(_('Default VOD/SERIES stream type'), cfg.vodtype)
+        self.cfg_livetype = getConfigListEntry(_("Default LIVE stream type"), cfg.livetype)
+        self.cfg_vodtype = getConfigListEntry(_("Default VOD/SERIES stream type"), cfg.vodtype)
 
-        self.cfg_livepreview = getConfigListEntry(_('Preview LIVE streams in mini tv'), cfg.livepreview)
-        self.cfg_stopstream = getConfigListEntry(_('Stop stream on back button'), cfg.stopstream)
-        self.cfg_adult = getConfigListEntry(_('XStreamity parental control'), cfg.adult)
-        self.cfg_adultpin = getConfigListEntry(_('XStreamity parental pin'), cfg.adultpin)
-        self.cfg_main = getConfigListEntry(_('Show in main menu *Restart GUI Required'), cfg.main)
+        self.cfg_livepreview = getConfigListEntry(_("Preview LIVE streams in mini tv"), cfg.livepreview)
+        self.cfg_stopstream = getConfigListEntry(_("Stop stream on back button"), cfg.stopstream)
+        self.cfg_adult = getConfigListEntry(_("XStreamity parental control"), cfg.adult)
+        self.cfg_adultpin = getConfigListEntry(_("XStreamity parental pin"), cfg.adultpin)
+        self.cfg_main = getConfigListEntry(_("Show in main menu *Restart GUI Required"), cfg.main)
 
-        self.cfg_TMDB = getConfigListEntry(_('Use Movie Database(TMDB) for VOD & Series'), cfg.TMDB)
-        self.cfg_TMDBLanguage = getConfigListEntry(_('Movie Database language'), cfg.TMDBLanguage)
+        self.cfg_TMDB = getConfigListEntry(_("Use Movie Database(TMDB) for VOD & Series"), cfg.TMDB)
+        self.cfg_TMDBLanguage = getConfigListEntry(_("Movie Database language"), cfg.TMDBLanguage)
 
-        self.cfg_catchupstart = getConfigListEntry(_('Margin before catchup (mins)'), cfg.catchupstart)
-        self.cfg_catchupend = getConfigListEntry(_('Margin after catchup (mins)'), cfg.catchupend)
+        self.cfg_catchupstart = getConfigListEntry(_("Margin before catchup (mins)"), cfg.catchupstart)
+        self.cfg_catchupend = getConfigListEntry(_("Margin after catchup (mins)"), cfg.catchupend)
 
-        self.cfg_subs = getConfigListEntry(_('Allow SubsSupport plugin in VOD'), cfg.subs)
+        self.cfg_subs = getConfigListEntry(_("Allow SubsSupport plugin in VOD"), cfg.subs)
 
-        self.cfg_skipplaylistsscreen = getConfigListEntry(_('Skip playlist selection screen if only 1 playlist'), cfg.skipplaylistsscreen)
+        self.cfg_skipplaylistsscreen = getConfigListEntry(_("Skip playlist selection screen if only 1 playlist"), cfg.skipplaylistsscreen)
 
-        self.cfg_wakeup = getConfigListEntry(_('Automatic EPG download time *Restart GUI Required'), cfg.wakeup)
+        self.cfg_wakeup = getConfigListEntry(_("Automatic EPG download time *Restart GUI Required"), cfg.wakeup)
 
         self.org_skin = cfg.skin.getValue()
         self.org_main = cfg.main.getValue()
@@ -190,12 +190,12 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         if cfg.adult.value is True:
             self.list.append(self.cfg_adultpin)
 
-        if os.path.isdir('/usr/lib/enigma2/python/Plugins/Extensions/SubsSupport'):
+        if os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/SubsSupport"):
             self.list.append(self.cfg_subs)
 
         self.list.append(self.cfg_main)
-        self['config'].list = self.list
-        self['config'].l.setList(self.list)
+        self["config"].list = self.list
+        self["config"].l.setList(self.list)
         self.handleInputHelpers()
 
     def handleInputHelpers(self):
@@ -204,9 +204,9 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
         if currConfig is not None:
             if isinstance(currConfig[1], ConfigText):
-                if 'VKeyIcon' in self:
+                if "VKeyIcon" in self:
                     try:
-                        self['VirtualKB'].setEnabled(True)
+                        self["VirtualKB"].setEnabled(True)
                     except:
                         pass
 
@@ -214,16 +214,16 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
                         self["virtualKeyBoardActions"].setEnabled(True)
                     except:
                         pass
-                    self['VKeyIcon'].show()
+                    self["VKeyIcon"].show()
 
                 if "HelpWindow" in self and currConfig[1].help_window and currConfig[1].help_window.instance is not None:
                     helpwindowpos = self["HelpWindow"].getPosition()
                     currConfig[1].help_window.instance.move(ePoint(helpwindowpos[0], helpwindowpos[1]))
 
             else:
-                if 'VKeyIcon' in self:
+                if "VKeyIcon" in self:
                     try:
-                        self['VirtualKB'].setEnabled(False)
+                        self["VirtualKB"].setEnabled(False)
                     except:
                         pass
 
@@ -231,27 +231,27 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
                         self["virtualKeyBoardActions"].setEnabled(False)
                     except:
                         pass
-                    self['VKeyIcon'].hide()
+                    self["VKeyIcon"].hide()
 
     def changedEntry(self):
-        self.item = self['config'].getCurrent()
+        self.item = self["config"].getCurrent()
         for x in self.onChangedEntry:
             x()
 
         try:
-            if isinstance(self['config'].getCurrent()[1], ConfigYesNo) or isinstance(self['config'].getCurrent()[1], ConfigSelection):
+            if isinstance(self["config"].getCurrent()[1], ConfigYesNo) or isinstance(self["config"].getCurrent()[1], ConfigSelection):
                 self.createSetup()
         except:
             pass
 
     def getCurrentEntry(self):
-        return self['config'].getCurrent() and self['config'].getCurrent()[0] or ''
+        return self["config"].getCurrent() and self["config"].getCurrent()[0] or ""
 
     def getCurrentValue(self):
-        return self['config'].getCurrent() and str(self['config'].getCurrent()[1].getText()) or ''
+        return self["config"].getCurrent() and str(self["config"].getCurrent()[1].getText()) or ""
 
     def ok(self):
-        sel = self['config'].getCurrent()[1]
+        sel = self["config"].getCurrent()[1]
         if sel and sel == cfg.location:
             self.openDirectoryBrowser(cfg.location.value, "location")
         elif sel and sel == cfg.downloadlocation:
@@ -272,8 +272,8 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
                 self.session.openWithCallback(
                     self.openDirectoryBrowserCB,
                     LocationBox,
-                    windowTitle=_('Choose Directory:'),
-                    text=_('Choose directory'),
+                    windowTitle=_("Choose Directory:"),
+                    text=_("Choose directory"),
                     currDir=path,
                     bookmarks=config.movielist.videodirs)
             except Exception as e:
@@ -285,8 +285,8 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
                 self.session.openWithCallback(
                     self.openDirectoryBrowserCB2,
                     LocationBox,
-                    windowTitle=_('Choose Directory:'),
-                    text=_('Choose directory'),
+                    windowTitle=_("Choose Directory:"),
+                    text=_("Choose directory"),
                     currDir=path,
                     bookmarks=config.movielist.videodirs)
             except Exception as e:
@@ -298,8 +298,8 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
                 self.session.openWithCallback(
                     self.openDirectoryBrowserCB3,
                     LocationBox,
-                    windowTitle=_('Choose Directory:'),
-                    text=_('Choose directory'),
+                    windowTitle=_("Choose Directory:"),
+                    text=_("Choose directory"),
                     currDir=path,
                     bookmarks=config.movielist.videodirs)
             except Exception as e:

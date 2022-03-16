@@ -25,8 +25,8 @@ class XStreamity_MainMenu(Screen):
         Screen.__init__(self, session)
         self.session = session
 
-        skin = skin_path + 'mainmenu.xml'
-        with open(skin, 'r') as f:
+        skin = skin_path + "mainmenu.xml"
+        with open(skin, "r") as f:
             self.skin = f.read()
 
         self.list = []
@@ -34,26 +34,26 @@ class XStreamity_MainMenu(Screen):
         self.playlists_all = []
         self["list"] = List(self.drawList, enableWrapAround=True)
 
-        self.setup_title = (_('Main Menu'))
+        self.setup_title = (_("Main Menu"))
 
-        self['key_red'] = StaticText(_('Back'))
-        self['key_green'] = StaticText(_('OK'))
-        self['key_blue'] = StaticText(_('Reset JSON'))
+        self["key_red"] = StaticText(_("Back"))
+        self["key_green"] = StaticText(_("OK"))
+        self["key_blue"] = StaticText(_("Reset JSON"))
 
-        self['version'] = StaticText()
+        self["version"] = StaticText()
 
-        self['actions'] = ActionMap(['XStreamityActions'], {
-            'red': self.quit,
-            'green': self.__next__,
-            'ok': self.__next__,
-            'cancel': self.quit,
-            'menu': self.settings,
-            'help': self.resetData,
-            'blue': self.resetData
+        self["actions"] = ActionMap(["XStreamityActions"], {
+            "red": self.quit,
+            "green": self.__next__,
+            "ok": self.__next__,
+            "cancel": self.quit,
+            "menu": self.settings,
+            "help": self.resetData,
+            "blue": self.resetData
         }, -2)
 
         self.clear_caches()
-        self['version'].setText(version)
+        self["version"].setText(version)
 
         if self.session.nav.getCurrentlyPlayingServiceReference():
             glob.currentPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
@@ -181,11 +181,11 @@ class XStreamity_MainMenu(Screen):
 
     def resetData(self, answer=None):
         if answer is None:
-            self.session.openWithCallback(self.resetData, MessageBox, _('Warning: delete stored json data for all playlists... Settings, favourites etc. \nPlaylists will not be deleted.\nDo you wish to continue?'))
+            self.session.openWithCallback(self.resetData, MessageBox, _("Warning: delete stored json data for all playlists... Settings, favourites etc. \nPlaylists will not be deleted.\nDo you wish to continue?"))
         elif answer:
             os.remove(playlists_json)
             if not os.path.isfile(playlists_json):
-                open(playlists_json, 'a').close()
+                open(playlists_json, "a").close()
             self.quit()
 
 

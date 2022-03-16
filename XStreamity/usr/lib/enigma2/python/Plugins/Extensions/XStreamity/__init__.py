@@ -7,8 +7,8 @@ import gettext
 
 from os import environ as os_environ
 
-PluginLanguageDomain = 'XStreamity'
-PluginLanguagePath = 'Extensions/XStreamity/locale'
+PluginLanguageDomain = "XStreamity"
+PluginLanguagePath = "Extensions/XStreamity/locale"
 
 try:
     from enigma import eMediaDatabase

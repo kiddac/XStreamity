@@ -45,7 +45,7 @@ def quickptime(str):
 
 def get_time_utc(timestring, fdateparse):
     try:
-        values = timestring.split(' ')
+        values = timestring.split(" ")
         tm = fdateparse(values[0])
         timegm = calendar.timegm(tm)
         timegm -= (3600 * int(values[1]) / 100)
@@ -222,27 +222,27 @@ class XStreamity_Update:
         try:
             for event, elem in iterparse(fileobj):
 
-                if elem.tag == 'channel':
+                if elem.tag == "channel":
                     elem.clear()
 
-                if elem.tag == 'programme':
-                    channel = elem.get('channel')
+                if elem.tag == "programme":
+                    channel = elem.get("channel")
                     if channel:
                         try:
-                            start = elem.get('start')
-                            stop = elem.get('stop')
+                            start = elem.get("start")
+                            stop = elem.get("stop")
                         except:
                             continue
 
                         try:
-                            title = elem.find('title').text
+                            title = elem.find("title").text
                         except:
-                            title = ''
+                            title = ""
 
                         try:
-                            desc = elem.find('desc').text
+                            desc = elem.find("desc").text
                         except:
-                            desc = ''
+                            desc = ""
 
                         if channel and start and stop:
                             yield channel.lower(), start, stop, title or "", desc or ""

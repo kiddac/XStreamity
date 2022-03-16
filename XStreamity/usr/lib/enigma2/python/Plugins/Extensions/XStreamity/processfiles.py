@@ -16,11 +16,11 @@ except:
 def processfiles():
     # check if playlists.txt file exists in specified location
     if not os.path.isfile(playlist_file):
-        open(playlist_file, 'a').close()
+        open(playlist_file, "a").close()
 
     # check if x-playlists.json file exists in specified location
     if not os.path.isfile(playlists_json):
-        open(playlists_json, 'a').close()
+        open(playlists_json, "a").close()
 
     playlists_all = []
     if os.path.isfile(playlists_json):
@@ -31,15 +31,15 @@ def processfiles():
                 os.remove(playlists_json)
 
     # check playlist.txt entries are valid
-    with open(playlist_file, 'r+') as f:
+    with open(playlist_file, "r+") as f:
         lines = f.readlines()
 
-    with open(playlist_file, 'w') as f:
+    with open(playlist_file, "w") as f:
         for line in lines:
-            line = re.sub(' +', ' ', line)
-            line = line.strip(' ')
-            if not line.startswith('http://') and not line.startswith('https://') and not line.startswith('#'):
-                line = '# ' + line
+            line = re.sub(" +", " ", line)
+            line = line.strip(" ")
+            if not line.startswith("http://") and not line.startswith("https://") and not line.startswith("#"):
+                line = "# " + line
             if "=mpegts" in line:
                 line = line.replace("=mpegts", "=ts")
             if "=hls" in line:
@@ -58,10 +58,10 @@ def processfiles():
         for line in lines:
 
             port = 80
-            username = ''
-            password = ''
-            type = 'm3u_plus'
-            output = 'ts'
+            username = ""
+            password = ""
+            type = "m3u_plus"
+            output = "ts"
             livehidden = []
             channelshidden = []
             vodhidden = []
@@ -81,14 +81,14 @@ def processfiles():
             vodfavourites = []
             live_streams = []
             catchup_checked = False
-            last_check = ''
+            last_check = ""
 
             serveroffset = 0
             epgoffset = 0
             epgalternative = False
             epgalternativeurl = ""
 
-            if not line.startswith("#") and line.startswith('http'):
+            if not line.startswith("#") and line.startswith("http"):
                 line = line.strip()
 
                 parsed_uri = urlparse(line)
@@ -111,24 +111,24 @@ def processfiles():
                 query = parse_qs(parsed_uri.query, keep_blank_values=True)
 
                 if "username" in query:
-                    username = query['username'][0].strip()
+                    username = query["username"][0].strip()
                 else:
                     continue
 
                 if "password" in query:
-                    password = query['password'][0].strip()
+                    password = query["password"][0].strip()
                 else:
                     continue
 
                 if "type" in query:
-                    type = query['type'][0].strip()
+                    type = query["type"][0].strip()
 
                 if "output" in query:
-                    output = query['output'][0].strip()
+                    output = query["output"][0].strip()
 
                 if "timeshift" in query:
                     try:
-                        epgoffset = int(query['timeshift'][0].strip())
+                        epgoffset = int(query["timeshift"][0].strip())
                     except:
                         pass
 
@@ -257,8 +257,8 @@ def processfiles():
                             ("live_streams", []),
                             ("catchup", False),
                             ("catchup_checked", False),
-                            ("last_check", ''),
-                            ("epg_date", ''),
+                            ("last_check", ""),
+                            ("epg_date", ""),
                             ("data_downloaded", False),
                             ("epg_importer_files", False)
                         ]),
@@ -272,15 +272,15 @@ def processfiles():
 
             for playlist in playlists_all:
                 for line in lines:
-                    if not line.startswith('#'):
-                        if str(playlist["playlist_info"]["domain"]) in line and 'username=' + str(playlist["playlist_info"]["username"]) in line and 'password=' + str(playlist["playlist_info"]["password"]) in line:
+                    if not line.startswith("#"):
+                        if str(playlist["playlist_info"]["domain"]) in line and "username=" + str(playlist["playlist_info"]["username"]) in line and "password=" + str(playlist["playlist_info"]["password"]) in line:
                             newList.append(playlist)
                             break
 
             playlists_all = newList
 
     # write new x-playlists.json file
-    with open(playlists_json, 'w') as f:
+    with open(playlists_json, "w") as f:
         json.dump(playlists_all, f)
 
     return playlists_all
