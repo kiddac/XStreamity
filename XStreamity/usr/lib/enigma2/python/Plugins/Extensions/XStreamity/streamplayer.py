@@ -145,17 +145,17 @@ Image.preinit = _mypreinit
 
 
 VIDEO_ASPECT_RATIO_MAP = {
-    0: '4:3 Letterbox',
-    1: '4:3 PanScan',
-    2: '16:9',
-    3: '16:9 Always',
-    4: '16:10 Letterbox',
-    5: '16:10 PanScan',
-    6: '16:9 Letterbox'
+    0: "4:3 Letterbox",
+    1: "4:3 PanScan",
+    2: "16:9",
+    3: "16:9 Always",
+    4: "16:10 Letterbox",
+    5: "16:10 PanScan",
+    6: "16:9 Letterbox"
 }
 
 streamtypelist = ["1", "4097"]
-vodstreamtypelist = [('4097', 'IPTV(4097)')]
+vodstreamtypelist = [("4097", "IPTV(4097)")]
 
 if os.path.exists("/usr/bin/gstplayer"):
     streamtypelist.append("5001")
@@ -283,7 +283,7 @@ class IPTVInfoBarPVRState:
         self.force_show = force_show
 
     def _mayShow(self):
-        if 'state' in self and not self.force_show:
+        if "state" in self and not self.force_show:
             self["state"].setText("")
             self["statusicon"].setPixmapNum(6)
             self["speed"].setText("")
@@ -301,33 +301,33 @@ class IPTVInfoBarPVRState:
             self.pvrStateDialog["speed"].setText("")
             speed_summary = self.pvrStateDialog["speed"].text
             if playstateString:
-                if playstateString == '>':
+                if playstateString == ">":
                     statusicon_summary = 0
                     self.pvrStateDialog["statusicon"].setPixmapNum(statusicon_summary)
 
-                elif playstateString == '||':
+                elif playstateString == "||":
                     statusicon_summary = 1
                     self.pvrStateDialog["statusicon"].setPixmapNum(statusicon_summary)
 
-                elif playstateString == 'END':
+                elif playstateString == "END":
                     statusicon_summary = 2
                     self.pvrStateDialog["statusicon"].setPixmapNum(statusicon_summary)
 
-                elif playstateString.startswith('>>'):
+                elif playstateString.startswith(">>"):
                     speed = state[3].split()
                     statusicon_summary = 3
                     self.pvrStateDialog["statusicon"].setPixmapNum(statusicon_summary)
                     self.pvrStateDialog["speed"].setText(speed[1])
                     speedtext = speed[1]
 
-                elif playstateString.startswith('<<'):
+                elif playstateString.startswith("<<"):
                     speed = state[3].split()
                     statusicon_summary = 4
                     self.pvrStateDialog["statusicon"].setPixmapNum(statusicon_summary)
                     self.pvrStateDialog["speed"].setText(speed[1])
                     speedtext = speed[1]
 
-                elif playstateString.startswith('/'):
+                elif playstateString.startswith("/"):
                     statusicon_summary = 5
                     self.pvrStateDialog["statusicon"].setPixmapNum(statusicon_summary)
                     self.pvrStateDialog["speed"].setText(playstateString)
@@ -374,7 +374,7 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
         self.direct_source = direct_source
         self.hasStreamData = False
 
-        skin = skin_path + 'streamplayer.xml'
+        skin = skin_path + "streamplayer.xml"
 
         self["x_description"] = StaticText()
         self["nowchannel"] = StaticText()
@@ -399,13 +399,13 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
 
         self.ar_id_player = 0
 
-        with open(skin, 'r') as f:
+        with open(skin, "r") as f:
             self.skin = f.read()
 
-        self.setup_title = _('TV')
+        self.setup_title = _("TV")
 
-        self['actions'] = ActionMap(["XStreamityActions"], {
-            'cancel': self.back,
+        self["actions"] = ActionMap(["XStreamityActions"], {
+            "cancel": self.back,
             "stop": self.back,
             "red": self.back,
 
@@ -413,8 +413,8 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             "down": self.__next__,
             "channelDown": self.prev,
             "up": self.prev,
-            'tv': self.toggleStreamType,
-            'info': self.toggleStreamType,
+            "tv": self.toggleStreamType,
+            "info": self.toggleStreamType,
             "green": self.nextAR,
             "rec": self.IPTVstartInstantRecording,
             "blue": self.showLog,
@@ -457,7 +457,7 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             name = ret[3]
 
             description = glob.currentepglist[glob.currentchannellistindex][4]
-            eventid = int(self.streamurl.rpartition('/')[-1].partition('.')[0])
+            eventid = int(self.streamurl.rpartition("/")[-1].partition(".")[0])
             serviceref = eServiceReference(1, 0, self.streamurl)
 
             if isinstance(serviceref, eServiceReference):
@@ -471,9 +471,9 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             if simulTimerList is None:  # no conflict
                 recording.autoincrease = False
 
-                self.session.open(MessageBox, _('Recording Timer Set.'), MessageBox.TYPE_INFO, timeout=5)
+                self.session.open(MessageBox, _("Recording Timer Set."), MessageBox.TYPE_INFO, timeout=5)
             else:
-                self.session.open(MessageBox, _('Recording Failed.'), MessageBox.TYPE_WARNING)
+                self.session.open(MessageBox, _("Recording Failed."), MessageBox.TYPE_WARNING)
                 return
         else:
             return
@@ -501,17 +501,17 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
         except:
             pass
 
-        start = ''
-        end = ''
+        start = ""
+        end = ""
         percent = 0
 
-        if glob.currentepglist[glob.currentchannellistindex][2] != '':
+        if glob.currentepglist[glob.currentchannellistindex][2] != "":
             start = glob.currentepglist[glob.currentchannellistindex][2]
 
-        if glob.currentepglist[glob.currentchannellistindex][5] != '':
+        if glob.currentepglist[glob.currentchannellistindex][5] != "":
             end = glob.currentepglist[glob.currentchannellistindex][5]
 
-        if start != '' and end != '':
+        if start != "" and end != "":
             self["progress"].show()
             start_time = datetime.strptime(start, "%H:%M")
             end_time = datetime.strptime(end, "%H:%M")
@@ -640,7 +640,7 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
         self.playStream(self.servicetype, self.streamurl, self.direct_source)
 
     def back(self):
-        glob.nextlist[-1]['index'] = glob.currentchannellistindex
+        glob.nextlist[-1]["index"] = glob.currentchannellistindex
         self.close()
 
     def toggleStreamType(self):
@@ -657,19 +657,19 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
 
     def downloadImage(self):
         try:
-            os.remove(str(dir_tmp) + 'original.png')
-            os.remove(str(dir_tmp) + 'temp.png')
+            os.remove(str(dir_tmp) + "original.png")
+            os.remove(str(dir_tmp) + "temp.png")
         except:
             pass
 
-        desc_image = ''
+        desc_image = ""
         try:
             desc_image = glob.currentchannellist[glob.currentchannellistindex][5]
         except:
             pass
 
         if desc_image and desc_image != "n/A":
-            temp = dir_tmp + 'temp.png'
+            temp = dir_tmp + "temp.png"
             try:
                 parsed = urlparse(desc_image)
                 domain = parsed.hostname
@@ -693,7 +693,7 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             self["picon"].instance.setPixmapFromFile(common_path + "picon.png")
 
     def resizeImage(self, data=None):
-        original = str(dir_tmp) + 'temp.png'
+        original = str(dir_tmp) + "temp.png"
 
         size = [147, 88]
         if screenwidth.width() > 1280:
@@ -701,23 +701,23 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
 
         if os.path.exists(original):
             try:
-                im = Image.open(original).convert('RGBA')
+                im = Image.open(original).convert("RGBA")
                 im.thumbnail(size, Image.ANTIALIAS)
 
                 # crop and center image
-                bg = Image.new('RGBA', size, (255, 255, 255, 0))
+                bg = Image.new("RGBA", size, (255, 255, 255, 0))
 
                 imagew, imageh = im.size
-                im_alpha = im.convert('RGBA').split()[-1]
+                im_alpha = im.convert("RGBA").split()[-1]
                 bgwidth, bgheight = bg.size
-                bg_alpha = bg.convert('RGBA').split()[-1]
-                temp = Image.new('L', (bgwidth, bgheight), 0)
+                bg_alpha = bg.convert("RGBA").split()[-1]
+                temp = Image.new("L", (bgwidth, bgheight), 0)
                 temp.paste(im_alpha, (int((bgwidth - imagew) / 2), int((bgheight - imageh) / 2)), im_alpha)
                 bg_alpha = ImageChops.screen(bg_alpha, temp)
                 bg.paste(im, (int((bgwidth - imagew) / 2), int((bgheight - imageh) / 2)))
                 im = bg
 
-                im.save(original, 'PNG')
+                im.save(original, "PNG")
 
                 if self["picon"].instance:
                     self["picon"].instance.setPixmapFromFile(original)
@@ -763,11 +763,11 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             if self.ar_id_player > 6:
                 self.ar_id_player = 0
             eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
-            # print('self.ar_id_player NEXT %s' % VIDEO_ASPECT_RATIO_MAP[self.ar_id_player])
+            # print("self.ar_id_player NEXT %s" % VIDEO_ASPECT_RATIO_MAP[self.ar_id_player])
             return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
         except Exception as e:
             print(ex)
-            return 'nextAR ERROR %s' % e
+            return "nextAR ERROR %s" % e
 
     def nextAR(self):
         message = self.nextARfunction()
@@ -785,8 +785,8 @@ class XStreamityCueSheetSupport:
         self.is_closing = False
         self.started = False
         self.resume_point = ""
-        if not os.path.exists('/etc/enigma2/xstreamity/resumepoints.pkl'):
-            with open('/etc/enigma2/xstreamity/resumepoints.pkl', "w"):
+        if not os.path.exists("/etc/enigma2/xstreamity/resumepoints.pkl"):
+            with open("/etc/enigma2/xstreamity/resumepoints.pkl", "w"):
                 pass
 
         self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
@@ -881,7 +881,7 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
         self.servicetype = servicetype
         self.direct_source = direct_source
 
-        skin = skin_path + 'vodplayer.xml'
+        skin = skin_path + "vodplayer.xml"
 
         self["streamcat"] = StaticText()
         self["streamtype"] = StaticText()
@@ -906,24 +906,24 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
 
         self.ar_id_player = 0
 
-        with open(skin, 'r') as f:
+        with open(skin, "r") as f:
             self.skin = f.read()
 
-        self.setup_title = _('VOD')
+        self.setup_title = _("VOD")
 
-        self['actions'] = ActionMap(["XStreamityActions"], {
-            'cancel': self.back,
+        self["actions"] = ActionMap(["XStreamityActions"], {
+            "cancel": self.back,
             "stop": self.back,
             "red": self.back,
-            'tv': self.toggleStreamType,
-            'info': self.toggleStreamType,
+            "tv": self.toggleStreamType,
+            "info": self.toggleStreamType,
             "green": self.nextAR,
         }, -2)
 
         self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl, self.direct_source))
 
     def playStream(self, servicetype, streamurl, direct_source):
-        if streamurl != 'None' and "/movie/" in streamurl:
+        if streamurl != "None" and "/movie/" in streamurl:
             self["streamcat"].setText("VOD")
         else:
             self["streamcat"].setText("Series")
@@ -954,17 +954,17 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
 
     def downloadImage(self):
         try:
-            os.remove(str(dir_tmp) + 'original.jpg')
-            os.remove(str(dir_tmp) + 'temp.jpg')
+            os.remove(str(dir_tmp) + "original.jpg")
+            os.remove(str(dir_tmp) + "temp.jpg")
         except:
             pass
 
-        desc_image = ''
+        desc_image = ""
 
         desc_image = glob.currentchannellist[glob.currentchannellistindex][5]
 
         if desc_image and desc_image != "n/A":
-            temp = dir_tmp + 'temp.jpg'
+            temp = dir_tmp + "temp.jpg"
             try:
                 parsed = urlparse(desc_image)
                 domain = parsed.hostname
@@ -989,7 +989,7 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
 
     def resizeImage(self, data=None):
         if self["cover"].instance:
-            preview = str(dir_tmp) + 'temp.jpg'
+            preview = str(dir_tmp) + "temp.jpg"
 
             width = 147
             height = 220
@@ -1017,7 +1017,7 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
             self["cover"].instance.show()
 
     def back(self):
-        glob.nextlist[-1]['index'] = glob.currentchannellistindex
+        glob.nextlist[-1]["index"] = glob.currentchannellistindex
         try:
             setResumePoint(self.session)
 
@@ -1033,7 +1033,10 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
                 currentindex = index
                 break
         nextStreamType = islice(cycle(vodstreamtypelist), currentindex + 1, None)
-        self.servicetype = int(next(nextStreamType))
+        try:
+            self.servicetype = int(next(nextStreamType))
+        except:
+            pass
         self.playStream(self.servicetype, self.streamurl, self.direct_source)
 
     def nextARfunction(self):
@@ -1042,11 +1045,11 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
             if self.ar_id_player > 6:
                 self.ar_id_player = 0
             eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
-            # print('self.ar_id_player NEXT %s' % VIDEO_ASPECT_RATIO_MAP[self.ar_id_player])
+            # print("self.ar_id_player NEXT %s" % VIDEO_ASPECT_RATIO_MAP[self.ar_id_player])
             return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
         except Exception as e:
             print(ex)
-            return 'nextAR ERROR %s' % e
+            return "nextAR ERROR %s" % e
 
     def nextAR(self):
         message = self.nextARfunction()
@@ -1090,7 +1093,7 @@ class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAud
         self.streamurl = streamurl
         self.servicetype = servicetype
 
-        skin = skin_path + 'catchupplayer.xml'
+        skin = skin_path + "catchupplayer.xml"
         self["x_description"] = StaticText()
         self["streamcat"] = StaticText()
         self["streamtype"] = StaticText()
@@ -1107,17 +1110,17 @@ class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAud
 
         self.ar_id_player = 0
 
-        with open(skin, 'r') as f:
+        with open(skin, "r") as f:
             self.skin = f.read()
 
-        self.setup_title = _('Catch Up')
+        self.setup_title = _("Catch Up")
 
-        self['actions'] = ActionMap(["XStreamityActions"], {
-            'cancel': self.back,
-            'red': self.back,
+        self["actions"] = ActionMap(["XStreamityActions"], {
+            "cancel": self.back,
+            "red": self.back,
             "stop": self.back,
-            'tv': self.toggleStreamType,
-            'info': self.toggleStreamType,
+            "tv": self.toggleStreamType,
+            "info": self.toggleStreamType,
             "green": self.nextAR,
         }, -2)
 
@@ -1150,8 +1153,8 @@ class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAud
 
     def downloadImage(self):
         try:
-            os.remove(str(dir_tmp) + 'original.png')
-            os.remove(str(dir_tmp) + 'temp.png')
+            os.remove(str(dir_tmp) + "original.png")
+            os.remove(str(dir_tmp) + "temp.png")
         except:
             pass
 
@@ -1159,10 +1162,10 @@ class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAud
             desc_image = glob.currentchannellist[glob.currentchannellistindex][5]
         except:
             pass
-            desc_image = ''
+            desc_image = ""
 
         if desc_image and desc_image != "n/A":
-            temp = dir_tmp + 'temp.png'
+            temp = dir_tmp + "temp.png"
             try:
                 parsed = urlparse(desc_image)
                 domain = parsed.hostname
@@ -1187,7 +1190,7 @@ class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAud
 
     def resizeImage(self, data=None):
         # print("*** resizeImage ***")
-        original = str(dir_tmp) + 'temp.png'
+        original = str(dir_tmp) + "temp.png"
 
         size = [147, 88]
         if screenwidth.width() > 1280:
@@ -1195,23 +1198,23 @@ class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAud
 
         if os.path.exists(original):
             try:
-                im = Image.open(original).convert('RGBA')
+                im = Image.open(original).convert("RGBA")
                 im.thumbnail(size, Image.ANTIALIAS)
 
                 # crop and center image
-                bg = Image.new('RGBA', size, (255, 255, 255, 0))
+                bg = Image.new("RGBA", size, (255, 255, 255, 0))
 
                 imagew, imageh = im.size
-                im_alpha = im.convert('RGBA').split()[-1]
+                im_alpha = im.convert("RGBA").split()[-1]
                 bgwidth, bgheight = bg.size
-                bg_alpha = bg.convert('RGBA').split()[-1]
-                temp = Image.new('L', (bgwidth, bgheight), 0)
+                bg_alpha = bg.convert("RGBA").split()[-1]
+                temp = Image.new("L", (bgwidth, bgheight), 0)
                 temp.paste(im_alpha, (int((bgwidth - imagew) / 2), int((bgheight - imageh) / 2)), im_alpha)
                 bg_alpha = ImageChops.screen(bg_alpha, temp)
                 bg.paste(im, (int((bgwidth - imagew) / 2), int((bgheight - imageh) / 2)))
                 im = bg
 
-                im.save(original, 'PNG')
+                im.save(original, "PNG")
 
                 if self["picon"].instance:
                     self["picon"].instance.setPixmapFromFile(original)
@@ -1223,7 +1226,7 @@ class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAud
             self.loadDefaultImage()
 
     def back(self):
-        glob.nextlist[-1]['index'] = glob.currentchannellistindex
+        glob.nextlist[-1]["index"] = glob.currentchannellistindex
         try:
             setResumePoint(self.session)
         except Exception as e:
@@ -1247,11 +1250,11 @@ class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAud
             if self.ar_id_player > 6:
                 self.ar_id_player = 0
             eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
-            # print('self.ar_id_player NEXT %s' % VIDEO_ASPECT_RATIO_MAP[self.ar_id_player])
+            # print("self.ar_id_player NEXT %s" % VIDEO_ASPECT_RATIO_MAP[self.ar_id_player])
             return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
         except Exception as e:
             print(ex)
-            return 'nextAR ERROR %s' % e
+            return "nextAR ERROR %s" % e
 
     def nextAR(self):
         message = self.nextARfunction()
