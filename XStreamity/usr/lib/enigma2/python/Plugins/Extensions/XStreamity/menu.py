@@ -32,39 +32,39 @@ class XStreamity_Menu(Screen):
         Screen.__init__(self, session)
         self.session = session
 
-        skin = skin_path + 'menu.xml'
-        with open(skin, 'r') as f:
+        skin = skin_path + "menu.xml"
+        with open(skin, "r") as f:
             self.skin = f.read()
 
         self.list = []
         self.drawList = []
         self["list"] = List(self.drawList, enableWrapAround=True)
 
-        self.setup_title = str(glob.current_playlist['playlist_info']['name'])
+        self.setup_title = str(glob.current_playlist["playlist_info"]["name"])
 
-        self['key_red'] = StaticText(_('Back'))
-        self['key_green'] = StaticText(_('OK'))
-        self['key_blue'] = StaticText(_('Update'))
+        self["key_red"] = StaticText(_("Back"))
+        self["key_green"] = StaticText(_("OK"))
+        self["key_blue"] = StaticText(_("Update"))
 
-        self['lastchecked'] = StaticText(_("Catchup channel check updated: ") + str(glob.current_playlist['data']['last_check']))
+        self["lastchecked"] = StaticText(_("Catchup channel check updated: ") + str(glob.current_playlist["data"]["last_check"]))
 
         self["splash"] = Pixmap()
         self["splash"].show()
 
-        self['actions'] = ActionMap(['XStreamityActions'], {
-            'red': self.quit,
-            'cancel': self.quit,
-            'menu': self.settings,
-            'blue': self.updateCategories,
-            'green': self.__next__,
-            'ok': self.__next__,
+        self["actions"] = ActionMap(["XStreamityActions"], {
+            "red": self.quit,
+            "cancel": self.quit,
+            "menu": self.settings,
+            "blue": self.updateCategories,
+            "green": self.__next__,
+            "ok": self.__next__,
         }, -2)
 
-        self.protocol = glob.current_playlist['playlist_info']['protocol']
-        self.domain = glob.current_playlist['playlist_info']['domain']
-        self.host = glob.current_playlist['playlist_info']['host']
-        self.username = glob.current_playlist['playlist_info']['username']
-        self.password = glob.current_playlist['playlist_info']['password']
+        self.protocol = glob.current_playlist["playlist_info"]["protocol"]
+        self.domain = glob.current_playlist["playlist_info"]["domain"]
+        self.host = glob.current_playlist["playlist_info"]["host"]
+        self.username = glob.current_playlist["playlist_info"]["username"]
+        self.password = glob.current_playlist["playlist_info"]["password"]
 
         self.live_streams = "%s/player_api.php?username=%s&password=%s&action=get_live_streams" % (self.host, self.username, self.password)
         self.p_live_categories_url = "%s/player_api.php?username=%s&password=%s&action=get_live_categories" % (self.host, self.username, self.password)
@@ -72,7 +72,7 @@ class XStreamity_Menu(Screen):
         self.p_series_categories_url = "%s/player_api.php?username=%s&password=%s&action=get_series_categories" % (self.host, self.username, self.password)
         self.p_live_streams_url = "%s/player_api.php?username=%s&password=%s&action=get_live_streams" % (self.host, self.username, self.password)
 
-        glob.current_playlist['data']['live_streams'] = []
+        glob.current_playlist["data"]["live_streams"] = []
 
         self.onFirstExecBegin.append(self.start)
         self.onLayoutFinish.append(self.__layoutFinished)
@@ -82,9 +82,9 @@ class XStreamity_Menu(Screen):
 
     # delay to allow splash screen to show
     def start(self):
-        if glob.current_playlist['data']['data_downloaded'] is False:
-            glob.current_playlist['data']['last_check'] = datetime.now().strftime("%d/%m/%Y %H:%M")
-            self['lastchecked'].setText(_("Last catchup check: ") + str(glob.current_playlist['data']['last_check']))
+        if glob.current_playlist["data"]["data_downloaded"] is False:
+            glob.current_playlist["data"]["last_check"] = datetime.now().strftime("%d/%m/%Y %H:%M")
+            self["lastchecked"].setText(_("Last catchup check: ") + str(glob.current_playlist["data"]["last_check"]))
 
             self.timer = eTimer()
             try:
@@ -106,8 +106,8 @@ class XStreamity_Menu(Screen):
         self.url_list.append([self.p_vod_categories_url, 1])
         self.url_list.append([self.p_series_categories_url, 2])
 
-        if glob.current_playlist['player_info']['showcatchup'] is True:
-            if glob.current_playlist['data']['catchup_checked'] is False or glob.current_playlist['data']['catchup'] is False:
+        if glob.current_playlist["player_info"]["showcatchup"] is True:
+            if glob.current_playlist["data"]["catchup_checked"] is False or glob.current_playlist["data"]["catchup"] is False:
                 self.url_list.append([self.p_live_streams_url, 3])
 
         self.process_downloads()
@@ -115,7 +115,7 @@ class XStreamity_Menu(Screen):
     def download_url(self, url):
         timeout = cfg.timeout.getValue()
         category = url[1]
-        r = ''
+        r = ""
 
         adapter = HTTPAdapter()
         http = requests.Session()
@@ -129,13 +129,13 @@ class XStreamity_Menu(Screen):
 
         except Exception as e:
             print(e)
-            return category, ''
+            return category, ""
 
     def process_downloads(self):
         self.retry = 0
-        glob.current_playlist['data']['live_categories'] = []
-        glob.current_playlist['data']['vod_categories'] = []
-        glob.current_playlist['data']['series_categories'] = []
+        glob.current_playlist["data"]["live_categories"] = []
+        glob.current_playlist["data"]["vod_categories"] = []
+        glob.current_playlist["data"]["series_categories"] = []
 
         threads = len(self.url_list)
 
@@ -150,17 +150,17 @@ class XStreamity_Menu(Screen):
                 for category, response in results:
                     if response:
                         if category == 0:
-                            glob.current_playlist['data']['live_categories'] = response
+                            glob.current_playlist["data"]["live_categories"] = response
                         if category == 1:
-                            glob.current_playlist['data']['vod_categories'] = response
+                            glob.current_playlist["data"]["vod_categories"] = response
                         if category == 2:
-                            glob.current_playlist['data']['series_categories'] = response
+                            glob.current_playlist["data"]["series_categories"] = response
                         if category == 3:
-                            glob.current_playlist['data']['live_streams'] = response
-                            glob.current_playlist['data']['catchup_checked'] = True
+                            glob.current_playlist["data"]["live_streams"] = response
+                            glob.current_playlist["data"]["catchup_checked"] = True
 
                 self["splash"].hide()
-                glob.current_playlist['data']['data_downloaded'] = True
+                glob.current_playlist["data"]["data_downloaded"] = True
                 self.createSetup()
                 return
             except Exception as e:
@@ -180,17 +180,17 @@ class XStreamity_Menu(Screen):
                     if response:
                         # add categories to main json file
                         if category == 0:
-                            glob.current_playlist['data']['live_categories'] = response
+                            glob.current_playlist["data"]["live_categories"] = response
                         if category == 1:
-                            glob.current_playlist['data']['vod_categories'] = response
+                            glob.current_playlist["data"]["vod_categories"] = response
                         if category == 2:
-                            glob.current_playlist['data']['series_categories'] = response
+                            glob.current_playlist["data"]["series_categories"] = response
                         if category == 3:
-                            glob.current_playlist['data']['live_streams'] = response
-                            glob.current_playlist['data']['catchup_checked'] = True
+                            glob.current_playlist["data"]["live_streams"] = response
+                            glob.current_playlist["data"]["catchup_checked"] = True
 
                 self["splash"].hide()
-                glob.current_playlist['data']['data_downloaded'] = True
+                glob.current_playlist["data"]["data_downloaded"] = True
                 self.createSetup()
                 return
             except Exception as e:
@@ -204,17 +204,17 @@ class XStreamity_Menu(Screen):
             if response:
                 # add categories to main json file
                 if category == 0:
-                    glob.current_playlist['data']['live_categories'] = response
+                    glob.current_playlist["data"]["live_categories"] = response
                 if category == 1:
-                    glob.current_playlist['data']['vod_categories'] = response
+                    glob.current_playlist["data"]["vod_categories"] = response
                 if category == 2:
-                    glob.current_playlist['data']['series_categories'] = response
+                    glob.current_playlist["data"]["series_categories"] = response
                 if category == 3:
-                    glob.current_playlist['data']['live_streams'] = response
-                    glob.current_playlist['data']['catchup_checked'] = True
+                    glob.current_playlist["data"]["live_streams"] = response
+                    glob.current_playlist["data"]["catchup_checked"] = True
 
         self["splash"].hide()
-        glob.current_playlist['data']['data_downloaded'] = True
+        glob.current_playlist["data"]["data_downloaded"] = True
         self.createSetup()
 
     def writeJsonFile(self):
@@ -229,30 +229,30 @@ class XStreamity_Menu(Screen):
         self.list = []
         self.index = 0
 
-        if glob.current_playlist['player_info']['showlive'] is True:
-            if glob.current_playlist['data']['live_categories'] != [] and "user_info" not in glob.current_playlist['data']['live_categories']:
+        if glob.current_playlist["player_info"]["showlive"] is True:
+            if glob.current_playlist["data"]["live_categories"] != [] and "user_info" not in glob.current_playlist["data"]["live_categories"]:
                 self.index += 1
                 self.list.append([self.index, _("Live Streams"), 0, ""])
 
-        if glob.current_playlist['player_info']['showvod'] is True:
-            if glob.current_playlist['data']['vod_categories'] != [] and "user_info" not in glob.current_playlist['data']['vod_categories']:
+        if glob.current_playlist["player_info"]["showvod"] is True:
+            if glob.current_playlist["data"]["vod_categories"] != [] and "user_info" not in glob.current_playlist["data"]["vod_categories"]:
                 self.index += 1
                 self.list.append([self.index, _("Vod"), 1, ""])
 
-        if glob.current_playlist['player_info']['showseries'] is True:
-            if glob.current_playlist['data']['series_categories'] != [] and "user_info" not in glob.current_playlist['data']['series_categories']:
+        if glob.current_playlist["player_info"]["showseries"] is True:
+            if glob.current_playlist["data"]["series_categories"] != [] and "user_info" not in glob.current_playlist["data"]["series_categories"]:
                 self.index += 1
                 self.list.append([self.index, _("TV Series"), 2, ""])
 
-        content = glob.current_playlist['data']['live_streams']
+        content = glob.current_playlist["data"]["live_streams"]
         hascatchup = any(int(item["tv_archive"]) == 1 for item in content if "tv_archive" in item)
-        glob.current_playlist['data']['live_streams'] = []
+        glob.current_playlist["data"]["live_streams"] = []
 
         if hascatchup:
-            glob.current_playlist['data']['catchup'] = True
+            glob.current_playlist["data"]["catchup"] = True
 
-        if glob.current_playlist['player_info']['showcatchup'] is True:
-            if glob.current_playlist['data']['catchup'] is True:
+        if glob.current_playlist["player_info"]["showcatchup"] is True:
+            if glob.current_playlist["data"]["catchup"] is True:
                 self.index += 1
                 self.list.append([self.index, _("Catch Up TV"), 3, ""])
 
@@ -266,14 +266,14 @@ class XStreamity_Menu(Screen):
         self.writeJsonFile()
 
         if len(self.list) == 0:
-            self.session.openWithCallback(self.close, MessageBox, (_('No data, blocked or playlist not compatible with XStreamity plugin.')), MessageBox.TYPE_WARNING, timeout=5)
+            self.session.openWithCallback(self.close, MessageBox, (_("No data, blocked or playlist not compatible with XStreamity plugin.")), MessageBox.TYPE_WARNING, timeout=5)
 
     def quit(self):
         self.close()
 
     def __next__(self):
-        category = self["list"].getCurrent()[2]
         if self["list"].getCurrent():
+            category = self["list"].getCurrent()[2]
             from . import channels
             if category == 0:
                 self.session.open(channels.XStreamity_Categories, "live")
@@ -288,13 +288,13 @@ class XStreamity_Menu(Screen):
 
     def updateCategories(self):
         self["splash"].show()
-        glob.current_playlist['data']['live_categories'] = []
-        glob.current_playlist['data']['vod_categories'] = []
-        glob.current_playlist['data']['series_categories'] = []
-        glob.current_playlist['data']['catchup'] = False
-        glob.current_playlist['data']['catchup_checked'] = False
-        glob.current_playlist['data']['last_check'] = datetime.now().strftime("%d/%m/%Y %H:%M")
-        self['lastchecked'].setText(_("Last catchup check: ") + str(glob.current_playlist['data']['last_check']))
+        glob.current_playlist["data"]["live_categories"] = []
+        glob.current_playlist["data"]["vod_categories"] = []
+        glob.current_playlist["data"]["series_categories"] = []
+        glob.current_playlist["data"]["catchup"] = False
+        glob.current_playlist["data"]["catchup_checked"] = False
+        glob.current_playlist["data"]["last_check"] = datetime.now().strftime("%d/%m/%Y %H:%M")
+        self["lastchecked"].setText(_("Last catchup check: ") + str(glob.current_playlist["data"]["last_check"]))
         self.timer = eTimer()
 
         try:
