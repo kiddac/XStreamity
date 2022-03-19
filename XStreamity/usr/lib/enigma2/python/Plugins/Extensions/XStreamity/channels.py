@@ -1046,7 +1046,7 @@ class XStreamity_Categories(Screen):
                             tmdb_id = item["info"]["tmdb_id"]
 
                         if "releasedate" in item["info"]:
-                            releasedate = item["info"]["releaseDate"]
+                            releasedate = item["info"]["releasedate"]
 
                         if "plot" in item["info"]:
                             plot = item["info"]["plot"]
