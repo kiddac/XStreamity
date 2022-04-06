@@ -109,8 +109,8 @@ class XStreamity_MainMenu(Screen):
             with open(downloads_json, "r") as f:
                 try:
                     downloads_all = json.load(f)
-                except:
-                    pass
+                except Exception as e:
+                    print(e)
 
         if self.playlists_all:
             self.list.append([1, _("Playlists")])
@@ -144,8 +144,8 @@ class XStreamity_MainMenu(Screen):
         return
 
     def downloadManager(self):
-        from . import downloadmanager2
-        self.session.openWithCallback(self.start, downloadmanager2.XStreamity_DownloadManager)
+        from . import downloadmanager
+        self.session.openWithCallback(self.start, downloadmanager.XStreamity_DownloadManager)
         return
 
     def updateEPG(self):

@@ -98,7 +98,7 @@ def processfiles():
                 if not (protocol == "http://" or protocol == "https://"):
                     continue
 
-                domain = parsed_uri.hostname
+                domain = parsed_uri.hostname.lower()
                 name = domain
                 if line.partition(" #")[-1]:
                     name = line.partition(" #")[-1].strip()

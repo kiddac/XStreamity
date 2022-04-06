@@ -155,7 +155,7 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 
             self.name = self.nameCfg.value.strip()
             protocol = self.protocolCfg.value
-            domain = self.serverCfg.value.strip()
+            domain = self.serverCfg.value.strip().lower()
             port = self.portCfg.value
             username = self.usernameCfg.value.strip()
             password = self.passwordCfg.value.strip()
