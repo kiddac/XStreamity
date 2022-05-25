@@ -224,6 +224,7 @@ class XStreamity_Categories(Screen):
 
         self.showingshortEPG = False
         self.favourites_category = False
+        self.recents_category = False
         self.pin = False
         self.isStream = False
         self.info = ""
@@ -268,10 +269,10 @@ class XStreamity_Categories(Screen):
         self.epgfolder = epglocation + str(self.domain)
         self.epgjsonfile = str(self.epgfolder) + "/" + str("epg.json")
 
-        self.timerEPG = eTimer()
-        self.timerBusy = eTimer()
         self.timerVOD = eTimer()
         self.timerVODBusy = eTimer()
+        self.timerimage = eTimer()
+        self.timerSeries = eTimer()
 
         # buttons / keys
         self["key_red"] = StaticText(_("Back"))
@@ -455,8 +456,6 @@ class XStreamity_Categories(Screen):
         self["x_title"].setText("")
         self["x_description"].setText("")
 
-        self.clear_caches()
-
         if self.level == 1:
             self.getCategories()
             if self.categoryname == "live":
@@ -474,6 +473,7 @@ class XStreamity_Categories(Screen):
         self.buildLists()
 
     def buildLists(self):
+        self.clear_caches()
         if self.level == 1:
             self.buildList1()
 
@@ -514,6 +514,8 @@ class XStreamity_Categories(Screen):
 
         if self.categoryname == "live" or self.categoryname == "vod":
             self.list1.append([index, _("FAVOURITES"), "-1", hidden])
+            index += 1
+            self.list1.append([index, _("RECENTLY WATCHED"), "-2", hidden])
             index += 1
 
         # add ALL category to list
@@ -557,6 +559,9 @@ class XStreamity_Categories(Screen):
 
             if self.favourites_category:
                 response = glob.current_playlist["player_info"]["livefavourites"]
+
+            elif self.recents_category:
+                response = glob.current_playlist["player_info"]["liverecents"]
 
             index = 0
 
@@ -658,6 +663,9 @@ class XStreamity_Categories(Screen):
 
             if self.favourites_category:
                 response = glob.current_playlist["player_info"]["vodfavourites"]
+
+            elif self.recents_category:
+                response = glob.current_playlist["player_info"]["vodrecents"]
 
             index = 0
             self.list2 = []
@@ -1167,10 +1175,10 @@ class XStreamity_Categories(Screen):
             # index = 0, name = 1, stream_id = 2, stream_icon = 3, epg_channel_id = 4, added = 5, category_id = 6, custom_sid = 7, nowtime = 9
             # nowTitle = 10, nowDesc = 11, nexttime = 12, nextTitle = 13, nextDesc = 14, next_url = 15, favourite = 16, watching = 17, hidden = 18, direct_source = 19
             if self.favourites_category:
+                # self.list2.reverse()
                 self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18], x[19]) for x in self.list2 if x[16] is True]
                 self.epglist = [buildEPGListEntry(x[0], x[2], x[9], x[10], x[11], x[12], x[13], x[14], x[18], x[19]) for x in self.list2 if x[16] is True]
             else:
-
                 self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18], x[19]) for x in self.list2 if x[18] is False]
                 self.epglist = [buildEPGListEntry(x[0], x[2], x[9], x[10], x[11], x[12], x[13], x[14], x[18], x[19]) for x in self.list2 if x[18] is False]
 
@@ -1180,6 +1188,7 @@ class XStreamity_Categories(Screen):
 
         elif self.categoryname == "vod":
             if self.favourites_category:
+                # self.list2.reverse()
                 self.main_list = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[10], x[11]) for x in self.list2 if x[7] is True]
             else:
                 self.main_list = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[10], x[11]) for x in self.list2 if x[10] is False]
@@ -1254,8 +1263,11 @@ class XStreamity_Categories(Screen):
                 self["key_yellow"].setText(_(glob.nextlist[-1]["sort"]))
                 self["key_menu"].setText(_("Hide/Show"))
 
-                if self.favourites_category:
+                if self.favourites_category or self.recents_category:
                     self["key_menu"].setText("")
+
+                if self.recents_category:
+                    self["key_blue"].setText(_("Delete"))
 
     def playStream(self):
         # print("*** playStream ***")
@@ -1312,7 +1324,6 @@ class XStreamity_Categories(Screen):
                                 self.addEPG()
 
                         self.refreshEPGInfo()
-                        self.timerimage = eTimer()
                         try:
                             self.timerimage.callback.append(self.downloadImage)
                         except:
@@ -1320,8 +1331,10 @@ class XStreamity_Categories(Screen):
                         self.timerimage.start(250, True)
 
                 elif self.categoryname == "vod":
-                    self.timerVOD = eTimer()
-                    self.timerVOD.stop()
+                    try:
+                        self.timerVOD.stop()
+                    except:
+                        pass
 
                     try:
                         self.timerVOD.callback.append(self.downloadVodData)
@@ -1330,8 +1343,10 @@ class XStreamity_Categories(Screen):
                     self.timerVOD.start(300, True)
 
             if self.categoryname == "series" and self.level != 1:
-                self.timerSeries = eTimer()
-                self.timerSeries.stop()
+                try:
+                    self.timerSeries.stop()
+                except:
+                    pass
                 try:
                     self.timerSeries.callback.append(self.displaySeriesData)
                 except:
@@ -1339,7 +1354,6 @@ class XStreamity_Categories(Screen):
                 self.timerSeries.start(300, True)
 
             if self.categoryname == "catchup" and self.level != 1:
-                self.timerimage = eTimer()
                 try:
                     self.timerimage.callback.append(self.downloadImage)
                 except:
@@ -1450,7 +1464,6 @@ class XStreamity_Categories(Screen):
                             self["picon"].instance.setPixmapFromFile(original)
 
                     except Exception as e:
-                        print("******* picon resize failed *******")
                         print(e)
                 else:
                     self.loadDefaultImage()
@@ -1630,10 +1643,46 @@ class XStreamity_Categories(Screen):
             return
 
         current_filter = self["key_blue"].getText()
-        if current_filter != (_("Reset Search")):
-            self.session.openWithCallback(self.filterChannels, VirtualKeyBoard, title=_("Filter this category..."), text=self.searchString)
-        else:
+
+        if current_filter == (_("Reset Search")):
             self.resetSearch()
+
+        elif current_filter == (_("Delete")):
+            self.deleteRecent()
+
+        else:
+            self.session.openWithCallback(self.filterChannels, VirtualKeyBoard, title=_("Filter this category..."), text=self.searchString)
+
+    def deleteRecent(self):
+        if self["main_list"].getCurrent():
+            currentindex = self["main_list"].getIndex()
+
+            with open(playlists_json, "r") as f:
+                try:
+                    self.playlists_all = json.load(f)
+                except:
+                    os.remove(playlists_json)
+
+            if self.categoryname == "live":
+                del glob.current_playlist["player_info"]['liverecents'][currentindex]
+                self.hideEPG()
+
+            elif self.categoryname == "vod":
+                del glob.current_playlist["player_info"]['vodrecents'][currentindex]
+                self.hideVod()
+
+            if self.playlists_all:
+                x = 0
+                for playlists in self.playlists_all:
+                    if playlists["playlist_info"]["domain"] == glob.current_playlist["playlist_info"]["domain"] and playlists["playlist_info"]["username"] == glob.current_playlist["playlist_info"]["username"] and playlists["playlist_info"]["password"] == glob.current_playlist["playlist_info"]["password"]:
+                        self.playlists_all[x] = glob.current_playlist
+                        break
+                    x += 1
+            with open(playlists_json, "w") as f:
+                json.dump(self.playlists_all, f)
+
+            del self.list2[currentindex]
+            self.buildLists()
 
     def filterChannels(self, result=None):
         # print("*** filterChannels ***")
@@ -1721,10 +1770,16 @@ class XStreamity_Categories(Screen):
     def parentalCheck(self):
         # print("*** parentalCheck ***")
         self.pin = True
+
         if self.level == 1:
+            adult = _("all"), "all", "+18", "adult", "18+", "18 rated", "xxx", "sex", "porn", "pink", "blue"
+            if any(s in str(self["main_list"].getCurrent()[0]).lower() and str(self["main_list"].getCurrent()[0]).lower() != "Allgemeines" for s in adult):
+                glob.adultChannel = True
+            else:
+                glob.adultChannel = False
+
             if cfg.adult.value is True and int(time.time()) - int(glob.pintime) > 900:
-                adult = _("all"), "all", "+18", "adult", "18+", "18 rated", "xxx", "sex", "porn", "pink", "blue"
-                if any(s in str(self["main_list"].getCurrent()[0]).lower() and str(self["main_list"].getCurrent()[0]).lower() != "Allgemeines" for s in adult):
+                if glob.adultChannel is True:
                     from Screens.InputBox import PinInput
                     self.session.openWithCallback(self.pinEntered, PinInput, pinList=[cfg.adultpin.value], triesEntry=cfg.retries.adultpin, title=_("Please enter the parental control pin code"), windowTitle=_("Enter pin code"))
                 else:
@@ -1758,8 +1813,14 @@ class XStreamity_Categories(Screen):
 
                 if category_id == "-1":
                     self.favourites_category = True
+                    self.recents_category = False
+
+                elif category_id == "-2":
+                    self.recents_category = True
+                    self.favourites_category = False
                 else:
                     self.favourites_category = False
+                    self.recents_category = False
 
                 self.level += 1
                 self["main_list"].setIndex(0)
@@ -1986,12 +2047,12 @@ class XStreamity_Categories(Screen):
                 if self.categoryname == "live":
                     if self.level == 1:
                         self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "live", self.list1, self.level)
-                    elif self.level == 2 and not self.favourites_category:
+                    elif self.level == 2 and not self.favourites_category and not self.recents_category:
                         self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "live", self.list2, self.level)
                 elif self.categoryname == "vod":
                     if self.level == 1:
                         self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "vod", self.list1, self.level)
-                    elif self.level == 2 and not self.favourites_category:
+                    elif self.level == 2 and not self.favourites_category and not self.recents_category:
                         self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "vod", self.list2, self.level)
                 elif self.categoryname == "series":
                     if self.level == 1:
@@ -2005,7 +2066,7 @@ class XStreamity_Categories(Screen):
                 elif self.categoryname == "catchup":
                     if self.level == 1:
                         self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "catchup", self.list1, self.level)
-                    elif self.level == 2 and not self.favourites_category:
+                    elif self.level == 2 and not self.favourites_category and not self.recents_category:
                         self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "catchup", self.list2, self.level)
 
     def favourite(self):
@@ -2026,15 +2087,18 @@ class XStreamity_Categories(Screen):
                 if favExists:
                     glob.current_playlist["player_info"]["livefavourites"][:] = [x for x in glob.current_playlist["player_info"]["livefavourites"] if str(x["stream_id"]) != str(favStream_id)]
                 else:
-                    glob.current_playlist["player_info"]["livefavourites"].append(dict([
-                        ("name", self.list2[currentindex][1]),
-                        ("stream_id", self.list2[currentindex][2]),
-                        ("stream_icon", self.list2[currentindex][3]),
-                        ("epg_channel_id", self.list2[currentindex][4]),
-                        ("added", self.list2[currentindex][5]),
-                        ("category_id", self.list2[currentindex][6]),
-                        ("custom_sid", self.list2[currentindex][7]),
-                    ]))
+                    newfavourite = {
+                        "name": self.list2[currentindex][1],
+                        "stream_id": self.list2[currentindex][2],
+                        "stream_icon": self.list2[currentindex][3],
+                        "epg_channel_id": self.list2[currentindex][4],
+                        "added": self.list2[currentindex][5],
+                        "category_id": self.list2[currentindex][6],
+                        "custom_sid": self.list2[currentindex][7]
+                    }
+
+                    glob.current_playlist["player_info"]["livefavourites"].insert(0, newfavourite)
+                    self.hideEPG()
 
             elif self.categoryname == "vod":
                 for fav in glob.current_playlist["player_info"]["vodfavourites"]:
@@ -2059,14 +2123,17 @@ class XStreamity_Categories(Screen):
                     # favourite = 7
                     # container_extension = 8
 
-                    glob.current_playlist["player_info"]["vodfavourites"].append(dict([
-                        ("name", self.list2[currentindex][1]),
-                        ("stream_id", self.list2[currentindex][2]),
-                        ("stream_icon", self.list2[currentindex][3]),
-                        ("added", self.list2[currentindex][4]),
-                        ("rating", self.list2[currentindex][5]),
-                        ("container_extension", self.list2[currentindex][8]),
-                    ]))
+                    newfavourite = {
+                        "name": self.list2[currentindex][1],
+                        "stream_id": self.list2[currentindex][2],
+                        "stream_icon": self.list2[currentindex][3],
+                        "added": self.list2[currentindex][4],
+                        "rating": self.list2[currentindex][5],
+                        "container_extension": self.list2[currentindex][8]
+                    }
+
+                    glob.current_playlist["player_info"]["vodfavourites"].insert(0, newfavourite)
+                    self.hideVod()
 
             with open(playlists_json, "r") as f:
                 try:

@@ -6,7 +6,7 @@ from __future__ import absolute_import, print_function
 from . import _
 from . import xstreamity_globals as glob
 
-from .plugin import skin_path, screenwidth, common_path, cfg, dir_tmp, pythonVer
+from .plugin import skin_path, screenwidth, common_path, cfg, dir_tmp, pythonVer, playlists_json
 from .xStaticText import StaticText
 
 
@@ -49,6 +49,8 @@ except:
     from urllib.parse import urlparse
 
 from . import log
+import json
+import os
 import re
 
 if cfg.subs.getValue() is True:
@@ -70,8 +72,6 @@ else:
     class SubsSupportStatus(object):
         def __init__(self, *args, **kwargs):
             pass
-
-import os
 
 
 # https twisted client hack #
@@ -155,7 +155,7 @@ VIDEO_ASPECT_RATIO_MAP = {
 }
 
 streamtypelist = ["1", "4097"]
-vodstreamtypelist = [("4097", "IPTV(4097)")]
+vodstreamtypelist = ["4097"]
 
 if os.path.exists("/usr/bin/gstplayer"):
     streamtypelist.append("5001")
@@ -171,9 +171,16 @@ if os.path.exists("/usr/bin/apt-get"):
     vodstreamtypelist.append("8193")
 
 
+def clear_caches():
+    try:
+        os.system("echo 1 > /proc/sys/vm/drop_caches")
+        os.system("echo 2 > /proc/sys/vm/drop_caches")
+        os.system("echo 3 > /proc/sys/vm/drop_caches")
+    except:
+        pass
+
+
 class IPTVInfoBarShowHide():
-    """ InfoBar show/hide control, accepts toggleShow and hide actions, might start
-    fancy animations. """
     STATE_HIDDEN = 0
     STATE_HIDING = 1
     STATE_SHOWING = 2
@@ -431,7 +438,16 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
 
         self.streamcheck = 0
 
-        # self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl, self.direct_source))
+        self.timerCache = eTimer()
+        self.timerRecent = eTimer()
+        self.timerstream = eTimer()
+
+        try:
+            self.timerCache.callback.append(clear_caches)
+        except:
+            self.timerCache_conn = self.timerCache.timeout.connect(clear_caches)
+        self.timerCache.start(60000, False)
+
         self.playStream(self.servicetype, self.streamurl, self.direct_source)
 
     def IPTVstartInstantRecording(self, limitEvent=True):
@@ -478,9 +494,70 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
         else:
             return
 
-    def playStream(self, servicetype, streamurl, direct_source):
+    def addRecentLiveList(self):
+        # print("**** addrecentlivelist ***")
+        if glob.adultChannel:
+            return
 
-        print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " Valid stream", file=log)
+        recentExists = False
+        recentStream_id = None
+
+        name = glob.originalChannelList2[glob.currentchannellistindex][1]
+        stream_id = glob.originalChannelList2[glob.currentchannellistindex][2]
+        stream_icon = glob.originalChannelList2[glob.currentchannellistindex][3]
+        epg_channel_id = glob.originalChannelList2[glob.currentchannellistindex][4]
+        added = glob.originalChannelList2[glob.currentchannellistindex][5]
+        category_id = glob.originalChannelList2[glob.currentchannellistindex][6]
+        custom_sid = glob.originalChannelList2[glob.currentchannellistindex][7]
+
+        for recent in glob.current_playlist["player_info"]["liverecents"]:
+            if stream_id == recent["stream_id"]:
+                favExists = True
+                glob.current_playlist["player_info"]["liverecents"].remove(recent)
+                break
+
+        newrecent = {
+            "name": name,
+            "stream_id": stream_id,
+            "stream_icon": stream_icon,
+            "epg_channel_id": epg_channel_id,
+            "added": added,
+            "category_id": category_id,
+            "custom_sid": custom_sid
+        }
+
+        glob.current_playlist["player_info"]["liverecents"].insert(0, newrecent)
+
+        if len(glob.current_playlist["player_info"]["liverecents"]) >= 20:
+            glob.current_playlist["player_info"]["liverecents"].pop(0)
+
+        with open(playlists_json, "r") as f:
+            try:
+                self.playlists_all = json.load(f)
+            except:
+                os.remove(playlists_json)
+
+        if self.playlists_all:
+            x = 0
+            for playlists in self.playlists_all:
+                if playlists["playlist_info"]["domain"] == glob.current_playlist["playlist_info"]["domain"] and playlists["playlist_info"]["username"] == glob.current_playlist["playlist_info"]["username"] and playlists["playlist_info"]["password"] == glob.current_playlist["playlist_info"]["password"]:
+                    self.playlists_all[x] = glob.current_playlist
+                    break
+                x += 1
+        with open(playlists_json, "w") as f:
+            json.dump(self.playlists_all, f)
+
+    def playStream(self, servicetype, streamurl, direct_source):
+        try:
+            self.timerRecent.stop()
+        except:
+            pass
+
+        try:
+            self.timerRecent.callback.append(self.addRecentLiveList)
+        except:
+            self.timerRecent_conn = self.timerRecent.timeout.connect(self.addRecentLiveList)
+        self.timerRecent.start(20000, True)
 
         try:
             self.session.nav.stopService()
@@ -565,7 +642,6 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
         print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " evTunedStart", file=log)
 
         if self.hasStreamData is False:
-            self.timerstream = eTimer()
             try:
                 self.timerstream.callback.append(self.checkStream)
             except:
@@ -595,7 +671,6 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             self.session.nav.stopService()
         except:
             pass
-        # self.session.open(MessageBox, _("Stream Failed"), MessageBox.TYPE_INFO, timeout=1)
 
     def __evUpdatedInfo(self):
         self.originalservicetype = self.servicetype
@@ -615,12 +690,10 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " Checking Stream", file=log)
             if self.streamcheck == 0:
                 print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " Stream Failed 1. Reloading Stream.", file=log)
-                # self.session.openWithCallback(self.streamFailed, MessageBox, _("Stream Failed 1. Reloading Stream."), MessageBox.TYPE_INFO, timeout=1)
                 self.streamFailed()
 
             elif self.streamcheck == 1:
                 print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " Stream Failed 2. Switching stream type.", file=log)
-                # self.session.openWithCallback(self.streamTypeFailed, MessageBox, _("Stream Failed 2. Switching stream type."), MessageBox.TYPE_INFO, timeout=1)
                 self.streamTypeFailed()
             else:
                 self.__evTuneFailed()
@@ -641,6 +714,10 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
 
     def back(self):
         glob.nextlist[-1]["index"] = glob.currentchannellistindex
+        try:
+            self.timerCache.stop()
+        except:
+            pass
         self.close()
 
     def toggleStreamType(self):
@@ -763,7 +840,6 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             if self.ar_id_player > 6:
                 self.ar_id_player = 0
             eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
-            # print("self.ar_id_player NEXT %s" % VIDEO_ASPECT_RATIO_MAP[self.ar_id_player])
             return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
         except Exception as e:
             print(ex)
@@ -816,7 +892,7 @@ class XStreamityCueSheetSupport:
             length[1] = abs(length[1])
 
             try:
-                last = getResumePoint(self.session, True)
+                last = getResumePoint(self.session)
             except Exception as e:
                 print(e)
                 return
@@ -824,10 +900,9 @@ class XStreamityCueSheetSupport:
             if last is None:
                 return
 
-            if (last > 900000) and (not length[1] or (last < length[1] - 900000)):
-                self.resume_point = last
-                l = last // 90000
-                Notifications.AddNotificationWithCallback(self.playLastCB, MessageBox, _("Do you want to resume this playback?") + "\n" + (_("Resume position at %s") % ("%d:%02d:%02d" % (l // 3600, l % 3600 // 60, l % 60))), MessageBox.TYPE_YESNO, 10)
+            self.resume_point = last
+            l = last // 90000
+            Notifications.AddNotificationWithCallback(self.playLastCB, MessageBox, _("Do you want to resume this playback?") + "\n" + (_("Resume position at %s") % ("%d:%02d:%02d" % (l // 3600, l % 3600 // 60, l % 60))), MessageBox.TYPE_YESNO, 10)
 
     def playLastCB(self, answer):
         if answer is True and self.resume_point:
@@ -920,9 +995,79 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
             "green": self.nextAR,
         }, -2)
 
+        self.timerCache = eTimer()
+        self.timerRecent = eTimer()
+
+        try:
+            self.timerCache.callback.append(clear_caches)
+        except:
+            self.timerCache_conn = self.timerCache.timeout.connect(clear_caches)
+        self.timerCache.start(60000, False)
+
         self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl, self.direct_source))
 
+    def addRecentVodList(self):
+        # print("**** addrecentvodlist ***")
+
+        recentExists = False
+        recentStream_id = None
+
+        name = glob.originalChannelList2[glob.currentchannellistindex][1]
+        stream_id = glob.originalChannelList2[glob.currentchannellistindex][2]
+        stream_icon = glob.originalChannelList2[glob.currentchannellistindex][3]
+        added = glob.originalChannelList2[glob.currentchannellistindex][4]
+        rating = glob.originalChannelList2[glob.currentchannellistindex][5]
+        container_extension = glob.originalChannelList2[glob.currentchannellistindex][8]
+
+        for recent in glob.current_playlist["player_info"]["vodrecents"]:
+            if stream_id == recent["stream_id"]:
+                favExists = True
+                glob.current_playlist["player_info"]["vodrecents"].remove(recent)
+                break
+
+        newrecent = {
+            "name": name,
+            "stream_id": stream_id,
+            "stream_icon": stream_icon,
+            "added": added,
+            "rating": rating,
+            "container_extension": container_extension
+        }
+
+        glob.current_playlist["player_info"]["vodrecents"].insert(0, newrecent)
+
+        if len(glob.current_playlist["player_info"]["vodrecents"]) >= 20:
+            glob.current_playlist["player_info"]["vodrecents"].pop(0)
+
+        with open(playlists_json, "r") as f:
+            try:
+                self.playlists_all = json.load(f)
+            except:
+                os.remove(playlists_json)
+
+        if self.playlists_all:
+            x = 0
+            for playlists in self.playlists_all:
+                if playlists["playlist_info"]["domain"] == glob.current_playlist["playlist_info"]["domain"] and playlists["playlist_info"]["username"] == glob.current_playlist["playlist_info"]["username"] and playlists["playlist_info"]["password"] == glob.current_playlist["playlist_info"]["password"]:
+                    self.playlists_all[x] = glob.current_playlist
+                    break
+                x += 1
+        with open(playlists_json, "w") as f:
+            json.dump(self.playlists_all, f)
+
     def playStream(self, servicetype, streamurl, direct_source):
+
+        try:
+            self.timerRecent.stop()
+        except:
+            pass
+
+        try:
+            self.timerRecent.callback.append(self.addRecentVodList)
+        except:
+            self.timerRecent_conn = self.timerRecent.timeout.connect(self.addRecentVodList)
+        self.timerRecent.start(20000, True)
+
         if streamurl != "None" and "/movie/" in streamurl:
             self["streamcat"].setText("VOD")
         else:
@@ -941,8 +1086,14 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
 
         if self.session.nav.getCurrentlyPlayingServiceReference():
             if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString():
-                self.session.nav.stopService()
+
+                try:
+                    self.session.nav.stopService()
+                except:
+                    pass
+
                 self.session.nav.playService(self.reference)
+
         else:
             self.session.nav.playService(self.reference)
 
@@ -1020,9 +1171,14 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
         glob.nextlist[-1]["index"] = glob.currentchannellistindex
         try:
             setResumePoint(self.session)
-
         except Exception as e:
             print(e)
+
+        try:
+            self.timerCache.stop()
+        except:
+            pass
+
         self.close()
 
     def toggleStreamType(self):
@@ -1037,6 +1193,7 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
             self.servicetype = int(next(nextStreamType))
         except:
             pass
+
         self.playStream(self.servicetype, self.streamurl, self.direct_source)
 
     def nextARfunction(self):
@@ -1045,7 +1202,6 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
             if self.ar_id_player > 6:
                 self.ar_id_player = 0
             eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
-            # print("self.ar_id_player NEXT %s" % VIDEO_ASPECT_RATIO_MAP[self.ar_id_player])
             return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
         except Exception as e:
             print(ex)
@@ -1123,6 +1279,14 @@ class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAud
             "info": self.toggleStreamType,
             "green": self.nextAR,
         }, -2)
+
+        self.timerCache = eTimer()
+
+        try:
+            self.timerCache.callback.append(clear_caches)
+        except:
+            self.timerCache_conn = self.timerCache.timeout.connect(clear_caches)
+        self.timerCache.start(60000, False)
 
         self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl))
 
@@ -1231,6 +1395,12 @@ class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAud
             setResumePoint(self.session)
         except Exception as e:
             print(e)
+
+        try:
+            self.timerCache.stop()
+        except:
+            pass
+
         self.close()
 
     def toggleStreamType(self):
@@ -1250,7 +1420,6 @@ class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAud
             if self.ar_id_player > 6:
                 self.ar_id_player = 0
             eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
-            # print("self.ar_id_player NEXT %s" % VIDEO_ASPECT_RATIO_MAP[self.ar_id_player])
             return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
         except Exception as e:
             print(ex)
@@ -1301,7 +1470,6 @@ class XStreamityLog(Screen):
         self.session = session
         Screen.__init__(self, session)
         self.setTitle(_("Xstreamity Log"))
-        # self.skinName = "EPGImportLog"
         self.skin = XStreamityLog.skin
 
         self["key_red"] = StaticText(_("Close"))
