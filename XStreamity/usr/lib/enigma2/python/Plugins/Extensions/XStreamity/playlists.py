@@ -72,6 +72,14 @@ class XStreamity_Playlists(Screen):
         self.onFirstExecBegin.append(self.start)
         self.onLayoutFinish.append(self.__layoutFinished)
 
+    def clear_caches(self):
+        try:
+            os.system("echo 1 > /proc/sys/vm/drop_caches")
+            os.system("echo 2 > /proc/sys/vm/drop_caches")
+            os.system("echo 3 > /proc/sys/vm/drop_caches")
+        except:
+            pass
+
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
 
@@ -96,6 +104,8 @@ class XStreamity_Playlists(Screen):
             self.delayedDownload()
         else:
             self.close()
+
+        self.clear_caches()
 
     def delayedDownload(self):
         self.timer = eTimer()
@@ -203,7 +213,6 @@ class XStreamity_Playlists(Screen):
                 self.playlists_all[index]["user_info"] = []
 
         self.buildPlaylistList()
-        return
 
     def buildPlaylistList(self):
         for playlists in self.playlists_all:
@@ -239,6 +248,13 @@ class XStreamity_Playlists(Screen):
                 if "max_connections" in playlists["user_info"]:
                     if not playlists["user_info"]["max_connections"]:
                         playlists["user_info"]["max_connections"] = 0
+
+                if 'allowed_output_formats' in playlists['user_info']:
+                    if playlists["playlist_info"]["output"] not in playlists['user_info']['allowed_output_formats']:
+                        try:
+                            playlists["playlist_info"]["output"] = str(playlists['user_info']['allowed_output_formats'][0])
+                        except:
+                            playlists["playlist_info"]["output"] = "ts"
 
             if "available_channels" in playlists:
                 del playlists["available_channels"]

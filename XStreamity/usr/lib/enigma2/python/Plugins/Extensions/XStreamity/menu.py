@@ -17,6 +17,7 @@ from Screens.Screen import Screen
 from Tools.LoadPixmap import LoadPixmap
 
 import json
+import os
 import requests
 
 
@@ -80,12 +81,11 @@ class XStreamity_Menu(Screen):
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
 
-    # delay to allow splash screen to show
     def start(self):
         if glob.current_playlist["data"]["data_downloaded"] is False:
             glob.current_playlist["data"]["last_check"] = datetime.now().strftime("%d/%m/%Y %H:%M")
             self["lastchecked"].setText(_("Last catchup check: ") + str(glob.current_playlist["data"]["last_check"]))
-
+            # delay to allow splash screen to show
             self.timer = eTimer()
             try:
                 self.timer_conn = self.timer.timeout.connect(self.makeUrlList)
@@ -98,6 +98,16 @@ class XStreamity_Menu(Screen):
         else:
             self["splash"].hide()
             self.createSetup()
+
+        self.clear_caches()
+
+    def clear_caches(self):
+        try:
+            os.system("echo 1 > /proc/sys/vm/drop_caches")
+            os.system("echo 2 > /proc/sys/vm/drop_caches")
+            os.system("echo 3 > /proc/sys/vm/drop_caches")
+        except:
+            pass
 
     def makeUrlList(self):
         self.url_list = []

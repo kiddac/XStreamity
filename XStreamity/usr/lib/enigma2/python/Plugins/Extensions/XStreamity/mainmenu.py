@@ -52,7 +52,6 @@ class XStreamity_MainMenu(Screen):
             "blue": self.resetData
         }, -2)
 
-        self.clear_caches()
         self["version"].setText(version)
 
         if self.session.nav.getCurrentlyPlayingServiceReference():
@@ -99,6 +98,7 @@ class XStreamity_MainMenu(Screen):
 
     def start(self, answer=None):
         self.playlists_all = xfiles.processfiles()
+        self.clear_caches()
         self.createSetup()
 
     def createSetup(self):
@@ -132,7 +132,6 @@ class XStreamity_MainMenu(Screen):
     def playlists(self):
         from . import playlists
         self.session.openWithCallback(self.start, playlists.XStreamity_Playlists)
-        return
 
     def settings(self):
         from . import settings
@@ -141,12 +140,10 @@ class XStreamity_MainMenu(Screen):
     def addServer(self):
         from . import server
         self.session.openWithCallback(self.start, server.XStreamity_AddServer)
-        return
 
     def downloadManager(self):
         from . import downloadmanager
         self.session.openWithCallback(self.start, downloadmanager.XStreamity_DownloadManager)
-        return
 
     def updateEPG(self):
         self.session.openWithCallback(self.updateEPG2, MessageBox, _("EPGs downloading."), type=MessageBox.TYPE_INFO, timeout=5)

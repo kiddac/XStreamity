@@ -64,6 +64,14 @@ class XStreamity_Update:
         self.epgjsonfile = ""
         self.processJsonFile()
 
+    def clear_caches(self):
+        try:
+            os.system("echo 1 > /proc/sys/vm/drop_caches")
+            os.system("echo 2 > /proc/sys/vm/drop_caches")
+            os.system("echo 3 > /proc/sys/vm/drop_caches")
+        except:
+            pass
+
     def checkRedirect(self, url):
         # print("*** check redirect ***")
         try:
@@ -100,6 +108,7 @@ class XStreamity_Update:
                     os.makedirs(epgfolder)
 
         self.processPlaylist()
+        self.clear_caches()
 
     def processPlaylist(self):
         # print("*** processPlaylist ***")

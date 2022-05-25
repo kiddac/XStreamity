@@ -61,6 +61,14 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
         self.onFirstExecBegin.append(self.initConfig)
         self.onLayoutFinish.append(self.__layoutFinished)
 
+    def clear_caches(self):
+        try:
+            os.system("echo 1 > /proc/sys/vm/drop_caches")
+            os.system("echo 2 > /proc/sys/vm/drop_caches")
+            os.system("echo 3 > /proc/sys/vm/drop_caches")
+        except:
+            pass
+
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
 
@@ -91,6 +99,7 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
         self.passwordCfg = NoSave(ConfigText(default=self.password, fixed_size=False))
         self.outputCfg = NoSave(ConfigSelection(default=self.output, choices=[("ts", "ts"), ("m3u8", "m3u8")]))
         self.createSetup()
+        self.clear_caches()
 
     def createSetup(self):
         self.list = []

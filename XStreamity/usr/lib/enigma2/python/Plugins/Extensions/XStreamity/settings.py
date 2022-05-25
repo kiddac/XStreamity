@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from . import _
-from . import xstreamity_globals as glob
 from .plugin import skin_path, cfg
 from .xStaticText import StaticText
 
@@ -81,6 +80,14 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.initConfig()
         self.onLayoutFinish.append(self.__layoutFinished)
 
+    def clear_caches(self):
+        try:
+            os.system("echo 1 > /proc/sys/vm/drop_caches")
+            os.system("echo 2 > /proc/sys/vm/drop_caches")
+            os.system("echo 3 > /proc/sys/vm/drop_caches")
+        except:
+            pass
+
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
 
@@ -103,9 +110,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
             self.session.open(MessageBox, _("Please change default parental pin.\n\nPin cannot be 0000, 1111 or 1234"), MessageBox.TYPE_WARNING)
             return
         else:
-            glob.changed = False
             if self["config"].isChanged():
-                glob.changed = True
                 for x in self["config"].list:
                     x[1].save()
                 cfg.save()
@@ -113,6 +118,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
                 if self.org_skin != cfg.skin.getValue() or self.org_main != cfg.main.getValue() or self.org_wakeup != cfg.wakeup.getValue():
                     self.changedFinished()
+            self.clear_caches()
             self.close()
 
     def changedFinished(self):
@@ -280,7 +286,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
                 print(e)
             ConfigListScreen.keyOK(self)
 
-        if cfgitem == "downloadlocation":
+        elif cfgitem == "downloadlocation":
             try:
                 self.session.openWithCallback(
                     self.openDirectoryBrowserCB2,
@@ -293,7 +299,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
                 print(e)
             ConfigListScreen.keyOK(self)
 
-        if cfgitem == "epglocation":
+        elif cfgitem == "epglocation":
             try:
                 self.session.openWithCallback(
                     self.openDirectoryBrowserCB3,
