@@ -26,7 +26,6 @@ class XStreamity_UserInfo(Screen):
 
         self.setup_title = (_("User Information"))
 
-        self["authorised"] = Label("")
         self["status"] = Label("")
         self["expiry"] = Label("")
         self["created"] = Label("")
@@ -52,9 +51,6 @@ class XStreamity_UserInfo(Screen):
         self.setTitle(self.setup_title)
 
     def createUserSetup(self):
-        if "auth" in glob.current_playlist["user_info"]:
-            self["authorised"].setText(str(glob.current_playlist["user_info"]["auth"]))
-
         if "status" in glob.current_playlist["user_info"]:
             self["status"].setText(str(glob.current_playlist["user_info"]["status"]))
 
