@@ -79,6 +79,8 @@ def processfiles():
             showcatchup = True
             livefavourites = []
             vodfavourites = []
+            liverecents = []
+            vodrecents = []
             live_streams = []
             catchup_checked = False
             last_check = ""
@@ -189,6 +191,12 @@ def processfiles():
                                 if "epgalternativeurl" not in playlists["player_info"]:
                                     playlists["player_info"]["epgalternativeurl"] = epgalternativeurl
 
+                                if "liverecents" not in playlists["player_info"]:
+                                    playlists["player_info"]["liverecents"] = liverecents
+
+                                if "vodrecents" not in playlists["player_info"]:
+                                    playlists["player_info"]["vodrecents"] = vodrecents
+
                                 playlists["playlist_info"]["name"] = name
                                 playlists["playlist_info"]["type"] = type
                                 playlists["playlist_info"]["output"] = output
@@ -240,6 +248,10 @@ def processfiles():
 
                             ("livefavourites", livefavourites),
                             ("vodfavourites", vodfavourites),
+
+                            ("liverecents", liverecents),
+                            ("vodrecents", vodrecents),
+
                             ("showlive", showlive),
                             ("showvod", showvod),
                             ("showseries", showseries),
