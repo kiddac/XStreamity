@@ -32,10 +32,21 @@ def setResumePoint(session):
                 else:
                     l = None
                 resumePointCache[key] = [lru, pos[1], l]
+
                 saveResumePoints()
 
 
-def getResumePoint(session, failed=False):
+def delResumePoint(ref):
+    global resumePointCache
+    try:
+        del resumePointCache[ref.toString()]
+    except KeyError:
+        pass
+
+    saveResumePoints()
+
+
+def getResumePoint(session):
     global resumePointCache
     resumePointCache = loadResumePoints()
 
@@ -45,9 +56,12 @@ def getResumePoint(session, failed=False):
             ref = session.nav.getCurrentlyPlayingServiceReference()
 
     if (ref is not None) and (ref.type != 1):
-        entry = resumePointCache[ref.toString()]
-        entry[0] = int(time())  # update LRU timestamp
-        return entry[1]
+        try:
+            entry = resumePointCache[ref.toString()]
+            entry[0] = int(time())  # update LRU timestamp
+            return entry[1]
+        except KeyError:
+            return None
 
 
 def saveResumePoints():
@@ -71,4 +85,9 @@ def loadResumePoints():
         return {}
 
 
-resumePointCache = {}
+def updateresumePointCache():
+    global resumePointCache
+    resumePointCache = loadResumePoints()
+
+
+resumePointCache = loadResumePoints()
