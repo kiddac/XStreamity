@@ -656,7 +656,7 @@ class XStreamity_Categories(Screen):
                                       str(nowtime), str(nowTitle), str(nowDesc), str(nexttime), str(nextTitle), str(nextDesc), str(next_url), favourite, watching, hidden, str(direct_source)])
                     index += 1
 
-            glob.originalChannelList2 = self.list2[:]
+                glob.originalChannelList2 = self.list2[:]
 
         elif self.categoryname == "vod":
             response = self.downloadApiData(glob.nextlist[-1]["next_url"])
@@ -737,7 +737,7 @@ class XStreamity_Categories(Screen):
                     self.list2.append([index, str(name), str(stream_id), str(stream_icon), str(added), str(rating), str(next_url), favourite, container_extension, year, hidden, str(direct_source)])
                     index += 1
 
-            glob.originalChannelList2 = self.list2[:]
+                glob.originalChannelList2 = self.list2[:]
 
         elif self.categoryname == "series":
             response = self.downloadApiData(glob.nextlist[-1]["next_url"])
@@ -809,7 +809,7 @@ class XStreamity_Categories(Screen):
 
                     index += 1
 
-            glob.originalChannelList2 = self.list2[:]
+                glob.originalChannelList2 = self.list2[:]
 
         elif self.categoryname == "catchup":
             response = self.downloadApiData(glob.nextlist[-1]["next_url"])
@@ -856,7 +856,7 @@ class XStreamity_Categories(Screen):
 
                             index += 1
 
-            glob.originalChannelList2 = self.list2[:]
+                glob.originalChannelList2 = self.list2[:]
 
     def getLevel3(self):
         # print("**** getLevel3 ****")
@@ -875,108 +875,109 @@ class XStreamity_Categories(Screen):
             rating = self["vod_rating"].getText()
             last_modified = ""
 
-            if "info" in currentChannelList:
-                if "name" in currentChannelList["info"] and currentChannelList["info"]["name"]:
-                    name = currentChannelList["info"]["name"]
+            if currentChannelList:
+                if "info" in currentChannelList:
+                    if "name" in currentChannelList["info"] and currentChannelList["info"]["name"]:
+                        name = currentChannelList["info"]["name"]
 
-                if "cover" in currentChannelList["info"] and currentChannelList["info"]["cover"]:
-                    if currentChannelList["info"]["cover"].startswith("http"):
-                        cover = currentChannelList["info"]["cover"]
+                    if "cover" in currentChannelList["info"] and currentChannelList["info"]["cover"]:
+                        if currentChannelList["info"]["cover"].startswith("http"):
+                            cover = currentChannelList["info"]["cover"]
 
-                if "plot" in currentChannelList["info"] and currentChannelList["info"]["plot"]:
-                    overview = currentChannelList["info"]["plot"]
+                    if "plot" in currentChannelList["info"] and currentChannelList["info"]["plot"]:
+                        overview = currentChannelList["info"]["plot"]
 
-                if "cast" in currentChannelList["info"] and currentChannelList["info"]["cast"]:
-                    cast = currentChannelList["info"]["cast"]
+                    if "cast" in currentChannelList["info"] and currentChannelList["info"]["cast"]:
+                        cast = currentChannelList["info"]["cast"]
 
-                if "director" in currentChannelList["info"] and currentChannelList["info"]["director"]:
-                    director = currentChannelList["info"]["director"]
+                    if "director" in currentChannelList["info"] and currentChannelList["info"]["director"]:
+                        director = currentChannelList["info"]["director"]
 
-                if "genre" in currentChannelList["info"] and currentChannelList["info"]["genre"]:
-                    genre = currentChannelList["info"]["genre"]
+                    if "genre" in currentChannelList["info"] and currentChannelList["info"]["genre"]:
+                        genre = currentChannelList["info"]["genre"]
 
-                if "releaseDate" in currentChannelList["info"] and currentChannelList["info"]["releaseDate"]:
-                    airdate = currentChannelList["info"]["releaseDate"]
+                    if "releaseDate" in currentChannelList["info"] and currentChannelList["info"]["releaseDate"]:
+                        airdate = currentChannelList["info"]["releaseDate"]
 
-                if "releaseDate" not in currentChannelList["info"] and "release_date" in currentChannelList["info"] and currentChannelList["info"]["release_date"]:
-                    airdate = currentChannelList["info"]["release_date"]
+                    if "releaseDate" not in currentChannelList["info"] and "release_date" in currentChannelList["info"] and currentChannelList["info"]["release_date"]:
+                        airdate = currentChannelList["info"]["release_date"]
 
-                if "rating" in currentChannelList["info"] and currentChannelList["info"]["rating"]:
-                    rating = currentChannelList["info"]["rating"]
+                    if "rating" in currentChannelList["info"] and currentChannelList["info"]["rating"]:
+                        rating = currentChannelList["info"]["rating"]
 
-                if "last_modified" in currentChannelList["info"] and currentChannelList["info"]["last_modified"]:
-                    last_modified = currentChannelList["info"]["last_modified"]
+                    if "last_modified" in currentChannelList["info"] and currentChannelList["info"]["last_modified"]:
+                        last_modified = currentChannelList["info"]["last_modified"]
 
-            if "episodes" in currentChannelList:
-                if currentChannelList["episodes"]:
+                if "episodes" in currentChannelList:
+                    if currentChannelList["episodes"]:
 
-                    seasonlist = []
-                    isdict = True
-                    try:
-                        seasonlist = list(currentChannelList["episodes"].keys())
-                    except:
-                        isdict = False
-                        x = 0
-                        for item in currentChannelList["episodes"]:
-                            seasonlist.append(x)
-                            x += 1
+                        seasonlist = []
+                        isdict = True
+                        try:
+                            seasonlist = list(currentChannelList["episodes"].keys())
+                        except:
+                            isdict = False
+                            x = 0
+                            for item in currentChannelList["episodes"]:
+                                seasonlist.append(x)
+                                x += 1
 
-                    if seasonlist:
-                        for season in seasonlist:
+                        if seasonlist:
+                            for season in seasonlist:
 
-                            name = _("Season ") + str(season)
+                                name = _("Season ") + str(season)
 
-                            if isdict:
-                                season_number = currentChannelList["episodes"][str(season)][0]["season"]
-                            else:
-                                season_number = currentChannelList["episodes"][season][0]["season"]
+                                if isdict:
+                                    season_number = currentChannelList["episodes"][str(season)][0]["season"]
+                                else:
+                                    season_number = currentChannelList["episodes"][season][0]["season"]
 
-                            series_id = 0
-                            hidden = False
-                            if "seasons" in currentChannelList:
-                                if currentChannelList["seasons"]:
-                                    for item in currentChannelList["seasons"]:
+                                series_id = 0
+                                hidden = False
+                                if "seasons" in currentChannelList:
+                                    if currentChannelList["seasons"]:
+                                        for item in currentChannelList["seasons"]:
 
-                                        if "season_number" in item:
-                                            if item["season_number"] == season_number:
+                                            if "season_number" in item:
+                                                if item["season_number"] == season_number:
 
-                                                if "airdate" in item and item["airdate"]:
-                                                    airdate = item["airdate"]
+                                                    if "airdate" in item and item["airdate"]:
+                                                        airdate = item["airdate"]
 
-                                                if "name" in item and item["name"]:
-                                                    name = item["name"]
+                                                    if "name" in item and item["name"]:
+                                                        name = item["name"]
 
-                                                if "overview" in item and item["overview"]:
-                                                    overview = item["overview"]
+                                                    if "overview" in item and item["overview"]:
+                                                        overview = item["overview"]
 
-                                                if "cover_big" in item and item["cover_big"]:
-                                                    if item["cover_big"].startswith("http"):
-                                                        cover = item["cover_big"]
-                                                elif "cover" in item and item["cover"]:
-                                                    if item["cover"].startswith("http"):
-                                                        cover = item["cover"]
-                                                if "id" in item and item["id"]:
-                                                    series_id = item["id"]
-                                                break
+                                                    if "cover_big" in item and item["cover_big"]:
+                                                        if item["cover_big"].startswith("http"):
+                                                            cover = item["cover_big"]
+                                                    elif "cover" in item and item["cover"]:
+                                                        if item["cover"].startswith("http"):
+                                                            cover = item["cover"]
+                                                    if "id" in item and item["id"]:
+                                                        series_id = item["id"]
+                                                    break
 
-                            if str(series_id) in glob.current_playlist["player_info"]["seriesseasonshidden"]:
-                                hidden = True
+                                if str(series_id) in glob.current_playlist["player_info"]["seriesseasonshidden"]:
+                                    hidden = True
 
-                            if cover:
-                                if cover.startswith("https://image.tmdb.org/t/p/") or cover.startswith("http://image.tmdb.org/t/p/"):
-                                    dimensions = cover.partition("/p/")[2].partition("/")[0]
-                                    if screenwidth.width() <= 1280:
-                                        cover = cover.replace(dimensions, "w300")
-                                    else:
-                                        cover = cover.replace(dimensions, "w400")
+                                if cover:
+                                    if cover.startswith("https://image.tmdb.org/t/p/") or cover.startswith("http://image.tmdb.org/t/p/"):
+                                        dimensions = cover.partition("/p/")[2].partition("/")[0]
+                                        if screenwidth.width() <= 1280:
+                                            cover = cover.replace(dimensions, "w300")
+                                        else:
+                                            cover = cover.replace(dimensions, "w400")
 
-                            next_url = self.seasons_url
-                            self.list3.append([index, str(name), str(series_id), str(cover), str(overview), str(cast), str(director), str(genre), str(airdate), str(rating), season_number, str(next_url), str(last_modified), hidden])
+                                next_url = self.seasons_url
+                                self.list3.append([index, str(name), str(series_id), str(cover), str(overview), str(cast), str(director), str(genre), str(airdate), str(rating), season_number, str(next_url), str(last_modified), hidden])
 
-                self.list3.sort(key=self.natural_keys)
+                    self.list3.sort(key=self.natural_keys)
 
-            self.storedcover = cover
-            glob.originalChannelList3 = self.list3[:]
+                self.storedcover = cover
+                glob.originalChannelList3 = self.list3[:]
 
     def getLevel4(self):
         # print("**** getLevel4 ****")
@@ -995,107 +996,108 @@ class XStreamity_Categories(Screen):
             releasedate = self["vod_release_date"].getText()
             rating = self["vod_rating"].getText()
 
-            if "info" in currentChannelList:
+            if currentChannelList:
+                if "info" in currentChannelList:
 
-                if "name" in currentChannelList["info"] and currentChannelList["info"]["name"]:
-                    shorttitle = currentChannelList["info"]["name"]
+                    if "name" in currentChannelList["info"] and currentChannelList["info"]["name"]:
+                        shorttitle = currentChannelList["info"]["name"]
 
-                if "cover" in currentChannelList["info"] and currentChannelList["info"]["cover"]:
-                    cover = currentChannelList["info"]["cover"]
+                    if "cover" in currentChannelList["info"] and currentChannelList["info"]["cover"]:
+                        cover = currentChannelList["info"]["cover"]
 
-                if "plot" in currentChannelList["info"] and currentChannelList["info"]["plot"]:
-                    plot = currentChannelList["info"]["plot"]
+                    if "plot" in currentChannelList["info"] and currentChannelList["info"]["plot"]:
+                        plot = currentChannelList["info"]["plot"]
 
-                if "cast" in currentChannelList["info"] and currentChannelList["info"]["cast"]:
-                    cast = currentChannelList["info"]["cast"]
+                    if "cast" in currentChannelList["info"] and currentChannelList["info"]["cast"]:
+                        cast = currentChannelList["info"]["cast"]
 
-                if "director" in currentChannelList["info"] and currentChannelList["info"]["director"]:
-                    director = currentChannelList["info"]["director"]
+                    if "director" in currentChannelList["info"] and currentChannelList["info"]["director"]:
+                        director = currentChannelList["info"]["director"]
 
-                if "genre" in currentChannelList["info"] and currentChannelList["info"]["genre"]:
-                    genre = currentChannelList["info"]["genre"]
+                    if "genre" in currentChannelList["info"] and currentChannelList["info"]["genre"]:
+                        genre = currentChannelList["info"]["genre"]
 
-                if "releaseDate" in currentChannelList["info"] and currentChannelList["info"]["releaseDate"]:
-                    releasedate = currentChannelList["info"]["releaseDate"]
+                    if "releaseDate" in currentChannelList["info"] and currentChannelList["info"]["releaseDate"]:
+                        releasedate = currentChannelList["info"]["releaseDate"]
 
-                if "rating" in currentChannelList["info"] and currentChannelList["info"]["rating"]:
-                    rating = currentChannelList["info"]["rating"]
+                    if "rating" in currentChannelList["info"] and currentChannelList["info"]["rating"]:
+                        rating = currentChannelList["info"]["rating"]
 
-                if "last_modified" in currentChannelList["info"] and currentChannelList["info"]["last_modified"]:
-                    last_modified = currentChannelList["info"]["last_modified"]
+                    if "last_modified" in currentChannelList["info"] and currentChannelList["info"]["last_modified"]:
+                        last_modified = currentChannelList["info"]["last_modified"]
 
-            if "episodes" in currentChannelList:
-                if currentChannelList["episodes"]:
-                    season_number = str(self.season_number)
-                    try:
-                        currentChannelList["episodes"][season_number]
-                    except:
-                        season_number = int(self.season_number)
+                if "episodes" in currentChannelList:
+                    if currentChannelList["episodes"]:
+                        season_number = str(self.season_number)
+                        try:
+                            currentChannelList["episodes"][season_number]
+                        except:
+                            season_number = int(self.season_number)
 
-                    for item in currentChannelList["episodes"][season_number]:
-                        title = ""
-                        stream_id = ""
-                        container_extension = "mp4"
-                        tmdb_id = ""
-                        duration = ""
-                        hidden = False
-                        direct_source = ""
+                        for item in currentChannelList["episodes"][season_number]:
+                            title = ""
+                            stream_id = ""
+                            container_extension = "mp4"
+                            tmdb_id = ""
+                            duration = ""
+                            hidden = False
+                            direct_source = ""
 
-                        if "id" in item:
-                            stream_id = item["id"]
+                            if "id" in item:
+                                stream_id = item["id"]
 
-                        if "title" in item:
-                            title = item["title"].replace(str(shorttitle) + " - ", "")
+                            if "title" in item:
+                                title = item["title"].replace(str(shorttitle) + " - ", "")
 
-                        if "container_extension" in item:
-                            container_extension = item["container_extension"]
+                            if "container_extension" in item:
+                                container_extension = item["container_extension"]
 
-                        if "tmdb_id" in item:
-                            tmdb_id = item["info"]["tmdb_id"]
+                            if "tmdb_id" in item:
+                                tmdb_id = item["info"]["tmdb_id"]
 
-                        if "releasedate" in item["info"]:
-                            releasedate = item["info"]["releasedate"]
+                            if "releasedate" in item["info"]:
+                                releasedate = item["info"]["releasedate"]
 
-                        if "plot" in item["info"]:
-                            plot = item["info"]["plot"]
+                            if "plot" in item["info"]:
+                                plot = item["info"]["plot"]
 
-                        if "duration" in item["info"]:
-                            duration = item["info"]["duration"]
+                            if "duration" in item["info"]:
+                                duration = item["info"]["duration"]
 
-                        if "rating" in item["info"]:
-                            rating = item["info"]["rating"]
+                            if "rating" in item["info"]:
+                                rating = item["info"]["rating"]
 
-                        if "direct_source" in item and item["direct_source"]:
-                            direct_source = item["direct_source"]
+                            if "direct_source" in item and item["direct_source"]:
+                                direct_source = item["direct_source"]
 
-                        if "seasons" in currentChannelList:
-                            if currentChannelList["seasons"]:
-                                for season in currentChannelList["seasons"]:
-                                    if int(season["season_number"]) == int(season_number):
-                                        if "cover" in season and season["cover"]:
-                                            cover = season["cover"]
+                            if "seasons" in currentChannelList:
+                                if currentChannelList["seasons"]:
+                                    for season in currentChannelList["seasons"]:
+                                        if int(season["season_number"]) == int(season_number):
+                                            if "cover" in season and season["cover"]:
+                                                cover = season["cover"]
 
-                                        if "cover_big" in season and season["cover_big"]:
-                                            cover = season["cover_big"]
-                                        break
+                                            if "cover_big" in season and season["cover_big"]:
+                                                cover = season["cover_big"]
+                                            break
 
-                        if cover:
-                            if cover.startswith("https://image.tmdb.org/t/p/") or cover.startswith("http://image.tmdb.org/t/p/"):
-                                dimensions = cover.partition("/p/")[2].partition("/")[0]
-                                if screenwidth.width() <= 1280:
-                                    cover = cover.replace(dimensions, "w300")
-                                else:
-                                    cover = cover.replace(dimensions, "w400")
+                            if cover:
+                                if cover.startswith("https://image.tmdb.org/t/p/") or cover.startswith("http://image.tmdb.org/t/p/"):
+                                    dimensions = cover.partition("/p/")[2].partition("/")[0]
+                                    if screenwidth.width() <= 1280:
+                                        cover = cover.replace(dimensions, "w300")
+                                    else:
+                                        cover = cover.replace(dimensions, "w400")
 
-                        if str(stream_id) in glob.current_playlist["player_info"]["seriesepisodeshidden"]:
-                            hidden = True
+                            if str(stream_id) in glob.current_playlist["player_info"]["seriesepisodeshidden"]:
+                                hidden = True
 
-                        next_url = "%s/series/%s/%s/%s.%s" % (self.host, self.username, self.password, stream_id, container_extension)
+                            next_url = "%s/series/%s/%s/%s.%s" % (self.host, self.username, self.password, stream_id, container_extension)
 
-                        self.list4.append([index, str(title), str(stream_id), str(cover), str(plot), str(cast), str(director), str(genre), str(releasedate), str(rating), str(duration), str(container_extension), str(tmdb_id), str(next_url), str(shorttitle), str(last_modified), hidden, str(direct_source)])
-                        index += 1
+                            self.list4.append([index, str(title), str(stream_id), str(cover), str(plot), str(cast), str(director), str(genre), str(releasedate), str(rating), str(duration), str(container_extension), str(tmdb_id), str(next_url), str(shorttitle), str(last_modified), hidden, str(direct_source)])
+                            index += 1
 
-            glob.originalChannelList4 = self.list4[:]
+                glob.originalChannelList4 = self.list4[:]
 
     def downloadApiData(self, url):
         content = ""
