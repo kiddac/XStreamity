@@ -118,7 +118,7 @@ cfg.catchupstart = ConfigSelectionNumber(0, 30, 1, default=0)
 cfg.catchupend = ConfigSelectionNumber(0, 30, 1, default=0)
 cfg.subs = ConfigYesNo(default=False)
 cfg.skipplaylistsscreen = ConfigYesNo(default=False)
-cfg.wakeup = ConfigClock(default=((9 * 60) + 9) * 60)  # 7:00
+cfg.wakeup = ConfigClock(default=((9 * 60) + 9) * 60)  # 10:09
 cfg.adult = ConfigYesNo(default=False)
 cfg.adultpin = ConfigPIN(default=0000)
 cfg.retries = ConfigSubsection()
