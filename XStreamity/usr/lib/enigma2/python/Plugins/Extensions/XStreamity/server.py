@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from . import _
-from .plugin import skin_path, playlist_file
+from .plugin import skin_path, playlist_file, hdr
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -61,14 +61,6 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
         self.onFirstExecBegin.append(self.initConfig)
         self.onLayoutFinish.append(self.__layoutFinished)
 
-    def clear_caches(self):
-        try:
-            os.system("echo 1 > /proc/sys/vm/drop_caches")
-            os.system("echo 2 > /proc/sys/vm/drop_caches")
-            os.system("echo 3 > /proc/sys/vm/drop_caches")
-        except:
-            pass
-
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
 
@@ -99,7 +91,6 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
         self.passwordCfg = NoSave(ConfigText(default=self.password, fixed_size=False))
         self.outputCfg = NoSave(ConfigSelection(default=self.output, choices=[("ts", "ts"), ("m3u8", "m3u8")]))
         self.createSetup()
-        self.clear_caches()
 
     def createSetup(self):
         self.list = []
@@ -177,7 +168,7 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
             valid = self.checkline()
 
             if not valid:
-                self.session.open(MessageBox, _("Details are not a valid or unauthorised"), type=MessageBox.TYPE_INFO, timeout=5)
+                self.session.open(MessageBox, _("Details are not valid or unauthorised"), type=MessageBox.TYPE_INFO, timeout=5)
                 return
 
             # update playlists.txt file
@@ -210,9 +201,18 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 
     def checkline(self):
         import requests
+        from requests.adapters import HTTPAdapter
+
         valid = False
+
+        r = ""
+        adapter = HTTPAdapter()
+        http = requests.Session()
+        http.mount("http://", adapter)
+        http.mount("https://", adapter)
+
         try:
-            r = requests.get(self.apiline, allow_redirects=True)
+            r = http.get(self.apiline, headers=hdr, timeout=10, verify=False, allow_redirects=True)
             r.raise_for_status()
             if r.status_code == requests.codes.ok:
                 response = r.json()
