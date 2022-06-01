@@ -427,28 +427,19 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             "blue": self.showLog,
         }, -2)
 
-        self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
-            iPlayableService.evStart: self.__evTunedStart,
-            iPlayableService.evStopped: self.__evTunedStopped,
-            iPlayableService.evTunedIn: self.__evTunedIn,
-            iPlayableService.evUpdatedInfo: self.__evUpdatedInfo,
-            iPlayableService.evEOF: self.__evEOF,
-            iPlayableService.evTuneFailed: self.__evTuneFailed
-        })
+        self.__event_tracker = ServiceEventTracker(
+            screen=self,
+            eventmap={
+                iPlayableService.evStart: self.__evStart,
+                iPlayableService.evTuneFailed: self.__evTuneFailed,
+                iPlayableService.evUpdatedInfo: self.__evUpdatedInfo,
+                iPlayableService.evEOF: self.__evEOF,
+            },
+        )
 
         self.streamcheck = 0
 
-        self.timerCache = eTimer()
-        self.timerRecent = eTimer()
-        self.timerstream = eTimer()
-
-        try:
-            self.timerCache.callback.append(clear_caches)
-        except:
-            self.timerCache_conn = self.timerCache.timeout.connect(clear_caches)
-        self.timerCache.start(60000, False)
-
-        self.playStream(self.servicetype, self.streamurl, self.direct_source)
+        self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl, self.direct_source))
 
     def IPTVstartInstantRecording(self, limitEvent=True):
         from . import record
@@ -548,21 +539,13 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             json.dump(self.playlists_all, f)
 
     def playStream(self, servicetype, streamurl, direct_source):
-        try:
-            self.timerRecent.stop()
-        except:
-            pass
-
-        try:
-            self.timerRecent.callback.append(self.addRecentLiveList)
-        except:
-            self.timerRecent_conn = self.timerRecent.timeout.connect(self.addRecentLiveList)
-        self.timerRecent.start(20000, True)
 
         try:
             self.session.nav.stopService()
         except:
             pass
+
+        self.downloadImage()
 
         self["x_description"].setText(glob.currentepglist[glob.currentchannellistindex][4])
         self["nowchannel"].setText(glob.currentchannellist[glob.currentchannellistindex][0])
@@ -635,33 +618,49 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
             glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
 
-        self.downloadImage()
-
-    def __evTunedStart(self):
+    def __evStart(self):
         # print("__evTunedStart")
-        print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " evTunedStart", file=log)
+        print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " evStart", self.servicetype, file=log)
 
         if self.hasStreamData is False:
+            self.timerstream = eTimer()
             try:
                 self.timerstream.callback.append(self.checkStream)
             except:
                 self.timerstream_conn = self.timerstream.timeout.connect(self.checkStream)
-            self.timerstream.start(10000, True)
+            self.timerstream.start(7000, True)
         else:
             try:
                 self.timerstream.stop()
             except:
                 pass
 
-    def __evTunedStopped(self):
-        # print("__evTunedStopped")
-        print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " evTunedStopped", file=log)
+    def __evUpdatedInfo(self):
+        # print("__evUpdatedInfo")
+        if not self.hasStreamData:
+            print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " evUpdatedInfo", self.servicetype, file=log)
+        self.originalservicetype = self.servicetype
+        self.hasStreamData = True
+        selectionchanged = 0
 
-        self.hasStreamData = False
+        self.timerCache = eTimer()
+        try:
+            self.timerCache.stop()
+        except:
+            pass
 
-    def __evTunedIn(self):
-        # print("__evTunedIn")
-        print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " evTunedIn", file=log)
+        try:
+            self.timerCache.callback.append(clear_caches)
+        except:
+            self.timerCache_conn = self.timerCache.timeout.connect(clear_caches)
+        self.timerCache.start(600000, False)
+
+        self.timerRecent = eTimer()
+        try:
+            self.timerRecent.callback.append(self.addRecentLiveList)
+        except:
+            self.timerRecent_conn = self.timerRecent.timeout.connect(self.addRecentLiveList)
+        self.timerRecent.start(20000, True)
 
     def __evTuneFailed(self):
         # print("__evTuneFailed")
@@ -672,17 +671,14 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
         except:
             pass
 
-    def __evUpdatedInfo(self):
-        self.originalservicetype = self.servicetype
-        # print("__evUpdatedInfo")
-        if not self.hasStreamData:
-            print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " evUpdatedInfo", file=log)
-        self.hasStreamData = True
-
     def __evEOF(self):
-        self.hasStreamData = False
         # print("__evEOF")
-        print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " evEOF", file=log)
+        print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " evEOF", self.servicetype, file=log)
+        self.hasStreamData = False
+        try:
+            self.session.nav.stopService()
+        except:
+            pass
 
     def checkStream(self):
         # print("checkStream")
@@ -707,17 +703,20 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
     def streamTypeFailed(self, data=None):
         if str(self.servicetype) == "1":
             self.servicetype = "4097"
-        else:
+        elif str(self.servicetype) == "4097":
             self.servicetype = "1"
+
         self.streamcheck = 2
         self.playStream(self.servicetype, self.streamurl, self.direct_source)
 
     def back(self):
         glob.nextlist[-1]["index"] = glob.currentchannellistindex
+
         try:
             self.timerCache.stop()
         except:
             pass
+
         self.close()
 
     def toggleStreamType(self):
@@ -733,6 +732,7 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
         self.playStream(self.servicetype, self.streamurl, self.direct_source)
 
     def downloadImage(self):
+        self.loadDefaultImage()
         try:
             os.remove(str(dir_tmp) + "original.png")
             os.remove(str(dir_tmp) + "temp.png")
@@ -995,15 +995,6 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
             "green": self.nextAR,
         }, -2)
 
-        self.timerCache = eTimer()
-        self.timerRecent = eTimer()
-
-        try:
-            self.timerCache.callback.append(clear_caches)
-        except:
-            self.timerCache_conn = self.timerCache.timeout.connect(clear_caches)
-        self.timerCache.start(60000, False)
-
         self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl, self.direct_source))
 
     def addRecentVodList(self):
@@ -1057,16 +1048,7 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
 
     def playStream(self, servicetype, streamurl, direct_source):
 
-        try:
-            self.timerRecent.stop()
-        except:
-            pass
-
-        try:
-            self.timerRecent.callback.append(self.addRecentVodList)
-        except:
-            self.timerRecent_conn = self.timerRecent.timeout.connect(self.addRecentVodList)
-        self.timerRecent.start(20000, True)
+        self.downloadImage()
 
         if streamurl != "None" and "/movie/" in streamurl:
             self["streamcat"].setText("VOD")
@@ -1101,9 +1083,22 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
             glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
             glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
 
-        self.downloadImage()
+            self.timerCache = eTimer()
+            try:
+                self.timerCache.callback.append(clear_caches)
+            except:
+                self.timerCache_conn = self.timerCache.timeout.connect(clear_caches)
+            self.timerCache.start(60000, False)
+
+            self.timerRecent = eTimer()
+            try:
+                self.timerRecent.callback.append(self.addRecentVodList)
+            except:
+                self.timerRecent_conn = self.timerRecent.timeout.connect(self.addRecentVodList)
+            self.timerRecent.start(20000, True)
 
     def downloadImage(self):
+        self.loadDefaultImage()
         try:
             os.remove(str(dir_tmp) + "original.jpg")
             os.remove(str(dir_tmp) + "temp.jpg")
@@ -1280,17 +1275,11 @@ class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAud
             "green": self.nextAR,
         }, -2)
 
-        self.timerCache = eTimer()
-
-        try:
-            self.timerCache.callback.append(clear_caches)
-        except:
-            self.timerCache_conn = self.timerCache.timeout.connect(clear_caches)
-        self.timerCache.start(60000, False)
-
         self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl))
 
     def playStream(self, servicetype, streamurl):
+        self.downloadImage()
+
         self["x_description"].setText(glob.catchupdata[1])
         self["streamcat"].setText("Catch")
         self["streamtype"].setText(str(servicetype))
@@ -1313,9 +1302,15 @@ class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAud
             glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
             glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
 
-        self.downloadImage()
+            self.timerCache = eTimer()
+            try:
+                self.timerCache.callback.append(clear_caches)
+            except:
+                self.timerCache_conn = self.timerCache.timeout.connect(clear_caches)
+            self.timerCache.start(60000, False)
 
     def downloadImage(self):
+        self.loadDefaultImage()
         try:
             os.remove(str(dir_tmp) + "original.png")
             os.remove(str(dir_tmp) + "temp.png")
