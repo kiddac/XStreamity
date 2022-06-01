@@ -271,8 +271,6 @@ class XStreamity_Categories(Screen):
 
         self.timerVOD = eTimer()
         self.timerVODBusy = eTimer()
-        self.timerimage = eTimer()
-        self.timerSeries = eTimer()
 
         # buttons / keys
         self["key_red"] = StaticText(_("Back"))
@@ -473,7 +471,6 @@ class XStreamity_Categories(Screen):
         self.buildLists()
 
     def buildLists(self):
-        self.clear_caches()
         if self.level == 1:
             self.buildList1()
 
@@ -1177,7 +1174,6 @@ class XStreamity_Categories(Screen):
             # index = 0, name = 1, stream_id = 2, stream_icon = 3, epg_channel_id = 4, added = 5, category_id = 6, custom_sid = 7, nowtime = 9
             # nowTitle = 10, nowDesc = 11, nexttime = 12, nextTitle = 13, nextDesc = 14, next_url = 15, favourite = 16, watching = 17, hidden = 18, direct_source = 19
             if self.favourites_category:
-                # self.list2.reverse()
                 self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18], x[19]) for x in self.list2 if x[16] is True]
                 self.epglist = [buildEPGListEntry(x[0], x[2], x[9], x[10], x[11], x[12], x[13], x[14], x[18], x[19]) for x in self.list2 if x[16] is True]
             else:
@@ -1190,7 +1186,6 @@ class XStreamity_Categories(Screen):
 
         elif self.categoryname == "vod":
             if self.favourites_category:
-                # self.list2.reverse()
                 self.main_list = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[10], x[11]) for x in self.list2 if x[7] is True]
             else:
                 self.main_list = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[10], x[11]) for x in self.list2 if x[10] is False]
@@ -1326,6 +1321,12 @@ class XStreamity_Categories(Screen):
                                 self.addEPG()
 
                         self.refreshEPGInfo()
+                        self.timerimage = eTimer()
+                        try:
+                            self.timerimage.stop()
+                        except:
+                            pass
+
                         try:
                             self.timerimage.callback.append(self.downloadImage)
                         except:
@@ -1333,6 +1334,7 @@ class XStreamity_Categories(Screen):
                         self.timerimage.start(250, True)
 
                 elif self.categoryname == "vod":
+                    self.timerVOD = eTimer()
                     try:
                         self.timerVOD.stop()
                     except:
@@ -1345,6 +1347,7 @@ class XStreamity_Categories(Screen):
                     self.timerVOD.start(300, True)
 
             if self.categoryname == "series" and self.level != 1:
+                self.timerSeries = eTimer()
                 try:
                     self.timerSeries.stop()
                 except:
@@ -1356,6 +1359,12 @@ class XStreamity_Categories(Screen):
                 self.timerSeries.start(300, True)
 
             if self.categoryname == "catchup" and self.level != 1:
+                self.timerimage = eTimer()
+                try:
+                    self.timerimage.stop()
+                except:
+                    pass
+
                 try:
                     self.timerimage.callback.append(self.downloadImage)
                 except:
@@ -1499,15 +1508,6 @@ class XStreamity_Categories(Screen):
         if ptr is not None and self.level != 1:
             self["vod_cover"].instance.setPixmap(ptr)
             self["vod_cover"].instance.show()
-
-    def clear_caches(self):
-        # print("*** clear_caches ***")
-        try:
-            system("echo 1 > /proc/sys/vm/drop_caches")
-            system("echo 2 > /proc/sys/vm/drop_caches")
-            system("echo 3 > /proc/sys/vm/drop_caches")
-        except:
-            pass
 
     def goUp(self):
         # print("*** goUp ***")
@@ -3287,7 +3287,6 @@ class XStreamity_Categories(Screen):
 
             if self.level == 2 or self.level == 3:
                 if cfg.TMDB.value is True:
-                    # self.downloadImage()
                     self.getTMDB()
                 else:
                     self.downloadImage()

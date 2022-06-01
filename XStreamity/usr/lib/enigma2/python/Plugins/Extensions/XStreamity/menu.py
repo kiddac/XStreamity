@@ -99,16 +99,6 @@ class XStreamity_Menu(Screen):
             self["splash"].hide()
             self.createSetup()
 
-        self.clear_caches()
-
-    def clear_caches(self):
-        try:
-            os.system("echo 1 > /proc/sys/vm/drop_caches")
-            os.system("echo 2 > /proc/sys/vm/drop_caches")
-            os.system("echo 3 > /proc/sys/vm/drop_caches")
-        except:
-            pass
-
     def makeUrlList(self):
         self.url_list = []
 

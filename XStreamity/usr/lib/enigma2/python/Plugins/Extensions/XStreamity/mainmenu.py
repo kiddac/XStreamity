@@ -88,17 +88,8 @@ class XStreamity_MainMenu(Screen):
         else:
             self.start()
 
-    def clear_caches(self):
-        try:
-            os.system("echo 1 > /proc/sys/vm/drop_caches")
-            os.system("echo 2 > /proc/sys/vm/drop_caches")
-            os.system("echo 3 > /proc/sys/vm/drop_caches")
-        except:
-            pass
-
     def start(self, answer=None):
         self.playlists_all = xfiles.processfiles()
-        self.clear_caches()
         self.createSetup()
 
     def createSetup(self):
