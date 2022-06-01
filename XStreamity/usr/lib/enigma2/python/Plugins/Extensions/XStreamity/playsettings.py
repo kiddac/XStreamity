@@ -131,21 +131,23 @@ class XStreamity_Settings(ConfigListScreen, Screen):
     def createSetup(self):
         self.list = []
         self.list.append(getConfigListEntry(_("Short name or provider name:"), self.nameCfg))
-        self.list.append(getConfigListEntry(_("Output:"), self.outputCfg))
 
         self.list.append(getConfigListEntry(_("Show LIVE category:"), self.showliveCfg))
         self.list.append(getConfigListEntry(_("Show VOD category:"), self.showvodCfg))
         self.list.append(getConfigListEntry(_("Show SERIES category:"), self.showseriesCfg))
         self.list.append(getConfigListEntry(_("Show CATCHUP category:"), self.showcatchupCfg))
-        self.list.append(getConfigListEntry(_("EPG offset:"), self.epgoffsetCfg))
-        self.list.append(getConfigListEntry(_("Use alternative EPG url as instructed by provider:"), self.epgalternativeCfg))
-        if self.epgalternativeCfg.value is True:
-            self.list.append(getConfigListEntry(_("Enter provided alternative EPG url:"), self.epgalternativeurlCfg))
+        self.list.append(getConfigListEntry(_("Output:"), self.outputCfg))
+
         if self.showliveCfg.value is True:
             self.list.append(getConfigListEntry(_("Stream Type LIVE:"), self.liveTypeCfg))
 
         if self.showvodCfg.value is True or self.showseriesCfg.value is True:
             self.list.append(getConfigListEntry(_("Stream Type VOD/SERIES:"), self.vodTypeCfg))
+
+        self.list.append(getConfigListEntry(_("EPG offset:"), self.epgoffsetCfg))
+        self.list.append(getConfigListEntry(_("Use alternative EPG url:"), self.epgalternativeCfg))
+        if self.epgalternativeCfg.value is True:
+            self.list.append(getConfigListEntry(_("Alternative EPG url:"), self.epgalternativeurlCfg))
 
         self["config"].list = self.list
         self["config"].l.setList(self.list)
@@ -289,18 +291,6 @@ class XStreamity_Settings(ConfigListScreen, Screen):
                         else:
                             playlistline = "%s%s:%s/get.php?username=%s&password=%s&type=%s&output=%s #%s" % (protocol, domain, port, username, password, self.listtype, output, self.name)
 
-                        line = str(playlistline) + "\n"
-                        exists = True
-                    f.write(line)
-                if exists is False:
-                    f.write("\n" + str(playlistline) + "\n")
-
-            with open(playlist_file, "r+") as f:
-                lines = f.readlines()
-                f.seek(0)
-                exists = False
-                for line in lines:
-                    if self.domain in line and self.username in line and self.password in line:
                         line = str(playlistline) + "\n"
                         exists = True
                     f.write(line)
