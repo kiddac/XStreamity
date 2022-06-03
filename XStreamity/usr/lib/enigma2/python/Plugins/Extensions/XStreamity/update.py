@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 
-from .plugin import playlists_json, pythonVer, cfg
+from .plugin import playlists_json, pythonVer, cfg, hdr
 from xml.etree.cElementTree import iterparse
 from twisted.web.client import downloadPage
-
+from requests.adapters import HTTPAdapter
 try:
     from urlparse import urlparse
 except:
@@ -74,8 +74,13 @@ class XStreamity_Update:
 
     def checkRedirect(self, url):
         # print("*** check redirect ***")
+        x = ""
+        adapter = HTTPAdapter()
+        http = requests.Session()
+        http.mount("http://", adapter)
+        http.mount("https://", adapter)
         try:
-            x = requests.get(url, timeout=20, verify=False, stream=True)
+            x = http.get(url, header=hdr, timeout=20, verify=False, stream=True)
             return str(x.url)
         except Exception as e:
             print(e)
