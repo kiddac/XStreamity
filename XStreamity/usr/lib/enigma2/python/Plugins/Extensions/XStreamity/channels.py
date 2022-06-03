@@ -24,7 +24,6 @@ from Tools.LoadPixmap import LoadPixmap
 from collections import OrderedDict
 from datetime import datetime, timedelta
 from enigma import eTimer, eServiceReference, eEPGCache, ePicLoad
-from os import system
 from requests.adapters import HTTPAdapter
 from twisted.web.client import downloadPage
 from itertools import cycle, islice
@@ -2702,7 +2701,7 @@ class XStreamity_Categories(Screen):
                 name = self.xmltv_channel_list[i]["name"]
 
                 if channelid and channelid != "None":
-                    xml_str += '<channel id="" + str(channelid) + "">" + str(serviceref) + "</channel><!--" + str(name) + "-->\n'
+                    xml_str += '<channel id="' + str(channelid) + '">' + str(serviceref) + '</channel><!--' + str(name) + '-->\n'
 
             xml_str += '</channels>\n'
             f.write(xml_str)
@@ -2777,8 +2776,13 @@ class XStreamity_Categories(Screen):
             stream_id = self["main_list"].getCurrent()[4]
             url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_vod_info&vod_id=" + str(stream_id)
             self.info = ""
+
+            adapter = HTTPAdapter(max_retries=0)
+            http = requests.Session()
+            http.mount("http://", adapter)
+            http.mount("https://", adapter)
             try:
-                r = requests.get(url, headers=hdr, stream=True, timeout=10, verify=False)
+                r = http.get(url, headers=hdr, stream=True, timeout=10, verify=False)
                 r.raise_for_status()
                 if r.status_code == requests.codes.ok:
                     content = r.json()
