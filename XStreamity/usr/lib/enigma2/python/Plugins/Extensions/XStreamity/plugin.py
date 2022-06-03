@@ -129,7 +129,7 @@ cfg.retries.adultpin.time = ConfigInteger(default=3)
 skin_path = "%s%s/" % (skin_directory, cfg.skin.value)
 common_path = "%scommon/" % (skin_directory)
 playlists_json = "%sx-playlists.json" % (dir_etc)
-downloads_json = "%sdownloads.json" % (dir_etc)
+downloads_json = "%sdownloads2.json" % (dir_etc)
 playlist_file = "%splaylists.txt" % (dir_etc)
 
 if cfg.location.value:
