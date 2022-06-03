@@ -3,8 +3,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: XStreamity v3.64\n"
-"POT-Creation-Date: 2022-04-06 10:34+0200\n"
-"PO-Revision-Date: 2022-04-11 14:21+0300\n"
+"POT-Creation-Date: 2022-06-03 13:27+0100\n"
+"PO-Revision-Date: 2022-06-03 13:28+0100\n"
 "Last-Translator: Dario Croci <spaeleus@croci.org>\n"
 "Language-Team: Dario Croci <spaeleus@croci.org>\n"
 "Language: it_IT\n"
@@ -25,235 +25,245 @@ msgid_plural "%d Mins"
 msgstr[0] "%d Dak"
 msgstr[1] "%d Mins"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:233
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1251
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1554
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1557
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1560
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:234
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1257
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1569
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1572
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1770
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1575
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1587
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1833
 msgid "Sort: A-Z"
 msgstr "Sırala: A-Z"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:277
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:173
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:276
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:158
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:39
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:45
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:46
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:45
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:47
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:38
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:66
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:65
 msgid "Back"
 msgstr "Geri"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:278
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:277
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:40
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:46
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:47
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:46
 msgid "OK"
 msgstr "TAMAM"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:280
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1249
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1677
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:279
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1255
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1728
 msgid "Search"
 msgstr "Arama"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:303
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:302
 msgid "Live Categories"
 msgstr "Canlı Kategoriler"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:304
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:303
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:235
 msgid "Live Streams"
 msgstr "Canlı Yayınlar"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:340
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:339
 msgid "Vod Categories"
 msgstr "VOD Kategorileri"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:341
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:340
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:240
 msgid "Vod"
 msgstr "VOD"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:371
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:370
 msgid "Series Categories"
 msgstr "Dizi Kategorileri"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:372
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2809
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:371
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2883
 msgid "Series"
 msgstr "Diziler"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:397
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:396
 msgid "Catch Up Categories"
 msgstr "Catch Up Kategorileri"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:398
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:397
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:257
 msgid "Catch Up TV"
 msgstr "Catch-Up TV"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:516
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:513
 msgid "FAVOURITES"
 msgstr "FAVORILER"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:523
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:515
+msgid "RECENTLY WATCHED"
+msgstr ""
+
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:522
 msgid "ALL"
 msgstr "HEPSİ"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:919
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:925
 msgid "Season "
 msgstr "Sezon "
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1239
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1633
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1657
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1245
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1649
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1708
 msgid "Reset Search"
 msgstr "Aramayı Sıfırla"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1245
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1534
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1251
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1549
 msgid "Reverse"
 msgstr "Tersi"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1246
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1255
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1252
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1261
 msgid "Hide/Show"
 msgstr "Gizle/Göster"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1296
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1355
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1267
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1652
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:47
+msgid "Delete"
+msgstr "Sil"
+
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1305
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1380
 msgid "Page: "
 msgstr "Sayfa: "
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1296
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1355
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1305
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1380
 msgid " of "
 msgstr " ile ilgili "
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1554
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1557
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1560
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1569
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1572
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1575
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1590
 msgid "Sort: Z-A"
 msgstr "Sırala: Z-A"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1554
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1557
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1560
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1604
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1569
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1572
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1575
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1619
 msgid "Sort: Original"
 msgstr "Sırala: Orijinal"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1557
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1560
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1578
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1572
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1575
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1593
 msgid "Sort: Added"
 msgstr "Sırala: Eklenme"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1560
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1593
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1575
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1608
 msgid "Sort: Year"
 msgstr "Sırala: Yıl"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1634
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1656
 msgid "Filter this category..."
 msgstr "Bu kategoriyi filtrele..."
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1713
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1764
 msgid "Incorrect pin code."
 msgstr "Yanlış pin kodu."
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1726
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1777
 msgid "all"
 msgstr "hepsi"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1729
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1786
 msgid "Please enter the parental control pin code"
 msgstr "Lütfen ebeveyn kontrolü pin kodunu giriniz"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1729
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:26
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1786
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:25
 msgid "Enter pin code"
 msgstr "PIN kodunu girin"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2213
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2272
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2281
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2282
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2341
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2350
 msgid "Next Info"
 msgstr "Sonra"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2276
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2345
 msgid "Now Info"
 msgstr "Şimdi"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2507
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:474
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2576
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:481
 msgid "Recording Timer Set."
 msgstr "Kayıt Zamanlayıcı Ayarı."
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2509
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:476
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2578
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:483
 msgid "Recording Failed."
 msgstr "Kayıt Başarısız."
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2696
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2765
 msgid "Video Type:"
 msgstr "Video Türü:"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2697
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2766
 msgid "Rating:"
 msgstr "Değerlendirme:"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2698
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2767
 msgid "Genre:"
 msgstr "Tür:"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2699
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2768
 msgid "Duration:"
 msgstr "Süre:"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2700
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2769
 msgid "Release Date:"
 msgstr "Yayın Tarihi:"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2701
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2770
 msgid "Cast:"
 msgstr "Oyuncular:"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2702
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2771
 msgid "Director:"
 msgstr "Yönetmen:"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2703
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2772
 msgid "Country:"
 msgstr "Ülke:"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2807
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2881
 msgid "Movie"
 msgstr "Film"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2807
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2809
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2811
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2881
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2883
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2885
 msgid "Not Started"
 msgstr "Başlatılmadı"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2811
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2885
 msgid "Catch-up"
 msgstr "Catch-Up"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2816
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2890
 msgid "Added to download manager"
 msgstr "İndirme yöneticisine eklendi"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2818
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2892
 msgid "Already added to download manager"
 msgstr "İndirme yöneticisine zaten eklendi"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:3199
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:3273
 msgid ""
 "The IMDb plugin is not installed!\n"
 "Please install it."
@@ -261,15 +271,15 @@ msgstr ""
 "IMDb eklentisi kurulu değil!\n"
 "Please install it."
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:3259
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:3332
 msgid "Catchup error. No data for this slot"
 msgstr "Catchup hatası. Bu yuva için veri yok"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:3370
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:3443
 msgid "Catchup currently not available. Missing EPG data"
 msgstr "Catchup şu anda mevcut değil. Eksik EPG verileri"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:141
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:126
 #, python-format
 msgid ""
 "Video Download Failed!\n"
@@ -282,7 +292,7 @@ msgstr ""
 "Bozuk İndirme Dosyası:\n"
 "%s"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:142
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:127
 #, python-format
 msgid ""
 "Video Download Failed!\n"
@@ -295,7 +305,7 @@ msgstr ""
 "RTMP Paketi okunamadı:\n"
 "%s"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:143
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:128
 #, python-format
 msgid ""
 "Video Download Failed!\n"
@@ -308,7 +318,7 @@ msgstr ""
 "Segmentasyon hatası\n"
 "%s"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:144
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:129
 #, python-format
 msgid ""
 "Video Download Failed!\n"
@@ -321,7 +331,7 @@ msgstr ""
 "Sunucu hatası:\n"
 "%s"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:145
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:130
 #, python-format
 msgid ""
 "Video Download Failed!\n"
@@ -334,33 +344,33 @@ msgstr ""
 "Bilinmeyen hata:\n"
 "%s"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:160
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:145
 msgid "VOD Download Manager"
 msgstr "VOD İndirme Yöneticisi"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:174
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:352
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:159
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:343
 msgid "Download"
 msgstr "İndir"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:175
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:160
 msgid "Remove"
 msgstr "Kaldır"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:223
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:208
 msgid "Free Space:"
 msgstr "Boş Alan:"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:223
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:208
 msgid "of"
 msgstr "ile ilgili"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:350
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:341
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/hidden.py:44
 msgid "Cancel"
 msgstr "İptal"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:360
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:351
 msgid ""
 "Vod Download folder location does not exist.\n"
 "\n"
@@ -368,8 +378,8 @@ msgstr ""
 "Vod İndirme klasörü konumu mevcut değil.\n"
 "\v\n"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:400
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:406
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:391
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:397
 msgid ""
 "Please update your wget library to download https lines\n"
 "\n"
@@ -381,11 +391,11 @@ msgstr ""
 "opkg update\n"
 "opkg install wget"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:440
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:431
 msgid "Cancel this download?"
 msgstr "Bu indirme iptal edilsin mi?"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:483
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:474
 msgid "Delete this entry?"
 msgstr "Bu giriş silinsin mi?"
 
@@ -397,7 +407,7 @@ msgstr "Gizli Kategoriler"
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:48
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/record.py:39
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:39
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:67
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:66
 msgid "Save"
 msgstr "Kaydet"
 
@@ -421,50 +431,48 @@ msgstr "Ana Menü"
 msgid "Reset JSON"
 msgstr "JSON Sıfırlama"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:116
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:107
 msgid "Playlists"
 msgstr "Oynatma Listeleri"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:117
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:122
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:108
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:113
 msgid "Add Playlist"
 msgstr "Oynatma Listesi Ekle"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:118
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:123
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:59
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:109
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:114
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:58
 msgid "Main Settings"
 msgstr "Ana Ayarlar"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:119
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:110
 msgid "Manual EPG Update"
 msgstr "Manuel EPG Güncellemesi"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:126
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:117
 msgid "Download Manager"
 msgstr "İndirme Yöneticisi"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:152
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:140
 msgid "EPGs downloading."
 msgstr "EPGler indiriliyor."
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:184
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:172
 msgid ""
-"Warning: delete stored json data for all playlists... Settings, favourites "
-"etc. \n"
+"Warning: delete stored json data for all playlists... Settings, favourites etc. \n"
 "Playlists will not be deleted.\n"
 "Do you wish to continue?"
 msgstr ""
-"Uyarı: tüm çalma listeleri için saklanan json verilerini silin... Ayarlar, "
-"favoriler vb.\n"
+"Uyarı: tüm çalma listeleri için saklanan json verilerini silin... Ayarlar, favoriler vb.\n"
 "Oynatma listeleri silinmeyecek.\n"
 "Devam etmek istiyor musunuz?"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:47
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:48
 msgid "Update"
 msgstr "Güncelle"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:49
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:50
 msgid "Catchup channel check updated: "
 msgstr "Catchup kanal kontrolü güncellendi:"
 
@@ -484,127 +492,120 @@ msgstr "Oynatma Listesi Ayarları"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:269
 msgid "No data, blocked or playlist not compatible with XStreamity plugin."
-msgstr ""
-"Veri yok, engellendi veya oynatma listesi XStreamity eklentisiyle uyumlu "
-"değil."
+msgstr "Veri yok, engellendi veya oynatma listesi XStreamity eklentisiyle uyumlu değil."
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:43
 msgid "Select Playlist"
 msgstr "Oynatma Listesini Seç"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:47
-msgid "Delete"
-msgstr "Sil"
-
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:48
 msgid "Info"
 msgstr "Bilgi"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:265
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:325
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:281
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:341
 msgid "Server Not Responding"
 msgstr "Sunucu Cevap Vermiyor"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:277
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:327
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:293
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:343
 msgid "Not Authorised"
 msgstr "İzinli Değil"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:282
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:290
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:314
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:298
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:306
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:330
 msgid "Active"
 msgstr "Aktif"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:284
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:319
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:300
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:335
 msgid "Banned"
 msgstr "Yasaklı"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:286
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:323
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:302
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:339
 msgid "Disabled"
 msgstr "Engelli"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:288
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:321
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:304
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:337
 msgid "Expired"
 msgstr "Süresi Dolmuş"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:293
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:295
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:309
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:311
 msgid "Expires: "
 msgstr "Süresi Doluyor:"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:297
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:313
 msgid "Active Conn:"
 msgstr "Aktif Bağ:"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:300
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:316
 msgid "Max Conn:"
 msgstr "Mak Bağ:"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:340
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:356
 msgid "Delete selected playlist?"
 msgstr "Seçili oynatma listesi silinsin mi?"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:361
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:377
 msgid "Delete providers EPG data?"
 msgstr "Sağlayıcıların EPG verileri silinsin mi?"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:71
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:79
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/record.py:72
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:70
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:91
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:98
 msgid "Really close without saving settings?"
 msgstr "Ayarları kaydetmeden gerçekten kapanıyor mu?"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:125
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:133
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:98
 msgid "Short name or provider name:"
 msgstr "Kısa ad veya sağlayıcı adı:"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:126
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:135
+msgid "Show LIVE category:"
+msgstr "LIVE kategorisini göster:"
+
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:136
+msgid "Show VOD category:"
+msgstr "VOD kategorisini göster:"
+
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:137
+msgid "Show SERIES category:"
+msgstr "SERIES kategorisini göster:"
+
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:138
+msgid "Show CATCHUP category:"
+msgstr "CATCHUP kategorisini göster:"
+
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:139
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:104
 msgid "Output:"
 msgstr "Çıktı:"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:128
-msgid "Show LIVE category:"
-msgstr "LIVE kategorisini göster:"
-
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:129
-msgid "Show VOD category:"
-msgstr "VOD kategorisini göster:"
-
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:130
-msgid "Show SERIES category:"
-msgstr "SERIES kategorisini göster:"
-
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:131
-msgid "Show CATCHUP category:"
-msgstr "CATCHUP kategorisini göster:"
-
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:132
-msgid "EPG offset:"
-msgstr "EPG ofseti:"
-
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:133
-msgid "Use alternative EPG url as instructed by provider:"
-msgstr ""
-"Sağlayıcı tarafından belirtildiği şekilde alternatif EPG url'sini kullanın:"
-
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:135
-msgid "Enter provided alternative EPG url:"
-msgstr "Sağlanan alternatif EPG URL'sini girin:"
-
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:137
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:142
 msgid "Stream Type LIVE:"
 msgstr "Akış Türü CANLI:"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:140
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:145
 msgid "Stream Type VOD/SERIES:"
 msgstr "Akış Türü VOD/SERİSİ:"
+
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:147
+msgid "EPG offset:"
+msgstr "EPG ofseti:"
+
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:148
+msgid "Use alternative EPG url:"
+msgstr ""
+
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:150
+msgid "Alternative EPG url:"
+msgstr ""
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:195
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:279
@@ -616,8 +617,8 @@ msgid "IPTV Xtream Codes playlists player by KiddaC"
 msgstr "IPTV Xtream Codes Oynatıcıyı Yapan KiddaC"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/record.py:38
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:46
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:1307
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:56
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:1470
 msgid "Close"
 msgstr "Kapat"
 
@@ -666,8 +667,8 @@ msgid "Password:"
 msgstr "Şifre:"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:171
-msgid "Details are not a valid or unauthorised"
-msgstr "Ayrıntılar geçerli veya yetkisiz değil"
+msgid "Details are not valid or unauthorised"
+msgstr ""
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:189
 msgid "Playlist added successfully."
@@ -677,15 +678,51 @@ msgstr "Oynatma listesi başarıyla eklendi."
 msgid "User Information"
 msgstr "Kullanıcı Bilgisi"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:26
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:40
+msgid "Status:"
+msgstr ""
+
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:41
+msgid "Is Trial:"
+msgstr ""
+
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:42
+msgid "Active Connections:"
+msgstr ""
+
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:43
+msgid "Max Connections:"
+msgstr ""
+
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:44
+msgid "Created At:"
+msgstr ""
+
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:45
+msgid "Expiry Date:"
+msgstr ""
+
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:46
+msgid "Allowed Output Formats:"
+msgstr ""
+
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:47
+msgid "Real URL:"
+msgstr ""
+
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:48
+msgid "Timezone:"
+msgstr ""
+
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:25
 msgid "Please enter the correct pin code"
 msgstr "Lütfen doğru pin kodunu girin"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:35
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:34
 msgid "The pin code you entered is wrong."
 msgstr "Girdiğiniz pin kodu yanlış."
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:103
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:110
 msgid ""
 "Please change default parental pin.\n"
 "\n"
@@ -695,130 +732,133 @@ msgstr ""
 "\n"
 "Pin 0000, 1111 veya 1234 olamaz"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:119
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:125
 msgid "You need to restart the GUI"
 msgstr "GUI'yi yeniden başlatmanız gerekiyor"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:119
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:125
 msgid "Do you want to restart now?"
 msgstr "Şimdi yeniden başlatmak istiyor musunuz?"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:130
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:136
 msgid "Select skin *Restart GUI Required"
 msgstr "Dış görünüm seçin *GUI'yi Yeniden Başlatma Gerekli"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:131
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:137
 msgid "playlists.txt location"
 msgstr "playlist.txt konumu"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:132
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:138
 msgid "EPG download location"
 msgstr "EPG indirme konumu"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:133
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:139
 msgid "VOD download folder"
 msgstr "VOD indirme klasörü"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:134
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:140
 msgid "Server timeout (seconds)"
 msgstr "Sunucu zaman aşımı (saniye)"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:136
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:142
 msgid "Default LIVE stream type"
 msgstr "Varsayılan CANLI yayın türü"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:137
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:143
 msgid "Default VOD/SERIES stream type"
 msgstr "Varsayılan VOD/SERIES akış türü"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:139
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:145
 msgid "Preview LIVE streams in mini tv"
 msgstr "Mini TV'de CANLI yayınları önizleme"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:140
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:146
 msgid "Stop stream on back button"
 msgstr "GERİ düğmesinde akışı durdur"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:141
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:147
 msgid "XStreamity parental control"
 msgstr "XStreamity ebeveyn kontrolü"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:142
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:148
 msgid "XStreamity parental pin"
 msgstr "XStreamity ebeveyn pini"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:143
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:149
 msgid "Show in main menu *Restart GUI Required"
 msgstr "Ana menüde göster *GUI'yi Yeniden Başlatma Gerekli"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:145
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:151
 msgid "Use Movie Database(TMDB) for VOD & Series"
 msgstr "VOD ve Diziler için Film Veritabanını (TMDB) Kullanın"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:146
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:152
 msgid "Movie Database language"
 msgstr "Film Veritabanı dili"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:148
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:154
 msgid "Margin before catchup (mins)"
 msgstr "Yakalamadan önceki marj (dakika)"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:149
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:155
 msgid "Margin after catchup (mins)"
 msgstr "Yakaladıktan sonra marj (dakika)"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:151
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:157
 msgid "Allow SubsSupport plugin in VOD"
 msgstr "VOD'da SubsSupport eklentisine izin ver"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:153
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:159
 msgid "Skip playlist selection screen if only 1 playlist"
 msgstr "Yalnızca 1 çalma listesi varsa çalma listesi seçim ekranını atla"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:155
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:161
 msgid "Automatic EPG download time *Restart GUI Required"
 msgstr "Otomatik EPG indirme süresi *GUI'yi Yeniden Başlatma Gerekli"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:275
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:288
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:301
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:281
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:294
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:307
 msgid "Choose Directory:"
 msgstr "Dizin Seçin:"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:276
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:289
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:302
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:282
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:295
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:308
 msgid "Choose directory"
 msgstr "Dizin seçin"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:405
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:412
 msgid "TV"
 msgstr "TV"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:830
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:905
 msgid "Do you want to resume this playback?"
 msgstr "Bu oynatmaya devam etmek istiyor musunuz?"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:830
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:905
 #, python-format
 msgid "Resume position at %s"
 msgstr "%s konumunda devam et"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:912
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:987
 msgid "VOD"
 msgstr "VOD"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:1116
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:1267
 msgid "Catch Up"
 msgstr "Catch Up"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:1303
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:1467
 msgid "Xstreamity Log"
 msgstr "Xstreamity Günlüğü"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:1308
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:1471
 msgid "Clear"
 msgstr "Temizle"
+
+#~ msgid "Use alternative EPG url as instructed by provider:"
+#~ msgstr "Sağlayıcı tarafından belirtildiği şekilde alternatif EPG url'sini kullanın:"
 
 #~ msgid "MOVIE DOWNLOAD FAILED!"
 #~ msgstr "SCARICAMENTO FILM FALLITO!"
@@ -848,9 +888,7 @@ msgstr "Temizle"
 #~ msgstr "File gia' scaricato."
 
 #~ msgid "Multiple downloads not allowed. Please wait or cancel download."
-#~ msgstr ""
-#~ "Scaricamenti multipli non sono consentiti. Attendi o cancella quello in "
-#~ "corso."
+#~ msgstr "Scaricamenti multipli non sono consentiti. Attendi o cancella quello in corso."
 
 #~ msgid "Download Failed!\n"
 #~ msgstr "Scaricamento Fallito!\n"
@@ -907,8 +945,7 @@ msgstr "Temizle"
 #~ msgstr "Tipo di flusso ReplayTV predefinito"
 
 #~ msgid "Preview LIVE streams in mini tv before playing"
-#~ msgstr ""
-#~ "Visualizza l'anteprima di streaming LIVE su mini tv prima di guardare"
+#~ msgstr "Visualizza l'anteprima di streaming LIVE su mini tv prima di guardare"
 
 #~ msgid "Update VOD Movie Database information"
 #~ msgstr "Aggiorna le informazioni del database dei film VOD"

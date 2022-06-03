@@ -1,34 +1,34 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: XStreamity\n"
-"POT-Creation-Date: 2021-12-04 15:10+0000\n"
-"PO-Revision-Date: 2021-12-04 15:11+0000\n"
+"POT-Creation-Date: 2022-06-03 13:15+0100\n"
+"PO-Revision-Date: 2022-06-03 13:15+0100\n"
 "Last-Translator: Tomppaa www.huoltovalikko.com\n"
 "Language-Team: tomppaa\n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0\n"
-"X-Poedit-Basepath: ../../..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.0.1\n"
+"X-Poedit-Basepath: ../../..\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: channels.py:233 channels.py:1536 channels.py:1539 channels.py:1542
-#: channels.py:1554 channels.py:1659 channels.py:1752
+#: channels.py:234 channels.py:1257 channels.py:1569 channels.py:1572
+#: channels.py:1575 channels.py:1587 channels.py:1833
 msgid "Sort: A-Z"
 msgstr "Järjestä: A-Ö"
 
-#: channels.py:276 downloadmanager2.py:178 mainmenu.py:39 menu.py:45
-#: playlists.py:45 playsettings.py:47 server.py:38 settings.py:66
+#: channels.py:276 downloadmanager.py:158 mainmenu.py:39 menu.py:46
+#: playlists.py:45 playsettings.py:47 server.py:38 settings.py:65
 msgid "Back"
 msgstr "Takaisin"
 
-#: channels.py:277 mainmenu.py:40 menu.py:46 playlists.py:46
+#: channels.py:277 mainmenu.py:40 menu.py:47 playlists.py:46
 msgid "OK"
 msgstr "OK"
 
-#: channels.py:279 channels.py:1234
+#: channels.py:279 channels.py:1255 channels.py:1728
 msgid "Search"
 msgstr "Haku"
 
@@ -52,7 +52,7 @@ msgstr "VOD"
 msgid "Series Categories"
 msgstr ""
 
-#: channels.py:371 channels.py:2749
+#: channels.py:371 channels.py:2883
 msgid "Series"
 msgstr ""
 
@@ -64,145 +64,151 @@ msgstr ""
 msgid "Catch Up TV"
 msgstr "Kirjasto TV"
 
-#: channels.py:515
+#: channels.py:513
 msgid "FAVOURITES"
 msgstr "SUOSIKIT"
+
+#: channels.py:515
+msgid "RECENTLY WATCHED"
+msgstr ""
 
 #: channels.py:522
 msgid "ALL"
 msgstr "KAIKKI"
 
-#: channels.py:908
+#: channels.py:925
 msgid "Season "
 msgstr "Kausi "
 
-#: channels.py:1224 channels.py:1615 channels.py:1639
+#: channels.py:1245 channels.py:1649 channels.py:1708
 msgid "Reset Search"
 msgstr "Tyhjennä Haku"
 
-#: channels.py:1230 channels.py:1516
+#: channels.py:1251 channels.py:1549
 msgid "Reverse"
 msgstr ""
 
-#: channels.py:1231 channels.py:1236
+#: channels.py:1252 channels.py:1261
 msgid "Hide/Show"
 msgstr "Piilota/Näytä"
 
-#: channels.py:1277 channels.py:1335
+#: channels.py:1267 channels.py:1652 playlists.py:47
+msgid "Delete"
+msgstr "Poista"
+
+#: channels.py:1305 channels.py:1380
 msgid "Page: "
 msgstr ""
 
-#: channels.py:1277 channels.py:1335
+#: channels.py:1305 channels.py:1380
 msgid " of "
 msgstr ""
 
-#: channels.py:1536 channels.py:1539 channels.py:1542 channels.py:1557
+#: channels.py:1569 channels.py:1572 channels.py:1575 channels.py:1590
 msgid "Sort: Z-A"
 msgstr "Järjestä: Ö-A"
 
-#: channels.py:1536 channels.py:1539 channels.py:1542 channels.py:1586
+#: channels.py:1569 channels.py:1572 channels.py:1575 channels.py:1619
 msgid "Sort: Original"
 msgstr "Järjestys: Alkuperäinen"
 
-#: channels.py:1539 channels.py:1542 channels.py:1560
+#: channels.py:1572 channels.py:1575 channels.py:1593
 msgid "Sort: Added"
 msgstr ""
 
-#: channels.py:1542 channels.py:1575
+#: channels.py:1575 channels.py:1608
 msgid "Sort: Year"
 msgstr ""
 
-#: channels.py:1616
+#: channels.py:1656
 msgid "Filter this category..."
 msgstr "Suodatin tällä Kategorialle..."
 
-#: channels.py:1695
+#: channels.py:1764
 msgid "Incorrect pin code."
 msgstr "Väärä pin koodi."
 
-#: channels.py:1708
+#: channels.py:1777
 msgid "all"
 msgstr "kaikki"
 
-#: channels.py:1711
+#: channels.py:1786
 msgid "Please enter the parental control pin code"
 msgstr "Anna lapsilukon pin koodi"
 
-#: channels.py:1711 settings.py:26
+#: channels.py:1786 settings.py:25
 msgid "Enter pin code"
 msgstr "Syötä PIN koodi"
 
-#: channels.py:2185 channels.py:2244 channels.py:2253
+#: channels.py:2282 channels.py:2341 channels.py:2350
 msgid "Next Info"
 msgstr "Seuraavat tiedot"
 
-#: channels.py:2248
+#: channels.py:2345
 msgid "Now Info"
 msgstr "Nyt tiedot"
 
-#: channels.py:2476 streamplayer.py:522
+#: channels.py:2576 streamplayer.py:481
 msgid "Recording Timer Set."
 msgstr "Tallennusajastin."
 
-#: channels.py:2478 streamplayer.py:524
+#: channels.py:2578 streamplayer.py:483
 msgid "Recording Failed."
 msgstr "Tallennus Epäonnistui."
 
-#: channels.py:2653
+#: channels.py:2765
 msgid "Video Type:"
 msgstr "Video Tyyppi:"
 
-#: channels.py:2654
+#: channels.py:2766
 msgid "Rating:"
 msgstr "Arvosana:"
 
-#: channels.py:2655
+#: channels.py:2767
 msgid "Genre:"
 msgstr "Tyylilaji:"
 
-#: channels.py:2656
+#: channels.py:2768
 msgid "Duration:"
 msgstr "Kesto:"
 
-#: channels.py:2657
+#: channels.py:2769
 msgid "Release Date:"
 msgstr "Julkaisupäivä:"
 
-#: channels.py:2658
+#: channels.py:2770
 msgid "Cast:"
 msgstr "Näyttelijät:"
 
-#: channels.py:2659
+#: channels.py:2771
 msgid "Director:"
 msgstr "Ohjaaja:"
 
-#: channels.py:2660
+#: channels.py:2772
 msgid "Country:"
 msgstr "Maa:"
 
-#: channels.py:2747
+#: channels.py:2881
 msgid "Movie"
 msgstr "Elokuva"
 
-#: channels.py:2747 channels.py:2749 channels.py:2751 downloadmanager2.py:279
-#: downloadmanager2.py:325 downloadmanager2.py:378 downloadmanager2.py:411
-#: downloadmanager2.py:462
+#: channels.py:2881 channels.py:2883 channels.py:2885
 msgid "Not Started"
 msgstr "Ei Ladattu"
 
-#: channels.py:2751
+#: channels.py:2885
 msgid "Catch-up"
 msgstr ""
 
-#: channels.py:2756
+#: channels.py:2890
 msgid "Added to download manager"
 msgstr "Lisätty lataus listaan"
 
-#: channels.py:2758
+#: channels.py:2892
 msgid "Already added to download manager"
 msgstr "Lisätty jo latauksenhallintaan"
 
-#: channels.py:3108
+#: channels.py:3273
 msgid ""
 "The IMDb plugin is not installed!\n"
 "Please install it."
@@ -210,87 +216,90 @@ msgstr ""
 "IMDb lisäosaa ei ole asennettu!\n"
 "Asenna se."
 
-#: channels.py:3169
+#: channels.py:3332
 msgid "Catchup error. No data for this slot"
 msgstr "Virhe: ladatessa tietoja"
 
-#: channels.py:3280
+#: channels.py:3443
 msgid "Catchup currently not available. Missing EPG data"
 msgstr "Mediakirjasto ei ole tällä hetkellä käytettävissä. EPG tiedot puuttuu"
 
-#: downloadmanager2.py:142 downloadmanager2.py:143 downloadmanager2.py:144
-#: downloadmanager2.py:145 downloadmanager2.py:146
-msgid "MOVIE DOWNLOAD FAILED!"
+#: downloadmanager.py:126
+#, python-format
+msgid ""
+"Video Download Failed!\n"
+"\n"
+"Corrupted Download File:\n"
+"%s"
 msgstr ""
 
-#: downloadmanager2.py:142
-msgid "DOWNLOADED FILE CORRUPTED:"
+#: downloadmanager.py:127
+#, python-format
+msgid ""
+"Video Download Failed!\n"
+"\n"
+"Could not read RTMP-Packet:\n"
+"%s"
 msgstr ""
 
-#: downloadmanager2.py:143
-msgid "COULD NOT READ RTMP PACKET:"
+#: downloadmanager.py:128
+#, python-format
+msgid ""
+"Video Download Failed!\n"
+"\n"
+"Segmentation fault:\n"
+"%s"
 msgstr ""
 
-#: downloadmanager2.py:144
-msgid "SEGMENTATION FAULT:"
+#: downloadmanager.py:129
+#, python-format
+msgid ""
+"Video Download Failed!\n"
+"\n"
+"Server returned error:\n"
+"%s"
 msgstr ""
 
-#: downloadmanager2.py:145
-msgid "SERVER RETURNED ERROR:"
+#: downloadmanager.py:130
+#, python-format
+msgid ""
+"Video Download Failed!\n"
+"\n"
+"Unknown Error:\n"
+"%s"
 msgstr ""
 
-#: downloadmanager2.py:146
-msgid "UNKNOWN ERROR:"
-msgstr ""
-
-#: downloadmanager2.py:161
+#: downloadmanager.py:145
 msgid "VOD Download Manager"
 msgstr "Latauksien Hallinta"
 
-#: downloadmanager2.py:179 downloadmanager2.py:328
+#: downloadmanager.py:159 downloadmanager.py:343
 msgid "Download"
 msgstr "Lataa"
 
-#: downloadmanager2.py:180
+#: downloadmanager.py:160
 msgid "Remove"
 msgstr "Poista"
 
-#: downloadmanager2.py:230
+#: downloadmanager.py:208
 msgid "Free Space:"
 msgstr "Vapaa Tila:"
 
-#: downloadmanager2.py:230
+#: downloadmanager.py:208
 msgid "of"
 msgstr "of"
 
-#: downloadmanager2.py:257 downloadmanager2.py:346 downloadmanager2.py:412
-#: downloadmanager2.py:460
-msgid "Downloading"
-msgstr "Ladataan"
-
-#: downloadmanager2.py:283 downloadmanager2.py:395 downloadmanager2.py:486
-msgid "Finished"
-msgstr ""
-
-#: downloadmanager2.py:326 hidden.py:44
+#: downloadmanager.py:341 hidden.py:44
 msgid "Cancel"
 msgstr "Peruuta"
 
-#: downloadmanager2.py:336
-msgid "Cancel this download?"
-msgstr "Peruuta tämä lataus?"
-
-#: downloadmanager2.py:387
+#: downloadmanager.py:351
 msgid ""
 "Vod Download folder location does not exist.\n"
 "\n"
 msgstr ""
 
-#: downloadmanager2.py:396
-msgid "File already downloaded."
-msgstr ""
-
-#: downloadmanager2.py:442 downloadmanager2.py:448
+#: downloadmanager.py:391 downloadmanager.py:397
 msgid ""
 "Please update your wget library to download https lines\n"
 "\n"
@@ -298,19 +307,19 @@ msgid ""
 "opkg install wget"
 msgstr ""
 
-#: downloadmanager2.py:463
-msgid "Multiple downloads not allowed. Please wait or cancel download."
-msgstr ""
+#: downloadmanager.py:431
+msgid "Cancel this download?"
+msgstr "Peruuta tämä lataus?"
 
-#: downloadmanager2.py:478
-msgid "Download Failed!\n"
-msgstr "Lataaminen epäonnistui!\n"
+#: downloadmanager.py:474
+msgid "Delete this entry?"
+msgstr ""
 
 #: hidden.py:35
 msgid "Hidden Categories"
 msgstr "Piilotettu kategoriat"
 
-#: hidden.py:45 playsettings.py:48 record.py:39 server.py:39 settings.py:67
+#: hidden.py:45 playsettings.py:48 record.py:39 server.py:39 settings.py:66
 msgid "Save"
 msgstr "Tallenna"
 
@@ -330,45 +339,46 @@ msgstr "Virhe: Kaikki kategoriat piilotettu. Muuta valintaasi."
 msgid "Main Menu"
 msgstr "Päävalikko"
 
-#: mainmenu.py:113
+#: mainmenu.py:41
+msgid "Reset JSON"
+msgstr ""
+
+#: mainmenu.py:107
 msgid "Playlists"
 msgstr "Toistolistat"
 
-#: mainmenu.py:114 mainmenu.py:119
+#: mainmenu.py:108 mainmenu.py:113
 msgid "Add Playlist"
 msgstr "Lisää Toistolista"
 
-#: mainmenu.py:115 mainmenu.py:120 settings.py:59
+#: mainmenu.py:109 mainmenu.py:114 settings.py:58
 msgid "Main Settings"
 msgstr "Asetukset"
 
-#: mainmenu.py:116
+#: mainmenu.py:110
 msgid "Manual EPG Update"
 msgstr "EPG Käsin Päivitys"
 
-#: mainmenu.py:123
+#: mainmenu.py:117
 msgid "Download Manager"
 msgstr "Latauksien Hallinta"
 
-#: mainmenu.py:125
-msgid "Reset Stored Data"
-msgstr ""
-
-#: mainmenu.py:151
+#: mainmenu.py:140
 msgid "EPGs downloading."
 msgstr "Ohjelmaopasta ladataan."
 
-#: mainmenu.py:185
+#: mainmenu.py:172
 msgid ""
-"Warning: delete stored json data for all playlists... Settings, favourites etc. Playlists will not be deleted.\n"
+"Warning: delete stored json data for all playlists... Settings, favourites etc. \n"
+"Playlists will not be deleted.\n"
 "Do you wish to continue?"
 msgstr ""
 
-#: menu.py:47
+#: menu.py:48
 msgid "Update"
 msgstr "Päivitä"
 
-#: menu.py:49
+#: menu.py:50
 msgid "Catchup channel check updated: "
 msgstr ""
 
@@ -392,107 +402,111 @@ msgstr "Ei tietoja, estetty tai toistolista ei ole yhteensopiva XStreamity Plugi
 msgid "Select Playlist"
 msgstr "Valitse Toistolista"
 
-#: playlists.py:47
-msgid "Delete"
-msgstr "Poista"
-
 #: playlists.py:48
 msgid "Info"
 msgstr "Tiedot"
 
-#: playlists.py:265 playlists.py:325
+#: playlists.py:281 playlists.py:341
 msgid "Server Not Responding"
 msgstr "Palvelin Ei Vastaa"
 
-#: playlists.py:277 playlists.py:327
+#: playlists.py:293 playlists.py:343
 msgid "Not Authorised"
 msgstr "Ei Valtuutettu"
 
-#: playlists.py:282 playlists.py:290 playlists.py:314
+#: playlists.py:298 playlists.py:306 playlists.py:330
 msgid "Active"
 msgstr "Aktiivinen"
 
-#: playlists.py:284 playlists.py:319
+#: playlists.py:300 playlists.py:335
 msgid "Banned"
 msgstr "Kielletty tili"
 
-#: playlists.py:286 playlists.py:323
+#: playlists.py:302 playlists.py:339
 msgid "Disabled"
 msgstr "Poistettu"
 
-#: playlists.py:288 playlists.py:321
+#: playlists.py:304 playlists.py:337
 msgid "Expired"
 msgstr "Päättynyt"
 
-#: playlists.py:293 playlists.py:295
+#: playlists.py:309 playlists.py:311
 msgid "Expires: "
 msgstr "Päättyy: "
 
-#: playlists.py:297
+#: playlists.py:313
 msgid "Active Conn:"
 msgstr "Aktiiviset yht:"
 
-#: playlists.py:300
+#: playlists.py:316
 msgid "Max Conn:"
 msgstr "Yhtäaikaiset:"
 
-#: playlists.py:340
+#: playlists.py:356
 msgid "Delete selected playlist?"
 msgstr "Poista valittu Toistolista?"
 
-#: playlists.py:361
+#: playlists.py:377
 msgid "Delete providers EPG data?"
 msgstr "Poistetaanko palveluntarjoajien EPG tiedot?"
 
-#: playsettings.py:71 record.py:72 server.py:70 settings.py:91
+#: playsettings.py:79 record.py:72 server.py:70 settings.py:98
 msgid "Really close without saving settings?"
 msgstr "Haluatko varmasti poistua tallentamatta asetuksia?"
 
-#: playsettings.py:117 server.py:98
+#: playsettings.py:133 server.py:98
 msgid "Short name or provider name:"
 msgstr "Lyhyt nimi tai palveluntarjoajan nimi:"
 
-#: playsettings.py:118 server.py:104
-msgid "Output:"
-msgstr "Ulostulo:"
-
-#: playsettings.py:120
+#: playsettings.py:135
 msgid "Show LIVE category:"
 msgstr "Näytä Suorat kategoriat:"
 
-#: playsettings.py:121
+#: playsettings.py:136
 msgid "Show VOD category:"
 msgstr "Näytä VOD kategoriat:"
 
-#: playsettings.py:122
+#: playsettings.py:137
 msgid "Show SERIES category:"
 msgstr "Näytä Sarjat kategoriat:"
 
-#: playsettings.py:123
+#: playsettings.py:138
 msgid "Show CATCHUP category:"
 msgstr "Näytä Mediakirjasto kategoriat:"
 
-#: playsettings.py:124
-msgid "EPG offset:"
-msgstr ""
+#: playsettings.py:139 server.py:104
+msgid "Output:"
+msgstr "Ulostulo:"
 
-#: playsettings.py:127
+#: playsettings.py:142
 msgid "Stream Type LIVE:"
 msgstr "Striimin tyyppi SUORA:"
 
-#: playsettings.py:130
+#: playsettings.py:145
 msgid "Stream Type VOD/SERIES:"
 msgstr "Striimin tyyppi VOD/SARJAT:"
 
-#: plugin.py:190 plugin.py:274
+#: playsettings.py:147
+msgid "EPG offset:"
+msgstr ""
+
+#: playsettings.py:148
+msgid "Use alternative EPG url:"
+msgstr ""
+
+#: playsettings.py:150
+msgid "Alternative EPG url:"
+msgstr ""
+
+#: plugin.py:195 plugin.py:279
 msgid "XStreamity"
 msgstr "XStreamity"
 
-#: plugin.py:273
+#: plugin.py:278
 msgid "IPTV Xtream Codes playlists player by KiddaC"
 msgstr "IPTV Soitin toistolistojen toistamiseen tehnyt KiddaC"
 
-#: record.py:38 serverinfo.py:46
+#: record.py:38 serverinfo.py:56 streamplayer.py:1470
 msgid "Close"
 msgstr "Sulje"
 
@@ -541,8 +555,8 @@ msgid "Password:"
 msgstr "Salasana:"
 
 #: server.py:171
-msgid "Details are not a valid or unauthorised"
-msgstr "Tiedot eivät ole oikein tai Tili ei voimassa"
+msgid "Details are not valid or unauthorised"
+msgstr ""
 
 #: server.py:189
 msgid "Playlist added successfully."
@@ -552,133 +566,183 @@ msgstr "Toistolista lisätty onnistuneesti."
 msgid "User Information"
 msgstr "Käyttäjä tiedot"
 
-#: settings.py:26
+#: serverinfo.py:40
+msgid "Status:"
+msgstr ""
+
+#: serverinfo.py:41
+msgid "Is Trial:"
+msgstr ""
+
+#: serverinfo.py:42
+msgid "Active Connections:"
+msgstr ""
+
+#: serverinfo.py:43
+msgid "Max Connections:"
+msgstr ""
+
+#: serverinfo.py:44
+msgid "Created At:"
+msgstr ""
+
+#: serverinfo.py:45
+msgid "Expiry Date:"
+msgstr ""
+
+#: serverinfo.py:46
+msgid "Allowed Output Formats:"
+msgstr ""
+
+#: serverinfo.py:47
+msgid "Real URL:"
+msgstr ""
+
+#: serverinfo.py:48
+msgid "Timezone:"
+msgstr ""
+
+#: settings.py:25
 msgid "Please enter the correct pin code"
 msgstr ""
 
-#: settings.py:35
+#: settings.py:34
 msgid "The pin code you entered is wrong."
 msgstr ""
 
-#: settings.py:103
+#: settings.py:110
 msgid ""
 "Please change default parental pin.\n"
 "\n"
 "Pin cannot be 0000, 1111 or 1234"
 msgstr ""
 
-#: settings.py:119
+#: settings.py:125
 msgid "You need to restart the GUI"
 msgstr ""
 
-#: settings.py:119
+#: settings.py:125
 msgid "Do you want to restart now?"
 msgstr ""
 
-#: settings.py:130
+#: settings.py:136
 msgid "Select skin *Restart GUI Required"
 msgstr "Valitse teema *Uudelleen käynnistys vaaditaan"
 
-#: settings.py:131
+#: settings.py:137
 msgid "playlists.txt location"
 msgstr "playlists.txt sijainti"
 
-#: settings.py:132
+#: settings.py:138
 msgid "EPG download location"
 msgstr ""
 
-#: settings.py:133
+#: settings.py:139
 msgid "VOD download folder"
 msgstr "Tallennus kansio ladatuille ohjelmille"
 
-#: settings.py:134
+#: settings.py:140
 msgid "Server timeout (seconds)"
 msgstr "Palvelin aikakatkaisua (sekunteina)"
 
-#: settings.py:136
+#: settings.py:142
 msgid "Default LIVE stream type"
 msgstr "Oletus Suorat striimi tyyppi"
 
-#: settings.py:137
+#: settings.py:143
 msgid "Default VOD/SERIES stream type"
 msgstr "Oletus  VOD/Sarjat striimi tyyppi"
 
-#: settings.py:139
+#: settings.py:145
 msgid "Preview LIVE streams in mini tv"
 msgstr "Esikatsele Suoria lähetyksiä minitelevisiossa"
 
-#: settings.py:140
+#: settings.py:146
 msgid "Stop stream on back button"
 msgstr "Pysäytä toisto takaisin näppäimellä"
 
-#: settings.py:141
+#: settings.py:147
 msgid "XStreamity parental control"
 msgstr ""
 
-#: settings.py:142
+#: settings.py:148
 msgid "XStreamity parental pin"
 msgstr ""
 
-#: settings.py:143
+#: settings.py:149
 msgid "Show in main menu *Restart GUI Required"
 msgstr "Näytä päävalikossa *Uudelleen käynnistys tarvittaan"
 
-#: settings.py:145
+#: settings.py:151
 msgid "Use Movie Database(TMDB) for VOD & Series"
 msgstr "Käytä Elokuva tietokantaa (TMDB) VOD & Sarjat"
 
-#: settings.py:146
+#: settings.py:152
 msgid "Movie Database language"
 msgstr "Elokuva tietokanta kieli"
 
-#: settings.py:148
+#: settings.py:154
 msgid "Margin before catchup (mins)"
 msgstr "Marginaali mediakirjastoon ennen (minuuttia)"
 
-#: settings.py:149
+#: settings.py:155
 msgid "Margin after catchup (mins)"
 msgstr "Marginaali mediakirjastoon jälkeen (minuuttia)"
 
-#: settings.py:151
+#: settings.py:157
 msgid "Allow SubsSupport plugin in VOD"
 msgstr "Salli  SubsSupport plugini VOD"
 
-#: settings.py:153
+#: settings.py:159
 msgid "Skip playlist selection screen if only 1 playlist"
 msgstr "Ohita toistolistan valintaikkuna jos on vain 1 toistolista"
 
-#: settings.py:155
+#: settings.py:161
 msgid "Automatic EPG download time *Restart GUI Required"
 msgstr "Automaattinen EPG latausaika *Uudelleen käynnistys vaaditaan"
 
-#: settings.py:275 settings.py:288 settings.py:301
+#: settings.py:281 settings.py:294 settings.py:307
 msgid "Choose Directory:"
 msgstr "Valitse hakemisto:"
 
-#: settings.py:276 settings.py:289 settings.py:302
+#: settings.py:282 settings.py:295 settings.py:308
 msgid "Choose directory"
 msgstr "Valitse hakemisto"
 
-#: streamplayer.py:377
+#: streamplayer.py:412
+msgid "TV"
+msgstr "TV"
+
+#: streamplayer.py:905
 msgid "Do you want to resume this playback?"
 msgstr ""
 
-#: streamplayer.py:377
+#: streamplayer.py:905
 #, python-format
 msgid "Resume position at %s"
 msgstr ""
 
-#: streamplayer.py:466
-msgid "TV"
-msgstr "TV"
-
-#: streamplayer.py:881
+#: streamplayer.py:987
 msgid "VOD"
 msgstr "VOD"
 
-#: streamplayer.py:1106
+#: streamplayer.py:1267
 msgid "Catch Up"
 msgstr "Mediakirjasto"
+
+#: streamplayer.py:1467
+msgid "Xstreamity Log"
+msgstr ""
+
+#: streamplayer.py:1471
+msgid "Clear"
+msgstr ""
+
+#~ msgid "Downloading"
+#~ msgstr "Ladataan"
+
+#~ msgid "Download Failed!\n"
+#~ msgstr "Lataaminen epäonnistui!\n"
 
 #~ msgid ""
 #~ "Downloading \n"
@@ -705,9 +769,6 @@ msgstr "Mediakirjasto"
 
 #~ msgid "Waiting..."
 #~ msgstr "Odottaa..."
-
-#~ msgid "Clear All"
-#~ msgstr "Tyhjennä Kaikki"
 
 #~ msgid "Record"
 #~ msgstr "Tallennus"
