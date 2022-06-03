@@ -26,12 +26,12 @@ def setResumePoint(session):
             if not pos[0]:
                 key = ref.toString()
                 lru = int(time())
-                l = seek.getLength()
-                if l:
-                    l = l[1]
+                length = seek.getLength()
+                if length:
+                    length = length[1]
                 else:
-                    l = None
-                resumePointCache[key] = [lru, pos[1], l]
+                    length = None
+                resumePointCache[key] = [lru, pos[1], length]
 
                 saveResumePoints()
 
