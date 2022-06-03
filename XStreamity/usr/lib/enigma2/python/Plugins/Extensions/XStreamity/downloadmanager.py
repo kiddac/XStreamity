@@ -7,7 +7,7 @@
 # https://github.com/openatv/enigma2/blob/7.0/lib/python/Screens/TaskView.py
 
 from . import _
-from .plugin import skin_path, downloads_json, cfg, pythonVer
+from .plugin import skin_path, downloads_json, cfg, pythonVer, hdr
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -15,6 +15,7 @@ from Components.Sources.List import List
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from enigma import eTimer, eServiceReference
+from requests.adapters import HTTPAdapter
 
 from Components.Task import Task, Job, job_manager as JobManager, Condition
 
@@ -80,23 +81,9 @@ class downloadTask(Task):
         self.lastprogress = 0
         self.firstrun = True
 
-        self.cacheTimer = eTimer()
-        try:
-            self.cacheTimer.callback.append(self.clear_caches)
-        except:
-            self.cacheTimer_conn = self.cacheTimer.timeout.connect(self.clear_caches)
-        self.cacheTimer.start(60000, False)
-
-    def clear_caches(self):
-        try:
-            os.system("echo 1 > /proc/sys/vm/drop_caches")
-            os.system("echo 2 > /proc/sys/vm/drop_caches")
-            os.system("echo 3 > /proc/sys/vm/drop_caches")
-        except:
-            pass
-
     def processOutput(self, data):
-        data = str(data)
+        if pythonVer == 3:
+            data = str(data)
         try:
             if data.find("%") != -1:
                 tmpvalue = re.findall(r'(\d+?%)', data)[-1].rstrip("%")
@@ -118,8 +105,6 @@ class downloadTask(Task):
             Task.processOutput(self, data)
 
     def afterRun(self):
-        self.cacheTimer.stop()
-        self.clear_caches()
         if self.getProgress() == 100 or self.progress == 100:
             try:
                 self.toolbox.download_finished(self.filename, self.filmtitle)
@@ -229,16 +214,22 @@ class XStreamity_DownloadManager(Screen):
             video[1] = self.cleantitle(video[1])  # make safe filename
             url = video[2]
             length = video[5]
-
+            adapter = HTTPAdapter()
+            http = requests.Session()
+            http.mount("http://", adapter)
+            http.mount("https://", adapter)
+            
             try:
-                r = requests.get(url, timeout=10, verify=False, stream=True)
+                r = http.get(url, headers=hdr, timeout=10, verify=False, stream=True)
+                print("response", r)
                 video[5] = float(r.headers["content-length"])
-                x += 1
                 templist.append(video)
+                r.close()
             except Exception as e:
                 print(e)
                 video[5] = 0
-                continue
+                templist.append(video)
+            x += 1
             if x == 5:
                 x = 0
                 time.sleep(1)
