@@ -490,9 +490,6 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
         if glob.adultChannel:
             return
 
-        recentExists = False
-        recentStream_id = None
-
         name = glob.originalChannelList2[glob.currentchannellistindex][1]
         stream_id = glob.originalChannelList2[glob.currentchannellistindex][2]
         stream_icon = glob.originalChannelList2[glob.currentchannellistindex][3]
@@ -503,7 +500,6 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
 
         for recent in glob.current_playlist["player_info"]["liverecents"]:
             if stream_id == recent["stream_id"]:
-                favExists = True
                 glob.current_playlist["player_info"]["liverecents"].remove(recent)
                 break
 
@@ -641,7 +637,6 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " evUpdatedInfo", self.servicetype, file=log)
         self.originalservicetype = self.servicetype
         self.hasStreamData = True
-        selectionchanged = 0
 
         self.timerCache = eTimer()
         try:
@@ -842,7 +837,7 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
             return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
         except Exception as e:
-            print(ex)
+            print(e)
             return "nextAR ERROR %s" % e
 
     def nextAR(self):
@@ -884,7 +879,6 @@ class XStreamityCueSheetSupport:
                 return
 
             seekable = service.seek()
-
             if seekable is None:
                 return  # Should not happen?
 
@@ -899,10 +893,10 @@ class XStreamityCueSheetSupport:
 
             if last is None:
                 return
-
-            self.resume_point = last
-            l = last // 90000
-            Notifications.AddNotificationWithCallback(self.playLastCB, MessageBox, _("Do you want to resume this playback?") + "\n" + (_("Resume position at %s") % ("%d:%02d:%02d" % (l // 3600, l % 3600 // 60, l % 60))), MessageBox.TYPE_YESNO, 10)
+            if (last > 900000) and (not length[1] or (last < length[1] - 900000)):
+                self.resume_point = last
+                newlast = last // 90000
+                Notifications.AddNotificationWithCallback(self.playLastCB, MessageBox, _("Do you want to resume this playback?") + "\n" + (_("Resume position at %s") % ("%d:%02d:%02d" % (newlast // 3600, newlast % 3600 // 60, newlast % 60))), MessageBox.TYPE_YESNO, 10)
 
     def playLastCB(self, answer):
         if answer is True and self.resume_point:
@@ -1000,9 +994,6 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
     def addRecentVodList(self):
         # print("**** addrecentvodlist ***")
 
-        recentExists = False
-        recentStream_id = None
-
         name = glob.originalChannelList2[glob.currentchannellistindex][1]
         stream_id = glob.originalChannelList2[glob.currentchannellistindex][2]
         stream_icon = glob.originalChannelList2[glob.currentchannellistindex][3]
@@ -1012,7 +1003,6 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
 
         for recent in glob.current_playlist["player_info"]["vodrecents"]:
             if stream_id == recent["stream_id"]:
-                favExists = True
                 glob.current_playlist["player_info"]["vodrecents"].remove(recent)
                 break
 
@@ -1199,7 +1189,7 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
             eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
             return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
         except Exception as e:
-            print(ex)
+            print(e)
             return "nextAR ERROR %s" % e
 
     def nextAR(self):
@@ -1417,7 +1407,7 @@ class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAud
             eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
             return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
         except Exception as e:
-            print(ex)
+            print(e)
             return "nextAR ERROR %s" % e
 
     def nextAR(self):
