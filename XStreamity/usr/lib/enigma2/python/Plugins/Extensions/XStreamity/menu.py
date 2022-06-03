@@ -3,7 +3,7 @@
 
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import skin_path, hdr, cfg, common_path, playlists_json, hasConcurrent, hasMultiprocessing
+from .plugin import skin_path, hdr, common_path, playlists_json, hasConcurrent, hasMultiprocessing
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -17,14 +17,7 @@ from Screens.Screen import Screen
 from Tools.LoadPixmap import LoadPixmap
 
 import json
-import os
 import requests
-
-
-try:
-    from requests.packages.urllib3.util.retry import Retry
-except:
-    from urllib3.util import Retry
 
 
 class XStreamity_Menu(Screen):
@@ -113,7 +106,6 @@ class XStreamity_Menu(Screen):
         self.process_downloads()
 
     def download_url(self, url):
-        timeout = cfg.timeout.getValue()
         category = url[1]
         r = ""
 
