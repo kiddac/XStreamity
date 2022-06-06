@@ -1102,7 +1102,7 @@ class XStreamity_Categories(Screen):
         http.mount("http://", adapter)
         http.mount("https://", adapter)
         try:
-            r = http.get(url, headers=hdr, stream=True, timeout=10, verify=False)
+            r = http.get(url, headers=hdr, stream=True, timeout=60, verify=False)
             r.raise_for_status()
             if r.status_code == requests.codes.ok:
                 try:
