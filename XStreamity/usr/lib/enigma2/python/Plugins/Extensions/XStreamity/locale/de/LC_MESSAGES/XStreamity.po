@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2022-06-03 12:59+0100\n"
-"PO-Revision-Date: 2022-06-03 13:12+0100\n"
+"PO-Revision-Date: 2022-06-11 19:25+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -70,7 +70,7 @@ msgstr "Favoriten"
 
 #: channels.py:515
 msgid "RECENTLY WATCHED"
-msgstr ""
+msgstr "KÜRZLICH GESEHEN"
 
 #: channels.py:522
 msgid "ALL"
@@ -232,6 +232,10 @@ msgid ""
 "Corrupted Download File:\n"
 "%s"
 msgstr ""
+"Video-Download fehlgeschlagen!\n"
+"\n"
+"Beschädigte Download-Datei:\n"
+"%s"
 
 #: downloadmanager.py:127
 #, python-format
@@ -241,6 +245,10 @@ msgid ""
 "Could not read RTMP-Packet:\n"
 "%s"
 msgstr ""
+"Video-Download fehlgeschlagen!\n"
+"\n"
+"RTMP-Paket konnte nicht gelesen werden:\n"
+"%s"
 
 #: downloadmanager.py:128
 #, python-format
@@ -250,6 +258,10 @@ msgid ""
 "Segmentation fault:\n"
 "%s"
 msgstr ""
+"Video-Download fehlgeschlagen!\n"
+"\n"
+"Segmentierungsfehler:\n"
+"%s"
 
 #: downloadmanager.py:129
 #, python-format
@@ -259,6 +271,10 @@ msgid ""
 "Server returned error:\n"
 "%s"
 msgstr ""
+"Video-Download fehlgeschlagen!\n"
+"\n"
+"Fehler vom Server zurückgegeben:\n"
+"%s"
 
 #: downloadmanager.py:130
 #, python-format
@@ -268,6 +284,10 @@ msgid ""
 "Unknown Error:\n"
 "%s"
 msgstr ""
+"Video-Download fehlgeschlagen!\n"
+"\n"
+"Unbekannter Fehler:\n"
+"%s"
 
 #: downloadmanager.py:145
 msgid "VOD Download Manager"
@@ -319,7 +339,7 @@ msgstr "Download abbrechen?"
 
 #: downloadmanager.py:474
 msgid "Delete this entry?"
-msgstr ""
+msgstr "Diesen Eintrag löschen?"
 
 #: hidden.py:35
 msgid "Hidden Categories"
@@ -347,7 +367,7 @@ msgstr "Hauptmenü"
 
 #: mainmenu.py:41
 msgid "Reset JSON"
-msgstr ""
+msgstr "JSON zurücksetzen"
 
 #: mainmenu.py:107
 msgid "Playlists"
@@ -379,6 +399,9 @@ msgid ""
 "Playlists will not be deleted.\n"
 "Do you wish to continue?"
 msgstr ""
+"Achtung: Gespeicherte json-Daten für alle Playlists löschen... Einstellungen, Favoriten etc.\n"
+"Wiedergabelisten werden nicht gelöscht.\n"
+"Möchten Sie fortfahren?"
 
 #: menu.py:48
 msgid "Update"
@@ -498,11 +521,11 @@ msgstr "EPG Versatz:"
 
 #: playsettings.py:148
 msgid "Use alternative EPG url:"
-msgstr ""
+msgstr "Alternative EPG-URL verwenden:"
 
 #: playsettings.py:150
 msgid "Alternative EPG url:"
-msgstr ""
+msgstr "Alternative EPG-URL:"
 
 #: plugin.py:195 plugin.py:279
 msgid "XStreamity"
@@ -562,7 +585,7 @@ msgstr "Passwort:"
 
 #: server.py:171
 msgid "Details are not valid or unauthorised"
-msgstr ""
+msgstr "Details sind ungültig oder nicht autorisiert"
 
 #: server.py:189
 msgid "Playlist added successfully."
@@ -574,7 +597,7 @@ msgstr "Benutzerinformation"
 
 #: serverinfo.py:40
 msgid "Status:"
-msgstr ""
+msgstr "Status:"
 
 #: serverinfo.py:41
 msgid "Is Trial:"
@@ -582,31 +605,31 @@ msgstr ""
 
 #: serverinfo.py:42
 msgid "Active Connections:"
-msgstr ""
+msgstr "Aktive Verbindungen:"
 
 #: serverinfo.py:43
 msgid "Max Connections:"
-msgstr ""
+msgstr "Max Verbindungen:"
 
 #: serverinfo.py:44
 msgid "Created At:"
-msgstr ""
+msgstr "Hergestellt in:"
 
 #: serverinfo.py:45
 msgid "Expiry Date:"
-msgstr ""
+msgstr "Ablaufdatum:"
 
 #: serverinfo.py:46
 msgid "Allowed Output Formats:"
-msgstr ""
+msgstr "Erlaubte Ausgabeformate:"
 
 #: serverinfo.py:47
 msgid "Real URL:"
-msgstr ""
+msgstr "Echte URL:"
 
 #: serverinfo.py:48
 msgid "Timezone:"
-msgstr ""
+msgstr "Zeitzone:"
 
 #: settings.py:25
 msgid "Please enter the correct pin code"
@@ -741,11 +764,11 @@ msgstr "Mediathek"
 
 #: streamplayer.py:1467
 msgid "Xstreamity Log"
-msgstr ""
+msgstr "Xstreamity-Protokoll"
 
 #: streamplayer.py:1471
 msgid "Clear"
-msgstr ""
+msgstr "Bereinige"
 
 #~ msgid "MOVIE DOWNLOAD FAILED!"
 #~ msgstr "FILM DOWNLOAD FEHLGESCHLAGEN!"
