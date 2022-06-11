@@ -24,8 +24,6 @@ def localeInit():
 
 if isDreamOS:  # check if DreamOS image
     _ = lambda txt: gettext.dgettext(PluginLanguageDomain, txt) if txt else ""
-    localeInit()
-    language.addCallback(localeInit)
 else:
     def _(txt):
         if gettext.dgettext(PluginLanguageDomain, txt):
@@ -33,4 +31,5 @@ else:
         else:
             print(("[%s] fallback to default translation for %s" % (PluginLanguageDomain, txt)))
             return gettext.gettext(txt)
-    language.addCallback(localeInit())
+localeInit()
+language.addCallback(localeInit)
