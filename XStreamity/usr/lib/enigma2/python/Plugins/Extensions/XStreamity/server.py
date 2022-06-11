@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from . import _
-from .plugin import skin_path, playlist_file, hdr
+from .plugin import skin_path, playlist_file, hdr, cfg
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -212,7 +212,7 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
         http.mount("https://", adapter)
 
         try:
-            r = http.get(self.apiline, headers=hdr, timeout=10, verify=False, allow_redirects=True)
+            r = http.get(self.apiline, headers=hdr, timeout=cfg.timeout.value, verify=False, allow_redirects=True)
             r.raise_for_status()
             if r.status_code == requests.codes.ok:
                 response = r.json()

@@ -142,7 +142,7 @@ class XStreamity_Playlists(Screen):
         http.mount("http://", adapter)
         http.mount("https://", adapter)
         try:
-            r = http.get(url[0], headers=hdr, timeout=10, verify=False)
+            r = http.get(url[0], headers=hdr, timeout=cfg.timeout.value, verify=False)
             r.raise_for_status()
             if r.status_code == requests.codes.ok:
                 try:
@@ -448,8 +448,8 @@ class XStreamity_Playlists(Screen):
             cleanName = re.sub(r'[\<\>\:\"\/\\\|\?\*]', "_", str(playlist["playlist_info"]["name"]))
             cleanName = re.sub(r" ", "_", cleanName)
             cleanName = re.sub(r"_+", "_", cleanName)
-            filepath = "/etc/epgimport/"
-            channelfilename = "xstreamity." + str(cleanName) + ".channels.xml"
+            # filepath = "/etc/epgimport/"
+            # channelfilename = "xstreamity." + str(cleanName) + ".channels.xml"
             channelfilelist.append(cleanName)
 
         # delete old xmltv channel files

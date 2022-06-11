@@ -1102,7 +1102,7 @@ class XStreamity_Categories(Screen):
         http.mount("http://", adapter)
         http.mount("https://", adapter)
         try:
-            r = http.get(url, headers=hdr, stream=True, timeout=10, verify=False)
+            r = http.get(url, headers=hdr, stream=True, timeout=cfg.timeout.value, verify=False)
             r.raise_for_status()
             if r.status_code == requests.codes.ok:
                 try:
@@ -1326,7 +1326,7 @@ class XStreamity_Categories(Screen):
                         except:
                             pass
 
-                    if cfg.channelpicons is True:
+                    if cfg.channelpicons.value is True:
                         try:
                             self.timerimage.callback.append(self.downloadImage)
                         except:
@@ -1364,7 +1364,7 @@ class XStreamity_Categories(Screen):
                     self.timerimage.stop()
                 except:
                     pass
-                if cfg.channelpicons is True:
+                if cfg.channelpicons.value is True:
                     try:
                         self.timerimage.callback.append(self.downloadImage)
                     except:
@@ -2377,7 +2377,7 @@ class XStreamity_Categories(Screen):
                     http.mount("https://", adapter)
 
                     try:
-                        r = http.get(url, headers=hdr, stream=True, timeout=10, verify=False)
+                        r = http.get(url, headers=hdr, stream=True, timeout=cfg.timeout.value, verify=False)
                         r.raise_for_status()
                         if r.status_code == requests.codes.ok:
                             try:
@@ -2783,7 +2783,7 @@ class XStreamity_Categories(Screen):
             http.mount("http://", adapter)
             http.mount("https://", adapter)
             try:
-                r = http.get(url, headers=hdr, stream=True, timeout=10, verify=False)
+                r = http.get(url, headers=hdr, stream=True, timeout=cfg.timeout.value, verify=False)
                 r.raise_for_status()
                 if r.status_code == requests.codes.ok:
                     content = r.json()
@@ -2804,7 +2804,7 @@ class XStreamity_Categories(Screen):
                 if cfg.TMDB.value is True:
                     self.getTMDB()
                 else:
-                    if cfg.channelcovers is True:
+                    if cfg.channelcovers.value is True:
                         self.downloadImage()
                     self.displayTMDB()
 
@@ -3204,7 +3204,7 @@ class XStreamity_Categories(Screen):
                     else:
                         self.info["director"] = self["vod_director"].getText()
 
-                if cfg.channelcovers is True:
+                if cfg.channelcovers.value is True:
                     self.downloadImage()
                 self.displayTMDB()
 
@@ -3296,7 +3296,7 @@ class XStreamity_Categories(Screen):
                 if cfg.TMDB.value is True:
                     self.getTMDB()
                 else:
-                    if cfg.channelcovers is True:
+                    if cfg.channelcovers.value is True:
                         self.downloadImage()
 
             if self.level != 1:
@@ -3352,7 +3352,7 @@ class XStreamity_Categories(Screen):
                     http.mount("https://", adapter)
 
                     try:
-                        r = http.get(url, headers=hdr, stream=True, timeout=10, verify=False)
+                        r = http.get(url, headers=hdr, stream=True, timeout=cfg.timeout.value, verify=False)
                         r.raise_for_status()
                         if r.status_code == requests.codes.ok:
                             try:

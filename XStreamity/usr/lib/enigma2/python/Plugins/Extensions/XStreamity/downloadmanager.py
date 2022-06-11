@@ -213,14 +213,14 @@ class XStreamity_DownloadManager(Screen):
         for video in self.downloads_all:
             video[1] = self.cleantitle(video[1])  # make safe filename
             url = video[2]
-            length = video[5]
+            # length = video[5]
             adapter = HTTPAdapter()
             http = requests.Session()
             http.mount("http://", adapter)
             http.mount("https://", adapter)
-            
+
             try:
-                r = http.get(url, headers=hdr, timeout=10, verify=False, stream=True)
+                r = http.get(url, headers=hdr, timeout=cfg.timeout.value, verify=False, stream=True)
                 print("response", r)
                 video[5] = float(r.headers["content-length"])
                 templist.append(video)
@@ -237,7 +237,7 @@ class XStreamity_DownloadManager(Screen):
         self.downloads_all[:] = templist
 
     def checkactivedownloads(self):
-        x = 0
+        # x = 0
         templist = []
         for video in self.downloads_all:
             recbytes = 0
@@ -335,7 +335,7 @@ class XStreamity_DownloadManager(Screen):
 
     def selectionChanged(self):
         if self["downloadlist"].getCurrent():
-            currentindex = self["downloadlist"].getIndex()
+            # currentindex = self["downloadlist"].getIndex()
 
             if self["downloadlist"].getCurrent()[3] != "Not Started":
                 self["key_green"].setText(_("Cancel"))
@@ -444,6 +444,7 @@ class XStreamity_DownloadManager(Screen):
             for video in self.downloads_all:
                 filmtitle = str(video[1])
 
+                """
                 url = video[2]
 
                 try:
@@ -453,6 +454,7 @@ class XStreamity_DownloadManager(Screen):
 
                 filename = str(filmtitle) + str(extension)
                 path = str(cfg.downloadlocation.getValue()) + str(filename)
+                """
 
                 if filmtitle == str(jobname):
                     video[3] = "Not Started"
