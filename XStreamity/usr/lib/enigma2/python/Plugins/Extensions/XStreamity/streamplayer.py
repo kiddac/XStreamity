@@ -541,7 +541,8 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
         except:
             pass
 
-        self.downloadImage()
+        if cfg.infobarpicons.value is True:
+            self.downloadImage()
 
         self["x_description"].setText(glob.currentepglist[glob.currentchannellistindex][4])
         self["nowchannel"].setText(glob.currentchannellist[glob.currentchannellistindex][0])
@@ -1038,7 +1039,8 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
 
     def playStream(self, servicetype, streamurl, direct_source):
 
-        self.downloadImage()
+        if cfg.infobarcovers.value is True:
+            self.downloadImage()
 
         if streamurl != "None" and "/movie/" in streamurl:
             self["streamcat"].setText("VOD")
@@ -1268,7 +1270,8 @@ class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAud
         self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl))
 
     def playStream(self, servicetype, streamurl):
-        self.downloadImage()
+        if cfg.infobarpicons.value is True:
+            self.downloadImage()
 
         self["x_description"].setText(glob.catchupdata[1])
         self["streamcat"].setText("Catch")

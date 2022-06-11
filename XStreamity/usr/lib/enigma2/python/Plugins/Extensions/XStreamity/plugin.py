@@ -126,6 +126,11 @@ cfg.retries.adultpin = ConfigSubsection()
 cfg.retries.adultpin.tries = ConfigInteger(default=3)
 cfg.retries.adultpin.time = ConfigInteger(default=3)
 
+cfg.channelpicons = ConfigYesNo(default=True)
+cfg.infobarpicons = ConfigYesNo(default=True)
+cfg.channelcovers = ConfigYesNo(default=True)
+cfg.infobarcovers = ConfigYesNo(default=True)
+
 skin_path = "%s%s/" % (skin_directory, cfg.skin.value)
 common_path = "%scommon/" % (skin_directory)
 playlists_json = "%sx-playlists.json" % (dir_etc)

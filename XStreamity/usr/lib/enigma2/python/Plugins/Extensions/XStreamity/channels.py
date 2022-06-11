@@ -1326,6 +1326,7 @@ class XStreamity_Categories(Screen):
                         except:
                             pass
 
+                    if cfg.channelpicons is True:
                         try:
                             self.timerimage.callback.append(self.downloadImage)
                         except:
@@ -1363,12 +1364,12 @@ class XStreamity_Categories(Screen):
                     self.timerimage.stop()
                 except:
                     pass
-
-                try:
-                    self.timerimage.callback.append(self.downloadImage)
-                except:
-                    self.timerimage_conn = self.timerimage.timeout.connect(self.downloadImage)
-                self.timerimage.start(250, True)
+                if cfg.channelpicons is True:
+                    try:
+                        self.timerimage.callback.append(self.downloadImage)
+                    except:
+                        self.timerimage_conn = self.timerimage.timeout.connect(self.downloadImage)
+                    self.timerimage.start(250, True)
 
         else:
             self.position = 0
@@ -2803,7 +2804,8 @@ class XStreamity_Categories(Screen):
                 if cfg.TMDB.value is True:
                     self.getTMDB()
                 else:
-                    self.downloadImage()
+                    if cfg.channelcovers is True:
+                        self.downloadImage()
                     self.displayTMDB()
 
             except Exception as e:
@@ -3202,7 +3204,8 @@ class XStreamity_Categories(Screen):
                     else:
                         self.info["director"] = self["vod_director"].getText()
 
-                self.downloadImage()
+                if cfg.channelcovers is True:
+                    self.downloadImage()
                 self.displayTMDB()
 
     def displayTMDB(self):
@@ -3293,7 +3296,8 @@ class XStreamity_Categories(Screen):
                 if cfg.TMDB.value is True:
                     self.getTMDB()
                 else:
-                    self.downloadImage()
+                    if cfg.channelcovers is True:
+                        self.downloadImage()
 
             if self.level != 1:
                 self["x_title"].setText(current[0])

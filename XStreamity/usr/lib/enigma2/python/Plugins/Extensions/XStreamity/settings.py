@@ -160,6 +160,11 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
         self.cfg_wakeup = getConfigListEntry(_("Automatic EPG download time *Restart GUI Required"), cfg.wakeup)
 
+        self.cfg_channelpicons = getConfigListEntry(_("Show channel picons"), cfg.channelpicons)
+        self.cfg_channelcovers = getConfigListEntry(_("Show Vod/Series posters"), cfg.channelcovers)
+        self.cfg_infobarpicons = getConfigListEntry(_("Show infobar picons"), cfg.infobarpicons)
+        self.cfg_infobarcovers = getConfigListEntry(_("Show infobar posters"), cfg.infobarcovers)
+
         self.org_skin = cfg.skin.getValue()
         self.org_main = cfg.main.getValue()
         self.org_wakeup = cfg.wakeup.getValue()
@@ -200,6 +205,12 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
             self.list.append(self.cfg_subs)
 
         self.list.append(self.cfg_main)
+
+        self.list.append(self.cfg_channelpicons)
+        self.list.append(self.cfg_channelcovers)
+        self.list.append(self.cfg_infobarpicons)
+        self.list.append(self.cfg_infobarcovers)
+
         self["config"].list = self.list
         self["config"].l.setList(self.list)
         self.handleInputHelpers()
