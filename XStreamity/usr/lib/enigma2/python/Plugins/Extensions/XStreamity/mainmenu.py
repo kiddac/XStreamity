@@ -96,7 +96,7 @@ class XStreamity_MainMenu(Screen):
         self.list = []
         downloads_all = []
 
-        if os.path.isfile(downloads_json):
+        if os.path.isfile(downloads_json) and os.stat(downloads_json).st_size > 0:
             with open(downloads_json, "r") as f:
                 try:
                     downloads_all = json.load(f)

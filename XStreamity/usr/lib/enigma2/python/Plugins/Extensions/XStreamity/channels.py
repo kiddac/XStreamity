@@ -481,6 +481,10 @@ class XStreamity_Categories(Screen):
 
         elif self.level == 4:
             self.buildList4()
+            
+        self.buttons()
+        self.selectionChanged()
+
 
     def getCategories(self):
         # print("*** getCategories **")
@@ -1102,7 +1106,7 @@ class XStreamity_Categories(Screen):
         http.mount("http://", adapter)
         http.mount("https://", adapter)
         try:
-            r = http.get(url, headers=hdr, stream=True, timeout=cfg.timeout.value, verify=False)
+            r = http.get(url, headers=hdr, stream=True, timeout=(10,30), verify=False)
             r.raise_for_status()
             if r.status_code == requests.codes.ok:
                 try:
@@ -1161,9 +1165,6 @@ class XStreamity_Categories(Screen):
             if glob.nextlist[-1]["index"] != 0:
                 self["main_list"].setIndex(glob.nextlist[-1]["index"])
 
-        self.buttons()
-        self.selectionChanged()
-
     def buildList2(self):
         # print("*** buildlist2 ***")
         self.main_list = []
@@ -1204,8 +1205,6 @@ class XStreamity_Categories(Screen):
         if self["main_list"].getCurrent():
             if glob.nextlist[-1]["index"] != 0:
                 self["main_list"].setIndex(glob.nextlist[-1]["index"])
-        self.buttons()
-        self.selectionChanged()
 
     def buildList3(self):
         # print("*** buildlist3 ***")
@@ -1220,8 +1219,6 @@ class XStreamity_Categories(Screen):
         if self["main_list"].getCurrent():
             if glob.nextlist[-1]["index"] != 0:
                 self["main_list"].setIndex(glob.nextlist[-1]["index"])
-        self.buttons()
-        self.selectionChanged()
 
     def buildList4(self):
         # print("*** buildlist4 ***")
@@ -1234,9 +1231,6 @@ class XStreamity_Categories(Screen):
         if self["main_list"].getCurrent():
             if glob.nextlist[-1]["index"] != 0:
                 self["main_list"].setIndex(glob.nextlist[-1]["index"])
-
-        self.buttons()
-        self.selectionChanged()
 
     def buttons(self):
         if glob.nextlist[-1]["filter"]:
@@ -1961,7 +1955,7 @@ class XStreamity_Categories(Screen):
         self["main_list"].setIndex(glob.currentchannellistindex)
         if self.categoryname == "live":
             self["epg_list"].setIndex(glob.currentchannellistindex)
-        self.selectionChanged()
+        # self.selectionChanged()
         self.buildLists()
 
     def back(self):
@@ -2377,7 +2371,7 @@ class XStreamity_Categories(Screen):
                     http.mount("https://", adapter)
 
                     try:
-                        r = http.get(url, headers=hdr, stream=True, timeout=cfg.timeout.value, verify=False)
+                        r = http.get(url, headers=hdr, stream=True, timeout=(10, 20), verify=False)
                         r.raise_for_status()
                         if r.status_code == requests.codes.ok:
                             try:
@@ -2783,7 +2777,7 @@ class XStreamity_Categories(Screen):
             http.mount("http://", adapter)
             http.mount("https://", adapter)
             try:
-                r = http.get(url, headers=hdr, stream=True, timeout=cfg.timeout.value, verify=False)
+                r = http.get(url, headers=hdr, stream=True, timeout=(10, 60), verify=False)
                 r.raise_for_status()
                 if r.status_code == requests.codes.ok:
                     content = r.json()
@@ -3352,7 +3346,7 @@ class XStreamity_Categories(Screen):
                     http.mount("https://", adapter)
 
                     try:
-                        r = http.get(url, headers=hdr, stream=True, timeout=cfg.timeout.value, verify=False)
+                        r = http.get(url, headers=hdr, stream=True, timeout=(10, 60), verify=False)
                         r.raise_for_status()
                         if r.status_code == requests.codes.ok:
                             try:

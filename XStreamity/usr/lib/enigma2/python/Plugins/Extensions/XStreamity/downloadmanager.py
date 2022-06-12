@@ -220,7 +220,7 @@ class XStreamity_DownloadManager(Screen):
             http.mount("https://", adapter)
 
             try:
-                r = http.get(url, headers=hdr, timeout=cfg.timeout.value, verify=False, stream=True)
+                r = http.get(url, headers=hdr, timeout=10, verify=False, stream=True)
                 print("response", r)
                 video[5] = float(r.headers["content-length"])
                 templist.append(video)

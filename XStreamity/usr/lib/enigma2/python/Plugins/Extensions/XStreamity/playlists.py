@@ -142,7 +142,7 @@ class XStreamity_Playlists(Screen):
         http.mount("http://", adapter)
         http.mount("https://", adapter)
         try:
-            r = http.get(url[0], headers=hdr, timeout=cfg.timeout.value, verify=False)
+            r = http.get(url[0], headers=hdr, timeout=10, verify=False, stream=True)
             r.raise_for_status()
             if r.status_code == requests.codes.ok:
                 try:

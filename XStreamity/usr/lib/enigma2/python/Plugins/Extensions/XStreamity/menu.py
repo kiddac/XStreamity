@@ -3,7 +3,7 @@
 
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import skin_path, cfg, hdr, common_path, playlists_json, hasConcurrent, hasMultiprocessing
+from .plugin import skin_path, hdr, common_path, playlists_json, hasConcurrent, hasMultiprocessing
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -115,7 +115,7 @@ class XStreamity_Menu(Screen):
         http.mount("https://", adapter)
 
         try:
-            r = http.get(url[0], headers=hdr, timeout=cfg.timeout.value, verify=False)
+            r = http.get(url[0], headers=hdr, timeout=(10, 20), verify=False, stream=True)
             response = r.json()
             return category, response
 

@@ -137,7 +137,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.cfg_location = getConfigListEntry(_("playlists.txt location"), cfg.location)
         self.cfg_epglocation = getConfigListEntry(_("EPG download location"), cfg.epglocation)
         self.cfg_downloadlocation = getConfigListEntry(_("VOD download folder"), cfg.downloadlocation)
-        self.cfg_timeout = getConfigListEntry(_("Server timeout (seconds)"), cfg.timeout)
+        # self.cfg_timeout = getConfigListEntry(_("Server timeout (seconds)"), cfg.timeout)
 
         self.cfg_livetype = getConfigListEntry(_("Default LIVE stream type"), cfg.livetype)
         self.cfg_vodtype = getConfigListEntry(_("Default VOD/SERIES stream type"), cfg.vodtype)
@@ -178,7 +178,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.list.append(self.cfg_epglocation)
         self.list.append(self.cfg_downloadlocation)
 
-        self.list.append(self.cfg_timeout)
+        # self.list.append(self.cfg_timeout)
 
         self.list.append(self.cfg_skipplaylistsscreen)
 
