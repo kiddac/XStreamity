@@ -15,3 +15,4 @@ catchupdata = []
 currentDownloadTotalBytes = 0
 pintime = 0
 adultChannel = False
+categoryname = None

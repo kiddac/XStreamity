@@ -35,6 +35,7 @@ class XStreamity_UserInfo(Screen):
         self["formats"] = Label("")
         self["realurl"] = Label("")
         self["timezone"] = Label("")
+        self["serveroffset"] = Label("")
 
         # fake labels for skin text translations
         t_status = _("Status:")
@@ -46,6 +47,7 @@ class XStreamity_UserInfo(Screen):
         t_allowedformats = _("Allowed Output Formats:")
         t_realurl = _("Real URL:")
         t_timezone = _("Timezone:")
+        t_serveroffset = _("Server Offset:")
 
         self["actions"] = ActionMap(["XStreamityActions"], {
             "ok": self.quit,
@@ -94,6 +96,9 @@ class XStreamity_UserInfo(Screen):
 
         if "timezone" in glob.current_playlist["server_info"]:
             self["timezone"].setText(str(glob.current_playlist["server_info"]["timezone"]))
+            
+        if "serveroffset" in glob.current_playlist["player_info"]:
+            self["serveroffset"].setText(str(glob.current_playlist["player_info"]["serveroffset"]))
 
     def quit(self):
         self.close()

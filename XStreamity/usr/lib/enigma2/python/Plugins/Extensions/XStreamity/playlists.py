@@ -228,7 +228,10 @@ class XStreamity_Playlists(Screen):
                         del playlists["server_info"]["rtmp_port"]
 
                     if "time_now" in playlists["server_info"]:
-                        time_now_datestamp = datetime.strptime(str(playlists["server_info"]["time_now"]), "%Y-%m-%d %H:%M:%S")
+                        try:
+                            time_now_datestamp = datetime.strptime(str(playlists["server_info"]["time_now"]), "%Y-%m-%d %H:%M:%S")
+                        except:
+                            time_now_datestamp = datetime.strptime(str(playlists["server_info"]["time_now"]), "%Y-%m-%d %H-%M-%S")    
                         playlists["player_info"]["serveroffset"] = datetime.now().hour - time_now_datestamp.hour
 
                 if "auth" in playlists:

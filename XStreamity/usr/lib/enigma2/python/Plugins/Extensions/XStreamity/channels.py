@@ -141,6 +141,7 @@ class XStreamity_Categories(Screen):
         Screen.__init__(self, session)
         self.session = session
         self.categoryname = categoryname
+        glob.categoryname = categoryname
 
         skin = skin_path + "categories.xml"
         if os.path.exists("/var/lib/dpkg/status"):
@@ -1301,7 +1302,7 @@ class XStreamity_Categories(Screen):
             self["main_title"].setText(self.main_title + ": " + str(channeltitle))
 
             if self.level != 4:
-                self.loadDefaultImage()
+                self.loadBlankImage()
 
             if self.level == 2:
                 if self.categoryname == "live":
@@ -1426,6 +1427,14 @@ class XStreamity_Categories(Screen):
                     self.loadDefaultImage()
             else:
                 self.loadDefaultImage()
+
+    def loadBlankImage(self, data=None):
+        # print("*** loadDefaultImage ***")
+        if self["picon"].instance:
+            self["picon"].instance.setPixmapFromFile(common_path + "picon_blank.png")
+
+        if self["vod_cover"].instance:
+            self["vod_cover"].instance.setPixmapFromFile(skin_path + "images/vod_blank.png")
 
     def loadDefaultImage(self, data=None):
         # print("*** loadDefaultImage ***")
@@ -2595,7 +2604,7 @@ class XStreamity_Categories(Screen):
 
         os.close(tmpfd)
 
-    def downloadFail(self, failure):
+    def downloadFail(self, failure=None):
         # print("*** downloadFail ***")
         print(("[EPG] download failed:", failure))
 

@@ -652,6 +652,7 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
         self.timerCache.start(600000, False)
 
         self.timerRecent = eTimer()
+
         try:
             self.timerRecent.callback.append(self.addRecentLiveList)
         except:
@@ -761,7 +762,7 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
         else:
             self.loadDefaultImage()
 
-    def loadDefaultImage(self):
+    def loadDefaultImage(self, data=None):
         if self["picon"].instance:
             self["picon"].instance.setPixmapFromFile(common_path + "picon.png")
 
@@ -994,7 +995,6 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
 
     def addRecentVodList(self):
         # print("**** addrecentvodlist ***")
-
         name = glob.originalChannelList2[glob.currentchannellistindex][1]
         stream_id = glob.originalChannelList2[glob.currentchannellistindex][2]
         stream_icon = glob.originalChannelList2[glob.currentchannellistindex][3]
@@ -1042,7 +1042,7 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
         if cfg.infobarcovers.value is True:
             self.downloadImage()
 
-        if streamurl != "None" and "/movie/" in streamurl:
+        if glob.categoryname == "vod":
             self["streamcat"].setText("VOD")
         else:
             self["streamcat"].setText("Series")
@@ -1082,12 +1082,13 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
                 self.timerCache_conn = self.timerCache.timeout.connect(clear_caches)
             self.timerCache.start(60000, False)
 
-            self.timerRecent = eTimer()
-            try:
-                self.timerRecent.callback.append(self.addRecentVodList)
-            except:
-                self.timerRecent_conn = self.timerRecent.timeout.connect(self.addRecentVodList)
-            self.timerRecent.start(20000, True)
+            if glob.categoryname == "vod":
+                self.timerRecent = eTimer()
+                try:
+                    self.timerRecent.callback.append(self.addRecentVodList)
+                except:
+                    self.timerRecent_conn = self.timerRecent.timeout.connect(self.addRecentVodList)
+                self.timerRecent.start(20000, True)
 
     def downloadImage(self):
         self.loadDefaultImage()
@@ -1121,9 +1122,9 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
         else:
             self.loadDefaultImage()
 
-    def loadDefaultImage(self):
+    def loadDefaultImage(self, data=None):
         if self["cover"].instance:
-            self["cover"].instance.setPixmapFromFile(skin_path + "images/vod_cover.png")
+            self["cover"].instance.setPixmapFromFile(skin_path + "images/vod_cover_small.png")
 
     def resizeImage(self, data=None):
         if self["cover"].instance:
