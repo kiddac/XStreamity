@@ -729,7 +729,7 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
         self.playStream(self.servicetype, self.streamurl, self.direct_source)
 
     def downloadImage(self):
-        self.loadDefaultImage()
+        self.loadBlankImage()
         try:
             os.remove(str(dir_tmp) + "original.png")
             os.remove(str(dir_tmp) + "temp.png")
@@ -761,6 +761,10 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
                 self.loadDefaultImage()
         else:
             self.loadDefaultImage()
+
+    def loadBlankImage(self, data=None):
+        if self["picon"].instance:
+            self["picon"].instance.setPixmapFromFile(common_path + "picon_blank.png")
 
     def loadDefaultImage(self, data=None):
         if self["picon"].instance:
@@ -1091,7 +1095,7 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
                 self.timerRecent.start(20000, True)
 
     def downloadImage(self):
-        self.loadDefaultImage()
+        self.loadBlankImage()
         try:
             os.remove(str(dir_tmp) + "original.jpg")
             os.remove(str(dir_tmp) + "temp.jpg")
@@ -1121,6 +1125,10 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
                 self.loadDefaultImage()
         else:
             self.loadDefaultImage()
+
+    def loadBlankImage(self, data=None):
+        if self["cover"].instance:
+            self["cover"].instance.setPixmapFromFile(skin_path + "images/vod_blank.png")
 
     def loadDefaultImage(self, data=None):
         if self["cover"].instance:
@@ -1304,7 +1312,7 @@ class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAud
             self.timerCache.start(60000, False)
 
     def downloadImage(self):
-        self.loadDefaultImage()
+        self.loadBlankImage()
         try:
             os.remove(str(dir_tmp) + "original.png")
             os.remove(str(dir_tmp) + "temp.png")
@@ -1336,6 +1344,10 @@ class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAud
                 self.loadDefaultImage()
         else:
             self.loadDefaultImage()
+
+    def loadBlankImage(self, data=None):
+        if self["picon"].instance:
+            self["picon"].instance.setPixmapFromFile(common_path + "picon_blank.png")
 
     def loadDefaultImage(self, data=None):
         if self["picon"].instance:
