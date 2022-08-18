@@ -116,7 +116,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
                 cfg.save()
                 configfile.save()
 
-                if self.org_skin != cfg.skin.getValue() or self.org_main != cfg.main.getValue() or self.org_wakeup != cfg.wakeup.getValue():
+                if self.org_skin != cfg.skin.getValue() or self.org_main != cfg.main.getValue() or self.org_wakeup != cfg.wakeup.getValue() or self.org_boot != cfg.boot.getValue():
                     self.changedFinished()
             self.clear_caches()
             self.close()
@@ -165,9 +165,12 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.cfg_infobarpicons = getConfigListEntry(_("Show infobar picons"), cfg.infobarpicons)
         self.cfg_infobarcovers = getConfigListEntry(_("Show infobar posters"), cfg.infobarcovers)
 
+        self.cfg_boot = getConfigListEntry(_("Auto start XStreamity on boot *Restart GUI Required"), cfg.boot)
+
         self.org_skin = cfg.skin.getValue()
         self.org_main = cfg.main.getValue()
         self.org_wakeup = cfg.wakeup.getValue()
+        self.org_boot = cfg.boot.getValue()
 
         self.createSetup()
 
@@ -210,6 +213,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.list.append(self.cfg_channelcovers)
         self.list.append(self.cfg_infobarpicons)
         self.list.append(self.cfg_infobarcovers)
+        self.list.append(self.cfg_boot)
 
         self["config"].list = self.list
         self["config"].l.setList(self.list)

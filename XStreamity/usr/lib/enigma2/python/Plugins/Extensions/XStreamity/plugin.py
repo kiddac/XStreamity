@@ -131,6 +131,8 @@ cfg.infobarpicons = ConfigYesNo(default=True)
 cfg.channelcovers = ConfigYesNo(default=True)
 cfg.infobarcovers = ConfigYesNo(default=True)
 
+cfg.boot = ConfigYesNo(default=False)
+
 skin_path = "%s%s/" % (skin_directory, cfg.skin.value)
 common_path = "%scommon/" % (skin_directory)
 playlists_json = "%sx-playlists.json" % (dir_etc)
@@ -273,6 +275,41 @@ def autostart(reason, session=None, **kwargs):
     return
 
 
+# auto boot start
+glb_session = None
+glb_startDelay = None
+
+
+class StartDelay:
+    def __init__(self):
+        self.timerboot = eTimer()
+
+    def start(self):
+        delay = 2000
+
+        try:
+            self.timer_conn = self.timerboot.timeout.connect(self.query)
+        except:
+            self.timerboot.callback.append(self.query)
+
+        self.timerboot.start(delay, True)
+
+    def query(self):
+        from . import playlists
+        glb_session.open(playlists.XStreamity_Playlists)
+        return
+
+
+def bootstart(reason, **kwargs):
+    print("*** bootstart ***")
+    global glb_session
+    global glb_startDelay
+    if reason == 0 and "session" in kwargs:
+        glb_session = kwargs["session"]
+        glb_startDelay = StartDelay()
+        glb_startDelay.start()
+
+
 def Plugins(**kwargs):
     addFont(font_folder + "m-plus-rounded-1c-regular.ttf", "xstreamityregular", 100, 0)
     addFont(font_folder + "m-plus-rounded-1c-medium.ttf", "xstreamitybold", 100, 0)
@@ -287,6 +324,8 @@ def Plugins(**kwargs):
 
     extensions_menu = PluginDescriptor(name=pluginname, description=description, where=PluginDescriptor.WHERE_EXTENSIONSMENU, fnc=extensionsmenu, needsRestart=True)
 
+    boot_start = PluginDescriptor(name=pluginname, description=description, where=[PluginDescriptor.WHERE_AUTOSTART, PluginDescriptor.WHERE_SESSIONSTART], fnc=bootstart, needsRestart=True)
+
     result = [PluginDescriptor(name=pluginname, description=description, where=[PluginDescriptor.WHERE_AUTOSTART, PluginDescriptor.WHERE_SESSIONSTART], fnc=autostart),
               PluginDescriptor(name=pluginname, description=description, where=PluginDescriptor.WHERE_PLUGINMENU, icon=iconFile, fnc=main)]
 
@@ -294,5 +333,8 @@ def Plugins(**kwargs):
 
     if cfg.main.getValue():
         result.append(main_menu)
+
+    if cfg.boot.getValue():
+        result.append(boot_start)
 
     return result
