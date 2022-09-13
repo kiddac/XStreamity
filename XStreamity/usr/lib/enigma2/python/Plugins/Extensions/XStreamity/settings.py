@@ -38,6 +38,7 @@ class ProtectedScreen:
 
 
 class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
+    ALLOW_SUSPEND = True
 
     def __init__(self, session):
         Screen.__init__(self, session)

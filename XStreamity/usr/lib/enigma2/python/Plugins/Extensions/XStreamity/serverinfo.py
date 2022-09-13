@@ -15,6 +15,7 @@ import json
 
 
 class XStreamity_UserInfo(Screen):
+    ALLOW_SUSPEND = True
 
     def __init__(self, session):
         Screen.__init__(self, session)
@@ -96,7 +97,7 @@ class XStreamity_UserInfo(Screen):
 
         if "timezone" in glob.current_playlist["server_info"]:
             self["timezone"].setText(str(glob.current_playlist["server_info"]["timezone"]))
-            
+
         if "serveroffset" in glob.current_playlist["player_info"]:
             self["serveroffset"].setText(str(glob.current_playlist["player_info"]["serveroffset"]))
 

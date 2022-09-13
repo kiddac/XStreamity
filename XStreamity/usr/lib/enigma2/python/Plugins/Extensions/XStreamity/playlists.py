@@ -31,6 +31,7 @@ if os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/EPGImport"):
 
 
 class XStreamity_Playlists(Screen):
+    ALLOW_SUSPEND = True
 
     def __init__(self, session):
         Screen.__init__(self, session)
@@ -231,7 +232,7 @@ class XStreamity_Playlists(Screen):
                         try:
                             time_now_datestamp = datetime.strptime(str(playlists["server_info"]["time_now"]), "%Y-%m-%d %H:%M:%S")
                         except:
-                            time_now_datestamp = datetime.strptime(str(playlists["server_info"]["time_now"]), "%Y-%m-%d %H-%M-%S")    
+                            time_now_datestamp = datetime.strptime(str(playlists["server_info"]["time_now"]), "%Y-%m-%d %H-%M-%S")
                         playlists["player_info"]["serveroffset"] = datetime.now().hour - time_now_datestamp.hour
 
                 if "auth" in playlists:

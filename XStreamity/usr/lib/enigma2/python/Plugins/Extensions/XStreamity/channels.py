@@ -137,6 +137,8 @@ def get_time_utc(timestring, fdateparse):
 
 
 class XStreamity_Categories(Screen):
+    ALLOW_SUSPEND = True
+
     def __init__(self, session, categoryname):
         Screen.__init__(self, session)
         self.session = session
@@ -482,7 +484,7 @@ class XStreamity_Categories(Screen):
 
         elif self.level == 4:
             self.buildList4()
-            
+
         self.buttons()
         self.selectionChanged()
 

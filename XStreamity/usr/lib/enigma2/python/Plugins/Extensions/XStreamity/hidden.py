@@ -18,6 +18,7 @@ import json
 
 
 class XStreamity_HiddenCategories(Screen):
+    ALLOW_SUSPEND = True
 
     def __init__(self, session, category_type, channellist, level=1):
 

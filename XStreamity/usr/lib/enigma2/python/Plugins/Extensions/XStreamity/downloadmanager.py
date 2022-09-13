@@ -176,7 +176,7 @@ class XStreamity_DownloadManager(Screen):
         self.setTitle(self.setup_title)
 
     def cleantitle(self, title):
-        cleanName = re.sub(r'[\<\>\:\"\/\\\|\?\*\(\)\[\]]', " ", str(title))
+        cleanName = re.sub(r'[\'\<\>\:\"\/\\\|\?\*\(\)\[\]]', " ", str(title))
         cleanName = re.sub(r"  ", " ", cleanName)
         cleanName = cleanName.strip()
         return cleanName

@@ -351,6 +351,7 @@ class IPTVInfoBarPVRState:
 
 
 class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSelection, InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport, InfoBarSummarySupport, InfoBarServiceErrorPopupSupport, InfoBarNotifications, IPTVInfoBarShowHide, IPTVInfoBarPVRState, Screen):
+    ALLOW_SUSPEND = True
 
     def __init__(self, session, streamurl, servicetype, direct_source=None):
         Screen.__init__(self, session)
