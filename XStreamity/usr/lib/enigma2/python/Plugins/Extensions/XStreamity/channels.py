@@ -488,7 +488,6 @@ class XStreamity_Categories(Screen):
         self.buttons()
         self.selectionChanged()
 
-
     def getCategories(self):
         # print("*** getCategories **")
         index = 0
@@ -606,6 +605,8 @@ class XStreamity_Categories(Screen):
 
                         if str(stream_id) in glob.current_playlist["player_info"]["channelshidden"]:
                             hidden = True
+                    else:
+                        continue
 
                     if "stream_icon" in item and item["stream_icon"]:
                         if item["stream_icon"].startswith("http"):
@@ -700,6 +701,8 @@ class XStreamity_Categories(Screen):
 
                         if str(stream_id) in glob.current_playlist["player_info"]["vodstreamshidden"]:
                             hidden = True
+                    else:
+                        continue
 
                     if "stream_icon" in item and item["stream_icon"]:
                         if item["stream_icon"].startswith("http"):
@@ -839,6 +842,8 @@ class XStreamity_Categories(Screen):
                                 stream_id = item["stream_id"]
                                 if str(stream_id) in glob.current_playlist["player_info"]["catchupchannelshidden"]:
                                     hidden = True
+                            else:
+                                continue
                             if "stream_icon" in item and item["stream_icon"]:
                                 if item["stream_icon"].startswith("http"):
                                     stream_icon = item["stream_icon"]
@@ -1048,6 +1053,8 @@ class XStreamity_Categories(Screen):
 
                             if "id" in item:
                                 stream_id = item["id"]
+                            else:
+                                continue
 
                             if "title" in item:
                                 title = item["title"].replace(str(shorttitle) + " - ", "")
@@ -1109,7 +1116,7 @@ class XStreamity_Categories(Screen):
         http.mount("http://", adapter)
         http.mount("https://", adapter)
         try:
-            r = http.get(url, headers=hdr, stream=True, timeout=(10,30), verify=False)
+            r = http.get(url, headers=hdr, stream=True, timeout=(10, 30), verify=False)
             r.raise_for_status()
             if r.status_code == requests.codes.ok:
                 try:

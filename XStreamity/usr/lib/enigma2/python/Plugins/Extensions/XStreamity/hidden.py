@@ -119,7 +119,7 @@ class XStreamity_HiddenCategories(Screen):
             pixmap = LoadPixmap(cached=True, path=common_path + "lock_on.png")
         else:
             pixmap = LoadPixmap(cached=True, path=common_path + "lock_off.png")
-        return(pixmap, str(name), str(category_id), enabled)
+        return (pixmap, str(name), str(category_id), enabled)
 
     def refresh(self):
         self.drawList = []

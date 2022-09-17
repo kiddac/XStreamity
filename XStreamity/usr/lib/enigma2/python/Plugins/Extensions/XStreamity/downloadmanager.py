@@ -505,4 +505,4 @@ class XStreamity_DownloadManager(Screen):
     def buildListEntry(self, dtype, title, url, state, progress, length):
         progresspercent = str(progress) + "%"
         length = convert_size(length)
-        return(str(dtype), str(title), str(url), str(state), int(progress), str(progresspercent), str(length))
+        return (str(dtype), str(title), str(url), str(state), int(progress), str(progresspercent), str(length))

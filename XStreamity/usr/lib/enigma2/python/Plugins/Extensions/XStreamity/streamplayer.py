@@ -9,7 +9,6 @@ from . import xstreamity_globals as glob
 from .plugin import skin_path, screenwidth, common_path, cfg, dir_tmp, pythonVer, playlists_json
 from .xStaticText import StaticText
 
-
 from Components.ActionMap import ActionMap
 from Components.AVSwitch import AVSwitch
 from enigma import eAVSwitch
@@ -537,11 +536,6 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
 
     def playStream(self, servicetype, streamurl, direct_source):
 
-        try:
-            self.session.nav.stopService()
-        except:
-            pass
-
         if cfg.infobarpicons.value is True:
             self.downloadImage()
 
@@ -610,7 +604,12 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
 
         self.reference = eServiceReference(int(self.servicetype), 0, streamurl)
         self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
-        self.session.nav.playService(self.reference, forceRestart=True)
+
+        if self.session.nav.getCurrentlyPlayingServiceReference():
+            if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString():
+                self.session.nav.stopService()
+
+        self.session.nav.playService(self.reference)
 
         if self.session.nav.getCurrentlyPlayingServiceReference():
             glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()

@@ -286,7 +286,7 @@ class XStreamity_Playlists(Screen):
             expires = ""
 
             if playlist:
-                if"name" in playlist["playlist_info"]:
+                if "name" in playlist["playlist_info"]:
                     name = playlist["playlist_info"]["name"]
                 elif "domain" in playlist["playlist_info"]:
                     name = playlist["playlist_info"]["domain"]
@@ -347,7 +347,7 @@ class XStreamity_Playlists(Screen):
         if status == (_("Not Authorised")):
             pixmap = LoadPixmap(cached=True, path=common_path + "led_red.png")
 
-        return(index, str(name), str(url), str(expires), str(status), pixmap, str(active), str(activenum), str(maxc), str(maxnum))
+        return (index, str(name), str(url), str(expires), str(status), pixmap, str(active), str(activenum), str(maxc), str(maxnum))
 
     def quit(self):
         self.close()

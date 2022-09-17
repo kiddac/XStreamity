@@ -1,40 +1,48 @@
 from Components.Converter.Converter import Converter
 from enigma import iServiceInformation, iPlayableService
 from Components.Element import cached
-
+from Components.Converter.Poll import Poll
 from os import path
 
 WIDESCREEN = [1, 3, 4, 7, 8, 0xB, 0xC, 0xF, 0x10]
 
 
-class XStreamityServiceInfo(Converter, object):
+class XStreamityServiceInfo(Poll, Converter):
 
-    IS_MULTICHANNEL = 0
-    AUDIO_STEREO = 1
-    IS_WIDESCREEN = 2
-    XRES = 3
-    YRES = 4
-    FRAMERATE = 5
-    AUDIOTRACKS_AVAILABLE = 6
-    SUBTITLES_AVAILABLE = 7
-    IS_SD = 8
-    IS_HD = 9
+    IS_MULTICHANNEL = 1
+    AUDIO_STEREO = 2
+    IS_WIDESCREEN = 3
+    XRES = 4
+    YRES = 5
+    FRAMERATE = 6
+    AUDIOTRACKS_AVAILABLE = 7
+    SUBTITLES_AVAILABLE = 8
+    IS_SD = 9
+    IS_HD = 10
+    IS_FHD = 11
+    IS_UHD = 12
 
     def __init__(self, type):
+        Poll.__init__(self)
         Converter.__init__(self, type)
+        self.poll_interval = 1000
+        self.poll_enabled = True
         self.type, self.interesting_events = {
 
             "IsMultichannel": (self.IS_MULTICHANNEL, (iPlayableService.evUpdatedInfo,)),
             "IsWidescreen": (self.IS_WIDESCREEN, (iPlayableService.evVideoSizeChanged,)),
             "VideoWidth": (self.XRES, (iPlayableService.evVideoSizeChanged,)),
             "VideoHeight": (self.YRES, (iPlayableService.evVideoSizeChanged,)),
-            "Framerate": (self.FRAMERATE, (iPlayableService.evUpdatedInfo, iPlayableService.evVideoSizeChanged, iPlayableService.evVideoFramerateChanged)),
+            "Framerate": (self.FRAMERATE, (iPlayableService.evVideoSizeChanged, iPlayableService.evUpdatedInfo,)),
             "AudioTracksAvailable": (self.AUDIOTRACKS_AVAILABLE, (iPlayableService.evUpdatedInfo,)),
             "SubtitlesAvailable": (self.SUBTITLES_AVAILABLE, (iPlayableService.evUpdatedInfo,)),
             "IsSD": (self.IS_SD, (iPlayableService.evVideoSizeChanged,)),
             "IsHD": (self.IS_HD, (iPlayableService.evVideoSizeChanged,)),
+            "IsFHD": (self.IS_FHD, (iPlayableService.evVideoSizeChanged,)),
+            "IsUHD": (self.IS_UHD, (iPlayableService.evVideoSizeChanged,)),
 
         }[type]
+        self.interesting_events += (iPlayableService.evStart,)
 
     def getServiceInfoString(self, info, what, convert=lambda x: "%d" % x):
         v = info.getInfo(what)
@@ -51,6 +59,49 @@ class XStreamityServiceInfo(Converter, object):
         if v == -2:
             return info.getInfoString(what)
         return convert(v)
+
+    def _getProcVal(self, pathname, base=10):
+        val = None
+        try:
+            f = open(pathname, "r")
+            val = int(f.read(), base)
+            f.close()
+            if val >= 2 ** 31:
+                val -= 2 ** 32
+        except Exception as e:
+            print(e)
+            pass
+        return val
+
+    def _getVal(self, pathname, info, infoVal, base=10):
+        val = self._getProcVal(pathname, base=base)
+        return val if val is not None else info.getInfo(infoVal)
+
+    def _getValInt(self, pathname, info, infoVal, base=10, default=-1):
+        val = self._getVal(pathname, info, infoVal, base)
+        return val if val is not None else default
+
+    def _getValStr(self, pathname, info, infoVal, base=10, convert=lambda x: "%d" % x):
+        val = self._getProcVal(pathname, base=base)
+        return convert(val) if val is not None else self.getServiceInfoString(info, infoVal, convert)
+
+    def _getVideoHeight(self, info):
+        return self._getValInt("/proc/stb/vmpeg/0/yres", info, iServiceInformation.sVideoHeight, base=16)
+
+    def _getVideoHeightStr(self, info, convert=lambda x: "%d" % x if x > 0 else "?"):
+        return self._getValStr("/proc/stb/vmpeg/0/yres", info, iServiceInformation.sVideoHeight, base=16, convert=convert)
+
+    def _getVideoWidth(self, info):
+        return self._getValInt("/proc/stb/vmpeg/0/xres", info, iServiceInformation.sVideoWidth, base=16)
+
+    def _getVideoWidthStr(self, info, convert=lambda x: "%d" % x if x > 0 else "?"):
+        return self._getValStr("/proc/stb/vmpeg/0/xres", info, iServiceInformation.sVideoWidth, base=16, convert=convert)
+
+    def _getFrameRate(self, info):
+        return self._getValInt("/proc/stb/vmpeg/0/framerate", info, iServiceInformation.sFrameRate)
+
+    def _getFrameRateStr(self, info, convert=lambda x: "%d" % x if x > 0 else ""):
+        return self._getValStr("/proc/stb/vmpeg/0/framerate", info, iServiceInformation.sFrameRate, convert=convert)
 
     @cached
     def getBoolean(self):
@@ -141,7 +192,14 @@ class XStreamityServiceInfo(Converter, object):
             return video_height < 720
 
         elif self.type == self.IS_HD:
-            return video_height >= 720 and video_height < 2160
+            return video_height >= 720 and video_height <= 1079
+
+        elif self.type == self.IS_FHD:
+            return video_height >= 1080 and video_height < 2160 and video_width < 3840
+
+        elif self.type == self.IS_UHD:
+            return video_height >= 2160 or video_width >= 3840
+
         else:
             return False
 
@@ -149,7 +207,7 @@ class XStreamityServiceInfo(Converter, object):
 
     @cached
     def getText(self):
-        video_rate = 0
+
         service = self.source.service
         info = service and service.info()
         if not info:
@@ -226,7 +284,6 @@ class XStreamityServiceInfo(Converter, object):
 
     @cached
     def getValue(self):
-        video_rate = 0
         service = self.source.service
         info = service and service.info()
         if not info:
@@ -259,6 +316,7 @@ class XStreamityServiceInfo(Converter, object):
             return str(video_height)
 
         elif self.type == self.FRAMERATE:
+            video_rate = None
             if path.exists("/proc/stb/vmpeg/0/framerate"):
                 f = open("/proc/stb/vmpeg/0/framerate", "r")
                 try:
