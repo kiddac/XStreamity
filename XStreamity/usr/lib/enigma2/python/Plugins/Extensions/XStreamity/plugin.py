@@ -182,6 +182,11 @@ if not os.path.isfile(playlists_json):
 if not os.path.isfile(downloads_json):
     open(downloads_json, "a").close()
 
+if os.path.isdir('/usr/lib/enigma2/python/Plugins/Extensions/XStreamityPro/'):
+    try:
+        shutil.rmtree('/usr/lib/enigma2/python/Plugins/Extensions/XStreamityPro/')
+    except:
+        pass
 
 # try and override epgimport settings
 try:
