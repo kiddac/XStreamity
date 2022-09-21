@@ -1923,10 +1923,13 @@ class XStreamity_Categories(Screen):
                     direct_source = self["main_list"].getCurrent()[10]
 
                     self.reference = eServiceReference(int(streamtype), 0, next_url)
-                    if direct_source:
-                        self.reference = eServiceReference(int(streamtype), 0, direct_source)
-                    self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
-                    self.session.openWithCallback(self.setIndex, streamplayer.XStreamity_VodPlayer, str(next_url), str(streamtype), str(direct_source))
+                    try:
+                        if direct_source:
+                            self.reference = eServiceReference(int(streamtype), 0, direct_source)
+                        self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
+                        self.session.openWithCallback(self.setIndex, streamplayer.XStreamity_VodPlayer, str(next_url), str(streamtype), str(direct_source))
+                    except Exception as e:
+                        print("********* vod crash *********", e)
 
                 elif self.categoryname == "series":
                     next_url = self["main_list"].getCurrent()[3]
@@ -2891,11 +2894,11 @@ class XStreamity_Categories(Screen):
 
             if exists is False:
                 if self.categoryname == "vod":
-                    downloads_all.append([_("Movie"), title, stream_url, _("Not Started"), 0, 0])
+                    downloads_all.append([_("Movie"), title, stream_url, "Not Started", 0, 0])
                 elif self.categoryname == "series":
-                    downloads_all.append([_("Series"), title, stream_url, _("Not Started"), 0, 0])
+                    downloads_all.append([_("Series"), title, stream_url, "Not Started", 0, 0])
                 elif self.categoryname == "catchup":
-                    downloads_all.append([_("Catch-up"), title, playurl, _("Not Started"), 0, 0])
+                    downloads_all.append([_("Catch-up"), title, playurl, "Not Started", 0, 0])
 
                 with open(downloads_json, "w") as f:
                     json.dump(downloads_all, f)

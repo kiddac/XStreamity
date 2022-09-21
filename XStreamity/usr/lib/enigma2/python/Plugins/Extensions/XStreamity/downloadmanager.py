@@ -277,6 +277,7 @@ class XStreamity_DownloadManager(Screen):
             path = str(cfg.downloadlocation.getValue()) + str(filename)
             url = video[2]
             state = video[3]
+
             parsed_uri = urlparse(url)
             video_domain = parsed_uri.hostname
 
@@ -337,7 +338,7 @@ class XStreamity_DownloadManager(Screen):
         if self["downloadlist"].getCurrent():
             # currentindex = self["downloadlist"].getIndex()
 
-            if self["downloadlist"].getCurrent()[3] != "Not Started":
+            if self["downloadlist"].getCurrent()[3] != _("Not Started"):
                 self["key_green"].setText(_("Cancel"))
             else:
                 self["key_green"].setText(_("Download"))
@@ -348,7 +349,7 @@ class XStreamity_DownloadManager(Screen):
 
     def download(self):
         if not os.path.exists(cfg.downloadlocation.value) or cfg.downloadlocation.value is None:
-            self.session.open(MessageBox, _("Vod Download folder location does not exist.\n\n" + str(cfg.downloadlocation.value) + "Please set download folder in Main Settings."), type=MessageBox.TYPE_WARNING)
+            self.session.open(MessageBox, _("Vod Download folder location does not exist.\n\n" + str(cfg.downloadlocation.value) + _("Please set download folder in Main Settings.")), type=MessageBox.TYPE_WARNING)
             return
 
         if self["downloadlist"].getCurrent():
@@ -369,7 +370,7 @@ class XStreamity_DownloadManager(Screen):
             parsed_uri = urlparse(self.url)
             video_domain = parsed_uri.hostname
 
-            if self["downloadlist"].getCurrent()[3] == "Not Started":
+            if self["downloadlist"].getCurrent()[3] == _("Not Started"):
 
                 if self.session.nav.getCurrentlyPlayingServiceReference():
                     playingstream = self.session.nav.getCurrentlyPlayingServiceReference().toString()
@@ -405,9 +406,9 @@ class XStreamity_DownloadManager(Screen):
                 except Exception as e:
                     print(e)
             else:
-                if self["downloadlist"].getCurrent()[3] == "Waiting":
+                if self["downloadlist"].getCurrent()[3] == _("Waiting"):
                     self.cancelJob(filmtitle)
-                elif self["downloadlist"].getCurrent()[3] == "In progress":
+                elif self["downloadlist"].getCurrent()[3] == _("In progress"):
                     self.cancelDownload()
 
     def cancelJob(self, filmtitle):
@@ -443,18 +444,6 @@ class XStreamity_DownloadManager(Screen):
             # os.system("killall -9 wget")
             for video in self.downloads_all:
                 filmtitle = str(video[1])
-
-                """
-                url = video[2]
-
-                try:
-                    extension = str(os.path.splitext(url)[-1])
-                except:
-                    extension = ""
-
-                filename = str(filmtitle) + str(extension)
-                path = str(cfg.downloadlocation.getValue()) + str(filename)
-                """
 
                 if filmtitle == str(jobname):
                     video[3] = "Not Started"
