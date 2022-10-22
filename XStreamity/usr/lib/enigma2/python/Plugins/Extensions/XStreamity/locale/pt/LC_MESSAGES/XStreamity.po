@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2022-06-03 13:23+0100\n"
-"PO-Revision-Date: 2022-06-03 13:23+0100\n"
-"Last-Translator: \n"
+"PO-Revision-Date: 2022-09-22 12:13+0100\n"
+"Last-Translator: extream87\n"
 "Language-Team: \n"
 "Language: pt_PT\n"
 "MIME-Version: 1.0\n"
@@ -437,7 +437,7 @@ msgstr "Adicionar Lista"
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:114
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:58
 msgid "Main Settings"
-msgstr "Menu Principal"
+msgstr "Configurações"
 
 # Atualização manual de EPG
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:110

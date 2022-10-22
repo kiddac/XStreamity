@@ -123,7 +123,7 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.showvodCfg = NoSave(ConfigYesNo(default=self.showvod))
         self.showseriesCfg = NoSave(ConfigYesNo(default=self.showseries))
         self.showcatchupCfg = NoSave(ConfigYesNo(default=self.showcatchup))
-        self.epgoffsetCfg = NoSave(ConfigSelectionNumber(-9, 9, 1, default=self.epgoffset))
+        self.epgoffsetCfg = NoSave(ConfigSelectionNumber(-9, 9, 1, default=self.epgoffset, wraparound=True))
         self.epgalternativeCfg = NoSave(ConfigYesNo(default=self.epgalternative))
         self.epgalternativeurlCfg = NoSave(ConfigText(default=self.epgalternativeurl, fixed_size=False))
 

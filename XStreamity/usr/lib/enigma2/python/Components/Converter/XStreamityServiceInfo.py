@@ -114,38 +114,36 @@ class XStreamityServiceInfo(Poll, Converter):
         video_width = None
         video_aspect = None
 
-        if path.exists("/proc/stb/vmpeg/0/yres"):
-            f = open("/proc/stb/vmpeg/0/yres", "r")
-            try:
-                video_height = int(f.read(), 16)
-            except:
-                pass
-            f.close()
-
-        if path.exists("/proc/stb/vmpeg/0/xres"):
-            f = open("/proc/stb/vmpeg/0/xres", "r")
-            try:
-                video_width = int(f.read(), 16)
-            except:
-                pass
-            f.close()
-
-        if path.exists("/proc/stb/vmpeg/0/aspect"):
-            f = open("/proc/stb/vmpeg/0/aspect", "r")
-            try:
-                video_aspect = int(f.read())
-            except:
-                pass
-            f.close()
+        video_height = int(info.getInfo(iServiceInformation.sVideoHeight))
+        video_width = int(info.getInfo(iServiceInformation.sVideoWidth))
+        video_aspect = info.getInfo(iServiceInformation.sAspect)
 
         if not video_height:
-            video_height = int(info.getInfo(iServiceInformation.sVideoHeight))
+            if path.exists("/proc/stb/vmpeg/0/yres"):
+                f = open("/proc/stb/vmpeg/0/yres", "r")
+                try:
+                    video_height = int(f.read(), 16)
+                except:
+                    pass
+                f.close()
 
         if not video_width:
-            video_width = int(info.getInfo(iServiceInformation.sVideoWidth))
+            if path.exists("/proc/stb/vmpeg/0/xres"):
+                f = open("/proc/stb/vmpeg/0/xres", "r")
+                try:
+                    video_width = int(f.read(), 16)
+                except:
+                    pass
+                f.close()
 
         if not video_aspect:
-            video_aspect = info.getInfo(iServiceInformation.sAspect)
+            if path.exists("/proc/stb/vmpeg/0/aspect"):
+                f = open("/proc/stb/vmpeg/0/aspect", "r")
+                try:
+                    video_aspect = int(f.read())
+                except:
+                    pass
+                f.close()
 
         if self.type in (self.IS_MULTICHANNEL, self.AUDIO_STEREO):
             audio = service.audioTracks()
