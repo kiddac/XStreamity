@@ -2858,20 +2858,6 @@ class XStreamity_Categories(Screen):
                 title = self["main_list"].getCurrent()[0]
                 stream_url = self["main_list"].getCurrent()[3]
 
-                """
-                if self.categoryname == "live":
-                    direct_source = self["main_list"].getCurrent()[7]
-
-                if self.categoryname == "vod":
-                    direct_source = self["main_list"].getCurrent()[10]
-
-                if self.categoryname == "series":
-                    direct_source = self["main_list"].getCurrent()[18]
-
-                if direct_source:
-                    stream_url = direct_source
-                    """
-
             downloads_all = []
             if os.path.isfile(downloads_json):
                 with open(downloads_json, "r") as f:
