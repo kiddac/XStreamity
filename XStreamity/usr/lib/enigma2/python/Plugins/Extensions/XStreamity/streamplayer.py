@@ -1435,7 +1435,7 @@ class XStreamityLog(Screen):
     if screenwidth.width() > 1280:
         skin = """
             <screen position="center,center" size="1920,1080" title="EPG Import Log" flags="wfNoBorder" backgroundColor="#000000">
-                <widget name="list" position="30,30" size="1860,990" font="Console;24" foregroundColor="#ffffff" backgroundColor="#000000" scrollbarMode="showOnDemand" transparent="1" />
+                <widget name="list" position="30,30" size="1860,990" font="Console;24" foregroundColor="#ffffff" backgroundColor="#000000" transparent="1" />
 
                 <eLabel position="0,1019" size="1920,1" backgroundColor="#ffffff" zPosition="1" />
                 <widget source="global.CurrentTime" render="Label" position="30,1020" size="400,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" halign="left" transparent="1">
@@ -1452,7 +1452,7 @@ class XStreamityLog(Screen):
     else:
         skin = """
             <screen position="center,center" size="1280,720" title="EPG Import Log" flags="wfNoBorder" backgroundColor="#000000">
-                <widget name="list" position="20,20" size="1240,660" font="Console;18" foregroundColor="#ffffff" backgroundColor="#000000" scrollbarMode="showOnDemand" transparent="1" />
+                <widget name="list" position="20,20" size="1240,660" font="Console;18" foregroundColor="#ffffff" backgroundColor="#000000" transparent="1" />
 
                 <eLabel position="0,679" size="1280,1" backgroundColor="#ffffff" zPosition="1" />
                 <widget source="global.CurrentTime" render="Label" position="20,680" size="260,40" font="xstreamityregular;18" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" halign="left" transparent="1">
