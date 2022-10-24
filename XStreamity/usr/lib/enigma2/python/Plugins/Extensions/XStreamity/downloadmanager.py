@@ -17,7 +17,8 @@ from Screens.Screen import Screen
 from enigma import eTimer, eServiceReference
 from requests.adapters import HTTPAdapter
 
-from Components.Task import Task, Job, job_manager as JobManager, Condition
+from Components.Task import job_manager as JobManager
+from Components.Task import Task, Job, Condition
 
 try:
     from urlparse import urlparse
@@ -59,7 +60,7 @@ class downloadJob(Job):
 
     def cancel(self):
         self.abort()
-        os.system("rm -f %s" % self.filename)
+        # os.system("rm -f %s" % self.filename)
 
 
 # downloadtask code borrowed from old video plugins
@@ -108,6 +109,9 @@ class downloadTask(Task):
         except Exception as errormsg:
             print("Error processOutput: " + str(errormsg))
             Task.processOutput(self, data)
+
+    def processOutputLine(self, line):
+        pass
 
     def afterRun(self):
         if self.getProgress() == 100 or self.progress == 100:
@@ -184,6 +188,7 @@ class XStreamity_DownloadManager(Screen):
 
     def cleantitle(self, title):
         cleanName = re.sub(r'[\'\<\>\:\"\/\\\|\?\*\(\)\[\]]', "", str(title))
+        cleanName = re.sub(r"   ", " ", cleanName)
         cleanName = re.sub(r"  ", " ", cleanName)
         cleanName = re.sub(r" ", "-", cleanName)
         cleanName = cleanName.strip()
@@ -229,7 +234,7 @@ class XStreamity_DownloadManager(Screen):
 
             try:
                 r = http.get(url, headers=hdr, timeout=10, verify=False, stream=True)
-                print("response", r)
+                # print("response", r)
                 video[5] = float(r.headers["content-length"])
                 templist.append(video)
                 r.close()
@@ -273,7 +278,25 @@ class XStreamity_DownloadManager(Screen):
         self.saveJson()
 
     def resumeDownloads(self):
-        os.system("killall -9 wget")
+
+        jobs = JobManager.getPendingJobs()
+        if len(jobs) >= 1:
+            for jobentry in jobs:
+                try:
+                    JobManager.active_jobs.remove(jobentry)
+                except:
+                    pass
+
+                try:
+                    jobentry.cancel()
+                except:
+                    pass
+
+            try:
+                os.system("killall -9 wget")
+            except:
+                pass
+
         for video in self.downloads_all:
             filmtitle = str(video[1])
             try:
@@ -458,7 +481,6 @@ class XStreamity_DownloadManager(Screen):
             activejob = jobs[0]
             jobname = str(activejob.name)
             activejob.cancel()
-            # os.system("killall -9 wget")
             for video in self.downloads_all:
                 filmtitle = str(video[1])
 

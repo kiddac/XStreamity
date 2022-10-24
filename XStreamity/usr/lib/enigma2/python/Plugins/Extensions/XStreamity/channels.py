@@ -1065,8 +1065,8 @@ class XStreamity_Categories(Screen):
                             if "tmdb_id" in item:
                                 tmdb_id = item["info"]["tmdb_id"]
 
-                            if "releasedate" in item["info"]:
-                                releasedate = item["info"]["releasedate"]
+                            if "releaseDate" in item["info"]:
+                                releasedate = item["info"]["releaseDate"]
 
                             if "plot" in item["info"]:
                                 plot = item["info"]["plot"]
@@ -3245,9 +3245,9 @@ class XStreamity_Categories(Screen):
             if "country" in self.info:
                 self["vod_country"].setText(str(self.info["country"]).strip())
 
-            if "releasedate" in self.info and self.info["releasedate"]:
+            if "releaseDate" in self.info and self.info["releaseDate"]:
                 try:
-                    self["vod_release_date"].setText(datetime.strptime(self.info["releasedate"], "%Y-%m-%d").strftime("%d-%m-%Y"))
+                    self["vod_release_date"].setText(datetime.strptime(self.info["releaseDate"], "%Y-%m-%d").strftime("%d-%m-%Y"))
                 except:
                     pass
 
