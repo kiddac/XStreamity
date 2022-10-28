@@ -3330,7 +3330,7 @@ class XStreamity_Categories(Screen):
             streamtype = glob.current_playlist["player_info"]["vodtype"]
             self.reference = eServiceReference(int(streamtype), 0, str(playurl))
             glob.catchupdata = [str(self["epg_short_list"].getCurrent()[0]), str(self["epg_short_list"].getCurrent()[3])]
-            self.session.openWithCallback(self.createSetup, streamplayer.XStreamity_CatchupPlayer, str(playurl), str(streamtype))
+            self.session.openWithCallback(self.setIndex, streamplayer.XStreamity_CatchupPlayer, str(playurl), str(streamtype))
         else:
             from Screens.MessageBox import MessageBox
             self.session.open(MessageBox, _("Catchup error. No data for this slot"), MessageBox.TYPE_WARNING, timeout=5)

@@ -1402,6 +1402,11 @@ class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAud
         except:
             pass
 
+        try:
+            self.session.nav.stopService()
+        except:
+            pass
+
         self.close()
 
     def toggleStreamType(self):
