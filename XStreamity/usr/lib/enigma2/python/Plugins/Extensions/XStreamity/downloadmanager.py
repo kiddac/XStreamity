@@ -5,6 +5,7 @@
 # https://github.com/OpenSPA/TVWeb/blob/master/usr/lib/enigma2/python/Plugins/Extensions/TVweb/plugin.py
 # https://github.com/openatv/enigma2/blob/7.0/lib/python/Components/Task.py
 # https://github.com/openatv/enigma2/blob/7.0/lib/python/Screens/TaskView.py
+# https://forums.openpli.org/topic/52171-cancel-a-single-job-in-jobmanager-taskpy/
 
 from . import _
 from .plugin import skin_path, downloads_json, cfg, pythonVer, hdr
@@ -18,7 +19,7 @@ from enigma import eTimer, eServiceReference
 from requests.adapters import HTTPAdapter
 
 from Components.Task import job_manager as JobManager
-from Components.Task import Task, Job, Condition
+from Components.Task import Task, Job
 
 try:
     from urlparse import urlparse
@@ -66,14 +67,16 @@ class downloadJob(Job):
 # downloadtask code borrowed from old video plugins
 class downloadTask(Task):
 
+    """
     if pythonVer == 3:
         ERROR_CORRUPT_FILE, ERROR_RTMP_ReadPacket, ERROR_SEGFAULT, ERROR_SERVER, ERROR_UNKNOWN = list(range(5))
     else:
         ERROR_CORRUPT_FILE, ERROR_RTMP_ReadPacket, ERROR_SEGFAULT, ERROR_SERVER, ERROR_UNKNOWN = range(5)
+        """
 
     def __init__(self, job, cmdline, filename, filmtitle):
         Task.__init__(self, job, filmtitle)
-        self.postconditions.append(downloadTaskPostcondition())
+        # self.postconditions.append(downloadTaskPostcondition())
         self.toolbox = job.toolbox
         self.setCmdline(cmdline)
         self.filename = filename
@@ -120,7 +123,14 @@ class downloadTask(Task):
             except Exception as e:
                 print(e)
 
+    def finish(self, aborted=False):
+        self.afterRun()
+        not_met = []
+        self.cleanup(not_met)
+        self.callback(self, not_met)
 
+
+"""
 class downloadTaskPostcondition(Condition):
     RECOVERABLE = True
 
@@ -138,6 +148,7 @@ class downloadTaskPostcondition(Condition):
             task.ERROR_SERVER: _("Video Download Failed!\n\nServer returned error:\n%s" % task.lasterrormsg),
             task.ERROR_UNKNOWN: _("Video Download Failed!\n\nUnknown Error:\n%s" % task.lasterrormsg)
         }[task.error]
+        """
 
 
 class XStreamity_DownloadManager(Screen):
@@ -158,7 +169,7 @@ class XStreamity_DownloadManager(Screen):
 
         self.list = []
         self.drawList = []
-        self.firstrun = True
+        # self.firstrun = True
 
         self.progress = 0
         self.timerDisplay = eTimer()
@@ -278,24 +289,20 @@ class XStreamity_DownloadManager(Screen):
         self.saveJson()
 
     def resumeDownloads(self):
-
+        # print("*** resumeDownloads ***")
         jobs = JobManager.getPendingJobs()
-        if len(jobs) >= 1:
-            for jobentry in jobs:
-                try:
-                    JobManager.active_jobs.remove(jobentry)
-                except:
-                    pass
+        # print("*** jobs ***", jobs)
+        for job in jobs:
 
-                try:
-                    jobentry.cancel()
-                except:
-                    pass
+            # print("*** job ****", job.name, job.status)
+            # print("*** active ***", JobManager.active_jobs)
+            if job.status == job.NOT_STARTED:
+                # print("*** not started ***")
+                JobManager.active_jobs.remove(job)
 
-            try:
-                os.system("killall -9 wget")
-            except:
-                pass
+            elif job.status == job.IN_PROGRESS:
+                # print("*** in progress ***")
+                job.cancel()
 
         for video in self.downloads_all:
             filmtitle = str(video[1])
@@ -373,8 +380,10 @@ class XStreamity_DownloadManager(Screen):
 
             if self["downloadlist"].getCurrent()[3] != _("Not Started"):
                 self["key_green"].setText(_("Cancel"))
+                self["key_blue"].setText("")
             else:
                 self["key_green"].setText(_("Download"))
+                self["key_blue"].setText(_("Remove"))
 
     def keyCancel(self, answer=None):
         global ui
@@ -389,7 +398,7 @@ class XStreamity_DownloadManager(Screen):
 
         if self["downloadlist"].getCurrent():
 
-            filmtitle = self["downloadlist"].getCurrent()[1]
+            self.filmtitle = self["downloadlist"].getCurrent()[1]
 
             self.url = self["downloadlist"].getCurrent()[2]
 
@@ -398,7 +407,7 @@ class XStreamity_DownloadManager(Screen):
             except:
                 self.extension = ""
 
-            filename = str(filmtitle) + str(self.extension)
+            filename = str(self.filmtitle) + str(self.extension)
             self.shortpath = str(cfg.downloadlocation.getValue())
             self.path = str(cfg.downloadlocation.getValue()) + str(filename)
 
@@ -433,7 +442,7 @@ class XStreamity_DownloadManager(Screen):
                             self.session.open(MessageBox, _("Please update your wget library to download https lines\n\nopkg update\nopkg install wget"), type=MessageBox.TYPE_INFO)
 
                 try:
-                    JobManager.AddJob(downloadJob(self, cmd, self.path, filmtitle))
+                    JobManager.AddJob(downloadJob(self, cmd, self.path, self.filmtitle))
                 except Exception as e:
                     print(e)
 
@@ -446,56 +455,43 @@ class XStreamity_DownloadManager(Screen):
                     print(e)
 
             else:
-                if self["downloadlist"].getCurrent()[3] == _("Waiting"):
-                    self.cancelJob(filmtitle)
-                elif self["downloadlist"].getCurrent()[3] == _("In progress"):
-                    self.cancelDownload()
+                self.cancelConfirm()
 
-    def cancelJob(self, filmtitle):
-        jobs = JobManager.getPendingJobs()
-        if len(jobs) >= 1:
-            for job in jobs:
-                jobname = str(job.name)
-                if filmtitle == jobname:
-                    JobManager.active_jobs.remove(job)
-                    break
-
-            for video in self.downloads_all:
-                if str(video[1]) == str(filmtitle):
-                    video[3] = "Not Started"
-
-            self.buildList()
-            self.saveJson()
-
-    def cancelDownload(self, answer=None):
+    def cancelConfirm(self, answer=None):
         if answer is None:
-            self.session.openWithCallback(self.cancelDownload, MessageBox, _("Cancel this download?"))
+            self.session.openWithCallback(self.cancelConfirm, MessageBox, _("Cancel this download?"))
         elif answer:
-            self.download_cancelled()
+            self.cancelJob2()
         else:
             return
 
-    def download_cancelled(self, data=None):
+    def cancelJob2(self, anser=None):
         jobs = JobManager.getPendingJobs()
+
         if len(jobs) >= 1:
-            activejob = jobs[0]
-            jobname = str(activejob.name)
-            activejob.cancel()
-            for video in self.downloads_all:
-                filmtitle = str(video[1])
+            for job in jobs:
+                jobname = str(job.name)
+                if self.filmtitle == jobname:
 
-                if filmtitle == str(jobname):
-                    video[3] = "Not Started"
-                    break
+                    if job.status == job.NOT_STARTED:
+                        JobManager.active_jobs.remove(job)
 
+                    elif job.status == job.IN_PROGRESS:
+                        job.cancel()
+
+                for video in self.downloads_all:
+                    if str(video[1]) == str(self.filmtitle):
+                        video[3] = "Not Started"
+
+        self.buildList()
         self.sortlist()
+        self.saveJson()
 
     def delete(self):
         if self["downloadlist"].getCurrent():
             currentindex = self["downloadlist"].getIndex()
-
-            if self.downloads_all[currentindex][3] == "In progress":
-                self.download_cancelled()
+            if self.downloads_all[currentindex][3] != "Not Started":
+                return
             else:
                 self.delete_entry()
 
