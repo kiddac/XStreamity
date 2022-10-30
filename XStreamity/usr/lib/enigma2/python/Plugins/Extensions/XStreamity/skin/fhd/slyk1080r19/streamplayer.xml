@@ -1,63 +1,63 @@
 <screen name="XStreamityStreamPlayer" position="0,0" size="1920,1080" backgroundColor="#ff000000" flags="wfNoBorder">
 	<ePixmap position="162,551" size="1596,227" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/infobar-top.png" alphatest="blend" zPosition="-1"/>
-	<widget source="nowtime" render="Label" position="185,567" size="195,54" font="Bold;42" foregroundColor="#7eaeef" backgroundColor="#133171" transparent="1" noWrap="1" valign="top"/>
-	<widget source="nowtitle" render="Label" position="380,567" size="996,54" font="Bold;42" noWrap="1" foregroundColor="#7eaeef" backgroundColor="#133171" transparent="1" valign="top" zPosition="3"/>
-	<widget source="x_description" render="XStreamityRunningText" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" position="185,620" size="1535,131" font="Regular;39" foregroundColor="#ffffff" backgroundColor="#133171" transparent="1" valign="top" zPosition="3"/>
-	<widget text="DD" render="FixedLabel" source="session.CurrentService" position="1516,566" size="51,57" font="Regular;39" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" halign="right" valign="center" noWrap="1" zPosition="3">
+	<widget source="nowtime" render="Label" position="185,567" size="195,54" font="slykbold;42" foregroundColor="#7eaeef" backgroundColor="#133171" transparent="1" noWrap="1" valign="top"/>
+	<widget source="nowtitle" render="Label" position="380,567" size="996,54" font="slykbold;42" noWrap="1" foregroundColor="#7eaeef" backgroundColor="#133171" transparent="1" valign="top" zPosition="3"/>
+	<widget source="x_description" render="XStreamityRunningText" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" position="185,620" size="1535,131" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#133171" transparent="1" valign="top" zPosition="3"/>
+	<widget text="DD" render="FixedLabel" source="session.CurrentService" position="1516,566" size="51,57" font="slykregular;39" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" halign="right" valign="center" noWrap="1" zPosition="3">
 		<convert type="XStreamityServiceInfo">IsMultichannel</convert>
 		<convert type="ConditionalShowHide"/>
 	</widget>
-	<widget text="UHD" render="FixedLabel" source="session.CurrentService" position="1579,566" size="80,57" font="Regular;39" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" halign="right" valign="center" noWrap="1" zPosition="3">
+	<widget text="UHD" render="FixedLabel" source="session.CurrentService" position="1579,566" size="80,57" font="slykregular;39" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" halign="right" valign="center" noWrap="1" zPosition="3">
 		<convert type="XStreamityServiceInfo">IsUHD</convert>
 		<convert type="ConditionalShowHide"/>
 	</widget>
-	<widget text="FHD" render="FixedLabel" source="session.CurrentService" position="1579,566" size="80,57" font="Regular;39" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" halign="right" valign="center" noWrap="1" zPosition="3">
+	<widget text="FHD" render="FixedLabel" source="session.CurrentService" position="1579,566" size="80,57" font="slykregular;39" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" halign="right" valign="center" noWrap="1" zPosition="3">
 		<convert type="XStreamityServiceInfo">IsFHD</convert>
 		<convert type="ConditionalShowHide"/>
 	</widget>
-	<widget text="HD" render="FixedLabel" source="session.CurrentService" position="1579,566" size="80,57" font="Regular;39" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" halign="right" valign="center" noWrap="1" zPosition="3">
+	<widget text="HD" render="FixedLabel" source="session.CurrentService" position="1579,566" size="80,57" font="slykregular;39" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" halign="right" valign="center" noWrap="1" zPosition="3">
 		<convert type="XStreamityServiceInfo">IsHD</convert>
 		<convert type="ConditionalShowHide"/>
 	</widget>
-	<widget text="SD" render="FixedLabel" source="session.CurrentService" position="1579,566" size="80,57" font="Regular;39" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" halign="right" valign="center" noWrap="1" zPosition="3">
+	<widget text="SD" render="FixedLabel" source="session.CurrentService" position="1579,566" size="80,57" font="slykregular;39" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" halign="right" valign="center" noWrap="1" zPosition="3">
 		<convert type="XStreamityServiceInfo">IsSD</convert>
 		<convert type="ConditionalShowHide"/>
 	</widget>
-	<widget text="W" render="FixedLabel" source="session.CurrentService" position="1671,566" size="33,57" font="Regular;39" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" halign="right" valign="center" noWrap="1" zPosition="3">
+	<widget text="W" render="FixedLabel" source="session.CurrentService" position="1671,566" size="33,57" font="slykregular;39" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" halign="right" valign="center" noWrap="1" zPosition="3">
 		<convert type="XStreamityServiceInfo">IsWidescreen</convert>
 		<convert type="ConditionalShowHide"/>
 	</widget>
-	<widget text="S" render="FixedLabel" source="session.CurrentService" position="1716,566" size="23,57" font="Regular;39" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" halign="right" valign="center" noWrap="1" zPosition="3">
+	<widget text="S" render="FixedLabel" source="session.CurrentService" position="1716,566" size="23,57" font="slykregular;39" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" halign="right" valign="center" noWrap="1" zPosition="3">
 		<convert type="XStreamityServiceInfo">SubtitlesAvailable</convert>
 		<convert type="ConditionalShowHide"/>
 	</widget>
 	<!-- main infobar -->
 	<ePixmap position="162,777" size="1596,234" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/infobar-2.png" alphatest="blend" zPosition="-1"/>>
 		
-	<widget source="nowchannel" render="Label" position="185,785" size="1191,54" font="Bold;42" foregroundColor="#ffffff" backgroundColor="#133171" transparent="1" valign="center" halign="left" noWrap="1"/>
-	<widget source="global.CurrentTime" render="Label" position="1376,785" size="360,54" font="Regular;39" foregroundColor="#7eaeef" backgroundColor="#13317" valign="center" halign="right" transparent="1" zPosition="2">
+	<widget source="nowchannel" render="Label" position="185,785" size="1191,54" font="slykbold;42" foregroundColor="#ffffff" backgroundColor="#133171" transparent="1" valign="center" halign="left" noWrap="1"/>
+	<widget source="global.CurrentTime" render="Label" position="1376,785" size="360,54" font="slykregular;39" foregroundColor="#7eaeef" backgroundColor="#13317" valign="center" halign="right" transparent="1" zPosition="2">
 		<convert type="ClockToText">Format:%H:%M %a %d/%m</convert>
 	</widget>
 	<widget name="picon" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/picon.png" position="201,861" size="150,90" scale="1" alphatest="blend" zPosition="10"/>
-	<widget source="nowtime" render="Label" position="384,843" size="644,54" font="Regular;39" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" noWrap="1" valign="center"/>
-	<widget source="nowtitle" render="Label" position="384,897" size="644,54" font="Bold;42" noWrap="1" foregroundColor="#133171" backgroundColor="#f5c400" transparent="1" valign="center"/>
-	<widget source="nexttime" render="Label" position="1063,843" size="644,54" font="Regular;39" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" noWrap="1" valign="center"/>
-	<widget source="nexttitle" render="Label" position="1063,897" size="644,54" font="Regular;39" noWrap="1" foregroundColor="#ffffff" backgroundColor="#13317" transparent="1" valign="center"/>
+	<widget source="nowtime" render="Label" position="384,843" size="644,54" font="slykregular;39" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" noWrap="1" valign="center"/>
+	<widget source="nowtitle" render="Label" position="384,897" size="644,54" font="slykbold;42" noWrap="1" foregroundColor="#133171" backgroundColor="#f5c400" transparent="1" valign="center"/>
+	<widget source="nexttime" render="Label" position="1063,843" size="644,54" font="slykregular;39" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" noWrap="1" valign="center"/>
+	<widget source="nexttitle" render="Label" position="1063,897" size="644,54" font="slykregular;39" noWrap="1" foregroundColor="#ffffff" backgroundColor="#13317" transparent="1" valign="center"/>
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/up-down.png" position="200,969" size="54,30" alphatest="blend" backgroundColor="transparent" zPosition="4"/>
-	<eLabel text="Channels" position="263,954" size="171,57" font="Regular;39" halign="left" valign="center" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1"/>
+	<eLabel text="Channels" position="263,954" size="171,57" font="slykregular;39" halign="left" valign="center" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1"/>
 	<widget name="statusicon" position="1063,966" size="38,38" zPosition="5" alphatest="blend" pixmaps="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/state_play.png,/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/state_pause.png,/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/state_stop.png,/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/state_ff.png,/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/state_rw.png,/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/state_slow.png,/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/state_blank.png"/>
-	<widget name="speed" position="1105,954" size="54,57" font="Regular;39" foregroundColor="#ffffff" backgroundColor="#133171" halign="right" valign="center" transparent="1" zPosition="3"/>
+	<widget name="speed" position="1105,954" size="54,57" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#133171" halign="right" valign="center" transparent="1" zPosition="3"/>
 	<widget name="progress" position="633,979" size="198,9" foregroundColor="#7eaeef" backgroundColor="#1a000000" zPosition="3"/>
-	<widget source="streamtype" render="Label" position="1376,954" size="360,57" font="Regular;39" halign="right" valign="center" transparent="1" noWrap="1" foregroundColor="#7eaeef" backgroundColor="#1c4475" zPosition="2"/>
+	<widget source="streamtype" render="Label" position="1376,954" size="360,57" font="slykregular;39" halign="right" valign="center" transparent="1" noWrap="1" foregroundColor="#7eaeef" backgroundColor="#1c4475" zPosition="2"/>
 	<!--
-		<widget source="session.CurrentService" render="Label" position="1656,939" size="90,36" font="xstreamitybold;27" foregroundColor="#ffffff" backgroundColor="#40000000" valign="center" halign="center" transparent="1" zPosition="3">
+		<widget source="session.CurrentService" render="Label" position="1656,939" size="90,36" font="slykbold;27" foregroundColor="#ffffff" backgroundColor="#40000000" valign="center" halign="center" transparent="1" zPosition="3">
 		<convert type="XStreamityServiceInfo">VideoWidth</convert>
 	</widget>
-	<widget source="session.CurrentService" render="Label" position="1656,981" size="90,36" font="xstreamitybold;27" foregroundColor="#ffffff" backgroundColor="#40000000" valign="center" halign="center" transparent="1" zPosition="3">
+	<widget source="session.CurrentService" render="Label" position="1656,981" size="90,36" font="slykbold;27" foregroundColor="#ffffff" backgroundColor="#40000000" valign="center" halign="center" transparent="1" zPosition="3">
 		<convert type="XStreamityServiceInfo">VideoHeight</convert>
 	</widget>
 	
-		<widget source="session.CurrentService" render="Label" position="1656,1023" size="90,36" font="xstreamitybold;24" foregroundColor="#ffffff" backgroundColor="#40000000" valign="center" halign="center" transparent="1" zPosition="3">
+		<widget source="session.CurrentService" render="Label" position="1656,1023" size="90,36" font="slykbold;24" foregroundColor="#ffffff" backgroundColor="#40000000" valign="center" halign="center" transparent="1" zPosition="3">
 		<convert type="XStreamityServiceInfo">Framerate</convert>
 	</widget>
 	

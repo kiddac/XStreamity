@@ -1,10 +1,10 @@
 <screen name="XStreamityDownloader" position="0,0" size="1920,1080" backgroundColor="#1c5791" flags="wfNoBorder">
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/background.png" alphatest="off" position="0,0" size="1920,1080" zPosition="-1"/>
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/slyklogo.png" position="center,44" size="144,78" alphatest="blend" backgroundColor="#ff000000" zPosition="2"/>
-	<widget source="global.CurrentTime" render="Label" position="1490,0" size="400,60" font="Regular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1">
+	<widget source="global.CurrentTime" render="Label" position="1490,0" size="400,60" font="slykregular;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1">
 		<convert type="ClockToText">Format:%H:%M %a %d/%m</convert>
 	</widget>
-	<eLabel text="XStreamity" position="90,56" size="806,54" font="Regular;45" foregroundColor="#ffffff" backgroundColor="#1d68ac" valign="top" halign="left" transparent="1" zPosition="2"/>
+	<eLabel text="XStreamity" position="90,56" size="806,54" font="slykregular;45" foregroundColor="#ffffff" backgroundColor="#1d68ac" valign="top" halign="left" transparent="1" zPosition="2"/>
 	<eLabel position="90,186" size="1740,52" backgroundColor="#00417a" zPosition="-1"/>
 	<eLabel position="90,238" size="1740,807" backgroundColor="#082353" zPosition="-1"/>
 	<eLabel position="150,290" size="1620,48" backgroundColor="#204382" zPosition="-1"/>
@@ -19,7 +19,7 @@
 	<eLabel position="150,776" size="1620,48" backgroundColor="#10326c" zPosition="-1"/>
 	<eLabel position="150,830" size="1620,48" backgroundColor="#204382" zPosition="-1"/>
 	<eLabel position="150,884" size="1620,48" backgroundColor="#10326c" zPosition="-1"/>
-	<widget source="Title" render="Label" position="90,187" size="870,54" font="Bold;39" foregroundColor="#ffffff" backgroundColor="#082353" valign="center" halign="center" transparent="0" zPosition="2"/>
+	<widget source="Title" render="Label" position="90,187" size="870,54" font="slykbold;39" foregroundColor="#ffffff" backgroundColor="#082353" valign="center" halign="center" transparent="0" zPosition="2"/>
 	<widget source="downloadlist" render="Listbox" position="center,290" size="1620,600" foregroundColor="#ffffff" backgroundColor="#1c5791" foregroundColorSelected="#133171" backgroundColorSelected="#f2d320" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/menu-bar-54.png" backgroundPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/blank.png" itemHeight="54" enableWrapAround="1" scrollbarMode="showOnDemand" transparent="1" zPosition="1">
 		<convert type="TemplatedMultiContent">
 			{"template": [
@@ -30,24 +30,20 @@
 				MultiContentEntryText(pos = (1365, 0), size = (90, 54), font=0, flags = RT_HALIGN_RIGHT|RT_VALIGN_CENTER, text = 5), # index 5 is the percentage
 				MultiContentEntryText(pos = (1455, 0), size = (150, 54), font=0, flags = RT_HALIGN_RIGHT|RT_VALIGN_CENTER, text = 6), # index 6 is the size
 				],
-			"fonts": [gFont("Regular",39)],
+			"fonts": [gFont("slykregular",39)],
 				"itemHeight": 54,
 				"scrollbarMode": "showOnDemand"
 			}
 		</convert>
 	</widget>
 	<widget source="key_red" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/key_red.png" position="153,946" size="36,36" alphatest="blend" zPosition="2"/>
-	<widget source="key_red" render="Label" position="201,941" size="327,44" font="Regular;39" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" noWrap="1" zPosition="2"/>
+	<widget source="key_red" render="Label" position="201,941" size="327,44" font="slykregular;39" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" noWrap="1" zPosition="2"/>
 	<widget source="key_green" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/key_green.png" position="528,946" size="36,36" alphatest="blend" zPosition="2"/>
-	<widget source="key_green" render="Label" position="576,941" size="327,44" font="Regular;39" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" noWrap="1" zPosition="2"/>
-	<widget source="key_yellow" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/key_yellow.png" position="903,946" size="36,36" alphatest="blend" zPosition="2">
-		<convert type="ConditionalShowHide"/>
-	</widget>
-	<widget source="key_yellow" render="Label" position="951,941" size="327,44" font="Regular;39" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" zPosition="2"/>
+	<widget source="key_green" render="Label" position="576,941" size="327,44" font="slykregular;39" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" noWrap="1" zPosition="2"/>
 	<widget source="key_blue" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/key_blue.png" position="1278,946" size="36,36" alphatest="blend" zPosition="2">
 		<convert type="ConditionalShowHide"/>
 	</widget>
-	<widget source="key_blue" render="Label" position="1326,941" size="327,44" font="Regular;39" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" zPosition="2"/>
-	<eLabel text="Press SELECT" position="152,992" size="432,48" font="Regular;39" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="top" halign="left" transparent="1" zPosition="1"/>
-	<widget source="diskspace" render="Label" position="960,992" size="810,44" font="Regular;24" foregroundColor="#ffffff" backgroundColor="#1c4475" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
+	<widget source="key_blue" render="Label" position="1326,941" size="327,44" font="slykregular;39" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" zPosition="2"/>
+	<eLabel text="Press SELECT" position="152,992" size="432,48" font="slykregular;39" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="top" halign="left" transparent="1" zPosition="1"/>
+	<widget source="diskspace" render="Label" position="960,992" size="810,44" font="slykregular;24" foregroundColor="#ffffff" backgroundColor="#1c4475" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
 </screen>

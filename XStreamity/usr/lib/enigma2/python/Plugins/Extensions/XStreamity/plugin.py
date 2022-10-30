@@ -318,6 +318,8 @@ def bootstart(reason, **kwargs):
 def Plugins(**kwargs):
     addFont(font_folder + "m-plus-rounded-1c-regular.ttf", "xstreamityregular", 100, 0)
     addFont(font_folder + "m-plus-rounded-1c-medium.ttf", "xstreamitybold", 100, 0)
+    addFont(font_folder + "slyk-medium.ttf", "slykregular", 100, 0)
+    addFont(font_folder + "slyk-bold.ttf", "slykbold", 100, 0)
 
     iconFile = "icons/plugin-icon_sd.png"
     if screenwidth.width() > 1280:

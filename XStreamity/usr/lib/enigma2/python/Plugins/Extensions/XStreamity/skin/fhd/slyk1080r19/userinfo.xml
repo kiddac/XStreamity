@@ -1,10 +1,10 @@
 <screen name="XStreamityUserInfo" position="0,0" size="1920,1080" backgroundColor="#1c5791" flags="wfNoBorder">
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/background.png" alphatest="off" position="0,0" size="1920,1080" zPosition="-1"/>
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/slyklogo.png" position="center,44" size="144,78" alphatest="blend" backgroundColor="#ff000000" zPosition="2"/>
-	<widget source="global.CurrentTime" render="Label" position="1430,60" size="400,47" font="Regular;36" foregroundColor="#ffffff" backgroundColor="#1d68ac" valign="top" halign="right" transparent="1" zPosition="3">
+	<widget source="global.CurrentTime" render="Label" position="1430,60" size="400,47" font="slykregular;36" foregroundColor="#ffffff" backgroundColor="#1d68ac" valign="top" halign="right" transparent="1" zPosition="3">
 		<convert type="ClockToText">Format:%H:%M %a %d/%m</convert>
 	</widget>
-	<eLabel text="XStreamity" position="90,56" size="806,54" font="Regular;45" foregroundColor="#ffffff" backgroundColor="#1d68ac" valign="top" halign="left" transparent="1" zPosition="2"/>
+	<eLabel text="XStreamity" position="90,56" size="806,54" font="slykregular;45" foregroundColor="#ffffff" backgroundColor="#1d68ac" valign="top" halign="left" transparent="1" zPosition="2"/>
 	<eLabel position="90,186" size="1740,52" backgroundColor="#00417a" zPosition="-1"/>
 	<eLabel position="90,238" size="1740,807" backgroundColor="#082353" zPosition="-1"/>
 	<eLabel position="280,290" size="1360,48" backgroundColor="#204382" zPosition="-1"/>
@@ -19,27 +19,27 @@
 	<eLabel position="280,776" size="1360,48" backgroundColor="#10326c" zPosition="-1"/>
 	<eLabel position="280,830" size="1360,48" backgroundColor="#204382" zPosition="-1"/>
 	<eLabel position="280,884" size="1360,48" backgroundColor="#10326c" zPosition="-1"/>
-	<widget source="Title" render="Label" position="90,187" size="870,54" font="Bold;39" foregroundColor="#ffffff" backgroundColor="#082353" valign="center" halign="center" transparent="0" zPosition="2"/>
-	<eLabel text="Status:" position="295,290" size="600,48" font="Regular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
-	<eLabel text="Is Trial:" position="295,344" size="600,48" font="Regular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
-	<eLabel text="Active Connections:" position="295,398" size="600,48" font="Regular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
-	<eLabel text="Max Connections:" position="295,452" size="600,48" font="Regular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
-	<eLabel text="Created At:" position="295,506" size="600,48" font="Regular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
-	<eLabel text="Expiry Date:" position="295,560" size="600,48" font="Regular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
-	<eLabel text="Allowed Output Formats:" position="295,614" size="600,48" font="Regular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
-	<eLabel text="Real URL:" position="295,668" size="600,48" font="Regular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
-	<eLabel text="Timezone:" position="295,722" size="600,48" font="Regular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
-	<eLabel text="Server Offset:" position="295,776" size="600,48" font="Regular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
-	<widget name="status" position="1024,290" size="600,48" font="Regular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
-	<widget name="trial" position="1024,344" size="600,48" font="Regular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
-	<widget name="activeconn" position="1024,398" size="600,48" font="Regular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
-	<widget name="maxconn" position="1024,452" size="600,48" font="Regular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
-	<widget name="created" position="1024,506" size="600,48" font="Regular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
-	<widget name="expiry" position="1024,560" size="600,48" font="Regular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
-	<widget name="formats" position="1024,614" size="600,48" font="Regular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
-	<widget name="realurl" position="1024,668" size="600,48" font="Regular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
-	<widget name="timezone" position="1024,722" size="600,48" font="Regular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
-	<widget name="serveroffset" position="1024,776" size="600,48" font="Regular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
+	<widget source="Title" render="Label" position="90,187" size="870,54" font="slykbold;39" foregroundColor="#ffffff" backgroundColor="#082353" valign="center" halign="center" transparent="0" zPosition="2"/>
+	<eLabel text="Status:" position="295,290" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<eLabel text="Is Trial:" position="295,344" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<eLabel text="Active Connections:" position="295,398" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<eLabel text="Max Connections:" position="295,452" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<eLabel text="Created At:" position="295,506" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<eLabel text="Expiry Date:" position="295,560" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<eLabel text="Allowed Output Formats:" position="295,614" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<eLabel text="Real URL:" position="295,668" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<eLabel text="Timezone:" position="295,722" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<eLabel text="Server Offset:" position="295,776" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<widget name="status" position="1024,290" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
+	<widget name="trial" position="1024,344" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
+	<widget name="activeconn" position="1024,398" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
+	<widget name="maxconn" position="1024,452" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
+	<widget name="created" position="1024,506" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
+	<widget name="expiry" position="1024,560" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
+	<widget name="formats" position="1024,614" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
+	<widget name="realurl" position="1024,668" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
+	<widget name="timezone" position="1024,722" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
+	<widget name="serveroffset" position="1024,776" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
 	<widget source="key_red" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/key_red.png" position="153,946" size="36,36" alphatest="blend" zPosition="2"/>
-	<widget source="key_red" render="Label" position="201,941" size="327,44" font="Regular;39" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" noWrap="1" zPosition="2"/>
+	<widget source="key_red" render="Label" position="201,941" size="327,44" font="slykregular;39" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" noWrap="1" zPosition="2"/>
 </screen>
