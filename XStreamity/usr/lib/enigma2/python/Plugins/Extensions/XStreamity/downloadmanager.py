@@ -10,6 +10,8 @@
 from . import _
 from .plugin import skin_path, downloads_json, cfg, pythonVer, hdr
 from .xStaticText import StaticText
+from .Task import job_manager as JobManager
+from .Task import Task, Job
 
 from Components.ActionMap import ActionMap
 from Components.Sources.List import List
@@ -17,9 +19,6 @@ from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from enigma import eTimer, eServiceReference
 from requests.adapters import HTTPAdapter
-
-from Components.Task import job_manager as JobManager
-from Components.Task import Task, Job
 
 try:
     from urlparse import urlparse
@@ -36,6 +35,10 @@ import time
 
 ui = False
 
+temp1 = _("Not Started")
+temp2 = _("In progress")
+temp3 = _("Waiting")
+
 
 def convert_size(size_bytes):
     if size_bytes == 0:
@@ -50,33 +53,25 @@ def convert_size(size_bytes):
 class downloadJob(Job):
     def __init__(self, toolbox, cmdline, filename, filmtitle):
         Job.__init__(self, filmtitle)
+        self.cmdline = cmdline
         self.filename = filename
         self.toolbox = toolbox
         self.retrycount = 0
         downloadTask(self, cmdline, filename, filmtitle)
 
     def retry(self):
-        self.retrycount += 1
+        assert self.status == self.FAILED
         self.restart()
 
     def cancel(self):
         self.abort()
-        # os.system("rm -f %s" % self.filename)
 
 
 # downloadtask code borrowed from old video plugins
 class downloadTask(Task):
 
-    """
-    if pythonVer == 3:
-        ERROR_CORRUPT_FILE, ERROR_RTMP_ReadPacket, ERROR_SEGFAULT, ERROR_SERVER, ERROR_UNKNOWN = list(range(5))
-    else:
-        ERROR_CORRUPT_FILE, ERROR_RTMP_ReadPacket, ERROR_SEGFAULT, ERROR_SERVER, ERROR_UNKNOWN = range(5)
-        """
-
     def __init__(self, job, cmdline, filename, filmtitle):
         Task.__init__(self, job, filmtitle)
-        # self.postconditions.append(downloadTaskPostcondition())
         self.toolbox = job.toolbox
         self.setCmdline(cmdline)
         self.filename = filename
@@ -86,6 +81,7 @@ class downloadTask(Task):
         self.progress = 0
         self.lastprogress = 0
         self.firstrun = True
+        self.starttime = time.time()
 
     def processOutput(self, data):
         global ui
@@ -101,9 +97,17 @@ class downloadTask(Task):
                     if ui:
                         self.toolbox.updatescreen()
 
-                if self.progress == 100 or self.progress != self.lastprogress:
-                    self.lastprogress = self.progress
+                elif self.progress == 100:
+                    self.lastprogress = int(self.progress)
                     if ui:
+                        self.toolbox.updatescreen()
+
+                elif int(self.progress) != int(self.lastprogress):
+                    self.lastprogress = int(self.progress)
+
+                    elapsed_time = time.time() - self.starttime
+                    if ui and elapsed_time > 2:
+                        self.starttime = time.time()
                         self.toolbox.updatescreen()
 
                 else:
@@ -122,33 +126,6 @@ class downloadTask(Task):
                 self.toolbox.download_finished(self.filename, self.filmtitle)
             except Exception as e:
                 print(e)
-
-    def finish(self, aborted=False):
-        self.afterRun()
-        not_met = []
-        self.cleanup(not_met)
-        self.callback(self, not_met)
-
-
-"""
-class downloadTaskPostcondition(Condition):
-    RECOVERABLE = True
-
-    def check(self, task):
-        if task.returncode == 0 or task.error is None:
-            return True
-        else:
-            return False
-
-    def getErrorMessage(self, task):
-        return {
-            task.ERROR_CORRUPT_FILE: _("Video Download Failed!\n\nCorrupted Download File:\n%s" % task.lasterrormsg),
-            task.ERROR_RTMP_ReadPacket: _("Video Download Failed!\n\nCould not read RTMP-Packet:\n%s" % task.lasterrormsg),
-            task.ERROR_SEGFAULT: _("Video Download Failed!\n\nSegmentation fault:\n%s" % task.lasterrormsg),
-            task.ERROR_SERVER: _("Video Download Failed!\n\nServer returned error:\n%s" % task.lasterrormsg),
-            task.ERROR_UNKNOWN: _("Video Download Failed!\n\nUnknown Error:\n%s" % task.lasterrormsg)
-        }[task.error]
-        """
 
 
 class XStreamity_DownloadManager(Screen):
@@ -169,7 +146,6 @@ class XStreamity_DownloadManager(Screen):
 
         self.list = []
         self.drawList = []
-        # self.firstrun = True
 
         self.progress = 0
         self.timerDisplay = eTimer()
@@ -202,15 +178,17 @@ class XStreamity_DownloadManager(Screen):
         cleanName = re.sub(r"   ", " ", cleanName)
         cleanName = re.sub(r"  ", " ", cleanName)
         cleanName = re.sub(r" ", "-", cleanName)
+        cleanName = re.sub(r"---", "-", cleanName)
         cleanName = cleanName.strip()
         return cleanName
 
     def start(self):
         self.readJsonFile()
+        self.cleanalltitles()
         self.diskspace()
         self.getDownloadSize()
         self.checkactivedownloads()
-        self.resumeDownloads()
+        self.stopDownloads()
 
     def readJsonFile(self):
         if os.path.isfile(downloads_json):
@@ -231,37 +209,34 @@ class XStreamity_DownloadManager(Screen):
             total = "-?-"
         self["diskspace"].setText(_("Free Space:") + " " + str(free) + " " + _("of") + " " + str(total))
 
-    def getDownloadSize(self):
-        x = 0
-        templist = []
+    def cleanalltitles(self):
         for video in self.downloads_all:
             video[1] = self.cleantitle(video[1])  # make safe filename
-            url = video[2]
-            # length = video[5]
-            adapter = HTTPAdapter()
-            http = requests.Session()
-            http.mount("http://", adapter)
-            http.mount("https://", adapter)
 
-            try:
-                r = http.get(url, headers=hdr, timeout=10, verify=False, stream=True)
-                # print("response", r)
-                video[5] = float(r.headers["content-length"])
-                templist.append(video)
-                r.close()
-            except Exception as e:
-                print(e)
-                video[5] = 0
-                templist.append(video)
-            x += 1
-            if x == 5:
-                x = 0
-                time.sleep(1)
+    def getDownloadSize(self):
+        x = 0
+        # templist = []
+        for video in self.downloads_all:
+            if video[5] == 0:
+                url = video[2]
+                adapter = HTTPAdapter()
+                http = requests.Session()
+                http.mount("http://", adapter)
+                http.mount("https://", adapter)
 
-        self.downloads_all[:] = templist
+                try:
+                    r = http.get(url, headers=hdr, timeout=10, verify=False, stream=True)
+                    video[5] = float(r.headers["content-length"])
+                    r.close()
+                except Exception as e:
+                    print(e)
+                    video[5] = 0
+                x += 1
+                if x == 5:
+                    x = 0
+                    time.sleep(1)
 
     def checkactivedownloads(self):
-        # x = 0
         templist = []
         for video in self.downloads_all:
             recbytes = 0
@@ -280,30 +255,35 @@ class XStreamity_DownloadManager(Screen):
             if os.path.exists(path):
                 recbytes = os.path.getsize(path)
                 if int(totalbytes) != int(recbytes):
+                    video[4] = int((recbytes / totalbytes) * 100) - 2
+                    if video[4] < 0:
+                        video[4] = 0
                     templist.append(video)
             else:
+                video[3] = "Not Started"
+                video[4] = 0
                 templist.append(video)
 
         self.downloads_all[:] = templist
+
         self.buildList()
         self.saveJson()
 
-    def resumeDownloads(self):
-        # print("*** resumeDownloads ***")
+    def stopDownloads(self):
+        # stop all active tasks
         jobs = JobManager.getPendingJobs()
-        # print("*** jobs ***", jobs)
         for job in jobs:
+            if "XStreamity" in job.cmdline:
 
-            # print("*** job ****", job.name, job.status)
-            # print("*** active ***", JobManager.active_jobs)
-            if job.status == job.NOT_STARTED:
-                # print("*** not started ***")
-                JobManager.active_jobs.remove(job)
+                if job.status == job.NOT_STARTED:
+                    JobManager.active_jobs.remove(job)
 
-            elif job.status == job.IN_PROGRESS:
-                # print("*** in progress ***")
-                job.cancel()
+                elif job.status == job.IN_PROGRESS:
+                    job.cancel()
 
+        self.resumeDownloads()
+
+    def resumeDownloads(self):
         for video in self.downloads_all:
             filmtitle = str(video[1])
             try:
@@ -315,8 +295,8 @@ class XStreamity_DownloadManager(Screen):
             filename = str(filmtitle) + str(extension)
             shortpath = str(cfg.downloadlocation.getValue())
             path = str(cfg.downloadlocation.getValue()) + str(filename)
-            url = video[2]
-            state = video[3]
+            url = str(video[2])
+            state = str(video[3])
 
             parsed_uri = urlparse(url)
             video_domain = parsed_uri.hostname
@@ -337,15 +317,18 @@ class XStreamity_DownloadManager(Screen):
                     cmd = "wget --no-check-certificate -U 'Enigma2 - XStreamity Plugin' -c '%s' -O '%s%s'" % (url, shortpath, filename)
 
                 try:
-                    JobManager.AddJob(downloadJob(self, cmd, path, filmtitle))
+                    JobManager.AddJob(downloadJob(self, cmd, path, filmtitle), onFail=self.fail)
                 except Exception as e:
                     print(e)
 
         self.updatescreen()
 
+    def fail(self, job=None, task=None, problems=None):
+        return False
+
     def buildList(self):
         self.drawList = []
-        self.drawList = [self.buildListEntry(x[0], x[1], x[2], _(x[3]), x[4], x[5]) for x in self.downloads_all]
+        self.drawList = [self.buildListEntry(x[0], x[1], x[2], str(x[3]), x[4], x[5]) for x in self.downloads_all]
         self["downloadlist"].setList(self.drawList)
 
     def updatescreen(self):
@@ -355,20 +338,26 @@ class XStreamity_DownloadManager(Screen):
     def sortlist(self):
         order = {"In progress": 0, "Waiting": 1, "Not Started": 2}
         self.downloads_all.sort(key=lambda x: order[x[3]])
-        self.buildList()
+        # self.buildList()
 
     def getprogress(self):
         jobs = JobManager.getPendingJobs()
         if len(jobs) >= 1:
-            for jobentry in jobs:
-                jobname = str(jobentry.name)
-                for video in self.downloads_all:
-                    title = str(video[1])
-                    if title == jobname:
-                        video[3] = jobentry.getStatustext()
-                        video[4] = jobentry.progress
-                        self.buildList()
-                        break
+            for job in jobs:
+                if "XStreamity" in job.cmdline:
+                    jobname = str(job.name)
+                    for video in self.downloads_all:
+                        title = str(video[1])
+                        if title == jobname:
+                            if job.status == job.NOT_STARTED:
+                                video[3] = "Waiting"
+
+                            elif job.status == job.IN_PROGRESS:
+                                video[3] = "In progress"
+
+                            video[4] = job.progress
+                            self.buildList()
+                            break
 
     def saveJson(self):
         with open(downloads_json, "w") as f:
@@ -376,8 +365,6 @@ class XStreamity_DownloadManager(Screen):
 
     def selectionChanged(self):
         if self["downloadlist"].getCurrent():
-            # currentindex = self["downloadlist"].getIndex()
-
             if self["downloadlist"].getCurrent()[3] != _("Not Started"):
                 self["key_green"].setText(_("Cancel"))
                 self["key_blue"].setText("")
@@ -442,15 +429,17 @@ class XStreamity_DownloadManager(Screen):
                             self.session.open(MessageBox, _("Please update your wget library to download https lines\n\nopkg update\nopkg install wget"), type=MessageBox.TYPE_INFO)
 
                 try:
-                    JobManager.AddJob(downloadJob(self, cmd, self.path, self.filmtitle))
+                    JobManager.AddJob(downloadJob(self, cmd, self.path, self.filmtitle), onFail=self.fail)
                 except Exception as e:
                     print(e)
 
                 try:
                     self.updatescreen()
                     self.sortlist()
+                    self.buildList()
                     self["downloadlist"].setIndex(0)
                     self.saveJson()
+                    self.createMetaFile(filename, self.filmtitle)
                 except Exception as e:
                     print(e)
 
@@ -461,31 +450,28 @@ class XStreamity_DownloadManager(Screen):
         if answer is None:
             self.session.openWithCallback(self.cancelConfirm, MessageBox, _("Cancel this download?"))
         elif answer:
-            self.cancelJob2()
+            self.cancelJob()
         else:
             return
 
-    def cancelJob2(self, anser=None):
+    def cancelJob(self, answer=None):
         jobs = JobManager.getPendingJobs()
 
-        if len(jobs) >= 1:
-            for job in jobs:
-                jobname = str(job.name)
-                if self.filmtitle == jobname:
-
-                    if job.status == job.NOT_STARTED:
-                        JobManager.active_jobs.remove(job)
-
-                    elif job.status == job.IN_PROGRESS:
-                        job.cancel()
+        for job in jobs:
+            jobname = str(job.name)
+            if self.filmtitle == jobname:
 
                 for video in self.downloads_all:
                     if str(video[1]) == str(self.filmtitle):
                         video[3] = "Not Started"
+                        self.buildList()
+                        self.saveJson()
 
-        self.buildList()
-        self.sortlist()
-        self.saveJson()
+                        if job.status == job.NOT_STARTED:
+                            JobManager.active_jobs.remove(job)
+
+                        elif job.status == job.IN_PROGRESS:
+                            job.cancel()
 
     def delete(self):
         if self["downloadlist"].getCurrent():
@@ -501,8 +487,11 @@ class XStreamity_DownloadManager(Screen):
         elif answer:
             currentindex = self["downloadlist"].getIndex()
             del self.downloads_all[currentindex]
-            self.saveJson()
+
+            self.sortlist()
             self.buildList()
+            self.saveJson()
+
         else:
             return
 
@@ -530,12 +519,12 @@ class XStreamity_DownloadManager(Screen):
                 break
             x += 1
         del self.downloads_all[x]
-        self.createMetaFile(filename, filmtitle)
         if ui:
+            self.sortlist()
             self.buildList()
         self.saveJson()
 
     def buildListEntry(self, dtype, title, url, state, progress, length):
         progresspercent = str(progress) + "%"
         length = convert_size(length)
-        return (str(dtype), str(title), str(url), str(state), int(progress), str(progresspercent), str(length))
+        return (str(dtype), str(title), str(url), _(state), int(progress), str(progresspercent), str(length))
