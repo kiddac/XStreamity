@@ -2,15 +2,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2022-10-31 23:51+0000\n"
-"PO-Revision-Date: 2022-10-31 23:51+0000\n"
-"Last-Translator: \n"
+"PO-Revision-Date: 2022-11-03 11:26+0000\n"
+"Last-Translator: Jakarta\n"
 "Language-Team: \n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Poedit 3.2\n"
 "X-Poedit-Basepath: ../../../../../../../../../..\n"
 "X-Poedit-SearchPath-0: .\n"
 
@@ -313,8 +313,7 @@ msgstr "Annuler"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:374
 msgid "Please set download folder in Main Settings."
-msgstr ""
-"Veuillez définir le dossier de téléchargement dans les paramètres principaux."
+msgstr "Veuillez définir le dossier de téléchargement dans les paramètres principaux."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:374
 msgid ""
@@ -330,8 +329,7 @@ msgid ""
 "opkg update\n"
 "opkg install wget"
 msgstr ""
-"Veuillez mettre à jour votre bibliothèque wget pour télécharger les lignes "
-"https\n"
+"Veuillez mettre à jour votre bibliothèque wget pour télécharger les lignes https\n"
 "\n"
 "opkg update\n"
 "opkg install wget"
@@ -366,9 +364,7 @@ msgstr "Réinitialiser"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/hidden.py:158
 msgid "Error: All categories hidden. Please amend your selection."
-msgstr ""
-"Erreur: Toutes les catégories sont cachées. Veuillez modifier votre "
-"sélection."
+msgstr "Erreur: Toutes les catégories sont cachées. Veuillez modifier votre sélection."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:38
 msgid "Main Menu"
@@ -407,11 +403,12 @@ msgstr "Téléchargement d'EPG."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:173
 msgid ""
-"Warning: delete stored json data for all playlists... Settings, favourites "
-"etc. \n"
+"Warning: delete stored json data for all playlists... Settings, favourites etc. \n"
 "Playlists will not be deleted.\n"
 "Do you wish to continue?"
 msgstr ""
+"Attention : suppression des données json stockées pour toutes les serveurs... les paramètres, les favoris, etc. Les serveurs ne seront pas supprimées.\n"
+"Voulez-vous continuer ?"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:42
 msgid "Update"
@@ -437,8 +434,7 @@ msgstr "Réglages liste de lecture"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:262
 msgid "No data, blocked or playlist not compatible with XStreamity plugin."
-msgstr ""
-"Pas de données, liste de lecture bloquée ou incompatible avec XStreamity."
+msgstr "Pas de données, liste de lecture bloquée ou incompatible avec XStreamity."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:44
 msgid "Select Playlist"
@@ -756,9 +752,7 @@ msgstr "Autoriser le plugin SubsSupport en Films"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:160
 msgid "Skip playlist selection screen if only 1 playlist"
-msgstr ""
-"Ignorer l'écran de sélection de liste de lecture s'il n'y a qu'une liste de "
-"lecture"
+msgstr "Ignorer l'écran de sélection de liste de lecture s'il n'y a qu'une liste de lecture"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:162
 msgid "Automatic EPG download time *Restart GUI Required"
@@ -774,15 +768,15 @@ msgstr "Afficher les affiches Vod/Séries"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:166
 msgid "Show infobar picons"
-msgstr "Afficher les icônes de la barre d'informations"
+msgstr "Afficher les picons dans la barre d'informations"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:167
 msgid "Show infobar posters"
-msgstr "Afficher les affiches de la barre d'informations"
+msgstr "Afficher les affiches dans la barre d'informations"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:169
 msgid "Auto start XStreamity on boot *Restart GUI Required"
-msgstr ""
+msgstr "Démarrage automatique de XStreamity au démarrage *Restart GUI requis"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:297
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:310
@@ -815,15 +809,15 @@ msgstr "Films"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:1268
 msgid "Catch Up"
-msgstr "Rattraper"
+msgstr "Rattrapage"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:1478
 msgid "Xstreamity Log"
-msgstr ""
+msgstr "XStreamity Log"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:1482
 msgid "Clear"
-msgstr "Dégager"
+msgstr "Effacer"
 
 #~ msgid "Server timeout (seconds)"
 #~ msgstr "Délai d'expiration du serveur (secondes)"
@@ -856,9 +850,7 @@ msgstr "Dégager"
 #~ msgstr "Fichier déjà téléchargé."
 
 #~ msgid "Multiple downloads not allowed. Please wait or cancel download."
-#~ msgstr ""
-#~ "Téléchargements multiples non autorisés. Veuillez patienter ou annuler le "
-#~ "téléchargement."
+#~ msgstr "Téléchargements multiples non autorisés. Veuillez patienter ou annuler le téléchargement."
 
 #~ msgid "Download Failed!\n"
 #~ msgstr "Échec du téléchargement!\n"
