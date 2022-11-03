@@ -2,9 +2,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: XStreamity v3.64\n"
+"Project-Id-Version: XStreamity v3.79\n"
 "POT-Creation-Date: 2022-10-31 23:51+0000\n"
-"PO-Revision-Date: 2022-10-31 23:52+0000\n"
+"PO-Revision-Date: 2022-11-03 13:33+0100\n"
 "Last-Translator: Dario Croci <spaeleus@croci.org>\n"
 "Language-Team: Dario Croci <spaeleus@croci.org>\n"
 "Language: it_IT\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Poedit 3.2\n"
 "X-Poedit-Basepath: ../../../../../../../../..\n"
 "X-Poedit-SearchPath-0: .\n"
 
@@ -51,7 +51,7 @@ msgstr "Indietro"
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:41
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:47
 msgid "OK"
-msgstr "OK"
+msgstr "Ok"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:281
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1258
@@ -70,12 +70,12 @@ msgstr "Stream live"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:341
 msgid "Vod Categories"
-msgstr "Categorie VOD"
+msgstr "Categorie Vod"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:342
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:233
 msgid "Vod"
-msgstr "VOD"
+msgstr "Vod"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:372
 msgid "Series Categories"
@@ -101,7 +101,7 @@ msgstr "PREFERITI"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:520
 msgid "RECENTLY WATCHED"
-msgstr "GUARDATO RECENTEMENTE"
+msgstr "VISTO RECENTEMENTE"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:527
 msgid "ALL"
@@ -193,11 +193,11 @@ msgstr "Inserire il codice PIN"
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2356
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2365
 msgid "Next Info"
-msgstr "Info successiva"
+msgstr "Info prossimo"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2360
 msgid "Now Info"
-msgstr "Info attuale"
+msgstr "Info corrente"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2591
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:481
@@ -262,7 +262,7 @@ msgid ""
 "The IMDb plugin is not installed!\n"
 "Please install it."
 msgstr ""
-"Il plugin IMDb non è installato!\n"
+"Plugin IMDb non installato.\n"
 "Provvedere all'installazione."
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:3336
@@ -285,7 +285,7 @@ msgstr "In corso"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:41
 msgid "Waiting"
-msgstr "inattesa:"
+msgstr "In attesa"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:143
 msgid "VOD Download Manager"
@@ -299,7 +299,7 @@ msgstr "Download"
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:157
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:364
 msgid "Remove"
-msgstr "Rimuover"
+msgstr "Rimuovere"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:209
 msgid "Free Space:"
@@ -316,8 +316,7 @@ msgstr "Annullare"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:374
 msgid "Please set download folder in Main Settings."
-msgstr ""
-"Si prega di impostare la cartella di download nelle Impostazioni principali."
+msgstr "Configurare la directory di download nelle impostazioni principali."
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:374
 msgid ""
@@ -370,7 +369,7 @@ msgstr "Resettare"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/hidden.py:158
 msgid "Error: All categories hidden. Please amend your selection."
-msgstr "Errore: tutte le categorie nascoste. Modificare la selezione."
+msgstr "Errore: tutte categorie nascoste. Modificare la selezione."
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:38
 msgid "Main Menu"
@@ -387,7 +386,7 @@ msgstr "Playlist"
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:109
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:114
 msgid "Add Playlist"
-msgstr "Aggiungere Playlist"
+msgstr "Aggiungere playlist"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:110
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:115
@@ -414,8 +413,8 @@ msgid ""
 "Playlists will not be deleted.\n"
 "Do you wish to continue?"
 msgstr ""
-"Attenzione: verranno rimossi i dati json memorizzati per tutte le "
-"playlist ... Impostazioni, preferiti ecc. \n"
+"Attenzione: verranno rimossi i dati json memorizzati per tutte le playlist "
+"(impostazioni, preferiti ecc)... \n"
 "Le playlist non verranno eliminate.\n"
 "Continuare?"
 
@@ -444,7 +443,7 @@ msgstr "Impostazioni playlist"
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:262
 msgid "No data, blocked or playlist not compatible with XStreamity plugin."
 msgstr ""
-"Nessun dato, bloccato o playlist non compatibile con il plugin XStreamity."
+"Nessun dato, playlist bloccata o non compatibile con il plugin XStreamity."
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:44
 msgid "Select Playlist"
@@ -492,19 +491,19 @@ msgstr "Scadenza: "
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:321
 msgid "Active Conn:"
-msgstr "Connessioni Attive:"
+msgstr "Conn. attive:"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:324
 msgid "Max Conn:"
-msgstr "Connessioni Massime:"
+msgstr "Conn. max:"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:364
 msgid "Delete selected playlist?"
-msgstr "Cancellare la playlist selezionata?"
+msgstr "Rimuovere la playlist selezionata?"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:385
 msgid "Delete providers EPG data?"
-msgstr "Cancellare i dati EPG del provider?"
+msgstr "Rimuovere i dati EPG provider?"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:80
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/record.py:72
@@ -520,19 +519,19 @@ msgstr "Nome breve o nome provider:"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:136
 msgid "Show LIVE category:"
-msgstr "Mostrare categorie LIVE:"
+msgstr "Mostrare la categoria LIVE:"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:137
 msgid "Show VOD category:"
-msgstr "Mostrare categorie VOD:"
+msgstr "Mostrare la categoria VOD:"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:138
 msgid "Show SERIES category:"
-msgstr "Mostrare categorie SERIE:"
+msgstr "Mostrare la categoria SERIE:"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:139
 msgid "Show CATCHUP category:"
-msgstr "Mostrare categorie Catch-Up:"
+msgstr "Mostrare la categoria Catch-Up:"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:140
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:104
@@ -541,11 +540,11 @@ msgstr "Output:"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:143
 msgid "Stream Type LIVE:"
-msgstr "Tipo di stream LIVE:"
+msgstr "Tipo stream LIVE:"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:146
 msgid "Stream Type VOD/SERIES:"
-msgstr "Tipo di stream VOD/SERIE:"
+msgstr "Tipo stream VOD/SERIE:"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:148
 msgid "EPG offset:"
@@ -553,11 +552,11 @@ msgstr "Offset EPG:"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:149
 msgid "Use alternative EPG url:"
-msgstr "Usa URL EPG alternativo:"
+msgstr "Utilizzare URL EPG alternativa:"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:151
 msgid "Alternative EPG url:"
-msgstr "URL EPG alternativo:"
+msgstr "URL EPG alternativa:"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:207
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:328
@@ -566,7 +565,7 @@ msgstr "XStreamity"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:327
 msgid "IPTV Xtream Codes playlists player by KiddaC"
-msgstr "Player playlist IPTV Xtream Codes by KiddaC"
+msgstr "Player di playlist IPTV Xtream Codes by KiddaC"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/record.py:38
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:59
@@ -620,7 +619,7 @@ msgstr "Password:"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:171
 msgid "Details are not valid or unauthorised"
-msgstr "I dettagli non sono validi o non autorizzati"
+msgstr "Dettagli non validi o non autorizzati"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:189
 msgid "Playlist added successfully."
@@ -636,7 +635,7 @@ msgstr "Stato:"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:43
 msgid "Is Trial:"
-msgstr "è prova:"
+msgstr "Tentativo:"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:44
 msgid "Active Connections:"
@@ -644,11 +643,11 @@ msgstr "Connessioni attive:"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:45
 msgid "Max Connections:"
-msgstr "Connessioni massime:"
+msgstr "Connessioni max:"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:46
 msgid "Created At:"
-msgstr "Creato a:"
+msgstr "Creato il:"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:47
 msgid "Expiry Date:"
@@ -690,7 +689,7 @@ msgstr ""
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:126
 msgid "You need to restart the GUI"
-msgstr "È necessario riavviare la GUI"
+msgstr "È necessario un riavvio della GUI"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:126
 msgid "Do you want to restart now?"
@@ -762,7 +761,7 @@ msgstr "Abilitare plugin SubsSupport in VOD"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:160
 msgid "Skip playlist selection screen if only 1 playlist"
-msgstr "Saltare schermata selezione della playlist con solo 1 playlist"
+msgstr "Saltare selezione playlist se una sola playlist presente"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:162
 msgid "Automatic EPG download time *Restart GUI Required"
@@ -770,23 +769,23 @@ msgstr "Ora download automatico EPG (richiesto riavvio GUI)"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:164
 msgid "Show channel picons"
-msgstr "Mostra le immagini dei canali"
+msgstr "Mostrare picon canali"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:165
 msgid "Show Vod/Series posters"
-msgstr "Mostra i poster di Vod/Serie"
+msgstr "Mostrare poster di Vod/Serie"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:166
 msgid "Show infobar picons"
-msgstr "Mostra le icone della barra delle informazioni"
+msgstr "Mostrare picon barra informazioni"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:167
 msgid "Show infobar posters"
-msgstr "Mostra i poster della barra delle informazioni"
+msgstr "Mostrare poster barra informazioni"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:169
 msgid "Auto start XStreamity on boot *Restart GUI Required"
-msgstr "Avvio automatico di XStreamity all'avvio *Riavvia la GUI richiesto"
+msgstr "Avvio automatico di XStreamity al boot (richiesto riavvio GUI)"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:297
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:310
@@ -811,7 +810,7 @@ msgstr "Riprendere la riproduzione?"
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:905
 #, python-format
 msgid "Resume position at %s"
-msgstr "Riprendi dalla posizione %s"
+msgstr "Riprendere dalla posizione %s"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:987
 msgid "VOD"
@@ -828,171 +827,3 @@ msgstr "Log XStreamity"
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:1482
 msgid "Clear"
 msgstr "Ripulire"
-
-#, python-format
-#~ msgid ""
-#~ "Video Download Failed!\n"
-#~ "\n"
-#~ "Corrupted Download File:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Download video fallito.\n"
-#~ "\n"
-#~ "File corrotto:\n"
-#~ "%s"
-
-#, python-format
-#~ msgid ""
-#~ "Video Download Failed!\n"
-#~ "\n"
-#~ "Could not read RTMP-Packet:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Download video fallito.\n"
-#~ "\n"
-#~ "Impossibile leggere il pacchetto RTMP:\n"
-#~ "%s"
-
-#, python-format
-#~ msgid ""
-#~ "Video Download Failed!\n"
-#~ "\n"
-#~ "Segmentation fault:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Download video fallito.\n"
-#~ "\n"
-#~ "Segmentation fault:\n"
-#~ "%s"
-
-#, python-format
-#~ msgid ""
-#~ "Video Download Failed!\n"
-#~ "\n"
-#~ "Server returned error:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Download video fallito.\n"
-#~ "\n"
-#~ "Errore server:\n"
-#~ "%s"
-
-#, python-format
-#~ msgid ""
-#~ "Video Download Failed!\n"
-#~ "\n"
-#~ "Unknown Error:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Download video fallito.\n"
-#~ "\n"
-#~ "Errore sconosciuto:\n"
-#~ "%s"
-
-#~ msgid "Server timeout (seconds)"
-#~ msgstr "Timeout server (secondi)"
-
-#~ msgid "Use alternative EPG url as instructed by provider:"
-#~ msgstr "Utilizzare un url EPG alternativo come indicato dal provider:"
-
-#~ msgid "MOVIE DOWNLOAD FAILED!"
-#~ msgstr "SCARICAMENTO FILM FALLITO!"
-
-#~ msgid "DOWNLOADED FILE CORRUPTED:"
-#~ msgstr "FILE SCARICATO CORROTTO:"
-
-#~ msgid "COULD NOT READ RTMP PACKET:"
-#~ msgstr "IMPOSSIBILE LEGGERE IL PACCHETTO RTMP:"
-
-#~ msgid "SEGMENTATION FAULT:"
-#~ msgstr "ERRORE SEGMENTAZIONE:"
-
-#~ msgid "SERVER RETURNED ERROR:"
-#~ msgstr "ERRORE RESTITUITO DAL SERVER:"
-
-#~ msgid "UNKNOWN ERROR:"
-#~ msgstr "ERRORE SCONOSCIUTO:"
-
-#~ msgid "Downloading"
-#~ msgstr "In Scaricamento"
-
-#~ msgid "Finished"
-#~ msgstr "Finito"
-
-#~ msgid "File already downloaded."
-#~ msgstr "File gia' scaricato."
-
-#~ msgid "Multiple downloads not allowed. Please wait or cancel download."
-#~ msgstr ""
-#~ "Scaricamenti multipli non sono consentiti. Attendi o cancella quello in "
-#~ "corso."
-
-#~ msgid "Download Failed!\n"
-#~ msgstr "Scaricamento Fallito!\n"
-
-#, fuzzy
-#~| msgid "Reset Search"
-#~ msgid "Reset Stored Data"
-#~ msgstr "Azzera dati memorizzati"
-
-#~ msgid "Date"
-#~ msgstr "Data"
-
-#~ msgid ""
-#~ "Download Failed\n"
-#~ "\n"
-#~ msgstr ""
-#~ "Download Fallito\n"
-#~ "\n"
-
-#~ msgid "Select Server"
-#~ msgstr "Seleziona Server"
-
-#~ msgid "Add"
-#~ msgstr "Aggiungi"
-
-#~ msgid "Settings"
-#~ msgstr "Impostazioni"
-
-#~ msgid "Edit"
-#~ msgstr "Modifica"
-
-#~ msgid "Stream Selection"
-#~ msgstr "Selezione flusso"
-
-#~ msgid "Lists updated: "
-#~ msgstr "Liste aggiornate il "
-
-#~ msgid "Add Server"
-#~ msgstr "Aggiungi Server"
-
-#~ msgid "Edit Server"
-#~ msgstr "Modifica Server"
-
-#~ msgid "Display name:"
-#~ msgstr "Nome visualizzato:"
-
-#~ msgid "Stream Type CATCHUP:"
-#~ msgstr "Tipo di stream ReplayTV:"
-
-#~ msgid "EPG Timeshift:"
-#~ msgstr "Timeshift EPG:"
-
-#~ msgid "Default CATCHUP stream type"
-#~ msgstr "Tipo di flusso ReplayTV predefinito"
-
-#~ msgid "Preview LIVE streams in mini tv before playing"
-#~ msgstr ""
-#~ "Visualizza l'anteprima di streaming LIVE su mini tv prima di guardare"
-
-#~ msgid "Update VOD Movie Database information"
-#~ msgstr "Aggiorna le informazioni del database dei film VOD"
-
-#~ msgid "VOD Movie Database language"
-#~ msgstr "Lingua del database dei film VOD"
-
-#~ msgid "Recording Started."
-#~ msgstr "Registrazione Avviata."
-
-#~ msgid "Refresh Lists"
-#~ msgstr "AGGIORNA LISTA"

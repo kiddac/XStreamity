@@ -439,7 +439,6 @@ class XStreamity_DownloadManager(Screen):
                     self.buildList()
                     self["downloadlist"].setIndex(0)
                     self.saveJson()
-                    self.createMetaFile(filename, self.filmtitle)
                 except Exception as e:
                     print(e)
 
@@ -522,6 +521,7 @@ class XStreamity_DownloadManager(Screen):
         if ui:
             self.sortlist()
             self.buildList()
+        self.createMetaFile(filename, self.filmtitle)
         self.saveJson()
 
     def buildListEntry(self, dtype, title, url, state, progress, length):
