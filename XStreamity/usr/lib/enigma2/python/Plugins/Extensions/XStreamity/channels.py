@@ -30,8 +30,9 @@ from itertools import cycle, islice
 
 try:
     from urlparse import urlparse
+    from urllib import quote
 except:
-    from urllib.parse import urlparse
+    from urllib.parse import urlparse, quote
 
 import base64
 import calendar
@@ -3030,28 +3031,28 @@ class XStreamity_Categories(Screen):
                 suffixlength = len(i)
                 searchtitle = searchtitle[:-suffixlength]
 
+        searchtitle = searchtitle.replace("multi:", "")
         searchtitle = searchtitle.replace(".", " ")
         searchtitle = searchtitle.replace("_", " ")
         searchtitle = searchtitle.replace("  ", " ")
-        searchtitle = searchtitle.replace(" ", "%20")
+        searchtitle = searchtitle.replace("'", "")
+        searchtitle = searchtitle.strip("-")
         searchtitle = searchtitle.strip()
 
-        self.searchtitle = searchtitle.replace("%20", " ").title()
-
-        # print("*** search title ***", searchtitle)
+        searchtitle = quote(searchtitle, safe="")
 
         if self.categoryname == "vod":
             if self.isIMDB is False:
-                searchurl = "http://api.themoviedb.org/3/search/movie?api_key=" + str(self.check(self.token)) + "&query=%22" + str(searchtitle) + "%22"
+                searchurl = 'http://api.themoviedb.org/3/search/movie?api_key=' + str(self.check(self.token)) + '&query=' + str(searchtitle)
+                if year:
+                    searchurl = 'http://api.themoviedb.org/3/search/movie?api_key=' + str(self.check(self.token)) + '&primary_release_year=' + year + '&query=' + str(searchtitle)
             else:
-                searchurl = "http://api.themoviedb.org/3/find/" + str(self.info["tmdb_id"]) + "?api_key=" + str(self.check(self.token)) + "&external_source=imdb_id"
-            if year:
-                searchurl += "&primary_release_year=" + year
+                searchurl = 'http://api.themoviedb.org/3/find/' + str(self.info["tmdb_id"]) + '?api_key=' + str(self.check(self.token)) + '&external_source=imdb_id'
 
         elif self.categoryname == "series":
-            searchurl = "http://api.themoviedb.org/3/search/tv?api_key=" + str(self.check(self.token)) + "&query=%22" + str(searchtitle) + "%22"
+            searchurl = 'http://api.themoviedb.org/3/search/tv?api_key=' + str(self.check(self.token)) + '&query=' + str(searchtitle)
             if year:
-                searchurl += "&first_air_date_year=" + year
+                searchurl = 'http://api.themoviedb.org/3/search/tv?api_key=' + str(self.check(self.token)) + '&first_air_date_year=' + year + '&query=' + str(searchtitle)
 
         if pythonVer == 3:
             searchurl = searchurl.encode()
