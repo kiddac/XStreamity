@@ -81,6 +81,9 @@ def processfiles():
             vodfavourites = []
             liverecents = []
             vodrecents = []
+            vodwatched = []
+            serieswatched = []
+
             live_streams = []
             catchup_checked = False
             last_check = ""
@@ -89,6 +92,8 @@ def processfiles():
             epgoffset = 0
             epgalternative = False
             epgalternativeurl = ""
+            
+            directsource = "Standard"
 
             if not line.startswith("#") and line.startswith("http"):
                 line = line.strip()
@@ -197,6 +202,15 @@ def processfiles():
                                 if "vodrecents" not in playlists["player_info"]:
                                     playlists["player_info"]["vodrecents"] = vodrecents
 
+                                if "vodwatched" not in playlists["player_info"]:
+                                    playlists["player_info"]["vodwatched"] = vodwatched
+
+                                if "serieswatched" not in playlists["player_info"]:
+                                    playlists["player_info"]["serieswatched"] = serieswatched
+                                    
+                                if "directsource" not in playlists["player_info"]:
+                                    playlists["player_info"]["directsource"] = directsource
+
                                 playlists["playlist_info"]["name"] = name
                                 playlists["playlist_info"]["type"] = type
                                 playlists["playlist_info"]["output"] = output
@@ -251,6 +265,8 @@ def processfiles():
 
                             ("liverecents", liverecents),
                             ("vodrecents", vodrecents),
+                            ("vodwatched", vodwatched),
+                            ("serieswatched", serieswatched),
 
                             ("showlive", showlive),
                             ("showvod", showvod),
@@ -260,6 +276,8 @@ def processfiles():
                             ("epgoffset", serveroffset),
                             ("epgalternative", epgalternative),
                             ("epgalternativeurl", epgalternativeurl),
+                            
+                            ("directsource", directsource),
                         ]),
 
                         "data": dict([

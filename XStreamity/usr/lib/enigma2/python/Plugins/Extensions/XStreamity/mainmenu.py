@@ -17,6 +17,7 @@ from Tools.LoadPixmap import LoadPixmap
 
 import json
 import os
+import shutil
 
 
 class XStreamity_MainMenu(Screen):
@@ -160,6 +161,11 @@ class XStreamity_MainMenu(Screen):
                 self.updateEPG()
 
     def quit(self, data=None):
+        try:
+            shutil.copyfile(playlist_file, '/home/playlists.txt')
+        except:
+            pass
+
         self.playOriginalChannel()
 
     def playOriginalChannel(self):

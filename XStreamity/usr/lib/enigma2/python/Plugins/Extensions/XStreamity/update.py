@@ -100,11 +100,12 @@ class XStreamity_Update:
         for playlist in self.playlists_all:
             if "user_info" in playlist and "auth" in playlist["user_info"] and str(playlist["user_info"]["auth"]) == "1":
                 domain = playlist["playlist_info"]["domain"]
+                name = playlist["playlist_info"]["name"]
                 xmltv = playlist["playlist_info"]["xmltv_api"]
                 epglocation = str(cfg.epglocation.value)
                 if not epglocation.endswith("/"):
                     epglocation = epglocation + str("/")
-                epgfolder = epglocation + str(domain)
+                epgfolder = epglocation + str(name)
                 epgxmlfile = str(epgfolder) + "/" + str("epg.xml")
                 epgjsonfile = str(epgfolder) + "/" + str("epg.json")
                 self.urllist.append([domain, xmltv, epgxmlfile, epgjsonfile])

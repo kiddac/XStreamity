@@ -114,6 +114,7 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.epgoffset = glob.current_playlist["player_info"]["epgoffset"]
         self.epgalternative = glob.current_playlist["player_info"]["epgalternative"]
         self.epgalternativeurl = glob.current_playlist["player_info"]["epgalternativeurl"]
+        self.directsource = glob.current_playlist["player_info"]["directsource"]
 
         self.nameCfg = NoSave(ConfigText(default=self.name, fixed_size=False))
         self.outputCfg = NoSave(ConfigSelection(default=self.output, choices=[("ts", "ts"), ("m3u8", "m3u8")]))
@@ -126,6 +127,7 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.epgoffsetCfg = NoSave(ConfigSelectionNumber(-9, 9, 1, default=self.epgoffset, wraparound=True))
         self.epgalternativeCfg = NoSave(ConfigYesNo(default=self.epgalternative))
         self.epgalternativeurlCfg = NoSave(ConfigText(default=self.epgalternativeurl, fixed_size=False))
+        self.directsourceCfg = NoSave(ConfigSelection(default=self.directsource, choices=[("Standard", "Standard"), ("Direct Source", "Direct Source")]))
 
         self.createSetup()
 
@@ -144,6 +146,8 @@ class XStreamity_Settings(ConfigListScreen, Screen):
 
         if self.showvodCfg.value is True or self.showseriesCfg.value is True:
             self.list.append(getConfigListEntry(_("Stream Type VOD/SERIES:"), self.vodTypeCfg))
+
+        self.list.append(getConfigListEntry(_("Stream Source URL:"), self.directsourceCfg))
 
         self.list.append(getConfigListEntry(_("EPG offset:"), self.epgoffsetCfg))
         self.list.append(getConfigListEntry(_("Use alternative EPG url:"), self.epgalternativeCfg))
@@ -234,6 +238,8 @@ class XStreamity_Settings(ConfigListScreen, Screen):
             epgalternative = self.epgalternativeCfg.value
             epgalternativeurl = self.epgalternativeurlCfg.value
 
+            directsource = self.directsourceCfg.value
+
             glob.current_playlist["playlist_info"]["name"] = self.name
             glob.current_playlist["playlist_info"]["output"] = output
             glob.current_playlist["player_info"]["showlive"] = showlive
@@ -245,7 +251,7 @@ class XStreamity_Settings(ConfigListScreen, Screen):
             glob.current_playlist["player_info"]["epgoffset"] = epgoffset
             glob.current_playlist["player_info"]["epgalternative"] = epgalternative
             glob.current_playlist["player_info"]["epgalternativeurl"] = epgalternativeurl
-
+            glob.current_playlist["player_info"]["directsource"] = directsource
             playlistline = "%s%s:%s/get.php?username=%s&password=%s&type=%s&output=%s&timeshift=%s #%s" % (self.protocol, self.domain, self.port, self.username, self.password, self.listtype, output, epgoffset, self.name)
 
             self.full_url = "%s/get.php?username=%s&password=%s&type=%s&output=%s" % (self.host, self.username, self.password, self.listtype, self.output)

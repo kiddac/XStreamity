@@ -352,7 +352,7 @@ class IPTVInfoBarPVRState:
 class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSelection, InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport, InfoBarSummarySupport, InfoBarServiceErrorPopupSupport, InfoBarNotifications, IPTVInfoBarShowHide, IPTVInfoBarPVRState, Screen):
     ALLOW_SUSPEND = True
 
-    def __init__(self, session, streamurl, servicetype, direct_source=None):
+    def __init__(self, session, streamurl, servicetype, direct_source=None, stream_id=None):
         Screen.__init__(self, session)
 
         self.session = session
@@ -599,8 +599,9 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
         else:
             self["progress"].hide()
 
-        if direct_source:
-            streamurl = str(direct_source)
+        if glob.current_playlist["player_info"]["directsource"] == "Direct Source":
+            if direct_source:
+                streamurl = str(direct_source)
 
         self.reference = eServiceReference(int(self.servicetype), 0, streamurl)
         self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
@@ -925,7 +926,7 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
     ENABLE_RESUME_SUPPORT = True
     ALLOW_SUSPEND = True
 
-    def __init__(self, session, streamurl, servicetype, direct_source=None):
+    def __init__(self, session, streamurl, servicetype, direct_source=None, stream_id=None):
         Screen.__init__(self, session)
         self.session = session
 
@@ -955,6 +956,7 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
         self.streamurl = streamurl
         self.servicetype = servicetype
         self.direct_source = direct_source
+        self.stream_id = stream_id
 
         skin = skin_path + "vodplayer.xml"
 
@@ -1041,6 +1043,35 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
         with open(playlists_json, "w") as f:
             json.dump(self.playlists_all, f)
 
+    def addWatchedList(self):
+        stream_id = self.stream_id
+
+        if glob.categoryname == "vod":
+
+            if stream_id not in glob.current_playlist["player_info"]["vodwatched"]:
+                glob.current_playlist["player_info"]["vodwatched"].append(stream_id)
+
+        elif glob.categoryname == "series":
+
+            if stream_id not in glob.current_playlist["player_info"]["serieswatched"]:
+                glob.current_playlist["player_info"]["serieswatched"].append(stream_id)
+
+        with open(playlists_json, "r") as f:
+            try:
+                self.playlists_all = json.load(f)
+            except:
+                os.remove(playlists_json)
+
+        if self.playlists_all:
+            x = 0
+            for playlists in self.playlists_all:
+                if playlists["playlist_info"]["domain"] == glob.current_playlist["playlist_info"]["domain"] and playlists["playlist_info"]["username"] == glob.current_playlist["playlist_info"]["username"] and playlists["playlist_info"]["password"] == glob.current_playlist["playlist_info"]["password"]:
+                    self.playlists_all[x] = glob.current_playlist
+                    break
+                x += 1
+        with open(playlists_json, "w") as f:
+            json.dump(self.playlists_all, f)
+
     def playStream(self, servicetype, streamurl, direct_source):
 
         if cfg.infobarcovers.value is True:
@@ -1057,8 +1088,10 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
         except:
             pass
 
-        if direct_source:
-            streamurl = direct_source
+        if glob.current_playlist["player_info"]["directsource"] == "Direct Source":
+            if direct_source:
+                streamurl = direct_source
+
         self.reference = eServiceReference(int(self.servicetype), 0, streamurl)
         self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
 
@@ -1093,6 +1126,13 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
                 except:
                     self.timerRecent_conn = self.timerRecent.timeout.connect(self.addRecentVodList)
                 self.timerRecent.start(20000, True)
+
+            self.timerWatched = eTimer()
+            try:
+                self.timerWatched.callback.append(self.addWatchedList)
+            except:
+                self.timerWatched_conn = self.timerWatched.timeout.connect(self.addWatchedList)
+            self.timerWatched.start(15000, True)
 
     def downloadImage(self):
         self.loadBlankImage()

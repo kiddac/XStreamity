@@ -171,8 +171,21 @@ if not os.path.exists(dir_tmp):
     os.makedirs(dir_tmp)
 
 # check if playlists.txt file exists in specified location
+
 if not os.path.isfile(playlist_file):
     open(playlist_file, "a").close()
+
+if os.stat(playlist_file).st_size == 0:
+    try:
+        shutil.copyfile('/home/playlists.txt', playlist_file)
+    except:
+        pass
+
+else:
+    try:
+        shutil.copyfile(playlist_file, '/home/playlists.txt')
+    except:
+        pass
 
 # check if x-playlists.json file exists in specified location
 if not os.path.isfile(playlists_json):

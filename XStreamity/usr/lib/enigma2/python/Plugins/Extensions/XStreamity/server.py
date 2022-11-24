@@ -13,6 +13,7 @@ from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 
 import os
+import shutil
 
 
 class XStreamity_AddServer(ConfigListScreen, Screen):
@@ -186,6 +187,12 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
             if exists is False:
                 with open(playlist_file, "a") as f:
                     f.write("\n" + str(playlistline) + "\n")
+
+            try:
+                shutil.copyfile(playlist_file, '/home/playlists.txt')
+            except:
+                pass
+
             self.session.open(MessageBox, _("Playlist added successfully."), type=MessageBox.TYPE_INFO, timeout=5)
             self.close()
 
