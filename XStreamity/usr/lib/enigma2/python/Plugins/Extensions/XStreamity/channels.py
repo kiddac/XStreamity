@@ -363,6 +363,7 @@ class XStreamity_Categories(Screen):
                 "stop": self.favourite,
                 "0": self.reset,
                 "menu": self.showHiddenList,
+                "1": self.clearWatched
             }, -1)
 
             self["channel_actions"].setEnabled(False)
@@ -389,6 +390,7 @@ class XStreamity_Categories(Screen):
                 "5": self.downloadVideo,
                 "0": self.reset,
                 "menu": self.showHiddenList,
+                "1": self.clearWatched
             }, -1)
 
             self["channel_actions"].setEnabled(False)
@@ -1836,14 +1838,25 @@ class XStreamity_Categories(Screen):
             if self.level == 1:
                 category_id = self["main_list"].getCurrent()[3]
 
-                if self.categoryname == "live":
-                    next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_live_streams&category_id=" + str(category_id)
-                if self.categoryname == "vod":
-                    next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_vod_streams&category_id=" + str(category_id)
-                if self.categoryname == "series":
-                    next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_series&category_id=" + str(category_id)
-                if self.categoryname == "catchup":
-                    next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_live_streams&category_id=" + str(category_id)
+                if category_id == "0":
+                    if self.categoryname == "live":
+                        next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_live_streams"
+                    if self.categoryname == "vod":
+                        next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_vod_streams"
+                    if self.categoryname == "series":
+                        next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_series"
+                    if self.categoryname == "catchup":
+                        next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_live_streams"
+
+                else:
+                    if self.categoryname == "live":
+                        next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_live_streams&category_id=" + str(category_id)
+                    if self.categoryname == "vod":
+                        next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_vod_streams&category_id=" + str(category_id)
+                    if self.categoryname == "series":
+                        next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_series&category_id=" + str(category_id)
+                    if self.categoryname == "catchup":
+                        next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_live_streams&category_id=" + str(category_id)
 
                 if category_id == "-1":
                     self.favourites_category = True
@@ -2111,6 +2124,39 @@ class XStreamity_Categories(Screen):
                         self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "catchup", self.list1, self.level)
                     elif self.level == 2 and not self.favourites_category and not self.recents_category:
                         self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "catchup", self.list2, self.level)
+
+    def clearWatched(self):
+        if self.categoryname == "vod" and self.level == 2:
+            for watched in glob.current_playlist["player_info"]["vodwatched"]:
+                if int(self["main_list"].getCurrent()[4]) == int(watched):
+                    glob.current_playlist["player_info"]["vodwatched"].remove(watched)
+                    break
+
+        if self.categoryname == "series" and self.level == 4:
+            for watched in glob.current_playlist["player_info"]["serieswatched"]:
+                if int(self["main_list"].getCurrent()[4]) == int(watched):
+                    glob.current_playlist["player_info"]["serieswatched"].remove(watched)
+                    print(glob.current_playlist["player_info"]["serieswatched"])
+                    break
+
+        with open(playlists_json, "r") as f:
+            try:
+                self.playlists_all = json.load(f)
+            except:
+                os.remove(playlists_json)
+
+        if self.playlists_all:
+            x = 0
+            for playlists in self.playlists_all:
+                if playlists["playlist_info"]["domain"] == glob.current_playlist["playlist_info"]["domain"] and playlists["playlist_info"]["username"] == glob.current_playlist["playlist_info"]["username"] and playlists["playlist_info"]["password"] == glob.current_playlist["playlist_info"]["password"]:
+                    self.playlists_all[x] = glob.current_playlist
+                    break
+                x += 1
+
+        with open(playlists_json, "w") as f:
+            json.dump(self.playlists_all, f)
+
+        self.buildLists()
 
     def favourite(self):
         # print("**** favourite ***")
@@ -2917,9 +2963,17 @@ class XStreamity_Categories(Screen):
                 with open(downloads_json, "w") as f:
                     json.dump(downloads_all, f)
 
-                self.session.open(MessageBox, _(title) + "\n\n" + _("Added to download manager"), MessageBox.TYPE_INFO, timeout=5)
+                self.session.openWithCallback(self.opendownloader, MessageBox, _(title) + "\n\n" + _("Added to download manager") + "\n\n" + _("Note recording acts as an open connection.") + "\n" + _("Do not record and play streams at the same time.") + "\n\n" + _("Open download manager?"))
+
             else:
                 self.session.open(MessageBox, _(title) + "\n\n" + _("Already added to download manager"), MessageBox.TYPE_ERROR, timeout=5)
+
+    def opendownloader(self, answer=None):
+        if not answer:
+            return
+        else:
+            from . import downloadmanager
+            self.session.openWithCallback(self.createSetup, downloadmanager.XStreamity_DownloadManager)
 
     def getTMDB(self):
         # print("**** getTMDB ***")
@@ -3045,14 +3099,14 @@ class XStreamity_Categories(Screen):
             if self.isIMDB is False:
                 searchurl = 'http://api.themoviedb.org/3/search/movie?api_key=' + str(self.check(self.token)) + '&query=' + str(searchtitle)
                 if year:
-                    searchurl = 'http://api.themoviedb.org/3/search/movie?api_key=' + str(self.check(self.token)) + '&primary_release_year=' + year + '&query=' + str(searchtitle)
+                    searchurl = 'http://api.themoviedb.org/3/search/movie?api_key=' + str(self.check(self.token)) + '&primary_release_year=' + str(year) + '&query=' + str(searchtitle)
             else:
                 searchurl = 'http://api.themoviedb.org/3/find/' + str(self.info["tmdb_id"]) + '?api_key=' + str(self.check(self.token)) + '&external_source=imdb_id'
 
         elif self.categoryname == "series":
             searchurl = 'http://api.themoviedb.org/3/search/tv?api_key=' + str(self.check(self.token)) + '&query=' + str(searchtitle)
             if year:
-                searchurl = 'http://api.themoviedb.org/3/search/tv?api_key=' + str(self.check(self.token)) + '&first_air_date_year=' + year + '&query=' + str(searchtitle)
+                searchurl = 'http://api.themoviedb.org/3/search/tv?api_key=' + str(self.check(self.token)) + '&first_air_date_year=' + str(year) + '&query=' + str(searchtitle)
 
         if pythonVer == 3:
             searchurl = searchurl.encode()
