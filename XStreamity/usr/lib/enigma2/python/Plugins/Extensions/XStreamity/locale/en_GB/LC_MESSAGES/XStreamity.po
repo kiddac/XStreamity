@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-10-31 23:49+0000\n"
-"PO-Revision-Date: 2022-10-31 23:49+0000\n"
+"POT-Creation-Date: 2022-11-26 18:14+0000\n"
+"PO-Revision-Date: 2022-11-26 18:15+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -10,41 +10,85 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Poedit 3.2\n"
 "X-Poedit-Basepath: ../../..\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: channels.py:236 channels.py:1260 channels.py:1581 channels.py:1584
-#: channels.py:1587 channels.py:1599 channels.py:1845
+#: Task.py:60 downloadmanager.py:40
+msgid "Waiting"
+msgstr ""
+
+#: Task.py:60 downloadmanager.py:39
+msgid "In progress"
+msgstr ""
+
+#: Task.py:60
+msgid "Finished"
+msgstr ""
+
+#: Task.py:60
+msgid "Failed"
+msgstr ""
+
+#: Task.py:324
+#, python-format
+msgid ""
+"Error: %s\n"
+"Retry?"
+msgstr ""
+
+#: Task.py:327
+msgid "Error"
+msgstr ""
+
+#: Task.py:374
+msgid "An unknown error occurred!"
+msgstr ""
+
+#: Task.py:399
+#, python-format
+msgid "A required tool (%s) was not found."
+msgstr ""
+
+#: Task.py:407
+msgid "Cancelled upon user request"
+msgstr ""
+
+#: Task.py:424 Task.py:439
+msgid "Error code"
+msgstr ""
+
+#: channels.py:238 channels.py:1277 channels.py:1603 channels.py:1606
+#: channels.py:1609 channels.py:1621 channels.py:1867
 msgid "Sort: A-Z"
 msgstr ""
 
-#: channels.py:278 downloadmanager.py:155 mainmenu.py:40 menu.py:40
-#: playlists.py:46 playsettings.py:48 server.py:38 settings.py:66
+#: channels.py:277 downloadmanager.py:156 mainmenu.py:41 menu.py:40
+#: playlists.py:46 playsettings.py:48 server.py:39 settings.py:66
 msgid "Back"
 msgstr ""
 
-#: channels.py:279 mainmenu.py:41 menu.py:41 playlists.py:47
+#: channels.py:278 mainmenu.py:42 menu.py:41 playlists.py:47
 msgid "OK"
 msgstr ""
 
-#: channels.py:281 channels.py:1258 channels.py:1740
+#: channels.py:280 channels.py:1275 channels.py:1762
 msgid "Search"
 msgstr ""
 
-#: channels.py:304
+#: channels.py:303
 msgid "Live Categories"
 msgstr ""
 
-#: channels.py:305 menu.py:228
+#: channels.py:304 menu.py:228
 msgid "Live Streams"
 msgstr ""
 
-#: channels.py:341
+#: channels.py:340
 msgid "Vod Categories"
 msgstr ""
 
-#: channels.py:342 menu.py:233
+#: channels.py:341 menu.py:233
 msgid "Vod"
 msgstr ""
 
@@ -52,219 +96,223 @@ msgstr ""
 msgid "Series Categories"
 msgstr ""
 
-#: channels.py:373 channels.py:2885
+#: channels.py:373 channels.py:2948
 msgid "Series"
 msgstr ""
 
-#: channels.py:398
+#: channels.py:399
 msgid "Catch Up Categories"
 msgstr ""
 
-#: channels.py:399 menu.py:250
+#: channels.py:400 menu.py:250
 msgid "Catch Up TV"
 msgstr ""
 
-#: channels.py:518
+#: channels.py:522
 msgid "FAVOURITES"
 msgstr ""
 
-#: channels.py:520
+#: channels.py:524
 msgid "RECENTLY WATCHED"
 msgstr ""
 
-#: channels.py:527
+#: channels.py:531
 msgid "ALL"
 msgstr ""
 
-#: channels.py:936
+#: channels.py:943
 msgid "Season "
 msgstr ""
 
-#: channels.py:1248 channels.py:1661 channels.py:1720
+#: channels.py:1265 channels.py:1683 channels.py:1742
 msgid "Reset Search"
 msgstr ""
 
-#: channels.py:1254 channels.py:1561
+#: channels.py:1271 channels.py:1583
 msgid "Reverse"
 msgstr ""
 
-#: channels.py:1255 channels.py:1264
+#: channels.py:1272 channels.py:1281
 msgid "Hide/Show"
 msgstr ""
 
-#: channels.py:1270 channels.py:1664 playlists.py:48
+#: channels.py:1287 channels.py:1686 playlists.py:48
 msgid "Delete"
 msgstr ""
 
-#: channels.py:1308 channels.py:1384
+#: channels.py:1326 channels.py:1404
 msgid "Page: "
 msgstr ""
 
-#: channels.py:1308 channels.py:1384
+#: channels.py:1326 channels.py:1404
 msgid " of "
 msgstr ""
 
-#: channels.py:1581 channels.py:1584 channels.py:1587 channels.py:1602
+#: channels.py:1603 channels.py:1606 channels.py:1609 channels.py:1624
 msgid "Sort: Z-A"
 msgstr ""
 
-#: channels.py:1581 channels.py:1584 channels.py:1587 channels.py:1631
+#: channels.py:1603 channels.py:1606 channels.py:1609 channels.py:1653
 msgid "Sort: Original"
 msgstr ""
 
-#: channels.py:1584 channels.py:1587 channels.py:1605
+#: channels.py:1606 channels.py:1609 channels.py:1627
 msgid "Sort: Added"
 msgstr ""
 
-#: channels.py:1587 channels.py:1620
+#: channels.py:1609 channels.py:1642
 msgid "Sort: Year"
 msgstr ""
 
-#: channels.py:1668
+#: channels.py:1690
 msgid "Filter this category..."
 msgstr ""
 
-#: channels.py:1776
+#: channels.py:1798
 msgid "Incorrect pin code."
 msgstr ""
 
-#: channels.py:1789
+#: channels.py:1811
 msgid "all"
 msgstr ""
 
-#: channels.py:1798
+#: channels.py:1820
 msgid "Please enter the parental control pin code"
 msgstr ""
 
-#: channels.py:1798 settings.py:25
+#: channels.py:1820 settings.py:25
 msgid "Enter pin code"
 msgstr ""
 
-#: channels.py:2297 channels.py:2356 channels.py:2365
+#: channels.py:2358 channels.py:2417 channels.py:2426
 msgid "Next Info"
 msgstr ""
 
-#: channels.py:2360
+#: channels.py:2421
 msgid "Now Info"
 msgstr ""
 
-#: channels.py:2591 streamplayer.py:481
+#: channels.py:2653 streamplayer.py:481
 msgid "Recording Timer Set."
 msgstr ""
 
-#: channels.py:2593 streamplayer.py:483
+#: channels.py:2655 streamplayer.py:483
 msgid "Recording Failed."
 msgstr ""
 
-#: channels.py:2780
+#: channels.py:2843
 msgid "Video Type:"
 msgstr ""
 
-#: channels.py:2781
+#: channels.py:2844
 msgid "Rating:"
 msgstr ""
 
-#: channels.py:2782
+#: channels.py:2845
 msgid "Genre:"
 msgstr ""
 
-#: channels.py:2783
+#: channels.py:2846
 msgid "Duration:"
 msgstr ""
 
-#: channels.py:2784
+#: channels.py:2847
 msgid "Release Date:"
 msgstr ""
 
-#: channels.py:2785
+#: channels.py:2848
 msgid "Cast:"
 msgstr ""
 
-#: channels.py:2786
+#: channels.py:2849
 msgid "Director:"
 msgstr ""
 
-#: channels.py:2787
+#: channels.py:2850
 msgid "Country:"
 msgstr ""
 
-#: channels.py:2883
+#: channels.py:2946
 msgid "Movie"
 msgstr ""
 
-#: channels.py:2887
+#: channels.py:2950
 msgid "Catch-up"
 msgstr ""
 
-#: channels.py:2892
+#: channels.py:2956
 msgid "Added to download manager"
 msgstr ""
 
-#: channels.py:2894
+#: channels.py:2956
+msgid "Note recording acts as an open connection."
+msgstr ""
+
+#: channels.py:2956
+msgid "Do not record and play streams at the same time."
+msgstr ""
+
+#: channels.py:2956
+msgid "Open download manager?"
+msgstr ""
+
+#: channels.py:2959
 msgid "Already added to download manager"
 msgstr ""
 
-#: channels.py:3276
+#: channels.py:3382
 msgid ""
 "The IMDb plugin is not installed!\n"
 "Please install it."
 msgstr ""
 
-#: channels.py:3336
+#: channels.py:3445
 msgid "Catchup error. No data for this slot"
 msgstr ""
 
-#: channels.py:3447
+#: channels.py:3557
 msgid "Catchup currently not available. Missing EPG data"
 msgstr ""
 
-#: downloadmanager.py:39 downloadmanager.py:359 downloadmanager.py:395
+#: downloadmanager.py:38 downloadmanager.py:368 downloadmanager.py:404
 msgid "Not Started"
 msgstr ""
 
-#: downloadmanager.py:40
-msgid "In progress"
-msgstr ""
-
-#: downloadmanager.py:41
-msgid "Waiting"
-msgstr ""
-
-#: downloadmanager.py:143
+#: downloadmanager.py:144
 msgid "VOD Download Manager"
 msgstr ""
 
-#: downloadmanager.py:156 downloadmanager.py:363
+#: downloadmanager.py:157 downloadmanager.py:372
 msgid "Download"
 msgstr ""
 
-#: downloadmanager.py:157 downloadmanager.py:364
+#: downloadmanager.py:158 downloadmanager.py:373
 msgid "Remove"
 msgstr ""
 
-#: downloadmanager.py:209
+#: downloadmanager.py:210
 msgid "Free Space:"
 msgstr ""
 
-#: downloadmanager.py:209
+#: downloadmanager.py:210
 msgid "of"
 msgstr ""
 
-#: downloadmanager.py:360 hidden.py:45
+#: downloadmanager.py:369 hidden.py:45
 msgid "Cancel"
 msgstr ""
 
-#: downloadmanager.py:374
+#: downloadmanager.py:383
 msgid "Please set download folder in Main Settings."
 msgstr ""
 
-#: downloadmanager.py:374
+#: downloadmanager.py:383
 msgid ""
 "Vod Download folder location does not exist.\n"
 "\n"
 msgstr ""
 
-#: downloadmanager.py:414 downloadmanager.py:420
+#: downloadmanager.py:423 downloadmanager.py:429
 msgid ""
 "Please update your wget library to download https lines\n"
 "\n"
@@ -272,11 +320,11 @@ msgid ""
 "opkg install wget"
 msgstr ""
 
-#: downloadmanager.py:440
+#: downloadmanager.py:450
 msgid "Cancel this download?"
 msgstr ""
 
-#: downloadmanager.py:477
+#: downloadmanager.py:485
 msgid "Delete this entry?"
 msgstr ""
 
@@ -284,7 +332,7 @@ msgstr ""
 msgid "Hidden Categories"
 msgstr ""
 
-#: hidden.py:46 playsettings.py:49 record.py:39 server.py:39 settings.py:67
+#: hidden.py:46 playsettings.py:49 record.py:39 server.py:40 settings.py:67
 msgid "Save"
 msgstr ""
 
@@ -300,39 +348,39 @@ msgstr ""
 msgid "Error: All categories hidden. Please amend your selection."
 msgstr ""
 
-#: mainmenu.py:38
+#: mainmenu.py:39
 msgid "Main Menu"
 msgstr ""
 
-#: mainmenu.py:42
+#: mainmenu.py:43
 msgid "Reset JSON"
 msgstr ""
 
-#: mainmenu.py:108
+#: mainmenu.py:109
 msgid "Playlists"
 msgstr ""
 
-#: mainmenu.py:109 mainmenu.py:114
+#: mainmenu.py:110 mainmenu.py:115
 msgid "Add Playlist"
 msgstr ""
 
-#: mainmenu.py:110 mainmenu.py:115 settings.py:59
+#: mainmenu.py:111 mainmenu.py:116 settings.py:59
 msgid "Main Settings"
 msgstr ""
 
-#: mainmenu.py:111
+#: mainmenu.py:112
 msgid "Manual EPG Update"
 msgstr ""
 
-#: mainmenu.py:118
+#: mainmenu.py:119
 msgid "Download Manager"
 msgstr ""
 
-#: mainmenu.py:141
+#: mainmenu.py:142
 msgid "EPGs downloading."
 msgstr ""
 
-#: mainmenu.py:173
+#: mainmenu.py:179
 msgid ""
 "Warning: delete stored json data for all playlists... Settings, favourites "
 "etc. \n"
@@ -416,63 +464,67 @@ msgstr ""
 msgid "Delete providers EPG data?"
 msgstr ""
 
-#: playsettings.py:80 record.py:72 server.py:70 settings.py:99
+#: playsettings.py:80 record.py:72 server.py:71 settings.py:99
 msgid "Really close without saving settings?"
 msgstr ""
 
-#: playsettings.py:134 server.py:98
+#: playsettings.py:136 server.py:99
 msgid "Short name or provider name:"
 msgstr ""
 
-#: playsettings.py:136
+#: playsettings.py:138
 msgid "Show LIVE category:"
 msgstr ""
 
-#: playsettings.py:137
+#: playsettings.py:139
 msgid "Show VOD category:"
 msgstr ""
 
-#: playsettings.py:138
+#: playsettings.py:140
 msgid "Show SERIES category:"
 msgstr ""
 
-#: playsettings.py:139
+#: playsettings.py:141
 msgid "Show CATCHUP category:"
 msgstr ""
 
-#: playsettings.py:140 server.py:104
+#: playsettings.py:142 server.py:105
 msgid "Output:"
 msgstr ""
 
-#: playsettings.py:143
+#: playsettings.py:145
 msgid "Stream Type LIVE:"
 msgstr ""
 
-#: playsettings.py:146
+#: playsettings.py:148
 msgid "Stream Type VOD/SERIES:"
 msgstr ""
 
-#: playsettings.py:148
+#: playsettings.py:150
+msgid "Stream Source URL:"
+msgstr ""
+
+#: playsettings.py:152
 msgid "EPG offset:"
 msgstr ""
 
-#: playsettings.py:149
+#: playsettings.py:153
 msgid "Use alternative EPG url:"
 msgstr ""
 
-#: playsettings.py:151
+#: playsettings.py:155
 msgid "Alternative EPG url:"
 msgstr ""
 
-#: plugin.py:207 plugin.py:328
+#: plugin.py:220 plugin.py:341
 msgid "XStreamity"
 msgstr ""
 
-#: plugin.py:327
+#: plugin.py:340
 msgid "IPTV Xtream Codes playlists player by KiddaC"
 msgstr ""
 
-#: record.py:38 serverinfo.py:59 streamplayer.py:1481
+#: record.py:38 serverinfo.py:59 streamplayer.py:1521
 msgid "Close"
 msgstr ""
 
@@ -496,35 +548,35 @@ msgstr ""
 msgid "End Time"
 msgstr ""
 
-#: server.py:31
+#: server.py:32
 msgid "Add Xtream Codes Playlist"
 msgstr ""
 
-#: server.py:99
+#: server.py:100
 msgid "Protocol:"
 msgstr ""
 
-#: server.py:100
+#: server.py:101
 msgid "Server URL:"
 msgstr ""
 
-#: server.py:101
+#: server.py:102
 msgid "Port:"
 msgstr ""
 
-#: server.py:102
+#: server.py:103
 msgid "Username:"
 msgstr ""
 
-#: server.py:103
+#: server.py:104
 msgid "Password:"
 msgstr ""
 
-#: server.py:171
+#: server.py:172
 msgid "Details are not valid or unauthorised"
 msgstr ""
 
-#: server.py:189
+#: server.py:196
 msgid "Playlist added successfully."
 msgstr ""
 
@@ -699,27 +751,27 @@ msgstr ""
 msgid "TV"
 msgstr ""
 
-#: streamplayer.py:905
+#: streamplayer.py:906
 msgid "Do you want to resume this playback?"
 msgstr ""
 
-#: streamplayer.py:905
+#: streamplayer.py:906
 #, python-format
 msgid "Resume position at %s"
 msgstr ""
 
-#: streamplayer.py:987
+#: streamplayer.py:989
 msgid "VOD"
 msgstr ""
 
-#: streamplayer.py:1268
+#: streamplayer.py:1308
 msgid "Catch Up"
 msgstr ""
 
-#: streamplayer.py:1478
+#: streamplayer.py:1518
 msgid "Xstreamity Log"
 msgstr ""
 
-#: streamplayer.py:1482
+#: streamplayer.py:1522
 msgid "Clear"
 msgstr ""
