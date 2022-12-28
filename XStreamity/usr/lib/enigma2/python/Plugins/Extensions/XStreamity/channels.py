@@ -1489,7 +1489,10 @@ class XStreamity_Categories(Screen):
                 if os.path.exists(original):
                     try:
                         im = Image.open(original).convert("RGBA")
-                        im.thumbnail(size, Image.ANTIALIAS)
+                        try:
+                            im.thumbnail(size, Image.Resampling.LANCZOS)
+                        except:
+                            im.thumbnail(size, Image.ANTIALIAS)
 
                         # crop and center image
                         bg = Image.new("RGBA", size, (255, 255, 255, 0))
