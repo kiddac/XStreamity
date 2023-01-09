@@ -6,7 +6,7 @@ from __future__ import absolute_import, print_function
 from . import _
 from . import xstreamity_globals as glob
 
-from .plugin import skin_path, screenwidth, common_path, cfg, dir_tmp, pythonVer, playlists_json
+from .plugin import skin_path, screenwidth, common_path, hdr, cfg, dir_tmp, pythonVer, playlists_json
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -38,7 +38,6 @@ from Screens.MessageBox import MessageBox
 from Screens.PVRState import PVRState
 from Screens.Screen import Screen
 from ServiceReference import ServiceReference
-from time import time
 from Tools.BoundFunction import boundFunction
 from twisted.web.client import downloadPage
 
@@ -51,6 +50,10 @@ from . import log
 import json
 import os
 import re
+import requests
+from requests.adapters import HTTPAdapter
+import base64
+import time
 
 if cfg.subs.getValue() is True:
     try:
@@ -441,9 +444,139 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
 
         self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl, self.direct_source))
 
+    def refreshInfobar(self):
+        # print("*** refreshInfobar ***")
+        start = ""
+        end = ""
+        percent = 0
+
+        if glob.currentepglist[glob.currentchannellistindex][2] != "":
+            start = glob.currentepglist[glob.currentchannellistindex][2]
+
+        if glob.currentepglist[glob.currentchannellistindex][5] != "":
+            end = glob.currentepglist[glob.currentchannellistindex][5]
+
+        if start != "" and end != "":
+            self["progress"].show()
+            start_time = datetime.strptime(start, "%H:%M")
+            end_time = datetime.strptime(end, "%H:%M")
+
+            if end_time < start_time:
+                end_time = datetime.strptime(end, "%H:%M") + timedelta(hours=24)
+
+            total_time = end_time - start_time
+
+            duration = 0
+
+            if total_time.total_seconds() > 0:
+                duration = total_time.total_seconds() / 60
+
+            now = datetime.now().strftime("%H:%M")
+            current_time = datetime.strptime(now, "%H:%M")
+            elapsed = current_time - start_time
+
+            if elapsed.days < 0:
+                elapsed = timedelta(days=0, seconds=elapsed.seconds)
+
+            elapsedmins = 0
+
+            if elapsed.total_seconds() > 0:
+                elapsedmins = elapsed.total_seconds() / 60
+
+            if duration > 0:
+                percent = int(elapsedmins / duration * 100)
+            else:
+                percent = 100
+
+            self["progress"].setValue(percent)
+        else:
+            self["progress"].hide()
+
+        current_hour = int(datetime.now().hour)
+        current_minute = int(datetime.now().minute)
+        next_time = str(glob.currentepglist[glob.currentchannellistindex][5])
+
+        if next_time and ((current_hour >= int(next_time.split(":")[0]) and current_minute > int(next_time.split(":")[1])) or (current_hour > int(next_time.split(":")[0]) and current_minute >= int(next_time.split(":")[1]))):
+            # print("*** updating short epg ***")
+            response = ""
+
+            player_api = str(glob.current_playlist["playlist_info"]["player_api"])
+            stream_id = str(glob.currentchannellist[glob.currentchannellistindex][4])
+
+            shortEPGJson = []
+
+            url = player_api + "&action=get_short_epg&stream_id=" + str(stream_id) + "&limit=2"
+
+            adapter = HTTPAdapter(max_retries=0)
+            http = requests.Session()
+            http.mount("http://", adapter)
+            http.mount("https://", adapter)
+            try:
+                r = http.get(url, headers=hdr, stream=True, timeout=(10, 20), verify=False)
+                r.raise_for_status()
+                if r.status_code == requests.codes.ok:
+                    try:
+                        response = r.json()
+                    except:
+                        response = ""
+
+            except Exception as e:
+                print(e)
+                response = ""
+
+            if response != "":
+                shortEPGJson = response
+
+                self.epgshortlist = []
+
+                if "epg_listings" in shortEPGJson and shortEPGJson["epg_listings"]:
+                    for listing in shortEPGJson["epg_listings"]:
+
+                        title = ""
+                        description = ""
+                        start = ""
+
+                        if "title" in listing:
+                            title = base64.b64decode(listing["title"]).decode("utf-8")
+
+                        if "description" in listing:
+                            description = base64.b64decode(listing["description"]).decode("utf-8")
+
+                        shift = 0
+
+                        if "serveroffset" in glob.current_playlist["player_info"]:
+                            shift = int(glob.current_playlist["player_info"]["serveroffset"])
+
+                        if listing["start"] and listing["end"]:
+
+                            start = listing["start"]
+                            start_datetime = datetime.strptime(start, "%Y-%m-%d %H:%M:%S") + timedelta(hours=shift)
+
+                        start_time = start_datetime.strftime("%H:%M")
+                        self.epgshortlist.append([str(title), str(description), str(start_time)])
+
+                    templist = list(glob.currentepglist[glob.currentchannellistindex])
+
+                    templist[4] = str(self.epgshortlist[0][1])  # description
+                    templist[3] = str(self.epgshortlist[0][0])  # title
+                    templist[2] = str(self.epgshortlist[0][2])  # now start
+                    templist[6] = str(self.epgshortlist[1][0])  # next title
+                    templist[5] = str(self.epgshortlist[1][2])  # next start
+
+                    glob.currentepglist[glob.currentchannellistindex] = tuple(templist)
+
+                    self["progress"].setValue(0)
+
+        self["x_description"].setText(glob.currentepglist[glob.currentchannellistindex][4])
+        self["nowchannel"].setText(glob.currentchannellist[glob.currentchannellistindex][0])
+        self["nowtitle"].setText(glob.currentepglist[glob.currentchannellistindex][3])
+        self["nexttitle"].setText(glob.currentepglist[glob.currentchannellistindex][6])
+        self["nowtime"].setText(glob.currentepglist[glob.currentchannellistindex][2])
+        self["nexttime"].setText(glob.currentepglist[glob.currentchannellistindex][5])
+
     def IPTVstartInstantRecording(self, limitEvent=True):
         from . import record
-        begin = int(time())
+        begin = int(time.time())
         end = begin + 3600
 
         if glob.currentepglist[glob.currentchannellistindex][3]:
@@ -452,7 +585,7 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             name = glob.currentchannellist[glob.currentchannellistindex][0]
 
         self.name = NoSave(ConfigText(default=name, fixed_size=False))
-        self.date = time()
+        self.date = time.time()
         self.starttime = NoSave(ConfigClock(default=begin))
         self.endtime = NoSave(ConfigClock(default=end))
         self.session.openWithCallback(self.RecordDateInputClosed, record.RecordDateInput, self.name, self.date, self.starttime, self.endtime, True)
@@ -535,16 +668,10 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             json.dump(self.playlists_all, f)
 
     def playStream(self, servicetype, streamurl, direct_source):
-
+        # print("*** playStream ***")
         if cfg.infobarpicons.value is True:
             self.downloadImage()
 
-        self["x_description"].setText(glob.currentepglist[glob.currentchannellistindex][4])
-        self["nowchannel"].setText(glob.currentchannellist[glob.currentchannellistindex][0])
-        self["nowtitle"].setText(glob.currentepglist[glob.currentchannellistindex][3])
-        self["nexttitle"].setText(glob.currentepglist[glob.currentchannellistindex][6])
-        self["nowtime"].setText(glob.currentepglist[glob.currentchannellistindex][2])
-        self["nexttime"].setText(glob.currentepglist[glob.currentchannellistindex][5])
         self["streamcat"].setText("Live")
         self["streamtype"].setText(str(servicetype))
 
@@ -552,52 +679,6 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             self["extension"].setText(str(os.path.splitext(streamurl)[-1]))
         except:
             pass
-
-        start = ""
-        end = ""
-        percent = 0
-
-        if glob.currentepglist[glob.currentchannellistindex][2] != "":
-            start = glob.currentepglist[glob.currentchannellistindex][2]
-
-        if glob.currentepglist[glob.currentchannellistindex][5] != "":
-            end = glob.currentepglist[glob.currentchannellistindex][5]
-
-        if start != "" and end != "":
-            self["progress"].show()
-            start_time = datetime.strptime(start, "%H:%M")
-            end_time = datetime.strptime(end, "%H:%M")
-
-            if end_time < start_time:
-                end_time = datetime.strptime(end, "%H:%M") + timedelta(hours=24)
-
-            total_time = end_time - start_time
-
-            duration = 0
-
-            if total_time.total_seconds() > 0:
-                duration = total_time.total_seconds() / 60
-
-            now = datetime.now().strftime("%H:%M")
-            current_time = datetime.strptime(now, "%H:%M")
-            elapsed = current_time - start_time
-
-            if elapsed.days < 0:
-                elapsed = timedelta(days=0, seconds=elapsed.seconds)
-
-            elapsedmins = 0
-
-            if elapsed.total_seconds() > 0:
-                elapsedmins = elapsed.total_seconds() / 60
-
-            if duration > 0:
-                percent = int(elapsedmins / duration * 100)
-            else:
-                percent = 100
-
-            self["progress"].setValue(percent)
-        else:
-            self["progress"].hide()
 
         if glob.current_playlist["player_info"]["directsource"] == "Direct Source":
             if direct_source:
@@ -615,6 +696,15 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
         if self.session.nav.getCurrentlyPlayingServiceReference():
             glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
             glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
+
+        self.refreshInfobar()
+
+        self.timerrefresh = eTimer()
+        try:
+            self.timerrefresh.callback.append(self.refreshInfobar)
+        except:
+            self.timerrefresh_conn = self.timerrefresh.timeout.connect(self.refreshInfobar)
+        self.timerrefresh.start(30000)
 
     def __evStart(self):
         # print("__evTunedStart")
