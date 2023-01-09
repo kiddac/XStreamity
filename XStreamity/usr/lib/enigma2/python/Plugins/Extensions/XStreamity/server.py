@@ -46,7 +46,7 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 
         self.protocol = "http://"
         self.server = "domain.xyz"
-        self.port = 80
+        self.port = ""
         self.username = "username"
         self.password = "password"
         self.listType = "m3u"
@@ -86,10 +86,10 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
     def initConfig(self):
         self.nameCfg = NoSave(ConfigText(default="IPTV", fixed_size=False))
         self.protocolCfg = NoSave(ConfigSelection(default=self.protocol, choices=[("http://", "http://"), ("https://", "https://")]))
-        self.serverCfg = NoSave(ConfigText(default=self.server, fixed_size=False))
-        self.portCfg = NoSave(ConfigNumber(default=self.port))
-        self.usernameCfg = NoSave(ConfigText(default=self.username, fixed_size=False))
-        self.passwordCfg = NoSave(ConfigText(default=self.password, fixed_size=False))
+        self.serverCfg = NoSave(ConfigText(fixed_size=False))
+        self.portCfg = NoSave(ConfigText(fixed_size=False))
+        self.usernameCfg = NoSave(ConfigText(fixed_size=False))
+        self.passwordCfg = NoSave(ConfigText(fixed_size=False))
         self.outputCfg = NoSave(ConfigSelection(default=self.output, choices=[("ts", "ts"), ("m3u8", "m3u8")]))
         self.createSetup()
 
@@ -98,7 +98,7 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 
         self.list.append(getConfigListEntry(_("Short name or provider name:"), self.nameCfg))
         self.list.append(getConfigListEntry(_("Protocol:"), self.protocolCfg))
-        self.list.append(getConfigListEntry(_("Server URL:"), self.serverCfg))
+        self.list.append(getConfigListEntry(_("Server URL: i.e. domain.xyz"), self.serverCfg))
         self.list.append(getConfigListEntry(_("Port:"), self.portCfg))
         self.list.append(getConfigListEntry(_("Username:"), self.usernameCfg))
         self.list.append(getConfigListEntry(_("Password:"), self.passwordCfg))
@@ -158,13 +158,19 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
             protocol = self.protocolCfg.value
             domain = self.serverCfg.value.strip().lower()
             port = self.portCfg.value
+
+            if port:
+                host = "%s%s:%s" % (protocol, domain, port)
+            else:
+                host = "%s%s" % (protocol, domain)
+
             username = self.usernameCfg.value.strip()
             password = self.passwordCfg.value.strip()
             listtype = "m3u"
             output = self.outputCfg.value
 
-            playlistline = "%s%s:%s/get.php?username=%s&password=%s&type=%s&output=%s #%s" % (protocol, domain, port, username, password, listtype, output, self.name)
-            self.apiline = "%s%s:%s/player_api.php?username=%s&password=%s" % (protocol, domain, port, username, password)
+            playlistline = "%s/get.php?username=%s&password=%s&type=%s&output=%s #%s" % (host, username, password, listtype, output, self.name)
+            self.apiline = "%s/player_api.php?username=%s&password=%s" % (host, username, password)
 
             valid = self.checkline()
 
@@ -177,16 +183,17 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
                 with open(playlist_file, "w+") as f:
                     f.close()
 
+            """
             with open(playlist_file, "r") as f:
                 lines = f.readlines()
                 exists = False
                 for line in lines:
                     if domain in line and username in line and password in line:
                         exists = True
+                        """
 
-            if exists is False:
-                with open(playlist_file, "a") as f:
-                    f.write("\n" + str(playlistline) + "\n")
+            with open(playlist_file, "a") as f:
+                f.write("\n" + str(playlistline) + "\n")
 
             try:
                 shutil.copyfile(playlist_file, '/home/playlists.txt')

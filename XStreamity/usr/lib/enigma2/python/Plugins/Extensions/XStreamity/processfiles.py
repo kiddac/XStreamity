@@ -57,7 +57,7 @@ def processfiles():
 
         for line in lines:
 
-            port = 80
+            port = ""
             username = ""
             password = ""
             type = "m3u_plus"
@@ -92,7 +92,7 @@ def processfiles():
             epgoffset = 0
             epgalternative = False
             epgalternativeurl = ""
-            
+
             directsource = "Standard"
 
             if not line.startswith("#") and line.startswith("http"):
@@ -113,7 +113,9 @@ def processfiles():
                 if parsed_uri.port:
                     port = parsed_uri.port
 
-                host = "%s%s:%s" % (protocol, domain, port)
+                    host = "%s%s:%s" % (protocol, domain, port)
+                else:
+                    host = "%s%s" % (protocol, domain)
 
                 query = parse_qs(parsed_uri.query, keep_blank_values=True)
 
@@ -207,7 +209,7 @@ def processfiles():
 
                                 if "serieswatched" not in playlists["player_info"]:
                                     playlists["player_info"]["serieswatched"] = serieswatched
-                                    
+
                                 if "directsource" not in playlists["player_info"]:
                                     playlists["player_info"]["directsource"] = directsource
 
