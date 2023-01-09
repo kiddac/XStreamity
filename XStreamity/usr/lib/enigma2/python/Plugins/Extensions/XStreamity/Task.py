@@ -10,15 +10,16 @@ from __future__ import print_function
 from . import _
 
 from Tools.CList import CList
-import six
 import os
-
+import sys
 from six.moves import map
 from six.moves import range
 
 isDreambox = False
 if os.path.exists("/usr/bin/apt-get"):
     isDreambox = True
+
+pythonVer = sys.version_info.major
 
 
 class Job(object):
@@ -234,7 +235,8 @@ class Task(object):
         self.processOutput(data)
 
     def processOutput(self, data):
-        data = six.ensure_str(data)
+        if pythonVer == 3:
+            data = str(data)
         self.output_line += data
         while True:
             i = self.output_line.find('\n')
