@@ -1139,11 +1139,11 @@ class XStreamity_Categories(Screen):
                     content = r.json()
                 except Exception as e:
                     print(e)
-                    content = ""
-            return content
 
         except Exception as e:
             print(e)
+
+        return content
 
     def xmltvCheckData(self):
         # print("*** xmltvCheckData ***")
@@ -1839,179 +1839,203 @@ class XStreamity_Categories(Screen):
             glob.currentepglist = self.epglist[:]
 
             if self.level == 1:
-                category_id = self["main_list"].getCurrent()[3]
+                if self.list1:
+                    category_id = self["main_list"].getCurrent()[3]
 
-                if category_id == "0":
-                    if self.categoryname == "live":
-                        next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_live_streams"
-                    if self.categoryname == "vod":
-                        next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_vod_streams"
-                    if self.categoryname == "series":
-                        next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_series"
-                    if self.categoryname == "catchup":
-                        next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_live_streams"
+                    if category_id == "0":
+                        if self.categoryname == "live":
+                            next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_live_streams"
+                        if self.categoryname == "vod":
+                            next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_vod_streams"
+                        if self.categoryname == "series":
+                            next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_series"
+                        if self.categoryname == "catchup":
+                            next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_live_streams"
 
-                else:
-                    if self.categoryname == "live":
-                        next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_live_streams&category_id=" + str(category_id)
-                    if self.categoryname == "vod":
-                        next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_vod_streams&category_id=" + str(category_id)
-                    if self.categoryname == "series":
-                        next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_series&category_id=" + str(category_id)
-                    if self.categoryname == "catchup":
-                        next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_live_streams&category_id=" + str(category_id)
-
-                if category_id == "-1":
-                    self.favourites_category = True
-                    self.recents_category = False
-
-                elif category_id == "-2":
-                    self.recents_category = True
-                    self.favourites_category = False
-                else:
-                    self.favourites_category = False
-                    self.recents_category = False
-
-                self.level += 1
-                self["main_list"].setIndex(0)
-
-                self["category_actions"].setEnabled(False)
-                self["channel_actions"].setEnabled(True)
-
-                self["key_yellow"].setText(_("Sort: A-Z"))
-                glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self["key_yellow"].getText(), "filter": ""})
-
-                self.createSetup()
-                return
-
-            elif self.level == 2:
-                if self.categoryname == "live":
-                    if self.selectedlist == self["epg_short_list"]:
-                        self.shortEPG()
-
-                    streamtype = glob.current_playlist["player_info"]["livetype"]
-                    next_url = self["main_list"].getCurrent()[3]
-                    stream_id = self["main_list"].getCurrent()[4]
-                    direct_source = self["main_list"].getCurrent()[7]
-
-                    if str(os.path.splitext(next_url)[-1]) == ".m3u8":
-                        if streamtype == "1":
-                            streamtype = "4097"
-
-                    self.reference = eServiceReference(int(streamtype), 0, next_url)
-
-                    if glob.current_playlist["player_info"]["directsource"] == "Direct Source":
-                        if direct_source:
-                            self.reference = eServiceReference(int(streamtype), 0, direct_source)
-                    self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
-
-                    if self.session.nav.getCurrentlyPlayingServiceReference():
-
-                        if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString() and cfg.livepreview.value is True:
-                            self.session.nav.stopService()
-                            self.session.nav.playService(self.reference)
-
-                            if self.session.nav.getCurrentlyPlayingServiceReference():
-                                glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
-                                glob.newPlayingServiceRefString = glob.newPlayingServiceRef.toString()
-
-                            for channel in self.list2:
-                                if channel[2] == stream_id:
-                                    channel[17] = True  # set watching icon
-                                else:
-                                    channel[17] = False
-                            self.buildLists()
-
-                        else:
-                            # return to last played stream
-                            callingfunction = sys._getframe().f_back.f_code.co_name
-                            if callingfunction == "playStream":
-                                next_url = str(self.lastviewed_url)
-                                stream_id = str(self.lastviewed_id)
-                                self["main_list"].setIndex(self.lastviewed_index)
-                                self.reference = eServiceReference(int(streamtype), 0, next_url)
-                                glob.newPlayingServiceRef = self.reference
-                                glob.newPlayingServiceRefString = self.reference.toString()
-                                glob.currentchannellistindex = self.lastviewed_index
-                                self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
-
-                            else:
-                                self.lastviewed_url = next_url
-                                if glob.current_playlist["player_info"]["directsource"] == "Direct Source":
-                                    if direct_source:
-                                        self.lastviewed_url = direct_source
-                                self.lastviewed_id = stream_id
-                                self.lastviewed_index = self["main_list"].getIndex()
-
-                            for channel in self.list2:
-                                if channel[2] == stream_id:
-                                    channel[17] = True  # set watching icon
-                                else:
-                                    channel[17] = False
-                            self.buildLists()
-
-                            self.session.openWithCallback(self.setIndex, streamplayer.XStreamity_StreamPlayer, str(next_url), str(streamtype), str(direct_source), stream_id)
                     else:
-                        self.session.openWithCallback(self.setIndex, streamplayer.XStreamity_StreamPlayer, str(next_url), str(streamtype), str(direct_source), stream_id)
+                        if self.categoryname == "live":
+                            next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_live_streams&category_id=" + str(category_id)
+                        if self.categoryname == "vod":
+                            next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_vod_streams&category_id=" + str(category_id)
+                        if self.categoryname == "series":
+                            next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_series&category_id=" + str(category_id)
+                        if self.categoryname == "catchup":
+                            next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_live_streams&category_id=" + str(category_id)
+
+                    if category_id == "-1":
+                        self.favourites_category = True
+                        self.recents_category = False
+
+                    elif category_id == "-2":
+                        self.recents_category = True
+                        self.favourites_category = False
+                    else:
+                        self.favourites_category = False
+                        self.recents_category = False
+
+                    self.level += 1
+                    self["main_list"].setIndex(0)
 
                     self["category_actions"].setEnabled(False)
+                    self["channel_actions"].setEnabled(True)
 
-                elif self.categoryname == "vod":
-                    streamtype = glob.current_playlist["player_info"]["vodtype"]
-                    next_url = self["main_list"].getCurrent()[3]
-                    direct_source = self["main_list"].getCurrent()[10]
-                    stream_id = self["main_list"].getCurrent()[4]
+                    self["key_yellow"].setText(_("Sort: A-Z"))
+                    glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self["key_yellow"].getText(), "filter": ""})
 
-                    self.reference = eServiceReference(int(streamtype), 0, next_url)
-                    try:
+                    self.createSetup()
+                else:
+                    self.createSetup()
+
+            elif self.level == 2:
+                if self.list2:
+                    if self.categoryname == "live":
+                        if self.selectedlist == self["epg_short_list"]:
+                            self.shortEPG()
+
+                        streamtype = glob.current_playlist["player_info"]["livetype"]
+                        next_url = self["main_list"].getCurrent()[3]
+                        stream_id = self["main_list"].getCurrent()[4]
+                        direct_source = self["main_list"].getCurrent()[7]
+
+                        if str(os.path.splitext(next_url)[-1]) == ".m3u8":
+                            if streamtype == "1":
+                                streamtype = "4097"
+
+                        self.reference = eServiceReference(int(streamtype), 0, next_url)
+
                         if glob.current_playlist["player_info"]["directsource"] == "Direct Source":
                             if direct_source:
                                 self.reference = eServiceReference(int(streamtype), 0, direct_source)
                         self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
-                        self.session.openWithCallback(self.setIndex, streamplayer.XStreamity_VodPlayer, str(next_url), str(streamtype), str(direct_source), stream_id)
-                    except Exception as e:
-                        print("********* vod crash *********", e)
 
-                elif self.categoryname == "series":
-                    next_url = self["main_list"].getCurrent()[3]
-                    if "&action=get_series_info" in next_url:
-                        self.seasons_url = self["main_list"].getCurrent()[3]
-                    self.level += 1
-                    self["main_list"].setIndex(0)
-                    self["category_actions"].setEnabled(False)
-                    self["channel_actions"].setEnabled(True)
-                    glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self["key_yellow"].getText(), "filter": ""})
+                        if self.session.nav.getCurrentlyPlayingServiceReference():
+
+                            if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString() and cfg.livepreview.value is True:
+                                self.session.nav.stopService()
+                                self.session.nav.playService(self.reference)
+
+                                if self.session.nav.getCurrentlyPlayingServiceReference():
+                                    glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
+                                    glob.newPlayingServiceRefString = glob.newPlayingServiceRef.toString()
+
+                                for channel in self.list2:
+                                    if channel[2] == stream_id:
+                                        channel[17] = True  # set watching icon
+                                    else:
+                                        channel[17] = False
+                                self.buildLists()
+
+                            else:
+                                # return to last played stream
+                                callingfunction = sys._getframe().f_back.f_code.co_name
+                                if callingfunction == "playStream":
+                                    next_url = str(self.lastviewed_url)
+                                    stream_id = str(self.lastviewed_id)
+                                    self["main_list"].setIndex(self.lastviewed_index)
+                                    self.reference = eServiceReference(int(streamtype), 0, next_url)
+                                    glob.newPlayingServiceRef = self.reference
+                                    glob.newPlayingServiceRefString = self.reference.toString()
+                                    glob.currentchannellistindex = self.lastviewed_index
+                                    self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
+
+                                else:
+                                    self.lastviewed_url = next_url
+                                    if glob.current_playlist["player_info"]["directsource"] == "Direct Source":
+                                        if direct_source:
+                                            self.lastviewed_url = direct_source
+                                    self.lastviewed_id = stream_id
+                                    self.lastviewed_index = self["main_list"].getIndex()
+
+                                for channel in self.list2:
+                                    if channel[2] == stream_id:
+                                        channel[17] = True  # set watching icon
+                                    else:
+                                        channel[17] = False
+                                self.buildLists()
+
+                                self.session.openWithCallback(self.setIndex, streamplayer.XStreamity_StreamPlayer, str(next_url), str(streamtype), str(direct_source), stream_id)
+                        else:
+                            self.session.openWithCallback(self.setIndex, streamplayer.XStreamity_StreamPlayer, str(next_url), str(streamtype), str(direct_source), stream_id)
+
+                        self["category_actions"].setEnabled(False)
+
+                    elif self.categoryname == "vod":
+                        streamtype = glob.current_playlist["player_info"]["vodtype"]
+                        next_url = self["main_list"].getCurrent()[3]
+                        direct_source = self["main_list"].getCurrent()[10]
+                        stream_id = self["main_list"].getCurrent()[4]
+
+                        self.reference = eServiceReference(int(streamtype), 0, next_url)
+                        try:
+                            if glob.current_playlist["player_info"]["directsource"] == "Direct Source":
+                                if direct_source:
+                                    self.reference = eServiceReference(int(streamtype), 0, direct_source)
+                            self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
+                            self.session.openWithCallback(self.setIndex, streamplayer.XStreamity_VodPlayer, str(next_url), str(streamtype), str(direct_source), stream_id)
+                        except Exception as e:
+                            print("********* vod crash *********", e)
+
+                    elif self.categoryname == "series":
+                        next_url = self["main_list"].getCurrent()[3]
+                        if "&action=get_series_info" in next_url:
+                            self.seasons_url = self["main_list"].getCurrent()[3]
+                        self.level += 1
+                        self["main_list"].setIndex(0)
+                        self["category_actions"].setEnabled(False)
+                        self["channel_actions"].setEnabled(True)
+                        glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self["key_yellow"].getText(), "filter": ""})
+                        self.createSetup()
+
+                    elif self.categoryname == "catchup":
+                        if self.selectedlist == self["main_list"]:
+                            self.catchupEPG()
+                            self.buttons()
+                        else:
+                            self.playCatchup()
+                else:
                     self.createSetup()
-                    return
-
-                elif self.categoryname == "catchup":
-                    if self.selectedlist == self["main_list"]:
-                        self.catchupEPG()
-                        self.buttons()
-                    else:
-                        self.playCatchup()
 
             elif self.level == 3:
                 if self.categoryname == "series":
-                    next_url = self["main_list"].getCurrent()[3]
-                    if "&action=get_series_info" in next_url:
-                        self.season_number = self["main_list"].getCurrent()[12]
-                    self.level += 1
-                    self["main_list"].setIndex(0)
-                    self["category_actions"].setEnabled(False)
-                    self["channel_actions"].setEnabled(True)
-                    glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self["key_yellow"].getText(), "filter": ""})
-                    self.createSetup()
-                    return
+                    if self.list3:
+                        next_url = self["main_list"].getCurrent()[3]
+                        if "&action=get_series_info" in next_url:
+                            self.season_number = self["main_list"].getCurrent()[12]
+                        self.level += 1
+                        self["main_list"].setIndex(0)
+                        self["category_actions"].setEnabled(False)
+                        self["channel_actions"].setEnabled(True)
+                        glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self["key_yellow"].getText(), "filter": ""})
+                        self.createSetup()
+                    else:
+                        self.createSetup()
 
             elif self.level == 4:
-                streamtype = glob.current_playlist["player_info"]["vodtype"]
-                next_url = self["main_list"].getCurrent()[3]
-                direct_source = self["main_list"].getCurrent()[18]
-                stream_id = self["main_list"].getCurrent()[4]
-                self.reference = eServiceReference(int(streamtype), 0, next_url)
-                self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
-                self.session.openWithCallback(self.setIndex, streamplayer.XStreamity_VodPlayer, str(next_url), str(streamtype), str(direct_source), stream_id)
+                if self.categoryname == "series":
+                    if self.list4:
+                        streamtype = glob.current_playlist["player_info"]["vodtype"]
+                        next_url = self["main_list"].getCurrent()[3]
+                        try:
+                            direct_source = self["main_list"].getCurrent()[18]
+                        except Exception as e:
+                            print(e)
+                            direct_source = ""
+
+                        stream_id = self["main_list"].getCurrent()[4]
+                        self.reference = eServiceReference(int(streamtype), 0, next_url)
+
+                        try:
+                            if glob.current_playlist["player_info"]["directsource"] == "Direct Source":
+                                if direct_source:
+                                    self.reference = eServiceReference(int(streamtype), 0, direct_source)
+
+                            self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
+                            self.session.openWithCallback(self.setIndex, streamplayer.XStreamity_VodPlayer, str(next_url), str(streamtype), str(direct_source), stream_id)
+                        except Exception as e:
+                            print("********* series crash *********", e)
+                            self.createSetup()
+                    else:
+                        self.createSetup()
 
     def setIndex(self):
         # print("*** set index ***")
@@ -2019,7 +2043,8 @@ class XStreamity_Categories(Screen):
         if self.categoryname == "live":
             self["epg_list"].setIndex(glob.currentchannellistindex)
         # self.selectionChanged()
-        self.buildLists()
+        self.xmltvdownloaded = False
+        self.createSetup()
 
     def back(self):
         # print("*** back ***")
@@ -2486,7 +2511,7 @@ class XStreamity_Categories(Screen):
                         self.epgshortlist = []
                         duplicatecheck = []
 
-                        if "epg_listings" in shortEPGJson:
+                        if "epg_listings" in shortEPGJson and shortEPGJson["epg_listings"]:
                             for listing in shortEPGJson["epg_listings"]:
 
                                 title = ""
@@ -3387,7 +3412,7 @@ class XStreamity_Categories(Screen):
         try:
             from Plugins.Extensions.IMDb.plugin import IMDB
             try:
-                name = str(self.searchtitle)
+                name = str(self["main_list"].getCurrent()[0])
             except:
                 name = ""
             self.session.open(IMDB, name, False)
@@ -3494,7 +3519,7 @@ class XStreamity_Categories(Screen):
                         self.epgshortlist = []
                         duplicatecheck = []
 
-                        if "epg_listings" in shortEPGJson:
+                        if "epg_listings" in shortEPGJson and shortEPGJson["epg_listings"]:
                             if shortEPGJson["epg_listings"]:
                                 for listing in shortEPGJson["epg_listings"]:
                                     if ("has_archive" in listing and listing["has_archive"] == 1) or ("now_playing" in listing and listing["now_playing"] == 1):
