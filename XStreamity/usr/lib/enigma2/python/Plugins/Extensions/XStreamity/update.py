@@ -80,7 +80,7 @@ class XStreamity_Update:
         http.mount("http://", adapter)
         http.mount("https://", adapter)
         try:
-            x = http.get(url, header=hdr, timeout=10, verify=False, stream=True)
+            x = http.get(url, headers=hdr, timeout=10, verify=False, stream=True)
             return str(x.url)
         except Exception as e:
             print(e)
