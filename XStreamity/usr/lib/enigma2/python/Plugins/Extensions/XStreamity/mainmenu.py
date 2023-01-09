@@ -4,7 +4,7 @@
 from . import _
 from . import xstreamity_globals as glob
 from . import processfiles as xfiles
-from .plugin import skin_path, common_path, version, downloads_json, pythonFull, playlists_json
+from .plugin import skin_path, common_path, version, downloads_json, pythonFull, playlists_json, playlist_file
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
