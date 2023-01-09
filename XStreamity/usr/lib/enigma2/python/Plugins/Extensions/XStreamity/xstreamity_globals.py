@@ -6,6 +6,7 @@ current_selection = 0
 current_playlist = []
 currentchannellist = None
 currentchannellistindex = 0
+currentepglist = []
 nextlist = []
 originalChannelList1 = []
 originalChannelList2 = []
