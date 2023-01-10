@@ -1139,11 +1139,11 @@ class XStreamity_Categories(Screen):
                     content = r.json()
                 except Exception as e:
                     print(e)
+                return content
 
         except Exception as e:
             print(e)
-
-        return content
+            self.session.openWithCallback(self.back, MessageBox, _("Server error or invalid link."), MessageBox.TYPE_ERROR, timeout=3)
 
     def xmltvCheckData(self):
         # print("*** xmltvCheckData ***")
@@ -1328,7 +1328,8 @@ class XStreamity_Categories(Screen):
 
             self["main_title"].setText(self.main_title + ": " + str(channeltitle))
 
-            self.clearVod()
+            if self.categoryname == "vod" or self.categoryname == "series":
+                self.clearVod()
 
             if self.level != 4:
                 self.loadBlankImage()
@@ -2046,7 +2047,7 @@ class XStreamity_Categories(Screen):
         self.xmltvdownloaded = False
         self.createSetup()
 
-    def back(self):
+    def back(self, data=None):
         # print("*** back ***")
 
         if self.categoryname != "catchup":
