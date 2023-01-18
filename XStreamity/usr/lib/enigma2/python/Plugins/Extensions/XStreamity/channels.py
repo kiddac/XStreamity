@@ -237,6 +237,26 @@ class XStreamity_Categories(Screen):
         self.sortindex = 0
         self.sortText = (_("Sort: A-Z"))
 
+        self.sortlivecategorylist = [(_("Sort: A-Z")), (_("Sort: Z-A")), (_("Sort: Original"))]
+        self.sortlcatchupcategorylist = [(_("Sort: A-Z")), (_("Sort: Z-A")), (_("Sort: Original"))]
+        self.sortlvodcateogrylist = [(_("Sort: A-Z")), (_("Sort: Z-A")), (_("Sort: Original"))]
+        self.sortlseriescategorylist = [(_("Sort: A-Z")), (_("Sort: Z-A")), (_("Sort: Original"))]
+
+        self.sortlivestreamlist = [(_("Sort: A-Z")), (_("Sort: Z-A")), (_("Sort: Added")), (_("Sort: Original"))]
+        self.sortlcatchupstreamlist = [(_("Sort: A-Z")), (_("Sort: Z-A")), (_("Sort: Added")), (_("Sort: Original"))]
+        self.sortvodstreamlist = [(_("Sort: A-Z")), (_("Sort: Z-A")), (_("Sort: Added")), (_("Sort: Year")), (_("Sort: Original"))]
+        self.sortvseriesnamelist = [(_("Sort: A-Z")), (_("Sort: Z-A")), (_("Sort: Added")), (_("Sort: Year")), (_("Sort: Original"))]
+
+        self.sortlivecategory = "original"
+        self.sortcatchupcategory = 'original'
+        self.sortvodcategory = "original"
+        self.sortseriescategory = "original"
+
+        self.sortlivestreams = "original"
+        self.sortcatchupstreams = 'original'
+        self.sortvodstreams = "original"
+        self.sortseriesnames = "original"
+
         self.storedcover = ""
 
         self.epgtimeshift = 0
@@ -302,7 +322,7 @@ class XStreamity_Categories(Screen):
         if self.categoryname == "live":
             self.setup_title = (_("Live Categories"))
             self.main_title = (_("Live Streams"))
-            nexturl = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_live_categories"
+            next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_live_categories"
 
             self["channel_actions"] = ActionMap(["XStreamityActions"], {
                 "cancel": self.back,
@@ -339,7 +359,7 @@ class XStreamity_Categories(Screen):
         elif self.categoryname == "vod":
             self.setup_title = (_("Vod Categories"))
             self.main_title = (_("Vod"))
-            nexturl = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_vod_categories"
+            next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_vod_categories"
 
             self["channel_actions"] = ActionMap(["XStreamityActions"], {
                 "cancel": self.back,
@@ -371,7 +391,7 @@ class XStreamity_Categories(Screen):
         elif self.categoryname == "series":
             self.setup_title = (_("Series Categories"))
             self.main_title = (_("Series"))
-            nexturl = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_series_categories"
+            next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_series_categories"
 
             self["channel_actions"] = ActionMap(["XStreamityActions"], {
                 "cancel": self.back,
@@ -398,7 +418,7 @@ class XStreamity_Categories(Screen):
         elif self.categoryname == "catchup":
             self.setup_title = (_("Catch Up Categories"))
             self.main_title = (_("Catch Up TV"))
-            nexturl = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_live_categories"
+            next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_live_categories"
 
             self["category_actions"] = ActionMap(["XStreamityActions"], {
                 "cancel": self.back,
@@ -437,7 +457,7 @@ class XStreamity_Categories(Screen):
             }, -1)
 
         glob.nextlist = []
-        glob.nextlist.append({"next_url": nexturl, "index": 0, "level": self.level, "sort": self.sortText, "filter": ""})
+        glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self.sortText, "filter": ""})
 
         self.PicLoad = ePicLoad()
         self.Scale = AVSwitch().getFramebufferScale()
@@ -1802,7 +1822,7 @@ class XStreamity_Categories(Screen):
             self.session.open(MessageBox, _("Incorrect pin code."), type=MessageBox.TYPE_ERROR, timeout=5)
 
         if self.pin is True:
-            glob.pintime = time.time()
+            glob.pintime = int(datetime.timestamp(datetime.now()))
             self.next()
         else:
             return
@@ -1812,13 +1832,13 @@ class XStreamity_Categories(Screen):
         self.pin = True
 
         if self.level == 1:
-            adult = _("all"), "all", "+18", "adult", "18+", "18 rated", "xxx", "sex", "porn", "pink", "blue"
+            adult = _("all"), "all", "+18", "adult", "adults", "18+", "18 rated", "xxx", "sex", "porn", "pink", "blue", "الكل", "vše", "alle", "kõik", "kaikki", "tout", "tutto", "alles", "wszystko", "todos", "všetky", "të gjitha", "sve", "allt", "hepsi", "所有"
             if any(s in str(self["main_list"].getCurrent()[0]).lower() and str(self["main_list"].getCurrent()[0]).lower() != "Allgemeines" for s in adult):
                 glob.adultChannel = True
             else:
                 glob.adultChannel = False
 
-            if cfg.adult.value is True and int(time.time()) - int(glob.pintime) > 900:
+            if cfg.adult.value is True and int(datetime.timestamp(datetime.now())) - int(glob.pintime) > 900:
                 if glob.adultChannel is True:
                     from Screens.InputBox import PinInput
                     self.session.openWithCallback(self.pinEntered, PinInput, pinList=[cfg.adultpin.value], triesEntry=cfg.retries.adultpin, title=_("Please enter the parental control pin code"), windowTitle=_("Enter pin code"))

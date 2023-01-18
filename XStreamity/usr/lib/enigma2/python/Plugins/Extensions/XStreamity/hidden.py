@@ -4,25 +4,50 @@
 from . import _
 from . import xstreamity_globals as glob
 
-from .plugin import skin_path, common_path, playlists_json
+from .plugin import skin_path, common_path, playlists_json, cfg
 from .xStaticText import StaticText
 
 from collections import OrderedDict
+from Components.config import config
 from Components.ActionMap import ActionMap
 from Components.Sources.List import List
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools.LoadPixmap import LoadPixmap
+from Screens.InputBox import PinInput
+from Tools.BoundFunction import boundFunction
 
 import json
 
 
-class XStreamity_HiddenCategories(Screen):
+class ProtectedScreen:
+    def __init__(self):
+        if self.isProtected():
+            self.onFirstExecBegin.append(boundFunction(self.session.openWithCallback, self.pinEntered, PinInput, pinList=[cfg.adultpin.value], triesEntry=cfg.retries.adultpin, title=_("Please enter the correct pin code"), windowTitle=_("Enter pin code")))
+
+    def isProtected(self):
+        return (config.plugins.XStreamity.adult.value)
+
+    def pinEntered(self, result):
+        if result is None:
+            self.closeProtectedScreen()
+        elif not result:
+            self.session.openWithCallback(self.closeProtectedScreen, MessageBox, _("The pin code you entered is wrong."), MessageBox.TYPE_ERROR)
+
+    def closeProtectedScreen(self, result=None):
+        self.close(None)
+
+
+class XStreamity_HiddenCategories(Screen, ProtectedScreen):
     ALLOW_SUSPEND = True
 
     def __init__(self, session, category_type, channellist, level=1):
 
         Screen.__init__(self, session)
+
+        if cfg.adult.getValue() is True:
+            ProtectedScreen.__init__(self)
+
         self.session = session
 
         skin = skin_path + "hidden.xml"
@@ -61,7 +86,7 @@ class XStreamity_HiddenCategories(Screen):
             "ok": self.toggleSelection,
         }, -2)
 
-        self.onFirstExecBegin.append(self.loadHidden)
+        self.loadHidden()
         self.onLayoutFinish.append(self.__layoutFinished)
 
     def __layoutFinished(self):

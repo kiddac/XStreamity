@@ -255,7 +255,11 @@ class XStreamity_DownloadManager(Screen):
             if os.path.exists(path):
                 recbytes = os.path.getsize(path)
                 if int(totalbytes) != int(recbytes):
-                    video[4] = int((recbytes / totalbytes) * 100) - 2
+                    try:
+                        video[4] = int((recbytes / totalbytes) * 100) - 2
+                    except:
+                        video[4] = 0
+
                     if video[4] < 0:
                         video[4] = 0
                     templist.append(video)
