@@ -80,7 +80,7 @@ class XStreamity_Update:
         http.mount("http://", adapter)
         http.mount("https://", adapter)
         try:
-            x = http.get(url, headers=hdr, timeout=10, verify=False, stream=True)
+            x = http.get(url, headers=hdr, timeout=30, verify=False, stream=True)
             return str(x.url)
         except Exception as e:
             print(e)
@@ -100,14 +100,18 @@ class XStreamity_Update:
         for playlist in self.playlists_all:
             if "user_info" in playlist and "auth" in playlist["user_info"] and str(playlist["user_info"]["auth"]) == "1":
                 domain = playlist["playlist_info"]["domain"]
-                name = playlist["playlist_info"]["name"]
+                # name = playlist["playlist_info"]["name"]
                 xmltv = playlist["playlist_info"]["xmltv_api"]
                 epglocation = str(cfg.epglocation.value)
                 if not epglocation.endswith("/"):
                     epglocation = epglocation + str("/")
-                epgfolder = epglocation + str(name)
+                epgfolder = epglocation + str(domain)
                 epgxmlfile = str(epgfolder) + "/" + str("epg.xml")
                 epgjsonfile = str(epgfolder) + "/" + str("epg.json")
+
+                exists = any(str(domain) == str(x[0]) for x in self.urllist)
+                if exists:
+                    continue
                 self.urllist.append([domain, xmltv, epgxmlfile, epgjsonfile])
 
                 if not os.path.exists(epgfolder):

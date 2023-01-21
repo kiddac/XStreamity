@@ -388,7 +388,7 @@ class XStreamity_Playlists(Screen):
             epglocation = str(cfg.epglocation.value)
             if not epglocation.endswith("/"):
                 epglocation = epglocation + str("/")
-            epgfolder = epglocation + str(self.currentplaylist["playlist_info"]["name"])
+            epgfolder = epglocation + str(self.currentplaylist["playlist_info"]["domain"])
 
             try:
                 shutil.rmtree(epgfolder)

@@ -287,7 +287,7 @@ class XStreamity_Categories(Screen):
         if not epglocation.endswith("/"):
             epglocation = epglocation + str("/")
 
-        self.epgfolder = epglocation + str(self.name)
+        self.epgfolder = epglocation + str(self.domain)
         self.epgjsonfile = str(self.epgfolder) + "/" + str("epg.json")
 
         self.timerVOD = eTimer()
@@ -1822,7 +1822,11 @@ class XStreamity_Categories(Screen):
             self.session.open(MessageBox, _("Incorrect pin code."), type=MessageBox.TYPE_ERROR, timeout=5)
 
         if self.pin is True:
-            glob.pintime = int(datetime.timestamp(datetime.now()))
+            if pythonVer == 2:
+                glob.pintime = int(time.mktime(datetime.now().timetuple()))
+            else:
+                glob.pintime = int(datetime.timestamp(datetime.now()))
+
             self.next()
         else:
             return
@@ -1830,6 +1834,10 @@ class XStreamity_Categories(Screen):
     def parentalCheck(self):
         # print("*** parentalCheck ***")
         self.pin = True
+        if pythonVer == 2:
+            nowtime = int(time.mktime(datetime.now().timetuple()))
+        else:
+            nowtime = int(datetime.timestamp(datetime.now()))
 
         if self.level == 1:
             adult = _("all"), "all", "+18", "adult", "adults", "18+", "18 rated", "xxx", "sex", "porn", "pink", "blue", "الكل", "vše", "alle", "kõik", "kaikki", "tout", "tutto", "alles", "wszystko", "todos", "všetky", "të gjitha", "sve", "allt", "hepsi", "所有"
@@ -1838,7 +1846,7 @@ class XStreamity_Categories(Screen):
             else:
                 glob.adultChannel = False
 
-            if cfg.adult.value is True and int(datetime.timestamp(datetime.now())) - int(glob.pintime) > 900:
+            if cfg.adult.value is True and (nowtime - int(glob.pintime) > 900):
                 if glob.adultChannel is True:
                     from Screens.InputBox import PinInput
                     self.session.openWithCallback(self.pinEntered, PinInput, pinList=[cfg.adultpin.value], triesEntry=cfg.retries.adultpin, title=_("Please enter the parental control pin code"), windowTitle=_("Enter pin code"))
@@ -2732,7 +2740,7 @@ class XStreamity_Categories(Screen):
 
         if scheme == "https" and sslverify:
             sniFactory = SNIFactory(domain)
-            downloadPage(url, tempfilename, sniFactory).addCallback(self.downloadComplete).addErrback(self.downloadFail)
+            downloadPage(url, tempfilename, sniFactory).addCallback(self.downloadComplete, tempfilename).addErrback(self.downloadFail)
         else:
             downloadPage(url, tempfilename).addCallback(self.downloadComplete, tempfilename).addErrback(self.downloadFail)
 
@@ -2742,8 +2750,7 @@ class XStreamity_Categories(Screen):
         # print("*** downloadFail ***")
         print(("[EPG] download failed:", failure))
 
-    def downloadComplete(self, data, filename):
-        # print("***** download complete ****")
+    def downloadComplete(self, data=None, filename=None):
         channellist_all = []
         with open(filename, "r+b") as f:
             try:
