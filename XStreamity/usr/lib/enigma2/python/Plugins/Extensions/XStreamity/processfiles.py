@@ -278,7 +278,6 @@ def processfiles():
                             ("epgoffset", serveroffset),
                             ("epgalternative", epgalternative),
                             ("epgalternativeurl", epgalternativeurl),
-                            
                             ("directsource", directsource),
                         ]),
 

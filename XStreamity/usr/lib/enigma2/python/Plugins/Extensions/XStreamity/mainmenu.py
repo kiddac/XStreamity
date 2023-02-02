@@ -4,7 +4,7 @@
 from . import _
 from . import xstreamity_globals as glob
 from . import processfiles as xfiles
-from .plugin import skin_path, common_path, version, downloads_json, pythonFull, playlists_json, playlist_file
+from .plugin import skin_directory, common_path, version, downloads_json, pythonFull, playlists_json, playlist_file, cfg
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -27,7 +27,9 @@ class XStreamity_MainMenu(Screen):
         Screen.__init__(self, session)
         self.session = session
 
-        skin = skin_path + "mainmenu.xml"
+        skin_path = os.path.join(skin_directory, cfg.skin.getValue())
+
+        skin = os.path.join(skin_path, "mainmenu.xml")
         with open(skin, "r") as f:
             self.skin = f.read()
 
@@ -188,14 +190,14 @@ def buildListEntry(index, title):
     png = None
 
     if index == 1:
-        png = LoadPixmap(common_path + "playlists.png")
+        png = LoadPixmap(os.path.join(common_path, "playlists.png"))
     if index == 2:
-        png = LoadPixmap(common_path + "settings.png")
+        png = LoadPixmap(os.path.join(common_path, "settings.png"))
     if index == 3:
-        png = LoadPixmap(common_path + "addplaylist.png")
+        png = LoadPixmap(os.path.join(common_path, "addplaylist.png"))
     if index == 4:
-        png = LoadPixmap(common_path + "vod_download.png")
+        png = LoadPixmap(os.path.join(common_path, "vod_download.png"))
     if index == 5:
-        png = LoadPixmap(common_path + "epg_download.png")
+        png = LoadPixmap(os.path.join(common_path, "epg_download.png"))
 
     return (index, str(title), png)

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from . import _
-from .plugin import skin_path, cfg
+from .plugin import skin_directory, cfg
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -48,10 +48,10 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
         self.session = session
 
-        skin = skin_path + "settings.xml"
-
+        skin_path = os.path.join(skin_directory, cfg.skin.getValue())
+        skin = os.path.join(skin_path, "settings.xml")
         if os.path.exists("/var/lib/dpkg/status"):
-            skin = skin_path + "DreamOS/settings.xml"
+            skin = os.path.join(skin_path, "DreamOS/settings.xml")
 
         with open(skin, "r") as f:
             self.skin = f.read()
@@ -117,7 +117,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
                 cfg.save()
                 configfile.save()
 
-                if self.org_skin != cfg.skin.getValue() or self.org_main != cfg.main.getValue() or self.org_wakeup != cfg.wakeup.getValue() or self.org_boot != cfg.boot.getValue():
+                if self.org_main != cfg.main.getValue() or self.org_wakeup != cfg.wakeup.getValue() or self.org_boot != cfg.boot.getValue():
                     self.changedFinished()
             self.clear_caches()
             self.close()

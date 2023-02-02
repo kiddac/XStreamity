@@ -3,7 +3,7 @@
 
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import skin_path, playlist_file, playlists_json
+from .plugin import skin_directory, playlist_file, playlists_json, cfg
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -30,10 +30,11 @@ class XStreamity_Settings(ConfigListScreen, Screen):
 
         self.session = session
 
-        skin = skin_path + "settings.xml"
+        skin_path = os.path.join(skin_directory, cfg.skin.getValue())
+        skin = os.path.join(skin_path, "settings.xml")
 
         if os.path.exists("/var/lib/dpkg/status"):
-            skin = skin_path + "DreamOS/settings.xml"
+            skin = os.path.join(skin_path, "DreamOS/settings.xml")
 
         with open(skin, "r") as f:
             self.skin = f.read()
@@ -236,7 +237,7 @@ class XStreamity_Settings(ConfigListScreen, Screen):
                 livetype = "4097"
 
             vodtype = self.vodTypeCfg.value
-            epgoffset = self.epgoffsetCfg.value
+            epgoffset = int(self.epgoffsetCfg.value)
 
             epgalternative = self.epgalternativeCfg.value
             epgalternativeurl = self.epgalternativeurlCfg.value

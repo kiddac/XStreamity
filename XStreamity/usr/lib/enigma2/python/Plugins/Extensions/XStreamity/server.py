@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from . import _
-from .plugin import skin_path, playlist_file, hdr
+from .plugin import skin_directory, playlist_file, hdr, cfg
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -21,10 +21,11 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
         Screen.__init__(self, session)
         self.session = session
 
-        skin = skin_path + "settings.xml"
+        skin_path = os.path.join(skin_directory, cfg.skin.getValue())
+        skin = os.path.join(skin_path, "settings.xml")
 
         if os.path.exists("/var/lib/dpkg/status"):
-            skin = skin_path + "DreamOS/settings.xml"
+            skin = os.path.join(skin_path, "DreamOS/settings.xml")
 
         with open(skin, "r") as f:
             self.skin = f.read()
@@ -220,20 +221,23 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
         valid = False
 
         r = ""
-        adapter = HTTPAdapter()
+        adapter = HTTPAdapter(max_retries=0)
         http = requests.Session()
         http.mount("http://", adapter)
         http.mount("https://", adapter)
-
+        response = ""
         try:
-            r = http.get(self.apiline, headers=hdr, timeout=15, verify=False, stream=True)
-            r.raise_for_status()
-            if r.status_code == requests.codes.ok:
-                response = r.json()
-                if "user_info" in response:
-                    if "auth" in response["user_info"]:
-                        if response["user_info"]["auth"] == 1:
-                            valid = True
+            with http.get(self.apiline, headers=hdr, timeout=15, verify=False, stream=True) as r:
+                r.raise_for_status()
+                if r.status_code == requests.codes.ok:
+                    try:
+                        response = r.json()
+                        if "user_info" in response:
+                            if "auth" in response["user_info"]:
+                                if response["user_info"]["auth"] == 1:
+                                    valid = True
+                    except Exception as e:
+                        print(e)
 
         except Exception as e:
             print(("Error Connecting: %s" % e))

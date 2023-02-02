@@ -3,7 +3,7 @@
 
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import skin_path
+from .plugin import skin_directory, cfg
 from .xStaticText import StaticText
 
 from Components.Label import Label
@@ -12,6 +12,7 @@ from datetime import datetime
 from Screens.Screen import Screen
 
 import json
+import os
 
 
 class XStreamity_UserInfo(Screen):
@@ -21,7 +22,8 @@ class XStreamity_UserInfo(Screen):
         Screen.__init__(self, session)
         self.session = session
 
-        skin = skin_path + "userinfo.xml"
+        skin_path = os.path.join(skin_directory, cfg.skin.getValue())
+        skin = os.path.join(skin_path, "userinfo.xml")
         with open(skin, "r") as f:
             self.skin = f.read()
 

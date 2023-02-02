@@ -4,7 +4,7 @@
 from . import _
 from . import xstreamity_globals as glob
 
-from .plugin import skin_path, common_path, playlists_json, cfg
+from .plugin import skin_directory, common_path, playlists_json, cfg
 from .xStaticText import StaticText
 
 from collections import OrderedDict
@@ -17,6 +17,7 @@ from Tools.LoadPixmap import LoadPixmap
 from Screens.InputBox import PinInput
 from Tools.BoundFunction import boundFunction
 
+import os
 import json
 
 
@@ -50,7 +51,8 @@ class XStreamity_HiddenCategories(Screen, ProtectedScreen):
 
         self.session = session
 
-        skin = skin_path + "hidden.xml"
+        skin_path = os.path.join(skin_directory, cfg.skin.getValue())
+        skin = os.path.join(skin_path, "hidden.xml")
         self.category_type = category_type
         self.channellist = channellist
         self.level = level
@@ -141,9 +143,9 @@ class XStreamity_HiddenCategories(Screen, ProtectedScreen):
 
     def buildListEntry(self, name, category_id, enabled):
         if enabled:
-            pixmap = LoadPixmap(cached=True, path=common_path + "lock_on.png")
+            pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "lock_on.png"))
         else:
-            pixmap = LoadPixmap(cached=True, path=common_path + "lock_off.png")
+            pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "lock_off.png"))
         return (pixmap, str(name), str(category_id), enabled)
 
     def refresh(self):

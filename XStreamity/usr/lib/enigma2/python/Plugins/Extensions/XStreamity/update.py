@@ -75,13 +75,14 @@ class XStreamity_Update:
     def checkRedirect(self, url):
         # print("*** check redirect ***")
         x = ""
-        adapter = HTTPAdapter()
+        adapter = HTTPAdapter(max_retries=0)
         http = requests.Session()
         http.mount("http://", adapter)
         http.mount("https://", adapter)
         try:
-            x = http.get(url, headers=hdr, timeout=30, verify=False, stream=True)
-            return str(x.url)
+            with http.get(url, headers=hdr, timeout=30, verify=False, stream=True) as x:
+                url = x.url
+                return str(url)
         except Exception as e:
             print(e)
             return str(url)
@@ -100,16 +101,14 @@ class XStreamity_Update:
         for playlist in self.playlists_all:
             if "user_info" in playlist and "auth" in playlist["user_info"] and str(playlist["user_info"]["auth"]) == "1":
                 domain = playlist["playlist_info"]["domain"]
-                # name = playlist["playlist_info"]["name"]
+                name = playlist["playlist_info"]["name"]
                 xmltv = playlist["playlist_info"]["xmltv_api"]
                 epglocation = str(cfg.epglocation.value)
-                if not epglocation.endswith("/"):
-                    epglocation = epglocation + str("/")
-                epgfolder = epglocation + str(domain)
-                epgxmlfile = str(epgfolder) + "/" + str("epg.xml")
-                epgjsonfile = str(epgfolder) + "/" + str("epg.json")
+                epgfolder = os.path.join(epglocation, str(name))
+                epgxmlfile = os.path.join(epgfolder, "epg.xml")
+                epgjsonfile = os.path.join(epgfolder, "epg.json")
 
-                exists = any(str(domain) == str(x[0]) for x in self.urllist)
+                exists = any(str(name) == str(x[0]) for x in self.urllist)
                 if exists:
                     continue
                 self.urllist.append([domain, xmltv, epgxmlfile, epgjsonfile])
@@ -135,6 +134,7 @@ class XStreamity_Update:
         epgxmlfile = self.urllist[0][2]
 
         url = self.checkRedirect(url)
+        time.sleep(1)
 
         try:
             parsed = urlparse(url)

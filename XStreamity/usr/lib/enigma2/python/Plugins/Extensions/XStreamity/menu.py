@@ -3,7 +3,7 @@
 
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import skin_path, hdr, common_path, playlists_json, hasConcurrent, hasMultiprocessing
+from .plugin import skin_directory, hdr, common_path, playlists_json, hasConcurrent, hasMultiprocessing, cfg
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -16,6 +16,7 @@ from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools.LoadPixmap import LoadPixmap
 
+import os
 import json
 import requests
 
@@ -27,7 +28,8 @@ class XStreamity_Menu(Screen):
         Screen.__init__(self, session)
         self.session = session
 
-        skin = skin_path + "menu.xml"
+        skin_path = os.path.join(skin_directory, cfg.skin.getValue())
+        skin = os.path.join(skin_path, "menu.xml")
         with open(skin, "r") as f:
             self.skin = f.read()
 
@@ -55,17 +57,12 @@ class XStreamity_Menu(Screen):
             "ok": self.__next__,
         }, -2)
 
-        self.protocol = glob.current_playlist["playlist_info"]["protocol"]
-        self.domain = glob.current_playlist["playlist_info"]["domain"]
-        self.host = glob.current_playlist["playlist_info"]["host"]
-        self.username = glob.current_playlist["playlist_info"]["username"]
-        self.password = glob.current_playlist["playlist_info"]["password"]
+        self.player_api = glob.current_playlist["playlist_info"]["player_api"]
 
-        self.live_streams = "%s/player_api.php?username=%s&password=%s&action=get_live_streams" % (self.host, self.username, self.password)
-        self.p_live_categories_url = "%s/player_api.php?username=%s&password=%s&action=get_live_categories" % (self.host, self.username, self.password)
-        self.p_vod_categories_url = "%s/player_api.php?username=%s&password=%s&action=get_vod_categories" % (self.host, self.username, self.password)
-        self.p_series_categories_url = "%s/player_api.php?username=%s&password=%s&action=get_series_categories" % (self.host, self.username, self.password)
-        self.p_live_streams_url = "%s/player_api.php?username=%s&password=%s&action=get_live_streams" % (self.host, self.username, self.password)
+        self.p_live_categories_url = str(self.player_api) + "&action=get_live_categories"
+        self.p_vod_categories_url = str(self.player_api) + "&action=get_vod_categories"
+        self.p_series_categories_url = str(self.player_api) + "&action=get_series_categories"
+        self.p_live_streams_url = str(self.player_api) + "&action=get_live_streams"
 
         glob.current_playlist["data"]["live_streams"] = []
 
@@ -110,15 +107,21 @@ class XStreamity_Menu(Screen):
         category = url[1]
         r = ""
 
-        adapter = HTTPAdapter()
+        adapter = HTTPAdapter(max_retries=0)
         http = requests.Session()
         http.mount("http://", adapter)
         http.mount("https://", adapter)
-
+        response = ""
         try:
-            r = http.get(url[0], headers=hdr, timeout=(10, 20), verify=False, stream=True)
-            response = r.json()
-            return category, response
+            with http.get(url[0], headers=hdr, timeout=(10, 20), verify=False, stream=True) as r:
+                r.raise_for_status()
+                if r.status_code == requests.codes.ok:
+                    try:
+                        response = r.json()
+                        return category, response
+                    except Exception as e:
+                        print(e)
+                        return category, ""
 
         except Exception as e:
             print(e)
@@ -308,13 +311,13 @@ def buildListEntry(index, title, category_id, playlisturl):
     png = None
 
     if category_id == 0:
-        png = LoadPixmap(common_path + "live.png")
+        png = LoadPixmap(os.path.join(common_path, "live.png"))
     if category_id == 1:
-        png = LoadPixmap(common_path + "vod.png")
+        png = LoadPixmap(os.path.join(common_path, "vod.png"))
     if category_id == 2:
-        png = LoadPixmap(common_path + "series.png")
+        png = LoadPixmap(os.path.join(common_path, "series.png"))
     if category_id == 3:
-        png = LoadPixmap(common_path + "catchup.png")
+        png = LoadPixmap(os.path.join(common_path, "catchup.png"))
     if category_id == 4:
-        png = LoadPixmap(common_path + "settings.png")
+        png = LoadPixmap(os.path.join(common_path, "settings.png"))
     return (index, str(title), category_id, str(playlisturl), png)

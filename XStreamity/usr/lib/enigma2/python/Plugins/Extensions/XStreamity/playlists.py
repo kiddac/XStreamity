@@ -4,7 +4,7 @@
 
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import skin_path, playlists_json, hdr, playlist_file, cfg, common_path, version, hasConcurrent, hasMultiprocessing
+from .plugin import skin_directory, playlists_json, hdr, playlist_file, cfg, common_path, version, hasConcurrent, hasMultiprocessing
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -37,7 +37,8 @@ class XStreamity_Playlists(Screen):
         Screen.__init__(self, session)
         self.session = session
 
-        skin = skin_path + "playlists.xml"
+        skin_path = os.path.join(skin_directory, cfg.skin.getValue())
+        skin = os.path.join(skin_path, "playlists.xml")
         with open(skin, "r") as f:
             self.skin = f.read()
 
@@ -138,19 +139,21 @@ class XStreamity_Playlists(Screen):
     def download_url(self, url):
         index = url[1]
         r = ""
-        adapter = HTTPAdapter()
+        adapter = HTTPAdapter(max_retries=0)
         http = requests.Session()
         http.mount("http://", adapter)
         http.mount("https://", adapter)
+        response = ""
         try:
-            r = http.get(url[0], headers=hdr, timeout=10, verify=False, stream=True)
-            r.raise_for_status()
-            if r.status_code == requests.codes.ok:
-                try:
-                    response = r.json()
-                    return index, response
-                except:
-                    return index, ""
+            with http.get(url[0], headers=hdr, timeout=10, verify=False, stream=True) as r:
+                r.raise_for_status()
+                if r.status_code == requests.codes.ok:
+                    try:
+                        response = r.json()
+                        return index, response
+                    except Exception as e:
+                        print(e)
+                        return index, ""
 
         except Exception as e:
             print(e)
@@ -336,20 +339,20 @@ class XStreamity_Playlists(Screen):
 
     def buildListEntry(self, index, name, url, expires, status, active, activenum, maxc, maxnum):
         if status == (_("Active")):
-            pixmap = LoadPixmap(cached=True, path=common_path + "led_green.png")
+            pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "led_green.png"))
 
             if int(activenum) >= int(maxnum) and int(maxnum) != 0:
-                pixmap = LoadPixmap(cached=True, path=common_path + "led_yellow.png")
+                pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "led_yellow.png"))
         if status == (_("Banned")):
-            pixmap = LoadPixmap(cached=True, path=common_path + "led_red.png")
+            pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "led_red.png"))
         if status == (_("Expired")):
-            pixmap = LoadPixmap(cached=True, path=common_path + "led_grey.png")
+            pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "led_grey.png"))
         if status == (_("Disabled")):
-            pixmap = LoadPixmap(cached=True, path=common_path + "led_grey.png")
+            pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "led_grey.png"))
         if status == (_("Server Not Responding")):
-            pixmap = LoadPixmap(cached=True, path=common_path + "led_red.png")
+            pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "led_red.png"))
         if status == (_("Not Authorised")):
-            pixmap = LoadPixmap(cached=True, path=common_path + "led_red.png")
+            pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "led_red.png"))
 
         return (index, str(name), str(url), str(expires), str(status), pixmap, str(active), str(activenum), str(maxc), str(maxnum))
 
@@ -386,9 +389,7 @@ class XStreamity_Playlists(Screen):
         else:
             self["splash"].show()
             epglocation = str(cfg.epglocation.value)
-            if not epglocation.endswith("/"):
-                epglocation = epglocation + str("/")
-            epgfolder = epglocation + str(self.currentplaylist["playlist_info"]["domain"])
+            epgfolder = os.path.join(epglocation,  str(self.currentplaylist["playlist_info"]["name"]))
 
             try:
                 shutil.rmtree(epgfolder)

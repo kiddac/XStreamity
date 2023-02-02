@@ -6,7 +6,7 @@ from __future__ import absolute_import, print_function
 from . import _
 from . import xstreamity_globals as glob
 
-from .plugin import skin_path, screenwidth, common_path, hdr, cfg, dir_tmp, pythonVer, playlists_json
+from .plugin import skin_directory, screenwidth, common_path, hdr, cfg, dir_tmp, pythonVer, playlists_json
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -191,8 +191,10 @@ class IPTVInfoBarShowHide():
     skipToggleShow = False
 
     def __init__(self):
-        self["ShowHideActions"] = ActionMap(["InfobarShowHideActions"], {
+        self["ShowHideActions"] = ActionMap(["InfobarShowHideActions", "OKCancelActions"], {
+            "ok": self.OkPressed,
             "toggleShow": self.OkPressed,
+            "cancel": self.hide,
             "hide": self.hide,
         }, 1)
 
@@ -352,6 +354,9 @@ class IPTVInfoBarPVRState:
                 cb(state_summary, speed_summary, statusicon_summary)
 
 
+skin_path = os.path.join(skin_directory, cfg.skin.getValue())
+
+
 class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSelection, InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport, InfoBarSummarySupport, InfoBarServiceErrorPopupSupport, InfoBarNotifications, IPTVInfoBarShowHide, IPTVInfoBarPVRState, Screen):
     ALLOW_SUSPEND = True
 
@@ -384,7 +389,7 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
         self.direct_source = direct_source
         self.hasStreamData = False
 
-        skin = skin_path + "streamplayer.xml"
+        skin = os.path.join(skin_path, "streamplayer.xml")
 
         self["x_description"] = StaticText()
         self["nowchannel"] = StaticText()
@@ -418,7 +423,6 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             "cancel": self.back,
             "stop": self.back,
             "red": self.back,
-
             "channelUp": self.__next__,
             "down": self.__next__,
             "channelDown": self.prev,
@@ -511,20 +515,20 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             http = requests.Session()
             http.mount("http://", adapter)
             http.mount("https://", adapter)
+            response = ""
             try:
-                r = http.get(url, headers=hdr, stream=True, timeout=(10, 20), verify=False)
-                r.raise_for_status()
-                if r.status_code == requests.codes.ok:
-                    try:
-                        response = r.json()
-                    except:
-                        response = ""
+                with http.get(url, headers=hdr, stream=True, timeout=(10, 20), verify=False) as r:
+                    r.raise_for_status()
+                    if r.status_code == requests.codes.ok:
+                        try:
+                            response = r.json()
+                        except Exception as e:
+                            print(e)
 
             except Exception as e:
                 print(e)
-                response = ""
 
-            if response != "":
+            if response:
                 shortEPGJson = response
 
                 self.epgshortlist = []
@@ -822,8 +826,8 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
     def downloadImage(self):
         self.loadBlankImage()
         try:
-            os.remove(str(dir_tmp) + "original.png")
-            os.remove(str(dir_tmp) + "temp.png")
+            os.remove(os.path.join(dir_tmp, "original.png"))
+            os.remove(os.path.join(dir_tmp, "temp.png"))
         except:
             pass
 
@@ -834,7 +838,7 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             pass
 
         if desc_image and desc_image != "n/A":
-            temp = dir_tmp + "temp.png"
+            temp = os.path.join(dir_tmp, "temp.png")
             try:
                 parsed = urlparse(desc_image)
                 domain = parsed.hostname
@@ -855,14 +859,14 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
 
     def loadBlankImage(self, data=None):
         if self["picon"].instance:
-            self["picon"].instance.setPixmapFromFile(common_path + "picon_blank.png")
+            self["picon"].instance.setPixmapFromFile(os.path.join(common_path, "picon_blank.png"))
 
     def loadDefaultImage(self, data=None):
         if self["picon"].instance:
-            self["picon"].instance.setPixmapFromFile(common_path + "picon.png")
+            self["picon"].instance.setPixmapFromFile(os.path.join(common_path, "picon.png"))
 
     def resizeImage(self, data=None):
-        original = str(dir_tmp) + "temp.png"
+        original = os.path.join(dir_tmp, "temp.png")
 
         size = [147, 88]
         if screenwidth.width() > 1280:
@@ -1051,7 +1055,7 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
         self.direct_source = direct_source
         self.stream_id = stream_id
 
-        skin = skin_path + "vodplayer.xml"
+        skin = os.path.join(skin_path, "vodplayer.xml")
 
         self["streamcat"] = StaticText()
         self["streamtype"] = StaticText()
@@ -1230,8 +1234,8 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
     def downloadImage(self):
         self.loadBlankImage()
         try:
-            os.remove(str(dir_tmp) + "original.jpg")
-            os.remove(str(dir_tmp) + "temp.jpg")
+            os.remove(os.path.join(dir_tmp, "original.jpg"))
+            os.remove(os.path.join(dir_tmp, "temp.jpg"))
         except:
             pass
 
@@ -1240,7 +1244,7 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
         desc_image = glob.currentchannellist[glob.currentchannellistindex][5]
 
         if desc_image and desc_image != "n/A":
-            temp = dir_tmp + "temp.jpg"
+            temp = os.path.join(dir_tmp, "temp.jpg")
             try:
                 parsed = urlparse(desc_image)
                 domain = parsed.hostname
@@ -1261,15 +1265,15 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
 
     def loadBlankImage(self, data=None):
         if self["cover"].instance:
-            self["cover"].instance.setPixmapFromFile(skin_path + "images/vod_blank.png")
+            self["cover"].instance.setPixmapFromFile(os.path.join(skin_path, "images/vod_blank.png"))
 
     def loadDefaultImage(self, data=None):
         if self["cover"].instance:
-            self["cover"].instance.setPixmapFromFile(skin_path + "images/vod_cover_small.png")
+            self["cover"].instance.setPixmapFromFile(os.path.join(skin_path, "images/vod_cover_small.png"))
 
     def resizeImage(self, data=None):
         if self["cover"].instance:
-            preview = str(dir_tmp) + "temp.jpg"
+            preview = os.path.join(dir_tmp, "temp.jpg")
 
             width = 147
             height = 220
@@ -1378,7 +1382,8 @@ class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAud
         self.streamurl = streamurl
         self.servicetype = servicetype
 
-        skin = skin_path + "catchupplayer.xml"
+        skin = os.path.join(skin_path, "catchupplayer.xml")
+
         self["x_description"] = StaticText()
         self["streamcat"] = StaticText()
         self["streamtype"] = StaticText()
@@ -1447,8 +1452,8 @@ class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAud
     def downloadImage(self):
         self.loadBlankImage()
         try:
-            os.remove(str(dir_tmp) + "original.png")
-            os.remove(str(dir_tmp) + "temp.png")
+            os.remove(os.path.join(dir_tmp, "original.png"))
+            os.remove(os.path.join(dir_tmp, "temp.png"))
         except:
             pass
 
@@ -1459,7 +1464,7 @@ class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAud
             desc_image = ""
 
         if desc_image and desc_image != "n/A":
-            temp = dir_tmp + "temp.png"
+            temp = os.path.join(dir_tmp, "temp.png")
             try:
                 parsed = urlparse(desc_image)
                 domain = parsed.hostname
@@ -1480,15 +1485,15 @@ class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAud
 
     def loadBlankImage(self, data=None):
         if self["picon"].instance:
-            self["picon"].instance.setPixmapFromFile(common_path + "picon_blank.png")
+            self["picon"].instance.setPixmapFromFile(os.path.join(common_path, "picon_blank.png"))
 
     def loadDefaultImage(self, data=None):
         if self["picon"].instance:
-            self["picon"].instance.setPixmapFromFile(common_path + "picon.png")
+            self["picon"].instance.setPixmapFromFile(os.path.join(common_path, "picon.png"))
 
     def resizeImage(self, data=None):
         # print("*** resizeImage ***")
-        original = str(dir_tmp) + "temp.png"
+        original = os.path.join(dir_tmp, "temp.png")
 
         size = [147, 88]
         if screenwidth.width() > 1280:
@@ -1617,7 +1622,7 @@ class XStreamityLog(Screen):
         self["key_red"] = StaticText(_("Close"))
         self["key_green"] = StaticText(_("Clear"))
         self["list"] = ScrollLabel(log.getvalue())
-        self["actions"] = ActionMap(["DirectionActions", "OkCancelActions", "ColorActions", "MenuActions"], {
+        self["actions"] = ActionMap(["XStreamityActions"], {
             "red": self.cancel,
             "green": self.clear,
             "ok": self.cancel,

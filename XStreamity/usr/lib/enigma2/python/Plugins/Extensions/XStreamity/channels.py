@@ -5,7 +5,7 @@ from . import _
 from . import streamplayer
 from . import xstreamity_globals as glob
 
-from .plugin import skin_path, screenwidth, hdr, cfg, common_path, dir_tmp, playlists_json, downloads_json, pythonVer
+from .plugin import skin_directory, screenwidth, hdr, cfg, common_path, dir_tmp, playlists_json, downloads_json, pythonVer
 from .xStaticText import StaticText
 
 from Components.AVSwitch import AVSwitch
@@ -147,9 +147,10 @@ class XStreamity_Categories(Screen):
         self.categoryname = categoryname
         glob.categoryname = categoryname
 
-        skin = skin_path + "categories.xml"
+        self.skin_path = os.path.join(skin_directory, cfg.skin.getValue())
+        skin = os.path.join(self.skin_path, "categories.xml")
         if os.path.exists("/var/lib/dpkg/status"):
-            skin = skin_path + "DreamOS/categories.xml"
+            skin = os.path.join(self.skin_path, "DreamOS/categories.xml")
 
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
@@ -276,19 +277,20 @@ class XStreamity_Categories(Screen):
         self.name = glob.current_playlist["playlist_info"]["name"]
         self.xmltv = glob.current_playlist["playlist_info"]["xmltv_api"] + str("&next_days=2")
 
+        self.player_api = glob.current_playlist["playlist_info"]["player_api"]
+
         self.liveStreamsData = []
-        self.liveStreamsUrl = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_live_streams"
-        self.simpledatatable = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_simple_data_table&stream_id="
+
+        self.liveStreamsUrl = str(self.player_api) + "&action=get_live_streams"
+        self.simpledatatable = str(self.player_api) + "&action=get_simple_data_table&stream_id="
+
         self.listType = ""
 
         self.token = "ZUp6enk4cko4ZzBKTlBMTFNxN3djd25MOHEzeU5Zak1Bdkd6S3lPTmdqSjhxeUxMSTBNOFRhUGNBMjBCVmxBTzlBPT0K"
 
         epglocation = str(cfg.epglocation.value)
-        if not epglocation.endswith("/"):
-            epglocation = epglocation + str("/")
-
-        self.epgfolder = epglocation + str(self.domain)
-        self.epgjsonfile = str(self.epgfolder) + "/" + str("epg.json")
+        self.epgfolder = os.path.join(epglocation, str(self.name))
+        self.epgjsonfile = os.path.join(self.epgfolder, "epg.json")
 
         self.timerVOD = eTimer()
         self.timerVODBusy = eTimer()
@@ -322,7 +324,7 @@ class XStreamity_Categories(Screen):
         if self.categoryname == "live":
             self.setup_title = (_("Live Categories"))
             self.main_title = (_("Live Streams"))
-            next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_live_categories"
+            next_url = str(self.player_api) + "&action=get_live_categories"
 
             self["channel_actions"] = ActionMap(["XStreamityActions"], {
                 "cancel": self.back,
@@ -359,7 +361,7 @@ class XStreamity_Categories(Screen):
         elif self.categoryname == "vod":
             self.setup_title = (_("Vod Categories"))
             self.main_title = (_("Vod"))
-            next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_vod_categories"
+            next_url = str(self.player_api) + "&action=get_vod_categories"
 
             self["channel_actions"] = ActionMap(["XStreamityActions"], {
                 "cancel": self.back,
@@ -391,7 +393,7 @@ class XStreamity_Categories(Screen):
         elif self.categoryname == "series":
             self.setup_title = (_("Series Categories"))
             self.main_title = (_("Series"))
-            next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_series_categories"
+            next_url = str(self.player_api) + "&action=get_series_categories"
 
             self["channel_actions"] = ActionMap(["XStreamityActions"], {
                 "cancel": self.back,
@@ -418,7 +420,7 @@ class XStreamity_Categories(Screen):
         elif self.categoryname == "catchup":
             self.setup_title = (_("Catch Up Categories"))
             self.main_title = (_("Catch Up TV"))
-            next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_live_categories"
+            next_url = str(self.player_api) + "&action=get_live_categories"
 
             self["category_actions"] = ActionMap(["XStreamityActions"], {
                 "cancel": self.back,
@@ -836,7 +838,7 @@ class XStreamity_Categories(Screen):
                             else:
                                 cover = cover.replace(dimensions, "w400")
 
-                    next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_series_info&series_id=" + str(series_id)
+                    next_url = str(self.player_api) + "&action=get_series_info&series_id=" + str(series_id)
 
                     self.list2.append([index, str(name), str(series_id), str(cover), str(plot), str(cast), str(director), str(genre), str(releaseDate), str(rating), str(last_modified), str(next_url), hidden])
 
@@ -1152,13 +1154,13 @@ class XStreamity_Categories(Screen):
         http.mount("http://", adapter)
         http.mount("https://", adapter)
         try:
-            r = http.get(url, headers=hdr, stream=True, timeout=(10, 30), verify=False)
-            r.raise_for_status()
-            if r.status_code == requests.codes.ok:
-                try:
-                    content = r.json()
-                except Exception as e:
-                    print(e)
+            with http.get(url, headers=hdr, stream=True, timeout=(10, 30), verify=False) as r:
+                r.raise_for_status()
+                if r.status_code == requests.codes.ok:
+                    try:
+                        content = r.json()
+                    except Exception as e:
+                        print(e)
                 return content
 
         except Exception as e:
@@ -1173,9 +1175,9 @@ class XStreamity_Categories(Screen):
 
         filepath = "/etc/epgimport/"
         filename = "xstreamity." + str(safeName) + ".sources.xml"
-        sourcepath = filepath + filename
+        sourcepath = os.path.join(filepath, filename)
         epgfilename = "xstreamity." + str(safeName) + ".channels.xml"
-        channelpath = filepath + epgfilename
+        channelpath = os.path.join(filepath, epgfilename)
 
         if not os.path.exists(sourcepath) or not os.path.exists(channelpath):
             self.downloadXMLTVdata()
@@ -1432,14 +1434,14 @@ class XStreamity_Categories(Screen):
         # print("*** downloadimage ***")
         if self["main_list"].getCurrent():
             try:
-                os.remove(str(dir_tmp) + "original.png")
-                os.remove(str(dir_tmp) + "temp.png")
+                os.remove(os.path.join(dir_tmp, "original.png"))
+                os.remove(os.path.join(dir_tmp, "temp.png"))
             except:
                 pass
 
             try:
-                os.remove(str(dir_tmp) + "original.jpg")
-                os.remove(str(dir_tmp) + "temp.jpg")
+                os.remove(os.path.join(dir_tmp, "original.jpg"))
+                os.remove(os.path.join(dir_tmp, "temp.jpg"))
             except:
                 pass
 
@@ -1458,9 +1460,9 @@ class XStreamity_Categories(Screen):
 
             if desc_image and desc_image != "n/A":
                 if self.categoryname == "live" or self.categoryname == "catchup":
-                    temp = dir_tmp + "temp.png"
+                    temp = os.path.join(dir_tmp, "temp.png")
                 elif self.categoryname == "vod" or self.categoryname == "series":
-                    temp = dir_tmp + "temp.jpg"
+                    temp = os.path.join(dir_tmp, "temp.jpg")
 
                 try:
                     parsed = urlparse(desc_image)
@@ -1483,25 +1485,25 @@ class XStreamity_Categories(Screen):
     def loadBlankImage(self, data=None):
         # print("*** loadDefaultImage ***")
         if self["picon"].instance:
-            self["picon"].instance.setPixmapFromFile(common_path + "picon_blank.png")
+            self["picon"].instance.setPixmapFromFile(os.path.join(common_path, "picon_blank.png"))
 
         if self["vod_cover"].instance:
-            self["vod_cover"].instance.setPixmapFromFile(skin_path + "images/vod_blank.png")
+            self["vod_cover"].instance.setPixmapFromFile(os.path.join(self.skin_path, "images/vod_blank.png"))
 
     def loadDefaultImage(self, data=None):
         # print("*** loadDefaultImage ***")
         if self["picon"].instance:
-            self["picon"].instance.setPixmapFromFile(common_path + "picon.png")
+            self["picon"].instance.setPixmapFromFile(os.path.join(common_path, "picon.png"))
 
         if self["vod_cover"].instance:
-            self["vod_cover"].instance.setPixmapFromFile(skin_path + "images/vod_cover.png")
+            self["vod_cover"].instance.setPixmapFromFile(os.path.join(self.skin_path, "images/vod_cover.png"))
 
     def resizeImage(self, data=None):
         # print("*** resizeImage ***")
         if self["main_list"].getCurrent():
 
             if self.categoryname == "live" or self.categoryname == "catchup":
-                original = str(dir_tmp) + "temp.png"
+                original = os.path.join(dir_tmp, "temp.png")
 
                 size = [147, 88]
                 if screenwidth.width() > 1280:
@@ -1539,7 +1541,7 @@ class XStreamity_Categories(Screen):
 
             elif self.categoryname == "vod" or self.categoryname == "series":
                 if self["vod_cover"].instance:
-                    preview = str(dir_tmp) + "temp.jpg"
+                    preview = os.path.join(dir_tmp, "temp.jpg")
 
                     width = 267
                     height = 400
@@ -1873,23 +1875,23 @@ class XStreamity_Categories(Screen):
 
                     if category_id == "0":
                         if self.categoryname == "live":
-                            next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_live_streams"
+                            next_url = str(self.player_api) + "&action=get_live_streams"
                         if self.categoryname == "vod":
-                            next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_vod_streams"
+                            next_url = str(self.player_api) + "&action=get_vod_streams"
                         if self.categoryname == "series":
-                            next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_series"
+                            next_url = str(self.player_api) + "&action=get_series"
                         if self.categoryname == "catchup":
-                            next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_live_streams"
+                            next_url = str(self.player_api) + "&action=get_live_streams"
 
                     else:
                         if self.categoryname == "live":
-                            next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_live_streams&category_id=" + str(category_id)
+                            next_url = str(self.player_api) + "&action=get_live_streams&category_id=" + str(category_id)
                         if self.categoryname == "vod":
-                            next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_vod_streams&category_id=" + str(category_id)
+                            next_url = str(self.player_api) + "&action=get_vod_streams&category_id=" + str(category_id)
                         if self.categoryname == "series":
-                            next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_series&category_id=" + str(category_id)
+                            next_url = str(self.player_api) + "&action=get_series&category_id=" + str(category_id)
                         if self.categoryname == "catchup":
-                            next_url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_live_streams&category_id=" + str(category_id)
+                            next_url = str(self.player_api) + "&action=get_live_streams&category_id=" + str(category_id)
 
                     if category_id == "-1":
                         self.favourites_category = True
@@ -2085,7 +2087,7 @@ class XStreamity_Categories(Screen):
                     return
 
                 try:
-                    os.remove(str(dir_tmp) + "liveepg.xml")
+                    os.remove(os.path.join(dir_tmp, "liveepg.xml"))
                 except:
                     pass
 
@@ -2106,9 +2108,9 @@ class XStreamity_Categories(Screen):
                 if cfg.stopstream.value:
                     self.stopStream()
 
-                levelpath = str(dir_tmp) + "level" + str(self.level) + ".json"
+                levelpath = os.path.join(dir_tmp, "level" + str(self.level) + ".json")
                 if self.categoryname == "series":
-                    levelpath = str(dir_tmp) + "level" + str(self.level) + ".xml"
+                    levelpath = os.path.join(dir_tmp, "level" + str(self.level) + ".xml")
 
                 try:
                     os.remove(levelpath)
@@ -2144,7 +2146,7 @@ class XStreamity_Categories(Screen):
 
                     self.stopStream()
 
-                    levelpath = str(dir_tmp) + "level" + str(self.level) + ".xml"
+                    levelpath = os.path.join(dir_tmp, "level" + str(self.level) + ".xml")
                     try:
                         os.remove(levelpath)
                     except:
@@ -2509,25 +2511,24 @@ class XStreamity_Categories(Screen):
                 if self.level == 2:
 
                     response = ""
-                    player_api = str(glob.current_playlist["playlist_info"]["player_api"])
                     stream_id = next_url.rpartition("/")[-1].partition(".")[0]
 
                     shortEPGJson = []
 
-                    url = str(player_api) + "&action=get_short_epg&stream_id=" + str(stream_id) + "&limit=1000"
+                    url = str(self.player_api) + "&action=get_short_epg&stream_id=" + str(stream_id) + "&limit=1000"
                     adapter = HTTPAdapter(max_retries=0)
                     http = requests.Session()
                     http.mount("http://", adapter)
                     http.mount("https://", adapter)
-
+                    response = ""
                     try:
-                        r = http.get(url, headers=hdr, stream=True, timeout=(10, 20), verify=False)
-                        r.raise_for_status()
-                        if r.status_code == requests.codes.ok:
-                            try:
-                                response = r.json()
-                            except:
-                                response = ""
+                        with http.get(url, headers=hdr, stream=True, timeout=(10, 20), verify=False) as r:
+                            r.raise_for_status()
+                            if r.status_code == requests.codes.ok:
+                                try:
+                                    response = r.json()
+                                except Exception as e:
+                                    print(e)
 
                     except Exception as e:
                         print(e)
@@ -2728,7 +2729,7 @@ class XStreamity_Categories(Screen):
         if epgimporter is False:
             return
 
-        url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_live_streams"
+        url = str(self.player_api) + "&action=get_live_streams"
         tmpfd, tempfilename = tempfile.mkstemp()
 
         parsed = urlparse(url)
@@ -2774,7 +2775,7 @@ class XStreamity_Categories(Screen):
 
         filepath = "/etc/epgimport/"
         epgfilename = "xstreamity." + str(safeName) + ".channels.xml"
-        channelpath = filepath + epgfilename
+        channelpath = os.path.join(filepath, epgfilename)
 
         # if xmltv file doesn't already exist, create file and build.
         if not os.path.isfile(channelpath):
@@ -2921,19 +2922,24 @@ class XStreamity_Categories(Screen):
         if self["main_list"].getCurrent():
             stream_id = self["main_list"].getCurrent()[4]
             url = str(glob.current_playlist["playlist_info"]["player_api"]) + "&action=get_vod_info&vod_id=" + str(stream_id)
+
             self.info = ""
 
             adapter = HTTPAdapter(max_retries=0)
             http = requests.Session()
             http.mount("http://", adapter)
             http.mount("https://", adapter)
+            content = ""
             try:
-                r = http.get(url, headers=hdr, stream=True, timeout=(10, 60), verify=False)
-                r.raise_for_status()
-                if r.status_code == requests.codes.ok:
-                    content = r.json()
+                with http.get(url, headers=hdr, stream=True, timeout=(10, 60), verify=False) as r:
+                    r.raise_for_status()
+                    if r.status_code == requests.codes.ok:
+                        try:
+                            content = r.json()
+                        except Exception as e:
+                            print(e)
 
-                if "info" in content and content["info"]:
+                if content and "info" in content and content["info"]:
                     self.info = content["info"]
 
                     if "name" not in self.info:
@@ -3041,7 +3047,7 @@ class XStreamity_Categories(Screen):
         year = ""
 
         try:
-            os.remove(str(dir_tmp) + "search.txt")
+            os.remove(os.path.join(dir_tmp, "search.txt"))
         except:
             pass
 
@@ -3167,7 +3173,7 @@ class XStreamity_Categories(Screen):
         if pythonVer == 3:
             searchurl = searchurl.encode()
 
-        filepath = str(dir_tmp) + "search.txt"
+        filepath = os.path.join(dir_tmp, "search.txt")
         try:
             downloadPage(searchurl, filepath, timeout=10).addCallback(self.processTMDB).addErrback(self.failed)
         except Exception as e:
@@ -3214,7 +3220,7 @@ class XStreamity_Categories(Screen):
         detailsurl = ""
 
         try:
-            os.remove(str(dir_tmp) + "tmdb.txt")
+            os.remove(os.path.join(dir_tmp, "tmdb.txt"))
         except:
             pass
 
@@ -3236,7 +3242,7 @@ class XStreamity_Categories(Screen):
         if pythonVer == 3:
             detailsurl = detailsurl.encode()
 
-        filepath = str(dir_tmp) + "tmdb.txt"
+        filepath = os.path.join(dir_tmp, "tmdb.txt")
         try:
             downloadPage(detailsurl, filepath, timeout=10).addCallback(self.processTMDBDetails).addErrback(self.failed)
         except Exception as e:
@@ -3527,21 +3533,20 @@ class XStreamity_Categories(Screen):
                     http = requests.Session()
                     http.mount("http://", adapter)
                     http.mount("https://", adapter)
-
+                    response = ""
                     try:
-                        r = http.get(url, headers=hdr, stream=True, timeout=(10, 60), verify=False)
-                        r.raise_for_status()
-                        if r.status_code == requests.codes.ok:
-                            try:
-                                response = r.json()
-                            except:
-                                response = ""
+                        with http.get(url, headers=hdr, stream=True, timeout=(10, 60), verify=False) as r:
+                            r.raise_for_status()
+                            if r.status_code == requests.codes.ok:
+                                try:
+                                    response = r.json()
+                                except Exception as e:
+                                    print(e)
 
                     except Exception as e:
                         print(e)
-                        response = ""
 
-                    if response != "":
+                    if response:
                         shortEPGJson = response
                         index = 0
                         self.epgshortlist = []
@@ -3637,50 +3642,50 @@ def buildShortEPGListEntry(date_all, time_all, title, description, index, start_
 
 
 def buildCategoryList(index, title, category_id, hidden):
-    png = LoadPixmap(common_path + "more.png")
+    png = LoadPixmap(os.path.join(common_path, "more.png"))
     return (title, png, index, category_id, hidden)
 
 
 def buildLiveStreamList(index, name, stream_id, stream_icon, next_url, favourite, watching, hidden, direct_source):
-    png = LoadPixmap(common_path + "play.png")
+    png = LoadPixmap(os.path.join(common_path, "play.png"))
     if favourite:
-        png = LoadPixmap(common_path + "favourite.png")
+        png = LoadPixmap(os.path.join(common_path, "favourite.png"))
     if watching:
-        png = LoadPixmap(common_path + "watching.png")
+        png = LoadPixmap(os.path.join(common_path, "watching.png"))
     return (name, png, index, next_url, stream_id, stream_icon, hidden, direct_source)
 
 
 def buildVodStreamList(index, title, stream_id, stream_icon, added, rating, next_url, favourite, container_extension, hidden, direct_source):
-    png = LoadPixmap(common_path + "play.png")
+    png = LoadPixmap(os.path.join(common_path, "play.png"))
     if favourite:
-        png = LoadPixmap(common_path + "favourite.png")
+        png = LoadPixmap(os.path.join(common_path, "favourite.png"))
     for channel in glob.current_playlist["player_info"]["vodwatched"]:
         if int(stream_id) == int(channel):
-            png = LoadPixmap(common_path + "watched.png")
+            png = LoadPixmap(os.path.join(common_path, "watched.png"))
 
     return (title, png, index, next_url, stream_id, stream_icon, added, rating, container_extension, hidden, direct_source)
 
 
 def buildSeriesTitlesList(index, title, series_id, cover, plot, cast, director, genre, releaseDate, rating, lastmodified, next_url, hidden):
-    png = LoadPixmap(common_path + "more.png")
+    png = LoadPixmap(os.path.join(common_path, "more.png"))
     return (title, png, index, next_url, series_id, cover, plot, cast, director, genre, releaseDate, rating, lastmodified, hidden)
 
 
 def buildSeriesSeasonsList(index, title, series_id, cover, plot, cast, director, genre, airDate, rating, season_number, next_url, lastmodified, hidden):
-    png = LoadPixmap(common_path + "more.png")
+    png = LoadPixmap(os.path.join(common_path, "more.png"))
     return (title, png, index, next_url, series_id, cover, plot, cast, director, genre, airDate, rating, season_number, lastmodified, hidden)
 
 
 def buildSeriesEpisodesList(index, title, series_id, cover, plot, cast, director, genre, releaseDate, rating, duration, container_extension, tmdb_id, next_url, shorttitle, lastmodified, hidden, direct_source):
-    png = LoadPixmap(common_path + "play.png")
+    png = LoadPixmap(os.path.join(common_path, "play.png"))
     for channel in glob.current_playlist["player_info"]["serieswatched"]:
         if int(series_id) == int(channel):
-            png = LoadPixmap(common_path + "watched.png")
+            png = LoadPixmap(os.path.join(common_path, "watched.png"))
     return (title, png, index, next_url, series_id, cover, plot, cast, director, genre, releaseDate, rating, duration, container_extension, tmdb_id, shorttitle, lastmodified, hidden, direct_source)
 
 
 def buildCatchupStreamList(index, title, stream_id, stream_icon, epg_channel_id, added, next_url, hidden):
-    png = LoadPixmap(common_path + "more.png")
+    png = LoadPixmap(os.path.join(common_path, "more.png"))
     return (title, png, index, next_url, stream_id, stream_icon, epg_channel_id, added, hidden)
 
 
