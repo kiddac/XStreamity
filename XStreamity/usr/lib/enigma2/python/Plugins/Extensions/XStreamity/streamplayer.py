@@ -51,7 +51,7 @@ import json
 import os
 import re
 import requests
-from requests.adapters import HTTPAdapter
+from requests.adapters import HTTPAdapter, Retry
 import base64
 import time
 
@@ -511,19 +511,20 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
 
             url = player_api + "&action=get_short_epg&stream_id=" + str(stream_id) + "&limit=2"
 
-            adapter = HTTPAdapter(max_retries=0)
+            retries = Retry(total=3, backoff_factor=1)
+            adapter = HTTPAdapter(max_retries=retries)
             http = requests.Session()
             http.mount("http://", adapter)
             http.mount("https://", adapter)
             response = ""
             try:
-                with http.get(url, headers=hdr, stream=True, timeout=(10, 20), verify=False) as r:
-                    r.raise_for_status()
-                    if r.status_code == requests.codes.ok:
-                        try:
-                            response = r.json()
-                        except Exception as e:
-                            print(e)
+                r = http.get(url, headers=hdr, timeout=(10, 20), verify=False)
+                r.raise_for_status()
+                if r.status_code == requests.codes.ok:
+                    try:
+                        response = r.json()
+                    except Exception as e:
+                        print(e)
 
             except Exception as e:
                 print(e)

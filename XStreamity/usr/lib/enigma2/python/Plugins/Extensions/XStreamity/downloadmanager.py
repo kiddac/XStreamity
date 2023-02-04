@@ -18,7 +18,7 @@ from Components.Sources.List import List
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from enigma import eTimer, eServiceReference
-from requests.adapters import HTTPAdapter
+from requests.adapters import HTTPAdapter, Retry
 
 try:
     from urlparse import urlparse
@@ -221,7 +221,8 @@ class XStreamity_DownloadManager(Screen):
         for video in self.downloads_all:
             if video[5] == 0:
                 url = video[2]
-                adapter = HTTPAdapter(max_retries=0)
+                retries = Retry(total=3, backoff_factor=1)
+                adapter = HTTPAdapter(max_retries=retries)
                 http = requests.Session()
                 http.mount("http://", adapter)
                 http.mount("https://", adapter)

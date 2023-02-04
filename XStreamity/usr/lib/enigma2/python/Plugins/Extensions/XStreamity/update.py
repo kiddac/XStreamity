@@ -5,7 +5,7 @@
 from .plugin import playlists_json, pythonVer, cfg, hdr
 from xml.etree.cElementTree import iterparse
 from twisted.web.client import downloadPage
-from requests.adapters import HTTPAdapter
+from requests.adapters import HTTPAdapter, Retry
 try:
     from urlparse import urlparse
 except:
@@ -75,14 +75,16 @@ class XStreamity_Update:
     def checkRedirect(self, url):
         # print("*** check redirect ***")
         x = ""
-        adapter = HTTPAdapter(max_retries=0)
+        retries = Retry(total=3, backoff_factor=1)
+        adapter = HTTPAdapter(max_retries=retries)
         http = requests.Session()
         http.mount("http://", adapter)
         http.mount("https://", adapter)
         try:
-            with http.get(url, headers=hdr, timeout=30, verify=False, stream=True) as x:
-                url = x.url
-                return str(url)
+            x = http.get(url, headers=hdr, timeout=30, verify=False, stream=True)
+            url = x.url
+            x.close()
+            return str(url)
         except Exception as e:
             print(e)
             return str(url)

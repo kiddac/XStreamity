@@ -24,7 +24,7 @@ from Tools.LoadPixmap import LoadPixmap
 from collections import OrderedDict
 from datetime import datetime, timedelta
 from enigma import eTimer, eServiceReference, eEPGCache, ePicLoad
-from requests.adapters import HTTPAdapter
+from requests.adapters import HTTPAdapter, Retry
 from twisted.web.client import downloadPage
 from itertools import cycle, islice
 
@@ -1149,19 +1149,20 @@ class XStreamity_Categories(Screen):
     def downloadApiData(self, url):
         # print("**** downloadApiData ****")
         content = ""
-        adapter = HTTPAdapter(max_retries=0)
+        retries = Retry(total=3, backoff_factor=1)
+        adapter = HTTPAdapter(max_retries=retries)
         http = requests.Session()
         http.mount("http://", adapter)
         http.mount("https://", adapter)
         try:
-            with http.get(url, headers=hdr, stream=True, timeout=(10, 30), verify=False) as r:
-                r.raise_for_status()
-                if r.status_code == requests.codes.ok:
-                    try:
-                        content = r.json()
-                    except Exception as e:
-                        print(e)
-                return content
+            r = http.get(url, headers=hdr, timeout=(10, 30), verify=False)
+            r.raise_for_status()
+            if r.status_code == requests.codes.ok:
+                try:
+                    content = r.json()
+                except Exception as e:
+                    print(e)
+            return content
 
         except Exception as e:
             print(e)
@@ -2516,25 +2517,26 @@ class XStreamity_Categories(Screen):
                     shortEPGJson = []
 
                     url = str(self.player_api) + "&action=get_short_epg&stream_id=" + str(stream_id) + "&limit=1000"
-                    adapter = HTTPAdapter(max_retries=0)
+                    retries = Retry(total=3, backoff_factor=1)
+                    adapter = HTTPAdapter(max_retries=retries)
                     http = requests.Session()
                     http.mount("http://", adapter)
                     http.mount("https://", adapter)
                     response = ""
                     try:
-                        with http.get(url, headers=hdr, stream=True, timeout=(10, 20), verify=False) as r:
-                            r.raise_for_status()
-                            if r.status_code == requests.codes.ok:
-                                try:
-                                    response = r.json()
-                                except Exception as e:
-                                    print(e)
+                        r = http.get(url, headers=hdr, timeout=(10, 20), verify=False)
+                        r.raise_for_status()
+                        if r.status_code == requests.codes.ok:
+                            try:
+                                response = r.json()
+                            except Exception as e:
+                                print(e)
 
                     except Exception as e:
                         print(e)
                         response = ""
 
-                    if response != "":
+                    if response:
                         shortEPGJson = response
                         index = 0
 
@@ -2925,19 +2927,20 @@ class XStreamity_Categories(Screen):
 
             self.info = ""
 
-            adapter = HTTPAdapter(max_retries=0)
+            retries = Retry(total=3, backoff_factor=1)
+            adapter = HTTPAdapter(max_retries=retries)
             http = requests.Session()
             http.mount("http://", adapter)
             http.mount("https://", adapter)
             content = ""
             try:
-                with http.get(url, headers=hdr, stream=True, timeout=(10, 60), verify=False) as r:
-                    r.raise_for_status()
-                    if r.status_code == requests.codes.ok:
-                        try:
-                            content = r.json()
-                        except Exception as e:
-                            print(e)
+                r = http.get(url, headers=hdr, timeout=(10, 60), verify=False)
+                r.raise_for_status()
+                if r.status_code == requests.codes.ok:
+                    try:
+                        content = r.json()
+                    except Exception as e:
+                        print(e)
 
                 if content and "info" in content and content["info"]:
                     self.info = content["info"]
@@ -3529,19 +3532,20 @@ class XStreamity_Categories(Screen):
 
                     url = str(self.simpledatatable) + str(stream_id)
 
-                    adapter = HTTPAdapter(max_retries=0)
+                    retries = Retry(total=3, backoff_factor=1)
+                    adapter = HTTPAdapter(max_retries=retries)
                     http = requests.Session()
                     http.mount("http://", adapter)
                     http.mount("https://", adapter)
                     response = ""
                     try:
-                        with http.get(url, headers=hdr, stream=True, timeout=(10, 60), verify=False) as r:
-                            r.raise_for_status()
-                            if r.status_code == requests.codes.ok:
-                                try:
-                                    response = r.json()
-                                except Exception as e:
-                                    print(e)
+                        r = http.get(url, headers=hdr, timeout=(10, 60), verify=False)
+                        r.raise_for_status()
+                        if r.status_code == requests.codes.ok:
+                            try:
+                                response = r.json()
+                            except Exception as e:
+                                print(e)
 
                     except Exception as e:
                         print(e)

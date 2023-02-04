@@ -10,10 +10,12 @@ from Components.ConfigList import ConfigListScreen
 from Components.config import getConfigListEntry, NoSave, ConfigText, ConfigSelection, ConfigNumber, ConfigYesNo, ConfigEnableDisable
 from Components.Pixmap import Pixmap
 from Screens.MessageBox import MessageBox
+from requests.adapters import HTTPAdapter, Retry
 from Screens.Screen import Screen
 
 import os
 import shutil
+import requests
 
 
 class XStreamity_AddServer(ConfigListScreen, Screen):
@@ -46,11 +48,6 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
         self["HelpWindow"].hide()
 
         self.protocol = "http://"
-        self.server = "domain.xyz"
-        self.port = ""
-        self.username = "username"
-        self.password = "password"
-        self.listType = "m3u"
         self.output = "ts"
 
         self["actions"] = ActionMap(["XStreamityActions"], {
@@ -215,29 +212,28 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
             pass
 
     def checkline(self):
-        import requests
-        from requests.adapters import HTTPAdapter
-
         valid = False
 
         r = ""
-        adapter = HTTPAdapter(max_retries=0)
+        retries = Retry(total=3, backoff_factor=1)
+        adapter = HTTPAdapter(max_retries=retries)
         http = requests.Session()
         http.mount("http://", adapter)
         http.mount("https://", adapter)
         response = ""
         try:
-            with http.get(self.apiline, headers=hdr, timeout=15, verify=False, stream=True) as r:
-                r.raise_for_status()
-                if r.status_code == requests.codes.ok:
-                    try:
-                        response = r.json()
-                        if "user_info" in response:
-                            if "auth" in response["user_info"]:
-                                if response["user_info"]["auth"] == 1:
-                                    valid = True
-                    except Exception as e:
-                        print(e)
+            r = http.get(self.apiline, headers=hdr, timeout=15, verify=False, stream=True)
+            r.raise_for_status()
+            if r.status_code == requests.codes.ok:
+                try:
+                    response = r.json()
+                    if "user_info" in response:
+                        if "auth" in response["user_info"]:
+                            if response["user_info"]["auth"] == 1:
+                                valid = True
+                    r.close()
+                except Exception as e:
+                    print(e)
 
         except Exception as e:
             print(("Error Connecting: %s" % e))

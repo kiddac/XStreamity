@@ -11,7 +11,7 @@ from Components.Pixmap import Pixmap
 from Components.Sources.List import List
 from datetime import datetime
 from enigma import eTimer
-from requests.adapters import HTTPAdapter
+from requests.adapters import HTTPAdapter, Retry
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools.LoadPixmap import LoadPixmap
@@ -107,21 +107,22 @@ class XStreamity_Menu(Screen):
         category = url[1]
         r = ""
 
-        adapter = HTTPAdapter(max_retries=0)
+        retries = Retry(total=3, backoff_factor=1)
+        adapter = HTTPAdapter(max_retries=retries)
         http = requests.Session()
         http.mount("http://", adapter)
         http.mount("https://", adapter)
         response = ""
         try:
-            with http.get(url[0], headers=hdr, timeout=(10, 20), verify=False, stream=True) as r:
-                r.raise_for_status()
-                if r.status_code == requests.codes.ok:
-                    try:
-                        response = r.json()
-                        return category, response
-                    except Exception as e:
-                        print(e)
-                        return category, ""
+            r = http.get(url[0], headers=hdr, timeout=(10, 20), verify=False)
+            r.raise_for_status()
+            if r.status_code == requests.codes.ok:
+                try:
+                    response = r.json()
+                    return category, response
+                except Exception as e:
+                    print(e)
+                    return category, ""
 
         except Exception as e:
             print(e)
