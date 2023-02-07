@@ -46,7 +46,7 @@
 	<widget source="x_title" render="Label" position="525,102" size="1215,42" font="xstreamitybold;30" foregroundColor="#ffffff" backgroundColor="#26242b34" halign="left" noWrap="1" transparent="1" zPosition="2" />
 	<widget source="x_description" render="XStreamityRunningText" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" position="525,165" size="1335,120" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#26242b34" halign="left" transparent="1" zPosition="2" />
 
-	<widget source="epg_list" render="Listbox" position="480,300" size="1440,720" foregroundColor="#ffffff" backgroundColor="#26242b34" foregroundColorSelected="#ffffff" backgroundColorSelected="#1a000000" scrollbarMode="showNever"
+	<widget source="epg_list" render="Listbox" position="480,300" size="1440,720" foregroundColor="#ffffff" backgroundColor="#26242b34" foregroundColorSelected="#ffffff" backgroundColorSelected="#1a000000" scrollbarMode="showOnDemand"
 			itemHeight="72" enableWrapAround="1" transparent="1" zPosition="3" >
 		<convert type="TemplatedMultiContent">{"template": [
 			MultiContentEntryText(pos = (45, 0), size = (90, 72), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 2),
@@ -56,7 +56,7 @@
 			],
 			"fonts": [gFont("xstreamityregular", 27)],
 			"itemHeight": 72,
-			"scrollbarMode": "showNever"
+			"scrollbarMode": "showOnDemand"
 			}</convert>
 	</widget>
 

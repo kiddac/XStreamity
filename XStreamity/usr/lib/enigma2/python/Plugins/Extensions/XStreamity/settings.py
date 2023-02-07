@@ -134,7 +134,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
     def initConfig(self):
         # print("*** init config ***")
-        self.cfg_skin = getConfigListEntry(_("Select skin *Restart GUI Required"), cfg.skin)
+        self.cfg_skin = getConfigListEntry(_("Select skin"), cfg.skin)
         self.cfg_location = getConfigListEntry(_("playlists.txt location"), cfg.location)
         self.cfg_epglocation = getConfigListEntry(_("EPG download location"), cfg.epglocation)
         self.cfg_downloadlocation = getConfigListEntry(_("VOD download folder"), cfg.downloadlocation)
@@ -168,7 +168,6 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
         self.cfg_boot = getConfigListEntry(_("Auto start XStreamity on boot *Restart GUI Required"), cfg.boot)
 
-        self.org_skin = cfg.skin.getValue()
         self.org_main = cfg.main.getValue()
         self.org_wakeup = cfg.wakeup.getValue()
         self.org_boot = cfg.boot.getValue()

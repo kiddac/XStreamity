@@ -25,7 +25,7 @@
 	<widget source="x_description" render="XStreamityRunningText" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" position="90,174" size="1217,165" font="slykregular;36" foregroundColor="#ffffff" backgroundColor="#1d68ac" valign="top" transparent="1" zPosition="1"/>
 	<widget source="page" render="Label" position="165,400" size="219,60" font="slykregular;24" foregroundColor="#ffffff" backgroundColor="#133171" valign="center" transparent="1" noWrap="1" zPosition="2"/>
 	<widget source="listposition" render="Label" position="432,400" size="165,60" font="slykregular;24" foregroundColor="#ffffff" backgroundColor="#133171" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
-	<widget source="epg_list" render="Listbox" position="630,452" size="1140,540" foregroundColor="#ffffff" backgroundColor="#1c5791" foregroundColorSelected="#133171" backgroundColorSelected="#f2d320" scrollbarMode="showNever" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/menu-bar-54.png" backgroundPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/blank.png" itemHeight="54" enableWrapAround="1" transparent="1" zPosition="3">
+	<widget source="epg_list" render="Listbox" position="630,452" size="1140,540" foregroundColor="#ffffff" backgroundColor="#1c5791" foregroundColorSelected="#133171" backgroundColorSelected="#f2d320" scrollbarMode="showOnDemand" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/menu-bar-54.png" backgroundPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/blank.png" itemHeight="54" enableWrapAround="1" transparent="1" zPosition="3">
 		<convert type="TemplatedMultiContent">{"template": [
 			MultiContentEntryText(pos = (15, 0), size = (90, 54), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 2),
 			MultiContentEntryText(pos = (105, 0), size = (450, 54), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 3),
@@ -34,7 +34,7 @@
 			],
 			"fonts": [gFont("slykregular", 27)],
 			"itemHeight": 54,
-			"scrollbarMode": "showNever"
+			"scrollbarMode": "showOnDemand"
 			}</convert>
 	</widget>
 	<widget source="epg_short_list" render="Listbox" position="630,452" size="1140,540" foregroundColor="#ffffff" backgroundColor="#1c5791" foregroundColorSelected="#133171" backgroundColorSelected="#f2d320" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/menu-bar-54.png" backgroundPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/blank.png" scrollbarMode="showOnDemand" scrollbarSliderBorderWidth="1" scrollbarWidth="6" enableWrapAround="1" itemHeight="54" transparent="1" zPosition="4">

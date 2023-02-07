@@ -2516,7 +2516,8 @@ class XStreamity_Categories(Screen):
 
                     shortEPGJson = []
 
-                    url = str(self.player_api) + "&action=get_short_epg&stream_id=" + str(stream_id) + "&limit=1000"
+                    # url = str(self.player_api) + "&action=get_short_epg&stream_id=" + str(stream_id) + "&limit=1000"
+                    url = str(self.player_api) + "&action=get_simple_data_table&stream_id=" + str(stream_id)
                     retries = Retry(total=3, backoff_factor=1)
                     adapter = HTTPAdapter(max_retries=retries)
                     http = requests.Session()
@@ -2539,6 +2540,7 @@ class XStreamity_Categories(Screen):
                     if response:
                         shortEPGJson = response
                         index = 0
+                        now = datetime.now()
 
                         self.epgshortlist = []
                         duplicatecheck = []
@@ -2581,7 +2583,7 @@ class XStreamity_Categories(Screen):
 
                                     epg_date_all = start_datetime.strftime("%a %d/%m")
                                     epg_time_all = str(start_datetime.strftime("%H:%M")) + " - " + str(end_datetime.strftime("%H:%M"))
-                                    if [epg_date_all, epg_time_all] not in duplicatecheck:
+                                    if [epg_date_all, epg_time_all] not in duplicatecheck and end_datetime >= now:
                                         duplicatecheck.append([epg_date_all, epg_time_all])
                                         self.epgshortlist.append(buildShortEPGListEntry(str(epg_date_all), str(epg_time_all), str(title), str(description), index, start_datetime, end_datetime))
 

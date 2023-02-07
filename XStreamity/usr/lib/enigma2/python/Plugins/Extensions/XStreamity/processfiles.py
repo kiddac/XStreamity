@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 
 from .plugin import playlists_json, playlist_file, cfg
 from collections import OrderedDict
@@ -148,84 +150,84 @@ def processfiles():
                 playlist_exists = False
 
                 if playlists_all:
-                    for playlists in playlists_all:
+                    for playlist in playlists_all:
 
                         # extra check in case playlists.txt details have been amended
-                        if "domain" in playlists["playlist_info"] and "username" in playlists["playlist_info"] and "password" in playlists["playlist_info"]:
-                            if playlists["playlist_info"]["domain"] == domain and playlists["playlist_info"]["username"] == username and playlists["playlist_info"]["password"] == password:
+                        if "domain" in playlist["playlist_info"] and "username" in playlist["playlist_info"] and "password" in playlist["playlist_info"]:
+                            if playlist["playlist_info"]["domain"] == domain and playlist["playlist_info"]["username"] == username and playlist["playlist_info"]["password"] == password:
 
                                 playlist_exists = True
 
-                                if "channelshidden" not in playlists["player_info"]:
-                                    playlists["player_info"]["channelshidden"] = channelshidden
+                                if "channelshidden" not in playlist["player_info"]:
+                                    playlist["player_info"]["channelshidden"] = channelshidden
 
-                                if "vodstreamshidden" not in playlists["player_info"]:
-                                    playlists["player_info"]["vodstreamshidden"] = vodstreamshidden
+                                if "vodstreamshidden" not in playlist["player_info"]:
+                                    playlist["player_info"]["vodstreamshidden"] = vodstreamshidden
 
-                                if "seriestitleshidden" not in playlists["player_info"]:
-                                    playlists["player_info"]["seriestitleshidden"] = seriestitleshidden
+                                if "seriestitleshidden" not in playlist["player_info"]:
+                                    playlist["player_info"]["seriestitleshidden"] = seriestitleshidden
 
-                                if "seriesseasonshidden" not in playlists["player_info"]:
-                                    playlists["player_info"]["seriesseasonshidden"] = seriesseasonshidden
+                                if "seriesseasonshidden" not in playlist["player_info"]:
+                                    playlist["player_info"]["seriesseasonshidden"] = seriesseasonshidden
 
-                                if "seriesepisodeshidden" not in playlists["player_info"]:
-                                    playlists["player_info"]["seriesepisodeshidden"] = seriesepisodeshidden
+                                if "seriesepisodeshidden" not in playlist["player_info"]:
+                                    playlist["player_info"]["seriesepisodeshidden"] = seriesepisodeshidden
 
-                                if "catchuphidden" not in playlists["player_info"]:
-                                    playlists["player_info"]["catchuphidden"] = catchuphidden
+                                if "catchuphidden" not in playlist["player_info"]:
+                                    playlist["player_info"]["catchuphidden"] = catchuphidden
 
-                                if "catchupchannelshidden" not in playlists["player_info"]:
-                                    playlists["player_info"]["catchupchannelshidden"] = catchupchannelshidden
+                                if "catchupchannelshidden" not in playlist["player_info"]:
+                                    playlist["player_info"]["catchupchannelshidden"] = catchupchannelshidden
 
-                                if "serveroffset" not in playlists["player_info"]:
-                                    playlists["player_info"]["serveroffset"] = serveroffset
+                                if "serveroffset" not in playlist["player_info"]:
+                                    playlist["player_info"]["serveroffset"] = serveroffset
 
-                                if "epgoffset" not in playlists["player_info"]:
-                                    playlists["player_info"]["epgoffset"] = epgoffset
+                                if "epgoffset" not in playlist["player_info"]:
+                                    playlist["player_info"]["epgoffset"] = epgoffset
 
-                                if "live_streams" not in playlists["data"]:
-                                    playlists["data"]["live_streams"] = live_streams
+                                if "live_streams" not in playlist["data"]:
+                                    playlist["data"]["live_streams"] = live_streams
 
-                                if "catchup_checked" not in playlists["data"]:
-                                    playlists["data"]["catchup_checked"] = catchup_checked
+                                if "catchup_checked" not in playlist["data"]:
+                                    playlist["data"]["catchup_checked"] = catchup_checked
 
-                                if "last_check" not in playlists["data"]:
-                                    playlists["data"]["last_check"] = last_check
+                                if "last_check" not in playlist["data"]:
+                                    playlist["data"]["last_check"] = last_check
 
-                                if "epgalternative" not in playlists["player_info"]:
-                                    playlists["player_info"]["epgalternative"] = epgalternative
+                                if "epgalternative" not in playlist["player_info"]:
+                                    playlist["player_info"]["epgalternative"] = epgalternative
 
-                                if "epgalternativeurl" not in playlists["player_info"]:
-                                    playlists["player_info"]["epgalternativeurl"] = epgalternativeurl
+                                if "epgalternativeurl" not in playlist["player_info"]:
+                                    playlist["player_info"]["epgalternativeurl"] = epgalternativeurl
 
-                                if "liverecents" not in playlists["player_info"]:
-                                    playlists["player_info"]["liverecents"] = liverecents
+                                if "liverecents" not in playlist["player_info"]:
+                                    playlist["player_info"]["liverecents"] = liverecents
 
-                                if "vodrecents" not in playlists["player_info"]:
-                                    playlists["player_info"]["vodrecents"] = vodrecents
+                                if "vodrecents" not in playlist["player_info"]:
+                                    playlist["player_info"]["vodrecents"] = vodrecents
 
-                                if "vodwatched" not in playlists["player_info"]:
-                                    playlists["player_info"]["vodwatched"] = vodwatched
+                                if "vodwatched" not in playlist["player_info"]:
+                                    playlist["player_info"]["vodwatched"] = vodwatched
 
-                                if "serieswatched" not in playlists["player_info"]:
-                                    playlists["player_info"]["serieswatched"] = serieswatched
+                                if "serieswatched" not in playlist["player_info"]:
+                                    playlist["player_info"]["serieswatched"] = serieswatched
 
-                                if "directsource" not in playlists["player_info"]:
-                                    playlists["player_info"]["directsource"] = directsource
+                                if "directsource" not in playlist["player_info"]:
+                                    playlist["player_info"]["directsource"] = directsource
 
-                                playlists["playlist_info"]["name"] = name
-                                playlists["playlist_info"]["type"] = type
-                                playlists["playlist_info"]["output"] = output
-                                playlists["playlist_info"]["full_url"] = full_url  # get.php
-                                playlists["playlist_info"]["index"] = index
-                                playlists["data"]["data_downloaded"] = False
-                                playlists["player_info"]["epgoffset"] = epgoffset
+                                playlist["playlist_info"]["name"] = name
+                                playlist["playlist_info"]["type"] = type
+                                playlist["playlist_info"]["output"] = output
+                                playlist["playlist_info"]["full_url"] = full_url  # get.php
+                                playlist["playlist_info"]["index"] = index
+                                playlist["data"]["data_downloaded"] = False
+                                playlist["player_info"]["epgoffset"] = epgoffset
 
-                                if playlists["player_info"]["epgalternative"] is True:
-                                    if playlists["player_info"]["epgalternativeurl"]:
-                                        playlists["playlist_info"]["xmltv_api"] = playlists["player_info"]["epgalternativeurl"]
+                                if playlist["player_info"]["epgalternative"] is True:
+                                    if playlist["player_info"]["epgalternativeurl"]:
+                                        playlist["playlist_info"]["xmltv_api"] = playlist["player_info"]["epgalternativeurl"]
                                 else:
-                                    playlists["playlist_info"]["xmltv_api"] = xmltv_api
+                                    playlist["playlist_info"]["xmltv_api"] = xmltv_api
                                 index += 1
                                 break
 
@@ -298,17 +300,17 @@ def processfiles():
                     index += 1
 
         # remove old playlists from x-playlists.json
-        if playlists_all:
-            newList = []
 
-            for playlist in playlists_all:
-                for line in lines:
-                    if not line.startswith("#"):
-                        if str(playlist["playlist_info"]["domain"]) in line and "username=" + str(playlist["playlist_info"]["username"]) in line and "password=" + str(playlist["playlist_info"]["password"]) in line:
-                            newList.append(playlist)
-                            break
+        newList = []
 
-            playlists_all = newList
+        for playlist in playlists_all:
+            for line in lines:
+                if not line.startswith("#"):
+                    if str(playlist["playlist_info"]["domain"]) in line and "username=" + str(playlist["playlist_info"]["username"]) in line and "password=" + str(playlist["playlist_info"]["password"]) in line:
+                        newList.append(playlist)
+                        break
+
+        playlists_all = newList
 
     # write new x-playlists.json file
     with open(playlists_json, "w") as f:

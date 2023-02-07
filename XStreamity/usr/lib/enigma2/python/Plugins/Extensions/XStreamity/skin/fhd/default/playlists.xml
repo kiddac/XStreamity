@@ -8,7 +8,7 @@
 	<widget source="version" render="Label" position="center, 150" size="1920,27" font="xstreamityregular;18" foregroundColor="#ffffff" backgroundColor="#2a70a4" halign="center" valign="center" transparent="1" /> 
 	<widget source="Title" render="Label" position="center,210" size="1920,70" foregroundColor="#ffffff" backgroundColor="#2a70a4" halign="center" font="xstreamityregular;48" transparent="1" />
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/panel-mid.png" position="center,300" size="984,660" alphatest="blend" zPosition="1" />
-	<widget source="playlists" render="Listbox" position="center,330" size="924,600" foregroundColor="#ffffff" backgroundColor="#2a70a4" foregroundColorSelected="#ffffff" backgroundColorSelected="#296fa3" itemHeight="120" scrollbarMode="showNever" enableWrapAround="1" transparent="1" zPosition="2">
+	<widget source="playlists" render="Listbox" position="center,330" size="924,600" foregroundColor="#ffffff" backgroundColor="#2a70a4" foregroundColorSelected="#ffffff" backgroundColorSelected="#296fa3" itemHeight="120" scrollbarMode="showOnDemand" enableWrapAround="1" transparent="1" zPosition="2">
 		<convert type="TemplatedMultiContent">
 			{"template": [
 			<!-- name -->
@@ -37,7 +37,7 @@
 			],
 			"fonts": [gFont("xstreamityregular", 30), gFont("xstreamityregular", 21)],
 			"itemHeight": 120,
-			"scrollbarMode": "showNever"
+			"scrollbarMode": "showOnDemand"
 			}
 		</convert>
 	</widget>

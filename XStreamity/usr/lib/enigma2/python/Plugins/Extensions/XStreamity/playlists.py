@@ -166,56 +166,45 @@ class XStreamity_Playlists(Screen):
         if threads > 10:
             threads = 10
 
-        if hasConcurrent:
-            print("******* trying concurrent futures ******")
-            try:
-                from concurrent.futures import ThreadPoolExecutor
-                executor = ThreadPoolExecutor(max_workers=threads)
+        if hasConcurrent or hasMultiprocessing:
+            if hasConcurrent:
+                print("******* trying concurrent futures ******")
+                try:
+                    from concurrent.futures import ThreadPoolExecutor
+                    executor = ThreadPoolExecutor(max_workers=threads)
 
-                with executor:
-                    results = executor.map(self.download_url, self.url_list)
-                for index, response in results:
-                    if response:
-                        self.playlists_all[index].update(response)
-                    else:
-                        self.playlists_all[index]["user_info"] = []
+                    with executor:
+                        results = executor.map(self.download_url, self.url_list)
+                except Exception as e:
+                    print(e)
 
-                self.buildPlaylistList()
-                return
+            if hasMultiprocessing:
+                print("********** trying multiprocessing threadpool *******")
+                try:
+                    from multiprocessing.pool import ThreadPool
+                    pool = ThreadPool(5)
+                    results = pool.imap_unordered(self.download_url, self.url_list)
+                    pool.close()
+                    pool.join()
+                except Exception as e:
+                    print(e)
 
-            except Exception as e:
-                print(e)
+            for index, response in results:
+                if response:
+                    self.playlists_all[index].update(response)
+                else:
+                    self.playlists_all[index]["user_info"] = []
 
-        if hasMultiprocessing:
-            print("********** trying multiprocessing threadpool *******")
-            try:
-                from multiprocessing.pool import ThreadPool
-                pool = ThreadPool(5)
-                results = pool.imap_unordered(self.download_url, self.url_list)
-                pool.close()
-                pool.join()
-
-                for index, response in results:
-                    if response:
-                        self.playlists_all[index].update(response)
-                    else:
-                        self.playlists_all[index]["user_info"] = []
-
-                self.buildPlaylistList()
-                return
-
-            except Exception as e:
-                print(e)
-
-        print("********** trying sequential download *******")
-        for url in self.url_list:
-            result = self.download_url(url)
-            index = result[0]
-            response = result[1]
-            if response:
-                self.playlists_all[index].update(response)
-            else:
-                self.playlists_all[index]["user_info"] = []
+        else:
+            print("********** trying sequential download *******")
+            for url in self.url_list:
+                result = self.download_url(url)
+                index = result[0]
+                response = result[1]
+                if response:
+                    self.playlists_all[index].update(response)
+                else:
+                    self.playlists_all[index]["user_info"] = []
 
         self.buildPlaylistList()
 
@@ -441,15 +430,8 @@ class XStreamity_Playlists(Screen):
         # print("*** epgimportcleanup ***")
 
         channelfilelist = []
-        oldsourcefiles = pythonglob.glob("/etc/epgimport/xstreamity.*.sources.xml")
-        oldchannelfiles = pythonglob.glob("/etc/epgimport/xstreamity.*.channels.xml")
 
-        # delete old xmltv source files
-        for filePath in oldsourcefiles:
-            try:
-                os.remove(filePath)
-            except:
-                print("Error while deleting file : ", filePath)
+        oldchannelfiles = pythonglob.glob("/etc/epgimport/xstreamity.*.channels.xml")
 
         with open(playlists_json, "r") as f:
             self.playlists_all = json.load(f)
