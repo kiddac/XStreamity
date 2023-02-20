@@ -44,7 +44,9 @@ dir_etc = "/etc/enigma2/xstreamity/"
 dir_tmp = "/tmp/xstreamity/"
 dir_plugins = "/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/"
 
-if screenwidth.width() > 1280:
+if screenwidth.width() == 2560:
+    skin_directory = os.path.join(dir_plugins, "skin/uhd/")
+elif screenwidth.width() > 1280:
     skin_directory = os.path.join(dir_plugins, "skin/fhd/")
 else:
     skin_directory = os.path.join(dir_plugins, "skin/hd/")

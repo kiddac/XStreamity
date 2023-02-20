@@ -1,0 +1,39 @@
+<screen name="XStreamityMenu" position="0,0" size="2560,1440" backgroundColor="#2a70a4" flags="wfNoBorder">
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/default/images/background.png" alphatest="off" position="0,0" size="2560,1440" zPosition="-1" />
+	<widget name="splash" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/default/images/splash.png" alphatest="off" position="0,0" size="2560,1440" zPosition="1000" />
+	<widget source="global.CurrentTime" render="Label" position="1987,0" size="534,80" font="xstreamityregular;36" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1">
+		<convert type="ClockToText">Format:%H:%M | %A %-d %b</convert>
+	</widget>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/logo.png" position="center,80" size="267,194" alphatest="blend" zPosition="1" />
+	<widget source="Title" render="Label" position="center,280" size="2560,94" foregroundColor="#ffffff" backgroundColor="#2a70a4" halign="center" font="xstreamityregular;64" transparent="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/panel-mid.png" position="center,400" size="1312,880" alphatest="blend" zPosition="1" />
+	<widget source="list" render="Listbox" position="center,440" size="1232,800" foregroundColor="#ffffff" backgroundColor="#2a70a4" foregroundColorSelected="#ffffff" backgroundColorSelected="#296fa3" itemHeight="160" scrollbarMode="showOnDemand" enableWrapAround="1" transparent="1" zPosition="2">
+		<convert type="TemplatedMultiContent">{"template": [
+			MultiContentEntryPixmapAlphaBlend(pos=(40, 27), size=(163, 107), png = 4),
+			MultiContentEntryText(pos=(252, 0), size=(900, 160), font=0, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1),
+			],
+			"fonts": [gFont("xstreamityregular", 64)],
+			"itemHeight": 160,
+			"scrollbarMode": "showOnDemand"
+			}</convert>
+	</widget>
+	
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/divider.png" position="center,598" size="1232,6" alphatest="blend" zPosition="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/divider.png" position="center,758" size="1232,6" alphatest="blend" zPosition="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/divider.png" position="center,918" size="1232,6" alphatest="blend" zPosition="1" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/divider.png" position="center,1078" size="1232,6" alphatest="blend" zPosition="1" />
+	
+	<widget source="lastchecked" render="Label" position="center,1300" size="984,40" font="xstreamityregular;28" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" halign="center" transparent="1" noWrap="1" zPosition="2" />
+	 
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/button-bg.png" position="0,1360" size="2560,80" alphatest="blend" zPosition="1" />
+	
+	<widget source="key_red" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/key_red.png" position="680,1375" size="51,51" alphatest="blend" zPosition="2" />
+	<widget source="key_red" render="Label" position="762,1360" size="220,80" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="2" />
+	
+	<widget source="key_green" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/key_green.png" position="1048,1375" size="51,51" alphatest="blend" zPosition="2" />
+	<widget source="key_green" render="Label" position="1116,1360" size="220,80" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="2" />
+
+	<widget source="key_blue" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/key_blue.png" position="1784,1375" size="51,51" alphatest="blend" zPosition="2" />
+	<widget source="key_blue" render="Label" position="1852,1360" size="220,80" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="2" />
+
+</screen>

@@ -136,79 +136,62 @@ class XStreamity_Menu(Screen):
 
         threads = len(self.url_list)
 
-        if hasConcurrent:
-            print("******* trying concurrent futures ******")
-            try:
-                from concurrent.futures import ThreadPoolExecutor
-                executor = ThreadPoolExecutor(max_workers=threads)
+        if hasConcurrent or hasMultiprocessing:
+            if hasConcurrent:
+                print("******* trying concurrent futures ******")
+                try:
+                    from concurrent.futures import ThreadPoolExecutor
+                    executor = ThreadPoolExecutor(max_workers=threads)
 
-                with executor:
-                    results = executor.map(self.download_url, self.url_list)
-                for category, response in results:
-                    if response:
-                        if category == 0:
-                            glob.current_playlist["data"]["live_categories"] = response
-                        if category == 1:
-                            glob.current_playlist["data"]["vod_categories"] = response
-                        if category == 2:
-                            glob.current_playlist["data"]["series_categories"] = response
-                        if category == 3:
-                            glob.current_playlist["data"]["live_streams"] = response
-                            glob.current_playlist["data"]["catchup_checked"] = True
+                    with executor:
+                        results = executor.map(self.download_url, self.url_list)
 
-                self["splash"].hide()
-                glob.current_playlist["data"]["data_downloaded"] = True
-                self.createSetup()
-                return
-            except Exception as e:
-                print(e)
+                except Exception as e:
+                    print(e)
 
-        elif hasMultiprocessing:
-            try:
-                print("*** trying multiprocessing ThreadPool ***")
-                from multiprocessing.pool import ThreadPool
-                pool = ThreadPool(threads)
-                results = pool.imap(self.download_url, self.url_list)
+            elif hasMultiprocessing:
+                try:
+                    print("*** trying multiprocessing ThreadPool ***")
+                    from multiprocessing.pool import ThreadPool
+                    pool = ThreadPool(threads)
+                    results = pool.imap(self.download_url, self.url_list)
 
-                pool.close()
-                pool.join()
+                    pool.close()
+                    pool.join()
 
-                for category, response in results:
-                    if response:
-                        # add categories to main json file
-                        if category == 0:
-                            glob.current_playlist["data"]["live_categories"] = response
-                        if category == 1:
-                            glob.current_playlist["data"]["vod_categories"] = response
-                        if category == 2:
-                            glob.current_playlist["data"]["series_categories"] = response
-                        if category == 3:
-                            glob.current_playlist["data"]["live_streams"] = response
-                            glob.current_playlist["data"]["catchup_checked"] = True
+                except Exception as e:
+                    print(e)
 
-                self["splash"].hide()
-                glob.current_playlist["data"]["data_downloaded"] = True
-                self.createSetup()
-                return
-            except Exception as e:
-                print(e)
+            for category, response in results:
+                if response:
+                    # add categories to main json file
+                    if category == 0:
+                        glob.current_playlist["data"]["live_categories"] = response
+                    if category == 1:
+                        glob.current_playlist["data"]["vod_categories"] = response
+                    if category == 2:
+                        glob.current_playlist["data"]["series_categories"] = response
+                    if category == 3:
+                        glob.current_playlist["data"]["live_streams"] = response
+                        glob.current_playlist["data"]["catchup_checked"] = True
+        else:
 
-        print("*** trying sequential ***")
-        for url in self.url_list:
-            result = self.download_url(url)
-            category = result[0]
-            response = result[1]
-            if response:
-                # add categories to main json file
-                if category == 0:
-                    glob.current_playlist["data"]["live_categories"] = response
-                if category == 1:
-                    glob.current_playlist["data"]["vod_categories"] = response
-                if category == 2:
-                    glob.current_playlist["data"]["series_categories"] = response
-                if category == 3:
-                    glob.current_playlist["data"]["live_streams"] = response
-                    glob.current_playlist["data"]["catchup_checked"] = True
+            print("*** trying sequential ***")
+            for url in self.url_list:
+                result = self.download_url(url)
+                category = result[0]
+                response = result[1]
+                if response:
+                    # add categories to main json file
+                    if category == 0:
+                        glob.current_playlist["data"]["live_categories"] = response
+                    if category == 1:
+                        glob.current_playlist["data"]["vod_categories"] = response
+                    if category == 2:
+                        glob.current_playlist["data"]["series_categories"] = response
+                    if category == 3:
+                        glob.current_playlist["data"]["live_streams"] = response
+                        glob.current_playlist["data"]["catchup_checked"] = True
 
         self["splash"].hide()
         glob.current_playlist["data"]["data_downloaded"] = True

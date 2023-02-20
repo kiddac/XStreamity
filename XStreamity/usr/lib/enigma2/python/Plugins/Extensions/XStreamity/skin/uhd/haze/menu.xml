@@ -1,0 +1,39 @@
+<screen name="XStreamityMenu" position="0,0" size="2560,1440" flags="wfNoBorder" backgroundColor="#ff000000">
+
+	<widget name="splash" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/haze/images/splash.png" alphatest="off" position="0,0" size="2560,1440" zPosition="1000" />
+	
+	<eLabel position="0,0" size="2560,120" backgroundColor="#1a000000" zPosition="-1" />
+	<eLabel position="0,122" size="2560,2" backgroundColor="#ffffff" zPosition="-1" />
+
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/logo_hz.png" position="0,0" size="400,120" alphatest="blend" zPosition="2" />
+
+	<widget source="Title" render="Label" position="404,0" size="2560,120" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" halign="left" font="xstreamityregular;48" transparent="1" />
+
+	<widget source="global.CurrentTime" render="Label" position="1720,0" size="800,120" font="xstreamityregular;48" foregroundColor="#ffffff" backgroundColor="#ff000000" valign="center" halign="right" transparent="1" zPosition="1">
+		<convert type="ClockToText">Format:%H:%M | %A %-d %b</convert>
+	</widget>
+
+	<eLabel position="0,123" size="640,1238" backgroundColor="#1a242b34" zPosition="-1" />
+	
+	<widget source="list" render="Listbox" position="0,128" size="640,1152" foregroundColor="#ffffff" backgroundColor="#1a242b34" foregroundColorSelected="#ffffff" backgroundColorSelected="#1a000000" 
+	selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/haze/images/menu-select.png"
+	itemHeight="96" scrollbarMode="showOnDemand" enableWrapAround="1" transparent="1" zPosition="2">
+		<convert type="TemplatedMultiContent">{"template": [
+			MultiContentEntryText(pos=(40, 0), size=(560, 96), font=0, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1),
+			],
+			"fonts": [gFont("xstreamityregular", 48)],
+			"itemHeight": 96,
+			"scrollbarMode": "showOnDemand"
+			}</convert>
+	</widget>
+	
+	<eLabel position="0,1359" size="2560,2" backgroundColor="#ffffff" zPosition="-1" />
+	<eLabel position="0,1360" size="2560,80" backgroundColor="#1a000000" zPosition="-1" />
+	
+	<widget source="key_red" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/key_red.png" position="1000,1375" size="51,51" alphatest="blend" zPosition="2" />
+	<widget source="key_red" render="Label" position="1070,1360" size="320,80" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="2" />
+	
+	<widget source="key_green" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/key_green.png" position="1400,1375" size="51,51" alphatest="blend" zPosition="2" />
+	<widget source="key_green" render="Label" position="1470,1360" size="320,80" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="2" />
+
+</screen>
