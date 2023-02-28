@@ -7,6 +7,9 @@ from Components.config import config, ConfigSubsection, ConfigSelection, ConfigD
 from enigma import eTimer, getDesktop, addFont
 from Plugins.Plugin import PluginDescriptor
 
+import os
+import shutil
+import sys
 import twisted.python.runtime
 
 try:
@@ -23,10 +26,6 @@ try:
         hasConcurrent = False
 except:
     hasConcurrent = False
-
-import os
-import shutil
-import sys
 
 pythonFull = float(str(sys.version_info.major) + "." + str(sys.version_info.minor))
 pythonVer = sys.version_info.major
@@ -149,19 +148,14 @@ font_folder = os.path.join(dir_plugins, "fonts/")
 
 """
 hdr = {
-"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:87.0) Gecko/20100101 Firefox/87.0",
-"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-"Accept-Language": "en-GB,en;q=0.5",
-"Accept-Encoding": "gzip, deflate",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+    "Accept-Encoding": "gzip, deflate",
 }
 """
 
-hdr = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
-}
 
-
-# hdr = {"User-Agent": "Enigma2 - XStreamity Plugin"}
+hdr = {"User-Agent": "Enigma2 - XStreamity Plugin"}
 
 
 # create folder for working files

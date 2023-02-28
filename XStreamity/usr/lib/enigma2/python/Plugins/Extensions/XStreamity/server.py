@@ -17,6 +17,10 @@ import os
 import shutil
 import requests
 
+from http.client import HTTPConnection
+HTTPConnection.debuglevel = 0
+requests.packages.urllib3.disable_warnings()
+
 
 class XStreamity_AddServer(ConfigListScreen, Screen):
     def __init__(self, session):

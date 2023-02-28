@@ -25,6 +25,10 @@ import re
 import requests
 import shutil
 
+from http.client import HTTPConnection
+HTTPConnection.debuglevel = 0
+requests.packages.urllib3.disable_warnings()
+
 epgimporter = False
 if os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/EPGImport"):
     epgimporter = True
@@ -139,14 +143,14 @@ class XStreamity_Playlists(Screen):
     def download_url(self, url):
         index = url[1]
         r = ""
-        retries = Retry(total=3, backoff_factor=1)
+        retries = Retry(total=2, backoff_factor=1)
         adapter = HTTPAdapter(max_retries=retries)
         http = requests.Session()
         http.mount("http://", adapter)
         http.mount("https://", adapter)
         response = ""
         try:
-            r = http.get(url[0], headers=hdr, timeout=10, verify=False)
+            r = http.get(url[0], headers=hdr, timeout=5, verify=False)
             r.raise_for_status()
             if r.status_code == requests.codes.ok:
                 try:
@@ -182,7 +186,7 @@ class XStreamity_Playlists(Screen):
                 print("********** trying multiprocessing threadpool *******")
                 try:
                     from multiprocessing.pool import ThreadPool
-                    pool = ThreadPool(5)
+                    pool = ThreadPool(threads)
                     results = pool.imap_unordered(self.download_url, self.url_list)
                     pool.close()
                     pool.join()

@@ -47,6 +47,11 @@ import tempfile
 import time
 import zlib
 
+from http.client import HTTPConnection
+
+HTTPConnection.debuglevel = 0
+requests.packages.urllib3.disable_warnings()
+
 # https twisted client hack #
 try:
     from twisted.internet import ssl
