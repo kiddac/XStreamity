@@ -18,8 +18,12 @@ import requests
 import time
 import twisted.python.runtime
 
-from http.client import HTTPConnection
-HTTPConnection.debuglevel = 0
+try:
+    from http.client import HTTPConnection
+    HTTPConnection.debuglevel = 0
+except:
+    from httplib import HTTPConnection
+    HTTPConnection.debuglevel = 0
 requests.packages.urllib3.disable_warnings()
 
 # https twisted client hack #

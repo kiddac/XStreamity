@@ -47,9 +47,13 @@ import tempfile
 import time
 import zlib
 
-from http.client import HTTPConnection
+try:
+    from http.client import HTTPConnection
+    HTTPConnection.debuglevel = 0
+except:
+    from httplib import HTTPConnection
+    HTTPConnection.debuglevel = 0
 
-HTTPConnection.debuglevel = 0
 requests.packages.urllib3.disable_warnings()
 
 # https twisted client hack #

@@ -55,8 +55,12 @@ from requests.adapters import HTTPAdapter, Retry
 import base64
 import time
 
-from http.client import HTTPConnection
-HTTPConnection.debuglevel = 0
+try:
+    from http.client import HTTPConnection
+    HTTPConnection.debuglevel = 0
+except:
+    from httplib import HTTPConnection
+    HTTPConnection.debuglevel = 0
 requests.packages.urllib3.disable_warnings()
 
 
