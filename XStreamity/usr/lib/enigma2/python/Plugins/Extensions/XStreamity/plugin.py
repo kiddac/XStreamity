@@ -126,6 +126,7 @@ cfg.retries = ConfigSubsection()
 cfg.retries.adultpin = ConfigSubsection()
 cfg.retries.adultpin.tries = ConfigInteger(default=3)
 cfg.retries.adultpin.time = ConfigInteger(default=3)
+cfg.locationvalid = ConfigYesNo(default=True)
 
 cfg.channelpicons = ConfigYesNo(default=True)
 cfg.infobarpicons = ConfigYesNo(default=True)
@@ -140,11 +141,18 @@ playlists_json = os.path.join(dir_etc, "x-playlists.json")
 downloads_json = os.path.join(dir_etc, "downloads2.json")
 playlist_file = os.path.join(dir_etc, "playlists.txt")
 
-if cfg.location.value:
-    playlist_file = os.path.join(cfg.location.value, "playlists.txt")
+location = cfg.location.getValue()
+if location:
+    if os.path.exists(location):
+        playlist_file = os.path.join(cfg.location.value, "playlists.txt")
+        cfg.locationvalid.setValue(True)
+        cfg.save()
+    else:
+        cfg.location.setValue(dir_etc)
+        cfg.locationvalid.setValue(False)
+        cfg.save()
 
 font_folder = os.path.join(dir_plugins, "fonts/")
-
 
 """
 hdr = {
@@ -154,9 +162,7 @@ hdr = {
 }
 """
 
-
 hdr = {"User-Agent": "Enigma2 - XStreamity Plugin"}
-
 
 # create folder for working files
 if not os.path.exists(dir_etc):
