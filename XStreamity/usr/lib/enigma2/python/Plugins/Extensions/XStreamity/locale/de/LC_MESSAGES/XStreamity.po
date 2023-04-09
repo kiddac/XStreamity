@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2023-03-07 20:48+0000\n"
-"PO-Revision-Date: 2023-03-07 20:48+0000\n"
+"PO-Revision-Date: 2023-04-09 19:49+0100\n"
 "Last-Translator: Masta2002\n"
 "Language-Team: \n"
 "Language: de\n"
@@ -28,7 +28,7 @@ msgstr "Fertig"
 
 #: Task.py:61
 msgid "Failed"
-msgstr ""
+msgstr "Fehlgeschlagen"
 
 #: Task.py:326
 #, python-format
@@ -36,27 +36,29 @@ msgid ""
 "Error: %s\n"
 "Retry?"
 msgstr ""
+"Fehler: %s\n"
+"Wiederholen?"
 
 #: Task.py:329
 msgid "Error"
-msgstr ""
+msgstr "Fehler"
 
 #: Task.py:376
 msgid "An unknown error occurred!"
-msgstr ""
+msgstr "Ein unbekannter Fehler ist aufgetreten!"
 
 #: Task.py:401
 #, python-format
 msgid "A required tool (%s) was not found."
-msgstr ""
+msgstr "Ein erforderliches Werkzeug (%s) wurde nicht gefunden."
 
 #: Task.py:409
 msgid "Cancelled upon user request"
-msgstr ""
+msgstr "Auf Benutzerwunsch abgebrochen"
 
 #: Task.py:426 Task.py:441
 msgid "Error code"
-msgstr ""
+msgstr "Fehlercode"
 
 #: channels.py:248 channels.py:250 channels.py:251 channels.py:252
 #: channels.py:253 channels.py:255 channels.py:256 channels.py:257
@@ -149,7 +151,7 @@ msgstr "Staffel "
 
 #: channels.py:1178
 msgid "Server error or invalid link."
-msgstr ""
+msgstr "Serverfehler oder ungültiger Link."
 
 #: channels.py:1297 channels.py:1719 channels.py:1778
 msgid "Reset Search"
@@ -257,15 +259,15 @@ msgstr "Dem Downloadmanager hinzugefügt"
 
 #: channels.py:3042
 msgid "Note recording acts as an open connection."
-msgstr ""
+msgstr "Die Aufzeichnung von Notizen fungiert als offene Verbindung."
 
 #: channels.py:3042
 msgid "Do not record and play streams at the same time."
-msgstr ""
+msgstr "Nehme keine Streams gleichzeitig auf und spiel sie ab."
 
 #: channels.py:3042
 msgid "Open download manager?"
-msgstr ""
+msgstr "Öffne Download Manager?"
 
 #: channels.py:3045
 msgid "Already added to download manager"
@@ -387,7 +389,7 @@ msgstr "JSON zurücksetzen"
 
 #: mainmenu.py:76
 msgid "Playlists.txt location is invalid and has been reset."
-msgstr ""
+msgstr "Speicherort der Playlists.txt ist ungültig und wurde zurückgesetzt."
 
 #: mainmenu.py:117
 msgid "Playlists"
@@ -540,7 +542,7 @@ msgstr "Streamtyp VOD/Serien:"
 
 #: playsettings.py:151
 msgid "Stream Source URL:"
-msgstr ""
+msgstr "Stream Quelle URL:"
 
 #: playsettings.py:153
 msgid "EPG offset:"
@@ -596,7 +598,7 @@ msgstr "Protokoll:"
 
 #: server.py:107
 msgid "Server URL: i.e. domain.xyz"
-msgstr ""
+msgstr "Server URL: i.e. domain.xyz"
 
 #: server.py:108
 msgid "Port:"
@@ -682,7 +684,7 @@ msgstr "Möchten Sie neu starten?"
 
 #: settings.py:138
 msgid "Select skin"
-msgstr ""
+msgstr "Wähle Skin"
 
 #: settings.py:139
 msgid "playlists.txt location"
@@ -690,7 +692,7 @@ msgstr "Ort der playlists.txt"
 
 #: settings.py:139 settings.py:151
 msgid " *Restart GUI Required"
-msgstr ""
+msgstr " *Neustart der GUI erforderlich"
 
 #: settings.py:140
 msgid "EPG download location"
@@ -726,7 +728,7 @@ msgstr "XStreamity Kindersicherungs-PIN"
 
 #: settings.py:151
 msgid "Show in main menu"
-msgstr ""
+msgstr "Im Hauptmenü anzeigen"
 
 #: settings.py:153
 msgid "Use Movie Database(TMDB) for VOD & Series"
@@ -755,7 +757,7 @@ msgstr ""
 
 #: settings.py:163
 msgid "Automatic EPG download time"
-msgstr ""
+msgstr "Zeit für automatisches Herunterladen des EPG"
 
 #: settings.py:165
 msgid "Show channel picons"
@@ -775,7 +777,7 @@ msgstr "Zeige infobar Poster"
 
 #: settings.py:170
 msgid "Auto start XStreamity on boot"
-msgstr ""
+msgstr "XStreamity beim Booten automatisch starten"
 
 #: settings.py:300 settings.py:313 settings.py:326
 msgid "Choose Directory:"
@@ -813,175 +815,3 @@ msgstr "Xstreamity-Protokoll"
 #: streamplayer.py:1633
 msgid "Clear"
 msgstr "Bereinige"
-
-#~ msgid "Server URL:"
-#~ msgstr "Server URL:"
-
-#~ msgid "Select skin *Restart GUI Required"
-#~ msgstr "Skin auswählen *Neustart der GUI erforderlich"
-
-#~ msgid "Show in main menu *Restart GUI Required"
-#~ msgstr "Im Hauptmenü anzeigen *Neustart der GUI erforderlich"
-
-#~ msgid "Automatic EPG download time *Restart GUI Required"
-#~ msgstr ""
-#~ "Zeit für automatisches Herunterladen des EPG *GUI muss neu gestartet "
-#~ "werden*"
-
-#~ msgid "Auto start XStreamity on boot *Restart GUI Required"
-#~ msgstr ""
-#~ "XStreamity beim Booten automatisch starten *GUI neu starten erforderlich"
-
-#, python-format
-#~ msgid ""
-#~ "Video Download Failed!\n"
-#~ "\n"
-#~ "Corrupted Download File:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Video-Download fehlgeschlagen!\n"
-#~ "\n"
-#~ "Beschädigte Download-Datei:\n"
-#~ "%s"
-
-#, python-format
-#~ msgid ""
-#~ "Video Download Failed!\n"
-#~ "\n"
-#~ "Could not read RTMP-Packet:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Video-Download fehlgeschlagen!\n"
-#~ "\n"
-#~ "RTMP-Paket konnte nicht gelesen werden:\n"
-#~ "%s"
-
-#, python-format
-#~ msgid ""
-#~ "Video Download Failed!\n"
-#~ "\n"
-#~ "Segmentation fault:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Video-Download fehlgeschlagen!\n"
-#~ "\n"
-#~ "Segmentierungsfehler:\n"
-#~ "%s"
-
-#, python-format
-#~ msgid ""
-#~ "Video Download Failed!\n"
-#~ "\n"
-#~ "Server returned error:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Video-Download fehlgeschlagen!\n"
-#~ "\n"
-#~ "Fehler vom Server zurückgegeben:\n"
-#~ "%s"
-
-#, python-format
-#~ msgid ""
-#~ "Video Download Failed!\n"
-#~ "\n"
-#~ "Unknown Error:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Video-Download fehlgeschlagen!\n"
-#~ "\n"
-#~ "Unbekannter Fehler:\n"
-#~ "%s"
-
-#~ msgid "Server timeout (seconds)"
-#~ msgstr "Server Zeitüberschreitung (Sekunden)"
-
-#~ msgid "MOVIE DOWNLOAD FAILED!"
-#~ msgstr "FILM DOWNLOAD FEHLGESCHLAGEN!"
-
-#~ msgid "DOWNLOADED FILE CORRUPTED:"
-#~ msgstr "HERUNTERGELADENE DATEI KORRUPT:"
-
-#~ msgid "COULD NOT READ RTMP PACKET:"
-#~ msgstr "KONNTE DAS RTMP-PAKET NICHT LESEN:"
-
-#~ msgid "SEGMENTATION FAULT:"
-#~ msgstr "SEGMENTIERUNGSFEHLER:"
-
-#~ msgid "SERVER RETURNED ERROR:"
-#~ msgstr "SERVER MELDET FEHLER:"
-
-#~ msgid "UNKNOWN ERROR:"
-#~ msgstr "UNBEKANNTER FEHLER:"
-
-#~ msgid "Downloading"
-#~ msgstr "Herunterladen"
-
-#~ msgid "File already downloaded."
-#~ msgstr "Datei bereits heruntergeladen."
-
-#~ msgid "Multiple downloads not allowed. Please wait or cancel download."
-#~ msgstr ""
-#~ "Mehrfache Downloads sind nicht erlaubt. Warte bitte oder breche den "
-#~ "Download ab."
-
-#~ msgid "Download Failed!\n"
-#~ msgstr "Download fehlgeschlagen\n"
-
-#~ msgid "Reset Stored Data"
-#~ msgstr "Gespeicherte Daten zurücksetzen"
-
-#~ msgid "XDownload:"
-#~ msgstr "Herunterladen:"
-
-#~ msgid "Downloading ..."
-#~ msgstr "Herunterladen ..."
-
-#~ msgid ""
-#~ "Downloading \n"
-#~ "\n"
-#~ msgstr ""
-#~ "Herunterladen\n"
-#~ "\n"
-
-#~ msgid ""
-#~ "Download Failed\n"
-#~ "\n"
-#~ msgstr ""
-#~ "Download fehlgeschlagen\n"
-#~ "\n"
-
-#~ msgid "Download All"
-#~ msgstr "Alle herunterladen"
-
-#~ msgid "GB"
-#~ msgstr "GB"
-
-#~ msgid "Cancel all downloads and exit?"
-#~ msgstr "Alle Downloads abbrechen und beenden?"
-
-#~ msgid "Record"
-#~ msgstr "Aufnehmen"
-
-#~ msgid "Settings"
-#~ msgstr "Einstellungen"
-
-#~ msgid "Lists updated: "
-#~ msgstr "Listen aktualisiert: "
-
-#~ msgid "Stream Type CATCHUP:"
-#~ msgstr "Streamtyp MEDIATHEK:"
-
-#~ msgid "XMLTV EPG Url:"
-#~ msgstr "XMLTV EPG Url:"
-
-#~ msgid "EPG/Catchup Timeshift:"
-#~ msgstr "EPG/Mediathek Timeshift:"
-
-#~ msgid "http://"
-#~ msgstr "http://"
-
-#~ msgid "https://"
-#~ msgstr "https://"
-
-#~ msgid "Default CATCHUP stream type"
-#~ msgstr "Standardtyp Mediathek-Stream"

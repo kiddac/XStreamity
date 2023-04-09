@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Jakarta\n"
 "POT-Creation-Date: 2023-03-07 20:49+0000\n"
-"PO-Revision-Date: 2023-03-07 20:49+0000\n"
+"PO-Revision-Date: 2023-03-08 13:48+0100\n"
 "Last-Translator: Jakarta\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Poedit 3.0.1\n"
 "X-Poedit-Basepath: ../../..\n"
 "X-Poedit-SearchPath-0: .\n"
 
@@ -24,11 +24,11 @@ msgstr "En cours"
 
 #: Task.py:61
 msgid "Finished"
-msgstr ""
+msgstr "Fini"
 
 #: Task.py:61
 msgid "Failed"
-msgstr ""
+msgstr "Echec"
 
 #: Task.py:326
 #, python-format
@@ -36,27 +36,29 @@ msgid ""
 "Error: %s\n"
 "Retry?"
 msgstr ""
+"Erreur : %s\n"
+"Réessayer ?"
 
 #: Task.py:329
 msgid "Error"
-msgstr ""
+msgstr "Erreur"
 
 #: Task.py:376
 msgid "An unknown error occurred!"
-msgstr ""
+msgstr "Une erreur inconnue s'est produite !"
 
 #: Task.py:401
 #, python-format
 msgid "A required tool (%s) was not found."
-msgstr ""
+msgstr "Un outil requis (%s) n'a pas été trouvé."
 
 #: Task.py:409
 msgid "Cancelled upon user request"
-msgstr ""
+msgstr "Annulé à la demande de l'utilisateur"
 
 #: Task.py:426 Task.py:441
 msgid "Error code"
-msgstr ""
+msgstr "Code d’erreur"
 
 #: channels.py:248 channels.py:250 channels.py:251 channels.py:252
 #: channels.py:253 channels.py:255 channels.py:256 channels.py:257
@@ -149,7 +151,7 @@ msgstr "Saison "
 
 #: channels.py:1178
 msgid "Server error or invalid link."
-msgstr ""
+msgstr "Erreur de serveur ou lien invalide."
 
 #: channels.py:1297 channels.py:1719 channels.py:1778
 msgid "Reset Search"
@@ -257,15 +259,15 @@ msgstr "Ajouté au gestionnaire de téléchargement"
 
 #: channels.py:3042
 msgid "Note recording acts as an open connection."
-msgstr ""
+msgstr "Notez que l’enregistrement agit comme une connexion ouverte."
 
 #: channels.py:3042
 msgid "Do not record and play streams at the same time."
-msgstr ""
+msgstr "Ne pas enregistrer et lire des flux en même temps."
 
 #: channels.py:3042
 msgid "Open download manager?"
-msgstr ""
+msgstr "Ouvrir le gestionnaire de téléchargement ?"
 
 #: channels.py:3045
 msgid "Already added to download manager"
@@ -315,8 +317,7 @@ msgstr "Annuler"
 
 #: downloadmanager.py:406
 msgid "Please set download folder in Main Settings."
-msgstr ""
-"Veuillez définir le dossier de téléchargement dans les paramètres principaux."
+msgstr "Veuillez définir le dossier de téléchargement dans les paramètres principaux."
 
 #: downloadmanager.py:406
 msgid ""
@@ -331,8 +332,7 @@ msgid ""
 "opkg update\n"
 "opkg install wget"
 msgstr ""
-"Veuillez mettre à jour votre bibliothèque wget pour télécharger les lignes "
-"https\n"
+"Veuillez mettre à jour votre bibliothèque wget pour télécharger les lignes https\n"
 "\n"
 "opkg update\n"
 "opkg install wget"
@@ -371,9 +371,7 @@ msgstr "Réinitialiser"
 
 #: hidden.py:185
 msgid "Error: All categories hidden. Please amend your selection."
-msgstr ""
-"Erreur: Toutes les catégories sont cachées. Veuillez modifier votre "
-"sélection."
+msgstr "Erreur: Toutes les catégories sont cachées. Veuillez modifier votre sélection."
 
 #: mainmenu.py:41
 msgid "Main Menu"
@@ -385,7 +383,7 @@ msgstr "Réinitialiser JSON"
 
 #: mainmenu.py:76
 msgid "Playlists.txt location is invalid and has been reset."
-msgstr ""
+msgstr "L'emplacement de Playlists.txt n'est pas valide et a été réinitialisé."
 
 #: mainmenu.py:117
 msgid "Playlists"
@@ -413,14 +411,11 @@ msgstr "Téléchargement d'EPG."
 
 #: mainmenu.py:187
 msgid ""
-"Warning: delete stored json data for all playlists... Settings, favourites "
-"etc. \n"
+"Warning: delete stored json data for all playlists... Settings, favourites etc. \n"
 "Playlists will not be deleted.\n"
 "Do you wish to continue?"
 msgstr ""
-"Attention : suppression des données json stockées pour toutes les "
-"serveurs... les paramètres, les favoris, etc. Les serveurs ne seront pas "
-"supprimées.\n"
+"Attention : suppression des données json stockées pour toutes les serveurs... les paramètres, les favoris, etc. Les serveurs ne seront pas supprimées.\n"
 "Voulez-vous continuer ?"
 
 #: menu.py:52
@@ -445,8 +440,7 @@ msgstr "Réglages liste de lecture"
 
 #: menu.py:257
 msgid "No data, blocked or playlist not compatible with XStreamity plugin."
-msgstr ""
-"Pas de données, liste de lecture bloquée ou incompatible avec XStreamity."
+msgstr "Pas de données, liste de lecture bloquée ou incompatible avec XStreamity."
 
 #: playlists.py:53
 msgid "Select Playlist"
@@ -538,7 +532,7 @@ msgstr "Type de Flux des Films/Séries:"
 
 #: playsettings.py:151
 msgid "Stream Source URL:"
-msgstr ""
+msgstr "URL de la source du flux:"
 
 #: playsettings.py:153
 msgid "EPG offset:"
@@ -594,7 +588,7 @@ msgstr "Protocole :"
 
 #: server.py:107
 msgid "Server URL: i.e. domain.xyz"
-msgstr ""
+msgstr "URL du serveur : par exemple domain.xyz"
 
 #: server.py:108
 msgid "Port:"
@@ -680,7 +674,7 @@ msgstr "Voulez-vous redémarrer maintenant ?"
 
 #: settings.py:138
 msgid "Select skin"
-msgstr ""
+msgstr "Sélectionnez le skin"
 
 #: settings.py:139
 msgid "playlists.txt location"
@@ -688,7 +682,7 @@ msgstr "emplacement playlists.txt"
 
 #: settings.py:139 settings.py:151
 msgid " *Restart GUI Required"
-msgstr ""
+msgstr "*Redémarrage GUI Requis"
 
 #: settings.py:140
 msgid "EPG download location"
@@ -724,7 +718,7 @@ msgstr "XStreamity contrôle parental pin"
 
 #: settings.py:151
 msgid "Show in main menu"
-msgstr ""
+msgstr "Afficher dans le menu principal"
 
 #: settings.py:153
 msgid "Use Movie Database(TMDB) for VOD & Series"
@@ -748,13 +742,11 @@ msgstr "Autoriser le plugin SubsSupport en Films"
 
 #: settings.py:161
 msgid "Skip playlist selection screen if only 1 playlist"
-msgstr ""
-"Ignorer l'écran de sélection de liste de lecture s'il n'y a qu'une liste de "
-"lecture"
+msgstr "Ignorer l'écran de sélection de liste de lecture s'il n'y a qu'une liste de lecture"
 
 #: settings.py:163
 msgid "Automatic EPG download time"
-msgstr ""
+msgstr "Temps de téléchargement automatique de l'EPG"
 
 #: settings.py:165
 msgid "Show channel picons"
@@ -774,7 +766,7 @@ msgstr "Afficher les affiches dans la barre d'informations"
 
 #: settings.py:170
 msgid "Auto start XStreamity on boot"
-msgstr ""
+msgstr "Démarrage automatique de XStreamity au démarrage"
 
 #: settings.py:300 settings.py:313 settings.py:326
 msgid "Choose Directory:"
@@ -826,5 +818,4 @@ msgstr "Effacer"
 #~ msgstr "Temps de téléchargement automatique de l'EPG *Redémarrer GUI requis"
 
 #~ msgid "Auto start XStreamity on boot *Restart GUI Required"
-#~ msgstr ""
-#~ "Démarrage automatique de XStreamity au démarrage *Restart GUI requis"
+#~ msgstr "Démarrage automatique de XStreamity au démarrage *Restart GUI requis"

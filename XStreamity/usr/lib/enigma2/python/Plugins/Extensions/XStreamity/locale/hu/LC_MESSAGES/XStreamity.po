@@ -1,34 +1,34 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-03-07 20:52+0000\n"
-"PO-Revision-Date: 2023-03-08 14:36+0100\n"
+"POT-Creation-Date: 2023-03-07 20:47+0000\n"
+"PO-Revision-Date: 2023-03-08 20:13+0100\n"
 "Last-Translator: Warder <ciksa@seznam.cz>\n"
 "Language-Team: \n"
-"Language: sk\n"
+"Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 ? 1 : 2);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.2.2\n"
 "X-Poedit-Basepath: ../../..\n"
 "X-Poedit-SearchPath-0: .\n"
 
 #: Task.py:61 downloadmanager.py:48
 msgid "Waiting"
-msgstr "Čaká sa"
+msgstr "Vár"
 
 #: Task.py:61 downloadmanager.py:47
 msgid "In progress"
-msgstr "Prebieha"
+msgstr "Folyamatban"
 
 #: Task.py:61
 msgid "Finished"
-msgstr "Ukončené"
+msgstr "Befejeződött"
 
 #: Task.py:61
 msgid "Failed"
-msgstr "Neúspešné"
+msgstr "Sikertelen"
 
 #: Task.py:326
 #, python-format
@@ -36,62 +36,62 @@ msgid ""
 "Error: %s\n"
 "Retry?"
 msgstr ""
-"Chyba: %s\n"
-"Znova?"
+"Hiba: %s\n"
+"Próbáljam újra?"
 
 #: Task.py:329
 msgid "Error"
-msgstr "Chyba"
+msgstr "Hiba"
 
 #: Task.py:376
 msgid "An unknown error occurred!"
-msgstr "Vyskytla sa neznáma chyba!"
+msgstr "Ismeretlen hiba történt!"
 
 #: Task.py:401
 #, python-format
 msgid "A required tool (%s) was not found."
-msgstr "Požadovaný nástroj (%s) sa nenašiel."
+msgstr "A szükséges eszköz (%s) nem található."
 
 #: Task.py:409
 msgid "Cancelled upon user request"
-msgstr "Zrušené na žiadosť užívateľa"
+msgstr "Felhasználó kérésére törölték"
 
 #: Task.py:426 Task.py:441
 msgid "Error code"
-msgstr "Kód chyby"
+msgstr "Hibakód"
 
 #: channels.py:248 channels.py:250 channels.py:251 channels.py:252
 #: channels.py:253 channels.py:255 channels.py:256 channels.py:257
 #: channels.py:258 channels.py:1309 channels.py:1639 channels.py:1642
 #: channels.py:1645 channels.py:1657 channels.py:1923
 msgid "Sort: A-Z"
-msgstr "Zoradiť: A-Z"
+msgstr "Rendezés: A-tól Z-ig"
 
 #: channels.py:250 channels.py:251 channels.py:252 channels.py:253
 #: channels.py:255 channels.py:256 channels.py:257 channels.py:258
 #: channels.py:1639 channels.py:1642 channels.py:1645 channels.py:1660
 msgid "Sort: Z-A"
-msgstr "Zoradiť: Z-A"
+msgstr "Rendezés: Z-A"
 
 #: channels.py:250 channels.py:251 channels.py:252 channels.py:253
 #: channels.py:255 channels.py:256 channels.py:257 channels.py:258
 #: channels.py:1639 channels.py:1642 channels.py:1645 channels.py:1689
 msgid "Sort: Original"
-msgstr "Zoradiť: Originál"
+msgstr "Rendezés: Eredeti"
 
 #: channels.py:255 channels.py:256 channels.py:257 channels.py:258
 #: channels.py:1642 channels.py:1645 channels.py:1663
 msgid "Sort: Added"
-msgstr "Zoradiť: Pridané"
+msgstr "Rendezés: Hozzáadva"
 
 #: channels.py:257 channels.py:258 channels.py:1645 channels.py:1678
 msgid "Sort: Year"
-msgstr "Zoradiť: Rok"
+msgstr "Rendezés: Év"
 
 #: channels.py:308 downloadmanager.py:166 mainmenu.py:43 menu.py:50
 #: playlists.py:55 playsettings.py:49 server.py:50 settings.py:66
 msgid "Back"
-msgstr "Späť"
+msgstr "Vissza"
 
 #: channels.py:309 mainmenu.py:44 menu.py:51 playlists.py:56
 msgid "OK"
@@ -99,19 +99,19 @@ msgstr "OK"
 
 #: channels.py:311 channels.py:1307 channels.py:1798
 msgid "Search"
-msgstr "Hľadať"
+msgstr "Keresés"
 
 #: channels.py:334
 msgid "Live Categories"
-msgstr "Živé kategórie"
+msgstr "Élő kategóriák"
 
 #: channels.py:335 menu.py:223
 msgid "Live Streams"
-msgstr "Priame prenosy"
+msgstr "Élő közvetítések"
 
 #: channels.py:371
 msgid "Vod Categories"
-msgstr "Vod Kategórie"
+msgstr "Vod kategóriák"
 
 #: channels.py:372 menu.py:228
 msgid "Vod"
@@ -119,15 +119,15 @@ msgstr "Vod"
 
 #: channels.py:403
 msgid "Series Categories"
-msgstr "Kategórie Seriálov"
+msgstr "Sorozat kategóriák"
 
 #: channels.py:404 channels.py:3035
 msgid "Series"
-msgstr "Edície"
+msgstr "Sorozatok"
 
 #: channels.py:430
 msgid "Catch Up Categories"
-msgstr "Catch Up Kategórie"
+msgstr "Felzárkózási kategóriák"
 
 #: channels.py:431 menu.py:245
 msgid "Catch Up TV"
@@ -135,115 +135,115 @@ msgstr "Catch Up TV"
 
 #: channels.py:553
 msgid "FAVOURITES"
-msgstr "OBĽÚBENÉ"
+msgstr "KEDVENCEK"
 
 #: channels.py:555
 msgid "RECENTLY WATCHED"
-msgstr "NEDÁVNO SLEDOVANÉ"
+msgstr "NEMRÉG MEGFIGYELTÉK"
 
 #: channels.py:562
 msgid "ALL"
-msgstr "VŠETKO"
+msgstr "ÖSSZES"
 
 #: channels.py:974
 msgid "Season "
-msgstr "Sezóna "
+msgstr "Évszak "
 
 #: channels.py:1178
 msgid "Server error or invalid link."
-msgstr "Chyba servera alebo neplatný odkaz."
+msgstr "Szerverhiba vagy érvénytelen hivatkozás."
 
 #: channels.py:1297 channels.py:1719 channels.py:1778
 msgid "Reset Search"
-msgstr "Vynulovať vyhľadávanie"
+msgstr "Alaphelyzet"
 
 #: channels.py:1303 channels.py:1619
 msgid "Reverse"
-msgstr "Opačne"
+msgstr "Visszafelé"
 
 #: channels.py:1304 channels.py:1313
 msgid "Hide/Show"
-msgstr "Skryť/zobraziť"
+msgstr "Elrejtés/Megjelenítés"
 
 #: channels.py:1319 channels.py:1722 playlists.py:57
 msgid "Delete"
-msgstr "Zmazať"
+msgstr "Törlés"
 
 #: channels.py:1358 channels.py:1437
 msgid "Page: "
-msgstr "Strana: "
+msgstr "Oldal: "
 
 #: channels.py:1358 channels.py:1437
 msgid " of "
-msgstr " z "
+msgstr " / "
 
 #: channels.py:1726
 msgid "Filter this category..."
-msgstr "Filtrovať túto kategóriu..."
+msgstr "Szűrje ezt a kategóriát..."
 
 #: channels.py:1834
 msgid "Incorrect pin code."
-msgstr "Nesprávny pin kód."
+msgstr "Helytelen PIN-kód."
 
 #: channels.py:1855
 msgid "all"
-msgstr "všetky"
+msgstr "összes"
 
 #: channels.py:1864
 msgid "Please enter the parental control pin code"
-msgstr "Zadajte PIN kód rodičovskej kontroly"
+msgstr "Kérjük, adja meg a szülői felügyelet PIN-kódját"
 
 #: channels.py:1864 hidden.py:27 settings.py:25
 msgid "Enter pin code"
-msgstr "Zadajte PIN kód"
+msgstr "Írja be a PIN kódot"
 
 #: channels.py:2438 channels.py:2497 channels.py:2506
 msgid "Next Info"
-msgstr "Ďalšie informácie"
+msgstr "Következő információ"
 
 #: channels.py:2501
 msgid "Now Info"
-msgstr "Nové informácie"
+msgstr "Most infó"
 
 #: channels.py:2735 streamplayer.py:628
 msgid "Recording Timer Set."
-msgstr "Časovač nahrávania Nastaviť."
+msgstr "Felvételi időzítő beállítás."
 
 #: channels.py:2737 streamplayer.py:630
 msgid "Recording Failed."
-msgstr "Nahrávanie zlyhalo."
+msgstr "A felvétel nem sikerült."
 
 #: channels.py:2924
 msgid "Video Type:"
-msgstr "Typ Videa:"
+msgstr "Videó típusa:"
 
 #: channels.py:2925
 msgid "Rating:"
-msgstr "Hodnotenie:"
+msgstr "Értékelés:"
 
 #: channels.py:2926
 msgid "Genre:"
-msgstr "Žáner:"
+msgstr "Műfaj:"
 
 #: channels.py:2927
 msgid "Duration:"
-msgstr "Trvanie:"
+msgstr "Időtartam:"
 
 #: channels.py:2928
 msgid "Release Date:"
-msgstr "Dátum vydania:"
+msgstr "Kiadás dátuma:"
 
 #: channels.py:2929
 msgid "Cast:"
-msgstr "Obsadenie:"
+msgstr "Önt:"
 
 #: channels.py:2930
 msgid "Director:"
-msgstr "Režisér:"
+msgstr "Igazgató:"
 
 #: channels.py:2931
 msgid "Country:"
-msgstr "Krajina:"
+msgstr "Ország:"
 
 #: channels.py:3033
 msgid "Movie"
@@ -251,82 +251,82 @@ msgstr "Film"
 
 #: channels.py:3037
 msgid "Catch-up"
-msgstr "Catch-up"
+msgstr "Felzárkóztató"
 
 #: channels.py:3042
 msgid "Added to download manager"
-msgstr "Pridané do správcu sťahovania"
+msgstr "Hozzáadva a letöltéskezelőhöz"
 
 #: channels.py:3042
 msgid "Note recording acts as an open connection."
-msgstr "Poznámka: Nahrávanie funguje ako otvorené pripojenie."
+msgstr "Megjegyzés: A felvétel nyitott kapcsolatként működik."
 
 #: channels.py:3042
 msgid "Do not record and play streams at the same time."
-msgstr "Nenahrávajte a neprehrávajte streamy súčasne."
+msgstr "Ne rögzítsen és játsszon le egyszerre streameket."
 
 #: channels.py:3042
 msgid "Open download manager?"
-msgstr "Otvoriť správcu sťahovania?"
+msgstr "Nyissa meg a letöltéskezelőt?"
 
 #: channels.py:3045
 msgid "Already added to download manager"
-msgstr "Už pridané do správcu sťahovania"
+msgstr "Már hozzá van adva a letöltéskezelőhöz"
 
 #: channels.py:3468
 msgid ""
 "The IMDb plugin is not installed!\n"
 "Please install it."
 msgstr ""
-"Doplnok IMDb nie je nainštalovaný!\n"
-"Nainštalujte ho, prosím."
+"Az IMDb bővítmény nincs telepítve!\n"
+"Kérem, telepítse."
 
 #: channels.py:3531
 msgid "Catchup error. No data for this slot"
-msgstr "Catchup chyba. Žiadne údaje pre tento slot"
+msgstr "Felzárkózási hiba. Nincsenek adatok ehhez a tárolóhelyhez"
 
 #: channels.py:3643
 msgid "Catchup currently not available. Missing EPG data"
-msgstr "Catchup momentálne nie je k dispozícii. Chýbajú údaje EPG"
+msgstr "Felzárkózás jelenleg nem érhető el. Hiányzó EPG-adatok"
 
 #: downloadmanager.py:46 downloadmanager.py:391 downloadmanager.py:427
 msgid "Not Started"
-msgstr "Nezačaté"
+msgstr "Kezdésre vár"
 
 #: downloadmanager.py:154
 msgid "VOD Download Manager"
-msgstr "Správca sťahovania VOD"
+msgstr "VOD letöltéskezelő"
 
 #: downloadmanager.py:167 downloadmanager.py:395
 msgid "Download"
-msgstr "Stiahnuť"
+msgstr "Letöltés"
 
 #: downloadmanager.py:168 downloadmanager.py:396
 msgid "Remove"
-msgstr "Odstrániť"
+msgstr "Eltávolítás"
 
 #: downloadmanager.py:220
 msgid "Free Space:"
-msgstr "Voľné miesto:"
+msgstr "Szabad hely:"
 
 #: downloadmanager.py:220
 msgid "of"
-msgstr "z"
+msgstr "/"
 
 #: downloadmanager.py:392 hidden.py:72
 msgid "Cancel"
-msgstr "Zrušiť"
+msgstr "Mégsem"
 
 #: downloadmanager.py:406
 msgid "Please set download folder in Main Settings."
-msgstr "Nastavte priečinok na stiahnutie v hlavných nastaveniach."
+msgstr "Kérjük, állítsa be a letöltési mappát a Főbeállításokban."
 
 #: downloadmanager.py:406
 msgid ""
 "Vod Download folder location does not exist.\n"
 "\n"
 msgstr ""
-"Umiestnenie priečinka Vod Download neexistuje.\n"
+"A Vod Download mappa helye nem létezik.\n"
 "\n"
 
 #: downloadmanager.py:446 downloadmanager.py:452
@@ -336,82 +336,83 @@ msgid ""
 "opkg update\n"
 "opkg install wget"
 msgstr ""
-"Aktualizujte svoju knižnicu wget a stiahnite si riadky https\n"
+"Kérjük, frissítse wget könyvtárát a https vonalak letöltéséhez\n"
 "\n"
-"Aktualizácia OPKG\n"
-"opkg inštalácia wget"
+"OPKG frissítés\n"
+"OPKG telepítse a WGET-t"
 
 #: downloadmanager.py:473
 msgid "Cancel this download?"
-msgstr "Zrušiť toto sťahovanie?"
+msgstr "Megszakítja a letöltést?"
 
 #: downloadmanager.py:508
 msgid "Delete this entry?"
-msgstr "Odstrániť tento záznam?"
+msgstr "Törli ezt a bejegyzést?"
 
 #: hidden.py:27 settings.py:25
 msgid "Please enter the correct pin code"
-msgstr "Zadajte správny PIN kód"
+msgstr "Kérjük, adja meg a helyes PIN-kódot"
 
 #: hidden.py:36 settings.py:34
 msgid "The pin code you entered is wrong."
-msgstr "Zadaný PIN kód je nesprávny."
+msgstr "A megadott PIN-kód helytelen."
 
 #: hidden.py:63
 msgid "Hidden Categories"
-msgstr "Skryté kategórie"
+msgstr "Rejtett kategóriák"
 
 #: hidden.py:73 playsettings.py:50 record.py:40 server.py:51 settings.py:67
 msgid "Save"
-msgstr "Uložiť"
+msgstr "Mentés"
 
 #: hidden.py:74
 msgid "Invert"
-msgstr "Invertovať"
+msgstr "Fordított"
 
 #: hidden.py:75
 msgid "Reset"
-msgstr "Resetovať"
+msgstr "Visszaállítás"
 
 #: hidden.py:185
 msgid "Error: All categories hidden. Please amend your selection."
-msgstr "Chyba: Všetky kategórie sú skryté. Prosím, zmeňte svoj výber."
+msgstr "Hiba: Minden kategória rejtett. Kérjük, módosítsa a választását."
 
 #: mainmenu.py:41
 msgid "Main Menu"
-msgstr "Hlavné menu"
+msgstr "Főmenü"
 
 #: mainmenu.py:45
 msgid "Reset JSON"
-msgstr "Resetujte JSON"
+msgstr "JSON alaphelyzetbe állítása"
 
 #: mainmenu.py:76
 msgid "Playlists.txt location is invalid and has been reset."
-msgstr "Umiestnenie súboru Playlists.txt je neplatné a bolo obnovené."
+msgstr ""
+"A lejátszási listák.txt hely érvénytelen, és alaphelyzetbe lett állítva."
 
 #: mainmenu.py:117
 msgid "Playlists"
-msgstr "Playlisty"
+msgstr "Játéklisták"
 
 #: mainmenu.py:118 mainmenu.py:123
 msgid "Add Playlist"
-msgstr "Pridať Playlist"
+msgstr "Lejátszási lista hozzáadása"
 
 #: mainmenu.py:119 mainmenu.py:124 settings.py:59
 msgid "Main Settings"
-msgstr "Hlavné nastavenia"
+msgstr "Fő beállítások"
 
 #: mainmenu.py:120
 msgid "Manual EPG Update"
-msgstr "Manuálna aktualizácia EPG"
+msgstr "Kézi EPG frissítés"
 
 #: mainmenu.py:127
 msgid "Download Manager"
-msgstr "Správca sťahovania"
+msgstr "Letöltés kezelő"
 
 #: mainmenu.py:150
 msgid "EPGs downloading."
-msgstr "Sťahovanie EPG."
+msgstr "EPG-k letöltése."
 
 #: mainmenu.py:187
 msgid ""
@@ -420,76 +421,76 @@ msgid ""
 "Playlists will not be deleted.\n"
 "Do you wish to continue?"
 msgstr ""
-"Upozornenie: vymažte uložené údaje json pre všetky playlisty... Nastavenia, "
-"obľúbené položky atď. \n"
-"Zoznamy skladieb sa neodstránia.\n"
-"Prajete si pokračovať?"
+"Figyelmeztetés: törölje a tárolt JSON-adatokat az összes lejátszási "
+"listához... Beállítások, kedvencek stb. \n"
+"A lejátszási listák nem törlődnek.\n"
+"Szeretné folytatni?"
 
 #: menu.py:52
 msgid "Update"
-msgstr "Aktualizovať"
+msgstr "Frissítés"
 
 #: menu.py:54
 msgid "Catchup channel check updated: "
-msgstr "Kontrola kanála Catchup aktualizovaná: "
+msgstr "Felzárkóztató csatorna ellenőrzése frissítve: "
 
 #: menu.py:86 menu.py:285
 msgid "Last catchup check: "
-msgstr "Posledná Catchup kontrola: "
+msgstr "Utolsó felzárkóztatási ellenőrzés: "
 
 #: menu.py:233
 msgid "TV Series"
-msgstr "Televízne seriály"
+msgstr "TV Sorozat"
 
 #: menu.py:248 playsettings.py:42
 msgid "Playlist Settings"
-msgstr "Playlist Nastavenie"
+msgstr "Lejátszási lista beállításai"
 
 #: menu.py:257
 msgid "No data, blocked or playlist not compatible with XStreamity plugin."
 msgstr ""
-"Žiadne údaje, blokované alebo playlist nie je kompatibilný s doplnkom "
-"XStreamity."
+"Nincs adat, blokkolt vagy lejátszási lista, amely nem kompatibilis az "
+"XStreamity beépülő modullal."
 
 #: playlists.py:53
 msgid "Select Playlist"
-msgstr "Vyberte Playlist"
+msgstr "Lejátszási lista kiválasztása"
 
 #: playlists.py:58
 msgid "Info"
-msgstr "Informácie"
+msgstr "Információ"
 
 #: playlists.py:290 playlists.py:350
 msgid "Server Not Responding"
-msgstr "Server nereaguje"
+msgstr "A kiszolgáló nem válaszol"
 
 #: playlists.py:302 playlists.py:352
 msgid "Not Authorised"
-msgstr "Nie je autorizovaný"
+msgstr "Nem engedélyezett"
 
 #: playlists.py:307 playlists.py:315 playlists.py:339
 msgid "Active"
-msgstr "Aktívny"
+msgstr "Aktív"
 
 #: playlists.py:309 playlists.py:344
 msgid "Banned"
-msgstr "Zablokovaný"
+msgstr "Tiltott"
 
 #: playlists.py:311 playlists.py:348
 msgid "Disabled"
-msgstr "Zakázané"
+msgstr "Kikapcsolva"
 
 #: playlists.py:313 playlists.py:346
 msgid "Expired"
-msgstr "Vypršala"
+msgstr "Lejárt"
 
 #: playlists.py:318 playlists.py:320
 msgid "Expires: "
-msgstr "Skončí: "
+msgstr "Lejár: "
 
 #: playlists.py:322
 msgid "Active Conn:"
-msgstr "Aktívny Conn:"
+msgstr "Aktív Conn:"
 
 #: playlists.py:325
 msgid "Max Conn:"
@@ -497,63 +498,63 @@ msgstr "Max Conn:"
 
 #: playlists.py:365
 msgid "Delete selected playlist?"
-msgstr "Odstrániť vybratý playlist?"
+msgstr "Törli a kiválasztott lejátszási listát?"
 
 #: playlists.py:386
 msgid "Delete providers EPG data?"
-msgstr "Odstrániť poskytovateľov EPG údaje?"
+msgstr "Törli a szolgáltatók EPG-adatait?"
 
 #: playsettings.py:81 record.py:73 server.py:77 settings.py:99
 msgid "Really close without saving settings?"
-msgstr "Naozaj zavrieť bez uloženia nastavení?"
+msgstr "Tényleg bezárja a beállítások mentése nélkül?"
 
 #: playsettings.py:137 server.py:105
 msgid "Short name or provider name:"
-msgstr "Skrátený názov alebo názov poskytovateľa:"
+msgstr "Rövid név vagy szolgáltatónév:"
 
 #: playsettings.py:139
 msgid "Show LIVE category:"
-msgstr "Zobraziť kategóriu NAŽIVO:"
+msgstr "Show LIVE kategória:"
 
 #: playsettings.py:140
 msgid "Show VOD category:"
-msgstr "Zobraziť kategóriu VOD:"
+msgstr "VOD kategória megjelenítése:"
 
 #: playsettings.py:141
 msgid "Show SERIES category:"
-msgstr "Zobraziť kategóriu SERIES:"
+msgstr "Show SERIES kategória:"
 
 #: playsettings.py:142
 msgid "Show CATCHUP category:"
-msgstr "Zobraziť kategóriu CATCHUP:"
+msgstr "CATCHUP kategória megjelenítése:"
 
 #: playsettings.py:143 server.py:111
 msgid "Output:"
-msgstr "Výstup:"
+msgstr "Kivitel:"
 
 #: playsettings.py:146
 msgid "Stream Type LIVE:"
-msgstr "Typ streamu LIVE:"
+msgstr "Élő közvetítés típusa:"
 
 #: playsettings.py:149
 msgid "Stream Type VOD/SERIES:"
-msgstr "Typ streamu VOD/SERIES:"
+msgstr "Stream típusa VOD/SERIES:"
 
 #: playsettings.py:151
 msgid "Stream Source URL:"
-msgstr "Adresa URL zdroja Streamu:"
+msgstr "Stream forrás URL-címe:"
 
 #: playsettings.py:153
 msgid "EPG offset:"
-msgstr "Posun EPG:"
+msgstr "EPG eltolás:"
 
 #: playsettings.py:154
 msgid "Use alternative EPG url:"
-msgstr "Použite alternatívnu EPG adresu:"
+msgstr "Használjon alternatív EPG URL-t:"
 
 #: playsettings.py:156
 msgid "Alternative EPG url:"
-msgstr "Alternatívna EPG adresa:"
+msgstr "Alternatív EPG URL:"
 
 #: plugin.py:227 plugin.py:348
 msgid "XStreamity"
@@ -561,43 +562,43 @@ msgstr "XStreamity"
 
 #: plugin.py:347
 msgid "IPTV Xtream Codes playlists player by KiddaC"
-msgstr "IPTV Xtream Kódy playlists od KiddaC"
+msgstr "IPTV Xtream kódok lejátszási listák lejátszója a KiddaC által"
 
 #: record.py:39 serverinfo.py:61 streamplayer.py:1632
 msgid "Close"
-msgstr "Zatvoriť"
+msgstr "Bezár"
 
 #: record.py:53
 msgid "Please enter recording time"
-msgstr "Zadajte čas nahrávania"
+msgstr "Kérjük, adja meg a felvételi időt"
 
 #: record.py:56
 msgid "Please enter recording end time"
-msgstr "Zadajte čas ukončenia nahrávania"
+msgstr "Kérjük, adja meg a felvétel befejezési idejét"
 
 #: record.py:93
 msgid "Name"
-msgstr "Meno"
+msgstr "Név"
 
 #: record.py:95
 msgid "Start Time"
-msgstr "Čas začiatku"
+msgstr "Kezdés ideje"
 
 #: record.py:97
 msgid "End Time"
-msgstr "Čas ukončenia"
+msgstr "Befejezés ideje"
 
 #: server.py:43
 msgid "Add Xtream Codes Playlist"
-msgstr "Pridajte Xtream Codes Playlists"
+msgstr "Xtream kódok lejátszási listájának hozzáadása"
 
 #: server.py:106
 msgid "Protocol:"
-msgstr "Protokol:"
+msgstr "Protokoll:"
 
 #: server.py:107
 msgid "Server URL: i.e. domain.xyz"
-msgstr "Adresa URL servera: t.j. doména.xyz"
+msgstr "Szerver URL: azaz domain.xyz"
 
 #: server.py:108
 msgid "Port:"
@@ -605,63 +606,63 @@ msgstr "Port:"
 
 #: server.py:109
 msgid "Username:"
-msgstr "Používateľské meno:"
+msgstr "Felhasználónév:"
 
 #: server.py:110
 msgid "Password:"
-msgstr "Heslo:"
+msgstr "Jelszó:"
 
 #: server.py:184
 msgid "Details are not valid or unauthorised"
-msgstr "Údaje nie sú platné alebo neoprávnené"
+msgstr "Az adatok nem érvényesek vagy jogosulatlanok"
 
 #: server.py:209
 msgid "Playlist added successfully."
-msgstr "Playlist bol úspešne pridaný."
+msgstr "A lejátszási lista sikeresen hozzáadva."
 
 #: serverinfo.py:30
 msgid "User Information"
-msgstr "Informácie o užívateľovi"
+msgstr "Felhasználói adatok"
 
 #: serverinfo.py:44
 msgid "Status:"
-msgstr "Stav:"
+msgstr "Állapot:"
 
 #: serverinfo.py:45
 msgid "Is Trial:"
-msgstr "Je skúšobná verzia:"
+msgstr "A próbaverzió:"
 
 #: serverinfo.py:46
 msgid "Active Connections:"
-msgstr "Aktívne pripojenia:"
+msgstr "Aktív kapcsolatok:"
 
 #: serverinfo.py:47
 msgid "Max Connections:"
-msgstr "Max pripojenia:"
+msgstr "Kapcsolatok maximális száma:"
 
 #: serverinfo.py:48
 msgid "Created At:"
-msgstr "Vytvorené:"
+msgstr "Létrehozva:"
 
 #: serverinfo.py:49
 msgid "Expiry Date:"
-msgstr "Dátum expirácie:"
+msgstr "Lejárati:"
 
 #: serverinfo.py:50
 msgid "Allowed Output Formats:"
-msgstr "Povolené výstupné formáty:"
+msgstr "Engedélyezett kimeneti formátumok:"
 
 #: serverinfo.py:51
 msgid "Real URL:"
-msgstr "Skutočná adresa URL:"
+msgstr "Valódi URL:"
 
 #: serverinfo.py:52
 msgid "Timezone:"
-msgstr "Časové pásmo:"
+msgstr "Időzóna:"
 
 #: serverinfo.py:53
 msgid "Server Offset:"
-msgstr "Offset servera:"
+msgstr "Szerver eltolás:"
 
 #: settings.py:111
 msgid ""
@@ -669,121 +670,123 @@ msgid ""
 "\n"
 "Pin cannot be 0000, 1111 or 1234"
 msgstr ""
-"Zmeňte predvolený rodičovský pin.\n"
+"Kérjük, módosítsd az alapértelmezett szülői PIN-kódot.\n"
 "\n"
-"Pin nemôže byť 0000, 1111 alebo 1234"
+"A kitűző nem lehet 0000, 1111 vagy 1234"
 
 #: settings.py:127
 msgid "You need to restart the GUI"
-msgstr "Musíte reštartovať GUI"
+msgstr "Újra kell indítania a grafikus felhasználói felületet"
 
 #: settings.py:127
 msgid "Do you want to restart now?"
-msgstr "Chcete reštartovať teraz?"
+msgstr "Most szeretné újraindítani?"
 
 #: settings.py:138
 msgid "Select skin"
-msgstr "Vyber skin"
+msgstr "Skin kiválasztása"
 
 #: settings.py:139
 msgid "playlists.txt location"
-msgstr "playlists.txt umiestnenie"
+msgstr "playlists.txt helyére"
 
 #: settings.py:139 settings.py:151
 msgid " *Restart GUI Required"
-msgstr " *Vyžaduje sa Reštart GUI"
+msgstr " *GUI újraindítása szükséges"
 
 #: settings.py:140
 msgid "EPG download location"
-msgstr "Miesto sťahovania EPG"
+msgstr "EPG letöltési hely"
 
 #: settings.py:141
 msgid "VOD download folder"
-msgstr "Priečinok na stiahnutie VOD"
+msgstr "VOD letöltési mappa"
 
 #: settings.py:144
 msgid "Default LIVE stream type"
-msgstr "Predvolený typ LIVE prenosu"
+msgstr "Alapértelmezett ÉLŐ közvetítés típusa"
 
 #: settings.py:145
 msgid "Default VOD/SERIES stream type"
-msgstr "Predvolený typ streamu VOD/SERIES"
+msgstr "Alapértelmezett VOD/SERIES adatfolyamtípus"
 
 #: settings.py:147
 msgid "Preview LIVE streams in mini tv"
-msgstr "Náhľad LIVE prenosov v mini tv"
+msgstr "ÉLŐ közvetítések előnézete mini tv-ben"
 
 #: settings.py:148
 msgid "Stop stream on back button"
-msgstr "Zastaviť stream na tlačidle Späť"
+msgstr "Streamelés leállítása a Vissza gombon"
 
 #: settings.py:149
 msgid "XStreamity parental control"
-msgstr "XStreamity rodičovská kontrola"
+msgstr "XStreamity szülői felügyelet"
 
 #: settings.py:150
 msgid "XStreamity parental pin"
-msgstr "Rodičovský pin XStreamity"
+msgstr "XStreamity szülői tű"
 
 #: settings.py:151
 msgid "Show in main menu"
-msgstr "Zobraziť v hlavnom menu"
+msgstr "Megjelenítés a főmenüben"
 
 #: settings.py:153
 msgid "Use Movie Database(TMDB) for VOD & Series"
-msgstr "Použitie filmovej databázy (TMDB) pre VOD a seriály"
+msgstr "A Movie Database (TMDB) használata a VOD & sorozatokhoz"
 
 #: settings.py:154
 msgid "Movie Database language"
-msgstr "Jazyk Filmovej databázy"
+msgstr "Filmadatbázis nyelve"
 
 #: settings.py:156
 msgid "Margin before catchup (mins)"
-msgstr "Rozpätie pred dobehnutím (minúty)"
+msgstr "Margó a felzárkózás előtt (perc)"
 
 #: settings.py:157
 msgid "Margin after catchup (mins)"
-msgstr "Rozpätie po dobehnutí (min)"
+msgstr "Margó a felzárkózás után (perc)"
 
 #: settings.py:159
 msgid "Allow SubsSupport plugin in VOD"
-msgstr "Povoliť doplnok SubsSupport na VOD"
+msgstr "A SubsSupport beépülő modul engedélyezése a VOD-ban"
 
 #: settings.py:161
 msgid "Skip playlist selection screen if only 1 playlist"
-msgstr "Preskočiť obrazovku výberu playlist, ak máte iba 1 playlist"
+msgstr ""
+"Hagyja ki a lejátszási lista kiválasztási képernyőjét, ha csak 1 "
+"lejátszási lista"
 
 #: settings.py:163
 msgid "Automatic EPG download time"
-msgstr "Automatický čas sťahovania EPG"
+msgstr "Automatikus EPG letöltési idő"
 
 #: settings.py:165
 msgid "Show channel picons"
-msgstr "Zobrazenie piconov kanála"
+msgstr "Csatornaképek megjelenítése"
 
 #: settings.py:166
 msgid "Show Vod/Series posters"
-msgstr "Zobraziť plagáty Vod/Series"
+msgstr "Vod/Series poszterek megjelenítése"
 
 #: settings.py:167
 msgid "Show infobar picons"
-msgstr "Zobrazenie piconov na informačnom paneli"
+msgstr "Csatorna ikon megjelenítése az Információs sávon"
 
 #: settings.py:168
 msgid "Show infobar posters"
-msgstr "Zobrazenie plagátov informačného panela"
+msgstr "Információs sáv posztereinek megjelenítése"
 
 #: settings.py:170
 msgid "Auto start XStreamity on boot"
-msgstr "Automatické spustenie XStreamity pri štarte"
+msgstr "Az XStreamity automatikus indítása rendszerindításkor"
 
 #: settings.py:300 settings.py:313 settings.py:326
 msgid "Choose Directory:"
-msgstr "Vyberte Adresár:"
+msgstr "Válasszon könyvtárat:"
 
 #: settings.py:301 settings.py:314 settings.py:327
 msgid "Choose directory"
-msgstr "Vyberte adresár"
+msgstr "Válasszon könyvtárat"
 
 #: streamplayer.py:429
 msgid "TV"
@@ -791,12 +794,12 @@ msgstr "TV"
 
 #: streamplayer.py:1013
 msgid "Do you want to resume this playback?"
-msgstr "Chcete pokračovať v tomto prehrávaní?"
+msgstr "Szeretné folytatni ezt a lejátszást ahonnan abbahagyta?"
 
 #: streamplayer.py:1013
 #, python-format
 msgid "Resume position at %s"
-msgstr "Obnovte pozíciu na %s"
+msgstr "Folytatás %s pozíciótól"
 
 #: streamplayer.py:1096
 msgid "VOD"
@@ -804,35 +807,12 @@ msgstr "VOD"
 
 #: streamplayer.py:1416
 msgid "Catch Up"
-msgstr "Dobehnúť"
+msgstr "Felzárkózás"
 
 #: streamplayer.py:1629
 msgid "Xstreamity Log"
-msgstr "Denník Xstreamity"
+msgstr "Xstreamity napló"
 
 #: streamplayer.py:1633
 msgid "Clear"
-msgstr "Vyčistiť"
-
-#~ msgid "Server URL:"
-#~ msgstr "Server URL:"
-
-#~ msgid "Select skin *Restart GUI Required"
-#~ msgstr ""
-#~ "Vyberte vzhľad *Vyžaduje sa reštartovanie grafického používateľského "
-#~ "rozhrania"
-
-#~ msgid "Show in main menu *Restart GUI Required"
-#~ msgstr ""
-#~ "Zobraziť v hlavnom menu *Vyžaduje sa reštart grafického používateľského "
-#~ "rozhrania"
-
-#~ msgid "Automatic EPG download time *Restart GUI Required"
-#~ msgstr ""
-#~ "Automatický čas sťahovania EPG *Vyžaduje sa reštartovanie grafického "
-#~ "používateľského rozhrania"
-
-#~ msgid "Auto start XStreamity on boot *Restart GUI Required"
-#~ msgstr ""
-#~ "Automatické spustenie XStreamity pri zavádzaní systému *Vyžaduje sa "
-#~ "reštartovanie grafického používateľského rozhrania"
+msgstr "Törlés"
