@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2023-03-07 20:51+0000\n"
-"PO-Revision-Date: 2023-03-07 20:51+0000\n"
+"PO-Revision-Date: 2023-04-16 15:13+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl_NL\n"
@@ -16,19 +16,19 @@ msgstr ""
 
 #: Task.py:61 downloadmanager.py:48
 msgid "Waiting"
-msgstr "Aan het wachten"
+msgstr "Wachten"
 
 #: Task.py:61 downloadmanager.py:47
 msgid "In progress"
-msgstr "Bezig"
+msgstr "In behandeling"
 
 #: Task.py:61
 msgid "Finished"
-msgstr ""
+msgstr "Voltooid"
 
 #: Task.py:61
 msgid "Failed"
-msgstr ""
+msgstr "Mislukt"
 
 #: Task.py:326
 #, python-format
@@ -36,27 +36,29 @@ msgid ""
 "Error: %s\n"
 "Retry?"
 msgstr ""
+"Fout: %s\n"
+"Opnieuw?"
 
 #: Task.py:329
 msgid "Error"
-msgstr ""
+msgstr "Fout"
 
 #: Task.py:376
 msgid "An unknown error occurred!"
-msgstr ""
+msgstr "Er is een onbekende fout opgetreden!"
 
 #: Task.py:401
 #, python-format
 msgid "A required tool (%s) was not found."
-msgstr ""
+msgstr "Een noodzakelijke tool (%s) is niet gevonden."
 
 #: Task.py:409
 msgid "Cancelled upon user request"
-msgstr ""
+msgstr "Geannuleerd door de gebruiker"
 
 #: Task.py:426 Task.py:441
 msgid "Error code"
-msgstr ""
+msgstr "Foutcode"
 
 #: channels.py:248 channels.py:250 channels.py:251 channels.py:252
 #: channels.py:253 channels.py:255 channels.py:256 channels.py:257
@@ -145,11 +147,11 @@ msgstr "ALLES"
 
 #: channels.py:974
 msgid "Season "
-msgstr "Seizoen"
+msgstr "Seizoen "
 
 #: channels.py:1178
 msgid "Server error or invalid link."
-msgstr ""
+msgstr "Serverfout of ongeldige link."
 
 #: channels.py:1297 channels.py:1719 channels.py:1778
 msgid "Reset Search"
@@ -217,7 +219,7 @@ msgstr "Video Type:"
 
 #: channels.py:2925
 msgid "Rating:"
-msgstr "Rating:"
+msgstr "Beoordeling:"
 
 #: channels.py:2926
 msgid "Genre:"
@@ -257,15 +259,15 @@ msgstr "Toegevoegd aan download manager"
 
 #: channels.py:3042
 msgid "Note recording acts as an open connection."
-msgstr ""
+msgstr "Opmerking, opname werkt als een zelfstandige verbinding."
 
 #: channels.py:3042
 msgid "Do not record and play streams at the same time."
-msgstr ""
+msgstr "Speel niet streams af tegellijktijdig met stream opnames."
 
 #: channels.py:3042
 msgid "Open download manager?"
-msgstr ""
+msgstr "Download manager openen?"
 
 #: channels.py:3045
 msgid "Already added to download manager"
@@ -385,7 +387,7 @@ msgstr "Herstel JSON"
 
 #: mainmenu.py:76
 msgid "Playlists.txt location is invalid and has been reset."
-msgstr ""
+msgstr "Playlists.txt locatie is ongeldig en is gereset."
 
 #: mainmenu.py:117
 msgid "Playlists"
@@ -537,7 +539,7 @@ msgstr "Streamtype voor VOD/Series:"
 
 #: playsettings.py:151
 msgid "Stream Source URL:"
-msgstr ""
+msgstr "Stream Source URL:"
 
 #: playsettings.py:153
 msgid "EPG offset:"
@@ -593,7 +595,7 @@ msgstr "Protocol:"
 
 #: server.py:107
 msgid "Server URL: i.e. domain.xyz"
-msgstr ""
+msgstr "Server URL: bijv. domain.xyz"
 
 #: server.py:108
 msgid "Port:"
@@ -679,15 +681,15 @@ msgstr "Wil je nu herstarten?"
 
 #: settings.py:138
 msgid "Select skin"
-msgstr ""
+msgstr "Selecteer skin"
 
 #: settings.py:139
 msgid "playlists.txt location"
-msgstr "Playlists.txt locatie"
+msgstr "playlists.txt locatie"
 
 #: settings.py:139 settings.py:151
 msgid " *Restart GUI Required"
-msgstr ""
+msgstr " * Herstart GUI noodzakelijk"
 
 #: settings.py:140
 msgid "EPG download location"
@@ -723,7 +725,7 @@ msgstr "XStreamity ouderlijke pincode"
 
 #: settings.py:151
 msgid "Show in main menu"
-msgstr ""
+msgstr "Weergeven in hoofdmenu"
 
 #: settings.py:153
 msgid "Use Movie Database(TMDB) for VOD & Series"
@@ -751,11 +753,11 @@ msgstr "Playlist-keuzescherm overslaan bij slechts één playlist"
 
 #: settings.py:163
 msgid "Automatic EPG download time"
-msgstr ""
+msgstr "Automatische EPG-downloadtijd"
 
 #: settings.py:165
 msgid "Show channel picons"
-msgstr "Kanaalpicons weergeven"
+msgstr "Zender picons weergeven"
 
 #: settings.py:166
 msgid "Show Vod/Series posters"
@@ -771,7 +773,7 @@ msgstr "Infobalkposters weergeven"
 
 #: settings.py:170
 msgid "Auto start XStreamity on boot"
-msgstr ""
+msgstr "Start XStreamity automatisch tijdens het opstarten"
 
 #: settings.py:300 settings.py:313 settings.py:326
 msgid "Choose Directory:"
