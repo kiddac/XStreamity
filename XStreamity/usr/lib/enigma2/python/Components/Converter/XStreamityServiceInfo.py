@@ -3,8 +3,11 @@ from enigma import iServiceInformation, iPlayableService
 from Components.Element import cached
 from Components.Converter.Poll import Poll
 from os import path
+from sys import version_info
 
 WIDESCREEN = [1, 3, 4, 7, 8, 0xB, 0xC, 0xF, 0x10]
+
+PY3 = version_info[0] == 3
 
 
 class XStreamityServiceInfo(Poll, Converter):
@@ -273,8 +276,11 @@ class XStreamityServiceInfo(Poll, Converter):
                     video_rate = int(self.getServiceInfoString(info, iServiceInformation.sFrameRate))
                 except:
                     return "fps -"
-            fps = str((video_rate + 500) / 1000)
-            return str("fps") + fps
+            if PY3:
+                fps = str((video_rate + 500) // 1000)
+            else:
+                fps = str((video_rate + 500) / 1000)
+            return str("fps ") + fps
 
         return ""
 
