@@ -284,7 +284,6 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
             self.openDirectoryBrowser(cfg.epglocation.value, "epglocation")
         else:
             pass
-        ConfigListScreen.keyOK(self)
 
     def openDirectoryBrowser(self, path, cfgitem):
 
@@ -298,11 +297,13 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
                     LocationBox,
                     windowTitle=_("Choose Directory:"),
                     text=_("Choose directory"),
-                    currDir=path,
-                    bookmarks=config.movielist.videodirs)
+                    currDir=str(path),
+                    bookmarks=config.movielist.videodirs,
+                    autoAdd=True,
+                    editDir=True,
+                    inhibitDirs=["/bin", "/boot", "/dev", "/home", "/lib", "/proc", "/run", "/sbin", "/sys", "/usr", "/var"])
             except Exception as e:
                 print(e)
-            ConfigListScreen.keyOK(self)
 
         elif cfgitem == "downloadlocation":
             try:
@@ -311,11 +312,13 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
                     LocationBox,
                     windowTitle=_("Choose Directory:"),
                     text=_("Choose directory"),
-                    currDir=path,
-                    bookmarks=config.movielist.videodirs)
+                    currDir=str(path),
+                    bookmarks=config.movielist.videodirs,
+                    autoAdd=True,
+                    editDir=True,
+                    inhibitDirs=["/bin", "/boot", "/dev", "/home", "/lib", "/proc", "/run", "/sbin", "/sys", "/usr", "/var"])
             except Exception as e:
                 print(e)
-            ConfigListScreen.keyOK(self)
 
         elif cfgitem == "epglocation":
             try:
@@ -324,11 +327,13 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
                     LocationBox,
                     windowTitle=_("Choose Directory:"),
                     text=_("Choose directory"),
-                    currDir=path,
-                    bookmarks=config.movielist.videodirs)
+                    currDir=str(path),
+                    bookmarks=config.movielist.videodirs,
+                    autoAdd=True,
+                    editDir=True,
+                    inhibitDirs=["/bin", "/boot", "/dev", "/home", "/lib", "/proc", "/run", "/sbin", "/sys", "/usr", "/var"])
             except Exception as e:
                 print(e)
-            ConfigListScreen.keyOK(self)
 
     def openDirectoryBrowserCB(self, path):
         if path is not None:

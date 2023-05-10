@@ -23,7 +23,7 @@ from itertools import cycle, islice
 from PIL import Image, ImageChops, ImageFile, PngImagePlugin
 from RecordTimer import RecordTimerEntry
 from Tools import Notifications
-from Components.ScrollLabel import ScrollLabel
+# from Components.ScrollLabel import ScrollLabel
 
 from Screens.InfoBarGenerics import InfoBarMenu, InfoBarSeek, InfoBarAudioSelection, InfoBarMoviePlayerSummarySupport, \
     InfoBarSubtitleSupport, InfoBarSummarySupport, InfoBarServiceErrorPopupSupport, InfoBarNotifications
@@ -46,7 +46,7 @@ try:
 except:
     from urllib.parse import urlparse
 
-from . import log
+# from . import log
 import json
 import os
 import re
@@ -440,7 +440,7 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             "info": self.toggleStreamType,
             "green": self.nextAR,
             "rec": self.IPTVstartInstantRecording,
-            "blue": self.showLog,
+            # "blue": self.showLog,
         }, -2)
 
         self.__event_tracker = ServiceEventTracker(
@@ -683,8 +683,6 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
 
     def playStream(self, servicetype, streamurl, direct_source):
         # print("*** playStream ***")
-        if cfg.infobarpicons.value is True:
-            self.downloadImage()
 
         self["streamcat"].setText("Live")
         self["streamtype"].setText(str(servicetype))
@@ -711,6 +709,9 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
             glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
 
+        if cfg.infobarpicons.value is True:
+            self.downloadImage()
+
         self.refreshInfobar()
 
         self.timerrefresh = eTimer()
@@ -722,7 +723,7 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
 
     def __evStart(self):
         # print("__evTunedStart")
-        print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " evStart", self.servicetype, file=log)
+        # print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " evStart", self.servicetype, file=log)
 
         if self.hasStreamData is False:
             self.timerstream = eTimer()
@@ -739,8 +740,10 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
 
     def __evUpdatedInfo(self):
         # print("__evUpdatedInfo")
+        """
         if not self.hasStreamData:
             print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " evUpdatedInfo", self.servicetype, file=log)
+            """
         self.originalservicetype = self.servicetype
         self.hasStreamData = True
 
@@ -766,7 +769,7 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
 
     def __evTuneFailed(self):
         # print("__evTuneFailed")
-        print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " evTunedFailed", file=log)
+        # print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " evTunedFailed", file=log)
         self.hasStreamData = False
         try:
             self.session.nav.stopService()
@@ -775,7 +778,7 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
 
     def __evEOF(self):
         # print("__evEOF")
-        print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " evEOF", self.servicetype, file=log)
+        # print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " evEOF", self.servicetype, file=log)
         self.hasStreamData = False
         try:
             self.session.nav.stopService()
@@ -785,18 +788,20 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
     def checkStream(self):
         # print("checkStream")
         if self.hasStreamData is False:
-            print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " Checking Stream", file=log)
+            # print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " Checking Stream", file=log)
             if self.streamcheck == 0:
-                print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " Stream Failed 1. Reloading Stream.", file=log)
+                # print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " Stream Failed 1. Reloading Stream.", file=log)
                 self.streamFailed()
 
             elif self.streamcheck == 1:
-                print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " Stream Failed 2. Switching stream type.", file=log)
+                # print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " Stream Failed 2. Switching stream type.", file=log)
                 self.streamTypeFailed()
             else:
                 self.__evTuneFailed()
+        """
         else:
             print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " Stream OK", file=log)
+            """
 
     def streamFailed(self, data=None):
         self.streamcheck = 1
@@ -958,8 +963,10 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
         message = self.nextARfunction()
         self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO, timeout=3)
 
+    """
     def showLog(self):
         self.session.open(XStreamityLog)
+        """
 
 
 class XStreamityCueSheetSupport:
@@ -1587,6 +1594,7 @@ class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAud
         self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO, timeout=3)
 
 
+'''
 class XStreamityLog(Screen):
     if screenwidth.width() > 1280:
         skin = """
@@ -1655,3 +1663,4 @@ class XStreamityLog(Screen):
         log.logfile.seek(0, 0)
         log.logfile.truncate()
         self.close(False)
+        '''

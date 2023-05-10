@@ -1,0 +1,69 @@
+<screen name="XStreamityStreamPlayer" position="0,0" size="2560,1440" backgroundColor="#ff000000" flags="wfNoBorder">
+	<ePixmap position="216,735" size="2128,303" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/slyk1080r19/images/infobar-top.png" alphatest="blend" zPosition="-1"/>
+	<widget source="nowtime" render="Label" position="247,756" size="260,72" font="slykbold;56" foregroundColor="#7eaeef" backgroundColor="#133171" transparent="1" noWrap="1" valign="top"/>
+	<widget source="nowtitle" render="Label" position="507,756" size="1328,72" font="slykbold;56" noWrap="1" foregroundColor="#7eaeef" backgroundColor="#133171" transparent="1" valign="top" zPosition="3"/>
+	<widget source="x_description" render="XStreamityRunningText" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" position="247,827" size="2047,175" font="slykregular;52" foregroundColor="#ffffff" backgroundColor="#133171" transparent="1" valign="top" zPosition="3"/>
+	<widget text="DD" render="FixedLabel" source="session.CurrentService" position="2022,755" size="68,76" font="slykregular;52" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" halign="right" valign="center" noWrap="1" zPosition="3">
+		<convert type="XStreamityServiceInfo">IsMultichannel</convert>
+		<convert type="ConditionalShowHide"/>
+	</widget>
+	<widget text="UHD" render="FixedLabel" source="session.CurrentService" position="2106,755" size="107,76" font="slykregular;52" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" halign="right" valign="center" noWrap="1" zPosition="3">
+		<convert type="XStreamityServiceInfo">IsUHD</convert>
+		<convert type="ConditionalShowHide"/>
+	</widget>
+	<widget text="FHD" render="FixedLabel" source="session.CurrentService" position="2106,755" size="107,76" font="slykregular;52" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" halign="right" valign="center" noWrap="1" zPosition="3">
+		<convert type="XStreamityServiceInfo">IsFHD</convert>
+		<convert type="ConditionalShowHide"/>
+	</widget>
+	<widget text="HD" render="FixedLabel" source="session.CurrentService" position="2106,755" size="107,76" font="slykregular;52" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" halign="right" valign="center" noWrap="1" zPosition="3">
+		<convert type="XStreamityServiceInfo">IsHD</convert>
+		<convert type="ConditionalShowHide"/>
+	</widget>
+	<widget text="SD" render="FixedLabel" source="session.CurrentService" position="2106,755" size="107,76" font="slykregular;52" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" halign="right" valign="center" noWrap="1" zPosition="3">
+		<convert type="XStreamityServiceInfo">IsSD</convert>
+		<convert type="ConditionalShowHide"/>
+	</widget>
+	<widget text="W" render="FixedLabel" source="session.CurrentService" position="2228,755" size="44,76" font="slykregular;52" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" halign="right" valign="center" noWrap="1" zPosition="3">
+		<convert type="XStreamityServiceInfo">IsWidescreen</convert>
+		<convert type="ConditionalShowHide"/>
+	</widget>
+	<widget text="S" render="FixedLabel" source="session.CurrentService" position="2288,755" size="31,76" font="slykregular;52" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" halign="right" valign="center" noWrap="1" zPosition="3">
+		<convert type="XStreamityServiceInfo">SubtitlesAvailable</convert>
+		<convert type="ConditionalShowHide"/>
+	</widget>
+	<!-- main infobar -->
+	<ePixmap position="216,1036" size="2128,312" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/slyk1080r19/images/infobar-2.png" alphatest="blend" zPosition="-1"/>>
+		
+	<widget source="nowchannel" render="Label" position="247,1047" size="1588,72" font="slykbold;56" foregroundColor="#ffffff" backgroundColor="#133171" transparent="1" valign="center" halign="left" noWrap="1"/>
+	<widget source="global.CurrentTime" render="Label" position="1835,1047" size="480,72" font="slykregular;52" foregroundColor="#7eaeef" backgroundColor="#13317" valign="center" halign="right" transparent="1" zPosition="2">
+		<convert type="ClockToText">Format:%H:%M %a %d/%m</convert>
+	</widget>
+	<widget name="picon" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/picon.png" position="268,1148" size="200,120" scale="1" alphatest="blend" zPosition="10"/>
+	<widget source="nowtime" render="Label" position="512,1124" size="859,72" font="slykregular;52" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" noWrap="1" valign="center"/>
+	<widget source="nowtitle" render="Label" position="512,1196" size="859,72" font="slykbold;56" noWrap="1" foregroundColor="#133171" backgroundColor="#f5c400" transparent="1" valign="center"/>
+	<widget source="nexttime" render="Label" position="1418,1124" size="859,72" font="slykregular;52" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" noWrap="1" valign="center"/>
+	<widget source="nexttitle" render="Label" position="1418,1196" size="859,72" font="slykregular;52" noWrap="1" foregroundColor="#ffffff" backgroundColor="#13317" transparent="1" valign="center"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/slyk1080r19/images/up-down.png" position="267,1292" size="72,40" alphatest="blend" backgroundColor="transparent" zPosition="4"/>
+	<eLabel text="Channels" position="351,1272" size="228,76" font="slykregular;52" halign="left" valign="center" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1"/>
+	<widget name="statusicon" position="1418,1288" size="51,51" zPosition="5" alphatest="blend" pixmaps="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/state_play.png,/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/state_pause.png,/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/state_stop.png,/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/state_ff.png,/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/state_rw.png,/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/state_slow.png,/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/state_blank.png"/>
+	<widget name="speed" position="1474,1272" size="72,76" font="slykregular;52" foregroundColor="#ffffff" backgroundColor="#133171" halign="right" valign="center" transparent="1" zPosition="3"/>
+	<widget name="progress" position="844,1306" size="264,12" foregroundColor="#7eaeef" backgroundColor="#1a000000" zPosition="3"/>
+	<widget source="streamtype" render="Label" position="1835,1272" size="480,76" font="slykregular;52" halign="right" valign="center" transparent="1" noWrap="1" foregroundColor="#7eaeef" backgroundColor="#1c4475" zPosition="2"/>
+	<!--
+		<widget source="session.CurrentService" render="Label" position="2208,1252" size="120,48" font="slykbold;36" foregroundColor="#ffffff" backgroundColor="#40000000" valign="center" halign="center" transparent="1" zPosition="3">
+		<convert type="XStreamityServiceInfo">VideoWidth</convert>
+	</widget>
+	<widget source="session.CurrentService" render="Label" position="2208,1308" size="120,48" font="slykbold;36" foregroundColor="#ffffff" backgroundColor="#40000000" valign="center" halign="center" transparent="1" zPosition="3">
+		<convert type="XStreamityServiceInfo">VideoHeight</convert>
+	</widget>
+	
+		<widget source="session.CurrentService" render="Label" position="2208,1364" size="120,48" font="slykbold;32" foregroundColor="#ffffff" backgroundColor="#40000000" valign="center" halign="center" transparent="1" zPosition="3">
+		<convert type="XStreamityServiceInfo">Framerate</convert>
+	</widget>
+	
+	<widget source="session.CurrentService" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/key_audio.png" position="2464,1252" size="51,51" alphatest="blend" zPosition="2">
+		<convert type="XStreamityServiceInfo">AudioTracksAvailable</convert>
+		<convert type="ConditionalShowHide" />
+	</widget>
+	-->
+</screen>

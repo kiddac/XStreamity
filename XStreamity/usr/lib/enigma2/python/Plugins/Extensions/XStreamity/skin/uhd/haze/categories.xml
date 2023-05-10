@@ -76,7 +76,7 @@
 	<widget name="progress" position="174,356" size="294,16" borderWidth="2" borderColor="#ffffff" foregroundColor="#ec297b" backgroundColor="#1a242b34" zPosition="3" />
 	<!-- vod section -->
 	
-	<widget name="vod_cover" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/haze/images/vod_background.png" alphatest="blend" position="694,400" size="534,800" zPosition="2" />
+	<widget name="vod_cover" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/haze/images/vod_cover.png" alphatest="blend" position="694,400" size="534,800" zPosition="2" />
 	<widget name="vod_background" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/vod_background.png" position="1307,400" size="1174,800" alphatest="blend" zPosition="2" />		
 
 	<widget source="vod_video_type_label" render="Label" position="1347,440" size="320,80" font="xstreamitybold;36" foregroundColor="#ffffff" backgroundColor="#40000000" halign="left" noWrap="1" transparent="1" zPosition="3" />

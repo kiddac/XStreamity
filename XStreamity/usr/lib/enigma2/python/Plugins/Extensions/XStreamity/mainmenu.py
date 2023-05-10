@@ -72,10 +72,13 @@ class XStreamity_MainMenu(Screen):
 
     def check_dependencies(self):
 
-        if cfg.locationvalid.getValue() is False:
-            self.session.open(MessageBox, _("Playlists.txt location is invalid and has been reset."), type=MessageBox.TYPE_INFO, timeout=5)
-            cfg.locationvalid.setValue(True)
-            cfg.save()
+        try:
+            if cfg.locationvalid.getValue() is False:
+                self.session.open(MessageBox, _("Playlists.txt location is invalid and has been reset."), type=MessageBox.TYPE_INFO, timeout=5)
+                cfg.locationvalid.setValue(True)
+                cfg.save()
+        except:
+            pass
 
         dependencies = True
 
