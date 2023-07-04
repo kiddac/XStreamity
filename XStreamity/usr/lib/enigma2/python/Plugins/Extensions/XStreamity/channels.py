@@ -2771,8 +2771,7 @@ class XStreamity_Categories(Screen):
                 channellist_all = json.load(f)
                 self.xmltv_channel_list = []
                 for channel in channellist_all:
-
-                    self.xmltv_channel_list.append({"name": str(channel["name"]), "stream_id": str(channel["stream_id"]), "epg_channel_id": str(channel["epg_channel_id"]), "custom_sid": channel["custom_sid"]})
+                    self.xmltv_channel_list.append({"name": str(channel["name"]).strip("-"), "stream_id": str(channel["stream_id"]), "epg_channel_id": str(channel["epg_channel_id"]), "custom_sid": channel["custom_sid"]})
             except:
                 pass
 
@@ -2860,7 +2859,7 @@ class XStreamity_Categories(Screen):
                 name = self.xmltv_channel_list[i]["name"]
 
                 if channelid and channelid != "None":
-                    xml_str += '<channel id="' + str(channelid) + '">' + str(serviceref) + '</channel><!--' + str(name) + '-->\n'
+                    xml_str += '<channel id="' + str(channelid) + '">' + str(serviceref) + '</channel><!-- ' + str(name) + ' -->\n'
 
             xml_str += '</channels>\n'
             f.write(xml_str)
