@@ -5,7 +5,7 @@
 	
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/logo_hz.png" position="0,0" size="400,120" alphatest="blend" zPosition="2" />
 	
-	<widget source="Title" render="Label" position="404,0" size="2560,120" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" halign="left" font="xstreamityregular;48" transparent="1" />
+	<!-- <widget source="Title" render="Label" position="404,0" size="2560,120" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" halign="left" font="xstreamityregular;48" transparent="1" /> -->
 
 	<widget source="global.CurrentTime" render="Label" position="1720,0" size="800,120" font="xstreamityregular;48" foregroundColor="#ffffff" backgroundColor="#ff000000" valign="center" halign="right" transparent="1" zPosition="1">
 		<convert type="ClockToText">Format:%H:%M | %A %-d %b</convert>
