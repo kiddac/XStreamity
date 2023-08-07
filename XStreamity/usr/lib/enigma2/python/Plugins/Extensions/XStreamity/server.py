@@ -184,9 +184,9 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
                 self.session.open(MessageBox, _("Details are not valid or unauthorised"), type=MessageBox.TYPE_INFO, timeout=5)
                 return
 
-            # update playlists.txt file
+            # check playlists.txt file hasn't been deleted
             if not os.path.isfile(playlist_file):
-                with open(playlist_file, "w+") as f:
+                with open(playlist_file, "a") as f:
                     f.close()
 
             """
@@ -198,6 +198,7 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
                         exists = True
                         """
 
+            # update playlists.txt file
             with open(playlist_file, "a") as f:
                 f.write("\n" + str(playlistline) + "\n")
 

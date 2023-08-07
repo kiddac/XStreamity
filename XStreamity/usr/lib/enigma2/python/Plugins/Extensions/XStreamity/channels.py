@@ -8,7 +8,6 @@ from . import xstreamity_globals as glob
 from .plugin import skin_directory, screenwidth, hdr, cfg, common_path, dir_tmp, playlists_json, downloads_json, pythonVer
 from .xStaticText import StaticText
 
-from Components.AVSwitch import AVSwitch
 from Components.ActionMap import ActionMap
 from Components.Pixmap import Pixmap
 from Components.ProgressBar import ProgressBar
@@ -27,6 +26,7 @@ from enigma import eTimer, eServiceReference, eEPGCache, ePicLoad
 from requests.adapters import HTTPAdapter, Retry
 from twisted.web.client import downloadPage
 from itertools import cycle, islice
+from xml.dom import minidom
 
 try:
     from urlparse import urlparse
@@ -471,7 +471,6 @@ class XStreamity_Categories(Screen):
         glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self.sortText, "filter": ""})
 
         self.PicLoad = ePicLoad()
-        self.Scale = AVSwitch().getFramebufferScale()
 
         try:
             self.PicLoad.PictureData.get().append(self.DecodePicture)
@@ -1559,7 +1558,7 @@ class XStreamity_Categories(Screen):
                         width = 400
                         height = 600
 
-                    self.PicLoad.setPara([width, height, self.Scale[0], self.Scale[1], 0, 1, "FF000000"])
+                    self.PicLoad.setPara([width, height, 1, 1, 0, 1, "FF000000"])
 
                     if self.PicLoad.startDecode(preview):
                         # if this has failed, then another decode is probably already in progress
@@ -1569,7 +1568,7 @@ class XStreamity_Categories(Screen):
                             self.PicLoad.PictureData.get().append(self.DecodePicture)
                         except:
                             self.PicLoad_conn = self.PicLoad.PictureData.connect(self.DecodePicture)
-                        self.PicLoad.setPara([width, height, self.Scale[0], self.Scale[1], 0, 1, "FF000000"])
+                        self.PicLoad.setPara([width, height, 1, 1, 0, 1, "FF000000"])
                         self.PicLoad.startDecode(preview)
 
     def DecodePicture(self, PicInfo=None):
@@ -2828,6 +2827,17 @@ class XStreamity_Categories(Screen):
 
             tree.write(sourcefile)
 
+        with open(sourcefile, "r+") as f:
+            xml_str = f.read()
+            f.seek(0)
+            doc = minidom.parseString(xml_str)
+            xml_output = doc.toprettyxml(encoding="utf-8", indent="\t")
+            try:
+                xml_output = os.linesep.join([s for s in xml_output.splitlines() if s.strip()])
+            except:
+                xml_output = os.linesep.join([s for s in xml_output.decode().splitlines() if s.strip()])
+            f.write(xml_output)
+
         # buildXMLTVChannelFile
         with open(channelpath, "w") as f:
             xml_str = '<?xml version="1.0" encoding="utf-8"?>\n'
@@ -2859,7 +2869,7 @@ class XStreamity_Categories(Screen):
                 name = self.xmltv_channel_list[i]["name"]
 
                 if channelid and channelid != "None":
-                    xml_str += '<channel id="' + str(channelid) + '">' + str(serviceref) + '</channel><!-- ' + str(name) + ' -->\n'
+                    xml_str += '\t<channel id="' + str(channelid) + '">' + str(serviceref) + '</channel><!-- ' + str(name) + ' -->\n'
 
             xml_str += '</channels>\n'
             f.write(xml_str)

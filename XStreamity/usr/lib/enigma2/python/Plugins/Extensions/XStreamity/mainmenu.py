@@ -3,7 +3,7 @@
 
 from . import _
 from . import xstreamity_globals as glob
-from . import processfiles as xfiles
+from . import processfiles as loadfiles
 from .plugin import skin_directory, common_path, version, downloads_json, pythonFull, playlists_json, playlist_file, cfg
 from .xStaticText import StaticText
 
@@ -102,7 +102,7 @@ class XStreamity_MainMenu(Screen):
             self.start()
 
     def start(self, answer=None):
-        self.playlists_all = xfiles.processfiles()
+        self.playlists_all = loadfiles.processfiles()
         self.createSetup()
 
     def createSetup(self):

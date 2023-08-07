@@ -10,8 +10,12 @@ from .plugin import skin_directory, screenwidth, common_path, hdr, cfg, dir_tmp,
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
-from Components.AVSwitch import AVSwitch
-from enigma import eAVSwitch
+
+try:
+    from enigma import eAVSwitch
+except:
+    from enigma import iAVSwitch  
+    
 from Components.config import config, NoSave, ConfigText, ConfigClock
 from Components.Label import Label
 from Components.ProgressBar import ProgressBar
@@ -32,7 +36,6 @@ try:
     from .resumepoints import setResumePoint, getResumePoint
 except Exception as e:
     print(e)
-
 
 from Screens.MessageBox import MessageBox
 from Screens.PVRState import PVRState
@@ -953,7 +956,11 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             self.ar_id_player += 1
             if self.ar_id_player > 6:
                 self.ar_id_player = 0
-            eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
+            try:
+                eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
+            except:
+                iAVSwitch.setAspectRatio(self.ar_id_player)
+                
             return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
         except Exception as e:
             print(e)
@@ -1079,7 +1086,6 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
         self["extension"] = StaticText()
 
         self.PicLoad = ePicLoad()
-        self.Scale = AVSwitch().getFramebufferScale()
         try:
             self.PicLoad.PictureData.get().append(self.DecodePicture)
         except:
@@ -1298,7 +1304,7 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
                 width = 220
                 height = 330
 
-            self.PicLoad.setPara([width, height, self.Scale[0], self.Scale[1], 0, 1, "FF000000"])
+            self.PicLoad.setPara([width, height, 1, 1, 0, 1, "FF000000"])
 
             if self.PicLoad.startDecode(preview):
                 # if this has failed, then another decode is probably already in progress
@@ -1308,7 +1314,7 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
                     self.PicLoad.PictureData.get().append(self.DecodePicture)
                 except:
                     self.PicLoad_conn = self.PicLoad.PictureData.connect(self.DecodePicture)
-                self.PicLoad.setPara([width, height, self.Scale[0], self.Scale[1], 0, 1, "FF000000"])
+                self.PicLoad.setPara([width, height, 1, 1, 0, 1, "FF000000"])
                 self.PicLoad.startDecode(preview)
 
     def DecodePicture(self, PicInfo=None):
@@ -1351,7 +1357,11 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
             self.ar_id_player += 1
             if self.ar_id_player > 6:
                 self.ar_id_player = 0
-            eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
+            try:
+                eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
+            except:
+                iAVSwitch.setAspectRatio(self.ar_id_player)
+                
             return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
         except Exception as e:
             print(e)
@@ -1583,7 +1593,10 @@ class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAud
             self.ar_id_player += 1
             if self.ar_id_player > 6:
                 self.ar_id_player = 0
-            eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
+            try:
+                eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
+            except:
+                iAVSwitch.setAspectRatio(self.ar_id_player)
             return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
         except Exception as e:
             print(e)

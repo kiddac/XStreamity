@@ -186,7 +186,7 @@ class XStreamity_Playlists(Screen):
                 except Exception as e:
                     print(e)
 
-            if hasMultiprocessing:
+            elif hasMultiprocessing:
                 print("********** trying multiprocessing threadpool *******")
                 try:
                     from multiprocessing.pool import ThreadPool
