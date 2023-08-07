@@ -8,7 +8,6 @@ from . import xstreamity_globals as glob
 from .plugin import skin_directory, screenwidth, hdr, cfg, common_path, dir_tmp, playlists_json, downloads_json, pythonVer
 from .xStaticText import StaticText
 
-from Components.AVSwitch import AVSwitch
 from Components.ActionMap import ActionMap
 from Components.Pixmap import Pixmap
 from Components.ProgressBar import ProgressBar
@@ -471,7 +470,6 @@ class XStreamity_Categories(Screen):
         glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self.sortText, "filter": ""})
 
         self.PicLoad = ePicLoad()
-        self.Scale = AVSwitch().getFramebufferScale()
 
         try:
             self.PicLoad.PictureData.get().append(self.DecodePicture)
@@ -1559,7 +1557,7 @@ class XStreamity_Categories(Screen):
                         width = 400
                         height = 600
 
-                    self.PicLoad.setPara([width, height, self.Scale[0], self.Scale[1], 0, 1, "FF000000"])
+                    self.PicLoad.setPara([width, height, 1, 1, 0, 1, "FF000000"])
 
                     if self.PicLoad.startDecode(preview):
                         # if this has failed, then another decode is probably already in progress
@@ -1569,7 +1567,7 @@ class XStreamity_Categories(Screen):
                             self.PicLoad.PictureData.get().append(self.DecodePicture)
                         except:
                             self.PicLoad_conn = self.PicLoad.PictureData.connect(self.DecodePicture)
-                        self.PicLoad.setPara([width, height, self.Scale[0], self.Scale[1], 0, 1, "FF000000"])
+                        self.PicLoad.setPara([width, height, 1, 1, 0, 1, "FF000000"])
                         self.PicLoad.startDecode(preview)
 
     def DecodePicture(self, PicInfo=None):
