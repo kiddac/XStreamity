@@ -12,10 +12,11 @@ from .xStaticText import StaticText
 from Components.ActionMap import ActionMap
 
 try:
-    from enigma import eAVSwitch
+    from Components.AVSwitch import iAVSwitch
 except:
-    from enigma import iAVSwitch  
-    
+    from enigma import eAVSwitch
+
+
 from Components.config import config, NoSave, ConfigText, ConfigClock
 from Components.Label import Label
 from Components.ProgressBar import ProgressBar
@@ -957,10 +958,10 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             if self.ar_id_player > 6:
                 self.ar_id_player = 0
             try:
-                eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
-            except:
                 iAVSwitch.setAspectRatio(self.ar_id_player)
-                
+            except:
+                eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
+
             return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
         except Exception as e:
             print(e)
@@ -1358,10 +1359,10 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
             if self.ar_id_player > 6:
                 self.ar_id_player = 0
             try:
-                eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
-            except:
                 iAVSwitch.setAspectRatio(self.ar_id_player)
-                
+            except:
+                eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
+
             return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
         except Exception as e:
             print(e)
