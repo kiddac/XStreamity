@@ -26,7 +26,10 @@ from enigma import eTimer, eServiceReference, eEPGCache, ePicLoad
 from requests.adapters import HTTPAdapter, Retry
 from twisted.web.client import downloadPage
 from itertools import cycle, islice
-from xml.dom import minidom
+try:
+    from xml.dom import minidom
+except:
+    pass
 
 try:
     from urlparse import urlparse
@@ -2827,16 +2830,19 @@ class XStreamity_Categories(Screen):
 
             tree.write(sourcefile)
 
-        with open(sourcefile, "r+") as f:
-            xml_str = f.read()
-            f.seek(0)
-            doc = minidom.parseString(xml_str)
-            xml_output = doc.toprettyxml(encoding="utf-8", indent="\t")
-            try:
-                xml_output = os.linesep.join([s for s in xml_output.splitlines() if s.strip()])
-            except:
-                xml_output = os.linesep.join([s for s in xml_output.decode().splitlines() if s.strip()])
-            f.write(xml_output)
+        try:
+            with open(sourcefile, "r+") as f:
+                xml_str = f.read()
+                f.seek(0)
+                doc = minidom.parseString(xml_str)
+                xml_output = doc.toprettyxml(encoding="utf-8", indent="\t")
+                try:
+                    xml_output = os.linesep.join([s for s in xml_output.splitlines() if s.strip()])
+                except:
+                    xml_output = os.linesep.join([s for s in xml_output.decode().splitlines() if s.strip()])
+                f.write(xml_output)
+        except Exception as e:
+            print(e)
 
         # buildXMLTVChannelFile
         with open(channelpath, "w") as f:

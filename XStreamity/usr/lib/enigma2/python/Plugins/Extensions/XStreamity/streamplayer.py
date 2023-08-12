@@ -28,7 +28,6 @@ from itertools import cycle, islice
 from PIL import Image, ImageChops, ImageFile, PngImagePlugin
 from RecordTimer import RecordTimerEntry
 from Tools import Notifications
-# from Components.ScrollLabel import ScrollLabel
 
 from Screens.InfoBarGenerics import InfoBarMenu, InfoBarSeek, InfoBarAudioSelection, InfoBarMoviePlayerSummarySupport, \
     InfoBarSubtitleSupport, InfoBarSummarySupport, InfoBarServiceErrorPopupSupport, InfoBarNotifications
@@ -50,7 +49,6 @@ try:
 except:
     from urllib.parse import urlparse
 
-# from . import log
 import json
 import os
 import re
@@ -443,8 +441,7 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             "tv": self.toggleStreamType,
             "info": self.toggleStreamType,
             "green": self.nextAR,
-            "rec": self.IPTVstartInstantRecording,
-            # "blue": self.showLog,
+            "rec": self.IPTVstartInstantRecording
         }, -2)
 
         self.__event_tracker = ServiceEventTracker(
@@ -726,9 +723,6 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
         self.timerrefresh.start(30000)
 
     def __evStart(self):
-        # print("__evTunedStart")
-        # print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " evStart", self.servicetype, file=log)
-
         if self.hasStreamData is False:
             self.timerstream = eTimer()
             try:
@@ -744,10 +738,6 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
 
     def __evUpdatedInfo(self):
         # print("__evUpdatedInfo")
-        """
-        if not self.hasStreamData:
-            print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " evUpdatedInfo", self.servicetype, file=log)
-            """
         self.originalservicetype = self.servicetype
         self.hasStreamData = True
 
@@ -772,8 +762,6 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
         self.timerRecent.start(20000, True)
 
     def __evTuneFailed(self):
-        # print("__evTuneFailed")
-        # print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " evTunedFailed", file=log)
         self.hasStreamData = False
         try:
             self.session.nav.stopService()
@@ -781,8 +769,6 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             pass
 
     def __evEOF(self):
-        # print("__evEOF")
-        # print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " evEOF", self.servicetype, file=log)
         self.hasStreamData = False
         try:
             self.session.nav.stopService()
@@ -792,20 +778,13 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
     def checkStream(self):
         # print("checkStream")
         if self.hasStreamData is False:
-            # print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " Checking Stream", file=log)
             if self.streamcheck == 0:
-                # print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " Stream Failed 1. Reloading Stream.", file=log)
                 self.streamFailed()
 
             elif self.streamcheck == 1:
-                # print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " Stream Failed 2. Switching stream type.", file=log)
                 self.streamTypeFailed()
             else:
                 self.__evTuneFailed()
-        """
-        else:
-            print(datetime.now(), glob.currentchannellist[glob.currentchannellistindex][0], " Stream OK", file=log)
-            """
 
     def streamFailed(self, data=None):
         self.streamcheck = 1
@@ -970,11 +949,6 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
     def nextAR(self):
         message = self.nextARfunction()
         self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO, timeout=3)
-
-    """
-    def showLog(self):
-        self.session.open(XStreamityLog)
-        """
 
 
 class XStreamityCueSheetSupport:
@@ -1606,75 +1580,3 @@ class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAud
     def nextAR(self):
         message = self.nextARfunction()
         self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO, timeout=3)
-
-
-'''
-class XStreamityLog(Screen):
-    if screenwidth.width() > 1280:
-        skin = """
-            <screen position="center,center" size="1920,1080" title="EPG Import Log" flags="wfNoBorder" backgroundColor="#000000">
-                <widget name="list" position="30,30" size="1860,990" font="Console;24" foregroundColor="#ffffff" backgroundColor="#000000" transparent="1" />
-
-                <eLabel position="0,1019" size="1920,1" backgroundColor="#ffffff" zPosition="1" />
-                <widget source="global.CurrentTime" render="Label" position="30,1020" size="400,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" halign="left" transparent="1">
-                    <convert type="ClockToText">Format:%H:%M | %A %-d %b</convert>
-                </widget>
-
-                <eLabel position="541,1020" size="9,60"  backgroundColor="#ff0011" zPosition="1" />
-                <eLabel position="807,1020" size="9,60"  backgroundColor="#307e13" zPosition="1" />
-
-                <widget source="key_red" render="Label" position="571,1020" size="165,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" transparent="1" noWrap="1" zPosition="2" />
-                <widget source="key_green" render="Label" position="837,1020" size="165,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" transparent="1" noWrap="1" zPosition="2" />
-
-            </screen>"""
-    else:
-        skin = """
-            <screen position="center,center" size="1280,720" title="EPG Import Log" flags="wfNoBorder" backgroundColor="#000000">
-                <widget name="list" position="20,20" size="1240,660" font="Console;18" foregroundColor="#ffffff" backgroundColor="#000000" transparent="1" />
-
-                <eLabel position="0,679" size="1280,1" backgroundColor="#ffffff" zPosition="1" />
-                <widget source="global.CurrentTime" render="Label" position="20,680" size="260,40" font="xstreamityregular;18" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" halign="left" transparent="1">
-                    <convert type="ClockToText">Format:%H:%M | %A %-d %b</convert>
-                </widget>
-
-                <eLabel position="360,680" size="6,40"  backgroundColor="#ff0011" zPosition="1" />
-                <eLabel position="538,680" size="6,40"  backgroundColor="#307e13" zPosition="1" />
-
-                <widget source="key_red" render="Label" position="380,1020" size="110,40" font="xstreamityregular;16" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" transparent="1" noWrap="1" zPosition="2" />
-                <widget source="key_green" render="Label" position="558,1020" size="110,40" font="xstreamityregular;16" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" transparent="1" noWrap="1" zPosition="2" />
-
-            </screen>"""
-
-    def __init__(self, session):
-        self.session = session
-        Screen.__init__(self, session)
-        self.setTitle(_("Xstreamity Log"))
-        self.skin = XStreamityLog.skin
-
-        self["key_red"] = StaticText(_("Close"))
-        self["key_green"] = StaticText(_("Clear"))
-        self["list"] = ScrollLabel(log.getvalue())
-        self["actions"] = ActionMap(["XStreamityActions"], {
-            "red": self.cancel,
-            "green": self.clear,
-            "ok": self.cancel,
-            "cancel": self.cancel,
-            "left": self["list"].pageUp,
-            "right": self["list"].pageDown,
-            "up": self["list"].pageUp,
-            "down": self["list"].pageDown,
-            "pageUp": self["list"].pageUp,
-            "pageDown": self["list"].pageDown,
-            "channelUp": self["list"].pageUp,
-            "channelDown": self["list"].pageDown,
-            "menu": self.cancel,
-        }, -2)
-
-    def cancel(self):
-        self.close(False)
-
-    def clear(self):
-        log.logfile.seek(0, 0)
-        log.logfile.truncate()
-        self.close(False)
-        '''
