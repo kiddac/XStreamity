@@ -91,6 +91,7 @@ def processfiles():
             last_check = ""
 
             serveroffset = 0
+            epgimport = False
             epgoffset = 0
             epgalternative = False
             epgalternativeurl = ""
@@ -182,6 +183,9 @@ def processfiles():
                                 if "serveroffset" not in playlist["player_info"]:
                                     playlist["player_info"]["serveroffset"] = serveroffset
 
+                                if "epgimport" not in playlist["player_info"]:
+                                    playlist["player_info"]["epgimport"] = epgimport
+                                    
                                 if "epgoffset" not in playlist["player_info"]:
                                     playlist["player_info"]["epgoffset"] = epgoffset
 
@@ -221,6 +225,8 @@ def processfiles():
                                 playlist["playlist_info"]["full_url"] = full_url  # get.php
                                 playlist["playlist_info"]["index"] = index
                                 playlist["data"]["data_downloaded"] = False
+                                
+                                playlist["player_info"]["epgimport"] = epgimport
                                 playlist["player_info"]["epgoffset"] = epgoffset
 
                                 if playlist["player_info"]["epgalternative"] is True:

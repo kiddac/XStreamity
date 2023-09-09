@@ -267,8 +267,9 @@ class XStreamity_DownloadManager(Screen):
                 print(e)
                 extension = ""
 
-            filename = os.path.join(filmtitle, extension)
-            path = os.path.join(cfg.downloadlocation.getValue(), filename)
+            filename = str(filmtitle) + str(extension)
+            path = str(cfg.downloadlocation.getValue()) + str(filename)
+
             totalbytes = video[5]
 
             if os.path.exists(path):

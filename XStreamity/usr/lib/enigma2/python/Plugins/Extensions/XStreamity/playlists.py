@@ -367,6 +367,7 @@ class XStreamity_Playlists(Screen):
                 with open(playlist_file, "r+") as f:
                     lines = f.readlines()
                     f.seek(0)
+                    f.truncate()
                     for line in lines:
 
                         if str(self.currentplaylist["playlist_info"]["domain"]) in line and "username=" + str(self.currentplaylist["playlist_info"]["username"]) in line:

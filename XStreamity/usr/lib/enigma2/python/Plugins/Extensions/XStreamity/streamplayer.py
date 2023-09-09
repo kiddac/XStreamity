@@ -441,7 +441,8 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             "tv": self.toggleStreamType,
             "info": self.toggleStreamType,
             "green": self.nextAR,
-            "rec": self.IPTVstartInstantRecording
+            "rec": self.IPTVstartInstantRecording,
+            "0": self.restartStream
         }, -2)
 
         self.__event_tracker = ServiceEventTracker(
@@ -457,6 +458,14 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
         self.streamcheck = 0
 
         self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl, self.direct_source))
+
+    def restartStream(self):
+        # print("*** restartStream ***")
+        if self.session:
+            self.session.nav.stopService()
+            self.playStream(self.servicetype, self.streamurl, self.direct_source)
+        else:
+            return
 
     def refreshInfobar(self):
         # print("*** refreshInfobar ***")
