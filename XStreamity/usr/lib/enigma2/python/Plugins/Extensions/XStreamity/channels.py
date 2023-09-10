@@ -495,8 +495,17 @@ class XStreamity_Categories(Screen):
         if self.level == 1:
             self.getCategories()
             if self.categoryname == "live" and glob.current_playlist["data"]["customsids"] is True:
-                self.xmltvCheckData()
-                return
+                self.timer = eTimer()
+                try:
+                    self.timer_conn = self.timer.timeout.connect(self.xmltvCheckData)
+                except:
+                    try:
+                        self.timer.callback.append(self.xmltvCheckData)
+                    except:
+                        self.self.xmltvCheckData()
+                self.timer.start(50, True)
+                # self.xmltvCheckData()
+                # return
 
         elif self.level == 2:
             self.getLevel2()
@@ -1187,7 +1196,7 @@ class XStreamity_Categories(Screen):
         safeName = re.sub(r"_+", "_", safeName)
 
         filepath = "/etc/epgimport/"
-        filename = "xstreamity." + str(safeName) + ".sources.xml"
+        filename = "xstreamity" + ".sources.xml"
         sourcepath = os.path.join(filepath, filename)
         epgfilename = "xstreamity." + str(safeName) + ".channels.xml"
         channelpath = os.path.join(filepath, epgfilename)
@@ -1199,9 +1208,8 @@ class XStreamity_Categories(Screen):
             # check file creation times - refresh if older than 24 hours.
             try:
                 nowtime = time.time()
-                sourcemodified = os.path.getctime(sourcepath)
                 channelmodified = os.path.getctime(channelpath)
-                if int(nowtime) - int(sourcemodified) > 14400 or int(nowtime) - int(channelmodified) > 14400:
+                if (int(nowtime) - int(channelmodified)) > 14400:
                     self.downloadXMLTVdata()
             except Exception as e:
                 print(e)
@@ -2881,7 +2889,7 @@ class XStreamity_Categories(Screen):
             xml_str += '</channels>\n'
             f.write(xml_str)
 
-        self.buildLists()
+        # self.buildLists()
 
     def epgminus(self):
         self.epgtimeshift -= 1
