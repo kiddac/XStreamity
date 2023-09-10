@@ -32,8 +32,6 @@
 	
 	<widget source="key_red" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/key_red.png" position="1000,1375" size="51,51" alphatest="blend" zPosition="2" />
 	<widget source="key_red" render="Label" position="1070,1360" size="320,80" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="2" />
-	
 	<widget source="key_green" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/key_green.png" position="1400,1375" size="51,51" alphatest="blend" zPosition="2" />
 	<widget source="key_green" render="Label" position="1470,1360" size="320,80" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="2" />
-
 </screen>

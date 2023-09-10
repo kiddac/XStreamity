@@ -113,8 +113,6 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.showseries = glob.current_playlist["player_info"]["showseries"]
         self.showcatchup = glob.current_playlist["player_info"]["showcatchup"]
 
-        self.epgimport = glob.current_playlist["player_info"]["epgimport"]
-
         self.epgoffset = glob.current_playlist["player_info"]["epgoffset"]
         self.epgalternative = glob.current_playlist["player_info"]["epgalternative"]
         self.epgalternativeurl = glob.current_playlist["player_info"]["epgalternativeurl"]
@@ -128,8 +126,6 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.showvodCfg = NoSave(ConfigYesNo(default=self.showvod))
         self.showseriesCfg = NoSave(ConfigYesNo(default=self.showseries))
         self.showcatchupCfg = NoSave(ConfigYesNo(default=self.showcatchup))
-
-        self.epgimportCfg = NoSave(ConfigYesNo(default=self.epgimport))
 
         self.epgoffsetCfg = NoSave(ConfigSelectionNumber(-9, 9, 1, default=self.epgoffset, wraparound=True))
         self.epgalternativeCfg = NoSave(ConfigYesNo(default=self.epgalternative))
@@ -155,8 +151,6 @@ class XStreamity_Settings(ConfigListScreen, Screen):
             self.list.append(getConfigListEntry(_("Stream Type VOD/SERIES:"), self.vodTypeCfg))
 
         self.list.append(getConfigListEntry(_("Stream Source URL:"), self.directsourceCfg))
-
-        self.list.append(getConfigListEntry(_("Use EPG Importer as fallback for provider custom sid refs:"), self.epgimportCfg))
 
         self.list.append(getConfigListEntry(_("EPG offset:"), self.epgoffsetCfg))
         self.list.append(getConfigListEntry(_("Use alternative EPG url:"), self.epgalternativeCfg))
@@ -246,7 +240,6 @@ class XStreamity_Settings(ConfigListScreen, Screen):
 
             vodtype = self.vodTypeCfg.value
             epgoffset = int(self.epgoffsetCfg.value)
-            epgimport = self.epgimportCfg
 
             epgalternative = self.epgalternativeCfg.value
             epgalternativeurl = self.epgalternativeurlCfg.value
@@ -261,7 +254,6 @@ class XStreamity_Settings(ConfigListScreen, Screen):
             glob.current_playlist["player_info"]["showcatchup"] = showcatchup
             glob.current_playlist["player_info"]["livetype"] = livetype
             glob.current_playlist["player_info"]["vodtype"] = vodtype
-            glob.current_playlist["player_info"]["epgoffset"] = epgimport
             glob.current_playlist["player_info"]["epgoffset"] = epgoffset
             glob.current_playlist["player_info"]["epgalternative"] = epgalternative
             glob.current_playlist["player_info"]["epgalternativeurl"] = epgalternativeurl

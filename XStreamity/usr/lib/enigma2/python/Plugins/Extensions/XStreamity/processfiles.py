@@ -87,16 +87,15 @@ def processfiles():
             serieswatched = []
 
             live_streams = []
-            catchup_checked = False
-            last_check = ""
 
             serveroffset = 0
-            epgimport = False
             epgoffset = 0
             epgalternative = False
             epgalternativeurl = ""
 
             directsource = "Standard"
+
+            customsids = False
 
             if not line.startswith("#") and line.startswith("http"):
                 line = line.strip()
@@ -183,20 +182,11 @@ def processfiles():
                                 if "serveroffset" not in playlist["player_info"]:
                                     playlist["player_info"]["serveroffset"] = serveroffset
 
-                                if "epgimport" not in playlist["player_info"]:
-                                    playlist["player_info"]["epgimport"] = epgimport
-                                    
                                 if "epgoffset" not in playlist["player_info"]:
                                     playlist["player_info"]["epgoffset"] = epgoffset
 
                                 if "live_streams" not in playlist["data"]:
                                     playlist["data"]["live_streams"] = live_streams
-
-                                if "catchup_checked" not in playlist["data"]:
-                                    playlist["data"]["catchup_checked"] = catchup_checked
-
-                                if "last_check" not in playlist["data"]:
-                                    playlist["data"]["last_check"] = last_check
 
                                 if "epgalternative" not in playlist["player_info"]:
                                     playlist["player_info"]["epgalternative"] = epgalternative
@@ -219,14 +209,16 @@ def processfiles():
                                 if "directsource" not in playlist["player_info"]:
                                     playlist["player_info"]["directsource"] = directsource
 
+                                if "customsids" not in playlist["data"]:
+                                    playlist["data"]["customsids"] = customsids
+
                                 playlist["playlist_info"]["name"] = name
                                 playlist["playlist_info"]["type"] = type
                                 playlist["playlist_info"]["output"] = output
                                 playlist["playlist_info"]["full_url"] = full_url  # get.php
                                 playlist["playlist_info"]["index"] = index
                                 playlist["data"]["data_downloaded"] = False
-                                
-                                playlist["player_info"]["epgimport"] = epgimport
+
                                 playlist["player_info"]["epgoffset"] = epgoffset
 
                                 if playlist["player_info"]["epgalternative"] is True:
@@ -295,11 +287,9 @@ def processfiles():
                             ("series_categories", []),
                             ("live_streams", []),
                             ("catchup", False),
-                            ("catchup_checked", False),
-                            ("last_check", ""),
+                            ("customsids", False),
                             ("epg_date", ""),
-                            ("data_downloaded", False),
-                            ("epg_importer_files", False)
+                            ("data_downloaded", False)
                         ]),
                     })
 

@@ -9,7 +9,6 @@ from .xStaticText import StaticText
 from Components.ActionMap import ActionMap
 from Components.Pixmap import Pixmap
 from Components.Sources.List import List
-from datetime import datetime
 from enigma import eTimer
 from requests.adapters import HTTPAdapter, Retry
 from Screens.MessageBox import MessageBox
@@ -51,8 +50,6 @@ class XStreamity_Menu(Screen):
         self["key_green"] = StaticText(_("OK"))
         self["key_blue"] = StaticText(_("Update"))
 
-        self["lastchecked"] = StaticText(_("Catchup channel check updated: ") + str(glob.current_playlist["data"]["last_check"]))
-
         self["splash"] = Pixmap()
         self["splash"].show()
 
@@ -60,7 +57,6 @@ class XStreamity_Menu(Screen):
             "red": self.quit,
             "cancel": self.quit,
             "menu": self.settings,
-            "blue": self.updateCategories,
             "green": self.__next__,
             "ok": self.__next__,
         }, -2)
@@ -82,8 +78,6 @@ class XStreamity_Menu(Screen):
 
     def start(self):
         if glob.current_playlist["data"]["data_downloaded"] is False:
-            glob.current_playlist["data"]["last_check"] = datetime.now().strftime("%d/%m/%Y %H:%M")
-            self["lastchecked"].setText(_("Last catchup check: ") + str(glob.current_playlist["data"]["last_check"]))
             # delay to allow splash screen to show
             self.timer = eTimer()
             try:
@@ -105,9 +99,8 @@ class XStreamity_Menu(Screen):
         self.url_list.append([self.p_vod_categories_url, 1])
         self.url_list.append([self.p_series_categories_url, 2])
 
-        if glob.current_playlist["player_info"]["showcatchup"] is True:
-            if glob.current_playlist["data"]["catchup_checked"] is False or glob.current_playlist["data"]["catchup"] is False:
-                self.url_list.append([self.p_live_streams_url, 3])
+        if glob.current_playlist["data"]["data_downloaded"] is False:
+            self.url_list.append([self.p_live_streams_url, 3])
 
         self.process_downloads()
 
@@ -181,7 +174,6 @@ class XStreamity_Menu(Screen):
                         glob.current_playlist["data"]["series_categories"] = response
                     if category == 3:
                         glob.current_playlist["data"]["live_streams"] = response
-                        glob.current_playlist["data"]["catchup_checked"] = True
         else:
 
             print("*** trying sequential ***")
@@ -199,7 +191,6 @@ class XStreamity_Menu(Screen):
                         glob.current_playlist["data"]["series_categories"] = response
                     if category == 3:
                         glob.current_playlist["data"]["live_streams"] = response
-                        glob.current_playlist["data"]["catchup_checked"] = True
 
         self["splash"].hide()
         glob.current_playlist["data"]["data_downloaded"] = True
@@ -234,7 +225,11 @@ class XStreamity_Menu(Screen):
 
         content = glob.current_playlist["data"]["live_streams"]
         hascatchup = any(int(item["tv_archive"]) == 1 for item in content if "tv_archive" in item)
+        hascustomsids = any(item["custom_sid"] for item in content if "custom_sid" in item)
         glob.current_playlist["data"]["live_streams"] = []
+
+        if hascustomsids:
+            glob.current_playlist["data"]["customsids"] = True
 
         if hascatchup:
             glob.current_playlist["data"]["catchup"] = True
@@ -273,26 +268,6 @@ class XStreamity_Menu(Screen):
                 self.session.open(channels.XStreamity_Categories, "catchup")
             elif category == 4:
                 self.settings()
-
-    def updateCategories(self):
-        self["splash"].show()
-        glob.current_playlist["data"]["live_categories"] = []
-        glob.current_playlist["data"]["vod_categories"] = []
-        glob.current_playlist["data"]["series_categories"] = []
-        glob.current_playlist["data"]["catchup"] = False
-        glob.current_playlist["data"]["catchup_checked"] = False
-        glob.current_playlist["data"]["last_check"] = datetime.now().strftime("%d/%m/%Y %H:%M")
-        self["lastchecked"].setText(_("Last catchup check: ") + str(glob.current_playlist["data"]["last_check"]))
-        self.timer = eTimer()
-
-        try:
-            self.timer_conn = self.timer.timeout.connect(self.makeUrlList)
-        except:
-            try:
-                self.timer.callback.append(self.makeUrlList)
-            except:
-                self.makeUrlList()
-        self.timer.start(5, True)
 
     def settings(self):
         from . import playsettings

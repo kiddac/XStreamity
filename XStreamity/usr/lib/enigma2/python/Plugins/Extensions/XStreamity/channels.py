@@ -494,10 +494,10 @@ class XStreamity_Categories(Screen):
 
         if self.level == 1:
             self.getCategories()
-            if self.categoryname == "live" and glob.current_playlist["player_info"]["epgimport"] is True:
+            if self.categoryname == "live" and glob.current_playlist["data"]["customsids"] is True:
                 self.xmltvCheckData()
                 return
-            
+
         elif self.level == 2:
             self.getLevel2()
 
