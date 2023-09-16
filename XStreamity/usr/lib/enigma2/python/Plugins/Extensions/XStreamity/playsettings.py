@@ -214,6 +214,9 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         return self["config"].getCurrent() and str(self["config"].getCurrent()[1].getText()) or ""
 
     def save(self):
+
+        self.playlists_all = self.getPlaylistJson()
+
         self.protocol = glob.current_playlist["playlist_info"]["protocol"]
         self.domain = glob.current_playlist["playlist_info"]["domain"]
         self.port = glob.current_playlist["playlist_info"]["port"]
@@ -227,6 +230,24 @@ class XStreamity_Settings(ConfigListScreen, Screen):
 
         if self["config"].isChanged():
             self.name = self.nameCfg.value.strip()
+            self.full_url = glob.current_playlist["playlist_info"]["full_url"]
+
+            # check name is not blank
+            if self.name is None or len(self.name) < 3:
+                self.session.open(MessageBox, _("Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum 2 characters."), MessageBox.TYPE_ERROR, timeout=10)
+                self.createSetup()
+                return
+
+            # check name exists
+            if self.playlists_all:
+                for playlists in self.playlists_all:
+                    if playlists["playlist_info"]["full_url"] == self.full_url:
+                        continue
+                    if playlists["playlist_info"]["name"] == self.name:
+                        self.session.open(MessageBox, _("Name already used. Please enter a unique name."), MessageBox.TYPE_ERROR, timeout=10)
+                        self.createSetup()
+                        return
+
             output = self.outputCfg.value
 
             showlive = self.showliveCfg.value
@@ -316,14 +337,17 @@ class XStreamity_Settings(ConfigListScreen, Screen):
 
         self.getPlaylistUserFile()
 
-    def getPlaylistUserFile(self):
-        if os.path.isfile(playlists_json):
-            with open(playlists_json, "r") as f:
+    def getPlaylistJson(self):
+        playlists_all = []
+        if os.path.isfile(playlists_json) and os.stat(playlists_json).st_size > 0:
+            with open(playlists_json) as f:
                 try:
-                    self.playlists_all = json.load(f)
+                    playlists_all = json.load(f)
                 except:
                     os.remove(playlists_json)
+        return playlists_all
 
+    def getPlaylistUserFile(self):
         if self.playlists_all:
             x = 0
             for playlists in self.playlists_all:

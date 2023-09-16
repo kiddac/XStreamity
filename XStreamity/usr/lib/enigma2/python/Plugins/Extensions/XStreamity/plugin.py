@@ -6,6 +6,7 @@ from . import _
 from Components.config import config, ConfigSubsection, ConfigSelection, ConfigDirectory, ConfigYesNo, ConfigSelectionNumber, ConfigClock, ConfigPIN, ConfigInteger
 from enigma import eTimer, getDesktop, addFont
 from Plugins.Plugin import PluginDescriptor
+from os.path import isdir
 
 import os
 import shutil
@@ -50,7 +51,6 @@ elif screenwidth.width() > 1280:
 else:
     skin_directory = os.path.join(dir_plugins, "skin/hd/")
 
-
 folders = os.listdir(skin_directory)
 if "common" in folders:
     folders.remove("common")
@@ -83,6 +83,22 @@ languages = [
     ("sq", "shqip")
 ]
 
+
+def defaultMoviePath():
+    result = config.usage.default_path.value
+    if not isdir(result):
+        from Tools import Directories
+        return Directories.defaultRecordingLocation(config.usage.default_path.value)
+    return result
+
+
+if not isdir(config.movielist.last_videodir.value):
+    try:
+        config.movielist.last_videodir.value = defaultMoviePath()
+        config.movielist.last_videodir.save()
+    except:
+        pass
+
 config.plugins.XStreamity = ConfigSubsection()
 cfg = config.plugins.XStreamity
 
@@ -104,7 +120,9 @@ if os.path.exists("/usr/bin/apt-get"):
 
 cfg.livetype = ConfigSelection(default="4097", choices=live_streamtype_choices)
 cfg.vodtype = ConfigSelection(default="4097", choices=vod_streamtype_choices)
-cfg.downloadlocation = ConfigDirectory(default="/media/hdd/movie/")
+# cfg.downloadlocation = ConfigDirectory(default="/media/hdd/movie/")
+
+cfg.downloadlocation = ConfigDirectory(default=config.movielist.last_videodir.value)
 cfg.epglocation = ConfigDirectory(default="/etc/enigma2/xstreamity/epg/")
 cfg.location = ConfigDirectory(default=dir_etc)
 cfg.main = ConfigYesNo(default=True)

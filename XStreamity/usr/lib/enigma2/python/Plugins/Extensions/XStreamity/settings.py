@@ -286,10 +286,6 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
             pass
 
     def openDirectoryBrowser(self, path, cfgitem):
-
-        if os.path.exists("/usr/bin/apt-get"):
-            path = None
-
         if cfgitem == "location":
             try:
                 self.session.openWithCallback(

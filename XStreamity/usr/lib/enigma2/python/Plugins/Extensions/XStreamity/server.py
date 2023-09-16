@@ -2,20 +2,21 @@
 # -*- coding: utf-8 -*-
 
 from . import _
-from .plugin import skin_directory, playlist_file, hdr, cfg
+from .plugin import skin_directory, playlist_file, hdr, cfg, playlists_json
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
 from Components.ConfigList import ConfigListScreen
 from Components.config import getConfigListEntry, NoSave, ConfigText, ConfigSelection, ConfigNumber, ConfigYesNo, ConfigEnableDisable
 from Components.Pixmap import Pixmap
-from Screens.MessageBox import MessageBox
 from requests.adapters import HTTPAdapter, Retry
+from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 
 import os
 import shutil
 import requests
+import json
 
 try:
     from http.client import HTTPConnection
@@ -64,6 +65,8 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
             "green": self.save,
             "ok": self.void,
         }, -2)
+
+        self.playlists_all = self.getPlaylistJson()
 
         self.onFirstExecBegin.append(self.initConfig)
         self.onLayoutFinish.append(self.__layoutFinished)
@@ -157,6 +160,16 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
                         pass
                     self["VKeyIcon"].hide()
 
+    def getPlaylistJson(self):
+        playlists_all = []
+        if os.path.isfile(playlists_json) and os.stat(playlists_json).st_size > 0:
+            with open(playlists_json) as f:
+                try:
+                    playlists_all = json.load(f)
+                except:
+                    os.remove(playlists_json)
+        return playlists_all
+
     def save(self):
         if self["config"].isChanged():
 
@@ -180,23 +193,28 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 
             valid = self.checkline()
 
+            # check url has response
             if not valid:
                 self.session.open(MessageBox, _("Details are not valid or unauthorised"), type=MessageBox.TYPE_INFO, timeout=5)
                 return
+
+            # check name is not blank
+            if self.name is None or len(self.name) < 3:
+                self.session.open(MessageBox, _("Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum 2 characters."), MessageBox.TYPE_ERROR, timeout=10)
+                self.createSetup()
+                return
+
+            # check name exists
+            if self.playlists_all:
+                for playlists in self.playlists_all:
+                    if playlists["playlist_info"]["name"] == self.name:
+                        self.session.open(MessageBox, _("Name already used. Please enter a unique name."), MessageBox.TYPE_ERROR, timeout=10)
+                        return
 
             # check playlists.txt file hasn't been deleted
             if not os.path.isfile(playlist_file):
                 with open(playlist_file, "a") as f:
                     f.close()
-
-            """
-            with open(playlist_file, "r") as f:
-                lines = f.readlines()
-                exists = False
-                for line in lines:
-                    if domain in line and username in line and password in line:
-                        exists = True
-                        """
 
             # update playlists.txt file
             with open(playlist_file, "a") as f:
