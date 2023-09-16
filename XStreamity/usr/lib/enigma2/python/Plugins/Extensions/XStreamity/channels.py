@@ -686,9 +686,9 @@ class XStreamity_Categories(Screen):
                     serviceref = "1:0:1:" + str(format(bouquet_id, "04x")) + ":" + str(format(bouquet_stream_id, "04x")) + ":" + str(format(unique_ref, "08x")) + ":0:0:0:0:" + "http%3a//example.m3u8"
 
                     if "custom_sid" in item and item["custom_sid"]:
-                        if channel["custom_sid"] and channel["custom_sid"] != "null" and channel["custom_sid"] != "None" and channel["custom_sid"] is not None and channel["custom_sid"] != "0":
-                            custom_sid = item["custom_sid"]
+                        custom_sid = item["custom_sid"]
 
+                        if custom_sid and custom_sid != "null" and custom_sid != "None" and custom_sid is not None and custom_sid != "0":
                             if custom_sid.startswith(":"):
                                 custom_sid = "1" + str(custom_sid)
                             serviceref = str(":".join(custom_sid.split(":")[:7])) + ":0:0:0:" + "http%3a//example.m3u8"
@@ -2805,7 +2805,6 @@ class XStreamity_Categories(Screen):
             open(channelpath, "a").close()
 
         # buildXMLTVSourceFile
-        # print("*** new xml code ***")
 
         sourcefile = "/etc/epgimport/xstreamity.sources.xml"
         if not os.path.isfile(sourcefile) or os.stat(sourcefile).st_size == 0:
