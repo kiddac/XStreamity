@@ -12,9 +12,9 @@ from .xStaticText import StaticText
 from Components.ActionMap import ActionMap
 
 try:
-    from Components.AVSwitch import iAVSwitch
-except:
     from enigma import eAVSwitch
+except Exception:
+    from enigma import eAVControl as eAVSwitch
 
 
 from Components.config import config, NoSave, ConfigText, ConfigClock
@@ -156,6 +156,17 @@ def _mypreinit():
 
 Image.preinit = _mypreinit
 
+"""
+aspectList = [
+    (_("4:3 Letterbox"), "0"),
+    (_("4:3 PanScan"), "1"),
+    (_("16:9"), "2"),
+    (_("16:9 Always"), "3"),
+    (_("16:10 Letterbox"), "4"),
+    (_("16:10 PanScan"), "5"),
+    (_("16:9 Letterbox"), "6")
+]
+"""
 
 VIDEO_ASPECT_RATIO_MAP = {
     0: "4:3 Letterbox",
@@ -602,11 +613,19 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
         from . import record
         begin = int(time.time())
         end = begin + 3600
+        dt_now = datetime.now()
 
         if glob.currentepglist[glob.currentchannellistindex][3]:
             name = glob.currentepglist[glob.currentchannellistindex][3]
         else:
             name = glob.currentchannellist[glob.currentchannellistindex][0]
+
+        if (glob.currentepglist[glob.currentchannellistindex][5]):
+
+            endstring = (glob.currentepglist[glob.currentchannellistindex][5])
+            end_dt = datetime.strptime(str(endstring), "%H:%M")
+            end_dt = end_dt.replace(year=dt_now.year, month=dt_now.month, day=dt_now.day)
+            end = int(time.mktime(end_dt.timetuple()))
 
         self.name = NoSave(ConfigText(default=name, fixed_size=False))
         self.date = time.time()
@@ -946,18 +965,16 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             if self.ar_id_player > 6:
                 self.ar_id_player = 0
             try:
-                iAVSwitch.setAspectRatio(self.ar_id_player)
-            except:
                 eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
-
+            except Exception as e:
+                print(e)
             return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
         except Exception as e:
             print(e)
-            return "nextAR ERROR %s" % e
 
     def nextAR(self):
         message = self.nextARfunction()
-        self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO, timeout=3)
+        # self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO, timeout=3)
 
 
 class XStreamityCueSheetSupport:
@@ -1342,18 +1359,16 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
             if self.ar_id_player > 6:
                 self.ar_id_player = 0
             try:
-                iAVSwitch.setAspectRatio(self.ar_id_player)
-            except:
                 eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
-
+            except Exception as e:
+                print(e)
             return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
         except Exception as e:
             print(e)
-            return "nextAR ERROR %s" % e
 
     def nextAR(self):
         message = self.nextARfunction()
-        self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO, timeout=3)
+        # self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO, timeout=3)
 
 
 class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSelection, InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport, InfoBarSummarySupport, InfoBarServiceErrorPopupSupport, InfoBarNotifications, IPTVInfoBarShowHide, IPTVInfoBarPVRState, XStreamityCueSheetSupport, SubsSupportStatus, SubsSupport, Screen):
@@ -1381,8 +1396,8 @@ class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAud
 
         try:
             XStreamityCueSheetSupport.__init__(self)
-        except:
-            pass
+        except Exception as e:
+            print(e)
 
         IPTVInfoBarPVRState.__init__(self, PVRState, True)
 
@@ -1579,13 +1594,12 @@ class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAud
                 self.ar_id_player = 0
             try:
                 eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
-            except:
-                iAVSwitch.setAspectRatio(self.ar_id_player)
+            except Exception as e:
+                print(e)
             return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
         except Exception as e:
             print(e)
-            return "nextAR ERROR %s" % e
 
     def nextAR(self):
         message = self.nextARfunction()
-        self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO, timeout=3)
+        # self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO, timeout=3)

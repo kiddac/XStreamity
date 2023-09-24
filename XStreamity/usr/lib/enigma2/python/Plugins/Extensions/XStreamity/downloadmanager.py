@@ -316,7 +316,7 @@ class XStreamity_DownloadManager(Screen):
                 print(e)
                 extension = ""
 
-            filename = os.path.join(filmtitle, extension)
+            filename = str(filmtitle) + str(extension)
             shortpath = str(cfg.downloadlocation.getValue())
             path = os.path.join(cfg.downloadlocation.getValue(), filename)
             url = str(video[2])
