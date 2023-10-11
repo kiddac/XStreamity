@@ -3590,80 +3590,81 @@ class XStreamity_Categories(Screen):
                         self.epgshortlist = []
                         duplicatecheck = []
 
-                        if "epg_listings" in shortEPGJson and shortEPGJson["epg_listings"]:
-                            if shortEPGJson["epg_listings"]:
-                                for listing in shortEPGJson["epg_listings"]:
-                                    if ("has_archive" in listing and listing["has_archive"] == 1) or ("now_playing" in listing and listing["now_playing"] == 1):
+                        if "epg_listings" not in shortEPGJson or not shortEPGJson["epg_listings"]:
+                            self.session.open(MessageBox, _("Catchup currently not available. Missing EPG data"), type=MessageBox.TYPE_INFO, timeout=5)
+                            return
 
-                                        title = ""
-                                        description = ""
-                                        epg_date_all = ""
-                                        epg_time_all = ""
-                                        start = ""
-                                        end = ""
+                        else:
+                            for listing in shortEPGJson["epg_listings"]:
+                                if ("has_archive" in listing and listing["has_archive"] == 1) or ("now_playing" in listing and listing["now_playing"] == 1):
 
-                                        catchupstart = int(cfg.catchupstart.getValue())
-                                        catchupend = int(cfg.catchupend.getValue())
+                                    title = ""
+                                    description = ""
+                                    epg_date_all = ""
+                                    epg_time_all = ""
+                                    start = ""
+                                    end = ""
 
-                                        if "title" in listing:
-                                            title = base64.b64decode(listing["title"]).decode("utf-8")
+                                    catchupstart = int(cfg.catchupstart.getValue())
+                                    catchupend = int(cfg.catchupend.getValue())
 
-                                        if "description" in listing:
-                                            description = base64.b64decode(listing["description"]).decode("utf-8")
+                                    if "title" in listing:
+                                        title = base64.b64decode(listing["title"]).decode("utf-8")
 
-                                        shift = 0
+                                    if "description" in listing:
+                                        description = base64.b64decode(listing["description"]).decode("utf-8")
 
-                                        if "serveroffset" in glob.current_playlist["player_info"]:
-                                            shift = int(glob.current_playlist["player_info"]["serveroffset"])
+                                    shift = 0
 
-                                        if listing["start"] and listing["end"]:
+                                    if "serveroffset" in glob.current_playlist["player_info"]:
+                                        shift = int(glob.current_playlist["player_info"]["serveroffset"])
 
-                                            start = listing["start"]
-                                            end = listing["end"]
+                                    if listing["start"] and listing["end"]:
 
-                                            start_datetime_original = datetime.strptime(start, "%Y-%m-%d %H:%M:%S")
-                                            start_datetime_offset = datetime.strptime(start, "%Y-%m-%d %H:%M:%S") + timedelta(hours=shift)
-                                            start_datetime_margin = datetime.strptime(start, "%Y-%m-%d %H:%M:%S") + timedelta(hours=shift) - timedelta(minutes=catchupstart)
+                                        start = listing["start"]
+                                        end = listing["end"]
 
+                                        start_datetime_original = datetime.strptime(start, "%Y-%m-%d %H:%M:%S")
+                                        start_datetime_offset = datetime.strptime(start, "%Y-%m-%d %H:%M:%S") + timedelta(hours=shift)
+                                        start_datetime_margin = datetime.strptime(start, "%Y-%m-%d %H:%M:%S") + timedelta(hours=shift) - timedelta(minutes=catchupstart)
+
+                                        try:
+                                            end_datetime_offset = datetime.strptime(end, "%Y-%m-%d %H:%M:%S") + timedelta(hours=shift)
+                                            end_datetime_margin = datetime.strptime(end, "%Y-%m-%d %H:%M:%S") + timedelta(hours=shift) + timedelta(minutes=catchupend)
+                                        except:
                                             try:
-                                                # end_datetime_original = datetime.strptime(end, "%Y-%m-%d %H:%M:%S")
+                                                end = listing["stop"]
                                                 end_datetime_offset = datetime.strptime(end, "%Y-%m-%d %H:%M:%S") + timedelta(hours=shift)
                                                 end_datetime_margin = datetime.strptime(end, "%Y-%m-%d %H:%M:%S") + timedelta(hours=shift) + timedelta(minutes=catchupend)
                                             except:
-                                                try:
-                                                    end = listing["stop"]
-                                                    # end_datetime_original = datetime.strptime(end, "%Y-%m-%d %H:%M:%S")
-                                                    end_datetime_offset = datetime.strptime(end, "%Y-%m-%d %H:%M:%S") + timedelta(hours=shift)
-                                                    end_datetime_margin = datetime.strptime(end, "%Y-%m-%d %H:%M:%S") + timedelta(hours=shift) + timedelta(minutes=catchupend)
-                                                except:
-                                                    return
+                                                return
 
-                                            epg_date_all = start_datetime_offset.strftime("%a %d/%m")
-                                            epg_time_all = str(start_datetime_offset.strftime("%H:%M")) + " - " + str(end_datetime_offset.strftime("%H:%M"))
+                                        epg_date_all = start_datetime_offset.strftime("%a %d/%m")
+                                        epg_time_all = str(start_datetime_offset.strftime("%H:%M")) + " - " + str(end_datetime_offset.strftime("%H:%M"))
 
-                                        epg_duration = int((end_datetime_margin - start_datetime_margin).total_seconds() / 60.0)
+                                    epg_duration = int((end_datetime_margin - start_datetime_margin).total_seconds() / 60.0)
 
-                                        url_datestring = str(start_datetime_original.strftime("%Y-%m-%d:%H-%M"))
+                                    url_datestring = str(start_datetime_original.strftime("%Y-%m-%d:%H-%M"))
 
-                                        if [epg_date_all, epg_time_all] not in duplicatecheck:
-                                            duplicatecheck.append([epg_date_all, epg_time_all])
-                                            self.epgshortlist.append(buildCatchupEPGListEntry(str(epg_date_all), str(epg_time_all), str(title), str(description), str(url_datestring), str(epg_duration), index))
+                                    if [epg_date_all, epg_time_all] not in duplicatecheck:
+                                        duplicatecheck.append([epg_date_all, epg_time_all])
+                                        self.epgshortlist.append(buildCatchupEPGListEntry(str(epg_date_all), str(epg_time_all), str(title), str(description), str(url_datestring), str(epg_duration), index))
 
-                                            index += 1
+                                        index += 1
 
-                                self.epgshortlist.reverse()
-                                self["epg_short_list"].setList(self.epgshortlist)
-                                duplicatecheck = []
+                            self.epgshortlist.reverse()
+                            self["epg_short_list"].setList(self.epgshortlist)
+                            duplicatecheck = []
 
-                                if self["epg_short_list"].getCurrent():
-                                    glob.catchupdata = [str(self["epg_short_list"].getCurrent()[0]), str(self["epg_short_list"].getCurrent()[3])]
-                                instance = self["epg_short_list"].master.master.instance
-                                instance.setSelectionEnable(1)
+                            if self["epg_short_list"].getCurrent():
+                                glob.catchupdata = [str(self["epg_short_list"].getCurrent()[0]), str(self["epg_short_list"].getCurrent()[3])]
+                            instance = self["epg_short_list"].master.master.instance
+                            instance.setSelectionEnable(1)
 
-                                self.selectedlist = self["epg_short_list"]
-                                self.displayShortEPG()
-                            else:
-                                self.session.open(MessageBox, _("Catchup currently not available. Missing EPG data"), type=MessageBox.TYPE_INFO, timeout=5)
+                            self.selectedlist = self["epg_short_list"]
+                            self.displayShortEPG()
+                    else:
+                        self.session.open(MessageBox, _("Catchup currently not available. Missing EPG data"), type=MessageBox.TYPE_INFO, timeout=5)
         return
 
     def reverse(self):

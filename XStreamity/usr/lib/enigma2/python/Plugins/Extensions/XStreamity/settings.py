@@ -202,7 +202,6 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.list.append(self.cfg_catchupstart)
         self.list.append(self.cfg_catchupend)
 
-        # self.list.append(self.cfg_parental)
         self.list.append(self.cfg_adult)
         if cfg.adult.value is True:
             self.list.append(self.cfg_adultpin)

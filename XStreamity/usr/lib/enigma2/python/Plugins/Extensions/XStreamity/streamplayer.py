@@ -31,7 +31,6 @@ from Tools import Notifications
 
 from Screens.InfoBarGenerics import InfoBarMenu, InfoBarSeek, InfoBarAudioSelection, InfoBarMoviePlayerSummarySupport, \
     InfoBarSubtitleSupport, InfoBarSummarySupport, InfoBarServiceErrorPopupSupport, InfoBarNotifications
-
 try:
     from .resumepoints import setResumePoint, getResumePoint
 except Exception as e:
@@ -379,7 +378,20 @@ class IPTVInfoBarPVRState:
 skin_path = os.path.join(skin_directory, cfg.skin.getValue())
 
 
-class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSelection, InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport, InfoBarSummarySupport, InfoBarServiceErrorPopupSupport, InfoBarNotifications, IPTVInfoBarShowHide, IPTVInfoBarPVRState, Screen):
+class XStreamity_StreamPlayer(
+    InfoBarBase,
+    IPTVInfoBarShowHide,
+    IPTVInfoBarPVRState,
+    InfoBarMenu,
+    InfoBarAudioSelection,
+    InfoBarNotifications,
+    InfoBarSeek,
+    InfoBarSummarySupport,
+    InfoBarSubtitleSupport,
+    InfoBarServiceErrorPopupSupport,
+    InfoBarMoviePlayerSummarySupport,
+        Screen):
+
     ALLOW_SUSPEND = True
 
     def __init__(self, session, streamurl, servicetype, direct_source=None, stream_id=None):
@@ -391,16 +403,18 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             if servicetype == "1":
                 servicetype = "4097"
 
-        for x in InfoBarBase, \
-                InfoBarMenu, \
-                InfoBarSeek, \
-                InfoBarAudioSelection, \
-                InfoBarMoviePlayerSummarySupport, \
-                InfoBarSubtitleSupport, \
-                InfoBarSummarySupport, \
-                InfoBarServiceErrorPopupSupport, \
-                InfoBarNotifications, \
-                IPTVInfoBarShowHide:
+        for x in (
+            InfoBarBase,
+            IPTVInfoBarShowHide,
+            InfoBarMenu,
+            InfoBarAudioSelection,
+            InfoBarNotifications,
+            InfoBarSeek,
+            InfoBarSummarySupport,
+            InfoBarSubtitleSupport,
+            InfoBarServiceErrorPopupSupport,
+            InfoBarMoviePlayerSummarySupport
+        ):
             x.__init__(self)
 
         IPTVInfoBarPVRState.__init__(self, PVRState, True)
@@ -960,21 +974,19 @@ class XStreamity_StreamPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudi
             self.playStream(self.servicetype, self.streamurl, self.direct_source)
 
     def nextARfunction(self):
+        self.ar_id_player += 1
+        if self.ar_id_player > 6:
+            self.ar_id_player = 0
         try:
-            self.ar_id_player += 1
-            if self.ar_id_player > 6:
-                self.ar_id_player = 0
-            try:
-                eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
-            except Exception as e:
-                print(e)
+            eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
             return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
         except Exception as e:
             print(e)
+            return _("Resolution Change Failed")
 
     def nextAR(self):
         message = self.nextARfunction()
-        # self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO, timeout=3)
+        self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO, timeout=1)
 
 
 class XStreamityCueSheetSupport:
@@ -1043,7 +1055,22 @@ class XStreamityCueSheetSupport:
                 print(e)
 
 
-class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSelection, InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport, InfoBarSummarySupport, InfoBarServiceErrorPopupSupport, InfoBarNotifications, IPTVInfoBarShowHide, IPTVInfoBarPVRState, XStreamityCueSheetSupport, SubsSupportStatus, SubsSupport, Screen):
+class XStreamity_VodPlayer(
+    InfoBarBase,
+    IPTVInfoBarShowHide,
+    IPTVInfoBarPVRState,
+    XStreamityCueSheetSupport,
+    InfoBarMenu,
+    InfoBarAudioSelection,
+    InfoBarNotifications,
+    InfoBarSeek,
+    InfoBarSummarySupport,
+    InfoBarSubtitleSupport,
+    InfoBarServiceErrorPopupSupport,
+    InfoBarMoviePlayerSummarySupport,
+    SubsSupportStatus,
+    SubsSupport,
+        Screen):
 
     ENABLE_RESUME_SUPPORT = True
     ALLOW_SUSPEND = True
@@ -1052,16 +1079,18 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
         Screen.__init__(self, session)
         self.session = session
 
-        for x in InfoBarBase, \
-                InfoBarMenu, \
-                InfoBarSeek, \
-                InfoBarAudioSelection, \
-                InfoBarMoviePlayerSummarySupport, \
-                InfoBarSubtitleSupport, \
-                InfoBarSummarySupport, \
-                InfoBarServiceErrorPopupSupport, \
-                InfoBarNotifications, \
-                IPTVInfoBarShowHide:
+        for x in (
+            InfoBarBase,
+            IPTVInfoBarShowHide,
+            InfoBarMenu,
+            InfoBarAudioSelection,
+            InfoBarNotifications,
+            InfoBarSeek,
+            InfoBarSummarySupport,
+            InfoBarSubtitleSupport,
+            InfoBarServiceErrorPopupSupport,
+            InfoBarMoviePlayerSummarySupport
+        ):
             x.__init__(self)
 
         try:
@@ -1354,24 +1383,37 @@ class XStreamity_VodPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSe
         self.playStream(self.servicetype, self.streamurl, self.direct_source)
 
     def nextARfunction(self):
+        self.ar_id_player += 1
+        if self.ar_id_player > 6:
+            self.ar_id_player = 0
         try:
-            self.ar_id_player += 1
-            if self.ar_id_player > 6:
-                self.ar_id_player = 0
-            try:
-                eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
-            except Exception as e:
-                print(e)
+            eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
             return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
         except Exception as e:
             print(e)
+            return _("Resolution Change Failed")
 
     def nextAR(self):
         message = self.nextARfunction()
-        # self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO, timeout=3)
+        self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO, timeout=1)
 
 
-class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAudioSelection, InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport, InfoBarSummarySupport, InfoBarServiceErrorPopupSupport, InfoBarNotifications, IPTVInfoBarShowHide, IPTVInfoBarPVRState, XStreamityCueSheetSupport, SubsSupportStatus, SubsSupport, Screen):
+class XStreamity_CatchupPlayer(
+    InfoBarBase,
+    IPTVInfoBarShowHide,
+    IPTVInfoBarPVRState,
+    XStreamityCueSheetSupport,
+    InfoBarMenu,
+    InfoBarAudioSelection,
+    InfoBarNotifications,
+    InfoBarSeek,
+    InfoBarSummarySupport,
+    InfoBarSubtitleSupport,
+    InfoBarServiceErrorPopupSupport,
+    InfoBarMoviePlayerSummarySupport,
+    SubsSupportStatus,
+    SubsSupport,
+        Screen):
 
     def __init__(self, session, streamurl, servicetype):
         Screen.__init__(self, session)
@@ -1382,16 +1424,18 @@ class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAud
             if servicetype == "1":
                 servicetype = "4097"
 
-        for x in InfoBarBase, \
-                InfoBarMenu, \
-                InfoBarSeek, \
-                InfoBarAudioSelection, \
-                InfoBarMoviePlayerSummarySupport, \
-                InfoBarSubtitleSupport, \
-                InfoBarSummarySupport, \
-                InfoBarServiceErrorPopupSupport, \
-                InfoBarNotifications, \
-                IPTVInfoBarShowHide:
+        for x in (
+            InfoBarBase,
+            IPTVInfoBarShowHide,
+            InfoBarMenu,
+            InfoBarAudioSelection,
+            InfoBarNotifications,
+            InfoBarSeek,
+            InfoBarSummarySupport,
+            InfoBarSubtitleSupport,
+            InfoBarServiceErrorPopupSupport,
+            InfoBarMoviePlayerSummarySupport
+        ):
             x.__init__(self)
 
         try:
@@ -1588,18 +1632,16 @@ class XStreamity_CatchupPlayer(InfoBarBase, InfoBarMenu, InfoBarSeek, InfoBarAud
         self.playStream(self.servicetype, self.streamurl)
 
     def nextARfunction(self):
+        self.ar_id_player += 1
+        if self.ar_id_player > 6:
+            self.ar_id_player = 0
         try:
-            self.ar_id_player += 1
-            if self.ar_id_player > 6:
-                self.ar_id_player = 0
-            try:
-                eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
-            except Exception as e:
-                print(e)
+            eAVSwitch.getInstance().setAspectRatio(self.ar_id_player)
             return VIDEO_ASPECT_RATIO_MAP[self.ar_id_player]
         except Exception as e:
             print(e)
+            return _("Resolution Change Failed")
 
     def nextAR(self):
         message = self.nextARfunction()
-        # self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO, timeout=3)
+        self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO, timeout=1)

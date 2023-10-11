@@ -21,7 +21,7 @@
 	
 	<widget source="Title" render="Label" position="120,535" size="1160,72" font="slykbold;52" foregroundColor="#ffffff" backgroundColor="#082353" valign="center" halign="center" transparent="0" zPosition="2"/>
 	
-	<widget name="config" textOffset="20,0" position="center,671" size="1814,576" font="slykregular;48" secondfont="slykregular;70" foregroundColor="#ffffff" backgroundColor="#133171" foregroundColorSelected="#133171" backgroundColorSelected="#f2d320"
+	<widget name="config" textOffset="20,0" position="center,671" size="1814,576" font="slykregular;48" secondfont="slykregular;48" foregroundColor="#ffffff" backgroundColor="#133171" foregroundColorSelected="#133171" backgroundColorSelected="#f2d320"
 	selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/slyk1080r19/images/menu-bar-54.png" backgroundPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/slyk1080r19/images/blank.png"
 	itemHeight="72" enableWrapAround="1" scrollbarMode="showOnDemand" transparent="1" zPosition="1"/>
 	

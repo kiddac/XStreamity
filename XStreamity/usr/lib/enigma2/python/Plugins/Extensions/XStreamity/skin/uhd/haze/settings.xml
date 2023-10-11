@@ -13,7 +13,7 @@
 	
 	<eLabel position="0,123" size="2560,1238" backgroundColor="#1a242b34" zPosition="-1" />
 
-	<widget name="config" textOffset="24,0" position="center,148" size="2160,1200" font="xstreamityregular;36" secondfont="xstreamityregular;48"
+	<widget name="config" textOffset="24,0" position="center,148" size="2160,1200" font="xstreamityregular;36" secondfont="xstreamityregular;36"
 	foregroundColor="#ffffff" backgroundColor="#1a242b34" foregroundColorSelected="#ffffff" backgroundColorSelected="#1a000000" 
 	selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/haze/images/menu-select.png"
 	itemHeight="80" scrollbarMode="showOnDemand" scrollbarSliderBorderWidth="1" scrollbarWidth="6" enableWrapAround="1" transparent="0" zPosition="2" />
