@@ -195,7 +195,8 @@ if not os.path.exists(dir_tmp):
 
 # check if playlists.txt file exists in specified location
 if not os.path.isfile(playlist_file):
-    open(playlist_file, "a").close()
+    with open(playlist_file, "a") as f:
+        f.close()
 
 if os.stat(playlist_file).st_size == 0:
     try:
@@ -211,12 +212,13 @@ else:
 
 # check if x-playlists.json file exists in specified location
 if not os.path.isfile(playlists_json):
-    open(playlists_json, "a").close()
+    with open(playlists_json, "a") as f:
+        f.close()
 
 # check if x-downloads.json file exists in specified location
 if not os.path.isfile(downloads_json):
-    open(downloads_json, "a").close()
-
+    with open(downloads_json, "a") as f:
+        f.close()
 
 # remove dodgy versions of my plugin
 if os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/XStreamityPro/"):

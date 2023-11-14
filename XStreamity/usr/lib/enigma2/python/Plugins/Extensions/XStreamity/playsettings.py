@@ -234,18 +234,16 @@ class XStreamity_Settings(ConfigListScreen, Screen):
 
             # check name is not blank
             if self.name is None or len(self.name) < 3:
-                self.session.open(MessageBox, _("Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum 2 characters."), MessageBox.TYPE_ERROR, timeout=10)
-                self.createSetup()
+                self.session.open(MessageBox, _("Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum 3 characters."), MessageBox.TYPE_ERROR, timeout=10)
+                # self.createSetup()
                 return
 
             # check name exists
             if self.playlists_all:
                 for playlists in self.playlists_all:
-                    if playlists["playlist_info"]["full_url"] == self.full_url:
-                        continue
-                    if playlists["playlist_info"]["name"] == self.name:
+                    if playlists["playlist_info"]["name"] == self.name and str(playlists["playlist_info"]["full_url"]) != str(self.full_url):
                         self.session.open(MessageBox, _("Name already used. Please enter a unique name."), MessageBox.TYPE_ERROR, timeout=10)
-                        self.createSetup()
+                        # self.createSetup()
                         return
 
             output = self.outputCfg.value

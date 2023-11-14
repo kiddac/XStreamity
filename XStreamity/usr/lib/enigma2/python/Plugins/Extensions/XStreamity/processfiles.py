@@ -18,11 +18,13 @@ except:
 def processfiles():
     # check if playlists.txt file exists in specified location
     if not os.path.isfile(playlist_file):
-        open(playlist_file, "a").close()
+        with open(playlist_file, "a") as f:
+            f.close()
 
     # check if x-playlists.json file exists in specified location
     if not os.path.isfile(playlists_json):
-        open(playlists_json, "a").close()
+        with open(playlists_json, "a") as f:
+            f.close()
 
     playlists_all = []
     if os.path.isfile(playlists_json):

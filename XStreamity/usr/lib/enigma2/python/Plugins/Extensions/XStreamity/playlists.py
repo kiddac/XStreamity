@@ -31,7 +31,6 @@ try:
 except:
     from httplib import HTTPConnection
     HTTPConnection.debuglevel = 0
-requests.packages.urllib3.disable_warnings()
 
 epgimporter = False
 if os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/EPGImport"):
@@ -125,7 +124,7 @@ class XStreamity_Playlists(Screen):
             try:
                 self.timer.callback.append(self.makeUrlList)
             except:
-                self.self.makeUrlList()
+                self.makeUrlList()
         self.timer.start(5, True)
 
     def makeUrlList(self):

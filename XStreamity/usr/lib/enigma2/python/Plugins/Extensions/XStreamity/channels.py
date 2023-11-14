@@ -57,8 +57,6 @@ except:
     from httplib import HTTPConnection
     HTTPConnection.debuglevel = 0
 
-requests.packages.urllib3.disable_warnings()
-
 # https twisted client hack #
 try:
     from twisted.internet import ssl
@@ -502,7 +500,7 @@ class XStreamity_Categories(Screen):
                     try:
                         self.timer.callback.append(self.xmltvCheckData)
                     except:
-                        self.self.xmltvCheckData()
+                        self.xmltvCheckData()
                 self.timer.start(50, True)
                 # self.xmltvCheckData()
                 # return
@@ -2802,7 +2800,8 @@ class XStreamity_Categories(Screen):
 
         # if xmltv file doesn't already exist, create file and build.
         if not os.path.isfile(channelpath):
-            open(channelpath, "a").close()
+            with open(channelpath, "a") as f:
+                f.close()
 
         # buildXMLTVSourceFile
 

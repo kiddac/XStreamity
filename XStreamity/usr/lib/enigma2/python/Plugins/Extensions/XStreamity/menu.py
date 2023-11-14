@@ -25,7 +25,6 @@ try:
 except:
     from httplib import HTTPConnection
     HTTPConnection.debuglevel = 0
-requests.packages.urllib3.disable_warnings()
 
 
 class XStreamity_Menu(Screen):

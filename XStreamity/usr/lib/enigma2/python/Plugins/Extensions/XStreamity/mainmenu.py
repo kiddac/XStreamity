@@ -191,7 +191,8 @@ class XStreamity_MainMenu(Screen):
         elif answer:
             os.remove(playlists_json)
             if not os.path.isfile(playlists_json):
-                open(playlists_json, "a").close()
+                with open(playlists_json, "a") as f:
+                    f.close()
             self.quit()
 
 
