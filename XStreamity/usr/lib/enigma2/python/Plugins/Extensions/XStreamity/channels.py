@@ -285,7 +285,7 @@ class XStreamity_Categories(Screen):
         self.password = glob.current_playlist["playlist_info"]["password"]
         self.output = glob.current_playlist["playlist_info"]["output"]
         self.name = glob.current_playlist["playlist_info"]["name"]
-        self.xmltv = glob.current_playlist["playlist_info"]["xmltv_api"] + str("&next_days=2")
+        self.xmltv = glob.current_playlist["playlist_info"]["xmltv_api"]
 
         self.player_api = glob.current_playlist["playlist_info"]["player_api"]
 
@@ -1053,6 +1053,7 @@ class XStreamity_Categories(Screen):
             genre = self["vod_genre"].getText()
             releasedate = self["vod_release_date"].getText()
             rating = self["vod_rating"].getText()
+            last_modified = ""
 
             if currentChannelList:
                 if "info" in currentChannelList:
