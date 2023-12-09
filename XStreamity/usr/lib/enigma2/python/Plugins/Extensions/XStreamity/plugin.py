@@ -171,15 +171,9 @@ if location:
 
 font_folder = os.path.join(dir_plugins, "fonts/")
 
-"""
-hdr = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-    "Accept-Encoding": "gzip, deflate",
-}
-"""
+hdr = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36'}
 
-hdr = {"User-Agent": "Enigma2 - XStreamity Plugin"}
+# hdr = {"User-Agent": "Enigma2 - XStreamity Plugin"}
 
 # create folder for working files
 if not os.path.exists(dir_etc):

@@ -587,7 +587,10 @@ class XStreamity_Categories(Screen):
 
         for item in currentCategoryList:
             hidden = False
-            category_name = item["category_name"]
+            if "category_name" in item:
+                category_name = item["category_name"]
+            else:
+                category_name = "No category"
             category_id = item["category_id"]
 
             if category_id in currentHidden:

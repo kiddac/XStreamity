@@ -125,7 +125,7 @@ class XStreamity_Playlists(Screen):
                 self.timer.callback.append(self.makeUrlList)
             except:
                 self.makeUrlList()
-        self.timer.start(5, True)
+        self.timer.start(10, True)
 
     def makeUrlList(self):
         self.url_list = []
@@ -153,7 +153,7 @@ class XStreamity_Playlists(Screen):
         http.mount("https://", adapter)
         response = ""
         try:
-            r = http.get(url[0], headers=hdr, timeout=5, verify=False)
+            r = http.get(url[0], headers=hdr, timeout=10, verify=False)
             r.raise_for_status()
             if r.status_code == requests.codes.ok:
                 try:

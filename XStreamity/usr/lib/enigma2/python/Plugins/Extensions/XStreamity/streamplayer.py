@@ -761,7 +761,8 @@ class XStreamity_StreamPlayer(
             self.timerrefresh.callback.append(self.refreshInfobar)
         except:
             self.timerrefresh_conn = self.timerrefresh.timeout.connect(self.refreshInfobar)
-        self.timerrefresh.start(30000)
+
+        self.timerrefresh.start(5 * 60 * 1000, False)
 
     def __evStart(self):
         if self.hasStreamData is False:
@@ -792,7 +793,7 @@ class XStreamity_StreamPlayer(
             self.timerCache.callback.append(clear_caches)
         except:
             self.timerCache_conn = self.timerCache.timeout.connect(clear_caches)
-        self.timerCache.start(600000, False)
+        self.timerCache.start(5 * 60 * 1000, False)
 
         self.timerRecent = eTimer()
 
@@ -800,7 +801,7 @@ class XStreamity_StreamPlayer(
             self.timerRecent.callback.append(self.addRecentLiveList)
         except:
             self.timerRecent_conn = self.timerRecent.timeout.connect(self.addRecentLiveList)
-        self.timerRecent.start(20000, True)
+        self.timerRecent.start(30 * 1000, True)
 
     def __evTuneFailed(self):
         self.hasStreamData = False
@@ -1266,7 +1267,7 @@ class XStreamity_VodPlayer(
                 self.timerCache.callback.append(clear_caches)
             except:
                 self.timerCache_conn = self.timerCache.timeout.connect(clear_caches)
-            self.timerCache.start(60000, False)
+            self.timerCache.start(5 * 60 * 1000, False)
 
             if glob.categoryname == "vod":
                 self.timerRecent = eTimer()
@@ -1274,14 +1275,14 @@ class XStreamity_VodPlayer(
                     self.timerRecent.callback.append(self.addRecentVodList)
                 except:
                     self.timerRecent_conn = self.timerRecent.timeout.connect(self.addRecentVodList)
-                self.timerRecent.start(20000, True)
+                self.timerRecent.start(5 * 60 * 1000, True)
 
             self.timerWatched = eTimer()
             try:
                 self.timerWatched.callback.append(self.addWatchedList)
             except:
                 self.timerWatched_conn = self.timerWatched.timeout.connect(self.addWatchedList)
-            self.timerWatched.start(15000, True)
+            self.timerWatched.start(15 * 60 * 1000, True)
 
     def downloadImage(self):
         self.loadBlankImage()
@@ -1516,7 +1517,7 @@ class XStreamity_CatchupPlayer(
                 self.timerCache.callback.append(clear_caches)
             except:
                 self.timerCache_conn = self.timerCache.timeout.connect(clear_caches)
-            self.timerCache.start(60000, False)
+            self.timerCache.start(5 * 60 * 1000, False)
 
     def downloadImage(self):
         self.loadBlankImage()
