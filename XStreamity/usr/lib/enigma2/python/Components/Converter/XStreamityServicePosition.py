@@ -1,7 +1,6 @@
-
-from enigma import iPlayableService
 from Components.Converter.Converter import Converter
 from Components.Converter.Poll import Poll
+from enigma import iPlayableService
 from Components.Element import cached, ElementError
 
 
@@ -11,6 +10,11 @@ class XStreamityServicePosition(Poll, Converter, object):
     TYPE_REMAINING = 2
     TYPE_GAUGE = 3
     TYPE_SUMMARY = 4
+    TYPE_VFD_LENGTH = 5
+    TYPE_VFD_POSITION = 6
+    TYPE_VFD_REMAINING = 7
+    TYPE_VFD_GAUGE = 8
+    TYPE_VFD_SUMMARY = 9
 
     def __init__(self, type):
         Poll.__init__(self)
@@ -34,6 +38,16 @@ class XStreamityServicePosition(Poll, Converter, object):
             self.type = self.TYPE_GAUGE
         elif type == "Summary":
             self.type = self.TYPE_SUMMARY
+        elif type == "VFDLength":
+            self.type = self.TYPE_VFD_LENGTH
+        elif type == "VFDPosition":
+            self.type = self.TYPE_VFD_POSITION
+        elif type == "VFDRemaining":
+            self.type = self.TYPE_VFD_REMAINING
+        elif type == "VFDGauge":
+            self.type = self.TYPE_VFD_GAUGE
+        elif type == "VFDSummary":
+            self.type = self.TYPE_VFD_SUMMARY
         else:
             raise ElementError("type must be {Length|Position|Remaining|Gauge|Summary} with optional arguments {Negate|Detailed|ShowHours|ShowNoSeconds} for ServicePosition converter")
 
@@ -82,7 +96,7 @@ class XStreamityServicePosition(Poll, Converter, object):
         if seek is None:
             return ""
 
-        if self.type == self.TYPE_SUMMARY or self.type == self.TYPE_SUMMARY:
+        if self.type == self.TYPE_SUMMARY:
             s = self.position / 90000
             e = (self.length / 90000) - s
             return "%02d:%02d +%2dm" % (s / 60, s % 60, e / 60)
@@ -101,9 +115,7 @@ class XStreamityServicePosition(Poll, Converter, object):
 
         if self.negate:
             l = -l
-        if self.negate:
             p = -p
-        if self.negate:
             r = -r
 
         if l >= 0:
@@ -156,6 +168,70 @@ class XStreamityServicePosition(Poll, Converter, object):
                             return sign_p + "%d:%02d" % (p / 60, p % 60)
                         elif self.type == self.TYPE_REMAINING:
                             return sign_r + "%d:%02d" % (r / 60, r % 60)
+
+            else:
+                if self.showHours:
+                    if self.type == self.TYPE_LENGTH:
+                        return sign_l + "%d:%02d:%02d:%03d" % ((l / 3600 / 90000), (l / 90000) % 3600 / 60, (l / 90000) % 60, (l % 90000) / 90)
+                    elif self.type == self.TYPE_POSITION:
+                        return sign_r + "%d:%02d:%02d:%03d" % ((r / 3600 / 90000), (r / 90000) % 3600 / 60, (r / 90000) % 60, (r % 90000) / 90)
+                    elif self.type == self.TYPE_REMAINING:
+                        return sign_p + "%d:%02d:%02d:%03d" % ((p / 3600 / 90000), (p / 90000) % 3600 / 60, (p / 90000) % 60, (p % 90000) / 90)
+                else:
+                    if self.type == self.TYPE_LENGTH:
+                        return sign_l + "%d:%02d:%03d" % ((l / 60 / 90000), (l / 90000) % 60, (l % 90000) / 90)
+                    elif self.type == self.TYPE_POSITION:
+                        return sign_p + "%d:%02d:%03d" % ((p / 60 / 90000), (p / 90000) % 60, (p % 90000) / 90)
+                    elif self.type == self.TYPE_REMAINING:
+                        return sign_r + "%d:%02d:%03d" % ((r / 60 / 90000), (r / 90000) % 60, (r % 90000) / 90)
+
+        else:
+            if not self.detailed:
+                if self.showHours:
+                    if self.showNoSeconds:
+                        if self.type == self.TYPE_VFD_LENGTH:
+                            return sign_l + "%d:%02d" % (l / 3600, l % 3600 / 60)
+                        elif self.type == self.TYPE_VFD_POSITION:
+                            return sign_p + "%d:%02d" % (p / 3600, p % 3600 / 60)
+                        elif self.type == self.TYPE_REMAINING:
+                            return sign_r + "%d:%02d" % (r / 3600, r % 3600 / 60)
+                    else:
+                        if self.type == self.TYPE_VFD_LENGTH:
+                            return sign_l + "%d:%02d:%02d" % (l / 3600, l % 3600 / 60, l % 60)
+                        elif self.type == self.TYPE_VFD_POSITION:
+                            return sign_p + "%d:%02d:%02d" % (p / 3600, p % 3600 / 60, p % 60)
+                        elif self.type == self.TYPE_REMAINING:
+                            return sign_r + "%d:%02d:%02d" % (r / 3600, r % 3600 / 60, r % 60)
+                else:
+                    if self.showNoSeconds:
+                        if self.type == self.TYPE_VFD_LENGTH:
+                            return ngettext("%d Min", "%d Mins", (l / 60)) % (l / 60)
+                        elif self.type == self.TYPE_VFD_POSITION:
+                            return sign_p + ngettext("%d Min", "%d Mins", (p / 60)) % (p / 60)
+                        elif self.type == self.TYPE_VFD_REMAINING:
+                            return sign_r + ngettext("%d Min", "%d Mins", (r / 60)) % (r / 60)
+                    else:
+                        if self.type == self.TYPE_VFD_LENGTH:
+                            return sign_l + "%d:%02d" % (l / 60, l % 60)
+                        elif self.type == self.TYPE_VFD_POSITION:
+                            return sign_p + "%d:%02d" % (p / 60, p % 60)
+                        elif self.type == self.TYPE_REMAINING:
+                            return sign_r + "%d:%02d" % (r / 60, r % 60)
+            else:
+                if self.showHours:
+                    if self.type == self.TYPE_VFD_LENGTH:
+                        return sign_l + "%d:%02d:%02d:%03d" % ((l / 3600 / 90000), (l / 90000) % 3600 / 60, (l / 90000) % 60, (l % 90000) / 90)
+                    elif self.type == self.TYPE_VFD_POSITION:
+                        return sign_r + "%d:%02d:%02d:%03d" % ((r / 3600 / 90000), (r / 90000) % 3600 / 60, (r / 90000) % 60, (r % 90000) / 90)
+                    elif self.type == self.TYPE_REMAINING:
+                        return sign_p + "%d:%02d:%02d:%03d" % ((p / 3600 / 90000), (p / 90000) % 3600 / 60, (p / 90000) % 60, (p % 90000) / 90)
+                else:
+                    if self.type == self.TYPE_VFD_LENGTH:
+                        return sign_l + "%d:%02d:%03d" % ((l / 60 / 90000), (l / 90000) % 60, (l % 90000) / 90)
+                    elif self.type == self.TYPE_VFD_POSITION:
+                        return sign_p + "%d:%02d:%03d" % ((p / 60 / 90000), (p / 90000) % 60, (p % 90000) / 90)
+                    elif self.type == self.TYPE_REMAINING:
+                        return sign_r + "%d:%02d:%03d" % ((r / 60 / 90000), (r / 90000) % 60, (r % 90000) / 90)
 
     # range/value are for the Progress renderer
     range = 10000

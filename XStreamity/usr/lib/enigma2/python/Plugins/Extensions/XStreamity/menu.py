@@ -208,17 +208,17 @@ class XStreamity_Menu(Screen):
         self.index = 0
 
         if glob.current_playlist["player_info"]["showlive"] is True:
-            if glob.current_playlist["data"]["live_categories"] != [] and "user_info" not in glob.current_playlist["data"]["live_categories"]:
+            if glob.current_playlist["data"]["live_categories"] and len(glob.current_playlist["data"]["live_categories"]) > 1 and "user_info" not in glob.current_playlist["data"]["live_categories"]:
                 self.index += 1
                 self.list.append([self.index, _("Live Streams"), 0, ""])
 
         if glob.current_playlist["player_info"]["showvod"] is True:
-            if glob.current_playlist["data"]["vod_categories"] != [] and "user_info" not in glob.current_playlist["data"]["vod_categories"]:
+            if glob.current_playlist["data"]["vod_categories"] and len(glob.current_playlist["data"]["vod_categories"]) > 1 and "user_info" not in glob.current_playlist["data"]["vod_categories"]:
                 self.index += 1
                 self.list.append([self.index, _("Vod"), 1, ""])
 
         if glob.current_playlist["player_info"]["showseries"] is True:
-            if glob.current_playlist["data"]["series_categories"] != [] and "user_info" not in glob.current_playlist["data"]["series_categories"]:
+            if glob.current_playlist["data"]["series_categories"] and len(glob.current_playlist["data"]["series_categories"]) > 1 and "user_info" not in glob.current_playlist["data"]["series_categories"]:
                 self.index += 1
                 self.list.append([self.index, _("TV Series"), 2, ""])
 

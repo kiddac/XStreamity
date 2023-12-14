@@ -245,6 +245,7 @@ class XStreamity_Categories(Screen):
         self.info = ""
         self.storedtitle = ""
         self.storedseason = ""
+        self.storedyear = ""
         self.sortindex = 0
         self.sortText = (_("Sort: A-Z"))
 
@@ -591,7 +592,11 @@ class XStreamity_Categories(Screen):
                 category_name = item["category_name"]
             else:
                 category_name = "No category"
-            category_id = item["category_id"]
+
+            if "category_id" in item:
+                category_id = item["category_id"]
+            else:
+                category_id = "999999"
 
             if category_id in currentHidden:
                 hidden = True
@@ -1009,14 +1014,18 @@ class XStreamity_Categories(Screen):
                                                         name = item["name"]
 
                                                     if "overview" in item and item["overview"]:
-                                                        overview = item["overview"]
+                                                        if len(item["overview"]) > 50:
+                                                            overview = item["overview"]
 
                                                     if "cover_big" in item and item["cover_big"]:
                                                         if item["cover_big"].startswith("http"):
-                                                            cover = item["cover_big"]
+                                                            if len(item["cover_big"]) > 50:
+                                                                cover = item["cover_big"]
                                                     elif "cover" in item and item["cover"]:
                                                         if item["cover"].startswith("http"):
-                                                            cover = item["cover"]
+                                                            if len(item["cover"]) > 50:
+                                                                cover = item["cover"]
+
                                                     if "id" in item and item["id"]:
                                                         series_id = item["id"]
                                                     break
@@ -1722,7 +1731,7 @@ class XStreamity_Categories(Screen):
 
         self.buildLists()
 
-    def search(self):
+    def search(self, result=None):
         # print("*** search ***")
         if not self["key_blue"].getText():
             return
@@ -1771,7 +1780,10 @@ class XStreamity_Categories(Screen):
 
     def filterChannels(self, result=None):
         # print("*** filterChannels ***")
-        if result or self.filterresult:
+
+        activelist = []
+
+        if result:
             self.filterresult = result
             glob.nextlist[-1]["filter"] = self.filterresult
 
@@ -1788,23 +1800,31 @@ class XStreamity_Categories(Screen):
                 activelist = self.list4[:]
 
             self.searchString = result
-            self["key_blue"].setText(_("Reset Search"))
-            self["key_yellow"].setText("")
             activelist = [channel for channel in activelist if str(result).lower() in str(channel[1]).lower()]
 
-            if self.level == 1:
-                self.list1 = activelist
+            if not activelist:
+                self.searchString = ""
+                self.session.openWithCallback(self.search, MessageBox, _("No results found."), type=MessageBox.TYPE_ERROR, timeout=5)
 
-            elif self.level == 2:
-                self.list2 = activelist
+            else:
 
-            elif self.level == 3:
-                self.list3 = activelist
+                if self.level == 1:
+                    self.list1 = activelist
 
-            elif self.level == 4:
-                self.list4 = activelist
+                elif self.level == 2:
+                    self.list2 = activelist
 
-            self.buildLists()
+                elif self.level == 3:
+                    self.list3 = activelist
+
+                elif self.level == 4:
+                    self.list4 = activelist
+
+                self["key_blue"].setText(_("Reset Search"))
+                self["key_yellow"].setText("")
+
+                self.hideVod()
+                self.buildLists()
 
     def resetSearch(self):
         # print("*** resetSearch ***")
@@ -2218,7 +2238,7 @@ class XStreamity_Categories(Screen):
             for watched in glob.current_playlist["player_info"]["serieswatched"]:
                 if int(self["main_list"].getCurrent()[4]) == int(watched):
                     glob.current_playlist["player_info"]["serieswatched"].remove(watched)
-                    print(glob.current_playlist["player_info"]["serieswatched"])
+                    # print(glob.current_playlist["player_info"]["serieswatched"])
                     break
 
         with open(playlists_json, "r") as f:
@@ -3115,16 +3135,20 @@ class XStreamity_Categories(Screen):
                             self.isIMDB = True
 
         elif self.categoryname == "series":
-            # print("*** getTMDB series ***")
-            try:
-                year = self["main_list"].getCurrent()[10]
-                year = year[0:4]
-            except:
-                pass
 
             if self.level == 2:
                 title = self["main_list"].getCurrent()[0]
                 self.storedtitle = title
+
+                try:
+                    year = self["main_list"].getCurrent()[10]
+                    year = year[0:4]
+
+                except:
+                    year = ""
+                    pass
+
+                self.storedyear = year
             else:
                 title = self.storedtitle
 
@@ -3207,8 +3231,8 @@ class XStreamity_Categories(Screen):
 
         elif self.categoryname == "series":
             searchurl = 'http://api.themoviedb.org/3/search/tv?api_key=' + str(self.check(self.token)) + '&query=' + str(searchtitle)
-            if year:
-                searchurl = 'http://api.themoviedb.org/3/search/tv?api_key=' + str(self.check(self.token)) + '&first_air_date_year=' + str(year) + '&query=' + str(searchtitle)
+            if self.storedyear:
+                searchurl = 'http://api.themoviedb.org/3/search/tv?api_key=' + str(self.check(self.token)) + '&first_air_date_year=' + str(self.storedyear) + '&query=' + str(searchtitle)
 
         if pythonVer == 3:
             searchurl = searchurl.encode()
@@ -3306,7 +3330,6 @@ class XStreamity_Categories(Screen):
             valid = False
             try:
                 self.detailsresult = json.loads(response, object_pairs_hook=OrderedDict)
-
                 valid = True
             except Exception as e:
                 print(e)
@@ -3323,7 +3346,17 @@ class XStreamity_Categories(Screen):
                 if result is False:
                     for episode in episodes:
                         try:
-                            if episode["episode_number"] == str(self["main_list"].getCurrent()[0]).partition(" ")[-1]:
+                            episodenum = int(str(self["main_list"].getCurrent()[0]).partition(" ")[-1])
+                        except:
+                            try:
+                                episodenum = int(str(self["main_list"].getCurrent()[0]).partition("E")[-1])
+                            except:
+                                try:
+                                    episodenum = int(str(self["main_list"].getCurrent()[0]).partition(" ")[0][-1])
+                                except:
+                                    episodenum = 1
+                        try:
+                            if str(episode["episode_number"]) == str(episodenum):
                                 self.detailsresult = episode
                                 result = True
                                 break
@@ -3358,8 +3391,15 @@ class XStreamity_Categories(Screen):
                     if "original_name" in self.detailsresult and self.detailsresult["original_name"]:
                         self.info["o_name"] = str(self.detailsresult["original_name"])
 
-                    if "episode_run_time" in self.detailsresult and self.detailsresult["episode_run_time"] and self.detailsresult["episode_run_time"] != 0:
-                        self.info["duration"] = str(timedelta(minutes=self.detailsresult["episode_run_time"][0]))
+                    try:
+                        if "episode_run_time" in self.detailsresult and self.detailsresult["episode_run_time"] and self.detailsresult["episode_run_time"] != 0:
+                            self.info["duration"] = str(timedelta(minutes=int(self.detailsresult["episode_run_time"][0])))
+
+                        elif "runtime" in self.detailsresult and self.detailsresult["runtime"] and self.detailsresult["runtime"] != 0:
+                            self.info["duration"] = str(timedelta(minutes=int(self.detailsresult["runtime"])))
+                    except Exception as e:
+                        self.info["duration"] = ""
+                        print(e)
 
                     if "first_air_date" in self.detailsresult and self.detailsresult["first_air_date"]:
                         self.info["releaseDate"] = str(self.detailsresult["first_air_date"])
@@ -3511,6 +3551,10 @@ class XStreamity_Categories(Screen):
         if self["main_list"].getCurrent():
             current = self["main_list"].getCurrent()
 
+            if self.level == 4:
+                self["vod_duration"].setText(current[12])
+                self["vod_video_type"].setText(current[13])
+
             if self.level != 1:
                 self["x_title"].setText(current[0])
                 self["x_description"].setText(current[6])
@@ -3524,13 +3568,11 @@ class XStreamity_Categories(Screen):
                 self["vod_director"].setText(current[8])
                 self["vod_cast"].setText(current[7])
 
-            if self.level == 4:
-                self["vod_duration"].setText(current[12])
-                self["vod_video_type"].setText(current[13])
-
-            if self.level == 2 or self.level == 3:
                 if cfg.TMDB.value is True:
-                    self.getTMDB()
+                    if self.level != 4:
+                        self.getTMDB()
+                    else:
+                        self.processTMDBDetails()
                 else:
                     self.info = ""
                     self.displayTMDB()
