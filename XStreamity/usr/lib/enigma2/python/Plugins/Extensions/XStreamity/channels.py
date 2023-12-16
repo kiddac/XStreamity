@@ -1225,7 +1225,8 @@ class XStreamity_Categories(Screen):
             self["picon"].hide()
 
         self.pre_list = []
-        self.pre_list = [buildCategoryList(x[0], x[1], x[2], x[3]) for x in self.prelist if x[3] is False]
+        if self["key_blue"].getText() != (_("Reset Search")):
+            self.pre_list = [buildCategoryList(x[0], x[1], x[2], x[3]) for x in self.prelist if x[3] is False]
 
         self.main_list = []
         self.main_list = [buildCategoryList(x[0], x[1], x[2], x[3]) for x in self.list1 if x[3] is False]
@@ -2197,17 +2198,17 @@ class XStreamity_Categories(Screen):
             if self["main_list"].getCurrent():
                 if self.categoryname == "live":
                     if self.level == 1:
-                        self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "live", self.list1, self.level)
+                        self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "live", self.prelist + self.list1, self.level)
                     elif self.level == 2 and not self.favourites_category and not self.recents_category:
                         self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "live", self.list2, self.level)
                 elif self.categoryname == "vod":
                     if self.level == 1:
-                        self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "vod", self.list1, self.level)
+                        self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "vod", self.prelist + self.list1, self.level)
                     elif self.level == 2 and not self.favourites_category and not self.recents_category:
                         self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "vod", self.list2, self.level)
                 elif self.categoryname == "series":
                     if self.level == 1:
-                        self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "series", self.list1, self.level)
+                        self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "series", self.prelist + self.list1, self.level)
                     elif self.level == 2:
                         self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "series", self.list2, self.level)
                     elif self.level == 3:
@@ -2216,7 +2217,7 @@ class XStreamity_Categories(Screen):
                         self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "series", self.list4, self.level)
                 elif self.categoryname == "catchup":
                     if self.level == 1:
-                        self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "catchup", self.list1, self.level)
+                        self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "catchup", self.prelist + self.list1, self.level)
                     elif self.level == 2 and not self.favourites_category and not self.recents_category:
                         self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "catchup", self.list2, self.level)
 

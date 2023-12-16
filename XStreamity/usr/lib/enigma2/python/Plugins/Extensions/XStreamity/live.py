@@ -555,7 +555,8 @@ class XStreamity_Categories(Screen):
         self.xmltvdownloaded = False
 
         self.pre_list = []
-        self.pre_list = [buildCategoryList(x[0], x[1], x[2], x[3]) for x in self.prelist if x[3] is False]
+        if self["key_blue"].getText() != (_("Reset Search")):
+            self.pre_list = [buildCategoryList(x[0], x[1], x[2], x[3]) for x in self.prelist if x[3] is False]
 
         self.main_list = []
         self.main_list = [buildCategoryList(x[0], x[1], x[2], x[3]) for x in self.list1 if x[3] is False]
@@ -1186,8 +1187,9 @@ class XStreamity_Categories(Screen):
         if self["key_menu"].getText() != "":
             from . import hidden
             if self["main_list"].getCurrent():
+
                 if self.level == 1:
-                    self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "live", self.list1, self.level)
+                    self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "live", self.prelist + self.list1, self.level)
                 elif self.level == 2 and not self.favourites_category and not self.recents_category:
                     self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "live", self.list2, self.level)
 
