@@ -230,26 +230,6 @@ class XStreamity_Categories(Screen):
         self.sortindex = 0
         self.sortText = (_("Sort: A-Z"))
 
-        self.sortlivecategorylist = [(_("Sort: A-Z")), (_("Sort: Z-A")), (_("Sort: Original"))]
-        self.sortlcatchupcategorylist = [(_("Sort: A-Z")), (_("Sort: Z-A")), (_("Sort: Original"))]
-        self.sortlvodcateogrylist = [(_("Sort: A-Z")), (_("Sort: Z-A")), (_("Sort: Original"))]
-        self.sortlseriescategorylist = [(_("Sort: A-Z")), (_("Sort: Z-A")), (_("Sort: Original"))]
-
-        self.sortlivestreamlist = [(_("Sort: A-Z")), (_("Sort: Z-A")), (_("Sort: Added")), (_("Sort: Original"))]
-        self.sortlcatchupstreamlist = [(_("Sort: A-Z")), (_("Sort: Z-A")), (_("Sort: Added")), (_("Sort: Original"))]
-        self.sortvodstreamlist = [(_("Sort: A-Z")), (_("Sort: Z-A")), (_("Sort: Added")), (_("Sort: Year")), (_("Sort: Original"))]
-        self.sortvseriesnamelist = [(_("Sort: A-Z")), (_("Sort: Z-A")), (_("Sort: Added")), (_("Sort: Year")), (_("Sort: Original"))]
-
-        self.sortlivecategory = "original"
-        self.sortcatchupcategory = 'original'
-        self.sortvodcategory = "original"
-        self.sortseriescategory = "original"
-
-        self.sortlivestreams = "original"
-        self.sortcatchupstreams = 'original'
-        self.sortvodstreams = "original"
-        self.sortseriesnames = "original"
-
         self.storedcover = ""
 
         self.epgtimeshift = 0

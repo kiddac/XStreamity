@@ -201,11 +201,6 @@ class XStreamity_Categories(Screen):
         self.sortindex = 0
         self.sortText = (_("Sort: A-Z"))
 
-        self.sortlivecategorylist = [(_("Sort: A-Z")), (_("Sort: Z-A")), (_("Sort: Original"))]
-        self.sortlivestreamlist = [(_("Sort: A-Z")), (_("Sort: Z-A")), (_("Sort: Added")), (_("Sort: Original"))]
-        self.sortlivecategory = "original"
-        self.sortlivestreams = "original"
-
         self.epgtimeshift = 0
         self.level = 1
 
