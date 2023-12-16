@@ -519,6 +519,7 @@ class XStreamity_Categories(Screen):
         # print("*** getCategories **")
         index = 0
         self.list1 = []
+        self.prelist = []
 
         if self.categoryname == "live":
             currentCategoryList = glob.current_playlist["data"]["live_categories"]
@@ -550,12 +551,12 @@ class XStreamity_Categories(Screen):
             hidden = True
 
         if self.categoryname == "live" or self.categoryname == "vod":
-            self.list1.append([index, _("FAVOURITES"), "-1", hiddenfavourites])
+            self.prelist.append([index, _("FAVOURITES"), "-1", hiddenfavourites])
             index += 1
-            self.list1.append([index, _("RECENTLY WATCHED"), "-2", hiddenrecent])
+            self.prelist.append([index, _("RECENTLY WATCHED"), "-2", hiddenrecent])
             index += 1
 
-        self.list1.append([index, _("ALL"), "0", hidden])
+        self.prelist.append([index, _("ALL"), "0", hidden])
         index += 1
 
         if self.categoryname == "catchup":
@@ -1223,9 +1224,16 @@ class XStreamity_Categories(Screen):
         elif self.categoryname == "catchup":
             self["picon"].hide()
 
+        self.pre_list = []
+        self.pre_list = [buildCategoryList(x[0], x[1], x[2], x[3]) for x in self.prelist if x[3] is False]
+
         self.main_list = []
         self.main_list = [buildCategoryList(x[0], x[1], x[2], x[3]) for x in self.list1 if x[3] is False]
-        self["main_list"].setList(self.main_list)
+
+        self.combined_list = []
+        self.combined_list.extend(self.pre_list + self.main_list)
+
+        self["main_list"].setList(self.combined_list)
 
         if self["main_list"].getCurrent():
             if glob.nextlist[-1]["index"] != 0:
