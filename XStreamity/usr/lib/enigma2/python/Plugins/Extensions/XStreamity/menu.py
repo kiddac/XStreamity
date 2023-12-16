@@ -257,8 +257,9 @@ class XStreamity_Menu(Screen):
         if self["list"].getCurrent():
             category = self["list"].getCurrent()[2]
             from . import channels
+            from . import live
             if category == 0:
-                self.session.open(channels.XStreamity_Categories, "live")
+                self.session.open(live.XStreamity_Categories)
             elif category == 1:
                 self.session.open(channels.XStreamity_Categories, "vod")
             elif category == 2:
