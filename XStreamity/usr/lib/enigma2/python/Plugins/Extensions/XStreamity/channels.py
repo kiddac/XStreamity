@@ -38,7 +38,6 @@ except:
     from urllib.parse import urlparse, quote
 
 import base64
-import calendar
 import codecs
 import json
 import math
@@ -128,23 +127,6 @@ Image.preinit = _mypreinit
 epgimporter = False
 if os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/EPGImport"):
     epgimporter = True
-
-
-# epg times
-def quickptime(str):
-    return time.struct_time((int(str[0:4]), int(str[4:6]), int(str[6:8]), int(str[8:10]), int(str[10:12]), 0, 1, -1, 0))
-
-
-def get_time_utc(timestring, fdateparse):
-    try:
-        values = timestring.split(" ")
-        tm = fdateparse(values[0])
-        timegm = calendar.timegm(tm)
-        timegm -= (3600 * int(values[1]) / 100)
-        return timegm
-    except Exception as e:
-        print("[XMLTVConverter] get_time_utc error:", e)
-        return 0
 
 
 class XStreamity_Categories(Screen):
@@ -241,7 +223,6 @@ class XStreamity_Categories(Screen):
         self.favourites_category = False
         self.recents_category = False
         self.pin = False
-        self.isStream = False
         self.info = ""
         self.storedtitle = ""
         self.storedseason = ""
