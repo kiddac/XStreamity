@@ -537,20 +537,24 @@ class XStreamity_Categories(Screen):
             currentHidden = glob.current_playlist["player_info"]["catchuphidden"]
 
         hidden = False
+        hiddenfavourites = False
+        hiddenrecent = False
 
         if (self.categoryname == "live" or self.categoryname == "vod") and ("-1" in currentHidden):
+            hiddenfavourites = True
+
+        if (self.categoryname == "live" or self.categoryname == "vod") and ("-2" in currentHidden):
+            hiddenrecent = True
+
+        if "0" in currentHidden:
             hidden = True
 
         if self.categoryname == "live" or self.categoryname == "vod":
-            self.list1.append([index, _("FAVOURITES"), "-1", hidden])
+            self.list1.append([index, _("FAVOURITES"), "-1", hiddenfavourites])
             index += 1
-            self.list1.append([index, _("RECENTLY WATCHED"), "-2", hidden])
+            self.list1.append([index, _("RECENTLY WATCHED"), "-2", hiddenrecent])
             index += 1
 
-        # add ALL category to list
-        hidden = False
-        if "0" in currentHidden:
-            hidden = True
         self.list1.append([index, _("ALL"), "0", hidden])
         index += 1
 
