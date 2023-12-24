@@ -46,16 +46,14 @@
 	<widget text="W" render="FixedLabel" source="session.CurrentService" position="1416,843" size="33,57" font="slykregular;39" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" halign="right" valign="center" noWrap="1" zPosition="3">
 		<convert type="XStreamityServiceInfo">IsWidescreen</convert>
 	</widget>
-		<convert type="ConditionalShowHide"/>
+	<convert type="ConditionalShowHide"/>
 	<widget text="S" render="FixedLabel" source="session.CurrentService" position="1461,843" size="23,57" font="slykregular;39" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" halign="right" valign="center" noWrap="1" zPosition="3">
 		<convert type="XStreamityServiceInfo">SubtitlesAvailable</convert>
 		<convert type="ConditionalShowHide"/>
 	</widget>
-
 	<widget source="streamtype" render="Label" position="1377,954" size="107,57" font="slykregular;39" halign="right" valign="center" transparent="1" noWrap="1" foregroundColor="#7eaeef" backgroundColor="#1c4475" zPosition="2"/>
 	<!-- picon -->
 	<widget name="cover" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/cover.png" position="1546,780" size="162,233" alphatest="blend" scale="1" zPosition="2"/>
-
 	<!--
 	<widget source="streamtype" render="Label" position="1560,981" size="90,36" font="slykbold;27" foregroundColor="#ffffff" backgroundColor="#40000000" valign="center" halign="center" transparent="1" zPosition="3" />
 	<widget source="extension" render="Label" position="1560,1023" size="90,36" font="slykbold;27" foregroundColor="#ffffff" backgroundColor="#40000000" valign="center" halign="center" transparent="1" zPosition="3" />

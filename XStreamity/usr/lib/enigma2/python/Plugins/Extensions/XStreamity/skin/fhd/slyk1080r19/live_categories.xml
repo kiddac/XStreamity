@@ -50,7 +50,6 @@
 	</widget>
 	<widget name="picon" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/picon.png" position="90,346" size="80,48" scale="1" alphatest="blend" zPosition="2"/>
 	<widget name="progress" position="645 ,424" size="540,9" foregroundColor="#7eaeef" backgroundColor="#1a000000" zPosition="3"/>
-	
 	<widget source="key_red" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/key_red.png" position="153,1002" size="36,36" alphatest="blend" zPosition="2"/>
 	<widget source="key_red" render="Label" position="201,989" size="165,60" font="slykregular;24" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" noWrap="1" zPosition="2"/>
 	<widget source="key_green" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/key_green.png" position="388,1002" size="36,36" alphatest="blend" zPosition="2"/>

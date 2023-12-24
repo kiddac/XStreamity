@@ -10,8 +10,7 @@
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/bars.png" alphatest="blend" position="150,455" size="450,534" zPosition="-1"/>
 	<widget name="epg_bg" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/bars.png" alphatest="blend" position="630,455" size="1140,534" zPosition="2"/>
 	<widget source="main_title" render="Label" position="90,56" size="806,42" valign="top" halign="left" font="slykregular;36" noWrap="0" zPosition="2" transparent="1" foregroundColor="#ffffff" backgroundColor="#1d68ac"/>
-	<widget source="main_list" render="Listbox" position="150,452" size="450,540" foregroundColor="#ffffff" backgroundColor="#1c5791" foregroundColorSelected="#133171" backgroundColorSelected="#f2d320" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/menu-bar-54.png" backgroundPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/blank.png" scrollbarMode="showOnDemand"
-	itemHeight="54" enableWrapAround="1" transparent="1" zPosition="3">
+	<widget source="main_list" render="Listbox" position="150,452" size="450,540" foregroundColor="#ffffff" backgroundColor="#1c5791" foregroundColorSelected="#133171" backgroundColorSelected="#f2d320" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/menu-bar-54.png" backgroundPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/blank.png" scrollbarMode="showOnDemand" itemHeight="54" enableWrapAround="1" transparent="1" zPosition="3">
 		<convert type="TemplatedMultiContent">{"template": [
 			MultiContentEntryText(pos=(15, 0), size = (378, 54), font=0, color = 0x00ffffff, color_sel = 0x00133171, backcolor_sel = None, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 0),
 			MultiContentEntryPixmapAlphaBlend(pos=(408, 17), size=(27, 25), png = 1),
@@ -38,8 +37,7 @@
 			"scrollbarMode": "showOnDemand"
 			}</convert>
 	</widget>
-	<widget source="epg_short_list" render="Listbox" position="630,452" size="1140,540" foregroundColor="#ffffff" backgroundColor="#1c5791" foregroundColorSelected="#133171" backgroundColorSelected="#f2d320" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/menu-bar-54.png" backgroundPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/blank.png" scrollbarMode="showOnDemand" 
-	enableWrapAround="1" itemHeight="54" transparent="1" zPosition="4">
+	<widget source="epg_short_list" render="Listbox" position="630,452" size="1140,540" foregroundColor="#ffffff" backgroundColor="#1c5791" foregroundColorSelected="#133171" backgroundColorSelected="#f2d320" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/menu-bar-54.png" backgroundPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/blank.png" scrollbarMode="showOnDemand" enableWrapAround="1" itemHeight="54" transparent="1" zPosition="4">
 		<convert type="TemplatedMultiContent">{"template": [
 			MultiContentEntryText(pos = (15, 0), size = (213, 54), font=0, color = 0x00ffffff, color_sel = 0x00133171, backcolor_sel = None, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1 ),
 			MultiContentEntryText(pos = (240, 0), size = (240, 54), font=0, color = 0x00ffffff, color_sel = 0x00133171, backcolor_sel = None, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 2),
@@ -52,7 +50,6 @@
 	</widget>
 	<widget name="picon" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/picon.png" position="90,346" size="80,48" scale="1" alphatest="blend" zPosition="2"/>
 	<widget name="progress" position="645 ,424" size="540,9" foregroundColor="#7eaeef" backgroundColor="#1a000000" zPosition="3"/>
-	
 	<widget source="key_red" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/key_red.png" position="153,1002" size="36,36" alphatest="blend" zPosition="2"/>
 	<widget source="key_red" render="Label" position="201,989" size="165,60" font="slykregular;24" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" noWrap="1" zPosition="2"/>
 	<widget source="key_green" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/key_green.png" position="388,1002" size="36,36" alphatest="blend" zPosition="2"/>

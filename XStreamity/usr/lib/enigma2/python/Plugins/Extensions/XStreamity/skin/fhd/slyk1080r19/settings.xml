@@ -18,19 +18,12 @@
 	<eLabel position="280,776" size="1360,48" backgroundColor="#10326c" zPosition="-1"/>
 	<eLabel position="280,830" size="1360,48" backgroundColor="#204382" zPosition="-1"/>
 	<eLabel position="280,884" size="1360,48" backgroundColor="#10326c" zPosition="-1"/>
-	
 	<widget source="Title" render="Label" position="90,401" size="870,54" font="slykbold;39" foregroundColor="#ffffff" backgroundColor="#082353" valign="center" halign="center" transparent="0" zPosition="2"/>
-	
-	<widget name="config" textOffset="15,0" position="center,503" size="1360,432" font="slykregular;36" secondfont="slykregular;36" foregroundColor="#ffffff" backgroundColor="#133171" foregroundColorSelected="#133171" backgroundColorSelected="#f2d320"
-	selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/menu-bar-54.png" backgroundPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/blank.png"
-	itemHeight="54" enableWrapAround="1" scrollbarMode="showOnDemand" transparent="1" zPosition="1"/>
-	
+	<widget name="config" textOffset="15,0" position="center,503" size="1360,432" font="slykregular;36" secondfont="slykregular;36" foregroundColor="#ffffff" backgroundColor="#133171" foregroundColorSelected="#133171" backgroundColorSelected="#f2d320" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/menu-bar-54.png" backgroundPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/blank.png" itemHeight="54" enableWrapAround="1" scrollbarMode="showOnDemand" transparent="1" zPosition="1"/>
 	<widget source="key_red" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/key_red.png" position="153,946" size="36,36" alphatest="blend" zPosition="2"/>
 	<widget source="key_red" render="Label" position="201,941" size="327,44" font="slykregular;39" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" noWrap="1" zPosition="2"/>
-	
 	<widget source="key_green" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/key_green.png" position="528,946" size="36,36" alphatest="blend" zPosition="2"/>
 	<widget source="key_green" render="Label" position="576,941" size="327,44" font="slykregular;39" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" noWrap="1" zPosition="2"/>
-
 	<eLabel text="Use" position="152,993" size="75,48" font="slykregular;39" foregroundColor="#5ea1e3" backgroundColor="#133171" valign="top" halign="left" transparent="1" zPosition="1"/>
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/prev-next.png" position="227,1004" size="60,30" alphatest="blend" transparent="1"/>
 	<eLabel text="to change settings and press GREEN to save changes" position="296,993" size="1200,48" font="slykregular;39" foregroundColor="#5ea1e3" backgroundColor="#133171" valign="center" halign="left" transparent="1" zPosition="1"/>
