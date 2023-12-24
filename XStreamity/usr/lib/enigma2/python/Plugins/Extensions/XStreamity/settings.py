@@ -150,7 +150,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.cfg_main = getConfigListEntry(_("Show in main menu") + _(" *Restart GUI Required"), cfg.main)
 
         self.cfg_TMDB = getConfigListEntry(_("Use Movie Database(TMDB) for VOD & Series"), cfg.TMDB)
-        self.cfg_TMDBLanguage = getConfigListEntry(_("Movie Database language"), cfg.TMDBLanguage)
+        self.cfg_TMDBLanguage2 = getConfigListEntry(_("Movie Database language"), cfg.TMDBLanguage2)
 
         self.cfg_catchupstart = getConfigListEntry(_("Margin before catchup (mins)"), cfg.catchupstart)
         self.cfg_catchupend = getConfigListEntry(_("Margin after catchup (mins)"), cfg.catchupend)
@@ -197,7 +197,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
         self.list.append(self.cfg_TMDB)
         if cfg.TMDB.value is True:
-            self.list.append(self.cfg_TMDBLanguage)
+            self.list.append(self.cfg_TMDBLanguage2)
 
         self.list.append(self.cfg_catchupstart)
         self.list.append(self.cfg_catchupend)
