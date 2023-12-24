@@ -21,7 +21,7 @@ from Screens.VirtualKeyBoard import VirtualKeyBoard
 from ServiceReference import ServiceReference
 from Tools.LoadPixmap import LoadPixmap
 from datetime import datetime, timedelta
-from enigma import eTimer, eServiceReference, eEPGCache, ePicLoad
+from enigma import eTimer, eServiceReference, eEPGCache
 from requests.adapters import HTTPAdapter, Retry
 from twisted.web.client import downloadPage
 from itertools import cycle, islice
@@ -196,7 +196,6 @@ class XStreamity_Categories(Screen):
         self.favourites_category = False
         self.recents_category = False
         self.pin = False
-        self.info = ""
 
         self.sortindex = 0
         self.sortText = (_("Sort: A-Z"))
@@ -206,25 +205,17 @@ class XStreamity_Categories(Screen):
 
         self.selectedlist = self["main_list"]
 
-        self.protocol = glob.current_playlist["playlist_info"]["protocol"]
-        self.domain = glob.current_playlist["playlist_info"]["domain"]
         self.host = glob.current_playlist["playlist_info"]["host"]
-        self.livetype = glob.current_playlist["player_info"]["livetype"]
         self.username = glob.current_playlist["playlist_info"]["username"]
         self.password = glob.current_playlist["playlist_info"]["password"]
         self.output = glob.current_playlist["playlist_info"]["output"]
         self.name = glob.current_playlist["playlist_info"]["name"]
-        self.xmltv = glob.current_playlist["playlist_info"]["xmltv_api"]
 
         self.player_api = glob.current_playlist["playlist_info"]["player_api"]
 
         self.liveStreamsData = []
 
-        self.liveStreamsUrl = str(self.player_api) + "&action=get_live_streams"
-        self.simpledatatable = str(self.player_api) + "&action=get_simple_data_table&stream_id="
         next_url = str(self.player_api) + "&action=get_live_categories"
-
-        self.listType = ""
 
         epglocation = str(cfg.epglocation.value)
         self.epgfolder = os.path.join(epglocation, str(self.name))
@@ -290,13 +281,6 @@ class XStreamity_Categories(Screen):
         glob.nextlist = []
         glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self.sortText, "filter": ""})
 
-        self.PicLoad = ePicLoad()
-
-        try:
-            self.PicLoad.PictureData.get().append(self.DecodePicture)
-        except:
-            self.PicLoad_conn = self.PicLoad.PictureData.connect(self.DecodePicture)
-
         self.onFirstExecBegin.append(self.createSetup)
         self.onLayoutFinish.append(self.__layoutFinished)
 
@@ -330,8 +314,7 @@ class XStreamity_Categories(Screen):
         # print("*** buildLists ***")
         if self.level == 1:
             self.buildList1()
-
-        elif self.level == 2:
+        else:
             self.buildList2()
 
         self.buttons()
@@ -353,10 +336,10 @@ class XStreamity_Categories(Screen):
         if "0" in currentHidden:
             hidden = True
 
-        if ("-1" in currentHidden):
+        if "-1" in currentHidden:
             hiddenfavourites = True
 
-        if ("-2" in currentHidden):
+        if "-2" in currentHidden:
             hiddenrecent = True
 
         self.prelist.append([index, _("FAVOURITES"), "-1", hiddenfavourites])
@@ -385,9 +368,6 @@ class XStreamity_Categories(Screen):
             index += 1
 
         glob.originalChannelList1 = self.list1[:]
-
-        print("*** prelist ***", self.prelist)
-        print("*** list1 ***", self.list1)
 
     def getLevel2(self):
         # print("*** getLevel2 ***")
@@ -632,7 +612,6 @@ class XStreamity_Categories(Screen):
 
     def selectionChanged(self):
         # print("*** selectionChanged ***")
-        # print("*** self.level ***", self.level)
         if self["main_list"].getCurrent():
 
             channeltitle = self["main_list"].getCurrent()[0]
@@ -691,12 +670,6 @@ class XStreamity_Categories(Screen):
             try:
                 os.remove(os.path.join(dir_tmp, "original.png"))
                 os.remove(os.path.join(dir_tmp, "temp.png"))
-            except:
-                pass
-
-            try:
-                os.remove(os.path.join(dir_tmp, "original.jpg"))
-                os.remove(os.path.join(dir_tmp, "temp.jpg"))
             except:
                 pass
 
@@ -776,33 +749,22 @@ class XStreamity_Categories(Screen):
             else:
                 self.loadDefaultImage()
 
-    def DecodePicture(self, PicInfo=None):
-        # print("*** DecodePicture ***")
-        ptr = self.PicLoad.getData()
-        if ptr is not None and self.level != 1:
-            self["vod_cover"].instance.setPixmap(ptr)
-            self["vod_cover"].instance.show()
-
     def goUp(self):
-        # print("*** goUp ***")
         instance = self.selectedlist.master.master.instance
         instance.moveSelection(instance.moveUp)
         self.selectionChanged()
 
     def goDown(self):
-        # print("*** goDown ***")
         instance = self.selectedlist.master.master.instance
         instance.moveSelection(instance.moveDown)
         self.selectionChanged()
 
     def pageUp(self):
-        # print("*** pageUp ***")
         instance = self.selectedlist.master.master.instance
         instance.moveSelection(instance.pageUp)
         self.selectionChanged()
 
     def pageDown(self):
-        # print("*** pageDown ***")
         instance = self.selectedlist.master.master.instance
         instance.moveSelection(instance.pageDown)
         self.selectionChanged()
@@ -816,20 +778,15 @@ class XStreamity_Categories(Screen):
         # print("*** sort ***")
         sortlist = []
 
-        if not self["key_yellow"].getText() or self["key_yellow"].getText() == _("Reverse"):
-            return
-
         if self.level == 1:
             activelist = self.list1[:]
             activeoriginal = glob.originalChannelList1[:]
-
         else:
             activelist = self.list2[:]
             activeoriginal = glob.originalChannelList2[:]
 
         if self.level == 1:
             sortlist = [(_("Sort: A-Z")), (_("Sort: Z-A")), (_("Sort: Original"))]
-
         else:
             sortlist = [(_("Sort: A-Z")), (_("Sort: Z-A")), (_("Sort: Added")), (_("Sort: Original"))]
 
@@ -863,8 +820,7 @@ class XStreamity_Categories(Screen):
 
         if self.level == 1:
             self.list1 = activelist
-
-        elif self.level == 2:
+        else:
             self.list2 = activelist
 
         self.buildLists()
@@ -922,8 +878,7 @@ class XStreamity_Categories(Screen):
 
             if self.level == 1:
                 activelist = self.list1[:]
-
-            elif self.level == 2:
+            else:
                 activelist = self.list2[:]
 
             self.searchString = result
@@ -932,13 +887,10 @@ class XStreamity_Categories(Screen):
             if not activelist:
                 self.searchString = ""
                 self.session.openWithCallback(self.search, MessageBox, _("No results found."), type=MessageBox.TYPE_ERROR, timeout=5)
-
             else:
-
                 if self.level == 1:
                     self.list1 = activelist
-
-                elif self.level == 2:
+                else:
                     self.list2 = activelist
 
                 self["key_blue"].setText(_("Reset Search"))
@@ -953,14 +905,12 @@ class XStreamity_Categories(Screen):
 
         if self.level == 1:
             activeoriginal = glob.originalChannelList1[:]
-
-        elif self.level == 2:
+        else:
             activeoriginal = glob.originalChannelList2[:]
 
         if self.level == 1:
             self.list1 = activeoriginal
-
-        elif self.level == 2:
+        else:
             self.list2 = activeoriginal
 
         self.filterresult = ""
@@ -1054,7 +1004,7 @@ class XStreamity_Categories(Screen):
                 else:
                     self.createSetup()
 
-            elif self.level == 2:
+            else:
                 if self.list2:
                     if self.selectedlist == self["epg_short_list"]:
                         self.shortEPG()
@@ -1163,13 +1113,6 @@ class XStreamity_Categories(Screen):
             if cfg.stopstream.value:
                 self.stopStream()
 
-            levelpath = os.path.join(dir_tmp, "level" + str(self.level) + ".json")
-
-            try:
-                os.remove(levelpath)
-            except:
-                pass
-
             self.level -= 1
 
             self["category_actions"].setEnabled(True)
@@ -1182,31 +1125,10 @@ class XStreamity_Categories(Screen):
         if self["key_menu"].getText() != "":
             from . import hidden
             if self["main_list"].getCurrent():
-
                 if self.level == 1:
                     self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "live", self.prelist + self.list1, self.level)
                 elif self.level == 2 and not self.favourites_category and not self.recents_category:
                     self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "live", self.list2, self.level)
-
-    def clearWatched(self):
-        with open(playlists_json, "r") as f:
-            try:
-                self.playlists_all = json.load(f)
-            except:
-                os.remove(playlists_json)
-
-        if self.playlists_all:
-            x = 0
-            for playlists in self.playlists_all:
-                if playlists["playlist_info"]["domain"] == glob.current_playlist["playlist_info"]["domain"] and playlists["playlist_info"]["username"] == glob.current_playlist["playlist_info"]["username"] and playlists["playlist_info"]["password"] == glob.current_playlist["playlist_info"]["password"]:
-                    self.playlists_all[x] = glob.current_playlist
-                    break
-                x += 1
-
-        with open(playlists_json, "w") as f:
-            json.dump(self.playlists_all, f)
-
-        self.buildLists()
 
     def favourite(self):
         # print("**** favourite ***")
@@ -1834,15 +1756,6 @@ class XStreamity_Categories(Screen):
     def epgreset(self):
         self.epgtimeshift = 0
         self.addEPG()
-
-    def failed(self, data=None):
-        # print("*** failed ***")
-        if data:
-            print(data)
-
-    def reverse(self):
-        self.epgshortlist.reverse()
-        self["epg_short_list"].setList(self.epgshortlist)
 
 
 def buildEPGListEntry(index, title, epgNowTime, epgNowTitle, epgNowDesc, epgNextTime, epgNextTitle, epgNextDesc, hidden, direct_source):
