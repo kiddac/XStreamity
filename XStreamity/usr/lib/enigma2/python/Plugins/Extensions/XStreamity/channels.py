@@ -256,8 +256,6 @@ class XStreamity_Categories(Screen):
         self.liveStreamsUrl = str(self.player_api) + "&action=get_live_streams"
         self.simpledatatable = str(self.player_api) + "&action=get_simple_data_table&stream_id="
 
-        self.listType = ""
-
         self.token = "ZUp6enk4cko4ZzBKTlBMTFNxN3djd25MOHEzeU5Zak1Bdkd6S3lPTmdqSjhxeUxMSTBNOFRhUGNBMjBCVmxBTzlBPT0K"
 
         epglocation = str(cfg.epglocation.value)
@@ -1340,7 +1338,6 @@ class XStreamity_Categories(Screen):
 
     def selectionChanged(self):
         # print("*** selectionChanged ***")
-        # print("*** self.level ***", self.level)
         if self["main_list"].getCurrent():
 
             channeltitle = self["main_list"].getCurrent()[0]
@@ -2125,15 +2122,6 @@ class XStreamity_Categories(Screen):
                 if cfg.stopstream.value:
                     self.stopStream()
 
-                levelpath = os.path.join(dir_tmp, "level" + str(self.level) + ".json")
-                if self.categoryname == "series":
-                    levelpath = os.path.join(dir_tmp, "level" + str(self.level) + ".xml")
-
-                try:
-                    os.remove(levelpath)
-                except:
-                    pass
-
                 self.level -= 1
 
                 self["category_actions"].setEnabled(True)
@@ -2163,11 +2151,6 @@ class XStreamity_Categories(Screen):
 
                     self.stopStream()
 
-                    levelpath = os.path.join(dir_tmp, "level" + str(self.level) + ".xml")
-                    try:
-                        os.remove(levelpath)
-                    except:
-                        pass
                     self.level -= 1
                     self.createSetup()
 
