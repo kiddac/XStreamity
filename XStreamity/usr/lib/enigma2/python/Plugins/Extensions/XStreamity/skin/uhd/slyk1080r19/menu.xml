@@ -20,12 +20,9 @@
 	<eLabel position="200,1107" size="1062,64" backgroundColor="#204382" zPosition="-1"/>
 	<eLabel position="200,1179" size="1062,64" backgroundColor="#10326c" zPosition="-1"/>
 	<eLabel text="Playlist Menu" position="120,535" size="1160,72" font="slykbold;52" foregroundColor="#ffffff" backgroundColor="#082353" valign="center" halign="center" transparent="0" zPosition="2"/>
-	
-	<widget source="list" render="Listbox" position="200,671" size="1062,576" foregroundColor="#ffffff" backgroundColor="#1c5791" foregroundColorSelected="#133171" backgroundColorSelected="#f2d320"
-		selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/slyk1080r19/images/menu-bar-54.png" backgroundPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/slyk1080r19/images/blank.png" 
-		transparent="1" enableWrapAround="1" zPosition="2">
+	<widget source="list" render="Listbox" position="200,671" size="1062,576" foregroundColor="#ffffff" backgroundColor="#1c5791" foregroundColorSelected="#133171" backgroundColorSelected="#f2d320" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/slyk1080r19/images/menu-bar-54.png" backgroundPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/slyk1080r19/images/blank.png" transparent="1" enableWrapAround="1" zPosition="2">
 		<convert type="TemplatedMultiContent">{"template": [	
-                                MultiContentEntryText(pos = (20,0), size = (1022,72), font=0,  color = 0x00ffffff, color_sel = 0x00133171, backcolor_sel = None, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1	) ],
+                                MultiContentEntryText(pos = (20,0), size = (1022,72), font=0, color = 0x00ffffff, color_sel = 0x00133171, backcolor_sel = None, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1	) ],
 				"fonts": [gFont("slykregular",52)],
 				"itemHeight": 72,
 				"scrollbarMode": "showOnDemand"
@@ -33,9 +30,7 @@
 	</widget>
 	<widget source="key_red" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/slyk1080r19/images/key_red.png" position="204,1262" size="48,48" alphatest="blend" zPosition="2"/>
 	<widget source="key_red" render="Label" position="268,1255" size="436,59" font="slykregular;52" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" noWrap="1" zPosition="2"/>
-	
 	<widget source="key_green" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/slyk1080r19/images/key_green.png" position="704,1262" size="48,48" alphatest="blend" zPosition="2"/>
 	<widget source="key_green" render="Label" position="768,1255" size="436,59" font="slykregular;52" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" noWrap="1" zPosition="2"/>
-	
 	<eLabel text="Press SELECT" position="203,1323" size="576,64" font="slykregular;52" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="top" halign="left" transparent="1" zPosition="1"/>
 </screen>

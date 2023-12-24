@@ -1,13 +1,11 @@
 <screen name="XStreamityDownloader" position="0,0" size="2560,1440" backgroundColor="#004757b5" flags="wfNoBorder">
-	<widget source="session.VideoPicture" render="Pig" position="0,0" size="256,144" transparent="1" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/toys/images/background.jpg" alphatest="off" position="0,0" size="2560,1440" zPosition="-1" />
+	<widget source="session.VideoPicture" render="Pig" position="0,0" size="256,144" transparent="1"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/toys/images/background.jpg" alphatest="off" position="0,0" size="2560,1440" zPosition="-1"/>
 	<widget source="global.CurrentTime" render="Label" position="1987,0" size="534,80" font="xstreamitybold;36" foregroundColor="#ffffff" backgroundColor="#4c82cd" valign="center" halign="right" transparent="1">
 		<convert type="ClockToText">Format:%H:%M | %A %-d %b</convert>
 	</widget>
-	<widget source="Title" render="Label" position="center,356" size="2560,94" foregroundColor="#ffffff" backgroundColor="#109dd2" halign="center" font="xstreamitybold;48" transparent="1" />
-
-	<widget source="downloadlist" render="Listbox" position="center,440" size="2160,800" foregroundColor="#ffffff" backgroundColor="#0945b8" foregroundColorSelected="#004e98"
-			backgroundColorSelected="#9bb1e6"  selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/toys/images/selection3.png" scrollbarMode="showOnDemand" enableWrapAround="1" transparent="1" zPosition="2" >
+	<widget source="Title" render="Label" position="center,356" size="2560,94" foregroundColor="#ffffff" backgroundColor="#109dd2" halign="center" font="xstreamitybold;48" transparent="1"/>
+	<widget source="downloadlist" render="Listbox" position="center,440" size="2160,800" foregroundColor="#ffffff" backgroundColor="#0945b8" foregroundColorSelected="#004e98" backgroundColorSelected="#9bb1e6" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/toys/images/selection3.png" scrollbarMode="showOnDemand" enableWrapAround="1" transparent="1" zPosition="2">
 		<convert type="TemplatedMultiContent">
 			{"template": [
 				MultiContentEntryText(pos = (20, 0), size = (260, 80), font=0, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 0), # index 0 is the type
@@ -22,29 +20,23 @@
 			}
 		</convert>
 	</widget>
-	
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/divider.png" position="center,518" size="2160,6" alphatest="blend" zPosition="1" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/divider.png" position="center,598" size="2160,6" alphatest="blend" zPosition="1" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/divider.png" position="center,678" size="2160,6" alphatest="blend" zPosition="1" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/divider.png" position="center,758" size="2160,6" alphatest="blend" zPosition="1" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/divider.png" position="center,838" size="2160,6" alphatest="blend" zPosition="1" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/divider.png" position="center,918" size="2160,6" alphatest="blend" zPosition="1" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/divider.png" position="center,998" size="2160,6" alphatest="blend" zPosition="1" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/divider.png" position="center,1078" size="2160,6" alphatest="blend" zPosition="1" />
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/divider.png" position="center,1158" size="2160,6" alphatest="blend" zPosition="1" />
-
-	<widget source="diskspace" render="Label" position="160,1280" size="2240,80" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#1f5792" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2" />
-	
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/button-bg.png" position="0,1360" size="2560,80" alphatest="blend" zPosition="1" />
-	
-	<widget source="key_red" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/key_red.png" position="680,1375" size="51,51" alphatest="blend" zPosition="2" />
-	<widget source="key_red" render="Label" position="762,1360" size="220,80" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#1f5792" valign="center" transparent="1" noWrap="1" zPosition="2" />
-	
-	<widget source="key_green" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/key_green.png" position="1048,1375" size="51,51" alphatest="blend" zPosition="2" />
-	<widget source="key_green" render="Label" position="1116,1360" size="220,80" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#1f5792" valign="center" transparent="1" noWrap="1" zPosition="2" />
-
-	<widget source="key_blue" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/key_blue.png" position="1784,1375" size="51,51" alphatest="blend" zPosition="2" >
-			<convert type="ConditionalShowHide" />
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/divider.png" position="center,518" size="2160,6" alphatest="blend" zPosition="1"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/divider.png" position="center,598" size="2160,6" alphatest="blend" zPosition="1"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/divider.png" position="center,678" size="2160,6" alphatest="blend" zPosition="1"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/divider.png" position="center,758" size="2160,6" alphatest="blend" zPosition="1"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/divider.png" position="center,838" size="2160,6" alphatest="blend" zPosition="1"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/divider.png" position="center,918" size="2160,6" alphatest="blend" zPosition="1"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/divider.png" position="center,998" size="2160,6" alphatest="blend" zPosition="1"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/divider.png" position="center,1078" size="2160,6" alphatest="blend" zPosition="1"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/divider.png" position="center,1158" size="2160,6" alphatest="blend" zPosition="1"/>
+	<widget source="diskspace" render="Label" position="160,1280" size="2240,80" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#1f5792" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/button-bg.png" position="0,1360" size="2560,80" alphatest="blend" zPosition="1"/>
+	<widget source="key_red" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/key_red.png" position="680,1375" size="51,51" alphatest="blend" zPosition="2"/>
+	<widget source="key_red" render="Label" position="762,1360" size="220,80" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#1f5792" valign="center" transparent="1" noWrap="1" zPosition="2"/>
+	<widget source="key_green" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/key_green.png" position="1048,1375" size="51,51" alphatest="blend" zPosition="2"/>
+	<widget source="key_green" render="Label" position="1116,1360" size="220,80" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#1f5792" valign="center" transparent="1" noWrap="1" zPosition="2"/>
+	<widget source="key_blue" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/key_blue.png" position="1784,1375" size="51,51" alphatest="blend" zPosition="2">
+		<convert type="ConditionalShowHide"/>
 	</widget>
-	<widget source="key_blue" render="Label" position="1852,1360" size="220,80" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#1f5792" valign="center" transparent="1" noWrap="1" zPosition="2" />
+	<widget source="key_blue" render="Label" position="1852,1360" size="220,80" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#1f5792" valign="center" transparent="1" noWrap="1" zPosition="2"/>
 </screen>

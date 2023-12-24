@@ -31,8 +31,8 @@
 		<convert type="XStreamityServiceInfo">IsUHD</convert>
 		<convert type="ConditionalShowHide"/>
 	</widget>
-	<widget text="FHD" render="FixedLabel" source="session.CurrentService" position="1766,1124" size="107,76" font="slykregular;52" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" halign="right" valign="center" noWrap="1" zPosition="3">
-		<convert type="XStreamityServiceInfo">IsFHD</convert>
+	<widget text="uhd" render="FixedLabel" source="session.CurrentService" position="1766,1124" size="107,76" font="slykregular;52" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" halign="right" valign="center" noWrap="1" zPosition="3">
+		<convert type="XStreamityServiceInfo">Isuhd</convert>
 		<convert type="ConditionalShowHide"/>
 	</widget>
 	<widget text="HD" render="FixedLabel" source="session.CurrentService" position="1766,1124" size="107,76" font="slykregular;52" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" halign="right" valign="center" noWrap="1" zPosition="3">
@@ -46,16 +46,14 @@
 	<widget text="W" render="FixedLabel" source="session.CurrentService" position="1888,1124" size="44,76" font="slykregular;52" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" halign="right" valign="center" noWrap="1" zPosition="3">
 		<convert type="XStreamityServiceInfo">IsWidescreen</convert>
 	</widget>
-		<convert type="ConditionalShowHide"/>
+	<convert type="ConditionalShowHide"/>
 	<widget text="S" render="FixedLabel" source="session.CurrentService" position="1948,1124" size="31,76" font="slykregular;52" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" halign="right" valign="center" noWrap="1" zPosition="3">
 		<convert type="XStreamityServiceInfo">SubtitlesAvailable</convert>
 		<convert type="ConditionalShowHide"/>
 	</widget>
-
 	<widget source="streamtype" render="Label" position="1836,1272" size="143,76" font="slykregular;52" halign="right" valign="center" transparent="1" noWrap="1" foregroundColor="#7eaeef" backgroundColor="#1c4475" zPosition="2"/>
 	<!-- picon -->
 	<widget name="cover" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/cover.png" position="2062,1040" size="216,311" alphatest="blend" scale="1" zPosition="2"/>
-
 	<!--
 	<widget source="streamtype" render="Label" position="2080,1308" size="120,48" font="slykbold;36" foregroundColor="#ffffff" backgroundColor="#40000000" valign="center" halign="center" transparent="1" zPosition="3" />
 	<widget source="extension" render="Label" position="2080,1364" size="120,48" font="slykbold;36" foregroundColor="#ffffff" backgroundColor="#40000000" valign="center" halign="center" transparent="1" zPosition="3" />
