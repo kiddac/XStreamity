@@ -256,16 +256,18 @@ class XStreamity_Menu(Screen):
     def __next__(self):
         if self["list"].getCurrent():
             category = self["list"].getCurrent()[2]
-            from . import channels
-            from . import live
             if category == 0:
+                from . import live
                 self.session.open(live.XStreamity_Categories)
             elif category == 1:
-                self.session.open(channels.XStreamity_Categories, "vod")
+                from . import vod
+                self.session.open(vod.XStreamity_Categories)
             elif category == 2:
-                self.session.open(channels.XStreamity_Categories, "series")
+                from . import series
+                self.session.open(series.XStreamity_Categories)
             elif category == 3:
-                self.session.open(channels.XStreamity_Categories, "catchup")
+                from . import catchup
+                self.session.open(catchup.XStreamity_Categories)
             elif category == 4:
                 self.settings()
 
