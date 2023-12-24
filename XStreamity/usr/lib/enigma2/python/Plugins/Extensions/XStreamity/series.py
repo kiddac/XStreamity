@@ -756,9 +756,8 @@ class XStreamity_Categories(Screen):
         if self["main_list"].getCurrent():
             if cfg.TMDB.value is True:
                 if self.level != 1:
-                    if cfg.TMDB.value is True:
-                        self.tmdbValid = True
-                        self.getTMDB()
+                    self.tmdbValid = True
+                    self.getTMDB()
 
             else:
                 self.tmdbresults = ""
@@ -989,11 +988,11 @@ class XStreamity_Categories(Screen):
             detailsurl = "http://api.themoviedb.org/3/tv/" + str(resultid) + "?api_key=" + str(self.check(self.token)) + "&append_to_response=credits&language=" + str(language)
 
         elif self.level == 3:
-            self.storedseason = self["main_list"].getCurrent()[12]
+            # self.storedseason = self["main_list"].getCurrent()[12]
             detailsurl = "http://api.themoviedb.org/3/tv/" + str(resultid) + "/season/" + str(self.storedseason) + "?api_key=" + str(self.check(self.token)) + "&append_to_response=credits&language=" + str(language)
 
         elif self.level == 4:
-            self.storedepisode = self["main_list"].getCurrent()[19]
+            # self.storedepisode = self["main_list"].getCurrent()[19]
             detailsurl = "http://api.themoviedb.org/3/tv/" + str(resultid) + "/season/" + str(self.storedseason) + "/episode/" + str(self.storedepisode) + "?api_key=" + str(self.check(self.token)) + "&append_to_response=credits&language=" + str(language)
 
         if pythonVer == 3:
@@ -1616,6 +1615,7 @@ class XStreamity_Categories(Screen):
             elif self.level == 3:
                 if self.list3:
                     next_url = self["main_list"].getCurrent()[3]
+                    self.storedseason = self["main_list"].getCurrent()[12]
 
                     self.level += 1
                     self["main_list"].setIndex(0)
@@ -1628,6 +1628,7 @@ class XStreamity_Categories(Screen):
 
             elif self.level == 4:
                 if self.list4:
+                    self.storedepisode = self["main_list"].getCurrent()[19]
                     streamtype = glob.current_playlist["player_info"]["vodtype"]
                     next_url = self["main_list"].getCurrent()[3]
                     try:
