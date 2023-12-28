@@ -32,7 +32,7 @@
 		<convert type="ConditionalShowHide"/>
 	</widget>
 	<widget text="uhd" render="FixedLabel" source="session.CurrentService" position="1766,1124" size="107,76" font="slykregular;52" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" halign="right" valign="center" noWrap="1" zPosition="3">
-		<convert type="XStreamityServiceInfo">Isuhd</convert>
+		<convert type="XStreamityServiceInfo">IsFHD</convert>
 		<convert type="ConditionalShowHide"/>
 	</widget>
 	<widget text="HD" render="FixedLabel" source="session.CurrentService" position="1766,1124" size="107,76" font="slykregular;52" foregroundColor="#7eaeef" backgroundColor="#13317" transparent="1" halign="right" valign="center" noWrap="1" zPosition="3">

@@ -396,7 +396,7 @@ class XStreamity_Categories(Screen):
 
                 next_url = str(self.player_api) + "&action=get_series_info&series_id=" + str(series_id)
 
-                self.list2.append([index, str(name), str(year), str(series_id), str(cover), str(plot), str(cast), str(director), str(genre), str(releaseDate),  str(rating), str(last_modified), str(tmdb), str(next_url), hidden])
+                self.list2.append([index, str(name), str(year), str(series_id), str(cover), str(plot), str(cast), str(director), str(genre), str(releaseDate), str(rating), str(last_modified), str(tmdb), str(next_url), hidden])
 
                 index += 1
 
@@ -670,13 +670,13 @@ class XStreamity_Categories(Screen):
     def downloadApiData(self, url):
         # print("**** downloadApiData ****")
         content = ""
-        retries = Retry(total=3, backoff_factor=1)
+        retries = Retry(total=1, backoff_factor=1)
         adapter = HTTPAdapter(max_retries=retries)
         http = requests.Session()
         http.mount("http://", adapter)
         http.mount("https://", adapter)
         try:
-            r = http.get(url, headers=hdr, timeout=(10, 30), verify=False)
+            r = http.get(url, headers=hdr, timeout=(10, 20), verify=False)
             r.raise_for_status()
             if r.status_code == requests.codes.ok:
                 try:
@@ -1364,7 +1364,10 @@ class XStreamity_Categories(Screen):
         if self.level == 1:
             sortlist = [(_("Sort: A-Z")), (_("Sort: Z-A")), (_("Sort: Original"))]
 
-        elif self.level != 1:
+        elif self.level == 2:
+            sortlist = [(_("Sort: A-Z")), (_("Sort: Z-A")), (_("Sort: Added")), (_("Sort: Original"))]
+
+        else:
             sortlist = [(_("Sort: A-Z")), (_("Sort: Z-A")), (_("Sort: Added")), (_("Sort: Year")), (_("Sort: Original"))]
 
         for index, item in enumerate(sortlist, start=0):
@@ -1385,17 +1388,21 @@ class XStreamity_Categories(Screen):
 
         elif current_sort == (_("Sort: Added")):
             if self.level == 2:
-                activelist.sort(key=lambda x: x[10], reverse=True)
+                activelist.sort(key=lambda x: x[11], reverse=True)
+
             if self.level == 3:
                 activelist.sort(key=lambda x: x[12], reverse=True)
+
             if self.level == 4:
                 activelist.sort(key=lambda x: x[15], reverse=True)
 
         elif current_sort == (_("Sort: Year")):
             if self.level == 2:
-                activelist.sort(key=lambda x: x[8], reverse=True)
+                activelist.sort(key=lambda x: x[9], reverse=True)
+
             if self.level == 3:
                 activelist.sort(key=lambda x: x[8], reverse=True)
+
             if self.level == 4:
                 activelist.sort(key=lambda x: x[8], reverse=True)
 
@@ -1597,7 +1604,7 @@ class XStreamity_Categories(Screen):
                     self.genre2 = self["vod_genre"].getText()
                     self.releaseDate2 = self["vod_release_date"].getText()
                     self.rating2 = self["vod_rating"].getText()
-                    self.tmdb2 = self["main_list"].getCurrent()[13]
+                    self.tmdb2 = self["main_list"].getCurrent()[14]
 
                     next_url = self["main_list"].getCurrent()[3]
                     if "&action=get_series_info" in next_url:
@@ -1606,6 +1613,7 @@ class XStreamity_Categories(Screen):
                     self["main_list"].setIndex(0)
                     self["category_actions"].setEnabled(False)
                     self["channel_actions"].setEnabled(True)
+                    self["key_yellow"].setText(_("Sort: A-Z"))
                     glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self["key_yellow"].getText(), "filter": ""})
 
                     self.createSetup()
@@ -1621,6 +1629,7 @@ class XStreamity_Categories(Screen):
                     self["main_list"].setIndex(0)
                     self["category_actions"].setEnabled(False)
                     self["channel_actions"].setEnabled(True)
+                    self["key_yellow"].setText(_("Sort: A-Z"))
                     glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self["key_yellow"].getText(), "filter": ""})
                     self.createSetup()
                 else:

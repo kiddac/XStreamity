@@ -42,7 +42,7 @@
 			"scrollbarMode": "showNever"
 			}</convert>
 	</widget>
-	<widget source="epg_short_list" render="Listbox" position="510,300" size="1380,720" foregroundColor="#ffffff" backgroundColor="#2a70a4" foregroundColorSelected="#ffffff" backgroundColorSelected="#0f366d" scrollbarMode="showOnDemand" itemHeight="72" enableWrapAround="1" transparent="1" zPosition="4">
+	<widget source="epg_short_list" render="Listbox" position="510,300" size="1380,720" foregroundColor="#ffffff" backgroundColor="#2a70a4" foregroundColorSelected="#ffffff" backgroundColorSelected="#0f366d" scrollbarMode="showOnDemand" enableWrapAround="1" itemHeight="72" transparent="1" zPosition="4">
 		<convert type="TemplatedMultiContent">{"template": [
 			MultiContentEntryText(pos = (15, 0), size = (213, 72), font=0, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1 ),
 			MultiContentEntryText(pos = (240, 0), size = (240, 72), font=0, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 2),

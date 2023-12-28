@@ -47,7 +47,7 @@ class XStreamity_Menu(Screen):
 
         self["key_red"] = StaticText(_("Back"))
         self["key_green"] = StaticText(_("OK"))
-        self["key_blue"] = StaticText(_("Update"))
+        self["key_blue"] = StaticText("")
 
         self["splash"] = Pixmap()
         self["splash"].show()

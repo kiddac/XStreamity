@@ -54,7 +54,7 @@
 			}</convert>
 	</widget>
 	<widget name="picon" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/picon.png" position="1640,90" size="220,132" alphatest="blend" zPosition="2"/>
-	<widget name="progress" position="1640,255" size="220,12" borderWidth="1" borderColor="#ffffff" foregroundColor="#098feb" backgroundColor="#103667" zPosition="3"/>
+	<widget name="progress" position="1640,255" size="220,12" borderWidth="1" borderColor="#ffffff" foregroundColor="#2a70a4" backgroundColor="#102e4b" zPosition="3"/>
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/button-bg.png" position="480,1020" size="1470,60" alphatest="blend" zPosition="1"/>
 	<widget source="key_red" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/key_red.png" position="504,1031" size="38,38" alphatest="blend" zPosition="2"/>
 	<widget source="key_red" render="Label" position="552,1020" size="165,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="2"/>
