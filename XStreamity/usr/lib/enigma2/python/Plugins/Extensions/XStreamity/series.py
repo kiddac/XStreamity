@@ -267,9 +267,12 @@ class XStreamity_Categories(Screen):
         elif self.level == 4:
             self.buildEpisodes()
 
-        self.resetButtons()
+        if (self.level == 1 and self.list1) or (self.level == 2 and self.list2) or (self.level == 3 and self.list3) or (self.level == 4 and self.list4):
+            self.resetButtons()
+            self.selectionChanged()
 
-        self.selectionChanged()
+        else:
+            self.back()
 
     def getCategories(self):
         # print("*** getCategories **")
@@ -401,6 +404,9 @@ class XStreamity_Categories(Screen):
                 index += 1
 
             glob.originalChannelList2 = self.list2[:]
+
+        else:
+            self.session.open(MessageBox, _("No series found in this category."), type=MessageBox.TYPE_ERROR, timeout=5)
 
     def getSeasons(self):
         # print("**** getSeasons ****")
