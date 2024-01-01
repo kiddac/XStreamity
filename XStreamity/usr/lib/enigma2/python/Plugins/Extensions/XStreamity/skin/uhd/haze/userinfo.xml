@@ -7,16 +7,17 @@
 		<convert type="ClockToText">Format:%H:%M | %A %-d %b</convert>
 	</widget>
 	<eLabel position="0,123" size="2560,1238" backgroundColor="#26242b34" zPosition="-1"/>
-	<eLabel text="Status:" position="787,440" size="492,80" font="xstreamityregular;36" foregroundColor="#ffffff" backgroundColor="#26242b34" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
-	<eLabel text="Is Trial:" position="787,520" size="492,80" font="xstreamityregular;36" foregroundColor="#ffffff" backgroundColor="#26242b34" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
-	<eLabel text="Active Connections:" position="787,600" size="492,80" font="xstreamityregular;36" foregroundColor="#ffffff" backgroundColor="#26242b34" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
-	<eLabel text="Max Connections:" position="787,680" size="492,80" font="xstreamityregular;36" foregroundColor="#ffffff" backgroundColor="#26242b34" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
-	<eLabel text="Created At:" position="787,760" size="492,80" font="xstreamityregular;36" foregroundColor="#ffffff" backgroundColor="#26242b34" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
-	<eLabel text="Expiry Date:" position="787,840" size="492,80" font="xstreamityregular;36" foregroundColor="#ffffff" backgroundColor="#26242b34" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
-	<eLabel text="Allowed Output Formats:" position="787,920" size="492,80" font="xstreamityregular;36" foregroundColor="#ffffff" backgroundColor="#26242b34" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
-	<eLabel text="Real URL:" position="787,1000" size="492,80" font="xstreamityregular;36" foregroundColor="#ffffff" backgroundColor="#26242b34" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
-	<eLabel text="Timezone:" position="787,1080" size="492,80" font="xstreamityregular;36" foregroundColor="#ffffff" backgroundColor="#26242b34" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
-	<eLabel text="Server Offset:" position="787,1160" size="492,80" font="xstreamityregular;36" foregroundColor="#ffffff" backgroundColor="#26242b34" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<eLabel source="t_status" render="Label"  position="787,440" size="492,80" font="xstreamityregular;36" foregroundColor="#ffffff" backgroundColor="#26242b34" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<eLabel source="t_trial" render="Label" position="787,520" size="492,80" font="xstreamityregular;36" foregroundColor="#ffffff" backgroundColor="#26242b34" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<eLabel source="t_activeconn" render="Label" position="787,600" size="492,80" font="xstreamityregular;36" foregroundColor="#ffffff" backgroundColor="#26242b34" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<eLabel source="t_maxconn" render="Label" position="787,680" size="492,80" font="xstreamityregular;36" foregroundColor="#ffffff" backgroundColor="#26242b34" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<eLabel source="t_created" render="Label" position="787,760" size="492,80" font="xstreamityregular;36" foregroundColor="#ffffff" backgroundColor="#26242b34" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<eLabel source="t_expiry" render="Label" position="787,840" size="492,80" font="xstreamityregular;36" foregroundColor="#ffffff" backgroundColor="#26242b34" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<eLabel source="t_formats" render="Label" position="787,920" size="492,80" font="xstreamityregular;36" foregroundColor="#ffffff" backgroundColor="#26242b34" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<eLabel source="t_realurl" render="Label" position="787,1000" size="492,80" font="xstreamityregular;36" foregroundColor="#ffffff" backgroundColor="#26242b34" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<eLabel source="t_timezone" render="Label" position="787,1080" size="492,80" font="xstreamityregular;36" foregroundColor="#ffffff" backgroundColor="#26242b34" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<eLabel source="t_serveroffset" render="Label" position="787,1160" size="492,80" font="xstreamityregular;36" foregroundColor="#ffffff" backgroundColor="#26242b34" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+
 	<widget name="status" position="1279,440" size="492,80" font="xstreamityregular;36" foregroundColor="#ffffff" backgroundColor="#26242b34" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
 	<widget name="trial" position="1279,520" size="492,80" font="xstreamityregular;36" foregroundColor="#ffffff" backgroundColor="#26242b34" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
 	<widget name="activeconn" position="1279,600" size="492,80" font="xstreamityregular;36" foregroundColor="#ffffff" backgroundColor="#26242b34" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>

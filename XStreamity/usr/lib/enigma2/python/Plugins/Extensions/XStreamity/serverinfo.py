@@ -40,17 +40,16 @@ class XStreamity_UserInfo(Screen):
         self["timezone"] = Label("")
         self["serveroffset"] = Label("")
 
-        # fake labels for skin text translations
-        t_status = _("Status:")
-        t_istrial = _("Is Trial:")
-        t_activeconnections = _("Active Connections:")
-        t_maxconnections = _("Max Connections:")
-        t_createdat = _("Created At:")
-        t_expirydate = _("Expiry Date:")
-        t_allowedformats = _("Allowed Output Formats:")
-        t_realurl = _("Real URL:")
-        t_timezone = _("Timezone:")
-        t_serveroffset = _("Server Offset:")
+        self["t_status"] = StaticText(_("Status:"))
+        self["t_expiry"] = StaticText(_("Expiry Date:"))
+        self["t_created"] = StaticText(_("Created At:"))
+        self["t_trial"] = StaticText(_("Is Trial:"))
+        self["t_activeconn"] = StaticText(_("Active Connections:"))
+        self["t_maxconn"] = StaticText(_("Max Connections:"))
+        self["t_formats"] = StaticText(_("Allowed Output Formats:"))
+        self["t_realurl"] = StaticText(_("Real URL:"))
+        self["t_timezone"] = StaticText(_("Timezone:"))
+        self["t_serveroffset"] = StaticText(_("Server Offset:"))
 
         self["actions"] = ActionMap(["XStreamityActions"], {
             "ok": self.quit,

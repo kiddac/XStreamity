@@ -159,14 +159,14 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
         self.cfg_skipplaylistsscreen = getConfigListEntry(_("Skip playlist selection screen if only 1 playlist"), cfg.skipplaylistsscreen)
 
-        self.cfg_wakeup = getConfigListEntry(_("Automatic EPG download time") + (" *Restart GUI Required"), cfg.wakeup)
+        self.cfg_wakeup = getConfigListEntry(_("Automatic EPG download time") + _(" *Restart GUI Required"), cfg.wakeup)
 
         self.cfg_channelpicons = getConfigListEntry(_("Show channel picons"), cfg.channelpicons)
         self.cfg_channelcovers = getConfigListEntry(_("Show Vod/Series posters"), cfg.channelcovers)
         self.cfg_infobarpicons = getConfigListEntry(_("Show infobar picons"), cfg.infobarpicons)
         self.cfg_infobarcovers = getConfigListEntry(_("Show infobar posters"), cfg.infobarcovers)
 
-        self.cfg_boot = getConfigListEntry(_("Auto start XStreamity on boot") + (" *Restart GUI Required"), cfg.boot)
+        self.cfg_boot = getConfigListEntry(_("Auto start XStreamity on boot") + _(" *Restart GUI Required"), cfg.boot)
 
         self.org_main = cfg.main.getValue()
         self.org_wakeup = cfg.wakeup.getValue()
