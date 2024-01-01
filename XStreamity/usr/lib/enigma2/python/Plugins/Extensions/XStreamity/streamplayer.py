@@ -577,7 +577,7 @@ class XStreamity_StreamPlayer(
 
                 self.epgshortlist = []
 
-                if "epg_listings" in shortEPGJson and shortEPGJson["epg_listings"]:
+                if "epg_listings" in shortEPGJson and shortEPGJson["epg_listings"] and len(shortEPGJson["epg_listings"]) > 1:
                     for listing in shortEPGJson["epg_listings"]:
 
                         title = ""

@@ -1199,6 +1199,9 @@ class XStreamity_Categories(Screen):
                                 if (index + 1 < len(self.epgJson[epg_channel_id])):
                                     next_el = self.epgJson[epg_channel_id][index + 1]
 
+                                    if next_el == entry:
+                                        next_el = self.epgJson[epg_channel_id][index + 2]
+
                                     entry[0] = int(entry[0]) + (int(glob.current_playlist["player_info"]["epgoffset"]) * 3600)
                                     entry[1] = int(entry[1]) + (int(glob.current_playlist["player_info"]["epgoffset"]) * 3600)
 
