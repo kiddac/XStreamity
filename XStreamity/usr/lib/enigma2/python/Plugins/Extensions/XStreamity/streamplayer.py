@@ -864,7 +864,7 @@ class XStreamity_StreamPlayer(
         self.playStream(self.servicetype, self.streamurl, self.direct_source)
 
     def downloadImage(self):
-        self.loadBlankImage()
+        self.loadDefaultImage()
         try:
             os.remove(os.path.join(dir_tmp, "original.png"))
             os.remove(os.path.join(dir_tmp, "temp.png"))
@@ -896,10 +896,6 @@ class XStreamity_StreamPlayer(
                 self.loadDefaultImage()
         else:
             self.loadDefaultImage()
-
-    def loadBlankImage(self, data=None):
-        if self["picon"].instance:
-            self["picon"].instance.setPixmapFromFile(os.path.join(common_path, "picon_blank.png"))
 
     def loadDefaultImage(self, data=None):
         if self["picon"].instance:
@@ -1285,7 +1281,7 @@ class XStreamity_VodPlayer(
             self.timerWatched.start(15 * 60 * 1000, True)
 
     def downloadImage(self):
-        self.loadBlankImage()
+        self.loadDefaultImage()
         try:
             os.remove(os.path.join(dir_tmp, "original.jpg"))
             os.remove(os.path.join(dir_tmp, "temp.jpg"))
@@ -1316,13 +1312,9 @@ class XStreamity_VodPlayer(
         else:
             self.loadDefaultImage()
 
-    def loadBlankImage(self, data=None):
-        if self["cover"].instance:
-            self["cover"].instance.setPixmapFromFile(os.path.join(skin_path, "images/vod_blank.png"))
-
     def loadDefaultImage(self, data=None):
         if self["cover"].instance:
-            self["cover"].instance.setPixmapFromFile(os.path.join(skin_path, "images/vod_cover_small.png"))
+            self["cover"].instance.setPixmapFromFile(os.path.join(skin_directory, "common/vod_cover_small.png"))
 
     def resizeImage(self, data=None):
         if self["cover"].instance:
@@ -1520,7 +1512,7 @@ class XStreamity_CatchupPlayer(
             self.timerCache.start(5 * 60 * 1000, False)
 
     def downloadImage(self):
-        self.loadBlankImage()
+        self.loadDefaultImage()
         try:
             os.remove(os.path.join(dir_tmp, "original.png"))
             os.remove(os.path.join(dir_tmp, "temp.png"))
@@ -1552,10 +1544,6 @@ class XStreamity_CatchupPlayer(
                 self.loadDefaultImage()
         else:
             self.loadDefaultImage()
-
-    def loadBlankImage(self, data=None):
-        if self["picon"].instance:
-            self["picon"].instance.setPixmapFromFile(os.path.join(common_path, "picon_blank.png"))
 
     def loadDefaultImage(self, data=None):
         if self["picon"].instance:

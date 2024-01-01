@@ -31,7 +31,7 @@
 	<widget source="x_title" render="Label" position="525,102" size="1215,42" font="xstreamitybold;30" foregroundColor="#ffffff" backgroundColor="#26242b34" halign="left" noWrap="1" transparent="1" zPosition="2"/>
 	<widget source="x_description" render="XStreamityRunningText" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" position="525,165" size="1335,120" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#26242b34" halign="left" transparent="1" zPosition="2"/>
 	<!-- vod section -->
-	<widget name="vod_cover" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/haze/images/vod_cover.png" alphatest="blend" position="520,300" size="400,600" zPosition="2"/>
+	<widget name="vod_cover" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/vod_cover.png" position="520,300" size="400,600" alphatest="blend" zPosition="3"/>
 	<widget name="vod_background" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/vod_background.png" position="980,300" size="880,600" alphatest="blend" zPosition="2"/>
 	<widget source="vod_video_type_label" render="Label" position="1010,330" size="240,60" font="xstreamitybold;27" foregroundColor="#ffffff" backgroundColor="#40000000" halign="left" noWrap="1" transparent="1" zPosition="3"/>
 	<widget source="vod_duration_label" render="Label" position="1010,510" size="240,60" font="xstreamitybold;27" foregroundColor="#ffffff" backgroundColor="#40000000" halign="left" noWrap="1" transparent="1" zPosition="3"/>

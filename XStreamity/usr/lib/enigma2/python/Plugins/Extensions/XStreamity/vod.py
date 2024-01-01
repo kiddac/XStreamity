@@ -500,7 +500,7 @@ class XStreamity_Categories(Screen):
 
             self.clearVod()
 
-            self.loadBlankImage()
+            self.loadDefaultImage()
 
             if self.level == 2:
                 self.timerVOD = eTimer()
@@ -936,15 +936,10 @@ class XStreamity_Categories(Screen):
             else:
                 self.loadDefaultImage()
 
-    def loadBlankImage(self, data=None):
-        # print("*** loadDefaultImage ***")
-        if self["vod_cover"].instance:
-            self["vod_cover"].instance.setPixmapFromFile(os.path.join(self.skin_path, "images/vod_blank.png"))
-
     def loadDefaultImage(self, data=None):
         # print("*** loadDefaultImage ***")
         if self["vod_cover"].instance:
-            self["vod_cover"].instance.setPixmapFromFile(os.path.join(self.skin_path, "images/vod_cover.png"))
+            self["vod_cover"].instance.setPixmapFromFile(os.path.join(skin_directory, "common/vod_cover.png"))
 
     def resizeImage(self, data=None):
         # print("*** resizeImage ***")
@@ -976,7 +971,6 @@ class XStreamity_Categories(Screen):
         ptr = self.PicLoad.getData()
         if ptr is not None and self.level == 2:
             self["vod_cover"].instance.setPixmap(ptr)
-            self["vod_cover"].instance.show()
 
     def goUp(self):
         instance = self.selectedlist.master.master.instance

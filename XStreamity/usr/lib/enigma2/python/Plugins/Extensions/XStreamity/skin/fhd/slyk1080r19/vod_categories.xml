@@ -25,7 +25,7 @@
 	<widget source="page" render="Label" position="165,400" size="219,60" font="slykregular;24" foregroundColor="#ffffff" backgroundColor="#133171" valign="center" transparent="1" noWrap="1" zPosition="2"/>
 	<widget source="listposition" render="Label" position="432,400" size="165,60" font="slykregular;24" foregroundColor="#ffffff" backgroundColor="#133171" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
 	<!-- vod section -->
-	<widget name="vod_cover" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/default/images/vod_cover.png" alphatest="off" position="1490,452" size="280,420" scale="1" zPosition="2"/>
+	<widget name="vod_cover" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/vod_cover.png" alphatest="blend" position="1490,452" size="280,420" scale="1" zPosition="4"/>
 	<widget source="vod_video_type_label" render="Label" position="645,450" size="240,60" font="slykbold;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" halign="left" noWrap="1" transparent="1" zPosition="3"/>
 	<widget source="vod_rating_label" render="Label" position="645,510" size="240,60" font="slykbold;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" halign="left" noWrap="1" transparent="1" zPosition="3"/>
 	<widget source="vod_genre_label" render="Label" position="645,570" size="240,60" font="slykbold;27" foregroundColor="#ffffff" backgroundColor="#2a70a4" halign="left" noWrap="1" transparent="1" zPosition="3"/>
