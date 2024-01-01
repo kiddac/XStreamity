@@ -20,16 +20,16 @@
 	<eLabel position="280,830" size="1360,48" backgroundColor="#204382" zPosition="-1"/>
 	<eLabel position="280,884" size="1360,48" backgroundColor="#10326c" zPosition="-1"/>
 	<widget source="Title" render="Label" position="90,187" size="870,54" font="slykbold;39" foregroundColor="#ffffff" backgroundColor="#082353" valign="center" halign="center" transparent="0" zPosition="2"/>
-	<eLabel source="t_status" render="Label"  position="295,290" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
-	<eLabel source="t_trial" render="Label" position="295,344" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
-	<eLabel source="t_activeconn" render="Label" position="295,398" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
-	<eLabel source="t_maxconn" render="Label" position="295,452" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
-	<eLabel source="t_created" render="Label" position="295,506" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
-	<eLabel source="t_expiry" render="Label" position="295,560" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
-	<eLabel source="t_formats" render="Label" position="295,614" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
-	<eLabel source="t_realurl" render="Label" position="295,668" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
-	<eLabel source="t_timezone" render="Label" position="295,722" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
-	<eLabel source="t_serveroffset" render="Label" position="295,776" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<widget source="t_status" render="Label" position="295,290" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<widget source="t_trial" render="Label" position="295,344" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<widget source="t_activeconn" render="Label" position="295,398" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<widget source="t_maxconn" render="Label" position="295,452" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<widget source="t_created" render="Label" position="295,506" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<widget source="t_expiry" render="Label" position="295,560" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<widget source="t_formats" render="Label" position="295,614" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<widget source="t_realurl" render="Label" position="295,668" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<widget source="t_timezone" render="Label" position="295,722" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<widget source="t_serveroffset" render="Label" position="295,776" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
 
 	<widget name="status" position="1024,290" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
 	<widget name="trial" position="1024,344" size="600,48" font="slykregular;39" foregroundColor="#ffffff" backgroundColor="#2a70a4" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
