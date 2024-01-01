@@ -218,8 +218,21 @@ if not os.path.isfile(downloads_json):
 if os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/XStreamityPro/"):
     try:
         shutil.rmtree("/usr/lib/enigma2/python/Plugins/Extensions/XStreamityPro/")
-    except Exception as e:
-        print(e)
+    except:
+        pass
+
+# remove toys skin
+if os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/toys/"):
+    try:
+        shutil.rmtree("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/toys/")
+    except:
+        pass
+
+if os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/toys/"):
+    try:
+        shutil.rmtree("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/toys/")
+    except:
+        pass
 
 # try and override epgimport settings
 try:
