@@ -17,7 +17,7 @@ except Exception:
     from enigma import eAVControl as eAVSwitch
 
 
-from Components.config import config, NoSave, ConfigText, ConfigClock
+from Components.config import NoSave, ConfigText, ConfigClock
 from Components.Label import Label
 from Components.ProgressBar import ProgressBar
 from Components.Pixmap import Pixmap, MultiPixmap
@@ -230,7 +230,7 @@ class IPTVInfoBarShowHide():
             self.hideTimer_conn = self.hideTimer.timeout.connect(self.doTimerHide)
         except:
             self.hideTimer.callback.append(self.doTimerHide)
-        self.hideTimer.start(5000, True)
+        self.hideTimer.start(3000, True)
 
         self.onShow.append(self.__onShow)
         self.onHide.append(self.__onHide)
@@ -247,15 +247,12 @@ class IPTVInfoBarShowHide():
 
     def serviceStarted(self):
         if self.execing:
-            if config.usage.show_infobar_on_zap.value:
-                self.doShow()
+            self.doShow()
 
     def startHideTimer(self):
         if self.__state == self.STATE_SHOWN and not self.__locked:
             self.hideTimer.stop()
-            idx = config.usage.infobar_timeout.index
-            if idx:
-                self.hideTimer.start(idx * 1500, True)
+            self.hideTimer.start(3000, True)
 
         elif hasattr(self, "pvrStateDialog"):
             self.hideTimer.stop()
@@ -1136,7 +1133,7 @@ class XStreamity_VodPlayer(
 
         self["actions"] = ActionMap(["XStreamityActions"], {
             "cancel": self.back,
-            "stop": self.back,
+            "stop": self.stopStream,
             "red": self.back,
             "tv": self.toggleStreamType,
             "info": self.toggleStreamType,
@@ -1357,6 +1354,12 @@ class XStreamity_VodPlayer(
         except:
             pass
 
+        try:
+            self.session.nav.stopService()
+            self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
+        except:
+            pass
+
         self.close()
 
     def toggleStreamType(self):
@@ -1388,6 +1391,20 @@ class XStreamity_VodPlayer(
     def nextAR(self):
         message = self.nextARfunction()
         self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO, timeout=1)
+
+    def stopStream(self):
+        # print("*** stopStream ***")
+
+        try:
+            setResumePoint(self.session)
+        except Exception as e:
+            print(e)
+
+        try:
+            self.session.nav.stopService()
+            self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
+        except:
+            pass
 
 
 class XStreamity_CatchupPlayer(
