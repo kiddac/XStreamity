@@ -437,7 +437,7 @@ class XStreamity_Categories(Screen):
             if self.selectedlist == self["epg_short_list"]:
                 self["key_blue"].setText("")
                 self["key_yellow"].setText(_("Reverse"))
-                self["key_menu"].setText(_("Hide/Show"))
+                self["key_menu"].setText("+/-")
 
             else:
                 self["key_blue"].setText(_("Search"))
@@ -446,7 +446,7 @@ class XStreamity_Categories(Screen):
                     glob.nextlist[-1]["sort"] = self.sortText
 
                 self["key_yellow"].setText(_(glob.nextlist[-1]["sort"]))
-                self["key_menu"].setText(_("Hide/Show"))
+                self["key_menu"].setText("+/-")
 
     def playStream(self):
         # print("*** playStream ***")
