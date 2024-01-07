@@ -67,7 +67,16 @@ class XStreamity_UserInfo(Screen):
 
     def createUserSetup(self):
         if "status" in glob.current_playlist["user_info"]:
-            self["status"].setText(str(glob.current_playlist["user_info"]["status"]))
+            if glob.current_playlist["user_info"]["status"] == "Active":
+                status = (_("Active"))
+            elif glob.current_playlist["user_info"]["status"] == "Banned":
+                status = (_("Banned"))
+            elif glob.current_playlist["user_info"]["status"] == "Disabled":
+                status = (_("Disabled"))
+            elif glob.current_playlist["user_info"]["status"] == "Expired":
+                status = (_("Expired"))
+
+            self["status"].setText(status)
 
         if "exp_date" in glob.current_playlist["user_info"]:
             try:
