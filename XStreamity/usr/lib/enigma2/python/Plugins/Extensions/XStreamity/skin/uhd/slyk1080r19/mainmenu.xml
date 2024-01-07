@@ -36,6 +36,6 @@
 		<convert type="ConditionalShowHide"/>
 	</widget>
 	<widget source="key_blue" render="Label" position="1768,1255" size="640,59" font="slykregular;52" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" zPosition="2"/>
-	<eLabel text="Press SELECT" position="203,1323" size="576,64" font="slykregular;52" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="top" halign="left" transparent="1" zPosition="1"/>
+	<!-- <eLabel text="Press SELECT" position="203,1323" size="576,64" font="slykregular;52" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="top" halign="left" transparent="1" zPosition="1"/> -->
 </screen>
 

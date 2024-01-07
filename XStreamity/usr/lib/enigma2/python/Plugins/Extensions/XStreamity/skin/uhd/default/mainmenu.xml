@@ -12,7 +12,7 @@
 			MultiContentEntryPixmapAlphaBlend(pos=(40, 27), size=(163, 107), png = 2),
 			MultiContentEntryText(pos=(252, 0), size=(900, 160), font=0, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1),
 			],
-			"fonts": [gFont("xstreamityregular", 64)],
+			"fonts": [gFont("xstreamityregular", 56)],
 			"itemHeight": 160,\
 			"scrollbarMode": "showOnDemand"
 			}</convert>
@@ -26,9 +26,9 @@
 	<widget source="key_red" render="Label" position="1070,1360" size="320,80" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="2"/>
 	<widget source="key_green" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/key_green.png" position="1400,1375" size="51,51" alphatest="blend" zPosition="2"/>
 	<widget source="key_green" render="Label" position="1470,1360" size="320,80" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="2"/>
-	<widget source="key_blue" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/key_blue.png" position="2239,1375" size="51,51" alphatest="blend" zPosition="2">
+	<widget source="key_blue" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/key_blue.png" position="2440,1375" size="51,51" alphatest="blend" zPosition="2">
 		<convert type="ConditionalShowHide"/>
 	</widget>
-	<widget source="key_blue" render="Label" position="2303,1360" size="300,80" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" zPosition="2"/>
+	<widget source="key_blue" render="Label" position="2020,1360" size="400,80" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" halign="right" transparent="1" zPosition="2"/>
 </screen>
 

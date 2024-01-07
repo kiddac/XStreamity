@@ -11,7 +11,7 @@
 		<convert type="TemplatedMultiContent">{"template": [
 			MultiContentEntryText(pos=(40, 0), size=(560, 96), font=0, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1),
 			],
-			"fonts": [gFont("xstreamityregular", 48)],
+			"fonts": [gFont("xstreamityregular", 40)],
 			"itemHeight": 96,
 			"scrollbarMode": "showOnDemand"
 			}</convert>
