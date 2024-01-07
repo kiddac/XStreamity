@@ -27,7 +27,7 @@
 			MultiContentEntryText(pos = (395, 69), size = (60, 30), font=1, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_RIGHT, text = 9),
 
 			],
-			"fonts": [gFont("xstreamityregular", 30), gFont("xstreamityregular", 21)],
+			"fonts": [gFont("xstreamityregular", 27), gFont("xstreamityregular", 21)],
 			"itemHeight": 120,
 			"scrollbarMode": "showOnDemand"
 			}
@@ -47,12 +47,16 @@
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/divider.png" position="0,974" size="480,4" alphatest="blend" zPosition="1"/>
 	<eLabel position="0,1019" size="1920,1" backgroundColor="#ffffff" zPosition="-1"/>
 	<eLabel position="0,1020" size="1920,60" backgroundColor="#34000000" zPosition="-1"/>
-	<widget source="key_red" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/key_red.png" position="510,1031" size="38,38" alphatest="blend" zPosition="2"/>
-	<widget source="key_red" render="Label" position="571,1020" size="165,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="2"/>
-	<widget source="key_green" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/key_green.png" position="786,1031" size="38,38" alphatest="blend" zPosition="2"/>
-	<widget source="key_green" render="Label" position="837,1020" size="165,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="2"/>
-	<widget source="key_yellow" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/key_yellow.png" position="1062,1031" size="38,38" alphatest="blend" zPosition="2"/>
-	<widget source="key_yellow" render="Label" position="1113,1020" size="165,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="2"/>
-	<widget source="key_blue" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/key_blue.png" position="1338,1031" size="38,38" alphatest="blend" zPosition="2"/>
-	<widget source="key_blue" render="Label" position="1389,1020" size="165,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="2"/>
+	
+	<widget source="key_red" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/key_red.png" position="30,1031" size="38,38" alphatest="blend" zPosition="2"/>
+	<widget source="key_red" render="Label" position="90,1020" size="375,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#1a000000" valign="center" transparent="1" noWrap="1" zPosition="2"/>
+	
+	<widget source="key_green" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/key_green.png" position="495,1031" size="38,38" alphatest="blend" zPosition="2"/>
+	<widget source="key_green" render="Label" position="555,1020" size="375,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#1a000000" valign="center" transparent="1" noWrap="1" zPosition="2"/>
+	
+	<widget source="key_yellow" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/key_yellow.png" position="960,1031" size="38,38" alphatest="blend" zPosition="2"/>
+	<widget source="key_yellow" render="Label" position="1020,1020" size="375,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#1a000000" valign="center" transparent="1" noWrap="1" zPosition="2"/>
+	
+	<widget source="key_blue" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/key_blue.png" position="1425,1031" size="38,38" alphatest="blend" zPosition="2"/>
+	<widget source="key_blue" render="Label" position="1485,1020" size="375,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#1a000000" valign="center" transparent="1" noWrap="1" zPosition="2"/>
 </screen>
