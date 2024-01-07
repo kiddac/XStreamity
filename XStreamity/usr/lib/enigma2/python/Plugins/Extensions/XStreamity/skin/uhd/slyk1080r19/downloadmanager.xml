@@ -30,7 +30,7 @@
 				MultiContentEntryText(pos = (1820, 0), size = (120, 72), font=0, flags = RT_HALIGN_RIGHT|RT_VALIGN_CENTER, text = 5), # index 5 is the percentage
 				MultiContentEntryText(pos = (1940, 0), size = (200, 72), font=0, flags = RT_HALIGN_RIGHT|RT_VALIGN_CENTER, text = 6), # index 6 is the size
 				],
-			"fonts": [gFont("slykregular",52)],
+			"fonts": [gFont("slykregular",40)],
 				"itemHeight": 72,
 				"scrollbarMode": "showOnDemand"
 			}
@@ -44,6 +44,6 @@
 		<convert type="ConditionalShowHide"/>
 	</widget>
 	<widget source="key_blue" render="Label" position="1768,1255" size="436,59" font="slykregular;52" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" zPosition="2"/>
-	<eLabel text="Press SELECT" position="203,1323" size="576,64" font="slykregular;52" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="top" halign="left" transparent="1" zPosition="1"/>
+	<!-- <eLabel text="Press SELECT" position="203,1323" size="576,64" font="slykregular;52" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="top" halign="left" transparent="1" zPosition="1"/> -->
 	<widget source="diskspace" render="Label" position="1280,1323" size="1080,59" font="slykregular;32" foregroundColor="#ffffff" backgroundColor="#1c4475" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
 </screen>
