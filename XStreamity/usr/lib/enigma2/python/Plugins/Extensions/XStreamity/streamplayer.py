@@ -1133,7 +1133,7 @@ class XStreamity_VodPlayer(
 
         self["actions"] = ActionMap(["XStreamityActions"], {
             "cancel": self.back,
-            "stop": self.stopStream,
+            "stop": self.back,
             "red": self.back,
             "tv": self.toggleStreamType,
             "info": self.toggleStreamType,
@@ -1356,6 +1356,10 @@ class XStreamity_VodPlayer(
 
         try:
             self.session.nav.stopService()
+        except:
+            pass
+
+        try:
             self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
         except:
             pass
@@ -1391,20 +1395,6 @@ class XStreamity_VodPlayer(
     def nextAR(self):
         message = self.nextARfunction()
         self.session.open(MessageBox, message, type=MessageBox.TYPE_INFO, timeout=1)
-
-    def stopStream(self):
-        # print("*** stopStream ***")
-
-        try:
-            setResumePoint(self.session)
-        except Exception as e:
-            print(e)
-
-        try:
-            self.session.nav.stopService()
-            self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
-        except:
-            pass
 
 
 class XStreamity_CatchupPlayer(
