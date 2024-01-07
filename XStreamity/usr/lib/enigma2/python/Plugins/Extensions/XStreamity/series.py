@@ -1211,7 +1211,7 @@ class XStreamity_Categories(Screen):
                 glob.nextlist[-1]["sort"] = self.sortText
 
             self["key_yellow"].setText(_(glob.nextlist[-1]["sort"]))
-            self["key_menu"].setText(_("Hide/Show"))
+            self["key_menu"].setText("+/-")
 
     def playStream(self):
         # print("*** playStream ***")
