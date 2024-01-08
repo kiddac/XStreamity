@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-03-07 20:51+0000\n"
-"PO-Revision-Date: 2023-04-16 15:13+0200\n"
+"POT-Creation-Date: 2024-01-07 23:56+0000\n"
+"PO-Revision-Date: 2024-01-07 23:56+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: nl_NL\n"
@@ -10,15 +10,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Poedit 3.4.1\n"
 "X-Poedit-Basepath: ../../..\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: Task.py:61 downloadmanager.py:48
+#: Task.py:61 downloadmanager.py:47
 msgid "Waiting"
 msgstr "Wachten"
 
-#: Task.py:61 downloadmanager.py:47
+#: Task.py:61 downloadmanager.py:46
 msgid "In progress"
 msgstr "In behandeling"
 
@@ -60,256 +60,162 @@ msgstr "Geannuleerd door de gebruiker"
 msgid "Error code"
 msgstr "Foutcode"
 
-#: channels.py:248 channels.py:250 channels.py:251 channels.py:252
-#: channels.py:253 channels.py:255 channels.py:256 channels.py:257
-#: channels.py:258 channels.py:1309 channels.py:1639 channels.py:1642
-#: channels.py:1645 channels.py:1657 channels.py:1923
-msgid "Sort: A-Z"
-msgstr "Sorteren: A-Z"
-
-#: channels.py:250 channels.py:251 channels.py:252 channels.py:253
-#: channels.py:255 channels.py:256 channels.py:257 channels.py:258
-#: channels.py:1639 channels.py:1642 channels.py:1645 channels.py:1660
-msgid "Sort: Z-A"
-msgstr "Sorteren: Z-A"
-
-#: channels.py:250 channels.py:251 channels.py:252 channels.py:253
-#: channels.py:255 channels.py:256 channels.py:257 channels.py:258
-#: channels.py:1639 channels.py:1642 channels.py:1645 channels.py:1689
-msgid "Sort: Original"
-msgstr "Sorteren: Origineel"
-
-#: channels.py:255 channels.py:256 channels.py:257 channels.py:258
-#: channels.py:1642 channels.py:1645 channels.py:1663
-msgid "Sort: Added"
-msgstr "Sorteren: Toegevoegd"
-
-#: channels.py:257 channels.py:258 channels.py:1645 channels.py:1678
-msgid "Sort: Year"
-msgstr "Sorteren: Jaar"
-
-#: channels.py:308 downloadmanager.py:166 mainmenu.py:43 menu.py:50
-#: playlists.py:55 playsettings.py:49 server.py:50 settings.py:66
-msgid "Back"
-msgstr "Terug"
-
-#: channels.py:309 mainmenu.py:44 menu.py:51 playlists.py:56
-msgid "OK"
-msgstr "OK"
-
-#: channels.py:311 channels.py:1307 channels.py:1798
-msgid "Search"
-msgstr "Zoeken"
-
-#: channels.py:334
-msgid "Live Categories"
-msgstr "Live Categorieën"
-
-#: channels.py:335 menu.py:223
-msgid "Live Streams"
-msgstr "Live streams"
-
-#: channels.py:371
-msgid "Vod Categories"
-msgstr "VOD Categorieën"
-
-#: channels.py:372 menu.py:228
-msgid "Vod"
-msgstr "VOD"
-
-#: channels.py:403
-msgid "Series Categories"
-msgstr "Series Categorie"
-
-#: channels.py:404 channels.py:3035
-msgid "Series"
-msgstr "Series"
-
-#: channels.py:430
+#: catchup.py:136
 msgid "Catch Up Categories"
 msgstr "Catch Up Categorie"
 
-#: channels.py:431 menu.py:245
+#: catchup.py:137 menu.py:239
 msgid "Catch Up TV"
 msgstr "Catch Up TV"
 
-#: channels.py:553
-msgid "FAVOURITES"
-msgstr "Favorieten"
+#: catchup.py:179 catchup.py:445 catchup.py:649 catchup.py:651 catchup.py:663
+#: catchup.py:818 live.py:201 live.py:577 live.py:789 live.py:791 live.py:803
+#: live.py:1000 series.py:156 series.py:1210 series.py:1365 series.py:1368
+#: series.py:1371 series.py:1383 series.py:1591 series.py:1616 series.py:1632
+#: vod.py:134 vod.py:859 vod.py:1012 vod.py:1014 vod.py:1026 vod.py:1226
+msgid "Sort: A-Z"
+msgstr "Sorteren: A-Z"
 
-#: channels.py:555
-msgid "RECENTLY WATCHED"
-msgstr "Recent bekeken"
+#: catchup.py:201 downloadmanager.py:165 live.py:225 mainmenu.py:43 menu.py:48
+#: playlists.py:54 playsettings.py:49 series.py:175 server.py:50 settings.py:66
+#: vod.py:153
+msgid "Back"
+msgstr "Terug"
 
-#: channels.py:562
+#: catchup.py:202 live.py:226 mainmenu.py:44 menu.py:49 playlists.py:55
+#: series.py:176 vod.py:154
+msgid "OK"
+msgstr "OK"
+
+#: catchup.py:204 catchup.py:443 catchup.py:733 live.py:228 live.py:575
+#: live.py:903 series.py:178 series.py:1208 series.py:1493 vod.py:156
+#: vod.py:857 vod.py:1131
+msgid "Search"
+msgstr "Zoeken"
+
+#: catchup.py:291 live.py:349 series.py:293 vod.py:271
 msgid "ALL"
 msgstr "ALLES"
 
-#: channels.py:974
-msgid "Season "
-msgstr "Seizoen "
-
-#: channels.py:1178
+#: catchup.py:396 live.py:499 series.py:696 vod.py:401
 msgid "Server error or invalid link."
 msgstr "Serverfout of ongeldige link."
 
-#: channels.py:1297 channels.py:1719 channels.py:1778
+#: catchup.py:403 catchup.py:433 catchup.py:696 catchup.py:726 live.py:533
+#: live.py:572 live.py:835 live.py:896 series.py:704 series.py:1205
+#: series.py:1439 series.py:1485 vod.py:408 vod.py:854 vod.py:1062 vod.py:1123
 msgid "Reset Search"
 msgstr "Herstel zoeken"
 
-#: channels.py:1303 channels.py:1619
+#: catchup.py:439 catchup.py:638
 msgid "Reverse"
 msgstr "Omkeren"
 
-#: channels.py:1304 channels.py:1313
-msgid "Hide/Show"
-msgstr "Verberg/Toon"
-
-#: channels.py:1319 channels.py:1722 playlists.py:57
-msgid "Delete"
-msgstr "Verwijder"
-
-#: channels.py:1358 channels.py:1437
+#: catchup.py:488 catchup.py:514 live.py:625 live.py:661 series.py:785
+#: series.py:813 vod.py:496 vod.py:524
 msgid "Page: "
 msgstr "Pagina: "
 
-#: channels.py:1358 channels.py:1437
+#: catchup.py:488 catchup.py:514 live.py:625 live.py:661 series.py:785
+#: series.py:813 vod.py:496 vod.py:524
 msgid " of "
 msgstr " van "
 
-#: channels.py:1726
+#: catchup.py:649 catchup.py:651 catchup.py:666 live.py:789 live.py:791
+#: live.py:806 series.py:1365 series.py:1368 series.py:1371 series.py:1386
+#: vod.py:1012 vod.py:1014 vod.py:1029
+msgid "Sort: Z-A"
+msgstr "Sorteren: Z-A"
+
+#: catchup.py:649 catchup.py:651 catchup.py:672 live.py:789 live.py:791
+#: live.py:812 series.py:1365 series.py:1368 series.py:1371 series.py:1409
+#: vod.py:1012 vod.py:1014 vod.py:1038
+msgid "Sort: Original"
+msgstr "Sorteren: Origineel"
+
+#: catchup.py:651 catchup.py:669 live.py:791 live.py:809 series.py:1368
+#: series.py:1371 series.py:1389 vod.py:1014 vod.py:1032
+msgid "Sort: Added"
+msgstr "Sorteren: Toegevoegd"
+
+#: catchup.py:699 live.py:842 series.py:1443 vod.py:1069
 msgid "Filter this category..."
 msgstr "Filter deze categorie..."
 
-#: channels.py:1834
+#: catchup.py:719 live.py:889 series.py:1471 vod.py:1116
+msgid "No results found."
+msgstr ""
+
+#: catchup.py:755 live.py:925 series.py:1529 vod.py:1153
 msgid "Incorrect pin code."
 msgstr "Onjuiste pincode."
 
-#: channels.py:1855
+#: catchup.py:776 live.py:946 series.py:1550 vod.py:1174
 msgid "all"
 msgstr "alles"
 
-#: channels.py:1864
+#: catchup.py:785 live.py:955 series.py:1559 vod.py:1183
 msgid "Please enter the parental control pin code"
 msgstr "Voer de pincode voor ouderlijk toezicht in"
 
-#: channels.py:1864 hidden.py:27 settings.py:25
+#: catchup.py:785 hidden.py:27 live.py:955 series.py:1559 settings.py:25
+#: vod.py:1183
 msgid "Enter pin code"
 msgstr "Pincode invoeren"
 
-#: channels.py:2438 channels.py:2497 channels.py:2506
-msgid "Next Info"
-msgstr "Volgende Info"
-
-#: channels.py:2501
-msgid "Now Info"
-msgstr "Nu Info"
-
-#: channels.py:2735 streamplayer.py:628
-msgid "Recording Timer Set."
-msgstr "Opname-timer ingesteld."
-
-#: channels.py:2737 streamplayer.py:630
-msgid "Recording Failed."
-msgstr "Opname mislukt."
-
-#: channels.py:2924
-msgid "Video Type:"
-msgstr "Video Type:"
-
-#: channels.py:2925
-msgid "Rating:"
-msgstr "Beoordeling:"
-
-#: channels.py:2926
-msgid "Genre:"
-msgstr "Genre:"
-
-#: channels.py:2927
-msgid "Duration:"
-msgstr "Duur:"
-
-#: channels.py:2928
-msgid "Release Date:"
-msgstr "Release datum:"
-
-#: channels.py:2929
-msgid "Cast:"
-msgstr "Cast:"
-
-#: channels.py:2930
-msgid "Director:"
-msgstr "Regisseur:"
-
-#: channels.py:2931
-msgid "Country:"
-msgstr "Land:"
-
-#: channels.py:3033
-msgid "Movie"
-msgstr "Film"
-
-#: channels.py:3037
+#: catchup.py:936
 msgid "Catch-up"
 msgstr "Catch-up"
 
-#: channels.py:3042
+#: catchup.py:941 series.py:1810 vod.py:1461
 msgid "Added to download manager"
 msgstr "Toegevoegd aan download manager"
 
-#: channels.py:3042
+#: catchup.py:941 series.py:1810 vod.py:1461
 msgid "Note recording acts as an open connection."
 msgstr "Opmerking, opname werkt als een zelfstandige verbinding."
 
-#: channels.py:3042
+#: catchup.py:941 series.py:1810 vod.py:1461
 msgid "Do not record and play streams at the same time."
 msgstr "Speel niet streams af tegellijktijdig met stream opnames."
 
-#: channels.py:3042
+#: catchup.py:941 series.py:1810 vod.py:1461
 msgid "Open download manager?"
 msgstr "Download manager openen?"
 
-#: channels.py:3045
+#: catchup.py:944 series.py:1813 vod.py:1464
 msgid "Already added to download manager"
 msgstr "Reeds toegevoegd aan download manager"
 
-#: channels.py:3468
-msgid ""
-"The IMDb plugin is not installed!\n"
-"Please install it."
-msgstr ""
-"IMDb Plugin is niet geïnstalleerd!\n"
-"Installeren aub."
-
-#: channels.py:3531
+#: catchup.py:975
 msgid "Catchup error. No data for this slot"
 msgstr "Catchup fout. Geen data voor dit slot"
 
-#: channels.py:3643
+#: catchup.py:1015 catchup.py:1088
 msgid "Catchup currently not available. Missing EPG data"
 msgstr "Catchup momenteel niet beschikbaar. Missende EPG data"
 
-#: downloadmanager.py:46 downloadmanager.py:391 downloadmanager.py:427
+#: downloadmanager.py:45 downloadmanager.py:391 downloadmanager.py:427
 msgid "Not Started"
 msgstr "Niet gestart"
 
-#: downloadmanager.py:154
+#: downloadmanager.py:153
 msgid "VOD Download Manager"
 msgstr "VOD download manager"
 
-#: downloadmanager.py:167 downloadmanager.py:395
+#: downloadmanager.py:166 downloadmanager.py:395
 msgid "Download"
 msgstr "Download"
 
-#: downloadmanager.py:168 downloadmanager.py:396
+#: downloadmanager.py:167 downloadmanager.py:396
 msgid "Remove"
 msgstr "Verwijderen"
 
-#: downloadmanager.py:220
+#: downloadmanager.py:219
 msgid "Free Space:"
 msgstr "Beschikbare opslag:"
 
-#: downloadmanager.py:220
+#: downloadmanager.py:219
 msgid "of"
 msgstr "van"
 
@@ -377,6 +283,42 @@ msgstr "Reset"
 msgid "Error: All categories hidden. Please amend your selection."
 msgstr "Fout: Alle categorieën zijn verborgen. Wijzig je keuze."
 
+#: live.py:146
+msgid "Live Categories"
+msgstr "Live Categorieën"
+
+#: live.py:147 menu.py:213
+msgid "Live Streams"
+msgstr "Live streams"
+
+#: live.py:345 vod.py:267
+msgid "FAVOURITES"
+msgstr "Favorieten"
+
+#: live.py:347 vod.py:269
+msgid "RECENTLY WATCHED"
+msgstr "Recent bekeken"
+
+#: live.py:587 live.py:838 playlists.py:56 vod.py:869 vod.py:1065
+msgid "Delete"
+msgstr "Verwijder"
+
+#: live.py:1306 live.py:1365 live.py:1374
+msgid "Next Info"
+msgstr "Volgende Info"
+
+#: live.py:1369
+msgid "Now Info"
+msgstr "Nu Info"
+
+#: live.py:1601 streamplayer.py:667
+msgid "Recording Timer Set."
+msgstr "Opname-timer ingesteld."
+
+#: live.py:1603 streamplayer.py:669
+msgid "Recording Failed."
+msgstr "Opname mislukt."
+
 #: mainmenu.py:41
 msgid "Main Menu"
 msgstr "Hoofdmenu"
@@ -385,35 +327,35 @@ msgstr "Hoofdmenu"
 msgid "Reset JSON"
 msgstr "Herstel JSON"
 
-#: mainmenu.py:76
+#: mainmenu.py:77
 msgid "Playlists.txt location is invalid and has been reset."
 msgstr "Playlists.txt locatie is ongeldig en is gereset."
 
-#: mainmenu.py:117
+#: mainmenu.py:120
 msgid "Playlists"
 msgstr "Playlists"
 
-#: mainmenu.py:118 mainmenu.py:123
+#: mainmenu.py:121 mainmenu.py:126
 msgid "Add Playlist"
 msgstr "Playlist toevoegen"
 
-#: mainmenu.py:119 mainmenu.py:124 settings.py:59
+#: mainmenu.py:122 mainmenu.py:127 settings.py:59
 msgid "Main Settings"
 msgstr "Instellingen"
 
-#: mainmenu.py:120
+#: mainmenu.py:123
 msgid "Manual EPG Update"
 msgstr "Handmatig EPG updaten"
 
-#: mainmenu.py:127
+#: mainmenu.py:130
 msgid "Download Manager"
 msgstr "Download manager"
 
-#: mainmenu.py:150
+#: mainmenu.py:153
 msgid "EPGs downloading."
 msgstr "EPG downloaden."
 
-#: mainmenu.py:187
+#: mainmenu.py:190
 msgid ""
 "Warning: delete stored json data for all playlists... Settings, favourites "
 "etc. \n"
@@ -424,144 +366,146 @@ msgstr ""
 "Instellingen, favorieten etc. Playlists worden niet verwijderd\n"
 "Doorgaan?"
 
-#: menu.py:52
-msgid "Update"
-msgstr "Update"
+#: menu.py:218 vod.py:86
+msgid "Vod"
+msgstr "VOD"
 
-#: menu.py:54
-msgid "Catchup channel check updated: "
-msgstr "Catchup kanalen bijgewerkt: "
-
-#: menu.py:86 menu.py:285
-msgid "Last catchup check: "
-msgstr "Laatste catchup check: "
-
-#: menu.py:233
+#: menu.py:223
 msgid "TV Series"
 msgstr "TV series"
 
-#: menu.py:248 playsettings.py:42
+#: menu.py:242 playsettings.py:42
 msgid "Playlist Settings"
 msgstr "Playlist instellingen"
 
-#: menu.py:257
+#: menu.py:251
 msgid "No data, blocked or playlist not compatible with XStreamity plugin."
 msgstr ""
 "Geen data, geblokkeerd of playlist niet compatible met Xstreamity plugin."
 
-#: playlists.py:53
+#: playlists.py:52
 msgid "Select Playlist"
 msgstr "Selecteer een playlist"
 
-#: playlists.py:58
+#: playlists.py:57
 msgid "Info"
 msgstr "Info"
 
-#: playlists.py:290 playlists.py:350
+#: playlists.py:289 playlists.py:349
 msgid "Server Not Responding"
 msgstr "Server reageert niet"
 
-#: playlists.py:302 playlists.py:352
+#: playlists.py:301 playlists.py:351
 msgid "Not Authorised"
 msgstr "Niet gemachtigd"
 
-#: playlists.py:307 playlists.py:315 playlists.py:339
+#: playlists.py:306 playlists.py:314 playlists.py:338 serverinfo.py:71
 msgid "Active"
 msgstr "Actief"
 
-#: playlists.py:309 playlists.py:344
+#: playlists.py:308 playlists.py:343 serverinfo.py:73
 msgid "Banned"
 msgstr "Verboden"
 
-#: playlists.py:311 playlists.py:348
+#: playlists.py:310 playlists.py:347 serverinfo.py:75
 msgid "Disabled"
 msgstr "Geblokkeerd"
 
-#: playlists.py:313 playlists.py:346
+#: playlists.py:312 playlists.py:345 serverinfo.py:77
 msgid "Expired"
 msgstr "Verlopen"
 
-#: playlists.py:318 playlists.py:320
+#: playlists.py:317 playlists.py:319
 msgid "Expires: "
 msgstr "Verloopt: "
 
-#: playlists.py:322
+#: playlists.py:321
 msgid "Active Conn:"
 msgstr "Actieve con:"
 
-#: playlists.py:325
+#: playlists.py:324
 msgid "Max Conn:"
 msgstr "Max conn:"
 
-#: playlists.py:365
+#: playlists.py:364
 msgid "Delete selected playlist?"
 msgstr "Gekozen playlist verwijderen?"
 
-#: playlists.py:386
+#: playlists.py:385
 msgid "Delete providers EPG data?"
 msgstr "Provider EPG verwijderen?"
 
-#: playsettings.py:81 record.py:73 server.py:77 settings.py:99
+#: playsettings.py:81 record.py:73 server.py:79 settings.py:99
 msgid "Really close without saving settings?"
 msgstr "Afsluiten zonder op te slaan?"
 
-#: playsettings.py:137 server.py:105
+#: playsettings.py:139 server.py:107
 msgid "Short name or provider name:"
 msgstr "Provider naam:"
 
-#: playsettings.py:139
+#: playsettings.py:141
 msgid "Show LIVE category:"
 msgstr "LIVE categorie weergeven:"
 
-#: playsettings.py:140
+#: playsettings.py:142
 msgid "Show VOD category:"
 msgstr "VOD categorie weergeven:"
 
-#: playsettings.py:141
+#: playsettings.py:143
 msgid "Show SERIES category:"
 msgstr "SERIES categorie weergeven:"
 
-#: playsettings.py:142
+#: playsettings.py:144
 msgid "Show CATCHUP category:"
 msgstr "CATCHUP categorie weergeven:"
 
-#: playsettings.py:143 server.py:111
+#: playsettings.py:145 server.py:113
 msgid "Output:"
 msgstr "Formaat:"
 
-#: playsettings.py:146
+#: playsettings.py:148
 msgid "Stream Type LIVE:"
 msgstr "Streamtype voor LIVE:"
 
-#: playsettings.py:149
+#: playsettings.py:151
 msgid "Stream Type VOD/SERIES:"
 msgstr "Streamtype voor VOD/Series:"
 
-#: playsettings.py:151
+#: playsettings.py:153
 msgid "Stream Source URL:"
 msgstr "Stream Source URL:"
 
-#: playsettings.py:153
+#: playsettings.py:155
 msgid "EPG offset:"
 msgstr "EPG compenseren:"
 
-#: playsettings.py:154
+#: playsettings.py:156
 msgid "Use alternative EPG url:"
 msgstr "Gebruik alternatieve EPG-url:"
 
-#: playsettings.py:156
+#: playsettings.py:158
 msgid "Alternative EPG url:"
 msgstr "Alternatieve EPG-URL:"
 
-#: plugin.py:227 plugin.py:348
+#: playsettings.py:237
+msgid ""
+"Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum 3 "
+"characters."
+msgstr ""
+
+#: playsettings.py:245 server.py:210
+msgid "Name already used. Please enter a unique name."
+msgstr ""
+
+#: plugin.py:253 plugin.py:374
 msgid "XStreamity"
 msgstr "XStreamity"
 
-#: plugin.py:347
+#: plugin.py:373
 msgid "IPTV Xtream Codes playlists player by KiddaC"
 msgstr "IPTV Xtream Codes Playlist Player by KiddaC, NL vertaling: grox"
 
-#: record.py:39 serverinfo.py:61 streamplayer.py:1632
+#: record.py:39 serverinfo.py:60
 msgid "Close"
 msgstr "Afsluiten"
 
@@ -585,35 +529,95 @@ msgstr "Starttijd"
 msgid "End Time"
 msgstr "Eindtijd"
 
+#: series.py:85
+msgid "Series Categories"
+msgstr "Series Categorie"
+
+#: series.py:86 series.py:1805
+msgid "Series"
+msgstr "Series"
+
+#: series.py:409
+#, fuzzy
+#| msgid "Filter this category..."
+msgid "No series found in this category."
+msgstr "Filter deze categorie..."
+
+#: series.py:1371 series.py:1399 vod.py:1014 vod.py:1035
+msgid "Sort: Year"
+msgstr "Sorteren: Jaar"
+
+#: series.py:1772 vod.py:1424
+msgid "Video Type:"
+msgstr "Video Type:"
+
+#: series.py:1773 vod.py:1425
+msgid "Rating:"
+msgstr "Beoordeling:"
+
+#: series.py:1774 vod.py:1426
+msgid "Genre:"
+msgstr "Genre:"
+
+#: series.py:1775 vod.py:1427
+msgid "Duration:"
+msgstr "Duur:"
+
+#: series.py:1776 vod.py:1428
+msgid "Release Date:"
+msgstr "Release datum:"
+
+#: series.py:1777 vod.py:1429
+msgid "Cast:"
+msgstr "Cast:"
+
+#: series.py:1778 vod.py:1430
+msgid "Director:"
+msgstr "Regisseur:"
+
+#: series.py:1779 vod.py:1431
+msgid "Country:"
+msgstr "Land:"
+
+#: series.py:1849
+msgid "Season "
+msgstr "Seizoen "
+
 #: server.py:43
 msgid "Add Xtream Codes Playlist"
 msgstr "Xtream Codes playlist toevoegen"
 
-#: server.py:106
+#: server.py:108
 msgid "Protocol:"
 msgstr "Protocol:"
 
-#: server.py:107
+#: server.py:109
 msgid "Server URL: i.e. domain.xyz"
 msgstr "Server URL: bijv. domain.xyz"
 
-#: server.py:108
+#: server.py:110
 msgid "Port:"
 msgstr "Poort:"
 
-#: server.py:109
+#: server.py:111
 msgid "Username:"
 msgstr "Gebruikersnaam:"
 
-#: server.py:110
+#: server.py:112
 msgid "Password:"
 msgstr "Wachtwoord:"
 
-#: server.py:184
+#: server.py:197
 msgid "Details are not valid or unauthorised"
 msgstr "Details zijn niet geldig of ongeautoriseerd"
 
-#: server.py:209
+#: server.py:202
+msgid ""
+"Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum 2 "
+"characters."
+msgstr ""
+
+#: server.py:227
 msgid "Playlist added successfully."
 msgstr "Playlist succesvol toegevoegd."
 
@@ -621,43 +625,43 @@ msgstr "Playlist succesvol toegevoegd."
 msgid "User Information"
 msgstr "Gebruikersinformatie"
 
-#: serverinfo.py:44
+#: serverinfo.py:43
 msgid "Status:"
 msgstr "Toestand:"
 
-#: serverinfo.py:45
-msgid "Is Trial:"
-msgstr "Is Proef:"
-
-#: serverinfo.py:46
-msgid "Active Connections:"
-msgstr "Actieve verbindingen:"
-
-#: serverinfo.py:47
-msgid "Max Connections:"
-msgstr "Maximale verbindingen:"
-
-#: serverinfo.py:48
-msgid "Created At:"
-msgstr "Gemaakt bij:"
-
-#: serverinfo.py:49
+#: serverinfo.py:44
 msgid "Expiry Date:"
 msgstr "Vervaldatum:"
 
-#: serverinfo.py:50
+#: serverinfo.py:45
+msgid "Created At:"
+msgstr "Gemaakt bij:"
+
+#: serverinfo.py:46
+msgid "Is Trial:"
+msgstr "Is Proef:"
+
+#: serverinfo.py:47
+msgid "Active Connections:"
+msgstr "Actieve verbindingen:"
+
+#: serverinfo.py:48
+msgid "Max Connections:"
+msgstr "Maximale verbindingen:"
+
+#: serverinfo.py:49
 msgid "Allowed Output Formats:"
 msgstr "Toegestane uitvoerformaten:"
 
-#: serverinfo.py:51
+#: serverinfo.py:50
 msgid "Real URL:"
 msgstr "Echte URL:"
 
-#: serverinfo.py:52
+#: serverinfo.py:51
 msgid "Timezone:"
 msgstr "Tijdzone:"
 
-#: serverinfo.py:53
+#: serverinfo.py:52
 msgid "Server Offset:"
 msgstr "Server-offset:"
 
@@ -671,146 +675,178 @@ msgstr ""
 "\n"
 "Pin mag niet 0000, 1111 of 1234 zijn"
 
-#: settings.py:127
+#: settings.py:126
 msgid "You need to restart the GUI"
 msgstr "Je moet de GUI herstarten"
 
-#: settings.py:127
+#: settings.py:126
 msgid "Do you want to restart now?"
 msgstr "Wil je nu herstarten?"
 
-#: settings.py:138
+#: settings.py:137
 msgid "Select skin"
 msgstr "Selecteer skin"
 
-#: settings.py:139
+#: settings.py:138
 msgid "playlists.txt location"
 msgstr "playlists.txt locatie"
 
-#: settings.py:139 settings.py:151
+#: settings.py:138 settings.py:150 settings.py:162 settings.py:169
 msgid " *Restart GUI Required"
 msgstr " * Herstart GUI noodzakelijk"
 
-#: settings.py:140
+#: settings.py:139
 msgid "EPG download location"
 msgstr "EPG download locatie"
 
-#: settings.py:141
+#: settings.py:140
 msgid "VOD download folder"
 msgstr "VOD download map"
 
-#: settings.py:144
+#: settings.py:143
 msgid "Default LIVE stream type"
 msgstr "Standaardtype LIVE-Stream"
 
-#: settings.py:145
+#: settings.py:144
 msgid "Default VOD/SERIES stream type"
 msgstr "Standaardtype VOD/Series-stream"
 
-#: settings.py:147
+#: settings.py:146
 msgid "Preview LIVE streams in mini tv"
 msgstr "Voorbeeldweergave van LIVE streams in mini TV"
 
-#: settings.py:148
+#: settings.py:147
 msgid "Stop stream on back button"
 msgstr "Stream stoppen via terug knop"
 
-#: settings.py:149
+#: settings.py:148
 msgid "XStreamity parental control"
 msgstr "XStreamity ouderlijk toezicht"
 
-#: settings.py:150
+#: settings.py:149
 msgid "XStreamity parental pin"
 msgstr "XStreamity ouderlijke pincode"
 
-#: settings.py:151
+#: settings.py:150
 msgid "Show in main menu"
 msgstr "Weergeven in hoofdmenu"
 
-#: settings.py:153
+#: settings.py:152
 msgid "Use Movie Database(TMDB) for VOD & Series"
 msgstr "Filmdatabase (TMDB) voor VOD en series gebruiken"
 
-#: settings.py:154
+#: settings.py:153
 msgid "Movie Database language"
 msgstr "Taal van database"
 
-#: settings.py:156
+#: settings.py:155
 msgid "Margin before catchup (mins)"
 msgstr "Marge voor catchup (min.)"
 
-#: settings.py:157
+#: settings.py:156
 msgid "Margin after catchup (mins)"
 msgstr "Marge na catchup (min.)"
 
-#: settings.py:159
+#: settings.py:158
 msgid "Allow SubsSupport plugin in VOD"
 msgstr "SubsSupport plugin in VOD gebruiken"
 
-#: settings.py:161
+#: settings.py:160
 msgid "Skip playlist selection screen if only 1 playlist"
 msgstr "Playlist-keuzescherm overslaan bij slechts één playlist"
 
-#: settings.py:163
+#: settings.py:162
 msgid "Automatic EPG download time"
 msgstr "Automatische EPG-downloadtijd"
 
-#: settings.py:165
+#: settings.py:164
 msgid "Show channel picons"
 msgstr "Zender picons weergeven"
 
-#: settings.py:166
+#: settings.py:165
 msgid "Show Vod/Series posters"
 msgstr "Vod/Serie-posters weergeven"
 
-#: settings.py:167
+#: settings.py:166
 msgid "Show infobar picons"
 msgstr "Infobalkpictogrammen weergeven"
 
-#: settings.py:168
+#: settings.py:167
 msgid "Show infobar posters"
 msgstr "Infobalkposters weergeven"
 
-#: settings.py:170
+#: settings.py:169
 msgid "Auto start XStreamity on boot"
 msgstr "Start XStreamity automatisch tijdens het opstarten"
 
-#: settings.py:300 settings.py:313 settings.py:326
+#: settings.py:293 settings.py:308 settings.py:323
 msgid "Choose Directory:"
 msgstr "Selecteer map:"
 
-#: settings.py:301 settings.py:314 settings.py:327
+#: settings.py:294 settings.py:309 settings.py:324
 msgid "Choose directory"
 msgstr "Selecteer map"
 
-#: streamplayer.py:429
+#: streamplayer.py:452
 msgid "TV"
 msgstr "TV"
 
-#: streamplayer.py:1013
+#: streamplayer.py:978 streamplayer.py:1393 streamplayer.py:1638
+#, fuzzy
+#| msgid "Recording Failed."
+msgid "Resolution Change Failed"
+msgstr "Opname mislukt."
+
+#: streamplayer.py:1033
 msgid "Do you want to resume this playback?"
 msgstr "Wil je het afspelen voortzetten?"
 
-#: streamplayer.py:1013
+#: streamplayer.py:1033
 #, python-format
 msgid "Resume position at %s"
 msgstr "Hervatten vanaf positie %s"
 
-#: streamplayer.py:1096
+#: streamplayer.py:1132
 msgid "VOD"
 msgstr "VOD"
 
-#: streamplayer.py:1416
+#: streamplayer.py:1475
 msgid "Catch Up"
 msgstr "Catch Up"
 
-#: streamplayer.py:1629
-msgid "Xstreamity Log"
-msgstr "Xstreamity Log"
+#: vod.py:85
+msgid "Vod Categories"
+msgstr "VOD Categorieën"
 
-#: streamplayer.py:1633
-msgid "Clear"
-msgstr "Verwijderen"
+#: vod.py:1456
+msgid "Movie"
+msgstr "Film"
+
+#: vod.py:1489
+msgid ""
+"The IMDb plugin is not installed!\n"
+"Please install it."
+msgstr ""
+"IMDb Plugin is niet geïnstalleerd!\n"
+"Installeren aub."
+
+#~ msgid "Hide/Show"
+#~ msgstr "Verberg/Toon"
+
+#~ msgid "Update"
+#~ msgstr "Update"
+
+#~ msgid "Catchup channel check updated: "
+#~ msgstr "Catchup kanalen bijgewerkt: "
+
+#~ msgid "Last catchup check: "
+#~ msgstr "Laatste catchup check: "
+
+#~ msgid "Xstreamity Log"
+#~ msgstr "Xstreamity Log"
+
+#~ msgid "Clear"
+#~ msgstr "Verwijderen"
 
 #~ msgid "Server URL:"
 #~ msgstr "Server URL:"
