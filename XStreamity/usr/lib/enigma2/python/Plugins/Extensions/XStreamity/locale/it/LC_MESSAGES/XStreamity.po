@@ -3,8 +3,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: XStreamity v4.19\n"
-"POT-Creation-Date: 2024-01-07 23:56+0000\n"
-"PO-Revision-Date: 2024-01-07 23:56+0000\n"
+"POT-Creation-Date: 2024-01-08 12:14+0000\n"
+"PO-Revision-Date: 2024-01-08 12:14+0000\n"
 "Last-Translator: Dario Croci <spaeleus@croci.org>\n"
 "Language-Team: Dario Croci <spaeleus@croci.org>\n"
 "Language: it_IT\n"
@@ -271,7 +271,7 @@ msgstr "Filtrare questa categoria..."
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1471
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1116
 msgid "No results found."
-msgstr ""
+msgstr "Nessun risultato trovato."
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:755
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:925
@@ -540,7 +540,7 @@ msgid ""
 "Do you wish to continue?"
 msgstr ""
 "Attenzione: verranno rimossi i dati json memorizzati per tutte le playlist "
-"(impostazioni, preferiti ecc)... \n"
+"(impostazioni, preferiti ecc) \n"
 "Le playlist non verranno eliminate.\n"
 "Continuare?"
 
@@ -1052,36 +1052,3 @@ msgid ""
 msgstr ""
 "Plugin IMDb non installato.\n"
 "Provvedere all'installazione."
-
-#~ msgid "Hide/Show"
-#~ msgstr "Nascondere/Mostrare"
-
-#~ msgid "Update"
-#~ msgstr "Aggiornare"
-
-#~ msgid "Catchup channel check updated: "
-#~ msgstr "Controllo del canale Catch-Up aggiornato: "
-
-#~ msgid "Last catchup check: "
-#~ msgstr "Ultimo controllo Catch-Up: "
-
-#~ msgid "Xstreamity Log"
-#~ msgstr "Log XStreamity"
-
-#~ msgid "Clear"
-#~ msgstr "Ripulire"
-
-#~ msgid "Server URL:"
-#~ msgstr "URL Server:"
-
-#~ msgid "Select skin *Restart GUI Required"
-#~ msgstr "Selezionare skin (richiesto riavvio GUI)"
-
-#~ msgid "Show in main menu *Restart GUI Required"
-#~ msgstr "Mostrare nel menu principale (richiesto riavvio GUI)"
-
-#~ msgid "Automatic EPG download time *Restart GUI Required"
-#~ msgstr "Ora download automatico EPG (richiesto riavvio GUI)"
-
-#~ msgid "Auto start XStreamity on boot *Restart GUI Required"
-#~ msgstr "Avvio automatico di XStreamity al boot (richiesto riavvio GUI)"

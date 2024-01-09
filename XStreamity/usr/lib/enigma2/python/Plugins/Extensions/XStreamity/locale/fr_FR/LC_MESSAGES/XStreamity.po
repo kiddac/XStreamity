@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: XStreamity v4.19\n"
-"POT-Creation-Date: 2024-01-07 23:55+0000\n"
-"PO-Revision-Date: 2024-01-07 23:55+0000\n"
+"Project-Id-Version: Xstreamity_4.29\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
 "Last-Translator: Jakarta\n"
 "Language-Team: \n"
 "Language: fr\n"
@@ -10,9 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 3.4.1\n"
-"X-Poedit-Basepath: ../../../../../../../../..\n"
-"X-Poedit-SearchPath-0: .\n"
+"X-Generator: Poedit 3.4\n"
 
 #: lib/enigma2/python/Components/Converter/XStreamityServicePosition.py:159
 #: lib/enigma2/python/Components/Converter/XStreamityServicePosition.py:161
@@ -269,7 +267,7 @@ msgstr "Filtrer cette catégorie..."
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1471
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1116
 msgid "No results found."
-msgstr ""
+msgstr "Aucun résultat trouvé."
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:755
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:925
@@ -353,7 +351,7 @@ msgstr "Pas Démarré"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:153
 msgid "VOD Download Manager"
-msgstr "Gestionnaire de téléchargement FILMS (VOD)"
+msgstr "Gestionnaire de téléchargement FILMS"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:166
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:395
@@ -381,13 +379,14 @@ msgstr "Annuler"
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:406
 msgid "Please set download folder in Main Settings."
 msgstr ""
-"Veuillez définir le dossier de téléchargement dans les paramètres principaux."
+"Veuillez définir le dossier de téléchargement dans les paramètres "
+"principaux."
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:406
 msgid ""
 "Vod Download folder location does not exist.\n"
 "\n"
-msgstr "L'emplacement du dossier de téléchargement FILMS (VOD) n'existe pas\n"
+msgstr "L'emplacement du dossier de téléchargement FILMS n'existe pas\n"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:446
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:452
@@ -448,12 +447,12 @@ msgstr ""
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:146
 msgid "Live Categories"
-msgstr "Choisir les catégories en DIRECT (LIVE)"
+msgstr "Catégories Chaînes TV"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:147
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:213
 msgid "Live Streams"
-msgstr "DIRECT (LIVE)"
+msgstr "Chaînes TV"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:345
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:267
@@ -509,7 +508,7 @@ msgstr ""
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:120
 msgid "Playlists"
-msgstr "Listes de lecture ou Playlists"
+msgstr "Listes de lecture"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:121
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:126
@@ -541,24 +540,24 @@ msgid ""
 "Playlists will not be deleted.\n"
 "Do you wish to continue?"
 msgstr ""
-"Attention : supprimez les données json stockées pour toutes les playlists... "
-"Paramètres, favoris, etc.\n"
+"Attention : supprimez les données json stockées pour toutes les "
+"playlists... Paramètres, favoris, etc.\n"
 "Les listes de lecture ne seront pas supprimées.\n"
 "Souhaitez-vous continuer?"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:218
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:86
 msgid "Vod"
-msgstr "FILMS (VOD)"
+msgstr "Films"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:223
 msgid "TV Series"
-msgstr "SERIES TV"
+msgstr "Séries TV"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:242
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:42
 msgid "Playlist Settings"
-msgstr "Paramètres Playlist"
+msgstr "Paramètres liste de lecture"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:251
 msgid "No data, blocked or playlist not compatible with XStreamity plugin."
@@ -643,11 +642,11 @@ msgstr "Nom abrégé ou nom du fournisseur:"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:141
 msgid "Show LIVE category:"
-msgstr "Afficher la catégorie DIRECT (LIVE)"
+msgstr "Afficher la catégorie CHAINES :"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:142
 msgid "Show VOD category:"
-msgstr "Afficher la catégorie FILMS (VOD):"
+msgstr "Afficher la catégorie FILMS :"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:143
 msgid "Show SERIES category:"
@@ -664,7 +663,7 @@ msgstr "Formats de sortie autorisés:"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:148
 msgid "Stream Type LIVE:"
-msgstr "Type de flux EN DIRECT (LIVE) :"
+msgstr "Type de flux CHAINES :"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:151
 msgid "Stream Type VOD/SERIES:"
@@ -735,7 +734,7 @@ msgstr "Heure de Fin"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:85
 msgid "Series Categories"
-msgstr "Choisir les catégories Séries"
+msgstr "Catégories Séries"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:86
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1805
@@ -743,10 +742,8 @@ msgid "Series"
 msgstr "Séries"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:409
-#, fuzzy
-#| msgid "Filter this category..."
 msgid "No series found in this category."
-msgstr "Filtrer cette catégorie..."
+msgstr "Aucune série trouvée dans cette catégorie."
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1371
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1399
@@ -903,7 +900,7 @@ msgstr "Vous voulez redémarrer maintenant?"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:137
 msgid "Select skin"
-msgstr "Sélectionnez un skin"
+msgstr "Sélectionnez skin"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:138
 msgid "playlists.txt location"
@@ -922,11 +919,11 @@ msgstr "Emplacement de téléchargement de l'EPG"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:140
 msgid "VOD download folder"
-msgstr "Dossier de téléchargement FILMS (VOD)"
+msgstr "Dossier de téléchargement FILMS"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:143
 msgid "Default LIVE stream type"
-msgstr "Type de flux CHAINES (LIVE) par défaut"
+msgstr "Type de flux CHAINES par défaut"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:144
 msgid "Default VOD/SERIES stream type"
@@ -934,7 +931,7 @@ msgstr "Type de flux FILMS/SERIES par défaut"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:146
 msgid "Preview LIVE streams in mini tv"
-msgstr "Prévisualisez les flux CHAINES (LIVE) sur une mini-télévision"
+msgstr "Prévisualisez les flux CHAINES sur une mini-télévision"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:147
 msgid "Stop stream on back button"
@@ -954,8 +951,7 @@ msgstr "Afficher dans le menu principal"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:152
 msgid "Use Movie Database(TMDB) for VOD & Series"
-msgstr ""
-"Utiliser la base de données de films (TMDB) pour les FILMS et les séries"
+msgstr "Utiliser la base de données de films (TMDB) pour les FILMS & SERIES"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:153
 msgid "Movie Database language"
@@ -1036,7 +1032,7 @@ msgstr "Reprendre la position à %s"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:1132
 msgid "VOD"
-msgstr "FILMS (VOD)"
+msgstr "FILMS"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:1475
 msgid "Catch Up"
@@ -1044,7 +1040,7 @@ msgstr "Rattrapage"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:85
 msgid "Vod Categories"
-msgstr "Choisir les catégories VOD….(FILMS)"
+msgstr "Catégories Films"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1456
 msgid "Movie"
@@ -1057,9 +1053,3 @@ msgid ""
 msgstr ""
 "Le plugin IMDb n'est pas installé !\n"
 "Veuillez l'installer."
-
-#~ msgid "Hide/Show"
-#~ msgstr "Masquer/Afficher"
-
-#~ msgid "Update"
-#~ msgstr "Mise à jour"

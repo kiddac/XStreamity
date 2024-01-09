@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-01-07 23:54+0000\n"
-"PO-Revision-Date: 2024-01-07 23:54+0000\n"
+"POT-Creation-Date: 2024-01-08 12:13+0000\n"
+"PO-Revision-Date: 2024-01-08 12:13+0000\n"
 "Last-Translator: Masta2002\n"
 "Language-Team: \n"
 "Language: de\n"
@@ -144,7 +144,7 @@ msgstr "Kategorie filtern."
 
 #: catchup.py:719 live.py:889 series.py:1471 vod.py:1116
 msgid "No results found."
-msgstr ""
+msgstr "Keine Ergebnisse gefunden."
 
 #: catchup.py:755 live.py:925 series.py:1529 vod.py:1153
 msgid "Incorrect pin code."
@@ -495,10 +495,12 @@ msgid ""
 "Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum 3 "
 "characters."
 msgstr ""
+"Der Name des Bouquet darf nicht leer sein. Bitte gebe einen eindeutigen "
+"Bouquet Namen ein. Mindestens 3 Zeichen."
 
 #: playsettings.py:245 server.py:210
 msgid "Name already used. Please enter a unique name."
-msgstr ""
+msgstr "Name bereits verwendet. Bitte gib einen eindeutigen Namen ein."
 
 #: plugin.py:253 plugin.py:374
 msgid "XStreamity"
@@ -541,10 +543,8 @@ msgid "Series"
 msgstr "Serien"
 
 #: series.py:409
-#, fuzzy
-#| msgid "Filter this category..."
 msgid "No series found in this category."
-msgstr "Kategorie filtern."
+msgstr "Keine Serien in dieser Kategorie gefunden."
 
 #: series.py:1371 series.py:1399 vod.py:1014 vod.py:1035
 msgid "Sort: Year"
@@ -619,6 +619,8 @@ msgid ""
 "Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum 2 "
 "characters."
 msgstr ""
+"Der Name des Bouquet darf nicht leer sein. Bitte gebe einen eindeutigen "
+"Bouquet Namen ein. Mindestens 2 Zeichen."
 
 #: server.py:227
 msgid "Playlist added successfully."
@@ -796,10 +798,8 @@ msgid "TV"
 msgstr "TV"
 
 #: streamplayer.py:978 streamplayer.py:1393 streamplayer.py:1638
-#, fuzzy
-#| msgid "Recording Failed."
 msgid "Resolution Change Failed"
-msgstr "Aufnahme fehlgeschlagen."
+msgstr "Änderung der Auflösung fehlgeschlagen"
 
 #: streamplayer.py:1033
 msgid "Do you want to resume this playback?"
@@ -833,21 +833,3 @@ msgid ""
 msgstr ""
 "Das IMDb Plugin ist nicht installiert\n"
 "Bitte installien."
-
-#~ msgid "Hide/Show"
-#~ msgstr "Verstecken/Zeigen"
-
-#~ msgid "Update"
-#~ msgstr "Update"
-
-#~ msgid "Catchup channel check updated: "
-#~ msgstr "Mediatheken Kanalprüfung aktualisiert: "
-
-#~ msgid "Last catchup check: "
-#~ msgstr "Letzte Mediatheken Überprüfung: "
-
-#~ msgid "Xstreamity Log"
-#~ msgstr "Xstreamity-Protokoll"
-
-#~ msgid "Clear"
-#~ msgstr "Bereinige"
