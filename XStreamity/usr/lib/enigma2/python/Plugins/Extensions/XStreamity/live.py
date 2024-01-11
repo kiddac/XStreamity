@@ -217,6 +217,14 @@ class XStreamity_Categories(Screen):
 
         next_url = str(self.player_api) + "&action=get_live_categories"
 
+        full_url = glob.current_playlist["playlist_info"]["full_url"]
+
+        self.unique_ref = 0
+
+        for j in str(full_url):
+            value = ord(j)
+            self.unique_ref += value
+
         epglocation = str(cfg.epglocation.value)
         self.epgfolder = os.path.join(epglocation, str(self.name))
         self.epgjsonfile = os.path.join(self.epgfolder, "epg.json")
@@ -384,7 +392,7 @@ class XStreamity_Categories(Screen):
 
         self.list2 = []
         currentChannelList = response
-        for item in currentChannelList:
+        for channel in currentChannelList:
             name = ""
             stream_id = ""
             stream_icon = ""
@@ -392,7 +400,7 @@ class XStreamity_Categories(Screen):
             added = ""
             category_id = ""
             custom_sid = ""
-            serviceref = ""
+            service_ref = ""
             nowtime = ""
             nowTitle = ""
             nowDesc = ""
@@ -405,60 +413,60 @@ class XStreamity_Categories(Screen):
             watching = False
             hidden = False
 
-            if "name" in item and item["name"]:
-                name = item["name"]
+            if "name" in channel and channel["name"]:
+                name = channel["name"]
 
                 # restyle bouquet markers
-                if "stream_type" in item and item["stream_type"] and item["stream_type"] != "live":
+                if "stream_type" in channel and channel["stream_type"] and channel["stream_type"] != "live":
                     pattern = re.compile(r"[^\w\s()\[\]]", re.U)
                     name = re.sub(r"_", "", re.sub(pattern, "", name))
                     name = "** " + str(name) + " **"
 
-            if "stream_id" in item and item["stream_id"]:
-                stream_id = item["stream_id"]
+            if "stream_id" in channel and channel["stream_id"]:
+                stream_id = channel["stream_id"]
 
                 if str(stream_id) in glob.current_playlist["player_info"]["channelshidden"]:
                     hidden = True
             else:
                 continue
 
-            if "stream_icon" in item and item["stream_icon"]:
-                if item["stream_icon"].startswith("http"):
-                    stream_icon = item["stream_icon"]
+            if "stream_icon" in channel and channel["stream_icon"]:
+                if channel["stream_icon"].startswith("http"):
+                    stream_icon = channel["stream_icon"]
 
                 if stream_icon.startswith("https://vignette.wikia.nocookie.net/tvfanon6528"):
                     if "scale-to-width-down" not in stream_icon:
                         stream_icon = str(stream_icon) + "/revision/latest/scale-to-width-down/220"
 
-            if "epg_channel_id" in item and item["epg_channel_id"]:
-                epg_channel_id = item["epg_channel_id"]
+            if "epg_channel_id" in channel and channel["epg_channel_id"]:
+                epg_channel_id = channel["epg_channel_id"]
 
                 if epg_channel_id and "&" in epg_channel_id:
                     epg_channel_id = epg_channel_id.replace("&", "&amp;")
 
-            if "added" in item and item["added"]:
-                added = item["added"]
+            if "added" in channel and channel["added"]:
+                added = channel["added"]
 
-            if "category_id" in item and item["category_id"]:
-                category_id = item["category_id"]
+            if "category_id" in channel and channel["category_id"]:
+                category_id = channel["category_id"]
 
-            if "direct_source" in item and item["direct_source"]:
-                direct_source = item["direct_source"]
+            if "direct_source" in channel and channel["direct_source"]:
+                direct_source = channel["direct_source"]
 
-            bouquet_id = 0
+            bouquet_id1 = 0
             calc_remainder = int(stream_id) // 65535
-            bouquet_id = bouquet_id + calc_remainder
-            bouquet_stream_id = int(stream_id) - int(calc_remainder * 65535)
-            unique_ref = 999 + int(glob.current_playlist["playlist_info"]["index"])
-            serviceref = "1:0:1:" + str(format(bouquet_id, "04x")) + ":" + str(format(bouquet_stream_id, "04x")) + ":" + str(format(unique_ref, "08x")) + ":0:0:0:0:" + "http%3a//example.m3u8"
+            bouquet_id1 = bouquet_id1 + calc_remainder
+            bouquet_id2 = int(stream_id) - int(calc_remainder * 65535)
 
-            if "custom_sid" in item and item["custom_sid"]:
-                custom_sid = item["custom_sid"]
+            service_ref = "1:0:1:" + str(format(bouquet_id1, "x")) + ":" + str(format(bouquet_id2, "x")) + ":" + str(format(self.unique_ref, "x")) + ":0:0:0:0:" + "http%3a//example.m3u8"
 
-                if custom_sid and custom_sid != "null" and custom_sid != "None" and custom_sid is not None and custom_sid != "0":
-                    if custom_sid.startswith(":"):
-                        custom_sid = "1" + str(custom_sid)
-                    serviceref = str(":".join(custom_sid.split(":")[:7])) + ":0:0:0:" + "http%3a//example.m3u8"
+            if "custom_sid" in channel and channel["custom_sid"]:
+                if channel["custom_sid"] != "null" and channel["custom_sid"] != "None" and channel["custom_sid"] is not None and channel["custom_sid"] != "0":
+                    if channel["custom_sid"][0].isdigit():
+                        channel["custom_sid"] = "1" + channel["custom_sid"][1:]
+
+                    service_ref = str(":".join(channel["custom_sid"].split(":")[:7])) + ":0:0:0:" + "http%3a//example.m3u8"
+                    custom_sid = channel["custom_sid"]
 
             next_url = "%s/live/%s/%s/%s.%s" % (self.host, self.username, self.password, stream_id, self.output)
 
@@ -470,7 +478,7 @@ class XStreamity_Categories(Screen):
             else:
                 glob.current_playlist["player_info"]["livefavourites"] = []
 
-            self.list2.append([index, str(name), str(stream_id), str(stream_icon), str(epg_channel_id), str(added), str(category_id), str(custom_sid), str(serviceref),
+            self.list2.append([index, str(name), str(stream_id), str(stream_icon), str(epg_channel_id), str(added), str(category_id), str(custom_sid), str(service_ref),
                               str(nowtime), str(nowTitle), str(nowDesc), str(nexttime), str(nextTitle), str(nextDesc), str(next_url), favourite, watching, hidden, str(direct_source)])
             index += 1
 
@@ -1718,28 +1726,28 @@ class XStreamity_Categories(Screen):
                 channelid = self.xmltv_channel_list[i]["epg_channel_id"]
                 if channelid and "&" in channelid:
                     channelid = channelid.replace("&", "&amp;")
-                bouquet_id = 0
 
                 stream_id = int(self.xmltv_channel_list[i]["stream_id"])
+
+                bouquet_id1 = 0
                 calc_remainder = int(stream_id) // 65535
-                bouquet_id = bouquet_id + calc_remainder
-                stream_id = int(stream_id) - int(calc_remainder * 65535)
+                bouquet_id1 = bouquet_id1 + calc_remainder
+                bouquet_id2 = int(stream_id) - int(calc_remainder * 65535)
 
-                unique_ref = 999 + int(glob.current_playlist["playlist_info"]["index"])
+                service_ref = "1:0:1:" + str(format(bouquet_id1, "x")) + ":" + str(format(bouquet_id2, "x")) + ":" + str(format(self.unique_ref, "x")) + ":0:0:0:0:" + "http%3a//example.m3u8"
 
-                serviceref = "1:0:1:" + str(format(bouquet_id, "04x")) + ":" + str(format(stream_id, "04x")) + ":" + str(format(unique_ref, "08x")) + ":0:0:0:0:" + "http%3a//example.m3u8"
+                if "custom_sid" in self.xmltv_channel_list[i] and self.xmltv_channel_list[i]["custom_sid"]:
+                    if self.xmltv_channel_list[i]["custom_sid"] and self.xmltv_channel_list[i]["custom_sid"] != "None" and self.xmltv_channel_list[i]["custom_sid"] is not None and self.xmltv_channel_list[i]["custom_sid"] != "0":
+                        if self.xmltv_channel_list[i]["custom_sid"][0].isdigit():
+                            self.xmltv_channel_list[i]["custom_sid"] = "1" + self.xmltv_channel_list[i]["custom_sid"][1:]
 
-                if "custom_sid" in self.xmltv_channel_list[i]:
-                    if self.xmltv_channel_list[i]["custom_sid"] and self.xmltv_channel_list[i]["custom_sid"] != "None":
-                        if self.xmltv_channel_list[i]["custom_sid"].startswith(":"):
-                            self.xmltv_channel_list[i]["custom_sid"] = "1" + self.xmltv_channel_list[i]["custom_sid"]
-                        serviceref = str(":".join(self.xmltv_channel_list[i]["custom_sid"].split(":")[:7])) + ":0:0:0:" + "http%3a//example.m3u8"
+                        service_ref = str(":".join(self.xmltv_channel_list[i]["custom_sid"].split(":")[:7])) + ":0:0:0:" + "http%3a//example.m3u8"
 
-                self.xmltv_channel_list[i]["serviceref"] = str(serviceref)
+                self.xmltv_channel_list[i]["serviceref"] = str(service_ref)
                 name = self.xmltv_channel_list[i]["name"]
 
                 if channelid and channelid != "None":
-                    xml_str += '\t<channel id="' + str(channelid) + '">' + str(serviceref) + '</channel><!-- ' + str(name) + ' -->\n'
+                    xml_str += '\t<channel id="' + str(channelid) + '">' + str(service_ref) + '</channel><!-- ' + str(name) + ' -->\n'
 
             xml_str += '</channels>\n'
             f.write(xml_str)
