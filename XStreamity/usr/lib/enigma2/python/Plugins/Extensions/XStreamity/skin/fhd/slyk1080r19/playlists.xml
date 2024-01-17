@@ -34,13 +34,13 @@
 			MultiContentEntryText(pos = (1065, 0), size = (240, 54), font=1, color = 0x00ffffff, color_sel = 0x00133171, backcolor_sel = None, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER, text = 4), 
 			
 			<!-- Active Conn Num -->
-			MultiContentEntryText(pos = (1365, 0), size = (90, 54), font=1, color = 0x00ffffff, color_sel = 0x00133171, backcolor_sel = None, flags = RT_HALIGN_RIGHT | RT_VALIGN_CENTER, text = 7),
+			MultiContentEntryText(pos = (1365-30, 0), size = (90, 54), font=1, color = 0x00ffffff, color_sel = 0x00133171, backcolor_sel = None, flags = RT_HALIGN_RIGHT | RT_VALIGN_CENTER, text = 7),
 			
 			<!-- Max Conn Num --> 
-			MultiContentEntryText(pos = (1485, 0), size = (90, 54), font=1, color = 0x00ffffff, color_sel = 0x00133171, backcolor_sel = None, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER, text = 9),
+			MultiContentEntryText(pos = (1485-30, 0), size = (90, 54), font=1, color = 0x00ffffff, color_sel = 0x00133171, backcolor_sel = None, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER, text = 9),
 			
 			<!-- Authorised LED -->
-			MultiContentEntryPixmapAlphaBlend(pos = (1575, 15), size = (23, 24), png = 5),
+			MultiContentEntryPixmapAlphaBlend(pos = (1575-30, 15), size = (23, 24), png = 5),
 			
 			<!-- Max Conn -->
 			<!-- MultiContentEntryText(pos = (645, 75), size = (120, 30), font=1, color = 0x00ffffff, color_sel = 0x00133171, backcolor = 0x00133171, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 8),-->

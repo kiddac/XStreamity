@@ -65,8 +65,8 @@
 		<convert type="XStreamityServiceInfo">IsUHD</convert>
 		<convert type="ConditionalShowHide"/>
 	</widget>
-	<widget text="hd" render="FixedLabel" source="session.CurrentService" position="1168,626" size="60,24" font="xstreamitybold;18" foregroundColor="#ffffff" backgroundColor="#40000000" valign="center" halign="center" transparent="1" zPosition="3">
-		<convert type="XStreamityServiceInfo">Ishd</convert>
+	<widget text="FHD" render="FixedLabel" source="session.CurrentService" position="1168,626" size="60,24" font="xstreamitybold;18" foregroundColor="#ffffff" backgroundColor="#40000000" valign="center" halign="center" transparent="1" zPosition="3">
+		<convert type="XStreamityServiceInfo">IsFHD</convert>
 		<convert type="ConditionalShowHide"/>
 	</widget>
 	<widget text="HD" render="FixedLabel" source="session.CurrentService" position="1168,626" size="60,24" font="xstreamitybold;18" foregroundColor="#ffffff" backgroundColor="#40000000" valign="center" halign="center" transparent="1" zPosition="3">

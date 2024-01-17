@@ -947,11 +947,15 @@ class XStreamity_Categories(Screen):
             if self["vod_cover"].instance:
                 preview = os.path.join(dir_tmp, "temp.jpg")
 
-                width = 267
-                height = 400
-                if screenwidth.width() > 1280:
+                if screenwidth.width() == 2560:
+                    width = 534
+                    height = 800
+                elif screenwidth.width() > 1280:
                     width = 400
                     height = 600
+                else:
+                    width = 267
+                    height = 400
 
                 self.PicLoad.setPara([width, height, 1, 1, 0, 1, "FF000000"])
 

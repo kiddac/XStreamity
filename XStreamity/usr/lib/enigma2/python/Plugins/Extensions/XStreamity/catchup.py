@@ -568,9 +568,12 @@ class XStreamity_Categories(Screen):
         if self["main_list"].getCurrent():
             original = os.path.join(dir_tmp, "temp.png")
 
-            size = [147, 88]
-            if screenwidth.width() > 1280:
+            if screenwidth.width() == 2560:
+                size = [294, 176]
+            elif screenwidth.width() > 1280:
                 size = [220, 130]
+            else:
+                size = [147, 88]
 
             if os.path.exists(original):
                 try:

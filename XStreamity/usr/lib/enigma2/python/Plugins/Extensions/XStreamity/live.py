@@ -723,9 +723,12 @@ class XStreamity_Categories(Screen):
         if self["main_list"].getCurrent():
             original = os.path.join(dir_tmp, "temp.png")
 
-            size = [147, 88]
-            if screenwidth.width() > 1280:
+            if screenwidth.width() == 2560:
+                size = [294, 176]
+            elif screenwidth.width() > 1280:
                 size = [220, 130]
+            else:
+                size = [147, 88]
 
             if os.path.exists(original):
                 try:
@@ -1048,6 +1051,7 @@ class XStreamity_Categories(Screen):
                                     channel[17] = True  # set watching icon
                                 else:
                                     channel[17] = False
+
                             self.buildLists()
 
                         else:
@@ -1118,7 +1122,7 @@ class XStreamity_Categories(Screen):
             self["x_title"].setText("")
             self["x_description"].setText("")
 
-            if cfg.stopstream.value:
+            if cfg.stopstream.value or cfg.livepreview.value is False:
                 self.stopStream()
 
             self.level -= 1

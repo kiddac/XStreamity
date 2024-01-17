@@ -15,16 +15,16 @@
 			MultiContentEntryText(pos = (40, 32), size = (760, 80), font=0, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 1),
 
 			<!-- Authorised LED -->
-			MultiContentEntryPixmapAlphaBlend(pos = (580, 52), size = (31, 32), png = 5),
+			MultiContentEntryPixmapAlphaBlend(pos = (580-30, 52), size = (31, 32), png = 5),
 			
 			<!-- Authorised -->
 			MultiContentEntryText(pos = (40, 92), size = (344, 40), font=1, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 4),
 			
 			<!-- Active Conn Num -->
-			MultiContentEntryText(pos = (424, 92), size = (80, 40), font=1, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_RIGHT, text = 7),
+			MultiContentEntryText(pos = (424-30, 92), size = (80, 40), font=1, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_RIGHT, text = 7),
 
 			<!-- Max Conn Num --> 
-			MultiContentEntryText(pos = (527, 92), size = (80, 40), font=1, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_RIGHT, text = 9),
+			MultiContentEntryText(pos = (527-30, 92), size = (80, 40), font=1, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_RIGHT, text = 9),
 
 			],
 			"fonts": [gFont("xstreamityregular", 36), gFont("xstreamityregular", 28)],

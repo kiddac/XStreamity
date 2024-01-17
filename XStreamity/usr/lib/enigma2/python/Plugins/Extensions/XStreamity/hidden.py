@@ -223,19 +223,19 @@ class XStreamity_HiddenCategories(Screen, ProtectedScreen):
                         glob.current_playlist["player_info"]["serieshidden"].append(item[1])
                     elif item[2] is False and item[1] in glob.current_playlist["player_info"]["serieshidden"]:
                         glob.current_playlist["player_info"]["serieshidden"].remove(item[1])
-                if self.level == 2:
+                elif self.level == 2:
                     if item[2] is True and item[1] not in glob.current_playlist["player_info"]["seriestitleshidden"]:
                         glob.current_playlist["player_info"]["seriestitleshidden"].append(item[1])
                     elif item[2] is False and item[1] in glob.current_playlist["player_info"]["seriestitleshidden"]:
                         glob.current_playlist["player_info"]["seriestitleshidden"].remove(item[1])
 
-                if self.level == 3:
+                elif self.level == 3:
                     if item[2] is True and item[1] not in glob.current_playlist["player_info"]["seriesseasonshidden"]:
                         glob.current_playlist["player_info"]["seriesseasonshidden"].append(item[1])
                     elif item[2] is False and item[1] in glob.current_playlist["player_info"]["seriesseasonshidden"]:
                         glob.current_playlist["player_info"]["seriesseasonshidden"].remove(item[1])
 
-                if self.level == 4:
+                elif self.level == 4:
                     if item[2] is True and item[1] not in glob.current_playlist["player_info"]["seriesepisodeshidden"]:
                         glob.current_playlist["player_info"]["seriesepisodeshidden"].append(item[1])
                     elif item[2] is False and item[1] in glob.current_playlist["player_info"]["seriesepisodeshidden"]:

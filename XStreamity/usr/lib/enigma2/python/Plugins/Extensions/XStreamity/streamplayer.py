@@ -37,7 +37,6 @@ except Exception as e:
     print(e)
 
 from Screens.MessageBox import MessageBox
-from Screens.PVRState import PVRState
 from Screens.Screen import Screen
 from ServiceReference import ServiceReference
 from Tools.BoundFunction import boundFunction
@@ -299,6 +298,18 @@ class IPTVInfoBarShowHide():
             self.__locked = 0
         if self.execing:
             self.startHideTimer()
+
+
+class PVRState2(Screen):
+    def __init__(self, session):
+        Screen.__init__(self, session)
+        self["eventname"] = Label()
+        self["state"] = Label()
+        self["speed"] = Label()
+        self["statusicon"] = MultiPixmap()
+
+
+PVRState = PVRState2
 
 
 class IPTVInfoBarPVRState:
@@ -901,9 +912,12 @@ class XStreamity_StreamPlayer(
     def resizeImage(self, data=None):
         original = os.path.join(dir_tmp, "temp.png")
 
-        size = [147, 88]
-        if screenwidth.width() > 1280:
+        if screenwidth.width() == 2560:
+            size = [294, 176]
+        elif screenwidth.width() > 1280:
             size = [220, 130]
+        else:
+            size = [147, 88]
 
         if os.path.exists(original):
             try:
@@ -1311,17 +1325,21 @@ class XStreamity_VodPlayer(
 
     def loadDefaultImage(self, data=None):
         if self["cover"].instance:
-            self["cover"].instance.setPixmapFromFile(os.path.join(skin_directory, "common/vod_cover_small.png"))
+            self["cover"].instance.setPixmapFromFile(os.path.join(skin_directory, "common/cover.png"))
 
     def resizeImage(self, data=None):
         if self["cover"].instance:
             preview = os.path.join(dir_tmp, "temp.jpg")
 
-            width = 147
-            height = 220
-            if screenwidth.width() > 1280:
+            if screenwidth.width() == 2560:
+                width = 293
+                height = 440
+            elif screenwidth.width() > 1280:
                 width = 220
                 height = 330
+            else:
+                width = 147
+                height = 220
 
             self.PicLoad.setPara([width, height, 1, 1, 0, 1, "FF000000"])
 
@@ -1560,9 +1578,12 @@ class XStreamity_CatchupPlayer(
         # print("*** resizeImage ***")
         original = os.path.join(dir_tmp, "temp.png")
 
-        size = [147, 88]
-        if screenwidth.width() > 1280:
+        if screenwidth.width() == 2560:
+            size = [294, 176]
+        elif screenwidth.width() > 1280:
             size = [220, 130]
+        else:
+            size = [147, 88]
 
         if os.path.exists(original):
             try:

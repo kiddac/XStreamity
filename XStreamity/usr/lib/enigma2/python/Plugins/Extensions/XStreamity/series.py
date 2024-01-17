@@ -399,7 +399,7 @@ class XStreamity_Categories(Screen):
 
                 next_url = str(self.player_api) + "&action=get_series_info&series_id=" + str(series_id)
 
-                self.list2.append([index, str(name), str(year), str(series_id), str(cover), str(plot), str(cast), str(director), str(genre), str(releaseDate), str(rating), str(last_modified), str(tmdb), str(next_url), hidden])
+                self.list2.append([index, str(name), str(series_id), str(cover), str(plot), str(cast), str(director), str(genre), str(releaseDate), str(rating), str(last_modified), str(tmdb), str(next_url), str(year), hidden])
 
                 index += 1
 
@@ -1291,11 +1291,15 @@ class XStreamity_Categories(Screen):
             if self["vod_cover"].instance:
                 preview = os.path.join(dir_tmp, "temp.jpg")
 
-                width = 267
-                height = 400
-                if screenwidth.width() > 1280:
+                if screenwidth.width() == 2560:
+                    width = 534
+                    height = 800
+                elif screenwidth.width() > 1280:
                     width = 400
                     height = 600
+                else:
+                    width = 267
+                    height = 400
 
                 self.PicLoad.setPara([width, height, 1, 1, 0, 1, "FF000000"])
 
@@ -1388,7 +1392,7 @@ class XStreamity_Categories(Screen):
 
         elif current_sort == (_("Sort: Added")):
             if self.level == 2:
-                activelist.sort(key=lambda x: x[11], reverse=True)
+                activelist.sort(key=lambda x: x[10], reverse=True)
 
             if self.level == 3:
                 activelist.sort(key=lambda x: x[12], reverse=True)
@@ -1398,7 +1402,7 @@ class XStreamity_Categories(Screen):
 
         elif current_sort == (_("Sort: Year")):
             if self.level == 2:
-                activelist.sort(key=lambda x: x[9], reverse=True)
+                activelist.sort(key=lambda x: x[8], reverse=True)
 
             if self.level == 3:
                 activelist.sort(key=lambda x: x[8], reverse=True)
@@ -1838,7 +1842,7 @@ def buildCategoryList(index, title, category_id, hidden):
     return (title, png, index, category_id, hidden)
 
 
-def buildSeriesTitlesList(index, title, year, series_id, cover, plot, cast, director, genre, releaseDate, rating, lastmodified, tmdb, next_url, hidden):
+def buildSeriesTitlesList(index, title, series_id, cover, plot, cast, director, genre, releaseDate, rating, lastmodified, tmdb, next_url, year, hidden):
     png = LoadPixmap(os.path.join(common_path, "more.png"))
     return (title, png, index, next_url, series_id, cover, plot, cast, director, genre, releaseDate, rating, lastmodified, year, tmdb, hidden)
 
