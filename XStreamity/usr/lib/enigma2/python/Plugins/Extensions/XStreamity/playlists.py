@@ -321,6 +321,16 @@ class XStreamity_Playlists(Screen):
                             active = str(_("Active Conn:"))
                             activenum = playlist["user_info"]["active_cons"]
 
+                            try:
+                                activenum = int(activenum)
+                            except:
+                                activenum = 0
+
+                            try:
+                                maxnum = int(maxnum)
+                            except:
+                                maxnum = 0
+
                             maxc = str(_("Max Conn:"))
                             maxnum = playlist["user_info"]["max_connections"]
 
