@@ -985,21 +985,26 @@ class XStreamity_Categories(Screen):
         except:
             pass
 
-        language = "en"
+        language = ""
 
         if cfg.TMDB.value is True:
             language = cfg.TMDBLanguage2.value
 
+        languagestr = ""
+
+        if language:
+            languagestr = "&language=" + str(language)
+
         if self.level == 2:
-            detailsurl = "http://api.themoviedb.org/3/tv/" + str(resultid) + "?api_key=" + str(self.check(self.token)) + "&append_to_response=credits&language=" + str(language)
+            detailsurl = "http://api.themoviedb.org/3/tv/" + str(resultid) + "?api_key=" + str(self.check(self.token)) + "&append_to_response=credits" + languagestr
 
         elif self.level == 3:
-            # self.storedseason = self["main_list"].getCurrent()[12]
-            detailsurl = "http://api.themoviedb.org/3/tv/" + str(resultid) + "/season/" + str(self.storedseason) + "?api_key=" + str(self.check(self.token)) + "&append_to_response=credits&language=" + str(language)
+            self.storedseason = self["main_list"].getCurrent()[12]
+            detailsurl = "http://api.themoviedb.org/3/tv/" + str(resultid) + "/season/" + str(self.storedseason) + "?api_key=" + str(self.check(self.token)) + "&append_to_response=credits" + languagestr
 
         elif self.level == 4:
-            # self.storedepisode = self["main_list"].getCurrent()[19]
-            detailsurl = "http://api.themoviedb.org/3/tv/" + str(resultid) + "/season/" + str(self.storedseason) + "/episode/" + str(self.storedepisode) + "?api_key=" + str(self.check(self.token)) + "&append_to_response=credits&language=" + str(language)
+            self.storedepisode = self["main_list"].getCurrent()[19]
+            detailsurl = "http://api.themoviedb.org/3/tv/" + str(resultid) + "/season/" + str(self.storedseason) + "/episode/" + str(self.storedepisode) + "?api_key=" + str(self.check(self.token)) + "&append_to_response=credits" + languagestr
 
         if pythonVer == 3:
             detailsurl = detailsurl.encode()
@@ -1050,11 +1055,15 @@ class XStreamity_Categories(Screen):
                 if "name" in self.tmdbdetails and self.tmdbdetails["name"]:
                     self.tmdbresults["name"] = str(self.tmdbdetails["name"])
 
-                if "overview" in self.tmdbdetails and self.tmdbdetails["overview"]:
+                if "overview" in self.tmdbdetails:
                     self.tmdbresults["description"] = str(self.tmdbdetails["overview"])
 
-                if "vote_average" in self.tmdbdetails and self.tmdbdetails["vote_average"] and self.tmdbdetails["vote_average"] != 0:
+                if "vote_average" in self.tmdbdetails and self.tmdbdetails["vote_average"]:
                     self.tmdbresults["rating"] = str(self.tmdbdetails["vote_average"])
+                    if self.tmdbresults["rating"] == "0" or self.tmdbresults["rating"] == "0.0":
+                        self.tmdbresults["rating"] = ""
+                else:
+                    self.tmdbresults["rating"] = ""
 
                 if self.level == 2:
                     if "original_name" in self.tmdbdetails and self.tmdbdetails["original_name"]:
@@ -1080,7 +1089,7 @@ class XStreamity_Categories(Screen):
                         genre = " / ".join(map(str, genre))
                         self.tmdbresults["genre"] = genre
 
-                if self.level == 2 or self.level == 3:
+                if self.level != 4:
                     if "credits" in self.tmdbdetails and self.tmdbdetails["credits"]:
                         if "cast" in self.tmdbdetails["credits"] and self.tmdbdetails["credits"]["cast"]:
                             cast = []
@@ -1106,7 +1115,7 @@ class XStreamity_Categories(Screen):
                         else:
                             self.tmdbresults["cover_big"] = "http://image.tmdb.org/t/p/w400" + str(self.tmdbdetails["poster_path"])
 
-                if self.level == 3 or self.level == 4:
+                if self.level != 2:
                     if "air_date" in self.tmdbdetails and self.tmdbdetails["air_date"]:
                         self.tmdbresults["releaseDate"] = str(self.tmdbdetails["air_date"])
 
@@ -1126,18 +1135,17 @@ class XStreamity_Categories(Screen):
                 self["vod_duration"].setText(current[12])
                 self["vod_video_type"].setText(current[13])
 
-            if self.level != 1:
-                self["x_title"].setText(current[0])
-                self["x_description"].setText(current[6])
-                self["vod_genre"].setText(current[9])
-                self["vod_rating"].setText(current[11])
-                try:
-                    self["vod_release_date"].setText(datetime.strptime(current[10], "%Y-%m-%d").strftime("%d-%m-%Y"))
-                except:
-                    self["vod_release_date"].setText("")
-                    pass
-                self["vod_director"].setText(current[8])
-                self["vod_cast"].setText(current[7])
+            self["x_title"].setText(current[0])
+            self["x_description"].setText(current[6])
+            self["vod_genre"].setText(current[9])
+            self["vod_rating"].setText(current[11])
+            try:
+                self["vod_release_date"].setText(datetime.strptime(current[10], "%Y-%m-%d").strftime("%d-%m-%Y"))
+            except:
+                self["vod_release_date"].setText("")
+                pass
+            self["vod_director"].setText(current[8])
+            self["vod_cast"].setText(current[7])
 
             stream_url = self["main_list"].getCurrent()[3]
 

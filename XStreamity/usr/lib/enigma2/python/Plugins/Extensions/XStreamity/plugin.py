@@ -56,7 +56,7 @@ if "common" in folders:
     folders.remove("common")
 
 languages = [
-    ("en-US", "English"),
+    ("", "English"),
     ("de-DE", "Deutsch"),
     ("es-ES", "Español"),
     ("fr-FR", "Français"),
@@ -131,7 +131,7 @@ cfg.stopstream = ConfigYesNo(default=False)
 cfg.skin = ConfigSelection(default="default", choices=folders)
 cfg.timeout = ConfigSelectionNumber(1, 20, 1, default=20, wraparound=True)
 cfg.TMDB = ConfigYesNo(default=True)
-cfg.TMDBLanguage2 = ConfigSelection(default="en-US", choices=languages)
+cfg.TMDBLanguage2 = ConfigSelection(default="", choices=languages)
 cfg.catchupstart = ConfigSelectionNumber(0, 30, 1, default=0, wraparound=True)
 cfg.catchupend = ConfigSelectionNumber(0, 30, 1, default=0, wraparound=True)
 cfg.subs = ConfigYesNo(default=False)

@@ -690,12 +690,17 @@ class XStreamity_Categories(Screen):
         except:
             pass
 
-        language = "en"
+        language = ""
 
         if cfg.TMDB.value is True:
             language = cfg.TMDBLanguage2.value
 
-        detailsurl = "http://api.themoviedb.org/3/movie/" + str(resultid) + "?api_key=" + str(self.check(self.token)) + "&append_to_response=credits&language=" + str(language)
+        languagestr = ""
+
+        if language:
+            languagestr = "&language=" + str(language)
+
+        detailsurl = "http://api.themoviedb.org/3/movie/" + str(resultid) + "?api_key=" + str(self.check(self.token)) + "&append_to_response=credits" + languagestr
 
         if pythonVer == 3:
             detailsurl = detailsurl.encode()
