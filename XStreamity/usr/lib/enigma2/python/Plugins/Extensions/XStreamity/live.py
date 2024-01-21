@@ -954,9 +954,14 @@ class XStreamity_Categories(Screen):
             nowtime = int(datetime.timestamp(datetime.now()))
 
         if self.level == 1:
-            adult = _("all"), "all", "+18", "adult", "adults", "18+", "18 rated", "xxx", "sex", "porn", "pink", "blue", "الكل", "vše", "alle", "kõik", "kaikki", "tout", "tutto", "alles", "wszystko", "todos", "všetky", "të gjitha", "sve", "allt", "hepsi", "所有"
-            if any(s in str(self["main_list"].getCurrent()[0]).lower() and str(self["main_list"].getCurrent()[0]).lower() != "Allgemeines" for s in adult):
-                glob.adultChannel = True
+            adult = "+18", "adult", "adults", "18+", "18 rated", "xxx", "sex", "porn", "pink", "blue", "الكل", "vše", "alle", "kõik", "kaikki", "tout", "tutto", "alles", "wszystko", "todos", "všetky", "të gjitha", "sve", "allt", "hepsi", "所有"
+
+            if str(self["main_list"].getCurrent()[0]).lower() == _("all") or str(self["main_list"].getCurrent()[0]).lower() == "all":
+                glob.adultChannel = True        
+                
+            elif any(s in str(self["main_list"].getCurrent()[0]).lower() for s in adult):
+                glob.adultChannel = True        
+            
             else:
                 glob.adultChannel = False
 
