@@ -29,7 +29,7 @@ class ProtectedScreen:
     def isProtected(self):
         return (config.plugins.XStreamity.adult.value)
 
-    def pinEntered(self, result):
+    def pinEntered(self, result=None):
         if result is None:
             self.closeProtectedScreen()
         elif not result:

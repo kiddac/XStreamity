@@ -27,7 +27,7 @@ class ProtectedScreen:
     def isProtected(self):
         return (config.plugins.XStreamity.adult.value)
 
-    def pinEntered(self, result):
+    def pinEntered(self, result=None):
         if result is None:
             self.closeProtectedScreen()
         elif not result:
@@ -126,7 +126,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.session.openWithCallback(self.ExecuteRestart, MessageBox, _("You need to restart the GUI") + "\n" + _("Do you want to restart now?"), MessageBox.TYPE_YESNO)
         self.close()
 
-    def ExecuteRestart(self, result):
+    def ExecuteRestart(self, result=None):
         if result:
             Standby.quitMainloop(3)
         else:

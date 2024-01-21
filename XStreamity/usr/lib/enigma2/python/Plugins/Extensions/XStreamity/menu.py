@@ -75,7 +75,7 @@ class XStreamity_Menu(Screen):
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
 
-    def start(self):
+    def start(self, data=None):
         if glob.current_playlist["data"]["data_downloaded"] is False:
             # delay to allow splash screen to show
             self.timer = eTimer()

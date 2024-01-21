@@ -252,7 +252,7 @@ class XStreamity_Categories(Screen):
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
 
-    def createSetup(self):
+    def createSetup(self, data=None):
         # print("*** createSetup ***")
         self["x_title"].setText("")
         self["x_description"].setText("")
@@ -835,7 +835,7 @@ class XStreamity_Categories(Screen):
                 else:
                     self.createSetup()
 
-    def setIndex(self):
+    def setIndex(self, data=None):
         # print("*** set index ***")
         self["main_list"].setIndex(glob.currentchannellistindex)
         self.createSetup()
