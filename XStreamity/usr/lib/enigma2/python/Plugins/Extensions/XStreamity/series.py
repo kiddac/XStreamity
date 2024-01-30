@@ -425,6 +425,7 @@ class XStreamity_Categories(Screen):
         airdate = self.releaseDate2
         rating = self.rating2
         tmdb = self.tmdb2
+        last_modified = ""
 
         if currentChannelList:
             if "info" in currentChannelList:
