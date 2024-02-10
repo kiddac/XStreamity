@@ -479,24 +479,27 @@ class XStreamity_Playlists(Screen):
 
         if os.path.isfile(sourcefile):
 
-            import xml.etree.ElementTree as ET
-            tree = ET.parse(sourcefile)
-            root = tree.getroot()
+            try:
+                import xml.etree.ElementTree as ET
+                tree = ET.parse(sourcefile)
+                root = tree.getroot()
 
-            for elem in root.iter():
-                for child in list(elem):
-                    exists = False
-                    description = ""
-                    if child.tag == "source":
-                        try:
-                            description = child.find("description").text
-                            for cfile in channelfilelist:
-                                if cfile in description:
-                                    exists = True
-                        except:
-                            pass
+                for elem in root.iter():
+                    for child in list(elem):
+                        exists = False
+                        description = ""
+                        if child.tag == "source":
+                            try:
+                                description = child.find("description").text
+                                for cfile in channelfilelist:
+                                    if cfile in description:
+                                        exists = True
+                            except:
+                                pass
 
-                        if exists is False:
-                            elem.remove(child)
+                            if exists is False:
+                                elem.remove(child)
 
-            tree.write(sourcefile)
+                tree.write(sourcefile)
+            except Exception as e:
+                print(e)
