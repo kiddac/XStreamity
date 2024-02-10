@@ -159,7 +159,7 @@ class XStreamity_DownloadManager(Screen):
         self.progress = 0
         self.timerDisplay = eTimer()
 
-        self["downloadlist"] = List(self.drawList)
+        self["downloadlist"] = List(self.drawList, enableWrapAround=True)
         self["downloadlist"].onSelectionChanged.append(self.selectionChanged)
 
         self["key_red"] = StaticText(_("Back"))
