@@ -1692,27 +1692,30 @@ class XStreamity_Categories(Screen):
                 xml_str += '</sources>\n'
                 f.write(xml_str)
 
-        import xml.etree.ElementTree as ET
+        try:
+            import xml.etree.ElementTree as ET
 
-        tree = ET.parse(sourcefile)
-        root = tree.getroot()
-        sourcecat = root.find("sourcecat")
+            tree = ET.parse(sourcefile)
+            root = tree.getroot()
+            sourcecat = root.find("sourcecat")
 
-        exists = False
-        for sourceitem in sourcecat:
-            if channelpath in sourceitem.attrib["channels"]:
-                exists = True
-                break
+            exists = False
+            for sourceitem in sourcecat:
+                if channelpath in sourceitem.attrib["channels"]:
+                    exists = True
+                    break
 
-        if exists is False:
-            source = ET.SubElement(sourcecat, "source", type="gen_xmltv", nocheck="1", channels=channelpath)
-            description = ET.SubElement(source, "description")
-            description.text = str(safeName)
+            if exists is False:
+                source = ET.SubElement(sourcecat, "source", type="gen_xmltv", nocheck="1", channels=channelpath)
+                description = ET.SubElement(source, "description")
+                description.text = str(safeName)
 
-            url = ET.SubElement(source, "url")
-            url.text = str(glob.current_playlist["playlist_info"]["xmltv_api"])
+                url = ET.SubElement(source, "url")
+                url.text = str(glob.current_playlist["playlist_info"]["xmltv_api"])
 
-            tree.write(sourcefile)
+                tree.write(sourcefile)
+        except Exception as e:
+            print(e)
 
         try:
             with open(sourcefile, "r+") as f:
