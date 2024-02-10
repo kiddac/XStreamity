@@ -1564,6 +1564,9 @@ class XStreamity_Categories(Screen):
             if str(self["main_list"].getCurrent()[0]).lower() == _("all") or str(self["main_list"].getCurrent()[0]).lower() == "all":
                 glob.adultChannel = True
 
+            elif "sport" in str(self["main_list"].getCurrent()[0]).lower():
+                glob.adultChannel = False
+
             elif any(s in str(self["main_list"].getCurrent()[0]).lower() for s in adult):
                 glob.adultChannel = True
 

@@ -957,11 +957,14 @@ class XStreamity_Categories(Screen):
             adult = "+18", "adult", "adults", "18+", "18 rated", "xxx", "sex", "porn", "pink", "blue", "الكل", "vše", "alle", "kõik", "kaikki", "tout", "tutto", "alles", "wszystko", "todos", "všetky", "të gjitha", "sve", "allt", "hepsi", "所有"
 
             if str(self["main_list"].getCurrent()[0]).lower() == _("all") or str(self["main_list"].getCurrent()[0]).lower() == "all":
-                glob.adultChannel = True        
-                
+                glob.adultChannel = True
+
+            elif "sport" in str(self["main_list"].getCurrent()[0]).lower():
+                glob.adultChannel = False
+
             elif any(s in str(self["main_list"].getCurrent()[0]).lower() for s in adult):
-                glob.adultChannel = True        
-            
+                glob.adultChannel = True
+
             else:
                 glob.adultChannel = False
 
