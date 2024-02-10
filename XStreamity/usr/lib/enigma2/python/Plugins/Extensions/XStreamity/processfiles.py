@@ -98,6 +98,7 @@ def processfiles():
             directsource = "Standard"
 
             customsids = False
+            fail_count = 0
 
             if not line.startswith("#") and line.startswith("http"):
                 line = line.strip()
@@ -214,6 +215,9 @@ def processfiles():
                                 if "customsids" not in playlist["data"]:
                                     playlist["data"]["customsids"] = customsids
 
+                                if "fail_count" not in playlist["data"]:
+                                    playlist["data"]["fail_count"] = fail_count
+
                                 playlist["playlist_info"]["name"] = name
                                 playlist["playlist_info"]["type"] = type
                                 playlist["playlist_info"]["output"] = output
@@ -291,7 +295,8 @@ def processfiles():
                             ("catchup", False),
                             ("customsids", False),
                             ("epg_date", ""),
-                            ("data_downloaded", False)
+                            ("data_downloaded", False),
+                            ("fail_count", 0)
                         ]),
                     })
 
