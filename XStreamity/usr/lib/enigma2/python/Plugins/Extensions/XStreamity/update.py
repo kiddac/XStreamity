@@ -62,13 +62,26 @@ def get_time_utc(timestring, fdateparse):
 
 
 class XStreamity_Update:
-
-    def __init__(self):
+    def __init__(self, session=None):
         # print("****** update ****")
-        self.epgfolder = ""
-        self.epgxmlfile = ""
-        self.epgjsonfile = ""
-        self.processJsonFile()
+        recordings = ""
+        next_rec_time = -1
+
+        try:
+            recordings = session.nav.getRecordings()
+            if not recordings:
+                next_rec_time = session.nav.RecordTimer.getNextRecordingTime()
+        except:
+            pass
+
+        if recordings or (next_rec_time > 0 and (next_rec_time - time()) < 360):
+            print("*** recording in progress ***")
+
+        else:
+            self.epgfolder = ""
+            self.epgxmlfile = ""
+            self.epgjsonfile = ""
+            self.processJsonFile()
 
     def clear_caches(self):
         try:

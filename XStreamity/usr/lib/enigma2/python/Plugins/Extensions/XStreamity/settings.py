@@ -117,7 +117,8 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
                 cfg.save()
                 configfile.save()
 
-                if self.org_main != cfg.main.getValue() or self.org_wakeup != cfg.wakeup.getValue() or self.org_boot != cfg.boot.getValue() or self.location != cfg.location.getValue():
+                if self.org_main != cfg.main.getValue() or self.org_wakeup != cfg.wakeup.getValue() or self.org_boot != cfg.boot.getValue() \
+                        or self.location != cfg.location.getValue() or self.org_epgboot != cfg.epgboot.getValue():
                     self.changedFinished()
             self.clear_caches()
             self.close()
@@ -159,6 +160,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
         self.cfg_skipplaylistsscreen = getConfigListEntry(_("Skip playlist selection screen if only 1 playlist"), cfg.skipplaylistsscreen)
 
+        self.cfg_epgboot = getConfigListEntry(_("Download EPG on boot") + _(" *Restart GUI Required"), cfg.epgboot)
         self.cfg_wakeup = getConfigListEntry(_("Automatic EPG download time") + _(" *Restart GUI Required"), cfg.wakeup)
 
         self.cfg_channelpicons = getConfigListEntry(_("Show channel picons"), cfg.channelpicons)
@@ -171,6 +173,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.org_main = cfg.main.getValue()
         self.org_wakeup = cfg.wakeup.getValue()
         self.org_boot = cfg.boot.getValue()
+        self.org_epgboot = cfg.epgboot.getValue()
         self.location = cfg.location.getValue()
         self.epg_location = cfg.epglocation.getValue()
         self.downloadlocation = cfg.downloadlocation.getValue()
@@ -193,7 +196,10 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
         self.list.append(self.cfg_livepreview)
         self.list.append(self.cfg_stopstream)
-        self.list.append(self.cfg_wakeup)
+
+        self.list.append(self.cfg_epgboot)
+        if cfg.epgboot.value is False:
+            self.list.append(self.cfg_wakeup)
 
         self.list.append(self.cfg_TMDB)
         if cfg.TMDB.value is True:

@@ -7,10 +7,12 @@ from Components.config import config, ConfigSubsection, ConfigSelection, ConfigD
 from enigma import eTimer, getDesktop, addFont
 from Plugins.Plugin import PluginDescriptor
 from os.path import isdir
+from datetime import datetime
 
 import os
 import shutil
 import sys
+import time
 import twisted.python.runtime
 
 try:
@@ -84,6 +86,10 @@ languages = [
 ]
 
 
+def convert(unix=0):
+    return datetime.fromtimestamp(unix).strftime('%Y-%m-%d %H:%M:%S')
+
+
 def defaultMoviePath():
     result = config.usage.default_path.value
     if not isdir(result):
@@ -151,6 +157,7 @@ cfg.channelcovers = ConfigYesNo(default=True)
 cfg.infobarcovers = ConfigYesNo(default=True)
 
 cfg.boot = ConfigYesNo(default=False)
+cfg.epgboot = ConfigYesNo(default=False)
 
 skin_path = os.path.join(skin_directory, cfg.skin.value)
 common_path = os.path.join(skin_directory, "common/")
@@ -268,21 +275,22 @@ class AutoStartTimer:
     def __init__(self, session):
         self.session = session
         self.timer = eTimer()
-        try:
-            self.timer_conn = self.timer.timeout.connect(self.onTimer)
-        except:
-            self.timer.callback.append(self.onTimer)
-        self.update()
+        if cfg.epgboot.getValue() is True:
+            self.runUpdate()
+        else:
+            try:
+                self.timer_conn = self.timer.timeout.connect(self.onTimer)
+            except:
+                self.timer.callback.append(self.onTimer)
+            self.update()
 
     def getWakeTime(self):
-        import time
         clock = cfg.wakeup.value
         nowt = time.time()
         now = time.localtime(nowt)
         return int(time.mktime((now.tm_year, now.tm_mon, now.tm_mday, clock[0], clock[1], 0, now.tm_wday, now.tm_yday, now.tm_isdst)))
 
     def update(self, atLeast=0):
-        import time
         self.timer.stop()
         wake = self.getWakeTime()
         nowtime = time.time()
@@ -301,7 +309,6 @@ class AutoStartTimer:
         return wake
 
     def onTimer(self):
-        import time
         self.timer.stop()
         now = int(time.time())
         wake = self.getWakeTime()
@@ -314,7 +321,7 @@ class AutoStartTimer:
     def runUpdate(self):
         print("\n *********** Updating XStreamity EPG ************ \n")
         from . import update
-        update.XStreamity_Update()
+        update.XStreamity_Update(self.session)
 
 
 def autostart(reason, session=None, **kwargs):
