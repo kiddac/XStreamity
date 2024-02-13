@@ -143,9 +143,9 @@ class XStreamity_HiddenCategories(Screen, ProtectedScreen):
 
     def buildListEntry(self, name, category_id, enabled):
         if enabled:
-            pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "lock_on.png"))
-        else:
             pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "lock_hidden.png"))
+        else:
+            pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "lock_off.png"))
         return (pixmap, str(name), str(category_id), enabled)
 
     def refresh(self):
