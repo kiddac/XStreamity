@@ -17,6 +17,7 @@ import os
 import requests
 import time
 import twisted.python.runtime
+from time import time as rtime
 
 try:
     from http.client import HTTPConnection
@@ -67,14 +68,11 @@ class XStreamity_Update:
         recordings = ""
         next_rec_time = -1
 
-        try:
-            recordings = session.nav.getRecordings()
-            if not recordings:
-                next_rec_time = session.nav.RecordTimer.getNextRecordingTime()
-        except:
-            pass
+        recordings = session.nav.getRecordings()
+        if not recordings:
+            next_rec_time = session.nav.RecordTimer.getNextRecordingTime()
 
-        if recordings or (next_rec_time > 0 and (next_rec_time - time()) < 360):
+        if recordings or (next_rec_time > 0 and (next_rec_time - rtime()) < 360):
             print("*** recording in progress ***")
 
         else:
