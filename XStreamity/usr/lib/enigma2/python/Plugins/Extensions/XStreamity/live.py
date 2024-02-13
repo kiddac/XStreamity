@@ -953,8 +953,8 @@ class XStreamity_Categories(Screen):
         else:
             nowtime = int(datetime.timestamp(datetime.now()))
 
-        if self.level == 1:
-            adult = "+18", "adult", "adults", "18+", "18 rated", "xxx", "sex", "porn", "pink", "blue", "الكل", "vše", "alle", "kõik", "kaikki", "tout", "tutto", "alles", "wszystko", "todos", "všetky", "të gjitha", "sve", "allt", "hepsi", "所有"
+        if self.level == 1 and self["main_list"].getCurrent():
+            adult = "adult", "+18", "18+", "18 rated", "xxx", "sex", "porn", "voksen", "volwassen", "aikuinen", "Erwachsene", "dorosly", "взрослый", "vuxen", "£дорослий"
 
             if str(self["main_list"].getCurrent()[0]).lower() == _("all") or str(self["main_list"].getCurrent()[0]).lower() == "all":
                 glob.adultChannel = True
