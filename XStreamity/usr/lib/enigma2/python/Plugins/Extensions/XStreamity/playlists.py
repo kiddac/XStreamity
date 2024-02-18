@@ -249,6 +249,11 @@ class XStreamity_Playlists(Screen):
                     if playlists["user_info"]["status"] != "Active" and playlists["user_info"]["status"] != "Banned" and playlists["user_info"]["status"] != "Disabled" and playlists["user_info"]["status"] != "Expired":
                         playlists["user_info"]["status"] = "Active"
 
+                    if playlists["user_info"]["status"] == "Active":
+                        playlists["data"]["fail_count"] = 0
+                    else:
+                        playlists["data"]["fail_count"] += 1
+
                 if "active_cons" in playlists["user_info"]:
                     if not playlists["user_info"]["active_cons"]:
                         playlists["user_info"]["active_cons"] = 0
@@ -264,6 +269,9 @@ class XStreamity_Playlists(Screen):
                         except:
                             playlists["playlist_info"]["output"] = "ts"
 
+            if "user_info" not in playlists or ("user_info" in playlists and playlists["user_info"] == []):
+                playlists["data"]["fail_count"] += 1
+
             if "available_channels" in playlists:
                 del playlists["available_channels"]
 
@@ -278,6 +286,7 @@ class XStreamity_Playlists(Screen):
         self["splash"].hide()
         self.list = []
         index = 0
+        fail_count_check = False
 
         for playlist in self.playlists_all:
             name = ""
@@ -334,6 +343,9 @@ class XStreamity_Playlists(Screen):
                             maxc = str(_("Max Conn:"))
                             maxnum = playlist["user_info"]["max_connections"]
 
+                if playlist["data"]["fail_count"] > 5:
+                    fail_count_check = True
+
                 self.list.append([index, name, url, expires, status, active, activenum, maxc, maxnum])
                 index += 1
 
@@ -344,22 +356,30 @@ class XStreamity_Playlists(Screen):
         if len(self.list) == 1 and cfg.skipplaylistsscreen.getValue() is True and "user_info" in playlist and "status" in playlist["user_info"] and playlist["user_info"]["status"] == "Active":
             self.getStreamTypes()
 
+        if fail_count_check:
+            self.session.open(MessageBox, _("You have dead playlists that are slowing down loading.\n\nPress Yellow button to remove dead playlists"), MessageBox.TYPE_WARNING)
+            for playlist in self.playlists_all:
+                playlist["data"]["fail_count"] = 0
+            with open(playlists_json, "w") as f:
+                json.dump(self.playlists_all, f)
+
     def buildListEntry(self, index, name, url, expires, status, active, activenum, maxc, maxnum):
         if status == (_("Active")):
             pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "led_green.png"))
 
             if int(activenum) >= int(maxnum) and int(maxnum) != 0:
                 pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "led_yellow.png"))
-        if status == (_("Banned")):
-            pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "led_red.png"))
-        if status == (_("Expired")):
-            pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "led_grey.png"))
-        if status == (_("Disabled")):
-            pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "led_grey.png"))
-        if status == (_("Server Not Responding")):
-            pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "led_red.png"))
-        if status == (_("Not Authorised")):
-            pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "led_red.png"))
+        else:
+            if status == (_("Banned")):
+                pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "led_red.png"))
+            elif status == (_("Expired")):
+                pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "led_grey.png"))
+            elif status == (_("Disabled")):
+                pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "led_grey.png"))
+            elif status == (_("Server Not Responding")):
+                pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "led_red.png"))
+            elif status == (_("Not Authorised")):
+                pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "led_red.png"))
 
         return (index, str(name), str(url), str(expires), str(status), pixmap, str(active), str(activenum), str(maxc), str(maxnum))
 
