@@ -126,8 +126,8 @@ class XStreamity_Categories(Screen):
         self.searchString = ""
         self.filterresult = ""
 
-        self.favourites_category = False
-        self.recents_category = False
+        self.chosen_category = ""
+
         self.pin = False
         self.info = ""
         self.sortindex = 0
@@ -296,13 +296,16 @@ class XStreamity_Categories(Screen):
         # print("*** url ***", glob.nextlist[-1]["next_url"])
 
         self["key_epg"].setText("IMDB")
-        response = self.downloadApiData(glob.nextlist[-1]["next_url"])
+        response = ""
 
-        if self.favourites_category:
+        if self.chosen_category == "favourites":
             response = glob.current_playlist["player_info"]["vodfavourites"]
 
-        elif self.recents_category:
+        elif self.chosen_category == "recents":
             response = glob.current_playlist["player_info"]["vodrecents"]
+
+        else:
+            response = self.downloadApiData(glob.nextlist[-1]["next_url"])
 
         index = 0
         self.list2 = []
@@ -319,6 +322,7 @@ class XStreamity_Categories(Screen):
                 favourite = False
                 hidden = False
                 direct_source = ""
+                category_id = ""
 
                 if "name" in item and item["name"]:
                     name = item["name"]
@@ -350,6 +354,11 @@ class XStreamity_Categories(Screen):
 
                 if "added" in item and item["added"]:
                     added = item["added"]
+
+                if "category_id" in item and item["category_id"]:
+                    category_id = item["category_id"]
+                    if self.chosen_category == "all" and str(category_id) in glob.current_playlist["player_info"]["vodhidden"]:
+                        hidden = True
 
                 if "container_extension" in item and item["container_extension"]:
                     container_extension = item["container_extension"]
@@ -425,7 +434,7 @@ class XStreamity_Categories(Screen):
         # print("*** buildVod ***")
         self.main_list = []
 
-        if self.favourites_category:
+        if self.chosen_category == "favourites":
             self.main_list = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[10], x[11]) for x in self.list2 if x[7] is True]
         else:
             self.main_list = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[10], x[11]) for x in self.list2 if x[10] is False]
@@ -867,10 +876,10 @@ class XStreamity_Categories(Screen):
             self["key_yellow"].setText(_(glob.nextlist[-1]["sort"]))
             self["key_menu"].setText("+/-")
 
-            if self.favourites_category or self.recents_category:
+            if self.chosen_category == "favourites" or self.chosen_category == "recents":
                 self["key_menu"].setText("")
 
-            if self.recents_category:
+            if self.chosen_category == "recents":
                 self["key_blue"].setText(_("Delete"))
 
     def playStream(self):
@@ -1220,19 +1229,16 @@ class XStreamity_Categories(Screen):
 
                     if category_id == "0":
                         next_url = str(self.player_api) + "&action=get_vod_streams"
-                    else:
-                        next_url = str(self.player_api) + "&action=get_vod_streams&category_id=" + str(category_id)
+                        self.chosen_category = "all"
 
-                    if category_id == "-1":
-                        self.favourites_category = True
-                        self.recents_category = False
+                    elif category_id == "-1":
+                        self.chosen_category = "favourites"
 
                     elif category_id == "-2":
-                        self.recents_category = True
-                        self.favourites_category = False
+                        self.chosen_category = "recents"
                     else:
-                        self.favourites_category = False
-                        self.recents_category = False
+                        next_url = str(self.player_api) + "&action=get_vod_streams&category_id=" + str(category_id)
+                        self.chosen_category = ""
 
                     self.level += 1
                     self["main_list"].setIndex(0)
@@ -1307,7 +1313,7 @@ class XStreamity_Categories(Screen):
             if self["main_list"].getCurrent():
                 if self.level == 1:
                     self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "vod", self.prelist + self.list1, self.level)
-                elif self.level == 2 and not self.favourites_category and not self.recents_category:
+                elif self.level == 2 and self.chosen_category != "favourites" and self.chosen_category != "recents":
                     self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "vod", self.list2, self.level)
 
     def clearWatched(self):
@@ -1393,7 +1399,7 @@ class XStreamity_Categories(Screen):
             with open(playlists_json, "w") as f:
                 json.dump(self.playlists_all, f)
 
-            if self.favourites_category:
+            if self.chosen_category == "favourites":
                 del self.list2[currentindex]
 
             self.buildLists()
