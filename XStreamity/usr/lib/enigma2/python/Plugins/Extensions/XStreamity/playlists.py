@@ -357,7 +357,7 @@ class XStreamity_Playlists(Screen):
             self.getStreamTypes()
 
         if fail_count_check:
-            self.session.open(MessageBox, _("You have dead playlists that are slowing down loading.\n\nPress Yellow button to remove dead playlists"), MessageBox.TYPE_WARNING)
+            self.session.open(MessageBox, _("You have dead playlists that are slowing down loading.\n\nPress Yellow button to soft delete dead playlists"), MessageBox.TYPE_WARNING)
             for playlist in self.playlists_all:
                 playlist["data"]["fail_count"] = 0
             with open(playlists_json, "w") as f:
