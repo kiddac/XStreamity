@@ -814,11 +814,11 @@ class XStreamity_Categories(Screen):
                 if self.list1:
                     category_id = self["main_list"].getCurrent()[3]
 
+                    next_url = str(self.player_api) + "&action=get_live_streams&category_id=" + str(category_id)
+                    self.chosen_category = ""
+
                     if category_id == "0":
                         next_url = str(self.player_api) + "&action=get_live_streams"
-
-                    else:
-                        next_url = str(self.player_api) + "&action=get_live_streams&category_id=" + str(category_id)
 
                     self.level += 1
                     self["main_list"].setIndex(0)

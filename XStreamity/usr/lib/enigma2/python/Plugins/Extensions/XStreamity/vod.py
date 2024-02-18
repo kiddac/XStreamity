@@ -1227,6 +1227,9 @@ class XStreamity_Categories(Screen):
                 if self.list1:
                     category_id = self["main_list"].getCurrent()[3]
 
+                    next_url = str(self.player_api) + "&action=get_vod_streams&category_id=" + str(category_id)
+                    self.chosen_category = ""
+
                     if category_id == "0":
                         next_url = str(self.player_api) + "&action=get_vod_streams"
                         self.chosen_category = "all"
@@ -1236,9 +1239,6 @@ class XStreamity_Categories(Screen):
 
                     elif category_id == "-2":
                         self.chosen_category = "recents"
-                    else:
-                        next_url = str(self.player_api) + "&action=get_vod_streams&category_id=" + str(category_id)
-                        self.chosen_category = ""
 
                     self.level += 1
                     self["main_list"].setIndex(0)
