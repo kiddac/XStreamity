@@ -193,8 +193,9 @@ class XStreamity_Categories(Screen):
         self.filterresult = ""
 
         self.showingshortEPG = False
-        self.favourites_category = False
-        self.recents_category = False
+
+        self.chosen_category = ""
+
         self.pin = False
 
         self.sortindex = 0
@@ -380,13 +381,16 @@ class XStreamity_Categories(Screen):
     def getLevel2(self):
         # print("*** getLevel2 ***")
 
-        response = self.downloadApiData(glob.nextlist[-1]["next_url"])
+        response = ""
 
-        if self.favourites_category:
+        if self.chosen_category == "favourites":
             response = glob.current_playlist["player_info"]["livefavourites"]
 
-        elif self.recents_category:
+        elif self.chosen_category == "recents":
             response = glob.current_playlist["player_info"]["liverecents"]
+
+        else:
+            response = self.downloadApiData(glob.nextlist[-1]["next_url"])
 
         index = 0
 
@@ -449,6 +453,8 @@ class XStreamity_Categories(Screen):
 
             if "category_id" in channel and channel["category_id"]:
                 category_id = channel["category_id"]
+                if self.chosen_category == "all" and str(category_id) in glob.current_playlist["player_info"]["livehidden"]:
+                    hidden = True
 
             if "direct_source" in channel and channel["direct_source"]:
                 direct_source = channel["direct_source"]
@@ -559,7 +565,7 @@ class XStreamity_Categories(Screen):
         self.epglist = []
         # index = 0, name = 1, stream_id = 2, stream_icon = 3, epg_channel_id = 4, added = 5, category_id = 6, custom_sid = 7, nowtime = 9
         # nowTitle = 10, nowDesc = 11, nexttime = 12, nextTitle = 13, nextDesc = 14, next_url = 15, favourite = 16, watching = 17, hidden = 18, direct_source = 19
-        if self.favourites_category:
+        if self.chosen_category == "favourites":
             self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18], x[19]) for x in self.list2 if x[16] is True]
             self.epglist = [buildEPGListEntry(x[0], x[2], x[9], x[10], x[11], x[12], x[13], x[14], x[18], x[19]) for x in self.list2 if x[16] is True]
         else:
@@ -588,10 +594,10 @@ class XStreamity_Categories(Screen):
             self["key_yellow"].setText(_(glob.nextlist[-1]["sort"]))
             self["key_menu"].setText("+/-")
 
-            if self.favourites_category or self.recents_category:
+            if self.chosen_category == "favourites" or self.chosen_category == "recent":
                 self["key_menu"].setText("")
 
-            if self.recents_category:
+            if self.chosen_category == "recents":
                 self["key_blue"].setText(_("Delete"))
 
     def playStream(self):
@@ -995,20 +1001,16 @@ class XStreamity_Categories(Screen):
 
                     if category_id == "0":
                         next_url = str(self.player_api) + "&action=get_live_streams"
+                        self.chosen_category = "all"
 
-                    else:
-                        next_url = str(self.player_api) + "&action=get_live_streams&category_id=" + str(category_id)
-
-                    if category_id == "-1":
-                        self.favourites_category = True
-                        self.recents_category = False
+                    elif category_id == "-1":
+                        self.chosen_category = "favourites"
 
                     elif category_id == "-2":
-                        self.recents_category = True
-                        self.favourites_category = False
+                        self.chosen_category = "recents"
                     else:
-                        self.favourites_category = False
-                        self.recents_category = False
+                        next_url = str(self.player_api) + "&action=get_live_streams&category_id=" + str(category_id)
+                        self.chosen_category = ""
 
                     self.level += 1
                     self["main_list"].setIndex(0)
@@ -1147,7 +1149,7 @@ class XStreamity_Categories(Screen):
             if self["main_list"].getCurrent():
                 if self.level == 1:
                     self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "live", self.prelist + self.list1, self.level)
-                elif self.level == 2 and not self.favourites_category and not self.recents_category:
+                elif self.level == 2 and self.chosen_category != "favourites" and self.chosen_category != "recents":
                     self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "live", self.list2, self.level)
 
     def favourite(self):
@@ -1196,7 +1198,7 @@ class XStreamity_Categories(Screen):
             with open(playlists_json, "w") as f:
                 json.dump(self.playlists_all, f)
 
-            if self.favourites_category:
+            if self.chosen_category == "favourites":
                 del self.list2[currentindex]
 
             self.buildLists()
