@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-02-18 13:08+0000\n"
-"PO-Revision-Date: 2024-02-18 13:08+0000\n"
+"POT-Creation-Date: 2024-02-18 12:57+0000\n"
+"PO-Revision-Date: 2024-02-18 18:50+0000\n"
 "Last-Translator: Masta2002\n"
 "Language-Team: \n"
 "Language: de\n"
@@ -355,7 +355,7 @@ msgstr "Download Manager"
 
 #: mainmenu.py:166
 msgid "Recordings in progress. EPG not downloaded."
-msgstr ""
+msgstr "Aufzeichnungen laufen. EPG nicht heruntergeladen."
 
 #: mainmenu.py:168
 msgid "EPGs downloading."
@@ -440,6 +440,9 @@ msgid ""
 "\n"
 "Press Yellow button to soft delete dead playlists"
 msgstr ""
+"Sie haben tote Wiedergabelisten, die das Laden verlangsamen.\n"
+"\n"
+"Drücken Sie die gelbe Taste, um tote Wiedergabelisten sanft zu löschen"
 
 #: playlists.py:394
 msgid "Delete selected playlist?"
@@ -849,9 +852,3 @@ msgid ""
 msgstr ""
 "Das IMDb Plugin ist nicht installiert\n"
 "Bitte installien."
-
-#, python-format
-#~ msgid "%d Min"
-#~ msgid_plural "%d Mins"
-#~ msgstr[0] "%d Min"
-#~ msgstr[1] "%d Mins"
