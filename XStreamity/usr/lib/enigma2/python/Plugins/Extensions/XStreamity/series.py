@@ -342,6 +342,7 @@ class XStreamity_Categories(Screen):
                 last_modified = ""
                 rating = ""
                 tmdb = ""
+                category_id = ""
 
                 if "name" in item and item["name"]:
                     name = item["name"]
@@ -396,6 +397,11 @@ class XStreamity_Categories(Screen):
 
                 if "tmdb" in item and item["tmdb"]:
                     tmdb = item["tmdb"]
+
+                if "category_id" in item and item["category_id"]:
+                    category_id = item["category_id"]
+                    if self.chosen_category == "all" and str(category_id) in glob.current_playlist["player_info"]["serieshidden"]:
+                        hidden = True
 
                 next_url = str(self.player_api) + "&action=get_series_info&series_id=" + str(series_id)
 
