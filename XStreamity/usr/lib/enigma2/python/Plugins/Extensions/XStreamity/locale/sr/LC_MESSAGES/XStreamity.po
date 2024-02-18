@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-01-07 23:57+0000\n"
-"PO-Revision-Date: 2024-01-07 23:57+0000\n"
+"POT-Creation-Date: 2024-02-18 13:11+0000\n"
+"PO-Revision-Date: 2024-02-18 13:11+0000\n"
 "Last-Translator: Petar Majstorović\n"
 "Language-Team: commando\n"
 "Language: srbija\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.1\n"
+"X-Generator: Poedit 3.4.2\n"
 "X-Poedit-Basepath: ../../..\n"
 "X-Poedit-SearchPath-0: .\n"
 
@@ -66,130 +66,130 @@ msgstr ""
 msgid "Catch Up TV"
 msgstr "Odloženo gledanje TV"
 
-#: catchup.py:179 catchup.py:445 catchup.py:649 catchup.py:651 catchup.py:663
-#: catchup.py:818 live.py:201 live.py:577 live.py:789 live.py:791 live.py:803
-#: live.py:1000 series.py:156 series.py:1210 series.py:1365 series.py:1368
-#: series.py:1371 series.py:1383 series.py:1591 series.py:1616 series.py:1632
-#: vod.py:134 vod.py:859 vod.py:1012 vod.py:1014 vod.py:1026 vod.py:1226
+#: catchup.py:179 catchup.py:445 catchup.py:652 catchup.py:654 catchup.py:666
+#: catchup.py:829 live.py:202 live.py:591 live.py:806 live.py:808 live.py:820
+#: live.py:1021 series.py:156 series.py:1225 series.py:1384 series.py:1387
+#: series.py:1390 series.py:1402 series.py:1618 series.py:1643 series.py:1659
+#: vod.py:134 vod.py:873 vod.py:1030 vod.py:1032 vod.py:1044 vod.py:1249
 msgid "Sort: A-Z"
 msgstr "Sortiranje: A-Z"
 
-#: catchup.py:201 downloadmanager.py:165 live.py:225 mainmenu.py:43 menu.py:48
+#: catchup.py:201 downloadmanager.py:165 live.py:234 mainmenu.py:44 menu.py:48
 #: playlists.py:54 playsettings.py:49 series.py:175 server.py:50 settings.py:66
 #: vod.py:153
 msgid "Back"
 msgstr "Nazad"
 
-#: catchup.py:202 live.py:226 mainmenu.py:44 menu.py:49 playlists.py:55
+#: catchup.py:202 live.py:235 mainmenu.py:45 menu.py:49 playlists.py:55
 #: series.py:176 vod.py:154
 msgid "OK"
 msgstr "OK"
 
-#: catchup.py:204 catchup.py:443 catchup.py:733 live.py:228 live.py:575
-#: live.py:903 series.py:178 series.py:1208 series.py:1493 vod.py:156
-#: vod.py:857 vod.py:1131
+#: catchup.py:204 catchup.py:443 catchup.py:736 live.py:237 live.py:589
+#: live.py:920 series.py:178 series.py:1223 series.py:1512 vod.py:156
+#: vod.py:871 vod.py:1149
 msgid "Search"
 msgstr "Pretraga"
 
-#: catchup.py:291 live.py:349 series.py:293 vod.py:271
+#: catchup.py:291 live.py:358 series.py:293 vod.py:271
 msgid "ALL"
 msgstr "SVE"
 
-#: catchup.py:396 live.py:499 series.py:696 vod.py:401
+#: catchup.py:396 live.py:513 series.py:703 vod.py:410
 msgid "Server error or invalid link."
 msgstr ""
 
-#: catchup.py:403 catchup.py:433 catchup.py:696 catchup.py:726 live.py:533
-#: live.py:572 live.py:835 live.py:896 series.py:704 series.py:1205
-#: series.py:1439 series.py:1485 vod.py:408 vod.py:854 vod.py:1062 vod.py:1123
+#: catchup.py:403 catchup.py:433 catchup.py:699 catchup.py:729 live.py:547
+#: live.py:586 live.py:852 live.py:913 series.py:711 series.py:1220
+#: series.py:1458 series.py:1504 vod.py:417 vod.py:868 vod.py:1080 vod.py:1141
 msgid "Reset Search"
 msgstr "Resetuj pretragu"
 
-#: catchup.py:439 catchup.py:638
+#: catchup.py:439 catchup.py:641
 msgid "Reverse"
 msgstr "Obrnuto"
 
-#: catchup.py:488 catchup.py:514 live.py:625 live.py:661 series.py:785
-#: series.py:813 vod.py:496 vod.py:524
+#: catchup.py:488 catchup.py:514 live.py:639 live.py:675 series.py:792
+#: series.py:820 vod.py:505 vod.py:533
 msgid "Page: "
 msgstr "Strana: "
 
-#: catchup.py:488 catchup.py:514 live.py:625 live.py:661 series.py:785
-#: series.py:813 vod.py:496 vod.py:524
+#: catchup.py:488 catchup.py:514 live.py:639 live.py:675 series.py:792
+#: series.py:820 vod.py:505 vod.py:533
 msgid " of "
 msgstr " od strane "
 
-#: catchup.py:649 catchup.py:651 catchup.py:666 live.py:789 live.py:791
-#: live.py:806 series.py:1365 series.py:1368 series.py:1371 series.py:1386
-#: vod.py:1012 vod.py:1014 vod.py:1029
+#: catchup.py:652 catchup.py:654 catchup.py:669 live.py:806 live.py:808
+#: live.py:823 series.py:1384 series.py:1387 series.py:1390 series.py:1405
+#: vod.py:1030 vod.py:1032 vod.py:1047
 msgid "Sort: Z-A"
 msgstr "Sortiranje: Z-A"
 
-#: catchup.py:649 catchup.py:651 catchup.py:672 live.py:789 live.py:791
-#: live.py:812 series.py:1365 series.py:1368 series.py:1371 series.py:1409
-#: vod.py:1012 vod.py:1014 vod.py:1038
+#: catchup.py:652 catchup.py:654 catchup.py:675 live.py:806 live.py:808
+#: live.py:829 series.py:1384 series.py:1387 series.py:1390 series.py:1428
+#: vod.py:1030 vod.py:1032 vod.py:1056
 msgid "Sort: Original"
 msgstr "Sortiranje: Original"
 
-#: catchup.py:651 catchup.py:669 live.py:791 live.py:809 series.py:1368
-#: series.py:1371 series.py:1389 vod.py:1014 vod.py:1032
+#: catchup.py:654 catchup.py:672 live.py:808 live.py:826 series.py:1387
+#: series.py:1390 series.py:1408 vod.py:1032 vod.py:1050
 msgid "Sort: Added"
 msgstr ""
 
-#: catchup.py:699 live.py:842 series.py:1443 vod.py:1069
+#: catchup.py:702 live.py:859 series.py:1462 vod.py:1087
 msgid "Filter this category..."
 msgstr "Filtriraj ovu kategoriju ..."
 
-#: catchup.py:719 live.py:889 series.py:1471 vod.py:1116
+#: catchup.py:722 live.py:906 series.py:1490 vod.py:1134
 msgid "No results found."
 msgstr ""
 
-#: catchup.py:755 live.py:925 series.py:1529 vod.py:1153
+#: catchup.py:758 live.py:942 series.py:1548 vod.py:1171
 msgid "Incorrect pin code."
 msgstr "Netačan PIN kod."
 
-#: catchup.py:776 live.py:946 series.py:1550 vod.py:1174
+#: catchup.py:781 live.py:965 series.py:1571 vod.py:1194
 msgid "all"
 msgstr "Sve"
 
-#: catchup.py:785 live.py:955 series.py:1559 vod.py:1183
+#: catchup.py:796 live.py:980 series.py:1586 vod.py:1209
 msgid "Please enter the parental control pin code"
 msgstr "Unesite PIN kod roditeljskog nadzora"
 
-#: catchup.py:785 hidden.py:27 live.py:955 series.py:1559 settings.py:25
-#: vod.py:1183
+#: catchup.py:796 hidden.py:27 live.py:980 series.py:1586 settings.py:25
+#: vod.py:1209
 msgid "Enter pin code"
 msgstr "Unesite pin kod"
 
-#: catchup.py:936
+#: catchup.py:947
 msgid "Catch-up"
 msgstr "Odloženo gledanje"
 
-#: catchup.py:941 series.py:1810 vod.py:1461
+#: catchup.py:952 series.py:1837 vod.py:1484
 msgid "Added to download manager"
 msgstr "Dodato u menadžer preuzimanja"
 
-#: catchup.py:941 series.py:1810 vod.py:1461
+#: catchup.py:952 series.py:1837 vod.py:1484
 msgid "Note recording acts as an open connection."
 msgstr ""
 
-#: catchup.py:941 series.py:1810 vod.py:1461
+#: catchup.py:952 series.py:1837 vod.py:1484
 msgid "Do not record and play streams at the same time."
 msgstr ""
 
-#: catchup.py:941 series.py:1810 vod.py:1461
+#: catchup.py:952 series.py:1837 vod.py:1484
 msgid "Open download manager?"
 msgstr ""
 
-#: catchup.py:944 series.py:1813 vod.py:1464
+#: catchup.py:955 series.py:1840 vod.py:1487
 msgid "Already added to download manager"
 msgstr "Već je dodato u menadžer preuzimanja"
 
-#: catchup.py:975
+#: catchup.py:986
 msgid "Catchup error. No data for this slot"
 msgstr "Greška odloženog gledanja. Nema podataka za ovo mesto"
 
-#: catchup.py:1015 catchup.py:1088
+#: catchup.py:1026 catchup.py:1099
 msgid "Catchup currently not available. Missing EPG data"
 msgstr "Odloženo gledanje trenutno nije dostupno. Nedostaju EPG podaci"
 
@@ -283,71 +283,75 @@ msgstr ""
 msgid "Live Streams"
 msgstr "Prenosi uživo"
 
-#: live.py:345 vod.py:267
+#: live.py:354 vod.py:267
 msgid "FAVOURITES"
 msgstr "FAVORITI"
 
-#: live.py:347 vod.py:269
+#: live.py:356 vod.py:269
 msgid "RECENTLY WATCHED"
 msgstr ""
 
-#: live.py:587 live.py:838 playlists.py:56 vod.py:869 vod.py:1065
+#: live.py:601 live.py:855 playlists.py:56 vod.py:883 vod.py:1083
 msgid "Delete"
 msgstr "Obriši"
 
-#: live.py:1306 live.py:1365 live.py:1374
+#: live.py:1328 live.py:1387 live.py:1396
 msgid "Next Info"
 msgstr "Sledeća informacija"
 
-#: live.py:1369
+#: live.py:1391
 msgid "Now Info"
 msgstr "Nova informacija"
 
-#: live.py:1601 streamplayer.py:667
+#: live.py:1623 streamplayer.py:678
 msgid "Recording Timer Set."
 msgstr "Tajmer snimanja je podešen."
 
-#: live.py:1603 streamplayer.py:669
+#: live.py:1625 streamplayer.py:680
 msgid "Recording Failed."
 msgstr "Snimanje nije uspelo."
 
-#: mainmenu.py:41
+#: mainmenu.py:42
 msgid "Main Menu"
 msgstr "Glavni meni"
 
-#: mainmenu.py:45
+#: mainmenu.py:46
 msgid "Reset JSON"
 msgstr ""
 
-#: mainmenu.py:77
+#: mainmenu.py:78
 msgid "Playlists.txt location is invalid and has been reset."
 msgstr ""
 
-#: mainmenu.py:120
+#: mainmenu.py:121
 msgid "Playlists"
 msgstr "Liste za reprodukciju"
 
-#: mainmenu.py:121 mainmenu.py:126
+#: mainmenu.py:122 mainmenu.py:127
 msgid "Add Playlist"
 msgstr "Dodaj listu za reprodukciju"
 
-#: mainmenu.py:122 mainmenu.py:127 settings.py:59
+#: mainmenu.py:123 mainmenu.py:128 settings.py:59
 msgid "Main Settings"
 msgstr "Glavna podešavanja"
 
-#: mainmenu.py:123
+#: mainmenu.py:124
 msgid "Manual EPG Update"
 msgstr ""
 
-#: mainmenu.py:130
+#: mainmenu.py:131
 msgid "Download Manager"
 msgstr "Menadžer preuzimanja"
 
-#: mainmenu.py:153
+#: mainmenu.py:166
+msgid "Recordings in progress. EPG not downloaded."
+msgstr ""
+
+#: mainmenu.py:168
 msgid "EPGs downloading."
 msgstr ""
 
-#: mainmenu.py:190
+#: mainmenu.py:205
 msgid ""
 "Warning: delete stored json data for all playlists... Settings, favourites "
 "etc. \n"
@@ -381,47 +385,54 @@ msgstr "Izaberite listu"
 msgid "Info"
 msgstr "Informacije"
 
-#: playlists.py:289 playlists.py:349
+#: playlists.py:298 playlists.py:379
 msgid "Server Not Responding"
 msgstr "Server ne reaguje"
 
-#: playlists.py:301 playlists.py:351
+#: playlists.py:310 playlists.py:381
 msgid "Not Authorised"
 msgstr "Nije Ovlašćen"
 
-#: playlists.py:306 playlists.py:314 playlists.py:338 serverinfo.py:71
+#: playlists.py:315 playlists.py:323 playlists.py:367 serverinfo.py:71
 msgid "Active"
 msgstr "Aktivno"
 
-#: playlists.py:308 playlists.py:343 serverinfo.py:73
+#: playlists.py:317 playlists.py:373 serverinfo.py:73
 msgid "Banned"
 msgstr "Zabranjeno"
 
-#: playlists.py:310 playlists.py:347 serverinfo.py:75
+#: playlists.py:319 playlists.py:377 serverinfo.py:75
 msgid "Disabled"
 msgstr "Onemogućeno"
 
-#: playlists.py:312 playlists.py:345 serverinfo.py:77
+#: playlists.py:321 playlists.py:375 serverinfo.py:77
 msgid "Expired"
 msgstr "Istekao"
 
-#: playlists.py:317 playlists.py:319
+#: playlists.py:326 playlists.py:328
 msgid "Expires: "
 msgstr "Ističe: "
 
-#: playlists.py:321
+#: playlists.py:330
 msgid "Active Conn:"
 msgstr "Aktivnih veza:"
 
-#: playlists.py:324
+#: playlists.py:343
 msgid "Max Conn:"
 msgstr "Maksimalno konekcija:"
 
-#: playlists.py:364
+#: playlists.py:360
+msgid ""
+"You have dead playlists that are slowing down loading.\n"
+"\n"
+"Press Yellow button to soft delete dead playlists"
+msgstr ""
+
+#: playlists.py:394
 msgid "Delete selected playlist?"
 msgstr "Izbrisati izabranu plejlistu?"
 
-#: playlists.py:385
+#: playlists.py:415
 msgid "Delete providers EPG data?"
 msgstr "Izbrisati EPG podatke provajdera?"
 
@@ -487,11 +498,11 @@ msgstr ""
 msgid "Name already used. Please enter a unique name."
 msgstr ""
 
-#: plugin.py:253 plugin.py:374
+#: plugin.py:260 plugin.py:381
 msgid "XStreamity"
 msgstr "XStreamity"
 
-#: plugin.py:373
+#: plugin.py:380
 msgid "IPTV Xtream Codes playlists player by KiddaC"
 msgstr "KiddaC plejer plejlista IPTV Xstream kodova"
 
@@ -523,53 +534,53 @@ msgstr "Vreme završetka"
 msgid "Series Categories"
 msgstr ""
 
-#: series.py:86 series.py:1805
+#: series.py:86 series.py:1832
 msgid "Series"
 msgstr ""
 
-#: series.py:409
+#: series.py:415
 #, fuzzy
 #| msgid "Filter this category..."
 msgid "No series found in this category."
 msgstr "Filtriraj ovu kategoriju ..."
 
-#: series.py:1371 series.py:1399 vod.py:1014 vod.py:1035
+#: series.py:1390 series.py:1418 vod.py:1032 vod.py:1053
 msgid "Sort: Year"
 msgstr ""
 
-#: series.py:1772 vod.py:1424
+#: series.py:1799 vod.py:1447
 msgid "Video Type:"
 msgstr "Vrsta videa:"
 
-#: series.py:1773 vod.py:1425
+#: series.py:1800 vod.py:1448
 msgid "Rating:"
 msgstr "Ocena:"
 
-#: series.py:1774 vod.py:1426
+#: series.py:1801 vod.py:1449
 msgid "Genre:"
 msgstr "Žanr:"
 
-#: series.py:1775 vod.py:1427
+#: series.py:1802 vod.py:1450
 msgid "Duration:"
 msgstr "Trajanje:"
 
-#: series.py:1776 vod.py:1428
+#: series.py:1803 vod.py:1451
 msgid "Release Date:"
 msgstr "Datum izlaska:"
 
-#: series.py:1777 vod.py:1429
+#: series.py:1804 vod.py:1452
 msgid "Cast:"
 msgstr "Uloge:"
 
-#: series.py:1778 vod.py:1430
+#: series.py:1805 vod.py:1453
 msgid "Director:"
 msgstr "Režija:"
 
-#: series.py:1779 vod.py:1431
+#: series.py:1806 vod.py:1454
 msgid "Country:"
 msgstr "Zemlja:"
 
-#: series.py:1849
+#: series.py:1876
 msgid "Season "
 msgstr "Sezona "
 
@@ -662,142 +673,147 @@ msgid ""
 "Pin cannot be 0000, 1111 or 1234"
 msgstr ""
 
-#: settings.py:126
+#: settings.py:127
 msgid "You need to restart the GUI"
 msgstr ""
 
-#: settings.py:126
+#: settings.py:127
 msgid "Do you want to restart now?"
 msgstr ""
 
-#: settings.py:137
+#: settings.py:138
 msgid "Select skin"
 msgstr ""
 
-#: settings.py:138
+#: settings.py:139
 msgid "playlists.txt location"
 msgstr "Lokacija do playlist.txt"
 
-#: settings.py:138 settings.py:150 settings.py:162 settings.py:169
+#: settings.py:139 settings.py:151 settings.py:163 settings.py:164
+#: settings.py:171
 msgid " *Restart GUI Required"
 msgstr ""
 
-#: settings.py:139
+#: settings.py:140
 msgid "EPG download location"
 msgstr ""
 
-#: settings.py:140
+#: settings.py:141
 msgid "VOD download folder"
 msgstr "FILM fascikla za preuzimanje"
 
-#: settings.py:143
+#: settings.py:144
 msgid "Default LIVE stream type"
 msgstr "Podrazumevani tip strima uživo"
 
-#: settings.py:144
+#: settings.py:145
 msgid "Default VOD/SERIES stream type"
 msgstr "Podrazumevani tip FILM/SERIJE strima"
 
-#: settings.py:146
+#: settings.py:147
 msgid "Preview LIVE streams in mini tv"
 msgstr "Pregledajte strimove uživo u mini tv -u"
 
-#: settings.py:147
+#: settings.py:148
 msgid "Stop stream on back button"
 msgstr "Dugme nazad Zaustavi striming"
 
-#: settings.py:148
+#: settings.py:149
 msgid "XStreamity parental control"
 msgstr ""
 
-#: settings.py:149
+#: settings.py:150
 msgid "XStreamity parental pin"
 msgstr ""
 
-#: settings.py:150
+#: settings.py:151
 msgid "Show in main menu"
 msgstr ""
 
-#: settings.py:152
+#: settings.py:153
 msgid "Use Movie Database(TMDB) for VOD & Series"
 msgstr "Koristite Movie Database (TMDB) za FILM i SERIJE"
 
-#: settings.py:153
+#: settings.py:154
 msgid "Movie Database language"
 msgstr "Jezik baze podataka filma"
 
-#: settings.py:155
+#: settings.py:156
 msgid "Margin before catchup (mins)"
 msgstr "Margina pre hvatanja Odloženo gledanje (min.)"
 
-#: settings.py:156
+#: settings.py:157
 msgid "Margin after catchup (mins)"
 msgstr "Margina posle hvatanja Odloženo gledanje (min.)"
 
-#: settings.py:158
+#: settings.py:159
 msgid "Allow SubsSupport plugin in VOD"
 msgstr "Dozvoli SubsSupport dodatak u FILM -ovi"
 
-#: settings.py:160
+#: settings.py:161
 msgid "Skip playlist selection screen if only 1 playlist"
 msgstr "Preskočite ekran za izbor liste ako postoji samo 1 lista"
 
-#: settings.py:162
-msgid "Automatic EPG download time"
+#: settings.py:163
+msgid "Download EPG on boot"
 msgstr ""
 
 #: settings.py:164
-msgid "Show channel picons"
-msgstr ""
-
-#: settings.py:165
-msgid "Show Vod/Series posters"
+msgid "Automatic EPG download time"
 msgstr ""
 
 #: settings.py:166
-msgid "Show infobar picons"
+msgid "Show channel picons"
 msgstr ""
 
 #: settings.py:167
-msgid "Show infobar posters"
+msgid "Show Vod/Series posters"
+msgstr ""
+
+#: settings.py:168
+msgid "Show infobar picons"
 msgstr ""
 
 #: settings.py:169
+msgid "Show infobar posters"
+msgstr ""
+
+#: settings.py:171
 msgid "Auto start XStreamity on boot"
 msgstr ""
 
-#: settings.py:293 settings.py:308 settings.py:323
+#: settings.py:299 settings.py:314 settings.py:329
 msgid "Choose Directory:"
 msgstr "Odaberite direktorijum:"
 
-#: settings.py:294 settings.py:309 settings.py:324
+#: settings.py:300 settings.py:315 settings.py:330
 msgid "Choose directory"
 msgstr "Odaberite direktorijum"
 
-#: streamplayer.py:452
+#: streamplayer.py:463
 msgid "TV"
 msgstr "TV"
 
-#: streamplayer.py:978 streamplayer.py:1393 streamplayer.py:1638
+#: streamplayer.py:992 streamplayer.py:1411 streamplayer.py:1659
 #, fuzzy
 #| msgid "Recording Failed."
 msgid "Resolution Change Failed"
 msgstr "Snimanje nije uspelo."
 
-#: streamplayer.py:1033
+#: streamplayer.py:1047
 msgid "Do you want to resume this playback?"
 msgstr ""
 
-#: streamplayer.py:1033
+#: streamplayer.py:1047
 #, python-format
 msgid "Resume position at %s"
 msgstr ""
 
-#: streamplayer.py:1132
+#: streamplayer.py:1146
 msgid "VOD"
 msgstr "FILM"
 
-#: streamplayer.py:1475
+#: streamplayer.py:1493
 msgid "Catch Up"
 msgstr "Odloženo gledanje"
 
@@ -805,11 +821,11 @@ msgstr "Odloženo gledanje"
 msgid "Vod Categories"
 msgstr ""
 
-#: vod.py:1456
+#: vod.py:1479
 msgid "Movie"
 msgstr "Film"
 
-#: vod.py:1489
+#: vod.py:1512
 msgid ""
 "The IMDb plugin is not installed!\n"
 "Please install it."

@@ -1,16 +1,16 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: XStreamity\n"
-"POT-Creation-Date: 2024-01-07 23:57+0000\n"
-"PO-Revision-Date: 2024-01-08 15:04+0100\n"
+"POT-Creation-Date: 2024-02-18 13:10+0000\n"
+"PO-Revision-Date: 2024-02-18 13:10+0000\n"
 "Last-Translator: Warder <ciksa@seznam.cz>\n"
 "Language-Team: \n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && "
-"(n%100<12 || n%100>14) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 "
+"|| n%100>14) ? 1 : 2);\n"
 "X-Generator: Poedit 3.4.2\n"
 "X-Poedit-Basepath: ../../../../../../../../../..\n"
 "X-Poedit-SearchPath-0: .\n"
@@ -88,38 +88,38 @@ msgstr "Catch Up TV"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:179
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:445
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:649
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:651
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:663
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:818
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:201
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:577
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:789
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:791
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:803
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:1000
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:652
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:654
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:666
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:829
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:202
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:591
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:806
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:808
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:820
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:1021
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:156
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1210
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1365
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1368
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1371
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1383
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1591
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1616
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1632
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1225
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1384
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1387
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1390
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1402
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1618
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1643
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1659
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:134
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:859
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1012
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1014
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1026
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1226
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:873
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1030
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1032
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1044
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1249
 msgid "Sort: A-Z"
 msgstr "Sortuj: A-Z"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:201
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:165
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:225
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:43
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:234
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:44
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:48
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:54
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:49
@@ -131,8 +131,8 @@ msgid "Back"
 msgstr "Wstecz"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:202
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:226
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:44
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:235
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:45
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:49
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:55
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:176
@@ -142,207 +142,207 @@ msgstr "OK"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:204
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:443
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:733
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:228
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:575
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:903
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:736
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:237
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:589
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:920
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:178
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1208
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1493
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1223
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1512
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:156
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:857
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1131
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:871
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1149
 msgid "Search"
 msgstr "Szukaj"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:291
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:349
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:358
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:293
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:271
 msgid "ALL"
 msgstr "WSZYSTKIE"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:396
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:499
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:696
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:401
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:513
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:703
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:410
 msgid "Server error or invalid link."
 msgstr "Błąd serwera lub nieprawidłowe łącze."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:403
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:433
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:696
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:726
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:533
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:572
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:835
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:896
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:704
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1205
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1439
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1485
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:408
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:854
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1062
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1123
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:699
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:729
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:547
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:586
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:852
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:913
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:711
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1220
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1458
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1504
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:417
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:868
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1080
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1141
 msgid "Reset Search"
 msgstr "Zresetuj wyszukiwanie"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:439
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:638
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:641
 msgid "Reverse"
 msgstr "Rewers"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:488
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:514
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:625
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:661
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:785
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:813
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:496
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:524
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:639
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:675
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:792
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:820
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:505
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:533
 msgid "Page: "
 msgstr "Strona: "
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:488
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:514
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:625
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:661
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:785
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:813
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:496
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:524
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:639
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:675
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:792
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:820
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:505
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:533
 msgid " of "
 msgstr " do "
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:649
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:651
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:666
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:789
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:791
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:652
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:654
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:669
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:806
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1365
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1368
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1371
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1386
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1012
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1014
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1029
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:808
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:823
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1384
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1387
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1390
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1405
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1030
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1032
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1047
 msgid "Sort: Z-A"
 msgstr "Sortuj: Z-A"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:649
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:651
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:672
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:789
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:791
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:812
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1365
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1368
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1371
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1409
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1012
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1014
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1038
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:652
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:654
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:675
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:806
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:808
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:829
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1384
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1387
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1390
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1428
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1030
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1032
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1056
 msgid "Sort: Original"
 msgstr "Sortuj: Oryginał"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:651
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:669
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:791
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:809
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1368
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1371
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1389
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1014
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:654
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:672
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:808
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:826
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1387
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1390
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1408
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1032
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1050
 msgid "Sort: Added"
 msgstr "Sortuj: Dodano"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:699
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:842
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1443
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1069
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:702
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:859
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1462
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1087
 msgid "Filter this category..."
 msgstr "Filtruj tę kategorię..."
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:719
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:889
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1471
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1116
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:722
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:906
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1490
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1134
 msgid "No results found."
 msgstr "Nic nie znaleziono."
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:755
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:925
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1529
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1153
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:758
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:942
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1548
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1171
 msgid "Incorrect pin code."
 msgstr "Nieprawidłowy kod PIN."
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:776
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:946
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1550
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1174
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:781
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:965
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1571
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1194
 msgid "all"
 msgstr "wszystkie"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:785
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:955
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1559
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1183
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:796
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:980
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1586
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1209
 msgid "Please enter the parental control pin code"
 msgstr "Wprowadź kod PIN kontroli rodzicielskiej"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:785
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:796
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/hidden.py:27
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:955
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1559
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:980
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1586
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:25
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1183
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1209
 msgid "Enter pin code"
 msgstr "Wprowadź kod PIN"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:936
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:947
 msgid "Catch-up"
 msgstr "Nadrabianie zaległości"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:941
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1810
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1461
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:952
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1837
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1484
 msgid "Added to download manager"
 msgstr "Dodano do menedżera pobierania"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:941
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1810
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1461
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:952
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1837
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1484
 msgid "Note recording acts as an open connection."
 msgstr "Nagrywanie notatek działa jak otwarte połączenie."
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:941
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1810
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1461
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:952
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1837
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1484
 msgid "Do not record and play streams at the same time."
 msgstr "Nie nagrywaj i nie odtwarzaj strumieni w tym samym czasie."
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:941
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1810
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1461
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:952
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1837
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1484
 msgid "Open download manager?"
 msgstr "Otworzyć menedżera pobierania?"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:944
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1813
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1464
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:955
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1840
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1487
 msgid "Already added to download manager"
 msgstr "Dodano już do menedżera pobierania"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:975
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:986
 msgid "Catchup error. No data for this slot"
 msgstr "Błąd przechwytywania. Brak danych dla tego slotu"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:1015
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:1088
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:1026
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:1099
 msgid "Catchup currently not available. Missing EPG data"
 msgstr "Usługa Catchup jest obecnie niedostępna. Brakujące dane EPG"
 
@@ -455,85 +455,89 @@ msgstr "Kategorie na żywo"
 msgid "Live Streams"
 msgstr "Zajęcia na żywo"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:345
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:354
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:267
 msgid "FAVOURITES"
 msgstr "aktualna lista ulubionych"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:347
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:356
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:269
 msgid "RECENTLY WATCHED"
 msgstr "OSTATNIO OGLĄDANE"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:587
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:838
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:601
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:855
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:56
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:869
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1065
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:883
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1083
 msgid "Delete"
 msgstr "Usuń"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:1306
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:1365
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:1374
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:1328
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:1387
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:1396
 msgid "Next Info"
 msgstr "Następne informacje"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:1369
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:1391
 msgid "Now Info"
 msgstr "Więcej informacji"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:1601
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:667
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:1623
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:678
 msgid "Recording Timer Set."
 msgstr "Ustawienie timera nagrywania."
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:1603
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:669
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:1625
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:680
 msgid "Recording Failed."
 msgstr "Nagrywanie nie powiodło się."
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:41
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:42
 msgid "Main Menu"
 msgstr "Menu główne"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:45
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:46
 msgid "Reset JSON"
 msgstr "Resetowanie JSON"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:77
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:78
 msgid "Playlists.txt location is invalid and has been reset."
 msgstr ""
 "Lokalizacja pliku Playlists.txt jest nieprawidłowa i została zresetowana."
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:120
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:121
 msgid "Playlists"
 msgstr "Listy odtwarzania"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:121
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:126
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:122
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:127
 msgid "Add Playlist"
 msgstr "Dodaj listę odtwarzania"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:122
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:127
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:123
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:128
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:59
 msgid "Main Settings"
 msgstr "Ustawienia główne"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:123
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:124
 msgid "Manual EPG Update"
 msgstr "Ręczna aktualizacja EPG"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:130
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:131
 msgid "Download Manager"
 msgstr "Menedżer pobierania"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:153
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:166
+msgid "Recordings in progress. EPG not downloaded."
+msgstr ""
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:168
 msgid "EPGs downloading."
 msgstr "Pobieranie EPG."
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:190
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:205
 msgid ""
 "Warning: delete stored json data for all playlists... Settings, favourites "
 "etc. \n"
@@ -573,59 +577,66 @@ msgstr "Wybierz listę odtwarzania"
 msgid "Info"
 msgstr "Informacja"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:289
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:349
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:298
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:379
 msgid "Server Not Responding"
 msgstr "Serwer nie odpowiada"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:301
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:351
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:310
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:381
 msgid "Not Authorised"
 msgstr "Nieautoryzowane"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:306
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:314
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:338
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:315
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:323
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:367
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:71
 msgid "Active"
 msgstr "Aktywny"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:308
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:343
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:317
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:373
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:73
 msgid "Banned"
 msgstr "Zbanowany"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:310
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:347
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:319
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:377
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:75
 msgid "Disabled"
 msgstr "Wyłączone"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:312
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:345
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:321
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:375
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:77
 msgid "Expired"
 msgstr "Wygasłe"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:317
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:319
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:326
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:328
 msgid "Expires: "
 msgstr "Wygasa: "
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:321
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:330
 msgid "Active Conn:"
 msgstr "Active Conn:"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:324
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:343
 msgid "Max Conn:"
 msgstr "Max Conn:"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:364
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:360
+msgid ""
+"You have dead playlists that are slowing down loading.\n"
+"\n"
+"Press Yellow button to soft delete dead playlists"
+msgstr ""
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:394
 msgid "Delete selected playlist?"
 msgstr "Usunąć wybraną listę odtwarzania?"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:385
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:415
 msgid "Delete providers EPG data?"
 msgstr "Usunąć dane EPG dostawców?"
 
@@ -691,20 +702,20 @@ msgid ""
 "Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum 3 "
 "characters."
 msgstr ""
-"Nazwa bukietu nie może być pusta. Wprowadź unikalną nazwę bukietu. Minimum "
-"3 znaki."
+"Nazwa bukietu nie może być pusta. Wprowadź unikalną nazwę bukietu. Minimum 3 "
+"znaki."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:245
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:210
 msgid "Name already used. Please enter a unique name."
 msgstr "Nazwa jest już używana. Wprowadź unikalną nazwę."
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:253
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:374
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:260
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:381
 msgid "XStreamity"
 msgstr "XStreamity"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:373
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:380
 msgid "IPTV Xtream Codes playlists player by KiddaC"
 msgstr "Odtwarzacz list odtwarzania IPTV Xtream Codes firmy KiddaC"
 
@@ -738,62 +749,62 @@ msgid "Series Categories"
 msgstr "Kategorie serii"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:86
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1805
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1832
 msgid "Series"
 msgstr "Seria"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:409
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:415
 msgid "No series found in this category."
 msgstr "Nie znaleziono serii w tej kategorii."
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1371
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1399
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1014
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1035
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1390
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1418
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1032
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1053
 msgid "Sort: Year"
 msgstr "Sortuj: Rok"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1772
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1424
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1799
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1447
 msgid "Video Type:"
 msgstr "Typ wideo:"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1773
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1425
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1800
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1448
 msgid "Rating:"
 msgstr "Ocena:"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1774
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1426
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1801
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1449
 msgid "Genre:"
 msgstr "Gatunek:"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1775
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1427
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1802
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1450
 msgid "Duration:"
 msgstr "Czas trwania:"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1776
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1428
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1803
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1451
 msgid "Release Date:"
 msgstr "Data wydania:"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1777
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1429
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1804
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1452
 msgid "Cast:"
 msgstr "Obsada:"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1778
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1430
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1805
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1453
 msgid "Director:"
 msgstr "Reżyser:"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1779
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1431
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1806
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1454
 msgid "Country:"
 msgstr "Kraj:"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1849
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1876
 msgid "Season "
 msgstr "Sezon "
 
@@ -830,8 +841,8 @@ msgid ""
 "Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum 2 "
 "characters."
 msgstr ""
-"Nazwa bukietu nie może być pusta. Wprowadź unikalną nazwę bukietu. Minimum "
-"2 znaki."
+"Nazwa bukietu nie może być pusta. Wprowadź unikalną nazwę bukietu. Minimum 2 "
+"znaki."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:227
 msgid "Playlist added successfully."
@@ -891,151 +902,156 @@ msgstr ""
 "\n"
 "Pin nie może mieć wartości 0000, 1111 lub 1234"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:126
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:127
 msgid "You need to restart the GUI"
 msgstr "Należy ponownie uruchomić GUI"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:126
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:127
 msgid "Do you want to restart now?"
 msgstr "Czy chcesz teraz uruchomić ponownie?"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:137
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:138
 msgid "Select skin"
 msgstr "Wybierz skórkę"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:138
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:139
 msgid "playlists.txt location"
 msgstr "lokalizacja playlists.txt"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:138
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:150
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:162
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:169
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:139
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:151
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:163
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:164
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:171
 msgid " *Restart GUI Required"
 msgstr " *Wymagany restart GUI"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:139
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:140
 msgid "EPG download location"
 msgstr "Lokalizacja pobierania EPG"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:140
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:141
 msgid "VOD download folder"
 msgstr "Folder pobierania VOD"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:143
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:144
 msgid "Default LIVE stream type"
 msgstr "Domyślny typ strumienia LIVE"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:144
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:145
 msgid "Default VOD/SERIES stream type"
 msgstr "Domyślny typ strumienia VOD/SERIES"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:146
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:147
 msgid "Preview LIVE streams in mini tv"
 msgstr "Podgląd transmisji LIVE w mini tv"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:147
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:148
 msgid "Stop stream on back button"
 msgstr "Zatrzymaj strumień na przycisku Wstecz"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:148
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:149
 msgid "XStreamity parental control"
 msgstr "Kontrola rodzicielska XStreamity"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:149
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:150
 msgid "XStreamity parental pin"
 msgstr "Pin rodzicielski XStreamity"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:150
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:151
 msgid "Show in main menu"
 msgstr "Pokaż w menu głównym"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:152
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:153
 msgid "Use Movie Database(TMDB) for VOD & Series"
 msgstr "Użyj bazy danych filmów (TMDB) dla VOD i seriali"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:153
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:154
 msgid "Movie Database language"
 msgstr "Język bazy danych filmów"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:155
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:156
 msgid "Margin before catchup (mins)"
 msgstr "Margines przed odrobieniem strat (min)"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:156
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:157
 msgid "Margin after catchup (mins)"
 msgstr "Marża po odrobieniu strat (min)"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:158
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:159
 msgid "Allow SubsSupport plugin in VOD"
 msgstr "Zezwalaj na wtyczkę SubsSupport w VOD"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:160
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:161
 msgid "Skip playlist selection screen if only 1 playlist"
 msgstr ""
 "Pomiń ekran wyboru listy odtwarzania, jeśli dostępna jest tylko 1 lista "
 "odtwarzania"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:162
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:163
+msgid "Download EPG on boot"
+msgstr ""
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:164
 msgid "Automatic EPG download time"
 msgstr "Automatyczny czas pobierania EPG"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:164
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:166
 msgid "Show channel picons"
 msgstr "Pokaż pikony kanału"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:165
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:167
 msgid "Show Vod/Series posters"
 msgstr "Pokaż plakaty Vod/Series"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:166
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:168
 msgid "Show infobar picons"
 msgstr "Pokaż pikony infobar"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:167
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:169
 msgid "Show infobar posters"
 msgstr "Pokaż plakaty infobar"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:169
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:171
 msgid "Auto start XStreamity on boot"
 msgstr "Automatyczne uruchamianie XStreamity przy starcie systemu"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:293
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:308
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:323
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:299
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:314
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:329
 msgid "Choose Directory:"
 msgstr "Wybierz katalog:"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:294
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:309
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:324
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:300
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:315
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:330
 msgid "Choose directory"
 msgstr "Wybór katalogu"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:452
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:463
 msgid "TV"
 msgstr "Serial"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:978
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:1393
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:1638
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:992
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:1411
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:1659
 msgid "Resolution Change Failed"
 msgstr "Zmiana rozdzielczości nie powiodła się"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:1033
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:1047
 msgid "Do you want to resume this playback?"
 msgstr "Czy chcesz wznowić odtwarzanie?"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:1033
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:1047
 #, python-format
 msgid "Resume position at %s"
 msgstr "Wznowienie pozycji na %s"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:1132
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:1146
 msgid "VOD"
 msgstr "VOD"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:1475
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:1493
 msgid "Catch Up"
 msgstr "Catch Up"
 
@@ -1043,11 +1059,11 @@ msgstr "Catch Up"
 msgid "Vod Categories"
 msgstr "Kategorie Vod"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1456
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1479
 msgid "Movie"
 msgstr "Film"
 
-#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1489
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1512
 msgid ""
 "The IMDb plugin is not installed!\n"
 "Please install it."
@@ -1055,193 +1071,193 @@ msgstr ""
 "Wtyczka IMDb nie jest zainstalowana!\n"
 "Prosimy o jej zainstalowanie."
 
-msgid "Hide/Show"
-msgstr "Fshihe/Tregoje"
+#~ msgid "Hide/Show"
+#~ msgstr "Fshihe/Tregoje"
 
-msgid "Update"
-msgstr "Rifresko"
+#~ msgid "Update"
+#~ msgstr "Rifresko"
 
-msgid "Catchup channel check updated: "
-msgstr "Kontrolli i kanalit të bibliotekave të mediave u freskua: "
+#~ msgid "Catchup channel check updated: "
+#~ msgstr "Kontrolli i kanalit të bibliotekave të mediave u freskua: "
 
-msgid "Last catchup check: "
-msgstr "Verifikimi i fundit medial: "
+#~ msgid "Last catchup check: "
+#~ msgstr "Verifikimi i fundit medial: "
 
-msgid "Xstreamity Log"
-msgstr "Kyqja në Xstreamity"
+#~ msgid "Xstreamity Log"
+#~ msgstr "Kyqja në Xstreamity"
 
-msgid "Clear"
-msgstr "Pastro"
+#~ msgid "Clear"
+#~ msgstr "Pastro"
 
-msgid "Server URL:"
-msgstr "Hyrja e serverit:"
+#~ msgid "Server URL:"
+#~ msgstr "Hyrja e serverit:"
 
-msgid "Select skin *Restart GUI Required"
-msgstr "Zgjidh lëkurën *Kërkohet rindezja e paisjes"
+#~ msgid "Select skin *Restart GUI Required"
+#~ msgstr "Zgjidh lëkurën *Kërkohet rindezja e paisjes"
 
-msgid "Show in main menu *Restart GUI Required"
-msgstr "Shfaq në menynë kryesore *Rindezja e paisjes e nevojshme"
+#~ msgid "Show in main menu *Restart GUI Required"
+#~ msgstr "Shfaq në menynë kryesore *Rindezja e paisjes e nevojshme"
 
-msgid "Automatic EPG download time *Restart GUI Required"
-msgstr "Koha automatike e shkarkimit të EPG *Kërkohet rindizje e paisjes"
+#~ msgid "Automatic EPG download time *Restart GUI Required"
+#~ msgstr "Koha automatike e shkarkimit të EPG *Kërkohet rindizje e paisjes"
 
-msgid "Auto start XStreamity on boot *Restart GUI Required"
-msgstr "Nisja automatike e XStreamity në nisje Kërkohet rinisje GUI"
-
-#, python-format
-msgid ""
-"Video Download Failed!\n"
-"\n"
-"Corrupted Download File:\n"
-"%s"
-msgstr ""
-"Shkarkimi i videos ka dështuar!\n"
-"\n"
-"Elemente të korruptuëra:\n"
-"%s"
+#~ msgid "Auto start XStreamity on boot *Restart GUI Required"
+#~ msgstr "Nisja automatike e XStreamity në nisje Kërkohet rinisje GUI"
 
 #, python-format
-msgid ""
-"Video Download Failed!\n"
-"\n"
-"Could not read RTMP-Packet:\n"
-"%s"
-msgstr ""
-"Shkarkimi i videos ka dështuar!\n"
-"\n"
-"Paketa RTMP nuk mund të lexohet:\n"
-"%s"
+#~ msgid ""
+#~ "Video Download Failed!\n"
+#~ "\n"
+#~ "Corrupted Download File:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Shkarkimi i videos ka dështuar!\n"
+#~ "\n"
+#~ "Elemente të korruptuëra:\n"
+#~ "%s"
 
 #, python-format
-msgid ""
-"Video Download Failed!\n"
-"\n"
-"Segmentation fault:\n"
-"%s"
-msgstr ""
-"Shkarkimi i videos ka dështuar!\n"
-"\n"
-"Gabim segmentimi:\n"
-"%s"
+#~ msgid ""
+#~ "Video Download Failed!\n"
+#~ "\n"
+#~ "Could not read RTMP-Packet:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Shkarkimi i videos ka dështuar!\n"
+#~ "\n"
+#~ "Paketa RTMP nuk mund të lexohet:\n"
+#~ "%s"
 
 #, python-format
-msgid ""
-"Video Download Failed!\n"
-"\n"
-"Server returned error:\n"
-"%s"
-msgstr ""
-"Shkarkimi i videos ka dështuar!\n"
-"\n"
-"Gabim i lajmëruar nga serveri:\n"
-"%s"
+#~ msgid ""
+#~ "Video Download Failed!\n"
+#~ "\n"
+#~ "Segmentation fault:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Shkarkimi i videos ka dështuar!\n"
+#~ "\n"
+#~ "Gabim segmentimi:\n"
+#~ "%s"
 
 #, python-format
-msgid ""
-"Video Download Failed!\n"
-"\n"
-"Unknown Error:\n"
-"%s"
-msgstr ""
-"Shkarkimi i videos ka dështuar!\n"
-"\n"
-"Gabim i panjohur:\n"
-"%s"
+#~ msgid ""
+#~ "Video Download Failed!\n"
+#~ "\n"
+#~ "Server returned error:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Shkarkimi i videos ka dështuar!\n"
+#~ "\n"
+#~ "Gabim i lajmëruar nga serveri:\n"
+#~ "%s"
 
-msgid "Username"
-msgstr "Emri i përdoruesit"
+#, python-format
+#~ msgid ""
+#~ "Video Download Failed!\n"
+#~ "\n"
+#~ "Unknown Error:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Shkarkimi i videos ka dështuar!\n"
+#~ "\n"
+#~ "Gabim i panjohur:\n"
+#~ "%s"
 
-msgid "Password"
-msgstr "Fjalkalimi"
+#~ msgid "Username"
+#~ msgstr "Emri i përdoruesit"
 
-msgid "Server timeout (seconds)"
-msgstr "Koha skaduese e serverit (sekonda)"
+#~ msgid "Password"
+#~ msgstr "Fjalkalimi"
 
-msgid "MOVIE DOWNLOAD FAILED!"
-msgstr "SHKARKIMI I FILMIT KA DËSHTUAR!"
+#~ msgid "Server timeout (seconds)"
+#~ msgstr "Koha skaduese e serverit (sekonda)"
 
-msgid "DOWNLOADED FILE CORRUPTED:"
-msgstr "ELEMENTI I SHKARKUAR ËSHTË KORRUPT:"
+#~ msgid "MOVIE DOWNLOAD FAILED!"
+#~ msgstr "SHKARKIMI I FILMIT KA DËSHTUAR!"
 
-msgid "COULD NOT READ RTMP PACKET:"
-msgstr "PAKETA RTMP NUK MUND TË LÖEXOHEJ:"
+#~ msgid "DOWNLOADED FILE CORRUPTED:"
+#~ msgstr "ELEMENTI I SHKARKUAR ËSHTË KORRUPT:"
 
-msgid "SEGMENTATION FAULT:"
-msgstr "GABIM SEGMENTI:"
+#~ msgid "COULD NOT READ RTMP PACKET:"
+#~ msgstr "PAKETA RTMP NUK MUND TË LÖEXOHEJ:"
 
-msgid "SERVER RETURNED ERROR:"
-msgstr "SERVERI PARALAJMËRON GABIME:"
+#~ msgid "SEGMENTATION FAULT:"
+#~ msgstr "GABIM SEGMENTI:"
 
-msgid "UNKNOWN ERROR:"
-msgstr "GABIM I PANJOHUR:"
+#~ msgid "SERVER RETURNED ERROR:"
+#~ msgstr "SERVERI PARALAJMËRON GABIME:"
 
-msgid "Downloading"
-msgstr "Shkarko"
+#~ msgid "UNKNOWN ERROR:"
+#~ msgstr "GABIM I PANJOHUR:"
 
-msgid "File already downloaded."
-msgstr "Skedari tashmë është shkarkuar."
+#~ msgid "Downloading"
+#~ msgstr "Shkarko"
 
-msgid "Multiple downloads not allowed. Please wait or cancel download."
-msgstr "Shum shkarkime nuk jan të lejuëra. Prisni ose ndaloni një shkarkim."
+#~ msgid "File already downloaded."
+#~ msgstr "Skedari tashmë është shkarkuar."
 
-msgid "Download Failed!\n"
-msgstr "Shkarkimi ka dështuar\n"
+#~ msgid "Multiple downloads not allowed. Please wait or cancel download."
+#~ msgstr "Shum shkarkime nuk jan të lejuëra. Prisni ose ndaloni një shkarkim."
 
-msgid "Reset Stored Data"
-msgstr "Rivendos të dhënat e ruajtura"
+#~ msgid "Download Failed!\n"
+#~ msgstr "Shkarkimi ka dështuar\n"
 
-msgid "XDownload:"
-msgstr "Shkarko:"
+#~ msgid "Reset Stored Data"
+#~ msgstr "Rivendos të dhënat e ruajtura"
 
-msgid "Downloading ..."
-msgstr "Po shkarkon ..."
+#~ msgid "XDownload:"
+#~ msgstr "Shkarko:"
 
-msgid ""
-"Downloading \n"
-"\n"
-msgstr ""
-"Shkarko\n"
-"\n"
+#~ msgid "Downloading ..."
+#~ msgstr "Po shkarkon ..."
 
-msgid ""
-"Download Failed\n"
-"\n"
-msgstr ""
-"Shkarkimi ka dështuar\n"
-"\n"
+#~ msgid ""
+#~ "Downloading \n"
+#~ "\n"
+#~ msgstr ""
+#~ "Shkarko\n"
+#~ "\n"
 
-msgid "Download All"
-msgstr "Shkarko të gjitha"
+#~ msgid ""
+#~ "Download Failed\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Shkarkimi ka dështuar\n"
+#~ "\n"
 
-msgid "GB"
-msgstr "GB"
+#~ msgid "Download All"
+#~ msgstr "Shkarko të gjitha"
 
-msgid "Cancel all downloads and exit?"
-msgstr "Anulo dhe dil nga të gjitha shkarkimet?"
+#~ msgid "GB"
+#~ msgstr "GB"
 
-msgid "Record"
-msgstr "Regjistro"
+#~ msgid "Cancel all downloads and exit?"
+#~ msgstr "Anulo dhe dil nga të gjitha shkarkimet?"
 
-msgid "Settings"
-msgstr "Konfigurimet"
+#~ msgid "Record"
+#~ msgstr "Regjistro"
 
-msgid "Lists updated: "
-msgstr "Lista /shtë aktualizuar: "
+#~ msgid "Settings"
+#~ msgstr "Konfigurimet"
 
-msgid "Stream Type CATCHUP:"
-msgstr "Lloi transmetues MEDIATEK:"
+#~ msgid "Lists updated: "
+#~ msgstr "Lista /shtë aktualizuar: "
 
-msgid "XMLTV EPG Url:"
-msgstr "XMLTV EPG Url:"
+#~ msgid "Stream Type CATCHUP:"
+#~ msgstr "Lloi transmetues MEDIATEK:"
 
-msgid "EPG/Catchup Timeshift:"
-msgstr "EPG/Mediathek Timeshift:"
+#~ msgid "XMLTV EPG Url:"
+#~ msgstr "XMLTV EPG Url:"
 
-msgid "http://"
-msgstr "http://"
+#~ msgid "EPG/Catchup Timeshift:"
+#~ msgstr "EPG/Mediathek Timeshift:"
 
-msgid "https://"
-msgstr "https://"
+#~ msgid "http://"
+#~ msgstr "http://"
 
-msgid "Default CATCHUP stream type"
-msgstr "Lloi transmetues mediatik"
+#~ msgid "https://"
+#~ msgstr "https://"
+
+#~ msgid "Default CATCHUP stream type"
+#~ msgstr "Lloi transmetues mediatik"
