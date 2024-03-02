@@ -1464,7 +1464,7 @@ class XStreamity_Categories(Screen):
                                 if "serveroffset" in glob.current_playlist["player_info"]:
                                     shift = int(glob.current_playlist["player_info"]["serveroffset"])
 
-                                if listing["start"] and listing["end"]:
+                                if listing["start"] and (listing["end"] or listing["stop"]):
 
                                     start = listing["start"]
                                     end = listing["end"]
@@ -1613,7 +1613,7 @@ class XStreamity_Categories(Screen):
                 serviceref = ServiceReference(self.reference)
 
             recording = RecordTimerEntry(serviceref, begin, end, name, description, eventid, dirname=str(cfg.downloadlocation.getValue()))
-            recording.dontSave = True
+            recording.dontSave = False
 
             simulTimerList = self.session.nav.RecordTimer.record(recording)
 
@@ -1696,7 +1696,7 @@ class XStreamity_Categories(Screen):
         try:
             import xml.etree.ElementTree as ET
 
-            tree = ET.parse(sourcefile)
+            tree = ET.parse(sourcefile, parser=ET.XMLParser(encoding="utf-8"))
             root = tree.getroot()
             sourcecat = root.find("sourcecat")
 

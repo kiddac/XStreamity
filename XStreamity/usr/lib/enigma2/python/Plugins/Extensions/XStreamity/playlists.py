@@ -434,10 +434,10 @@ class XStreamity_Playlists(Screen):
                 self["scroll_up"].show()
                 self["scroll_down"].show()
 
-            if self["playlists"].getIndex() < 5:
+            elif self["playlists"].getIndex() < 5:
                 self["scroll_up"].hide()
 
-            if self["playlists"].getIndex() + 1 > ((self["playlists"].count() // 5) * 5):
+            elif self["playlists"].getIndex() + 1 > ((self["playlists"].count() // 5) * 5):
                 self["scroll_down"].hide()
         else:
             glob.current_selection = 0
@@ -501,7 +501,7 @@ class XStreamity_Playlists(Screen):
 
             try:
                 import xml.etree.ElementTree as ET
-                tree = ET.parse(sourcefile)
+                tree = ET.parse(sourcefile, parser=ET.XMLParser(encoding="utf-8"))
                 root = tree.getroot()
 
                 for elem in root.iter():
