@@ -3,6 +3,7 @@
 
 
 from .plugin import playlists_json, pythonVer, cfg, hdr
+from . import xstreamity_globals as glob
 from xml.etree.cElementTree import iterparse
 from twisted.web.client import downloadPage
 from requests.adapters import HTTPAdapter, Retry
@@ -18,6 +19,7 @@ import requests
 import time
 import twisted.python.runtime
 from time import time as rtime
+
 
 try:
     from http.client import HTTPConnection
@@ -63,8 +65,9 @@ def get_time_utc(timestring, fdateparse):
 
 
 class XStreamity_Update:
-    def __init__(self, session=None):
+    def __init__(self, session=None, mode=None):
         # print("****** update ****")
+        self.mode = mode
         recordings = ""
         next_rec_time = -1
 
@@ -117,7 +120,8 @@ class XStreamity_Update:
 
         self.urllist = []
 
-        for playlist in self.playlists_all:
+        if self.mode == "manual":
+            playlist = glob.current_playlist
             if "user_info" in playlist and "auth" in playlist["user_info"] and str(playlist["user_info"]["auth"]) == "1":
                 domain = playlist["playlist_info"]["domain"]
                 name = playlist["playlist_info"]["name"]
@@ -127,13 +131,28 @@ class XStreamity_Update:
                 epgxmlfile = os.path.join(epgfolder, "epg.xml")
                 epgjsonfile = os.path.join(epgfolder, "epg.json")
 
-                exists = any(str(name) == str(x[0]) for x in self.urllist)
-                if exists:
-                    continue
                 self.urllist.append([domain, xmltv, epgxmlfile, epgjsonfile])
 
                 if not os.path.exists(epgfolder):
                     os.makedirs(epgfolder)
+        else:
+            for playlist in self.playlists_all:
+                if "user_info" in playlist and "auth" in playlist["user_info"] and str(playlist["user_info"]["auth"]) == "1":
+                    domain = playlist["playlist_info"]["domain"]
+                    name = playlist["playlist_info"]["name"]
+                    xmltv = playlist["playlist_info"]["xmltv_api"]
+                    epglocation = str(cfg.epglocation.value)
+                    epgfolder = os.path.join(epglocation, str(name))
+                    epgxmlfile = os.path.join(epgfolder, "epg.xml")
+                    epgjsonfile = os.path.join(epgfolder, "epg.json")
+
+                    exists = any(str(domain) == str(x[0]) for x in self.urllist)
+                    if exists:
+                        continue
+                    self.urllist.append([domain, xmltv, epgxmlfile, epgjsonfile])
+
+                    if not os.path.exists(epgfolder):
+                        os.makedirs(epgfolder)
 
         self.processPlaylist()
         self.clear_caches()

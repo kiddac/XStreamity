@@ -13,7 +13,7 @@ from enigma import eServiceReference
 from Screens.Console import Console
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
-from time import time
+# from time import time
 from Tools.LoadPixmap import LoadPixmap
 
 import json
@@ -121,7 +121,7 @@ class XStreamity_MainMenu(Screen):
             self.list.append([1, _("Playlists")])
             self.list.append([3, _("Add Playlist")])
             self.list.append([2, _("Main Settings")])
-            self.list.append([5, _("Manual EPG Update")])
+            # self.list.append([5, _("Manual EPG Update")])
 
         else:
             self.list.append([3, _("Add Playlist")])
@@ -150,6 +150,7 @@ class XStreamity_MainMenu(Screen):
         from . import downloadmanager
         self.session.openWithCallback(self.start, downloadmanager.XStreamity_DownloadManager)
 
+    """
     def updateEPG(self):
 
         recordings = ""
@@ -166,10 +167,13 @@ class XStreamity_MainMenu(Screen):
             self.session.open(MessageBox, _("Recordings in progress. EPG not downloaded."), type=MessageBox.TYPE_INFO, timeout=5)
         else:
             self.session.openWithCallback(self.updateEPG2, MessageBox, _("EPGs downloading."), type=MessageBox.TYPE_INFO, timeout=5)
+            """
 
+    """
     def updateEPG2(self, data=None):
         from . import update
-        update.XStreamity_Update(self.session)
+        update.XStreamity_Update()
+        """
 
     def __next__(self):
         index = self["list"].getCurrent()[0]
@@ -183,8 +187,10 @@ class XStreamity_MainMenu(Screen):
                 self.addServer()
             if index == 4:
                 self.downloadManager()
+            """
             if index == 5:
                 self.updateEPG()
+                """
 
     def quit(self, data=None):
         try:
@@ -222,7 +228,9 @@ def buildListEntry(index, title):
         png = LoadPixmap(os.path.join(common_path, "addplaylist.png"))
     if index == 4:
         png = LoadPixmap(os.path.join(common_path, "vod_download.png"))
+    """
     if index == 5:
         png = LoadPixmap(os.path.join(common_path, "epg_download.png"))
+        """
 
     return (index, str(title), png)

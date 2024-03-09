@@ -7,7 +7,7 @@ from Components.config import config, ConfigSubsection, ConfigSelection, ConfigD
 from enigma import eTimer, getDesktop, addFont
 from Plugins.Plugin import PluginDescriptor
 from os.path import isdir
-from datetime import datetime
+# from datetime import datetime
 
 import os
 import shutil
@@ -85,9 +85,10 @@ languages = [
     ("sq-AL", "shqip")
 ]
 
-
+"""
 def convert(unix=0):
     return datetime.fromtimestamp(unix).strftime('%Y-%m-%d %H:%M:%S')
+    """
 
 
 def defaultMoviePath():
@@ -157,7 +158,7 @@ cfg.channelcovers = ConfigYesNo(default=True)
 cfg.infobarcovers = ConfigYesNo(default=True)
 
 cfg.boot = ConfigYesNo(default=False)
-cfg.epgboot = ConfigYesNo(default=False)
+# cfg.epgboot = ConfigYesNo(default=False)
 
 skin_path = os.path.join(skin_directory, cfg.skin.value)
 common_path = os.path.join(skin_directory, "common/")
@@ -275,6 +276,7 @@ class AutoStartTimer:
     def __init__(self, session):
         self.session = session
         self.timer = eTimer()
+        """
         if cfg.epgboot.getValue() is True:
             self.runUpdate()
         else:
@@ -283,6 +285,13 @@ class AutoStartTimer:
             except:
                 self.timer.callback.append(self.onTimer)
             self.update()
+            """
+
+        try:
+            self.timer_conn = self.timer.timeout.connect(self.onTimer)
+        except:
+            self.timer.callback.append(self.onTimer)
+        self.update()
 
     def getWakeTime(self):
         clock = cfg.wakeup.value

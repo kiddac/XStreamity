@@ -13,6 +13,7 @@ from enigma import eTimer
 from requests.adapters import HTTPAdapter, Retry
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
+from time import time
 from Tools.LoadPixmap import LoadPixmap
 
 import os
@@ -244,6 +245,12 @@ class XStreamity_Menu(Screen):
         self.index += 1
         self.list.append([self.index, _("Playlist Settings"), 4, ""])
 
+        if glob.current_playlist["player_info"]["showlive"] is True:
+            if glob.current_playlist["data"]["live_categories"] and len(glob.current_playlist["data"]["live_categories"]) > 0 \
+                    and "category_id" in glob.current_playlist["data"]["live_categories"][0] and "user_info" not in glob.current_playlist["data"]["live_categories"]:
+                self.index += 1
+                self.list.append([self.index, _("Manual EPG Update"), 5, ""])
+
         self.drawList = []
         self.drawList = [buildListEntry(x[0], x[1], x[2], x[3]) for x in self.list]
         self["list"].setList(self.drawList)
@@ -273,10 +280,32 @@ class XStreamity_Menu(Screen):
                 self.session.open(catchup.XStreamity_Categories)
             elif category == 4:
                 self.settings()
+            elif category == 5:
+                self.updateEPG()
 
     def settings(self):
         from . import playsettings
         self.session.openWithCallback(self.start, playsettings.XStreamity_Settings)
+
+    def updateEPG(self):
+        recordings = ""
+        next_rec_time = -1
+
+        try:
+            recordings = self.session.nav.getRecordings()
+            if not recordings:
+                next_rec_time = self.session.nav.RecordTimer.getNextRecordingTime()
+        except:
+            pass
+
+        if recordings or (next_rec_time > 0 and (next_rec_time - time()) < 360):
+            self.session.open(MessageBox, _("Recordings in progress. EPG not downloaded."), type=MessageBox.TYPE_INFO, timeout=5)
+        else:
+            self.session.openWithCallback(self.updateEPG2, MessageBox, _("EPGs downloading."), type=MessageBox.TYPE_INFO, timeout=5)
+
+    def updateEPG2(self, data=None):
+        from . import update
+        update.XStreamity_Update(self.session, "manual")
 
 
 def buildListEntry(index, title, category_id, playlisturl):
@@ -292,4 +321,6 @@ def buildListEntry(index, title, category_id, playlisturl):
         png = LoadPixmap(os.path.join(common_path, "catchup.png"))
     if category_id == 4:
         png = LoadPixmap(os.path.join(common_path, "settings.png"))
+    if category_id == 5:
+        png = LoadPixmap(os.path.join(common_path, "epg_download.png"))
     return (index, str(title), category_id, str(playlisturl), png)

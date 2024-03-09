@@ -528,7 +528,7 @@ class XStreamity_Categories(Screen):
             self.downloadXMLTVdata()
 
         else:
-            # check file creation times - refresh if older than 24 hours.
+            # check file creation times - refresh if older than 4 hours.
             try:
                 nowtime = time.time()
                 channelmodified = os.path.getctime(channelpath)
