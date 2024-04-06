@@ -1,40 +1,38 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from .plugin import playlists_json, playlist_file, cfg
 from collections import OrderedDict
-
 import json
 import os
 import re
-
-
 try:
-    from urlparse import urlparse, parse_qs
-except:
     from urllib.parse import urlparse, parse_qs
+except ImportError:
+    from urlparse import urlparse, parse_qs
+
+from .plugin import playlists_json, playlist_file, cfg
 
 
-def processfiles():
-    # check if playlists.txt file exists in specified location
+def process_files():
+    # Check if playlists.txt file exists in specified location
     if not os.path.isfile(playlist_file):
-        with open(playlist_file, "a") as f:
-            f.close()
+        with open(playlist_file, "a"):
+            pass
 
-    # check if x-playlists.json file exists in specified location
+    # Check if x-playlists.json file exists in specified location
     if not os.path.isfile(playlists_json):
-        with open(playlists_json, "a") as f:
-            f.close()
+        with open(playlists_json, "a"):
+            pass
 
     playlists_all = []
     if os.path.isfile(playlists_json):
         with open(playlists_json, "r") as f:
             try:
                 playlists_all = json.load(f)
-            except:
+            except ValueError:
                 os.remove(playlists_json)
 
-    # check playlist.txt entries are valid
+    # Check playlist.txt entries are valid
     with open(playlist_file, "r+") as f:
         lines = f.readlines()
 
@@ -42,7 +40,7 @@ def processfiles():
         for line in lines:
             line = re.sub(" +", " ", line)
             line = line.strip(" ")
-            if not line.startswith("http://") and not line.startswith("https://") and not line.startswith("#"):
+            if not line.startswith(("http://", "https://", "#")):
                 line = "# " + line
             if "=mpegts" in line:
                 line = line.replace("=mpegts", "=ts")
@@ -53,269 +51,229 @@ def processfiles():
             if line != "":
                 f.write(line)
 
-        # read entries from playlists.txt
-        index = 0
+    # Read entries from playlists.txt
+    index = 0
+    livetype = cfg.livetype.getValue()
+    vodtype = cfg.vodtype.getValue()
 
-        livetype = cfg.livetype.getValue()
-        vodtype = cfg.vodtype.getValue()
+    for line in lines:
+        port = ""
+        username = ""
+        password = ""
+        type = "m3u_plus"
+        output = "ts"
+        livehidden = []
+        channelshidden = []
+        vodhidden = []
+        vodstreamshidden = []
+        serieshidden = []
+        seriestitleshidden = []
+        seriesseasonshidden = []
+        seriesepisodeshidden = []
+        catchuphidden = []
+        catchupchannelshidden = []
+        showlive = True
+        showvod = True
+        showseries = True
+        showcatchup = True
+        livefavourites = []
+        vodfavourites = []
+        liverecents = []
+        vodrecents = []
+        vodwatched = []
+        serieswatched = []
+        live_streams = []
+        serveroffset = 0
+        epgoffset = 0
+        epgalternative = False
+        epgalternativeurl = ""
+        directsource = "Standard"
+        customsids = False
+        fail_count = 0
 
-        for line in lines:
+        if not line.startswith("#") and line.startswith("http"):
+            line = line.strip()
+            parsed_uri = urlparse(line)
+            protocol = parsed_uri.scheme + "://"
 
-            port = ""
-            username = ""
-            password = ""
-            type = "m3u_plus"
-            output = "ts"
-            livehidden = []
-            channelshidden = []
-            vodhidden = []
-            vodstreamshidden = []
-            serieshidden = []
-            seriestitleshidden = []
-            seriesseasonshidden = []
-            seriesepisodeshidden = []
-            catchuphidden = []
-            catchupchannelshidden = []
+            if not (protocol == "http://" or protocol == "https://"):
+                continue
 
-            showlive = True
-            showvod = True
-            showseries = True
-            showcatchup = True
-            livefavourites = []
-            vodfavourites = []
-            liverecents = []
-            vodrecents = []
-            vodwatched = []
-            serieswatched = []
+            domain = parsed_uri.hostname.lower()
+            name = domain
+            if line_partition := line.partition(" #")[-1]:
+                name = line_partition.strip()
 
-            live_streams = []
+            if parsed_uri.port:
+                port = parsed_uri.port
+                host = protocol + domain + ":" + str(port)
+            else:
+                host = protocol + domain
 
-            serveroffset = 0
-            epgoffset = 0
-            epgalternative = False
-            epgalternativeurl = ""
+            query = parse_qs(parsed_uri.query, keep_blank_values=True)
 
-            directsource = "Standard"
+            if "username" not in query or "password" not in query:
+                continue
 
-            customsids = False
-            fail_count = 0
+            username = query["username"][0].strip()
+            password = query["password"][0].strip()
 
-            if not line.startswith("#") and line.startswith("http"):
-                line = line.strip()
+            if "type" in query:
+                type = query["type"][0].strip()
 
-                parsed_uri = urlparse(line)
+            if "output" in query:
+                output = query["output"][0].strip()
 
-                protocol = parsed_uri.scheme + "://"
+            if "timeshift" in query:
+                try:
+                    epgoffset = int(query["timeshift"][0].strip())
+                except ValueError:
+                    pass
 
-                if not (protocol == "http://" or protocol == "https://"):
-                    continue
+            player_api = host + "/player_api.php?username=" + username + "&password=" + password
+            xmltv_api = host + "/xmltv.php?username=" + username + "&password=" + password
+            full_url = host + "/get.php?username=" + username + "&password=" + password + "&type=" + type + "&output=" + output
 
-                domain = parsed_uri.hostname.lower()
-                name = domain
-                if line.partition(" #")[-1]:
-                    name = line.partition(" #")[-1].strip()
+            playlist_exists = False
 
-                if parsed_uri.port:
-                    port = parsed_uri.port
+            for playlist in playlists_all:
+                # Extra check in case playlists.txt details have been amended
+                if ("domain" in playlist["playlist_info"]
+                        and "username" in playlist["playlist_info"]
+                        and "password" in playlist["playlist_info"]):
+                    if (playlist["playlist_info"]["domain"] == domain
+                            and playlist["playlist_info"]["username"] == username
+                            and playlist["playlist_info"]["password"] == password):
 
-                    host = "%s%s:%s" % (protocol, domain, port)
-                else:
-                    host = "%s%s" % (protocol, domain)
+                        playlist_exists = True
 
-                query = parse_qs(parsed_uri.query, keep_blank_values=True)
+                        # Dictionary containing keys and default values for playlist["player_info"] and playlist["data"]
+                        default_values = {
+                            "player_info": {
+                                "channelshidden": channelshidden,
+                                "vodstreamshidden": vodstreamshidden,
+                                "seriestitleshidden": seriestitleshidden,
+                                "seriesseasonshidden": seriesseasonshidden,
+                                "seriesepisodeshidden": seriesepisodeshidden,
+                                "catchuphidden": catchuphidden,
+                                "catchupchannelshidden": catchupchannelshidden,
+                                "serveroffset": serveroffset,
+                                "epgoffset": epgoffset,
+                                "epgalternative": epgalternative,
+                                "epgalternativeurl": epgalternativeurl,
+                                "liverecents": liverecents,
+                                "vodrecents": vodrecents,
+                                "vodwatched": vodwatched,
+                                "serieswatched": serieswatched,
+                                "directsource": directsource
+                            },
+                            "data": {
+                                "live_streams": live_streams,
+                                "customsids": customsids,
+                                "fail_count": fail_count
+                            }
+                        }
 
-                if "username" in query:
-                    username = query["username"][0].strip()
-                else:
-                    continue
+                        # Iterate over keys and default values and update playlist
+                        for key, value in default_values.items():
+                            for sub_key, sub_value in value.items():
+                                if sub_key not in playlist[key]:
+                                    playlist[key][sub_key] = sub_value
 
-                if "password" in query:
-                    password = query["password"][0].strip()
-                else:
-                    continue
+                        playlist["playlist_info"]["name"] = name
+                        playlist["playlist_info"]["type"] = type
+                        playlist["playlist_info"]["output"] = output
+                        playlist["playlist_info"]["full_url"] = full_url
+                        playlist["playlist_info"]["index"] = index
+                        playlist["data"]["data_downloaded"] = False
+                        playlist["player_info"]["epgoffset"] = epgoffset
 
-                if "type" in query:
-                    type = query["type"][0].strip()
+                        if playlist["player_info"]["epgalternative"] is True:
+                            if playlist["player_info"]["epgalternativeurl"]:
+                                playlist["playlist_info"]["xmltv_api"] = playlist["player_info"]["epgalternativeurl"]
+                        else:
+                            playlist["playlist_info"]["xmltv_api"] = xmltv_api
 
-                if "output" in query:
-                    output = query["output"][0].strip()
-
-                if "timeshift" in query:
-                    try:
-                        epgoffset = int(query["timeshift"][0].strip())
-                    except:
-                        pass
-
-                player_api = "%s/player_api.php?username=%s&password=%s" % (host, username, password)
-                xmltv_api = "%s/xmltv.php?username=%s&password=%s" % (host, username, password)
-                full_url = "%s/get.php?username=%s&password=%s&type=%s&output=%s" % (host, username, password, type, output)
-
-                playlist_exists = False
-
-                if playlists_all:
-                    for playlist in playlists_all:
-
-                        # extra check in case playlists.txt details have been amended
-                        if "domain" in playlist["playlist_info"] and "username" in playlist["playlist_info"] and "password" in playlist["playlist_info"]:
-                            if playlist["playlist_info"]["domain"] == domain and playlist["playlist_info"]["username"] == username and playlist["playlist_info"]["password"] == password:
-
-                                playlist_exists = True
-
-                                if "channelshidden" not in playlist["player_info"]:
-                                    playlist["player_info"]["channelshidden"] = channelshidden
-
-                                if "vodstreamshidden" not in playlist["player_info"]:
-                                    playlist["player_info"]["vodstreamshidden"] = vodstreamshidden
-
-                                if "seriestitleshidden" not in playlist["player_info"]:
-                                    playlist["player_info"]["seriestitleshidden"] = seriestitleshidden
-
-                                if "seriesseasonshidden" not in playlist["player_info"]:
-                                    playlist["player_info"]["seriesseasonshidden"] = seriesseasonshidden
-
-                                if "seriesepisodeshidden" not in playlist["player_info"]:
-                                    playlist["player_info"]["seriesepisodeshidden"] = seriesepisodeshidden
-
-                                if "catchuphidden" not in playlist["player_info"]:
-                                    playlist["player_info"]["catchuphidden"] = catchuphidden
-
-                                if "catchupchannelshidden" not in playlist["player_info"]:
-                                    playlist["player_info"]["catchupchannelshidden"] = catchupchannelshidden
-
-                                if "serveroffset" not in playlist["player_info"]:
-                                    playlist["player_info"]["serveroffset"] = serveroffset
-
-                                if "epgoffset" not in playlist["player_info"]:
-                                    playlist["player_info"]["epgoffset"] = epgoffset
-
-                                if "live_streams" not in playlist["data"]:
-                                    playlist["data"]["live_streams"] = live_streams
-
-                                if "epgalternative" not in playlist["player_info"]:
-                                    playlist["player_info"]["epgalternative"] = epgalternative
-
-                                if "epgalternativeurl" not in playlist["player_info"]:
-                                    playlist["player_info"]["epgalternativeurl"] = epgalternativeurl
-
-                                if "liverecents" not in playlist["player_info"]:
-                                    playlist["player_info"]["liverecents"] = liverecents
-
-                                if "vodrecents" not in playlist["player_info"]:
-                                    playlist["player_info"]["vodrecents"] = vodrecents
-
-                                if "vodwatched" not in playlist["player_info"]:
-                                    playlist["player_info"]["vodwatched"] = vodwatched
-
-                                if "serieswatched" not in playlist["player_info"]:
-                                    playlist["player_info"]["serieswatched"] = serieswatched
-
-                                if "directsource" not in playlist["player_info"]:
-                                    playlist["player_info"]["directsource"] = directsource
-
-                                if "customsids" not in playlist["data"]:
-                                    playlist["data"]["customsids"] = customsids
-
-                                if "fail_count" not in playlist["data"]:
-                                    playlist["data"]["fail_count"] = fail_count
-
-                                playlist["playlist_info"]["name"] = name
-                                playlist["playlist_info"]["type"] = type
-                                playlist["playlist_info"]["output"] = output
-                                playlist["playlist_info"]["full_url"] = full_url  # get.php
-                                playlist["playlist_info"]["index"] = index
-                                playlist["data"]["data_downloaded"] = False
-
-                                playlist["player_info"]["epgoffset"] = epgoffset
-
-                                if playlist["player_info"]["epgalternative"] is True:
-                                    if playlist["player_info"]["epgalternativeurl"]:
-                                        playlist["playlist_info"]["xmltv_api"] = playlist["player_info"]["epgalternativeurl"]
-                                else:
-                                    playlist["playlist_info"]["xmltv_api"] = xmltv_api
-                                index += 1
-                                break
-
-                if not playlist_exists:
-                    playlists_all.append({
-                        "playlist_info": dict([
-                            ("index", index),
-                            ("name", name),
-                            ("protocol", protocol),
-                            ("domain", domain),
-                            ("port", port),
-                            ("username", username),
-                            ("password", password),
-                            ("type", type),
-                            ("output", output),
-                            ("host", host),
-                            ("player_api", player_api),
-                            ("xmltv_api", xmltv_api),
-                            ("full_url", full_url),
-                        ]),
-
-                        "player_info": OrderedDict([
-                            ("livetype", livetype),
-                            ("vodtype", vodtype),
-                            ("livehidden", livehidden),
-                            ("channelshidden", channelshidden),
-                            ("vodhidden", vodhidden),
-                            ("vodstreamshidden", vodstreamshidden),
-                            ("serieshidden", serieshidden),
-                            ("seriestitleshidden", seriestitleshidden),
-                            ("seriesseasonshidden", seriesseasonshidden),
-                            ("seriesepisodeshidden", seriesepisodeshidden),
-
-                            ("catchuphidden", catchuphidden),
-                            ("catchupchannelshidden", catchupchannelshidden),
-
-                            ("livefavourites", livefavourites),
-                            ("vodfavourites", vodfavourites),
-
-                            ("liverecents", liverecents),
-                            ("vodrecents", vodrecents),
-                            ("vodwatched", vodwatched),
-                            ("serieswatched", serieswatched),
-
-                            ("showlive", showlive),
-                            ("showvod", showvod),
-                            ("showseries", showseries),
-                            ("showcatchup", showcatchup),
-                            ("serveroffset", serveroffset),
-                            ("epgoffset", serveroffset),
-                            ("epgalternative", epgalternative),
-                            ("epgalternativeurl", epgalternativeurl),
-                            ("directsource", directsource),
-                        ]),
-
-                        "data": dict([
-                            ("live_categories", []),
-                            ("vod_categories", []),
-                            ("series_categories", []),
-                            ("live_streams", []),
-                            ("catchup", False),
-                            ("customsids", False),
-                            ("epg_date", ""),
-                            ("data_downloaded", False),
-                            ("fail_count", 0)
-                        ]),
-                    })
-
-                    index += 1
-
-        # remove old playlists from x-playlists.json
-
-        newList = []
-
-        for playlist in playlists_all:
-            for line in lines:
-                if not line.startswith("#"):
-                    if str(playlist["playlist_info"]["domain"]) in line and "username=" + str(playlist["playlist_info"]["username"]) in line and "password=" + str(playlist["playlist_info"]["password"]) in line:
-                        newList.append(playlist)
+                        index += 1
                         break
 
-        playlists_all = newList
+            if not playlist_exists:
+                playlists_all.append({
+                    "playlist_info": {
+                        "index": index,
+                        "name": name,
+                        "protocol": protocol,
+                        "domain": domain,
+                        "port": port,
+                        "username": username,
+                        "password": password,
+                        "type": type,
+                        "output": output,
+                        "host": host,
+                        "player_api": player_api,
+                        "xmltv_api": xmltv_api,
+                        "full_url": full_url,
+                    },
+                    "player_info": OrderedDict([
+                        ("livetype", livetype),
+                        ("vodtype", vodtype),
+                        ("livehidden", livehidden),
+                        ("channelshidden", channelshidden),
+                        ("vodhidden", vodhidden),
+                        ("vodstreamshidden", vodstreamshidden),
+                        ("serieshidden", serieshidden),
+                        ("seriestitleshidden", seriestitleshidden),
+                        ("seriesseasonshidden", seriesseasonshidden),
+                        ("seriesepisodeshidden", seriesepisodeshidden),
+                        ("catchuphidden", catchuphidden),
+                        ("catchupchannelshidden", catchupchannelshidden),
+                        ("livefavourites", livefavourites),
+                        ("vodfavourites", vodfavourites),
+                        ("liverecents", liverecents),
+                        ("vodrecents", vodrecents),
+                        ("vodwatched", vodwatched),
+                        ("serieswatched", serieswatched),
+                        ("showlive", showlive),
+                        ("showvod", showvod),
+                        ("showseries", showseries),
+                        ("showcatchup", showcatchup),
+                        ("serveroffset", serveroffset),
+                        ("epgoffset", serveroffset),
+                        ("epgalternative", epgalternative),
+                        ("epgalternativeurl", epgalternativeurl),
+                        ("directsource", directsource),
+                    ]),
 
-    # write new x-playlists.json file
+                    "data": {
+                        "live_categories": [],
+                        "vod_categories": [],
+                        "series_categories": [],
+                        "live_streams": [],
+                        "catchup": False,
+                        "customsids": False,
+                        "epg_date": "",
+                        "data_downloaded": False,
+                        "fail_count": 0
+                    },
+                })
+
+                index += 1
+
+    # Remove old playlists from x-playlists.json
+    new_list = []
+
+    for playlist in playlists_all:
+        for line in lines:
+            if not line.startswith("#"):
+                if (str(playlist["playlist_info"]["domain"]) in line
+                        and "username=" + str(playlist["playlist_info"]["username"]) in line
+                        and "password=" + str(playlist["playlist_info"]["password"]) in line):
+                    new_list.append(playlist)
+                    break
+
+    playlists_all = new_list
+
+    # Write new x-playlists.json file
     with open(playlists_json, "w") as f:
         json.dump(playlists_all, f)
 

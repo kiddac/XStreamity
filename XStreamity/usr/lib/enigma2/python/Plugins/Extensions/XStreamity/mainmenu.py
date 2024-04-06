@@ -13,7 +13,6 @@ from enigma import eServiceReference
 from Screens.Console import Console
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
-# from time import time
 from Tools.LoadPixmap import LoadPixmap
 
 import json
@@ -103,7 +102,7 @@ class XStreamity_MainMenu(Screen):
             self.start()
 
     def start(self, answer=None):
-        self.playlists_all = loadfiles.processfiles()
+        self.playlists_all = loadfiles.process_files()
         self.createSetup()
 
     def createSetup(self):
@@ -149,31 +148,6 @@ class XStreamity_MainMenu(Screen):
     def downloadManager(self):
         from . import downloadmanager
         self.session.openWithCallback(self.start, downloadmanager.XStreamity_DownloadManager)
-
-    """
-    def updateEPG(self):
-
-        recordings = ""
-        next_rec_time = -1
-
-        try:
-            recordings = self.session.nav.getRecordings()
-            if not recordings:
-                next_rec_time = self.session.nav.RecordTimer.getNextRecordingTime()
-        except:
-            pass
-
-        if recordings or (next_rec_time > 0 and (next_rec_time - time()) < 360):
-            self.session.open(MessageBox, _("Recordings in progress. EPG not downloaded."), type=MessageBox.TYPE_INFO, timeout=5)
-        else:
-            self.session.openWithCallback(self.updateEPG2, MessageBox, _("EPGs downloading."), type=MessageBox.TYPE_INFO, timeout=5)
-            """
-
-    """
-    def updateEPG2(self, data=None):
-        from . import update
-        update.XStreamity_Update()
-        """
 
     def __next__(self):
         index = self["list"].getCurrent()[0]
