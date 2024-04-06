@@ -6,13 +6,11 @@ from Tools.Directories import resolveFilename, SCOPE_PLUGINS
 import gettext
 import os
 
-
 PluginLanguageDomain = "XStreamity"
 PluginLanguagePath = "Extensions/XStreamity/locale"
 
-isDreamOS = False
-if os.path.exists("/var/lib/dpkg/status"):
-    isDreamOS = True
+# Determine if the system is running DreamOS
+isDreamOS = os.path.exists("/var/lib/dpkg/status")
 
 
 def localeInit():
@@ -22,8 +20,10 @@ def localeInit():
     gettext.bindtextdomain(PluginLanguageDomain, resolveFilename(SCOPE_PLUGINS, PluginLanguagePath))
 
 
+# Define the _ function based on whether it's DreamOS or not
 if isDreamOS:  # check if DreamOS image
-    _ = lambda txt: gettext.dgettext(PluginLanguageDomain, txt) if txt else ""
+    def _(txt):
+        return gettext.dgettext(PluginLanguageDomain, txt) if txt else ""
 else:
     def _(txt):
         if gettext.dgettext(PluginLanguageDomain, txt):
@@ -31,5 +31,6 @@ else:
         else:
             print(("[%s] fallback to default translation for %s" % (PluginLanguageDomain, txt)))
             return gettext.gettext(txt)
+
 localeInit()
 language.addCallback(localeInit)
