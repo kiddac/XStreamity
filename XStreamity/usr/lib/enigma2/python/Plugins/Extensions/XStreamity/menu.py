@@ -45,7 +45,7 @@ class XStreamity_Menu(Screen):
         self.drawList = []
         self["list"] = List(self.drawList, enableWrapAround=True)
 
-        self.etup_title = str(glob.current_playlist["playlist_info"]["name"])
+        self.setup_title = str(glob.current_playlist["playlist_info"]["name"])
 
         self["key_red"] = StaticText(_("Back"))
         self["key_green"] = StaticText(_("OK"))
