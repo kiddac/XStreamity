@@ -39,7 +39,7 @@ class XStreamity_MainMenu(Screen):
         self.playlists_all = []
         self["list"] = List(self.drawList, enableWrapAround=True)
 
-        self.setup_title = (_("Main Menu"))
+        self.setup_title = _("Main Menu")
 
         self["key_red"] = StaticText(_("Back"))
         self["key_green"] = StaticText(_("OK"))
@@ -126,26 +126,22 @@ class XStreamity_MainMenu(Screen):
         downloads_all = []
 
         if os.path.isfile(downloads_json) and os.stat(downloads_json).st_size > 0:
-            with open(downloads_json, "r") as f:
-                try:
+            try:
+                with open(downloads_json, "r") as f:
                     downloads_all = json.load(f)
-                except Exception as e:
-                    print(e)
+            except Exception as e:
+                print(e)
 
         if self.playlists_all:
-            self.list.append([1, _("Playlists")])
-            self.list.append([3, _("Add Playlist")])
-            self.list.append([2, _("Main Settings")])
+            self.list.extend([[1, _("Playlists")], [3, _("Add Playlist")], [2, _("Main Settings")]])
             # self.list.append([5, _("Manual EPG Update")])
 
         else:
-            self.list.append([3, _("Add Playlist")])
-            self.list.append([2, _("Main Settings")])
+            self.list.extend([[3, _("Add Playlist")], [2, _("Main Settings")]])
 
         if downloads_all:
             self.list.append([4, _("Download Manager")])
 
-        self.drawList = []
         self.drawList = [buildListEntry(x[0], x[1]) for x in self.list]
         self["list"].setList(self.drawList)
 
@@ -166,27 +162,24 @@ class XStreamity_MainMenu(Screen):
         self.session.openWithCallback(lambda: self.start, downloadmanager.XStreamity_DownloadManager)
 
     def __next__(self):
-        index = self["list"].getCurrent()[0]
+        current_entry = self["list"].getCurrent()
 
-        if self["list"].getCurrent():
+        if current_entry:
+            index = current_entry[0]
             if index == 1:
                 self.playlists()
-            if index == 2:
+            elif index == 2:
                 self.settings()
-            if index == 3:
+            elif index == 3:
                 self.addServer()
-            if index == 4:
+            elif index == 4:
                 self.downloadManager()
-            """
-            if index == 5:
-                self.updateEPG()
-                """
 
     def quit(self, data=None):
         try:
             shutil.copyfile(playlist_file, '/home/playlists.txt')
-        except:
-            pass
+        except Exception as e:
+            print("Error copying playlist file:", e)
 
         self.playOriginalChannel()
 
@@ -200,27 +193,25 @@ class XStreamity_MainMenu(Screen):
         if answer is None:
             self.session.openWithCallback(self.resetData, MessageBox, _("Warning: delete stored json data for all playlists... Settings, favourites etc. \nPlaylists will not be deleted.\nDo you wish to continue?"))
         elif answer:
-            os.remove(playlists_json)
-            if not os.path.isfile(playlists_json):
-                with open(playlists_json, "a") as f:
-                    f.close()
+            try:
+                os.remove(playlists_json)
+                with open(playlists_json, "a"):
+                    pass
+            except OSError as e:
+                print("Error deleting or recreating JSON file:", e)
             self.quit()
 
 
 def buildListEntry(index, title):
+    image_mapping = {
+        1: "playlists.png",
+        2: "settings.png",
+        3: "addplaylist.png",
+        4: "vod_download.png"
+    }
+
     png = None
+    if index in image_mapping:
+        png = LoadPixmap(os.path.join(common_path, image_mapping[index]))
 
-    if index == 1:
-        png = LoadPixmap(os.path.join(common_path, "playlists.png"))
-    if index == 2:
-        png = LoadPixmap(os.path.join(common_path, "settings.png"))
-    if index == 3:
-        png = LoadPixmap(os.path.join(common_path, "addplaylist.png"))
-    if index == 4:
-        png = LoadPixmap(os.path.join(common_path, "vod_download.png"))
-    """
-    if index == 5:
-        png = LoadPixmap(os.path.join(common_path, "epg_download.png"))
-        """
-
-    return (index, str(title), png)
+    return index, str(title), png
