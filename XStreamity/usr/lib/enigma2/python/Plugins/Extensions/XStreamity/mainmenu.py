@@ -28,7 +28,7 @@ class XStreamity_MainMenu(Screen):
         Screen.__init__(self, session)
         self.session = session
 
-        skin_path = os.path.join(skin_directory, cfg.skin.getValue())
+        skin_path = os.path.join(skin_directory, cfg.skin.value)
 
         skin = os.path.join(skin_path, "mainmenu.xml")
         with open(skin, "r") as f:
@@ -84,7 +84,7 @@ class XStreamity_MainMenu(Screen):
 
     def check_dependencies(self):
         try:
-            if not cfg.locationvalid.getValue():
+            if not cfg.locationvalid.value:
                 print("Playlists.txt location is invalid and has been reset.")
                 self.session.open(MessageBox, _("Playlists.txt location is invalid and has been reset."), type=MessageBox.TYPE_INFO, timeout=5)
                 cfg.locationvalid.setValue(True)

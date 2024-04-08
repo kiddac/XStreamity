@@ -45,12 +45,12 @@ class XStreamity_HiddenCategories(Screen, ProtectedScreen):
     def __init__(self, session, category_type, channellist, level=1):
         Screen.__init__(self, session)
 
-        if cfg.adult.getValue():
+        if cfg.adult.value:
             ProtectedScreen.__init__(self)
 
         self.session = session
 
-        skin_path = os.path.join(skin_directory, cfg.skin.getValue())
+        skin_path = os.path.join(skin_directory, cfg.skin.value)
         skin = os.path.join(skin_path, "hidden.xml")
         with open(skin, "r") as f:
             self.skin = f.read()

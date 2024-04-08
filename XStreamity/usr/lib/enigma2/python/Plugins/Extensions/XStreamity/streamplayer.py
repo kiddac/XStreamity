@@ -63,7 +63,7 @@ except:
     HTTPConnection.debuglevel = 0
 
 
-if cfg.subs.getValue() is True:
+if cfg.subs.value is True:
     try:
         from Plugins.Extensions.SubsSupport import SubsSupport, SubsSupportStatus
     except ImportError:
@@ -381,7 +381,7 @@ class IPTVInfoBarPVRState:
                 cb(state_summary, speed_summary, statusicon_summary)
 
 
-skin_path = os.path.join(skin_directory, cfg.skin.getValue())
+skin_path = os.path.join(skin_directory, cfg.skin.value)
 
 
 class XStreamity_StreamPlayer(
@@ -666,7 +666,7 @@ class XStreamity_StreamPlayer(
             if isinstance(serviceref, eServiceReference):
                 serviceref = ServiceReference(serviceref)
 
-            recording = RecordTimerEntry(serviceref, begin, end, name, description, eventid, dirname=str(cfg.downloadlocation.getValue()))
+            recording = RecordTimerEntry(serviceref, begin, end, name, description, eventid, dirname=str(cfg.downloadlocation.value))
             recording.dontSave = True
 
             simulTimerList = self.session.nav.RecordTimer.record(recording)

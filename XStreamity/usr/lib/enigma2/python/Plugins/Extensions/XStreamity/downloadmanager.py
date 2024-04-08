@@ -153,7 +153,7 @@ class XStreamity_DownloadManager(Screen):
         self.progress = 0
         self.timerDisplay = eTimer()
 
-        skin_path = os.path.join(skin_directory, cfg.skin.getValue())
+        skin_path = os.path.join(skin_directory, cfg.skin.value)
         skin = os.path.join(skin_path, "downloadmanager.xml")
 
         with open(skin, "r") as f:
@@ -266,7 +266,7 @@ class XStreamity_DownloadManager(Screen):
             extension = os.path.splitext(video[2])[-1]
 
             filename = filmtitle + extension
-            path = os.path.join(cfg.downloadlocation.getValue(), filename)
+            path = os.path.join(cfg.downloadlocation.value, filename)
 
             totalbytes = video[5]
 
@@ -317,8 +317,8 @@ class XStreamity_DownloadManager(Screen):
                 extension = ""
 
             filename = filmtitle + extension
-            shortpath = str(cfg.downloadlocation.getValue())
-            path = os.path.join(cfg.downloadlocation.getValue(), filename)
+            shortpath = str(cfg.downloadlocation.value)
+            path = os.path.join(cfg.downloadlocation.value, filename)
 
             parsed_uri = urlparse(url)
             video_domain = parsed_uri.hostname
@@ -410,8 +410,8 @@ class XStreamity_DownloadManager(Screen):
                 self.extension = ""
 
             filename = "{}{}".format(self.filmtitle, self.extension)
-            self.shortpath = str(cfg.downloadlocation.getValue())
-            self.path = os.path.join(cfg.downloadlocation.getValue(), filename)
+            self.shortpath = str(cfg.downloadlocation.value)
+            self.path = os.path.join(cfg.downloadlocation.value, filename)
 
             parsed_uri = urlparse(self.url)
             video_domain = parsed_uri.hostname

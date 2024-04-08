@@ -53,8 +53,8 @@ def process_files():
 
     # Read entries from playlists.txt
     index = 0
-    livetype = cfg.livetype.getValue()
-    vodtype = cfg.vodtype.getValue()
+    livetype = cfg.livetype.value
+    vodtype = cfg.vodtype.value
 
     for line in lines:
         port = ""

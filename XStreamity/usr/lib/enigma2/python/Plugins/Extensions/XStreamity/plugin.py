@@ -156,7 +156,7 @@ downloads_json = os.path.join(dir_etc, "downloads2.json")
 skin_path = os.path.join(skin_directory, cfg.skin.value)
 common_path = os.path.join(skin_directory, "common/")
 
-location = cfg.location.getValue()
+location = cfg.location.value
 if location:
     if os.path.exists(location):
         playlist_file = os.path.join(cfg.location.value, "playlists.txt")
@@ -374,10 +374,10 @@ def Plugins(**kwargs):
 
     result.append(extensions_menu)
 
-    if cfg.main.getValue():
+    if cfg.main.value:
         result.append(main_menu)
 
-    if cfg.boot.getValue():
+    if cfg.boot.value:
         result.append(boot_start)
 
     return result

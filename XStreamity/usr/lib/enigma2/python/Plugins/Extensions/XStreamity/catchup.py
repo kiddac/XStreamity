@@ -136,7 +136,7 @@ class XStreamity_Categories(Screen):
         self.session = session
         glob.categoryname = "catchup"
 
-        self.skin_path = os.path.join(skin_directory, cfg.skin.getValue())
+        self.skin_path = os.path.join(skin_directory, cfg.skin.value)
         skin = os.path.join(self.skin_path, "live_categories.xml")
         if os.path.exists("/var/lib/dpkg/status"):
             skin = os.path.join(self.skin_path, "DreamOS/live_categories.xml")
@@ -979,8 +979,8 @@ class XStreamity_Categories(Screen):
         duplicatecheck = set()
 
         shift = int(glob.current_playlist["player_info"].get("serveroffset", 0))
-        catchupstart = int(cfg.catchupstart.getValue())
-        catchupend = int(cfg.catchupend.getValue())
+        catchupstart = int(cfg.catchupstart.value)
+        catchupend = int(cfg.catchupend.value)
 
         for listing in shortEPGJson["epg_listings"]:
             if "has_archive" in listing and listing["has_archive"] == 1 or "now_playing" in listing and listing["now_playing"] == 1:

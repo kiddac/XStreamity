@@ -41,7 +41,7 @@ class XStreamity_Playlists(Screen):
         Screen.__init__(self, session)
         self.session = session
 
-        skin_path = os.path.join(skin_directory, cfg.skin.getValue())
+        skin_path = os.path.join(skin_directory, cfg.skin.value)
         skin = os.path.join(skin_path, "playlists.xml")
         with open(skin, "r") as f:
             self.skin = f.read()
@@ -316,7 +316,7 @@ class XStreamity_Playlists(Screen):
         self.drawList = [self.buildListEntry(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8]) for x in self.list]
         self["playlists"].setList(self.drawList)
 
-        if len(self.list) == 1 and cfg.skipplaylistsscreen.getValue() and "user_info" in self.playlists_all[0] and "status" in self.playlists_all[0]["user_info"] and self.playlists_all[0]["user_info"]["status"] == "Active":
+        if len(self.list) == 1 and cfg.skipplaylistsscreen.value and "user_info" in self.playlists_all[0] and "status" in self.playlists_all[0]["user_info"] and self.playlists_all[0]["user_info"]["status"] == "Active":
             self.getStreamTypes()
 
         if fail_count_check:
@@ -427,7 +427,7 @@ class XStreamity_Playlists(Screen):
             self.checkoneplaylist()
 
     def checkoneplaylist(self):
-        if len(self.list) == 1 and cfg.skipplaylistsscreen.getValue() is True:
+        if len(self.list) == 1 and cfg.skipplaylistsscreen.value is True:
             self.quit()
 
     def epgimportcleanup(self):

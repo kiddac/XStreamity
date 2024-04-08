@@ -31,7 +31,7 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
         Screen.__init__(self, session)
         self.session = session
 
-        skin_path = os.path.join(skin_directory, cfg.skin.getValue())
+        skin_path = os.path.join(skin_directory, cfg.skin.value)
         skin = os.path.join(skin_path, "settings.xml")
 
         if os.path.exists("/var/lib/dpkg/status"):
