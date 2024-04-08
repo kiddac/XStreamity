@@ -201,15 +201,6 @@ class XStreamity_Menu(Screen):
         show_series = glob.current_playlist["player_info"].get("showseries", False)
         show_catchup = glob.current_playlist["player_info"].get("showcatchup", False)
 
-        if show_live:
-            add_category_to_list("Live Streams", "live_categories", 0)
-
-        if show_vod:
-            add_category_to_list("Vod", "vod_categories", 1)
-
-        if show_series:
-            add_category_to_list("TV Series", "series_categories", 2)
-
         content = glob.current_playlist["data"]["live_streams"]
         has_catchup = any(int(item.get("tv_archive", 0)) == 1 for item in content if "tv_archive" in item)
         has_custom_sids = any(item.get("custom_sid", False) for item in content if "custom_sid" in item)
@@ -219,6 +210,15 @@ class XStreamity_Menu(Screen):
 
         if has_catchup:
             glob.current_playlist["data"]["catchup"] = True
+
+        if show_live:
+            add_category_to_list("Live Streams", "live_categories", 0)
+
+        if show_vod:
+            add_category_to_list("Vod", "vod_categories", 1)
+
+        if show_series:
+            add_category_to_list("TV Series", "series_categories", 2)
 
         if show_catchup and glob.current_playlist["data"]["catchup"]:
             self.index += 1
