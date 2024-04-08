@@ -80,10 +80,9 @@ class XStreamity_Playlists(Screen):
 
     def clear_caches(self):
         try:
-            os.system("echo 1 > /proc/sys/vm/drop_caches")
-            os.system("echo 2 > /proc/sys/vm/drop_caches")
-            os.system("echo 3 > /proc/sys/vm/drop_caches")
-        except:
+            with open("/proc/sys/vm/drop_caches", "w") as drop_caches:
+                drop_caches.write("1\n2\n3\n")
+        except IOError:
             pass
 
     def __layoutFinished(self):
