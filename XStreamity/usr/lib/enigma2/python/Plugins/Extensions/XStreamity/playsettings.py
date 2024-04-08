@@ -18,7 +18,7 @@ import json
 
 try:
     from urlparse import urlparse, parse_qs
-except:
+except ImportError:
     from urllib.parse import urlparse, parse_qs
 
 
@@ -27,7 +27,6 @@ class XStreamity_Settings(ConfigListScreen, Screen):
 
     def __init__(self, session):
         Screen.__init__(self, session)
-
         self.session = session
 
         skin_path = os.path.join(skin_directory, cfg.skin.getValue())
@@ -39,7 +38,7 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         with open(skin, "r") as f:
             self.skin = f.read()
 
-        self.setup_title = (_("Playlist Settings"))
+        self.setup_title = _("Playlist Settings")
 
         self.onChangedEntry = []
 
@@ -61,15 +60,13 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         }, -2)
 
         self.onFirstExecBegin.append(self.initConfig)
-
         self.onLayoutFinish.append(self.__layoutFinished)
 
     def clear_caches(self):
         try:
-            os.system("echo 1 > /proc/sys/vm/drop_caches")
-            os.system("echo 2 > /proc/sys/vm/drop_caches")
-            os.system("echo 3 > /proc/sys/vm/drop_caches")
-        except:
+            with open("/proc/sys/vm/drop_caches", "w") as drop_caches:
+                drop_caches.write("1\n2\n3\n")
+        except IOError:
             pass
 
     def __layoutFinished(self):
@@ -86,7 +83,6 @@ class XStreamity_Settings(ConfigListScreen, Screen):
                 x[1].cancel()
 
             self.close()
-        return
 
     def initConfig(self):
         live_streamtype_choices = [("1", "DVB(1)"), ("4097", "IPTV(4097)")]
@@ -104,19 +100,21 @@ class XStreamity_Settings(ConfigListScreen, Screen):
             live_streamtype_choices.append(("8193", "DreamOS GStreamer(8193)"))
             vod_streamtype_choices.append(("8193", "DreamOS GStreamer(8193)"))
 
-        self.name = str(glob.current_playlist["playlist_info"]["name"])
-        self.output = str(glob.current_playlist["playlist_info"]["output"])
-        self.liveType = str(glob.current_playlist["player_info"]["livetype"])
-        self.vodType = str(glob.current_playlist["player_info"]["vodtype"])
-        self.showlive = glob.current_playlist["player_info"]["showlive"]
-        self.showvod = glob.current_playlist["player_info"]["showvod"]
-        self.showseries = glob.current_playlist["player_info"]["showseries"]
-        self.showcatchup = glob.current_playlist["player_info"]["showcatchup"]
+        playlist_info = glob.current_playlist.get("playlist_info", {})
+        player_info = glob.current_playlist.get("player_info", {})
 
-        self.epgoffset = glob.current_playlist["player_info"]["epgoffset"]
-        self.epgalternative = glob.current_playlist["player_info"]["epgalternative"]
-        self.epgalternativeurl = glob.current_playlist["player_info"]["epgalternativeurl"]
-        self.directsource = glob.current_playlist["player_info"]["directsource"]
+        self.name = str(playlist_info.get("name", ""))
+        self.output = str(playlist_info.get("output", ""))
+        self.liveType = str(player_info.get("livetype", ""))
+        self.vodType = str(player_info.get("vodtype", ""))
+        self.showlive = player_info.get("showlive", False)
+        self.showvod = player_info.get("showvod", False)
+        self.showseries = player_info.get("showseries", False)
+        self.showcatchup = player_info.get("showcatchup", False)
+        self.epgoffset = player_info.get("epgoffset", 0)
+        self.epgalternative = player_info.get("epgalternative", False)
+        self.epgalternativeurl = player_info.get("epgalternativeurl", "")
+        self.directsource = player_info.get("directsource", "Standard")
 
         self.nameCfg = NoSave(ConfigText(default=self.name, fixed_size=False))
         self.outputCfg = NoSave(ConfigSelection(default=self.output, choices=[("ts", "ts"), ("m3u8", "m3u8")]))
@@ -126,7 +124,6 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.showvodCfg = NoSave(ConfigYesNo(default=self.showvod))
         self.showseriesCfg = NoSave(ConfigYesNo(default=self.showseries))
         self.showcatchupCfg = NoSave(ConfigYesNo(default=self.showcatchup))
-
         self.epgoffsetCfg = NoSave(ConfigSelectionNumber(-9, 9, 1, default=self.epgoffset, wraparound=True))
         self.epgalternativeCfg = NoSave(ConfigYesNo(default=self.epgalternative))
         self.epgalternativeurlCfg = NoSave(ConfigText(default=self.epgalternativeurl, fixed_size=False))
@@ -135,26 +132,28 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.createSetup()
 
     def createSetup(self):
-        self.list = []
-        self.list.append(getConfigListEntry(_("Short name or provider name:"), self.nameCfg))
+        self.list = [
+            getConfigListEntry(_("Short name or provider name:"), self.nameCfg),
+            getConfigListEntry(_("Show LIVE category:"), self.showliveCfg),
+            getConfigListEntry(_("Show VOD category:"), self.showvodCfg),
+            getConfigListEntry(_("Show SERIES category:"), self.showseriesCfg),
+            getConfigListEntry(_("Show CATCHUP category:"), self.showcatchupCfg),
+            getConfigListEntry(_("Output:"), self.outputCfg)
+        ]
 
-        self.list.append(getConfigListEntry(_("Show LIVE category:"), self.showliveCfg))
-        self.list.append(getConfigListEntry(_("Show VOD category:"), self.showvodCfg))
-        self.list.append(getConfigListEntry(_("Show SERIES category:"), self.showseriesCfg))
-        self.list.append(getConfigListEntry(_("Show CATCHUP category:"), self.showcatchupCfg))
-        self.list.append(getConfigListEntry(_("Output:"), self.outputCfg))
-
-        if self.showliveCfg.value is True:
+        if self.showliveCfg.value:
             self.list.append(getConfigListEntry(_("Stream Type LIVE:"), self.liveTypeCfg))
 
-        if self.showvodCfg.value is True or self.showseriesCfg.value is True:
+        if self.showvodCfg.value or self.showseriesCfg.value:
             self.list.append(getConfigListEntry(_("Stream Type VOD/SERIES:"), self.vodTypeCfg))
 
-        self.list.append(getConfigListEntry(_("Stream Source URL:"), self.directsourceCfg))
+        self.list.extend([
+            getConfigListEntry(_("Stream Source URL:"), self.directsourceCfg),
+            getConfigListEntry(_("EPG offset:"), self.epgoffsetCfg),
+            getConfigListEntry(_("Use alternative EPG url:"), self.epgalternativeCfg)
+        ])
 
-        self.list.append(getConfigListEntry(_("EPG offset:"), self.epgoffsetCfg))
-        self.list.append(getConfigListEntry(_("Use alternative EPG url:"), self.epgalternativeCfg))
-        if self.epgalternativeCfg.value is True:
+        if self.epgalternativeCfg.value:
             self.list.append(getConfigListEntry(_("Alternative EPG url:"), self.epgalternativeurlCfg))
 
         self["config"].list = self.list
@@ -214,78 +213,72 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         return self["config"].getCurrent() and str(self["config"].getCurrent()[1].getText()) or ""
 
     def save(self):
-
         self.playlists_all = self.getPlaylistJson()
 
-        self.protocol = glob.current_playlist["playlist_info"]["protocol"]
-        self.domain = glob.current_playlist["playlist_info"]["domain"]
-        self.port = glob.current_playlist["playlist_info"]["port"]
-        self.username = glob.current_playlist["playlist_info"]["username"]
-        self.password = glob.current_playlist["playlist_info"]["password"]
+        playlist_info = glob.current_playlist.get("playlist_info", {})
+        player_info = glob.current_playlist.get("player_info", {})
+
+        self.protocol = playlist_info.get("protocol", "")
+        self.domain = playlist_info.get("domain", "")
+        self.port = playlist_info.get("port", "")
+        self.username = playlist_info.get("username", "")
+        self.password = playlist_info.get("password", "")
         self.listtype = "m3u"
-        if self.port:
-            self.host = "%s%s:%s" % (self.protocol, self.domain, self.port)
-        else:
-            self.host = "%s%s" % (self.protocol, self.domain)
+
+        self.host = "{}{}:{}".format(self.protocol, self.domain, self.port) if self.port else "{}{}".format(self.protocol, self.domain)
 
         if self["config"].isChanged():
             self.name = self.nameCfg.value.strip()
-            self.full_url = glob.current_playlist["playlist_info"]["full_url"]
+            self.full_url = playlist_info.get("full_url", "")
 
-            # check name is not blank
-            if self.name is None or len(self.name) < 3:
+            if not self.name or len(self.name) < 3:
                 self.session.open(MessageBox, _("Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum 3 characters."), MessageBox.TYPE_ERROR, timeout=10)
-                # self.createSetup()
                 return
 
-            # check name exists
             if self.playlists_all:
-                for playlists in self.playlists_all:
-                    if playlists["playlist_info"]["name"] == self.name and str(playlists["playlist_info"]["full_url"]) != str(self.full_url):
+                for playlist in self.playlists_all:
+                    if playlist["playlist_info"]["name"] == self.name and str(playlist["playlist_info"]["full_url"]) != str(playlist_info.get("full_url", "")):
                         self.session.open(MessageBox, _("Name already used. Please enter a unique name."), MessageBox.TYPE_ERROR, timeout=10)
-                        # self.createSetup()
                         return
 
             output = self.outputCfg.value
-
             showlive = self.showliveCfg.value
             showvod = self.showvodCfg.value
             showseries = self.showseriesCfg.value
             showcatchup = self.showcatchupCfg.value
-
             livetype = self.liveTypeCfg.value
             if output == "m3u8" and livetype == "1":
                 livetype = "4097"
 
             vodtype = self.vodTypeCfg.value
             epgoffset = int(self.epgoffsetCfg.value)
-
             epgalternative = self.epgalternativeCfg.value
             epgalternativeurl = self.epgalternativeurlCfg.value
-
             directsource = self.directsourceCfg.value
 
-            glob.current_playlist["playlist_info"]["name"] = self.name
-            glob.current_playlist["playlist_info"]["output"] = output
-            glob.current_playlist["player_info"]["showlive"] = showlive
-            glob.current_playlist["player_info"]["showvod"] = showvod
-            glob.current_playlist["player_info"]["showseries"] = showseries
-            glob.current_playlist["player_info"]["showcatchup"] = showcatchup
-            glob.current_playlist["player_info"]["livetype"] = livetype
-            glob.current_playlist["player_info"]["vodtype"] = vodtype
-            glob.current_playlist["player_info"]["epgoffset"] = epgoffset
-            glob.current_playlist["player_info"]["epgalternative"] = epgalternative
-            glob.current_playlist["player_info"]["epgalternativeurl"] = epgalternativeurl
-            glob.current_playlist["player_info"]["directsource"] = directsource
+            playlist_info["name"] = self.name
+            playlist_info["output"] = output
+            player_info["showlive"] = showlive
+            player_info["showvod"] = showvod
+            player_info["showseries"] = showseries
+            player_info["showcatchup"] = showcatchup
+            player_info["livetype"] = livetype
+            player_info["vodtype"] = vodtype
+            player_info["epgoffset"] = epgoffset
+            player_info["epgalternative"] = epgalternative
+            player_info["epgalternativeurl"] = epgalternativeurl
+            player_info["directsource"] = directsource
 
-            playlistline = "%s/get.php?username=%s&password=%s&type=%s&output=%s&timeshift=%s #%s" % (self.host, self.username, self.password, self.listtype, output, epgoffset, self.name)
-            self.full_url = "%s/get.php?username=%s&password=%s&type=%s&output=%s" % (self.host, self.username, self.password, self.listtype, self.output)
+            playlistline = "{}/get.php?username={}&password={}&type={}&output={}&timeshift={} #{}".format(
+                self.host, self.username, self.password, self.listtype, output, epgoffset, self.name)
+            self.full_url = "{}/get.php?username={}&password={}&type={}&output={}".format(
+                self.host, self.username, self.password, self.listtype, output)
 
-            glob.current_playlist["playlist_info"]["full_url"] = self.full_url
+            playlist_info["full_url"] = self.full_url
             if epgalternativeurl:
-                glob.current_playlist["player_info"]["xmltv_api"] = epgalternativeurl
+                player_info["xmltv_api"] = epgalternativeurl
 
-            # update playlists.txt file
+            # Update playlists.txt file
             if not os.path.isfile(playlist_file):
                 with open(playlist_file, "w+") as f:
                     f.close()
@@ -296,65 +289,56 @@ class XStreamity_Settings(ConfigListScreen, Screen):
                 exists = False
                 for line in lines:
                     hastimeshift = False
-                    if self.domain in line and self.username in line and self.password in line:
+                    if all(x in line for x in [self.domain, self.username, self.password]):
                         parsed_uri = urlparse(line)
                         protocol = parsed_uri.scheme + "://"
                         domain = parsed_uri.hostname
-                        port = ""
-
-                        if parsed_uri.port:
-                            port = parsed_uri.port
-                            host = "%s%s:%s" % (protocol, domain, port)
-                        else:
-                            host = "%s%s" % (protocol, domain)
+                        port = parsed_uri.port or ""
+                        host = "{}{}".format(protocol, domain + (":" + str(port) if port else ""))
 
                         query = parse_qs(parsed_uri.query, keep_blank_values=True)
 
-                        if "username" in query:
-                            username = query["username"][0].strip()
-                        else:
+                        username = query.get("username", [None])[0]
+                        password = query.get("password", [None])[0]
+
+                        if username is None or password is None:
                             continue
 
-                        if "password" in query:
-                            password = query["password"][0].strip()
-                        else:
-                            continue
-                        if "timeshift" in query:
-                            hastimeshift = True
+                        hastimeshift = "timeshift" in query
 
                         if hastimeshift or int(epgoffset) != 0:
-                            playlistline = "%s/get.php?username=%s&password=%s&type=%s&output=%s&timeshift=%s #%s" % (host, username, password, self.listtype, output, epgoffset, self.name)
+                            playlistline = "{}/get.php?username={}&password={}&type={}&output={}&timeshift={} #{}".format(
+                                host, username.strip(), password.strip(), self.listtype, output, epgoffset, self.name)
                         else:
-                            playlistline = "%s/get.php?username=%s&password=%s&type=%s&output=%s #%s" % (host, username, password, self.listtype, output, self.name)
+                            playlistline = "{}/get.php?username={}&password={}&type={}&output={} #{}".format(
+                                host, username.strip(), password.strip(), self.listtype, output, self.name)
 
                         line = str(playlistline) + "\n"
                         exists = True
                     f.write(line)
-                if exists is False:
-                    f.write("\n" + str(playlistline) + "\n")
+                if not exists:
+                    f.write("\n{}\n".format(playlistline))
 
         self.getPlaylistUserFile()
 
-    def getPlaylistJson(self):
+    def load_playlists(self):
         playlists_all = []
-        if os.path.isfile(playlists_json) and os.stat(playlists_json).st_size > 0:
-            with open(playlists_json) as f:
-                try:
+        if os.path.exists(playlists_json) and os.stat(playlists_json).st_size > 0:
+            try:
+                with open(playlists_json) as f:
                     playlists_all = json.load(f)
-                except:
-                    os.remove(playlists_json)
+            except json.JSONDecodeError as e:
+                print(f"Error loading playlists from {playlists_json}: {e}")
+                os.remove(playlists_json)
         return playlists_all
 
     def getPlaylistUserFile(self):
-        if self.playlists_all:
-            x = 0
-            for playlists in self.playlists_all:
-                # extra check in case playlists.txt details have been amended
-                if "domain" in playlists["playlist_info"] and "username" in playlists["playlist_info"] and "password" in playlists["playlist_info"]:
-                    if playlists["playlist_info"]["domain"] == self.domain and playlists["playlist_info"]["username"] == self.username and playlists["playlist_info"]["password"] == self.password:
-                        self.playlists_all[x] = glob.current_playlist
-                        break
-                x += 1
+        for index, playlist in enumerate(self.playlists_all):
+            playlist_info = playlist.get("playlist_info", {})
+            if all(key in playlist_info for key in ["domain", "username", "password"]):
+                if (playlist_info["domain"], playlist_info["username"], playlist_info["password"]) == (self.domain, self.username, self.password):
+                    self.playlists_all[index] = glob.current_playlist
+                    break
 
         self.writeJsonFile()
 
