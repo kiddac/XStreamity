@@ -202,8 +202,11 @@ class XStreamity_Menu(Screen):
         show_catchup = glob.current_playlist["player_info"].get("showcatchup", False)
 
         content = glob.current_playlist["data"]["live_streams"]
+
         has_catchup = any(int(item.get("tv_archive", 0)) == 1 for item in content if "tv_archive" in item)
         has_custom_sids = any(item.get("custom_sid", False) for item in content if "custom_sid" in item)
+
+        glob.current_playlist["data"]["live_streams"] = []
 
         if has_custom_sids:
             glob.current_playlist["data"]["customsids"] = True
