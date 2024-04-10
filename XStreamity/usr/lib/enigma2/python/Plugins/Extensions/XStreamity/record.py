@@ -24,7 +24,7 @@ class RecordDateInput(ConfigListScreen, Screen):
         Screen.__init__(self, session)
         self.session = session
 
-        skin_path = os.path.join(skin_directory, cfg.skin.value)
+        skin_path = os.path.join(skin_directory, cfg.skin.getValue())
         skin = os.path.join(skin_path, "settings.xml")
 
         if os.path.exists("/var/lib/dpkg/status"):
@@ -50,10 +50,10 @@ class RecordDateInput(ConfigListScreen, Screen):
         self.conf_endtime = config_endtime
         self.conf_instant = config_instant
 
-        self.setup_title = _("Please enter recording time")
+        self.setup_title = (_("Please enter recording time"))
 
         if self.conf_instant:
-            self.setup_title = _("Please enter recording end time")
+            self.setup_title = (_("Please enter recording end time"))
 
         self["actions"] = ActionMap(["XStreamityActions"], {
             "cancel": self.cancel,
@@ -78,6 +78,7 @@ class RecordDateInput(ConfigListScreen, Screen):
                 x[1].cancel()
 
             self.close()
+        return
 
     def initConfig(self):
         self.timeinput_name = self.conf_name
@@ -90,7 +91,7 @@ class RecordDateInput(ConfigListScreen, Screen):
         self.list = []
 
         self.list.append(getConfigListEntry(_("Name"), self.timeinput_name))
-        if not self.conf_instant:
+        if self.conf_instant is False:
             self.list.append(getConfigListEntry(_("Start Time"), self.timeinput_starttime))
 
         self.list.append(getConfigListEntry(_("End Time"), self.timeinput_endtime))

@@ -4,7 +4,7 @@
 from . import _
 from . import xstreamity_globals as glob
 from . import processfiles as loadfiles
-from .plugin import skin_directory, common_path, version, downloads_json, playlists_json, playlist_file, cfg
+from .plugin import skin_directory, common_path, version, downloads_json, pythonFull, playlists_json, playlist_file, cfg
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -13,12 +13,12 @@ from enigma import eServiceReference
 from Screens.Console import Console
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
+# from time import time
 from Tools.LoadPixmap import LoadPixmap
 
 import json
 import os
 import shutil
-import sys
 
 
 class XStreamity_MainMenu(Screen):
@@ -28,7 +28,7 @@ class XStreamity_MainMenu(Screen):
         Screen.__init__(self, session)
         self.session = session
 
-        skin_path = os.path.join(skin_directory, cfg.skin.value)
+        skin_path = os.path.join(skin_directory, cfg.skin.getValue())
 
         skin = os.path.join(skin_path, "mainmenu.xml")
         with open(skin, "r") as f:
@@ -39,7 +39,7 @@ class XStreamity_MainMenu(Screen):
         self.playlists_all = []
         self["list"] = List(self.drawList, enableWrapAround=True)
 
-        self.setup_title = _("Main Menu")
+        self.setup_title = (_("Main Menu"))
 
         self["key_red"] = StaticText(_("Back"))
         self["key_green"] = StaticText(_("OK"))
@@ -71,54 +71,39 @@ class XStreamity_MainMenu(Screen):
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
 
-    def check_python_dependencies(self):
-        try:
-            import requests
-            from PIL import Image
-            if sys.version_info < (3, 9):
-                from multiprocessing.pool import ThreadPool
-            return True
-        except Exception as e:
-            print("Failed to import dependencies:", e)
-            return False
-
     def check_dependencies(self):
+
         try:
-            if not cfg.locationvalid.value:
-                print("Playlists.txt location is invalid and has been reset.")
+            if cfg.locationvalid.getValue() is False:
                 self.session.open(MessageBox, _("Playlists.txt location is invalid and has been reset."), type=MessageBox.TYPE_INFO, timeout=5)
                 cfg.locationvalid.setValue(True)
                 cfg.save()
-        except Exception as e:
-            print("Error checking location validity:", e)
+        except:
+            pass
 
         dependencies = True
 
-        dependencies = self.check_python_dependencies()
+        try:
+            import requests
+            from PIL import Image
+            print("***** python version *** %s" % pythonFull)
+            if pythonFull < 3.9:
+                print("*** checking multiprocessing ***")
+                from multiprocessing.pool import ThreadPool
+        except Exception as e:
+            print("**** missing dependencies ***")
+            print(e)
+            dependencies = False
 
-        if not dependencies:
-            script_file = os.path.join(os.path.dirname(__file__), "dependencies.sh")
-            try:
-                os.chmod(script_file, 0o755)
-            except Exception as e:
-                print(e)
-
-            cmd = ". {}".format(script_file)
-
-            self.session.openWithCallback(self.retry_check_dependencies, Console, title="Checking Python Dependencies", cmdlist=[cmd], closeOnSuccess=True)
+        if dependencies is False:
+            os.chmod("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/dependencies.sh", 0o0755)
+            cmd1 = ". /usr/lib/enigma2/python/Plugins/Extensions/XStreamity/dependencies.sh"
+            self.session.openWithCallback(self.start, Console, title="Checking Python Dependencies", cmdlist=[cmd1], closeOnSuccess=False)
         else:
             self.start()
 
-    def retry_check_dependencies(self):
-        dependencies = self.check_python_dependencies()
-
-        if not dependencies:
-            self.session.openWithCallback(self.close, MessageBox, _("Dependencies not installed.\n\nTrying installing older version from feeds first..."), type=MessageBox.TYPE_INFO, timeout=10)
-        else:
-            self.start()
-
-    def start(self):
-        self.playlists_all = loadfiles.process_files()
+    def start(self, answer=None):
+        self.playlists_all = loadfiles.processfiles()
         self.createSetup()
 
     def createSetup(self):
@@ -126,60 +111,92 @@ class XStreamity_MainMenu(Screen):
         downloads_all = []
 
         if os.path.isfile(downloads_json) and os.stat(downloads_json).st_size > 0:
-            try:
-                with open(downloads_json, "r") as f:
+            with open(downloads_json, "r") as f:
+                try:
                     downloads_all = json.load(f)
-            except Exception as e:
-                print(e)
+                except Exception as e:
+                    print(e)
 
         if self.playlists_all:
-            self.list.extend([[1, _("Playlists")], [3, _("Add Playlist")], [2, _("Main Settings")]])
+            self.list.append([1, _("Playlists")])
+            self.list.append([3, _("Add Playlist")])
+            self.list.append([2, _("Main Settings")])
             # self.list.append([5, _("Manual EPG Update")])
 
         else:
-            self.list.extend([[3, _("Add Playlist")], [2, _("Main Settings")]])
+            self.list.append([3, _("Add Playlist")])
+            self.list.append([2, _("Main Settings")])
 
         if downloads_all:
             self.list.append([4, _("Download Manager")])
 
+        self.drawList = []
         self.drawList = [buildListEntry(x[0], x[1]) for x in self.list]
         self["list"].setList(self.drawList)
 
     def playlists(self):
         from . import playlists
-        self.session.openWithCallback(lambda: self.start, playlists.XStreamity_Playlists)
+        self.session.openWithCallback(self.start, playlists.XStreamity_Playlists)
 
     def settings(self):
         from . import settings
-        self.session.openWithCallback(lambda: self.start, settings.XStreamity_Settings)
+        self.session.openWithCallback(self.start, settings.XStreamity_Settings)
 
     def addServer(self):
         from . import server
-        self.session.openWithCallback(lambda: self.start, server.XStreamity_AddServer)
+        self.session.openWithCallback(self.start, server.XStreamity_AddServer)
 
     def downloadManager(self):
         from . import downloadmanager
-        self.session.openWithCallback(lambda: self.start, downloadmanager.XStreamity_DownloadManager)
+        self.session.openWithCallback(self.start, downloadmanager.XStreamity_DownloadManager)
+
+    """
+    def updateEPG(self):
+
+        recordings = ""
+        next_rec_time = -1
+
+        try:
+            recordings = self.session.nav.getRecordings()
+            if not recordings:
+                next_rec_time = self.session.nav.RecordTimer.getNextRecordingTime()
+        except:
+            pass
+
+        if recordings or (next_rec_time > 0 and (next_rec_time - time()) < 360):
+            self.session.open(MessageBox, _("Recordings in progress. EPG not downloaded."), type=MessageBox.TYPE_INFO, timeout=5)
+        else:
+            self.session.openWithCallback(self.updateEPG2, MessageBox, _("EPGs downloading."), type=MessageBox.TYPE_INFO, timeout=5)
+            """
+
+    """
+    def updateEPG2(self, data=None):
+        from . import update
+        update.XStreamity_Update()
+        """
 
     def __next__(self):
-        current_entry = self["list"].getCurrent()
+        index = self["list"].getCurrent()[0]
 
-        if current_entry:
-            index = current_entry[0]
+        if self["list"].getCurrent():
             if index == 1:
                 self.playlists()
-            elif index == 2:
+            if index == 2:
                 self.settings()
-            elif index == 3:
+            if index == 3:
                 self.addServer()
-            elif index == 4:
+            if index == 4:
                 self.downloadManager()
+            """
+            if index == 5:
+                self.updateEPG()
+                """
 
     def quit(self, data=None):
         try:
             shutil.copyfile(playlist_file, '/home/playlists.txt')
-        except Exception as e:
-            print("Error copying playlist file:", e)
+        except:
+            pass
 
         self.playOriginalChannel()
 
@@ -193,25 +210,27 @@ class XStreamity_MainMenu(Screen):
         if answer is None:
             self.session.openWithCallback(self.resetData, MessageBox, _("Warning: delete stored json data for all playlists... Settings, favourites etc. \nPlaylists will not be deleted.\nDo you wish to continue?"))
         elif answer:
-            try:
-                os.remove(playlists_json)
-                with open(playlists_json, "a"):
-                    pass
-            except OSError as e:
-                print("Error deleting or recreating JSON file:", e)
+            os.remove(playlists_json)
+            if not os.path.isfile(playlists_json):
+                with open(playlists_json, "a") as f:
+                    f.close()
             self.quit()
 
 
 def buildListEntry(index, title):
-    image_mapping = {
-        1: "playlists.png",
-        2: "settings.png",
-        3: "addplaylist.png",
-        4: "vod_download.png"
-    }
-
     png = None
-    if index in image_mapping:
-        png = LoadPixmap(os.path.join(common_path, image_mapping[index]))
 
-    return index, str(title), png
+    if index == 1:
+        png = LoadPixmap(os.path.join(common_path, "playlists.png"))
+    if index == 2:
+        png = LoadPixmap(os.path.join(common_path, "settings.png"))
+    if index == 3:
+        png = LoadPixmap(os.path.join(common_path, "addplaylist.png"))
+    if index == 4:
+        png = LoadPixmap(os.path.join(common_path, "vod_download.png"))
+    """
+    if index == 5:
+        png = LoadPixmap(os.path.join(common_path, "epg_download.png"))
+        """
+
+    return (index, str(title), png)

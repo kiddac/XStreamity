@@ -43,27 +43,30 @@ class XStreamity_HiddenCategories(Screen, ProtectedScreen):
     ALLOW_SUSPEND = True
 
     def __init__(self, session, category_type, channellist, level=1):
+
         Screen.__init__(self, session)
 
-        if cfg.adult.value:
+        if cfg.adult.getValue() is True:
             ProtectedScreen.__init__(self)
 
         self.session = session
 
-        skin_path = os.path.join(skin_directory, cfg.skin.value)
+        skin_path = os.path.join(skin_directory, cfg.skin.getValue())
         skin = os.path.join(skin_path, "hidden.xml")
-        with open(skin, "r") as f:
-            self.skin = f.read()
-
         self.category_type = category_type
         self.channellist = channellist
         self.level = level
 
-        self.setup_title = _("Hidden Categories")
+        with open(skin, "r") as f:
+            self.skin = f.read()
+
+        self.setup_title = (_("Hidden Categories"))
+
         self.startList = []
         self.drawList = []
         self["hidden_list"] = List(self.drawList, enableWrapAround=True)
         self["hidden_list"].onSelectionChanged.append(self.getCurrentEntry)
+
         self.currentSelection = 0
 
         self["key_red"] = StaticText(_("Cancel"))
@@ -71,10 +74,9 @@ class XStreamity_HiddenCategories(Screen, ProtectedScreen):
         self["key_yellow"] = StaticText(_("Invert"))
         self["key_blue"] = StaticText(_("Reset"))
 
-        playlist_info = glob.current_playlist["playlist_info"]
-        self.protocol = playlist_info["protocol"]
-        self.domain = playlist_info["domain"]
-        self.host = playlist_info["host"]
+        self.protocol = glob.current_playlist["playlist_info"]["protocol"]
+        self.domain = glob.current_playlist["playlist_info"]["domain"]
+        self.host = glob.current_playlist["playlist_info"]["host"]
 
         self["actions"] = ActionMap(["XStreamityActions"], {
             "red": self.keyCancel,
@@ -95,36 +97,55 @@ class XStreamity_HiddenCategories(Screen, ProtectedScreen):
 
     def loadHidden(self):
         self.playlists_all = []
+        self.hidelist = []
+        self.hidechannellist = []
         self.startList = []
-        player_info = glob.current_playlist["player_info"]
 
-        # Define dictionary to map category types to keys in player_info
-        category_keys = {
-            "live": ["livehidden", "channelshidden"],
-            "vod": ["vodhidden", "vodstreamshidden"],
-            "series": ["serieshidden", "seriestitleshidden", "seriesseasonshidden", "seriesepisodeshidden"],
-            "catchup": ["catchuphidden", "catchupchannelshidden"]
-        }
+        if self.category_type == "live":
+            if self.level == 1:
+                self.hidelist = glob.current_playlist["player_info"]["livehidden"]
+            else:
+                self.hidelist = glob.current_playlist["player_info"]["channelshidden"]
 
-        # Get the corresponding key based on category_type and level
-        list_key = category_keys.get(self.category_type, [])[self.level - 1]
+        elif self.category_type == "vod":
+            if self.level == 1:
+                self.hidelist = glob.current_playlist["player_info"]["vodhidden"]
+            else:
+                self.hidelist = glob.current_playlist["player_info"]["vodstreamshidden"]
 
-        # Retrieve hidelist based on list_key
-        self.hidelist = player_info.get(list_key, [])
+        elif self.category_type == "series":
+            if self.level == 1:
+                self.hidelist = glob.current_playlist["player_info"]["serieshidden"]
+            elif self.level == 2:
+                self.hidelist = glob.current_playlist["player_info"]["seriestitleshidden"]
 
-        # Populate startList based on hidelist
+            elif self.level == 3:
+                self.hidelist = glob.current_playlist["player_info"]["seriesseasonshidden"]
+
+            elif self.level == 4:
+                self.hidelist = glob.current_playlist["player_info"]["seriesepisodeshidden"]
+
+        elif self.category_type == "catchup":
+            if self.level == 1:
+                self.hidelist = glob.current_playlist["player_info"]["catchuphidden"]
+            else:
+                self.hidelist = glob.current_playlist["player_info"]["catchupchannelshidden"]
+
         for item in self.channellist:
-            hidden = item[2] in self.hidelist
-            self.startList.append([item[1], item[2], hidden])
+            if item[2] not in self.hidelist:
+                self.startList.append([item[1], item[2], False])
+            elif item[2] in self.hidelist:
+                self.startList.append([item[1], item[2], True])
 
         self.drawList = []
         self.drawList = [self.buildListEntry(x[0], x[1], x[2]) for x in self.startList]
         self["hidden_list"].setList(self.drawList)
 
     def buildListEntry(self, name, category_id, enabled):
-        image_path = "lock_hidden.png" if enabled else "lock_off.png"
-        full_path = os.path.join(common_path, image_path)
-        pixmap = LoadPixmap(cached=True, path=full_path)
+        if enabled:
+            pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "lock_hidden.png"))
+        else:
+            pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "lock_off.png"))
         return (pixmap, str(name), str(category_id), enabled)
 
     def refresh(self):
@@ -133,7 +154,7 @@ class XStreamity_HiddenCategories(Screen, ProtectedScreen):
         self["hidden_list"].updateList(self.drawList)
 
     def toggleSelection(self):
-        if self["hidden_list"].list:
+        if len(self["hidden_list"].list) > 0:
             idx = self["hidden_list"].getIndex()
             self.startList[idx][2] = not self.startList[idx][2]
             self.refresh()
@@ -155,56 +176,95 @@ class XStreamity_HiddenCategories(Screen, ProtectedScreen):
         self.close()
 
     def keyGreen(self):
-        count = sum(1 for item in self.startList if item[2])
+        count = 0
+        for item in self.startList:
+            if item[2] is True:
+                count += 1
 
         if count == len(self.channellist):
             self.session.open(MessageBox, _("Error: All categories hidden. Please amend your selection."), MessageBox.TYPE_ERROR)
             return
 
-        playlist_info = glob.current_playlist["playlist_info"]
-        player_info = glob.current_playlist["player_info"]
-        domain = playlist_info["domain"]
-        username = playlist_info["username"]
-        password = playlist_info["password"]
+        domain = glob.current_playlist["playlist_info"]["domain"]
+        username = glob.current_playlist["playlist_info"]["username"]
+        password = glob.current_playlist["playlist_info"]["password"]
 
-        # Define dictionary to map category types to keys in player_info
-        category_keys = {
-            "live": ["livehidden", "channelshidden"],
-            "vod": ["vodhidden", "vodstreamshidden"],
-            "series": ["serieshidden", "seriestitleshidden", "seriesseasonshidden", "seriesepisodeshidden"],
-            "catchup": ["catchuphidden", "catchupchannelshidden"]
-        }
+        for item in self.startList:
 
-        # Get the list key based on category type and level
-        list_key = category_keys.get(self.category_type, [])[self.level - 1]
+            if self.category_type == "live":
+                if self.level == 1:
+                    if item[2] is True and item[1] not in glob.current_playlist["player_info"]["livehidden"]:
+                        glob.current_playlist["player_info"]["livehidden"].append(item[1])
+                    elif item[2] is False and item[1] in glob.current_playlist["player_info"]["livehidden"]:
+                        glob.current_playlist["player_info"]["livehidden"].remove(item[1])
 
-        # Ensure list_key exists before proceeding
-        if list_key:
-            selected_list = player_info.get(list_key, [])
+                elif self.level == 2:
+                    if item[2] is True and item[1] not in glob.current_playlist["player_info"]["channelshidden"]:
+                        glob.current_playlist["player_info"]["channelshidden"].append(item[1])
+                    elif item[2] is False and item[1] in glob.current_playlist["player_info"]["channelshidden"]:
+                        glob.current_playlist["player_info"]["channelshidden"].remove(item[1])
 
-            for item in self.startList:
-                item_id = item[1]
-                hidden = item[2]
+            elif self.category_type == "vod":
+                if self.level == 1:
+                    if item[2] is True and item[1] not in glob.current_playlist["player_info"]["vodhidden"]:
+                        glob.current_playlist["player_info"]["vodhidden"].append(item[1])
+                    elif item[2] is False and item[1] in glob.current_playlist["player_info"]["vodhidden"]:
+                        glob.current_playlist["player_info"]["vodhidden"].remove(item[1])
 
-                if hidden and item_id not in selected_list:
-                    selected_list.append(item_id)
-                elif not hidden and item_id in selected_list:
-                    selected_list.remove(item_id)
+                elif self.level == 2:
+                    if item[2] is True and item[1] not in glob.current_playlist["player_info"]["vodstreamshidden"]:
+                        glob.current_playlist["player_info"]["vodstreamshidden"].append(item[1])
+                    elif item[2] is False and item[1] in glob.current_playlist["player_info"]["vodstreamshidden"]:
+                        glob.current_playlist["player_info"]["vodstreamshidden"].remove(item[1])
 
-            # Update player_info with the modified list
-            player_info[list_key] = selected_list
+            elif self.category_type == "series":
+                if self.level == 1:
+                    if item[2] is True and item[1] not in glob.current_playlist["player_info"]["serieshidden"]:
+                        glob.current_playlist["player_info"]["serieshidden"].append(item[1])
+                    elif item[2] is False and item[1] in glob.current_playlist["player_info"]["serieshidden"]:
+                        glob.current_playlist["player_info"]["serieshidden"].remove(item[1])
+                elif self.level == 2:
+                    if item[2] is True and item[1] not in glob.current_playlist["player_info"]["seriestitleshidden"]:
+                        glob.current_playlist["player_info"]["seriestitleshidden"].append(item[1])
+                    elif item[2] is False and item[1] in glob.current_playlist["player_info"]["seriestitleshidden"]:
+                        glob.current_playlist["player_info"]["seriestitleshidden"].remove(item[1])
+
+                elif self.level == 3:
+                    if item[2] is True and item[1] not in glob.current_playlist["player_info"]["seriesseasonshidden"]:
+                        glob.current_playlist["player_info"]["seriesseasonshidden"].append(item[1])
+                    elif item[2] is False and item[1] in glob.current_playlist["player_info"]["seriesseasonshidden"]:
+                        glob.current_playlist["player_info"]["seriesseasonshidden"].remove(item[1])
+
+                elif self.level == 4:
+                    if item[2] is True and item[1] not in glob.current_playlist["player_info"]["seriesepisodeshidden"]:
+                        glob.current_playlist["player_info"]["seriesepisodeshidden"].append(item[1])
+                    elif item[2] is False and item[1] in glob.current_playlist["player_info"]["seriesepisodeshidden"]:
+                        glob.current_playlist["player_info"]["seriesepisodeshidden"].remove(item[1])
+
+            elif self.category_type == "catchup":
+                if self.level == 1:
+                    if item[2] is True and item[1] not in glob.current_playlist["player_info"]["catchuphidden"]:
+                        glob.current_playlist["player_info"]["catchuphidden"].append(item[1])
+                    elif item[2] is False and item[1] in glob.current_playlist["player_info"]["catchuphidden"]:
+                        glob.current_playlist["player_info"]["catchuphidden"].remove(item[1])
+
+                elif self.level == 2:
+                    if item[2] is True and item[1] not in glob.current_playlist["player_info"]["catchupchannelshidden"]:
+                        glob.current_playlist["player_info"]["catchupchannelshidden"].append(item[1])
+                    elif item[2] is False and item[1] in glob.current_playlist["player_info"]["catchupchannelshidden"]:
+                        glob.current_playlist["player_info"]["catchupchannelshidden"].remove(item[1])
+
+        self.playlists_all = []
 
         with open(playlists_json) as f:
-            playlists_all = json.load(f, object_pairs_hook=OrderedDict)
+            self.playlists_all = json.load(f, object_pairs_hook=OrderedDict)
 
-        for idx, playlist in enumerate(playlists_all):
-            if (
-                playlist["playlist_info"]["domain"].strip() == str(domain).strip() and
-                playlist["playlist_info"]["username"].strip() == str(username).strip() and
-                playlist["playlist_info"]["password"].strip() == str(password).strip()
-            ):
-                playlists_all[idx] = glob.current_playlist
+        x = 0
+        for playlist in self.playlists_all:
+            if playlist["playlist_info"]["domain"] == str(domain).strip() and playlist["playlist_info"]["username"] == str(username).strip() and playlist["playlist_info"]["password"] == str(password).strip():
+                self.playlists_all[x] = glob.current_playlist
                 break
+            x += 1
 
         with open(playlists_json, "w") as f:
             json.dump(self.playlists_all, f)

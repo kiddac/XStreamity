@@ -13,13 +13,12 @@ from enigma import eTimer
 from requests.adapters import HTTPAdapter, Retry
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
-
+from time import time
 from Tools.LoadPixmap import LoadPixmap
 
 import os
 import json
 import requests
-import time
 
 try:
     from http.client import HTTPConnection
@@ -36,7 +35,7 @@ class XStreamity_Menu(Screen):
         Screen.__init__(self, session)
         self.session = session
 
-        skin_path = os.path.join(skin_directory, cfg.skin.value)
+        skin_path = os.path.join(skin_directory, cfg.skin.getValue())
         skin = os.path.join(skin_path, "menu.xml")
         with open(skin, "r") as f:
             self.skin = f.read()
@@ -64,10 +63,10 @@ class XStreamity_Menu(Screen):
 
         self.player_api = glob.current_playlist["playlist_info"]["player_api"]
 
-        self.p_live_categories_url = self.player_api + "&action=get_live_categories"
-        self.p_vod_categories_url = self.player_api + "&action=get_vod_categories"
-        self.p_series_categories_url = self.player_api + "&action=get_series_categories"
-        self.p_live_streams_url = self.player_api + "&action=get_live_streams"
+        self.p_live_categories_url = str(self.player_api) + "&action=get_live_categories"
+        self.p_vod_categories_url = str(self.player_api) + "&action=get_vod_categories"
+        self.p_series_categories_url = str(self.player_api) + "&action=get_series_categories"
+        self.p_live_streams_url = str(self.player_api) + "&action=get_live_streams"
 
         glob.current_playlist["data"]["live_streams"] = []
 
@@ -78,8 +77,8 @@ class XStreamity_Menu(Screen):
         self.setTitle(self.setup_title)
 
     def start(self, data=None):
-        # delay to allow splash screen to show
         if glob.current_playlist["data"]["data_downloaded"] is False:
+            # delay to allow splash screen to show
             self.timer = eTimer()
             try:
                 self.timer_conn = self.timer.timeout.connect(self.makeUrlList)
@@ -94,40 +93,41 @@ class XStreamity_Menu(Screen):
             self.createSetup()
 
     def makeUrlList(self):
-        self.url_list = [
-            [self.p_live_categories_url, 0],
-            [self.p_vod_categories_url, 1],
-            [self.p_series_categories_url, 2]
-        ]
+        self.url_list = []
 
-        if not glob.current_playlist["data"]["data_downloaded"]:
+        self.url_list.append([self.p_live_categories_url, 0])
+        self.url_list.append([self.p_vod_categories_url, 1])
+        self.url_list.append([self.p_series_categories_url, 2])
+
+        if glob.current_playlist["data"]["data_downloaded"] is False:
             self.url_list.append([self.p_live_streams_url, 3])
 
         self.process_downloads()
 
     def download_url(self, url):
         category = url[1]
-        response = ""
+        r = ""
 
         retries = Retry(total=3, backoff_factor=1)
         adapter = HTTPAdapter(max_retries=retries)
+        http = requests.Session()
+        http.mount("http://", adapter)
+        http.mount("https://", adapter)
+        response = ""
+        try:
+            r = http.get(url[0], headers=hdr, timeout=(10, 20), verify=False)
+            r.raise_for_status()
+            if r.status_code == requests.codes.ok:
+                try:
+                    response = r.json()
+                    return category, response
+                except Exception as e:
+                    print(e)
+                    return category, ""
 
-        with requests.Session() as http:
-            http.mount("http://", adapter)
-            http.mount("https://", adapter)
-
-            try:
-                r = http.get(url[0], headers=hdr, timeout=(10, 20), verify=False)
-                r.raise_for_status()
-                if r.status_code == requests.codes.ok:
-                    try:
-                        response = r.json()
-                    except ValueError as e:
-                        print("Error decoding JSON:", e)
-            except requests.exceptions.RequestException as e:
-                print("Request error:", e)
-
-        return category, response
+        except Exception as e:
+            print(e)
+            return category, ""
 
     def process_downloads(self):
         self.retry = 0
@@ -136,42 +136,61 @@ class XStreamity_Menu(Screen):
         glob.current_playlist["data"]["series_categories"] = []
 
         threads = len(self.url_list)
-        results = []
 
-        if hasConcurrent:
-            print("******* trying concurrent futures ******")
-            try:
-                from concurrent.futures import ThreadPoolExecutor
-                with ThreadPoolExecutor(max_workers=threads) as executor:
-                    results = list(executor.map(self.download_url, self.url_list))
-            except Exception as e:
-                print("Concurrent execution error:", e)
+        if hasConcurrent or hasMultiprocessing:
+            if hasConcurrent:
+                print("******* trying concurrent futures ******")
+                try:
+                    from concurrent.futures import ThreadPoolExecutor
+                    executor = ThreadPoolExecutor(max_workers=threads)
 
-        elif hasMultiprocessing:
-            try:
-                print("*** trying multiprocessing ThreadPool ***")
-                from multiprocessing.pool import ThreadPool
-                with ThreadPool(threads) as pool:
-                    results = list(pool.imap(self.download_url, self.url_list))
-            except Exception as e:
-                print("Multiprocessing execution error:", e)
+                    with executor:
+                        results = executor.map(self.download_url, self.url_list)
 
+                except Exception as e:
+                    print(e)
+
+            elif hasMultiprocessing:
+                try:
+                    print("*** trying multiprocessing ThreadPool ***")
+                    from multiprocessing.pool import ThreadPool
+                    pool = ThreadPool(threads)
+                    results = pool.imap(self.download_url, self.url_list)
+
+                    pool.close()
+                    pool.join()
+
+                except Exception as e:
+                    print(e)
+
+            for category, response in results:
+                if response:
+                    # add categories to main json file
+                    if category == 0:
+                        glob.current_playlist["data"]["live_categories"] = response
+                    if category == 1:
+                        glob.current_playlist["data"]["vod_categories"] = response
+                    if category == 2:
+                        glob.current_playlist["data"]["series_categories"] = response
+                    if category == 3:
+                        glob.current_playlist["data"]["live_streams"] = response
         else:
+
             print("*** trying sequential ***")
             for url in self.url_list:
                 result = self.download_url(url)
-                results.append(result)
-
-        for category, response in results:
-            if response:
-                if category == 0:
-                    glob.current_playlist["data"]["live_categories"] = response
-                elif category == 1:
-                    glob.current_playlist["data"]["vod_categories"] = response
-                elif category == 2:
-                    glob.current_playlist["data"]["series_categories"] = response
-                elif category == 3:
-                    glob.current_playlist["data"]["live_streams"] = response
+                category = result[0]
+                response = result[1]
+                if response:
+                    # add categories to main json file
+                    if category == 0:
+                        glob.current_playlist["data"]["live_categories"] = response
+                    if category == 1:
+                        glob.current_playlist["data"]["vod_categories"] = response
+                    if category == 2:
+                        glob.current_playlist["data"]["series_categories"] = response
+                    if category == 3:
+                        glob.current_playlist["data"]["live_streams"] = response
 
         self["splash"].hide()
         glob.current_playlist["data"]["data_downloaded"] = True
@@ -179,78 +198,74 @@ class XStreamity_Menu(Screen):
 
     def writeJsonFile(self):
         with open(playlists_json, "r") as f:
-            playlists_all = json.load(f)
-
-        playlists_all[glob.current_selection] = glob.current_playlist
+            self.playlists_all = json.load(f)
+            self.playlists_all[glob.current_selection] = glob.current_playlist
 
         with open(playlists_json, "w") as f:
-            json.dump(playlists_all, f)
+            json.dump(self.playlists_all, f)
 
     def createSetup(self):
         self.list = []
         self.index = 0
 
-        def add_category_to_list(title, category_type, index):
-            if category_type in glob.current_playlist["data"] and glob.current_playlist["data"][category_type]:
-                if "category_id" in glob.current_playlist["data"][category_type][0] and "user_info" not in glob.current_playlist["data"][category_type]:
-                    self.index += 1
-                    self.list.append([self.index, _(title), index, ""])
+        if glob.current_playlist["player_info"]["showlive"] is True:
+            if glob.current_playlist["data"]["live_categories"] and len(glob.current_playlist["data"]["live_categories"]) > 0 \
+                    and "category_id" in glob.current_playlist["data"]["live_categories"][0] and "user_info" not in glob.current_playlist["data"]["live_categories"]:
+                self.index += 1
+                self.list.append([self.index, _("Live Streams"), 0, ""])
 
-        show_live = glob.current_playlist["player_info"].get("showlive", False)
-        show_vod = glob.current_playlist["player_info"].get("showvod", False)
-        show_series = glob.current_playlist["player_info"].get("showseries", False)
-        show_catchup = glob.current_playlist["player_info"].get("showcatchup", False)
+        if glob.current_playlist["player_info"]["showvod"] is True:
+            if glob.current_playlist["data"]["vod_categories"] and len(glob.current_playlist["data"]["vod_categories"]) > 0 \
+                    and "category_id" in glob.current_playlist["data"]["vod_categories"][0] and "user_info" not in glob.current_playlist["data"]["vod_categories"]:
+                self.index += 1
+                self.list.append([self.index, _("Vod"), 1, ""])
+
+        if glob.current_playlist["player_info"]["showseries"] is True:
+            if glob.current_playlist["data"]["series_categories"] and len(glob.current_playlist["data"]["series_categories"]) > 0 \
+                    and "category_id" in glob.current_playlist["data"]["series_categories"][0] and "user_info" not in glob.current_playlist["data"]["series_categories"]:
+                self.index += 1
+                self.list.append([self.index, _("TV Series"), 2, ""])
 
         content = glob.current_playlist["data"]["live_streams"]
-
-        has_catchup = any(int(item.get("tv_archive", 0)) == 1 for item in content if "tv_archive" in item)
-        has_custom_sids = any(item.get("custom_sid", False) for item in content if "custom_sid" in item)
-
+        hascatchup = any(int(item["tv_archive"]) == 1 for item in content if "tv_archive" in item)
+        hascustomsids = any(item["custom_sid"] for item in content if "custom_sid" in item)
         glob.current_playlist["data"]["live_streams"] = []
 
-        if has_custom_sids:
+        if hascustomsids:
             glob.current_playlist["data"]["customsids"] = True
 
-        if has_catchup:
+        if hascatchup:
             glob.current_playlist["data"]["catchup"] = True
 
-        if show_live:
-            add_category_to_list("Live Streams", "live_categories", 0)
-
-        if show_vod:
-            add_category_to_list("Vod", "vod_categories", 1)
-
-        if show_series:
-            add_category_to_list("TV Series", "series_categories", 2)
-
-        if show_catchup and glob.current_playlist["data"]["catchup"]:
-            self.index += 1
-            self.list.append([self.index, _("Catch Up TV"), 3, ""])
+        if glob.current_playlist["player_info"]["showcatchup"] is True:
+            if glob.current_playlist["data"]["catchup"] is True:
+                self.index += 1
+                self.list.append([self.index, _("Catch Up TV"), 3, ""])
 
         self.index += 1
         self.list.append([self.index, _("Playlist Settings"), 4, ""])
 
-        if show_live:
+        if glob.current_playlist["player_info"]["showlive"] is True:
             if glob.current_playlist["data"]["live_categories"] and len(glob.current_playlist["data"]["live_categories"]) > 0 \
                     and "category_id" in glob.current_playlist["data"]["live_categories"][0] and "user_info" not in glob.current_playlist["data"]["live_categories"]:
                 self.index += 1
                 self.list.append([self.index, _("Manual EPG Update"), 5, ""])
 
+        self.drawList = []
         self.drawList = [buildListEntry(x[0], x[1], x[2], x[3]) for x in self.list]
         self["list"].setList(self.drawList)
 
         self.writeJsonFile()
 
-        if not self.list:
+        if len(self.list) == 0:
             self.session.openWithCallback(self.close, MessageBox, (_("No data, blocked or playlist not compatible with XStreamity plugin.")), MessageBox.TYPE_WARNING, timeout=5)
 
     def quit(self):
         self.close()
 
     def __next__(self):
-        current_item = self["list"].getCurrent()
-        if current_item:
-            category = current_item[2]
+        if self["list"].getCurrent():
+            category = self["list"].getCurrent()[2]
             if category == 0:
                 from . import live
                 self.session.open(live.XStreamity_Categories)
@@ -283,7 +298,7 @@ class XStreamity_Menu(Screen):
         except:
             pass
 
-        if recordings or (next_rec_time > 0 and (next_rec_time - time.time()) < 360):
+        if recordings or (next_rec_time > 0 and (next_rec_time - time()) < 360):
             self.session.open(MessageBox, _("Recordings in progress. EPG not downloaded."), type=MessageBox.TYPE_INFO, timeout=5)
         else:
             self.session.openWithCallback(self.updateEPG2, MessageBox, _("EPGs downloading."), type=MessageBox.TYPE_INFO, timeout=5)
@@ -294,18 +309,18 @@ class XStreamity_Menu(Screen):
 
 
 def buildListEntry(index, title, category_id, playlisturl):
-    icon_mapping = {
-        0: "live.png",
-        1: "vod.png",
-        2: "series.png",
-        3: "catchup.png",
-        4: "settings.png",
-        5: "epg_download.png"
-    }
-
     png = None
-    icon_filename = icon_mapping.get(category_id)
-    if icon_filename:
-        png = LoadPixmap(os.path.join(common_path, icon_filename))
 
+    if category_id == 0:
+        png = LoadPixmap(os.path.join(common_path, "live.png"))
+    if category_id == 1:
+        png = LoadPixmap(os.path.join(common_path, "vod.png"))
+    if category_id == 2:
+        png = LoadPixmap(os.path.join(common_path, "series.png"))
+    if category_id == 3:
+        png = LoadPixmap(os.path.join(common_path, "catchup.png"))
+    if category_id == 4:
+        png = LoadPixmap(os.path.join(common_path, "settings.png"))
+    if category_id == 5:
+        png = LoadPixmap(os.path.join(common_path, "epg_download.png"))
     return (index, str(title), category_id, str(playlisturl), png)

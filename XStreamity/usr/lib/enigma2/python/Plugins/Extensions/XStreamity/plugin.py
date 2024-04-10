@@ -1,22 +1,24 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from . import _
+
+from Components.config import config, ConfigSubsection, ConfigSelection, ConfigDirectory, ConfigYesNo, ConfigSelectionNumber, ConfigClock, ConfigPIN, ConfigInteger
+from enigma import eTimer, getDesktop, addFont
+from Plugins.Plugin import PluginDescriptor
+from os.path import isdir
+# from datetime import datetime
+
 import os
 import shutil
 import sys
 import time
 import twisted.python.runtime
 
-from . import _
-from Components.config import config, ConfigSubsection, ConfigSelection, ConfigDirectory, ConfigYesNo, ConfigSelectionNumber, ConfigClock, ConfigPIN, ConfigInteger
-from enigma import eTimer, getDesktop, addFont
-from Plugins.Plugin import PluginDescriptor
-from os.path import isdir
-
 try:
     from multiprocessing.pool import ThreadPool
     hasMultiprocessing = True
-except ImportError:
+except:
     hasMultiprocessing = False
 
 try:
@@ -25,13 +27,15 @@ try:
         hasConcurrent = True
     else:
         hasConcurrent = False
-except ImportError:
+except:
     hasConcurrent = False
 
 pythonFull = float(str(sys.version_info.major) + "." + str(sys.version_info.minor))
 pythonVer = sys.version_info.major
 
-isDreambox = os.path.exists("/usr/bin/apt-get")
+isDreambox = False
+if os.path.exists("/usr/bin/apt-get"):
+    isDreambox = True
 
 with open("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/version.txt", "r") as f:
     version = f.readline()
@@ -49,7 +53,9 @@ elif screenwidth.width() > 1280:
 else:
     skin_directory = os.path.join(dir_plugins, "skin/hd/")
 
-folders = [folder for folder in os.listdir(skin_directory) if folder != "common"]
+folders = os.listdir(skin_directory)
+if "common" in folders:
+    folders.remove("common")
 
 languages = [
     ("", "English"),
@@ -79,6 +85,11 @@ languages = [
     ("sq-AL", "shqip")
 ]
 
+"""
+def convert(unix=0):
+    return datetime.fromtimestamp(unix).strftime('%Y-%m-%d %H:%M:%S')
+    """
+
 
 def defaultMoviePath():
     result = config.usage.default_path.value
@@ -95,7 +106,6 @@ if not isdir(config.movielist.last_videodir.value):
     except:
         pass
 
-# Configurations initialization
 config.plugins.XStreamity = ConfigSubsection()
 cfg = config.plugins.XStreamity
 
@@ -117,6 +127,7 @@ if os.path.exists("/usr/bin/apt-get"):
 
 cfg.livetype = ConfigSelection(default="4097", choices=live_streamtype_choices)
 cfg.vodtype = ConfigSelection(default="4097", choices=vod_streamtype_choices)
+# cfg.downloadlocation = ConfigDirectory(default="/media/hdd/movie/")
 
 cfg.downloadlocation = ConfigDirectory(default=config.movielist.last_videodir.value)
 cfg.epglocation = ConfigDirectory(default="/etc/enigma2/xstreamity/epg/")
@@ -147,16 +158,15 @@ cfg.channelcovers = ConfigYesNo(default=True)
 cfg.infobarcovers = ConfigYesNo(default=True)
 
 cfg.boot = ConfigYesNo(default=False)
-# Set default file paths
-playlist_file = os.path.join(dir_etc, "playlists.txt")
-playlists_json = os.path.join(dir_etc, "x-playlists.json")
-downloads_json = os.path.join(dir_etc, "downloads2.json")
+# cfg.epgboot = ConfigYesNo(default=False)
 
-# Set skin and font paths
 skin_path = os.path.join(skin_directory, cfg.skin.value)
 common_path = os.path.join(skin_directory, "common/")
+playlists_json = os.path.join(dir_etc, "x-playlists.json")
+downloads_json = os.path.join(dir_etc, "downloads2.json")
+playlist_file = os.path.join(dir_etc, "playlists.txt")
 
-location = cfg.location.value
+location = cfg.location.getValue()
 if location:
     if os.path.exists(location):
         playlist_file = os.path.join(cfg.location.value, "playlists.txt")
@@ -169,9 +179,9 @@ if location:
 
 font_folder = os.path.join(dir_plugins, "fonts/")
 
-hdr = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36"
-}
+hdr = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36'}
+
+# hdr = {"User-Agent": "Enigma2 - XStreamity Plugin"}
 
 # create folder for working files
 if not os.path.exists(dir_etc):
@@ -253,6 +263,12 @@ def mainmenu(menu_id, **kwargs):
         return []
 
 
+def extensionsmenu(session, **kwargs):
+    from . import mainmenu
+    session.open(mainmenu.XStreamity_MainMenu)
+    return
+
+
 autoStartTimer = None
 
 
@@ -260,6 +276,16 @@ class AutoStartTimer:
     def __init__(self, session):
         self.session = session
         self.timer = eTimer()
+        """
+        if cfg.epgboot.getValue() is True:
+            self.runUpdate()
+        else:
+            try:
+                self.timer_conn = self.timer.timeout.connect(self.onTimer)
+            except:
+                self.timer.callback.append(self.onTimer)
+            self.update()
+            """
 
         try:
             self.timer_conn = self.timer.timeout.connect(self.onTimer)
@@ -365,7 +391,7 @@ def Plugins(**kwargs):
 
     main_menu = PluginDescriptor(name=pluginname, description=description, where=PluginDescriptor.WHERE_MENU, fnc=mainmenu, needsRestart=True)
 
-    extensions_menu = PluginDescriptor(name=pluginname, description=description, where=PluginDescriptor.WHERE_EXTENSIONSMENU, fnc=main, needsRestart=True)
+    extensions_menu = PluginDescriptor(name=pluginname, description=description, where=PluginDescriptor.WHERE_EXTENSIONSMENU, fnc=extensionsmenu, needsRestart=True)
 
     boot_start = PluginDescriptor(name=pluginname, description=description, where=[PluginDescriptor.WHERE_AUTOSTART, PluginDescriptor.WHERE_SESSIONSTART], fnc=bootstart, needsRestart=True)
 
@@ -374,10 +400,10 @@ def Plugins(**kwargs):
 
     result.append(extensions_menu)
 
-    if cfg.main.value:
+    if cfg.main.getValue():
         result.append(main_menu)
 
-    if cfg.boot.value:
+    if cfg.boot.getValue():
         result.append(boot_start)
 
     return result

@@ -13,7 +13,7 @@
 			MultiContentEntryText(pos=(189, 0), size=(675, 120), font=0, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 1),
 			],
 			"fonts": [gFont("xstreamityregular", 42)],
-			"itemHeight": 120,
+			"itemHeight": 120,\
 			"scrollbarMode": "showOnDemand"
 			}</convert>
 	</widget>

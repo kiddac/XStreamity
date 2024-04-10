@@ -135,7 +135,7 @@ class XStreamity_Categories(Screen):
         self.session = session
         glob.categoryname = "live"
 
-        self.skin_path = os.path.join(skin_directory, cfg.skin.value)
+        self.skin_path = os.path.join(skin_directory, cfg.skin.getValue())
         skin = os.path.join(self.skin_path, "live_categories.xml")
         if os.path.exists("/var/lib/dpkg/status"):
             skin = os.path.join(self.skin_path, "DreamOS/live_categories.xml")
@@ -1612,7 +1612,7 @@ class XStreamity_Categories(Screen):
             if isinstance(self.reference, eServiceReference):
                 serviceref = ServiceReference(self.reference)
 
-            recording = RecordTimerEntry(serviceref, begin, end, name, description, eventid, dirname=str(cfg.downloadlocation.value))
+            recording = RecordTimerEntry(serviceref, begin, end, name, description, eventid, dirname=str(cfg.downloadlocation.getValue()))
             recording.dontSave = False
 
             simulTimerList = self.session.nav.RecordTimer.record(recording)

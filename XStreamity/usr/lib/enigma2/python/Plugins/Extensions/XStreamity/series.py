@@ -74,7 +74,7 @@ class XStreamity_Categories(Screen):
         self.session = session
         glob.categoryname = "series"
 
-        self.skin_path = os.path.join(skin_directory, cfg.skin.value)
+        self.skin_path = os.path.join(skin_directory, cfg.skin.getValue())
         skin = os.path.join(self.skin_path, "vod_categories.xml")
         if os.path.exists("/var/lib/dpkg/status"):
             skin = os.path.join(self.skin_path, "DreamOS/vod_categories.xml")

@@ -63,7 +63,7 @@ except:
     HTTPConnection.debuglevel = 0
 
 
-if cfg.subs.value is True:
+if cfg.subs.getValue() is True:
     try:
         from Plugins.Extensions.SubsSupport import SubsSupport, SubsSupportStatus
     except ImportError:
@@ -194,9 +194,10 @@ if os.path.exists("/usr/bin/apt-get"):
 
 def clear_caches():
     try:
-        with open("/proc/sys/vm/drop_caches", "w") as drop_caches:
-            drop_caches.write("1\n2\n3\n")
-    except IOError:
+        os.system("echo 1 > /proc/sys/vm/drop_caches")
+        os.system("echo 2 > /proc/sys/vm/drop_caches")
+        os.system("echo 3 > /proc/sys/vm/drop_caches")
+    except:
         pass
 
 
@@ -381,7 +382,7 @@ class IPTVInfoBarPVRState:
                 cb(state_summary, speed_summary, statusicon_summary)
 
 
-skin_path = os.path.join(skin_directory, cfg.skin.value)
+skin_path = os.path.join(skin_directory, cfg.skin.getValue())
 
 
 class XStreamity_StreamPlayer(
@@ -666,7 +667,7 @@ class XStreamity_StreamPlayer(
             if isinstance(serviceref, eServiceReference):
                 serviceref = ServiceReference(serviceref)
 
-            recording = RecordTimerEntry(serviceref, begin, end, name, description, eventid, dirname=str(cfg.downloadlocation.value))
+            recording = RecordTimerEntry(serviceref, begin, end, name, description, eventid, dirname=str(cfg.downloadlocation.getValue()))
             recording.dontSave = True
 
             simulTimerList = self.session.nav.RecordTimer.record(recording)

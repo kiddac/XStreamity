@@ -43,12 +43,12 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
     def __init__(self, session):
         Screen.__init__(self, session)
 
-        if cfg.adult.value is True:
+        if cfg.adult.getValue() is True:
             ProtectedScreen.__init__(self)
 
         self.session = session
 
-        skin_path = os.path.join(skin_directory, cfg.skin.value)
+        skin_path = os.path.join(skin_directory, cfg.skin.getValue())
         skin = os.path.join(skin_path, "settings.xml")
         if os.path.exists("/var/lib/dpkg/status"):
             skin = os.path.join(skin_path, "DreamOS/settings.xml")
@@ -83,10 +83,10 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
     def clear_caches(self):
         try:
-            with open("/proc/sys/vm/drop_caches", "w") as drop_caches:
-                drop_caches.write("1\n2\n3\n")
-        except IOError:
-            pass
+            os.system("echo 1 > /proc/sys/vm/drop_caches")
+            os.system("echo 2 > /proc/sys/vm/drop_caches")
+            os.system("echo 3 > /proc/sys/vm/drop_caches")
+        except:
             pass
 
     def __layoutFinished(self):
@@ -118,12 +118,12 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
                 configfile.save()
 
                 """
-                if self.org_main != cfg.main.value or self.org_wakeup != cfg.wakeup.value or self.org_boot != cfg.boot.value \
-                        or self.location != cfg.location.value or self.org_epgboot != cfg.epgboot.value:
+                if self.org_main != cfg.main.getValue() or self.org_wakeup != cfg.wakeup.getValue() or self.org_boot != cfg.boot.getValue() \
+                        or self.location != cfg.location.getValue() or self.org_epgboot != cfg.epgboot.getValue():
                         """
 
-                if self.org_main != cfg.main.value or self.org_wakeup != cfg.wakeup.value or self.org_boot != cfg.boot.value \
-                        or self.location != cfg.location.value:
+                if self.org_main != cfg.main.getValue() or self.org_wakeup != cfg.wakeup.getValue() or self.org_boot != cfg.boot.getValue() \
+                        or self.location != cfg.location.getValue():
 
                     self.changedFinished()
             self.clear_caches()
@@ -176,13 +176,13 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
         self.cfg_boot = getConfigListEntry(_("Auto start XStreamity on boot") + _(" *Restart GUI Required"), cfg.boot)
 
-        self.org_main = cfg.main.value
-        self.org_wakeup = cfg.wakeup.value
-        self.org_boot = cfg.boot.value
-        # self.org_epgboot = cfg.epgboot.value
-        self.location = cfg.location.value
-        self.epg_location = cfg.epglocation.value
-        self.downloadlocation = cfg.downloadlocation.value
+        self.org_main = cfg.main.getValue()
+        self.org_wakeup = cfg.wakeup.getValue()
+        self.org_boot = cfg.boot.getValue()
+        # self.org_epgboot = cfg.epgboot.getValue()
+        self.location = cfg.location.getValue()
+        self.epg_location = cfg.epglocation.getValue()
+        self.downloadlocation = cfg.downloadlocation.getValue()
 
         self.createSetup()
 
