@@ -22,12 +22,12 @@ class XStreamity_UserInfo(Screen):
         Screen.__init__(self, session)
         self.session = session
 
-        skin_path = os.path.join(skin_directory, cfg.skin.getValue())
+        skin_path = os.path.join(skin_directory, cfg.skin.value)
         skin = os.path.join(skin_path, "userinfo.xml")
         with open(skin, "r") as f:
             self.skin = f.read()
 
-        self.setup_title = (_("User Information"))
+        self.setup_title = _("User Information")
 
         self["status"] = Label("")
         self["expiry"] = Label("")
@@ -66,50 +66,35 @@ class XStreamity_UserInfo(Screen):
         self.setTitle(self.setup_title)
 
     def createUserSetup(self):
-        if "status" in glob.current_playlist["user_info"]:
-            if glob.current_playlist["user_info"]["status"] == "Active":
-                status = (_("Active"))
-            elif glob.current_playlist["user_info"]["status"] == "Banned":
-                status = (_("Banned"))
-            elif glob.current_playlist["user_info"]["status"] == "Disabled":
-                status = (_("Disabled"))
-            elif glob.current_playlist["user_info"]["status"] == "Expired":
-                status = (_("Expired"))
+        status_map = {
+            "Active": _("Active"),
+            "Banned": _("Banned"),
+            "Disabled": _("Disabled"),
+            "Expired": _("Expired")
+        }
 
-            self["status"].setText(status)
+        user_info = glob.active_playlist.get("user_info", {})
+        server_info = glob.active_playlist.get("server_info", {})
+        player_info = glob.active_playlist.get("player_info", {})
 
-        if "exp_date" in glob.current_playlist["user_info"]:
-            try:
-                self["expiry"].setText(str(datetime.fromtimestamp(int(glob.current_playlist["user_info"]["exp_date"])).strftime("%d-%m-%Y  %H:%M")))
-            except:
-                self["expiry"].setText("Null")
+        self["status"].setText(status_map.get(user_info.get("status"), _("Unknown")))
 
-        if "created_at" in glob.current_playlist["user_info"]:
-            try:
-                self["created"].setText(str(datetime.fromtimestamp(int(glob.current_playlist["user_info"]["created_at"])).strftime("%d-%m-%Y  %H:%M")))
-            except:
-                self["created"].setText("Null")
+        exp_date = user_info.get("exp_date")
+        self["expiry"].setText(datetime.fromtimestamp(int(exp_date)).strftime("%d-%m-%Y  %H:%M") if exp_date else "Null")
 
-        if "is_trial" in glob.current_playlist["user_info"]:
-            self["trial"].setText(str(glob.current_playlist["user_info"]["is_trial"]))
+        created_at = user_info.get("created_at")
+        self["created"].setText(datetime.fromtimestamp(int(created_at)).strftime("%d-%m-%Y  %H:%M") if created_at else "Null")
 
-        if "active_cons" in glob.current_playlist["user_info"]:
-            self["activeconn"].setText(str(glob.current_playlist["user_info"]["active_cons"]))
+        self["trial"].setText(str(user_info.get("is_trial", "")))
+        self["activeconn"].setText(str(user_info.get("active_cons", "")))
+        self["maxconn"].setText(str(user_info.get("max_connections", "")))
 
-        if "max_connections" in glob.current_playlist["user_info"]:
-            self["maxconn"].setText(str(glob.current_playlist["user_info"]["max_connections"]))
+        self["formats"].setText(str(json.dumps(user_info.get("allowed_output_formats", []))).lstrip("[").rstrip("]"))
 
-        if "allowed_output_formats" in glob.current_playlist["user_info"]:
-            self["formats"].setText(str(json.dumps(glob.current_playlist["user_info"]["allowed_output_formats"])).lstrip("[").rstrip("]"))
+        self["realurl"].setText(str(server_info.get("url", "")))
+        self["timezone"].setText(str(server_info.get("timezone", "")))
 
-        if "url" in glob.current_playlist["server_info"]:
-            self["realurl"].setText(str(glob.current_playlist["server_info"]["url"]))
-
-        if "timezone" in glob.current_playlist["server_info"]:
-            self["timezone"].setText(str(glob.current_playlist["server_info"]["timezone"]))
-
-        if "serveroffset" in glob.current_playlist["player_info"]:
-            self["serveroffset"].setText(str(glob.current_playlist["player_info"]["serveroffset"]))
+        self["serveroffset"].setText(str(player_info.get("serveroffset", "")))
 
     def quit(self):
         self.close()

@@ -1,3 +1,4 @@
+
 from Components.Converter.Converter import Converter
 from enigma import iServiceInformation, iPlayableService
 from Components.Element import cached
@@ -276,10 +277,9 @@ class XStreamityServiceInfo(Poll, Converter):
                     video_rate = int(self.getServiceInfoString(info, iServiceInformation.sFrameRate))
                 except:
                     return "fps -"
-            if PY3:
-                fps = str((video_rate + 500) // 1000)
-            else:
-                fps = str((video_rate + 500) / 1000)
+
+            fps = str((video_rate + 500) // 1000)
+
             return str("fps ") + fps
 
         return ""
