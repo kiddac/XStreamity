@@ -47,7 +47,6 @@ from Tools.LoadPixmap import LoadPixmap
 from enigma import eTimer, eServiceReference, eEPGCache
 
 from . import _
-# from . import streamplayer
 from .import liveplayer
 from . import xstreamity_globals as glob
 
@@ -155,7 +154,6 @@ class XStreamity_Categories(Screen):
 
         self.main_list = []  # displayed list
         self["main_list"] = List(self.main_list, enableWrapAround=True)
-        # self["main_list"].onSelectionChanged.append(self.selectionChanged)
 
         self["x_title"] = StaticText()
         self["x_description"] = StaticText()
@@ -585,7 +583,7 @@ class XStreamity_Categories(Screen):
             page = (position - 1) // self.itemsperpage + 1
             page_all = int(math.ceil(position_all // self.itemsperpage))
 
-            self["page"].setText(_("Page: {}/{}").format(page, page_all))
+            self["page"].setText(_("Page: ") + "{}/{}".format(page, page_all))
             self["listposition"].setText("{}/{}".format(position, position_all))
             self["main_title"].setText("{}: {}".format(self.main_title, channel_title))
 
@@ -619,7 +617,7 @@ class XStreamity_Categories(Screen):
             page = 0
             page_all = 0
 
-            self["page"].setText(_("Page: {}/{}").format(page, page_all))
+            self["page"].setText(_("Page: ") + "{}/{}".format(page, page_all))
             self["listposition"].setText("{}/{}".format(position, position_all))
             self["key_yellow"].setText("")
             self["key_blue"].setText("")

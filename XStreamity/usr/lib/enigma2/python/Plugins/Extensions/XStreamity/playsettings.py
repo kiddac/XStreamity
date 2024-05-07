@@ -297,7 +297,7 @@ class XStreamity_Settings(ConfigListScreen, Screen):
 
                         if parsed_uri.port:
                             port = str(parsed_uri.port)
-                            host = "{}{}:{}".format(protocol, domain, parsed_uri.port)
+                            host = "{}{}:{}".format(protocol, domain, port)
                         else:
                             host = "{}{}".format(protocol, domain)
 

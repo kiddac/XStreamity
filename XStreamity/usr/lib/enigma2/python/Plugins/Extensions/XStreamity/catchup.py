@@ -460,7 +460,7 @@ class XStreamity_Categories(Screen):
             page = (position - 1) // self.itemsperpage + 1
             page_all = int(math.ceil(position_all // self.itemsperpage))
 
-            self["page"].setText(_("Page: {}/{}").format(page, page_all))
+            self["page"].setText(_("Page: ") + "{}/{}".format(page, page_all))
             self["listposition"].setText("{}/{}".format(position, position_all))
             self["main_title"].setText("{}: {}".format(self.main_title, channel_title))
 
@@ -485,7 +485,7 @@ class XStreamity_Categories(Screen):
             page = 0
             page_all = 0
 
-            self["page"].setText(_("Page: {}/{}").format(page, page_all))
+            self["page"].setText(_("Page: ") + "{}/{}".format(page, page_all))
             self["listposition"].setText("{}/{}".format(position, position_all))
             self["key_yellow"].setText("")
             self["key_blue"].setText("")

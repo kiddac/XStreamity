@@ -94,7 +94,6 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
                 drop_caches.write("1\n2\n3\n")
         except IOError:
             pass
-            pass
 
     def __layoutFinished(self):
         self.setTitle(self.setup_title)

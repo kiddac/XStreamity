@@ -329,7 +329,7 @@ class XStreamity_Playlists(Screen):
                             try:
                                 expires = _("Expires: ") + datetime.fromtimestamp(int(exp_date)).strftime("%d-%m-%Y")
                             except:
-                                expires = _("Expires: Null")
+                                expires = _("Expires: ") + "Null"
 
                         active = str(_("Active Conn:"))
                         activenum = playlist["user_info"]["active_cons"]
