@@ -195,15 +195,15 @@ class XStreamity_HiddenCategories(Screen, ProtectedScreen):
             player_info[list_key] = selected_list
 
         with open(playlists_json) as f:
-            playlists_all = json.load(f, object_pairs_hook=OrderedDict)
+            self.playlists_all = json.load(f, object_pairs_hook=OrderedDict)
 
-        for idx, playlist in enumerate(playlists_all):
+        for idx, playlist in enumerate(self.playlists_all):
             if (
                 playlist["playlist_info"]["domain"].strip() == str(domain).strip() and
                 playlist["playlist_info"]["username"].strip() == str(username).strip() and
                 playlist["playlist_info"]["password"].strip() == str(password).strip()
             ):
-                playlists_all[idx] = glob.active_playlist
+                self.playlists_all[idx] = glob.active_playlist
                 break
 
         with open(playlists_json, "w") as f:

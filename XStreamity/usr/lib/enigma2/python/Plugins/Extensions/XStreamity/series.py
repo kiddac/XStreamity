@@ -660,11 +660,11 @@ class XStreamity_Categories(Screen):
         if current_item:
             channel_title = current_item[0]
             current_index = self["main_list"].getIndex()
-
+            
             position = current_index + 1
             position_all = len(self.pre_list) + len(self.main_list) if self.level == 1 else len(self.main_list)
             page = (position - 1) // self.itemsperpage + 1
-            page_all = int(math.ceil(position_all // self.itemsperpage))
+            page_all = int(math.ceil(position_all // self.itemsperpage) + 1)
 
             self["page"].setText(_("Page: ") + "{}/{}".format(page, page_all))
             self["listposition"].setText("{}/{}".format(position, position_all))
