@@ -1,861 +1,266 @@
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-05-08 20:35+0100\n"
-"PO-Revision-Date: 2024-05-08 20:35+0100\n"
-"Last-Translator: Warder <ciksa@seznam.cz>\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-12-14 20:23+0000\n"
+"PO-Revision-Date: 2024-05-11 19:05+0100\n"
+"Last-Translator: \n"
 "Language-Team: \n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 ? 1 : 2);\n"
+"X-Loco-Source-Locale: nb_NO\n"
 "X-Generator: Poedit 3.4.2\n"
-"X-Poedit-Basepath: ../../..\n"
+"X-Poedit-Basepath: ../../../../../../../../../..\n"
+"X-Loco-Parser: loco_parse_po\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: Task.py:61 downloadmanager.py:48
-msgid "Waiting"
-msgstr "Čekám"
-
-#: Task.py:61 downloadmanager.py:47
-msgid "In progress"
-msgstr "Probíhá"
-
-#: Task.py:61
-msgid "Finished"
-msgstr "Dokončené"
-
-#: Task.py:61
-msgid "Failed"
-msgstr "Selhalo"
-
-#: Task.py:326
+#: usr/lib/enigma2/python/Components/Converter/XStreamityServicePosition.py:147
+#: usr/lib/enigma2/python/Components/Converter/XStreamityServicePosition.py:149
+#: usr/lib/enigma2/python/Components/Converter/XStreamityServicePosition.py:151
 #, python-format
-msgid ""
-"Error: %s\n"
-"Retry?"
-msgstr ""
-"Chyba: %s\n"
-"Zkusit ještě jednou?"
+msgid "%d Min"
+msgid_plural "%d Mins"
+msgstr[0] "%d Min"
+msgstr[1] "%d Mins"
+msgstr[2] "%d Mins"
 
-#: Task.py:329
-msgid "Error"
-msgstr "Chyba"
-
-#: Task.py:376
-msgid "An unknown error occurred!"
-msgstr "Došlo k neznámé chybě!"
-
-#: Task.py:401
-#, python-format
-msgid "A required tool (%s) was not found."
-msgstr "Požadovaný nástroj (%s) nebyl nalezen."
-
-#: Task.py:409
-msgid "Cancelled upon user request"
-msgstr "Zrušeno na žádost uživatele"
-
-#: Task.py:426 Task.py:441
-msgid "Error code"
-msgstr "Kód chyby"
-
-#: catchup.py:144
-msgid "Catch Up Categories"
-msgstr "Catch Up kategorie"
-
-#: catchup.py:145 menu.py:245
-msgid "Catch Up TV"
-msgstr "Catch Up TV"
-
-#: catchup.py:183 catchup.py:432 catchup.py:625 catchup.py:639 catchup.py:770
-#: live.py:202 live.py:551 live.py:768 live.py:782 live.py:964 series.py:159
-#: series.py:1055 series.py:1178 series.py:1202 series.py:1205 series.py:1208
-#: series.py:1391 series.py:1417 series.py:1433 vod.py:135 vod.py:798
-#: vod.py:927 vod.py:944 vod.py:946 vod.py:1132
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:233
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1536
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1539
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1542
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1554
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1659
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1752
 msgid "Sort: A-Z"
 msgstr "Seřadit: A-Z"
 
-#: catchup.py:205 downloadmanager.py:166 live.py:234 mainmenu.py:44 menu.py:50
-#: playlists.py:54 playsettings.py:48 series.py:178 server.py:52 settings.py:73
-#: vod.py:154
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:276
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:178
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:39
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:45
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:45
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:47
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:38
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:66
 msgid "Back"
 msgstr "Zpět"
 
-#: catchup.py:206 live.py:235 mainmenu.py:45 menu.py:51 playlists.py:55
-#: series.py:179 vod.py:155
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:277
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:40
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:46
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:46
 msgid "OK"
 msgstr "OK"
 
-#: catchup.py:208 catchup.py:435 catchup.py:702 live.py:237 live.py:548
-#: live.py:879 series.py:181 series.py:1058 series.py:1303 vod.py:157
-#: vod.py:801 vod.py:1047
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:279
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1234
 msgid "Search"
 msgstr "Hledat"
 
-#: catchup.py:305 live.py:350 series.py:294 vod.py:265
-msgid "ALL"
-msgstr "VŠE"
-
-#: catchup.py:392 live.py:473 series.py:596 vod.py:388
-msgid "Server error or invalid link."
-msgstr "Chyba serveru nebo neplatný odkaz."
-
-#: catchup.py:397 catchup.py:423 catchup.py:671 catchup.py:696 live.py:506
-#: live.py:542 live.py:815 live.py:872 series.py:602 series.py:1051
-#: series.py:1249 series.py:1295 vod.py:394 vod.py:794 vod.py:980 vod.py:1039
-msgid "Reset Search"
-msgstr "Obnovit vyhledávání"
-
-#: catchup.py:428 catchup.py:619 live.py:762
-msgid "Reverse"
-msgstr "Stornovat"
-
-#: catchup.py:463 catchup.py:488 live.py:586 live.py:620 series.py:669
-#: series.py:696 vod.py:478 vod.py:504
-msgid "Page: "
-msgstr "Stránka: "
-
-#: catchup.py:625 catchup.py:642 live.py:768 live.py:785 series.py:1179
-#: series.py:1202 series.py:1205 series.py:1208 vod.py:928 vod.py:944
-#: vod.py:946
-msgid "Sort: Z-A"
-msgstr "Řazení: Z-A"
-
-#: catchup.py:627 catchup.py:629 catchup.py:649 live.py:770 live.py:772
-#: live.py:792 series.py:1182 series.py:1202 series.py:1205 series.py:1208
-#: series.py:1217 vod.py:931 vod.py:944 vod.py:946 vod.py:955
-msgid "Sort: Original"
-msgstr "Seřadit: Originál"
-
-#: catchup.py:629 catchup.py:645 live.py:772 live.py:788 series.py:1180
-#: series.py:1205 series.py:1208 vod.py:929 vod.py:946
-msgid "Sort: Added"
-msgstr "Seřadit: Přidáno"
-
-#: catchup.py:674 live.py:822 series.py:1253 vod.py:987
-msgid "Filter this category..."
-msgstr "Filtrovat tuto kategorii..."
-
-#: catchup.py:689 live.py:865 series.py:1281 vod.py:1032
-msgid "No results found."
-msgstr "Nebyly nalezeny žádné výsledky."
-
-#: catchup.py:720 live.py:898 series.py:1331 vod.py:1066
-msgid "Incorrect pin code."
-msgstr "Nesprávný kód PIN."
-
-#: catchup.py:740 live.py:919 series.py:1352 vod.py:1087
-msgid "all"
-msgstr "vše"
-
-#: catchup.py:749 live.py:928 series.py:1361 vod.py:1096
-msgid "Please enter the parental control pin code"
-msgstr "Zadejte PIN kód rodičovské kontroly"
-
-#: catchup.py:749 hidden.py:27 live.py:928 series.py:1361 settings.py:32
-#: vod.py:1096
-msgid "Enter pin code"
-msgstr "Zadejte kód PIN"
-
-#: catchup.py:880
-msgid "Catch-up"
-msgstr "Catch-up"
-
-#: catchup.py:885 series.py:1609 vod.py:1367
-msgid "Added to download manager"
-msgstr "Přidáno do správce stahování"
-
-#: catchup.py:885 series.py:1609 vod.py:1367
-msgid "Note recording acts as an open connection."
-msgstr "Poznámka: Nahrávání funguje jako otevřené připojení."
-
-#: catchup.py:885 series.py:1609 vod.py:1367
-msgid "Do not record and play streams at the same time."
-msgstr "Nenahrávejte a nepřehrávejte streamy současně."
-
-#: catchup.py:885 series.py:1609 vod.py:1367
-msgid "Open download manager?"
-msgstr "Otevřít správce stahování?"
-
-#: catchup.py:888 series.py:1612 vod.py:1370
-msgid "Already added to download manager"
-msgstr "Již přidáno do správce stahování"
-
-#: catchup.py:919
-msgid "Catchup error. No data for this slot"
-msgstr "Chyba Catchupu. Žádná data pro tento slot"
-
-#: catchup.py:978
-msgid "Catchup currently not available. Missing EPG data"
-msgstr "Funkce Catchup momentálně není k dispozici. Chybějící data EPG"
-
-#: catchupplayer.py:421
-msgid "Catch Up"
-msgstr "Catch Up"
-
-#: catchupplayer.py:598 liveplayer.py:883 vodplayer.py:703
-msgid "Resolution Change Failed"
-msgstr "Změna rozlišení neúspěšná"
-
-#: downloadmanager.py:46 downloadmanager.py:384 downloadmanager.py:385
-#: downloadmanager.py:420
-msgid "Not Started"
-msgstr "Nezahájeno"
-
-#: downloadmanager.py:148
-msgid "VOD Download Manager"
-msgstr "VOD Download Manager"
-
-#: downloadmanager.py:167 downloadmanager.py:384
-msgid "Download"
-msgstr "Stáhnout"
-
-#: downloadmanager.py:168 downloadmanager.py:385
-msgid "Remove"
-msgstr "Odstranit"
-
-#: downloadmanager.py:222 downloadmanager.py:225
-msgid "Free Space:"
-msgstr "Volné místo:"
-
-#: downloadmanager.py:222 downloadmanager.py:225
-msgid "of"
-msgstr "ze"
-
-#: downloadmanager.py:384 hidden.py:69
-msgid "Cancel"
-msgstr "Zrušit"
-
-#: downloadmanager.py:397
-msgid "Please set download folder in Main Settings."
-msgstr "Nastavte složku pro stahování v hlavním nastavení."
-
-#: downloadmanager.py:397
-msgid ""
-"Vod Download folder location does not exist.\n"
-"\n"
-msgstr ""
-"Umístění složky Vod Download neexistuje.\n"
-"\n"
-
-#: downloadmanager.py:436 downloadmanager.py:444
-#, fuzzy
-#| msgid ""
-#| "Please update your wget library to download https lines\n"
-#| "\n"
-#| "opkg update\n"
-#| "opkg install wget"
-msgid ""
-"Please update your wget library to download https lines\n"
-"\n"
-"opkg update\n"
-"apt-get -y install wget"
-msgstr ""
-"Aktualizujte prosím svou knihovnu wget a stáhněte si řádky https\n"
-"\n"
-"Aktualizace OPKG\n"
-"opkg install wget"
-
-#: downloadmanager.py:438 downloadmanager.py:446
-msgid ""
-"Please update your wget library to download https lines\n"
-"\n"
-"opkg update\n"
-"opkg install wget"
-msgstr ""
-"Aktualizujte prosím svou knihovnu wget a stáhněte si řádky https\n"
-"\n"
-"Aktualizace OPKG\n"
-"opkg install wget"
-
-#: downloadmanager.py:467
-msgid "Cancel this download?"
-msgstr "Zrušit toto stahování?"
-
-#: downloadmanager.py:500
-msgid "Delete this entry?"
-msgstr "Odstranit tuto položku?"
-
-#: hidden.py:27 settings.py:32
-msgid "Please enter the correct pin code"
-msgstr "Zadejte správný PIN kód"
-
-#: hidden.py:36 settings.py:41
-msgid "The pin code you entered is wrong."
-msgstr "Zadaný kód PIN je nesprávný."
-
-#: hidden.py:62
-msgid "Hidden Categories"
-msgstr "Skryté kategorie"
-
-#: hidden.py:70 playsettings.py:49 record.py:40 server.py:53 settings.py:74
-msgid "Save"
-msgstr "Uložit"
-
-#: hidden.py:71
-msgid "Invert"
-msgstr "Převrácení"
-
-#: hidden.py:72
-msgid "Reset"
-msgstr "Resetovat"
-
-#: hidden.py:161
-msgid "Error: All categories hidden. Please amend your selection."
-msgstr "Chyba: Všechny kategorie jsou skryté. Upravte prosím svůj výběr."
-
-#: live.py:150
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:302
 msgid "Live Categories"
 msgstr "Živé kategorie"
 
-#: live.py:151
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:303
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:235
 msgid "Live Streams"
 msgstr "Živé přenosy"
 
-#: live.py:348 vod.py:263
-msgid "FAVOURITES"
-msgstr "OBLÍBENÉ"
-
-#: live.py:349 vod.py:264
-msgid "RECENTLY WATCHED"
-msgstr "NEDÁVNO SLEDOVANÉ"
-
-#: live.py:546 live.py:818 playlists.py:56 vod.py:809 vod.py:983
-msgid "Delete"
-msgstr "Smazat"
-
-#: live.py:1273 live.py:1328 live.py:1337
-msgid "Next Info"
-msgstr "Další informace"
-
-#: live.py:1332
-msgid "Now Info"
-msgstr "Nyní info"
-
-#: live.py:1541 liveplayer.py:630
-msgid "Recording Timer Set."
-msgstr "Nastaviť časovač nahrávání."
-
-#: live.py:1543 liveplayer.py:632
-msgid "Recording Failed."
-msgstr "Nahrávání se nezdařilo."
-
-#: liveplayer.py:439
-msgid "TV"
-msgstr "TV"
-
-#: mainmenu.py:42
-msgid "Main Menu"
-msgstr "Hlavní menu"
-
-#: mainmenu.py:46
-msgid "Reset JSON"
-msgstr "Resetovat JSON"
-
-#: mainmenu.py:89
-msgid "Playlists.txt location is invalid and has been reset."
-msgstr "Umístění souboru Playlists.txt je neplatné a bylo resetováno."
-
-#: mainmenu.py:116
-msgid ""
-"Dependencies not installed.\n"
-"\n"
-"Trying installing older version from feeds first..."
-msgstr ""
-
-#: mainmenu.py:136
-msgid "Playlists"
-msgstr "Playlisty"
-
-#: mainmenu.py:136 mainmenu.py:140
-msgid "Add Playlist"
-msgstr "Přidat Playlist"
-
-#: mainmenu.py:136 mainmenu.py:140 settings.py:66
-msgid "Main Settings"
-msgstr "Hlavní nastavení"
-
-#: mainmenu.py:143
-msgid "Download Manager"
-msgstr "Správce stahování"
-
-#: mainmenu.py:194
-msgid ""
-"Warning: delete stored json data for all playlists... Settings, favourites "
-"etc. \n"
-"Playlists will not be deleted.\n"
-"Do you wish to continue?"
-msgstr ""
-"Upozornění: smazat uložená data JSON pro všechny seznamy skladeb ... "
-"Nastavení, oblíbené položky atd. \n"
-"Seznamy skladeb nebudou smazány.\n"
-"Chcete pokračovat?"
-
-#: menu.py:248 playsettings.py:41
-msgid "Playlist Settings"
-msgstr "Playlist nastavení"
-
-#: menu.py:254
-msgid "Manual EPG Update"
-msgstr "Ruční obnova EPG"
-
-#: menu.py:262
-msgid "No data, blocked or playlist not compatible with XStreamity plugin."
-msgstr ""
-"Žádná data, blokované nebo playlist není kompatibilní s pluginem XStreamity."
-
-#: menu.py:304
-msgid "Recordings in progress. EPG not downloaded."
-msgstr "Probíhající nahrávání. EPG není staženo."
-
-#: menu.py:306
-msgid "EPGs downloading."
-msgstr "Stahování EPG."
-
-#: playlists.py:52
-msgid "Select Playlist"
-msgstr "Vybrat Playlist"
-
-#: playlists.py:57
-msgid "Info"
-msgstr "Informace"
-
-#: playlists.py:97
-msgid "No internet."
-msgstr ""
-
-#: playlists.py:304 playlists.py:382
-msgid "Server Not Responding"
-msgstr "Server nereaguje"
-
-#: playlists.py:314 playlists.py:384
-msgid "Not Authorised"
-msgstr "Nepovoleno"
-
-#: playlists.py:319 playlists.py:370 serverinfo.py:70
-msgid "Active"
-msgstr "Aktivní"
-
-#: playlists.py:320 playlists.py:376 serverinfo.py:71
-msgid "Banned"
-msgstr "Zablokován"
-
-#: playlists.py:321 playlists.py:380 serverinfo.py:72
-msgid "Disabled"
-msgstr "Vypnuto"
-
-#: playlists.py:322 playlists.py:378 serverinfo.py:73
-msgid "Expired"
-msgstr "Expirovaný"
-
-#: playlists.py:330 playlists.py:332
-msgid "Expires: "
-msgstr "Vyprší: "
-
-#: playlists.py:334
-msgid "Active Conn:"
-msgstr "Aktivní Conn:"
-
-#: playlists.py:342
-msgid "Max Conn:"
-msgstr "Max Conn:"
-
-#: playlists.py:363
-msgid ""
-"You have dead playlists that are slowing down loading.\n"
-"\n"
-"Press Yellow button to soft delete dead playlists"
-msgstr ""
-"Máte mrtvé seznamy skladeb, které zpomalují načítání.\n"
-"\n"
-"Stiskněte žluté tlačítko pro jemné odstranění mrtvých seznamů skladeb"
-
-#: playlists.py:397
-msgid "Delete selected playlist?"
-msgstr "Smazat vybraný seznam skladeb?"
-
-#: playlists.py:418
-msgid "Delete providers EPG data?"
-msgstr "Smazat data EPG poskytovatelů?"
-
-#: playsettings.py:78 record.py:73 server.py:82 settings.py:105
-msgid "Really close without saving settings?"
-msgstr "Opravdu zavřít bez uložení nastavení?"
-
-#: playsettings.py:136 server.py:109
-msgid "Short name or provider name:"
-msgstr "Krátký název nebo název poskytovatele:"
-
-#: playsettings.py:137
-msgid "Show LIVE category:"
-msgstr "Zobraziť ŽIVÉ kategorii:"
-
-#: playsettings.py:138
-msgid "Show VOD category:"
-msgstr "Zobraziť VOD kategorii:"
-
-#: playsettings.py:139
-msgid "Show SERIES category:"
-msgstr "Zobraziť SERIÁLY kategorii:"
-
-#: playsettings.py:140
-msgid "Show CATCHUP category:"
-msgstr "Zobraziť CATCHUP kategorii:"
-
-#: playsettings.py:141 server.py:115
-msgid "Output:"
-msgstr "Výstup:"
-
-#: playsettings.py:145
-msgid "Stream Type LIVE:"
-msgstr "Typ streamu LIVE:"
-
-#: playsettings.py:148
-msgid "Stream Type VOD/SERIES:"
-msgstr "Typ streamu VOD/SERIES:"
-
-#: playsettings.py:151
-msgid "Stream Source URL:"
-msgstr "Adresa URL zdroje Streamu:"
-
-#: playsettings.py:152
-msgid "EPG offset:"
-msgstr "Ofset EPG:"
-
-#: playsettings.py:153
-msgid "Use alternative EPG url:"
-msgstr "Použijte alternativní adresu URL EPG:"
-
-#: playsettings.py:157
-msgid "Alternative EPG url:"
-msgstr "Alternativní adresa URL EPG:"
-
-#: playsettings.py:235
-msgid ""
-"Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum 3 "
-"characters."
-msgstr ""
-"Název kytice nesmí být prázdný. Zadejte prosím jedinečný název kytice. "
-"Minimálně 3 znaky."
-
-#: playsettings.py:241 server.py:212
-msgid "Name already used. Please enter a unique name."
-msgstr "Již použitý název. Zadejte prosím jedinečný název."
-
-#: plugin.py:266 plugin.py:379
-msgid "XStreamity"
-msgstr "XStreamity"
-
-#: plugin.py:378
-msgid "IPTV Xtream Codes playlists player by KiddaC"
-msgstr "IPTV Xtream kódy playlisty KiddaC"
-
-#: record.py:39 serverinfo.py:60
-msgid "Close"
-msgstr "Zavřít"
-
-#: record.py:53
-msgid "Please enter recording time"
-msgstr "Zadejte prosím čas nahrávání"
-
-#: record.py:56
-msgid "Please enter recording end time"
-msgstr "Zadejte prosím koncový čas nahrávání"
-
-#: record.py:92
-msgid "Name"
-msgstr "Jméno"
-
-#: record.py:94
-msgid "Start Time"
-msgstr "Čas zahájení"
-
-#: record.py:96
-msgid "End Time"
-msgstr "Čas konce"
-
-#: series.py:90
-msgid "Series Categories"
-msgstr "Kategorie sérií"
-
-#: series.py:91 series.py:1604
-msgid "Series"
-msgstr "Série"
-
-#: series.py:389
-msgid "No series found in this category."
-msgstr "V této kategorii nebyly nalezeny žádné série."
-
-#: series.py:1181 series.py:1208 vod.py:930 vod.py:946
-msgid "Sort: Year"
-msgstr "Seřadit: Rok"
-
-#: series.py:1571 vod.py:1330
-msgid "Video Type:"
-msgstr "Typ videa:"
-
-#: series.py:1572 vod.py:1331
-msgid "Rating:"
-msgstr "Hodnocení:"
-
-#: series.py:1573 vod.py:1332
-msgid "Genre:"
-msgstr "Žánr:"
-
-#: series.py:1574 vod.py:1333
-msgid "Duration:"
-msgstr "Doba trvání:"
-
-#: series.py:1575 vod.py:1334
-msgid "Release Date:"
-msgstr "Datum vydání:"
-
-#: series.py:1576 vod.py:1335
-msgid "Cast:"
-msgstr "Obsazení:"
-
-#: series.py:1577 vod.py:1336
-msgid "Director:"
-msgstr "Režisér:"
-
-#: series.py:1578 vod.py:1337
-msgid "Country:"
-msgstr "Země:"
-
-#: series.py:1648
-msgid "Season "
-msgstr "Sezóna "
-
-#: server.py:44
-msgid "Add Xtream Codes Playlist"
-msgstr "Přidat seznam skladeb Xtream Codes"
-
-#: server.py:110
-msgid "Protocol:"
-msgstr "Protokol:"
-
-#: server.py:111
-msgid "Server URL: i.e. domain.xyz"
-msgstr "Adresa URL serveru: tj. domain.xyz"
-
-#: server.py:112
-msgid "Port:"
-msgstr "Přístav:"
-
-#: server.py:113
-msgid "Username:"
-msgstr "Uživatelské jméno:"
-
-#: server.py:114
-msgid "Password:"
-msgstr "Heslo:"
-
-#: server.py:201
-msgid "Details are not valid or unauthorised"
-msgstr "Údaje jsou neplatné nebo neoprávněné"
-
-#: server.py:206
-msgid ""
-"Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum 2 "
-"characters."
-msgstr ""
-"Název kytice nesmí být prázdný. Zadejte prosím jedinečný název kytice. "
-"Minimálně 2 znaky."
-
-#: server.py:225
-msgid "Playlist added successfully."
-msgstr "Seznam skladeb byl úspěšně přidán."
-
-#: serverinfo.py:30
-msgid "User Information"
-msgstr "Informace o uživateli"
-
-#: serverinfo.py:43
-msgid "Status:"
-msgstr "Stav:"
-
-#: serverinfo.py:44
-msgid "Expiry Date:"
-msgstr "Platnost do:"
-
-#: serverinfo.py:45
-msgid "Created At:"
-msgstr "Vytvořeno v:"
-
-#: serverinfo.py:46
-msgid "Is Trial:"
-msgstr "Je zkouška:"
-
-#: serverinfo.py:47
-msgid "Active Connections:"
-msgstr "Aktivní připojení:"
-
-#: serverinfo.py:48
-msgid "Max Connections:"
-msgstr "Max připojení:"
-
-#: serverinfo.py:49
-msgid "Allowed Output Formats:"
-msgstr "Povolené výstupní formáty:"
-
-#: serverinfo.py:50
-msgid "Real URL:"
-msgstr "Skutečná adresa URL:"
-
-#: serverinfo.py:51
-msgid "Timezone:"
-msgstr "Časová zóna:"
-
-#: serverinfo.py:52
-msgid "Server Offset:"
-msgstr "Offset serveru:"
-
-#: serverinfo.py:80
-msgid "Unknown"
-msgstr ""
-
-#: settings.py:117
-#, fuzzy
-#| msgid ""
-#| "Please change default parental pin.\n"
-#| "\n"
-#| "Pin cannot be 0000, 1111 or 1234"
-msgid ""
-"Please change default parental pin.\n"
-"\n"
-"Pin cannot be 0000, 111, or 1234"
-msgstr ""
-"Změňte výchozí rodičovský kód PIN.\n"
-"\n"
-"Pin nemůže být 0000, 1111 nebo 1234"
-
-#: settings.py:134
-msgid "You need to restart the GUI"
-msgstr "Musíte restartovat GUI"
-
-#: settings.py:134
-msgid "Do you want to restart now?"
-msgstr "Chcete nyní restartovat?"
-
-#: settings.py:144
-msgid "Select skin"
-msgstr "Vybrat vzhled"
-
-#: settings.py:145
-msgid "playlists.txt location"
-msgstr "playlists.txt umístění"
-
-#: settings.py:145 settings.py:154 settings.py:161 settings.py:166
-msgid " *Restart GUI Required"
-msgstr " *Vyžadováno restartování GUI"
-
-#: settings.py:146
-msgid "EPG download location"
-msgstr "Složka pro stažení EPG"
-
-#: settings.py:147
-msgid "VOD download folder"
-msgstr "Složka pro stažení VOD"
-
-#: settings.py:148
-msgid "Default LIVE stream type"
-msgstr "Výchozí typ živého přenosu"
-
-#: settings.py:149
-msgid "Default VOD/SERIES stream type"
-msgstr "Výchozí typ streamu VOD/SERIES"
-
-#: settings.py:150
-msgid "Preview LIVE streams in mini tv"
-msgstr "Náhled LIVE přenosů v mini tv"
-
-#: settings.py:151
-msgid "Stop stream on back button"
-msgstr "Zastaviť stream po stlačený tlačítka Zpět"
-
-#: settings.py:152
-msgid "XStreamity parental control"
-msgstr "XStreamity rodičovská kontrola"
-
-#: settings.py:153
-msgid "XStreamity parental pin"
-msgstr "XStreamity rodičovský pin"
-
-#: settings.py:154
-msgid "Show in main menu"
-msgstr "Zobrazit v hlavní nabídce"
-
-#: settings.py:155
-msgid "Use Movie Database(TMDB) for VOD & Series"
-msgstr "Použijte filmovou databázi (TMDB) pro VOD a Seriály"
-
-#: settings.py:156
-msgid "Movie Database language"
-msgstr "Jazyk databáze filmů"
-
-#: settings.py:157
-msgid "Margin before catchup (mins)"
-msgstr "Rozpětí před doháněním (min)"
-
-#: settings.py:158
-msgid "Margin after catchup (mins)"
-msgstr "Rozpětí po dohánění (min)"
-
-#: settings.py:159
-msgid "Allow SubsSupport plugin in VOD"
-msgstr "Povolit plugin SubsSupport ve VOD"
-
-#: settings.py:160
-msgid "Skip playlist selection screen if only 1 playlist"
-msgstr ""
-"Přeskočit obrazovku výběru seznamu skladeb, pokud je pouze 1 seznam skladeb"
-
-#: settings.py:161
-msgid "Automatic EPG download time"
-msgstr "Čas automatického stahování EPG"
-
-#: settings.py:162
-msgid "Show channel picons"
-msgstr "Zobrazit picony kanálů"
-
-#: settings.py:163
-msgid "Show Vod/Series posters"
-msgstr "Zobrazit plakáty Vod/seriálů"
-
-#: settings.py:164
-msgid "Show infobar picons"
-msgstr "Zobrazit picony na infobaru"
-
-#: settings.py:165
-msgid "Show infobar posters"
-msgstr "Zobrazit plakáty na informačním panelu"
-
-#: settings.py:166
-msgid "Auto start XStreamity on boot"
-msgstr "Automatické spuštění XStreamity při startu systému"
-
-#: settings.py:286
-msgid "Choose Directory:"
-msgstr "Vyberte adresář:"
-
-#: settings.py:287
-msgid "Choose directory"
-msgstr "Vyberte adresář"
-
-#: vod.py:90
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:339
 msgid "Vod Categories"
 msgstr "Vod kategorie"
 
-#: vod.py:91
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:340
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:240
 msgid "Vod"
-msgstr "Vod"
+msgstr "VOD"
 
-#: vod.py:1362
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:370
+msgid "Series Categories"
+msgstr "Kategorie sérií"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:371
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2749
+msgid "Series"
+msgstr "Série"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:396
+msgid "Catch Up Categories"
+msgstr "Catch Up kategorie"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:397
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:257
+msgid "Catch Up TV"
+msgstr "Catch Up TV"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:515
+msgid "FAVOURITES"
+msgstr "OBLÍBENÉ"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:522
+msgid "ALL"
+msgstr "VŠE"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:908
+msgid "Season "
+msgstr "Sezóna "
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1224
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1615
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1639
+msgid "Reset Search"
+msgstr "Obnovit vyhledávání"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1230
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1516
+msgid "Reverse"
+msgstr "Stornovat"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1231
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1236
+msgid "Hide/Show"
+msgstr "Skrýt/zobrazit"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1277
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1335
+msgid "Page: "
+msgstr "Stránka:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1277
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1335
+msgid " of "
+msgstr " z "
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1536
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1539
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1542
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1557
+msgid "Sort: Z-A"
+msgstr "Řazení: Z-A"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1536
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1539
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1542
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1586
+msgid "Sort: Original"
+msgstr "Seřadit: Originál"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1539
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1542
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1560
+msgid "Sort: Added"
+msgstr "Seřadit: Přidáno"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1542
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1575
+msgid "Sort: Year"
+msgstr "Seřadit: Rok"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1616
+msgid "Filter this category..."
+msgstr "Filtrovat tuto kategorii..."
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1695
+msgid "Incorrect pin code."
+msgstr "Nesprávný kód PIN."
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1708
+msgid "all"
+msgstr "vše"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1711
+msgid "Please enter the parental control pin code"
+msgstr "Zadejte PIN kód rodičovské kontroly"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:1711
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:26
+msgid "Enter pin code"
+msgstr "Zadejte kód PIN"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2185
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2244
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2253
+msgid "Next Info"
+msgstr "Další informace"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2248
+msgid "Now Info"
+msgstr "Nyní info"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2476
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:522
+msgid "Recording Timer Set."
+msgstr "Nastaviť časovač nahrávání."
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2478
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:524
+msgid "Recording Failed."
+msgstr "Nahrávání se nezdařilo."
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2653
+msgid "Video Type:"
+msgstr "Typ videa:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2654
+msgid "Rating:"
+msgstr "Hodnocení:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2655
+msgid "Genre:"
+msgstr "Žánr:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2656
+msgid "Duration:"
+msgstr "Doba trvání:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2657
+msgid "Release Date:"
+msgstr "Datum vydání:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2658
+msgid "Cast:"
+msgstr "Obsazení:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2659
+msgid "Director:"
+msgstr "Režie:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2660
+msgid "Country:"
+msgstr "Země:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2747
 msgid "Movie"
 msgstr "Film"
 
-#: vod.py:1395
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2747
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2749
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2751
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:279
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:325
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:378
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:411
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:462
+msgid "Not Started"
+msgstr "Nezahájeno"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2751
+msgid "Catch-up"
+msgstr "Catch-up"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2756
+msgid "Added to download manager"
+msgstr "Přidáno do správce stahování"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:2758
+msgid "Already added to download manager"
+msgstr "Již přidáno do správce stahování"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:3108
 msgid ""
 "The IMDb plugin is not installed!\n"
 "Please install it."
@@ -863,22 +268,527 @@ msgstr ""
 "IMDb plugin není nainstalován!\n"
 "Prosím, nainstalujte jej."
 
-#: vodplayer.py:431
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:3169
+msgid "Catchup error. No data for this slot"
+msgstr "Chyba Catchupu. Žádná data pro tento slot"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/channels.py:3280
+msgid "Catchup currently not available. Missing EPG data"
+msgstr "Funkce Catchup momentálně není k dispozici. Chybějící data EPG"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:142
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:143
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:144
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:145
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:146
+msgid "MOVIE DOWNLOAD FAILED!"
+msgstr "STAHOVÁNÍ FILMU SE NEZDAŘILO!"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:142
+msgid "DOWNLOADED FILE CORRUPTED:"
+msgstr "STAŽENÝ SOUBOR JE POŠKOZEN:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:143
+msgid "COULD NOT READ RTMP PACKET:"
+msgstr "NELZE PŘEČÍST PAKET RTMP:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:144
+msgid "SEGMENTATION FAULT:"
+msgstr "PORUCHA SEGMENTACE:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:145
+msgid "SERVER RETURNED ERROR:"
+msgstr "SERVER VRÁTIL CHYBU:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:146
+msgid "UNKNOWN ERROR:"
+msgstr "NEZNÁMÁ CHYBA:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:161
+msgid "VOD Download Manager"
+msgstr "VOD Download Manager"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:179
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:328
+msgid "Download"
+msgstr "Stáhnout"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:180
+msgid "Remove"
+msgstr "Odstranit"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:230
+msgid "Free Space:"
+msgstr "Volné místo:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:230
+msgid "of"
+msgstr "ze"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:257
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:346
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:412
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:460
+msgid "Downloading"
+msgstr "Stahuji"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:283
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:395
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:486
+msgid "Finished"
+msgstr "Dokončené"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:326
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/hidden.py:44
+msgid "Cancel"
+msgstr "Zrušit"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:336
+msgid "Cancel this download?"
+msgstr "Zrušit toto stahování?"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:387
+msgid ""
+"Vod Download folder location does not exist.\n"
+"\n"
+msgstr ""
+"Umístění složky Vod Download neexistuje.\n"
+"\n"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:396
+msgid "File already downloaded."
+msgstr "Soubor je již stažen."
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:442
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:448
+msgid ""
+"Please update your wget library to download https lines\n"
+"\n"
+"opkg update\n"
+"opkg install wget"
+msgstr ""
+"Aktualizujte prosím svou knihovnu wget a stáhněte si řádky https\n"
+"\n"
+"Aktualizace OPKG\n"
+"opkg install wget"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:463
+msgid "Multiple downloads not allowed. Please wait or cancel download."
+msgstr ""
+"Vícenásobné stahování není povoleno. Počkejte prosím nebo stahování zrušte."
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager2.py:478
+msgid "Download Failed!\n"
+msgstr "Stažení se nezdařilo!\n"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/hidden.py:35
+msgid "Hidden Categories"
+msgstr "Skryté kategorie"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/hidden.py:45
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:48
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/record.py:39
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:39
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:67
+msgid "Save"
+msgstr "Uložit"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/hidden.py:46
+msgid "Invert"
+msgstr "Převrácení"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/hidden.py:47
+msgid "Reset"
+msgstr "Resetovat"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/hidden.py:157
+msgid "Error: All categories hidden. Please amend your selection."
+msgstr "Chyba: Všechny kategorie jsou skryté. Upravte prosím svůj výběr."
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:37
+msgid "Main Menu"
+msgstr "Hlavní menu"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:113
+msgid "Playlists"
+msgstr "Playlisty"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:114
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:119
+msgid "Add Playlist"
+msgstr "Přidat Playlist"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:115
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:120
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:59
+msgid "Main Settings"
+msgstr "Hlavní nastavení"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:116
+msgid "Manual EPG Update"
+msgstr "Ruční obnova EPG"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:123
+msgid "Download Manager"
+msgstr "Správce stahování"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:125
+msgid "Reset Stored Data"
+msgstr "Reset údajů"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:151
+msgid "EPGs downloading."
+msgstr "Stahování EPG."
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:185
+msgid ""
+"Warning: delete stored json data for all playlists... Settings, favourites "
+"etc. Playlists will not be deleted.\n"
+"Do you wish to continue?"
+msgstr ""
+"Upozornění: smažte uložená data json pro všechny seznamy skladeb... "
+"Nastavení, oblíbené atd. Seznamy skladeb nebudou smazány.\n"
+"Přejete si pokračovat?"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:47
+msgid "Update"
+msgstr "Aktualizovat"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:49
+msgid "Catchup channel check updated: "
+msgstr "Aktualizována kontrola kanálu Catchup: "
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:87
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:297
+msgid "Last catchup check: "
+msgstr "Poslední kontrola catchup: "
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:245
+msgid "TV Series"
+msgstr "TV seriály"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:260
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:40
+msgid "Playlist Settings"
+msgstr "Playlist nastavení"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:269
+msgid "No data, blocked or playlist not compatible with XStreamity plugin."
+msgstr ""
+"Žádná data, blokované nebo playlist není kompatibilní s pluginem "
+"XStreamity."
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:43
+msgid "Select Playlist"
+msgstr "Vybrat Playlist"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:47
+msgid "Delete"
+msgstr "Smazat"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:48
+msgid "Info"
+msgstr "Informace"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:265
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:325
+msgid "Server Not Responding"
+msgstr "Server nereaguje"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:277
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:327
+msgid "Not Authorised"
+msgstr "Nepovoleno"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:282
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:290
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:314
+msgid "Active"
+msgstr "Aktivní"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:284
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:319
+msgid "Banned"
+msgstr "Zablokován"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:286
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:323
+msgid "Disabled"
+msgstr "Vypnuto"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:288
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:321
+msgid "Expired"
+msgstr "Expirovaný"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:293
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:295
+msgid "Expires: "
+msgstr "Vyprší: "
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:297
+msgid "Active Conn:"
+msgstr "Aktivní Conn:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:300
+msgid "Max Conn:"
+msgstr "Max Conn:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:340
+msgid "Delete selected playlist?"
+msgstr "Smazat vybraný seznam skladeb?"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:361
+msgid "Delete providers EPG data?"
+msgstr "Smazat data EPG poskytovatelů?"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:71
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/record.py:72
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:70
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:91
+msgid "Really close without saving settings?"
+msgstr "Opravdu zavřít bez uložení nastavení?"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:117
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:98
+msgid "Short name or provider name:"
+msgstr "Krátký název nebo název poskytovatele:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:118
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:104
+msgid "Output:"
+msgstr "Výstup:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:120
+msgid "Show LIVE category:"
+msgstr "Zobraziť ŽIVÉ kategorii:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:121
+msgid "Show VOD category:"
+msgstr "Zobraziť VOD kategorii:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:122
+msgid "Show SERIES category:"
+msgstr "Zobraziť SERIÁLY kategorii:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:123
+msgid "Show CATCHUP category:"
+msgstr "Zobraziť CATCHUP kategorii:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:124
+msgid "EPG offset:"
+msgstr "Ofset EPG:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:127
+msgid "Stream Type LIVE:"
+msgstr "Typ streamu LIVE:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:130
+msgid "Stream Type VOD/SERIES:"
+msgstr "Typ streamu VOD/SERIES:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:190
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:274
+msgid "XStreamity"
+msgstr "XStreamity"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:273
+msgid "IPTV Xtream Codes playlists player by KiddaC"
+msgstr "IPTV Xtream kódy playlisty KiddaC"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/record.py:38
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:46
+msgid "Close"
+msgstr "Zavřít"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/record.py:52
+msgid "Please enter recording time"
+msgstr "Zadejte prosím čas nahrávání"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/record.py:55
+msgid "Please enter recording end time"
+msgstr "Zadejte prosím koncový čas nahrávání"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/record.py:92
+msgid "Name"
+msgstr "Jméno"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/record.py:94
+msgid "Start Time"
+msgstr "Čas zahájení"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/record.py:96
+msgid "End Time"
+msgstr "Čas konce"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:31
+msgid "Add Xtream Codes Playlist"
+msgstr "Přidat seznam skladeb Xtream Codes"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:99
+msgid "Protocol:"
+msgstr "Protokol:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:100
+msgid "Server URL:"
+msgstr "Adresa URL serveru:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:101
+msgid "Port:"
+msgstr "Přístav:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:102
+msgid "Username:"
+msgstr "Uživatelské jméno:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:103
+msgid "Password:"
+msgstr "Heslo:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:171
+msgid "Details are not a valid or unauthorised"
+msgstr "Podrobnosti nejsou platné nebo neautorizované"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:189
+msgid "Playlist added successfully."
+msgstr "Seznam skladeb byl úspěšně přidán."
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:27
+msgid "User Information"
+msgstr "Informace o uživateli"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:26
+msgid "Please enter the correct pin code"
+msgstr "Zadejte správný PIN kód"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:35
+msgid "The pin code you entered is wrong."
+msgstr "Zadaný kód PIN je nesprávný."
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:103
+msgid ""
+"Please change default parental pin.\n"
+"\n"
+"Pin cannot be 0000, 1111 or 1234"
+msgstr ""
+"Změňte výchozí rodičovský kód PIN.\n"
+"\n"
+"Pin nemůže být 0000, 1111 nebo 1234"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:119
+msgid "You need to restart the GUI"
+msgstr "Musíte restartovat GUI"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:119
+msgid "Do you want to restart now?"
+msgstr "Chcete nyní restartovat?"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:130
+msgid "Select skin *Restart GUI Required"
+msgstr "Vyberte vzhled *Vyžaduje se Restart GUI"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:131
+msgid "playlists.txt location"
+msgstr "playlists.txt umístění"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:132
+msgid "EPG download location"
+msgstr "Složka pro stažení EPG"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:133
+msgid "VOD download folder"
+msgstr "Složka pro stažení VOD"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:134
+msgid "Server timeout (seconds)"
+msgstr "Časový limit serveru (v sekundách)"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:136
+msgid "Default LIVE stream type"
+msgstr "Výchozí typ živého přenosu"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:137
+msgid "Default VOD/SERIES stream type"
+msgstr "Výchozí typ streamu VOD/SERIES"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:139
+msgid "Preview LIVE streams in mini tv"
+msgstr "Náhled LIVE přenosů v mini tv"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:140
+msgid "Stop stream on back button"
+msgstr "Zastaviť stream po stlačený tlačítka Zpět"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:141
+msgid "XStreamity parental control"
+msgstr "XStreamity rodičovská kontrola"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:142
+msgid "XStreamity parental pin"
+msgstr "XStreamity rodičovský pin"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:143
+msgid "Show in main menu *Restart GUI Required"
+msgstr "Zobrazit v hlavní nabídce *Vyžadováno restartování GUI"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:145
+msgid "Use Movie Database(TMDB) for VOD & Series"
+msgstr "Použijte filmovou databázi (TMDB) pro VOD a Seriály"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:146
+msgid "Movie Database language"
+msgstr "Jazyk databáze filmů"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:148
+msgid "Margin before catchup (mins)"
+msgstr "Rozpětí před doháněním (min)"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:149
+msgid "Margin after catchup (mins)"
+msgstr "Rozpětí po dohánění (min)"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:151
+msgid "Allow SubsSupport plugin in VOD"
+msgstr "Povolit plugin SubsSupport ve VOD"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:153
+msgid "Skip playlist selection screen if only 1 playlist"
+msgstr ""
+"Přeskočit obrazovku výběru seznamu skladeb, pokud je pouze 1 seznam skladeb"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:155
+msgid "Automatic EPG download time *Restart GUI Required"
+msgstr "Čas automatického stahování EPG *Vyžadováno Restartování GUI"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:275
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:288
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:301
+msgid "Choose Directory:"
+msgstr "Vyberte adresář:"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:276
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:289
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:302
+msgid "Choose directory"
+msgstr "Vyberte adresář"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:377
+msgid "Do you want to resume this playback?"
+msgstr "Chcete pokračovat v tomto přehrávání?"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:377
+#, python-format
+msgid "Resume position at %s"
+msgstr "Resume position at %s"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:466
+msgid "TV"
+msgstr "TV"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:881
 msgid "VOD"
 msgstr "VOD"
 
-#~ msgid " of "
-#~ msgstr " z "
-
-#~ msgid "TV Series"
-#~ msgstr "TV seriály"
-
-#~ msgid "Download EPG on boot"
-#~ msgstr "Stažení EPG při spuštění systému"
-
-#~ msgid "Do you want to resume this playback?"
-#~ msgstr "Chcete pokračovat v tomto přehrávání?"
-
-#, python-format
-#~ msgid "Resume position at %s"
-#~ msgstr "Resume position at %s"
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/streamplayer.py:1106
+msgid "Catch Up"
+msgstr "Catch Up"

@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: XStreamity v4.38\n"
 "POT-Creation-Date: 2024-05-08 20:38+0100\n"
-"PO-Revision-Date: 2024-05-08 20:38+0100\n"
+"PO-Revision-Date: 2024-05-12 09:05+0200\n"
 "Last-Translator: Jakarta\n"
 "Language-Team: Jakarta\n"
 "Language: fr\n"
@@ -242,12 +242,6 @@ msgid ""
 msgstr "L'emplacement du dossier de téléchargement FILMS n'existe pas\n"
 
 #: downloadmanager.py:436 downloadmanager.py:444
-#, fuzzy
-#| msgid ""
-#| "Please update your wget library to download https lines\n"
-#| "\n"
-#| "opkg update\n"
-#| "opkg install wget"
 msgid ""
 "Please update your wget library to download https lines\n"
 "\n"
@@ -257,7 +251,7 @@ msgstr ""
 "Veuillez mettre à jour votre bibliothèque wget pour télécharger les lignes "
 "https\n"
 "opkg update\n"
-"opkg install wget"
+"apt-get -y install wget"
 
 #: downloadmanager.py:438 downloadmanager.py:446
 msgid ""
@@ -429,7 +423,7 @@ msgstr "Info"
 
 #: playlists.py:97
 msgid "No internet."
-msgstr ""
+msgstr "Pas d'internet."
 
 #: playlists.py:304 playlists.py:382
 msgid "Server Not Responding"
@@ -719,7 +713,7 @@ msgstr "Décalage du serveur:"
 
 #: serverinfo.py:80
 msgid "Unknown"
-msgstr ""
+msgstr "Inconnu"
 
 #: settings.py:117
 #, fuzzy

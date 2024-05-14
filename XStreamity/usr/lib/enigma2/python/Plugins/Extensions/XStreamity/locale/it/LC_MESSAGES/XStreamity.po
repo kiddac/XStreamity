@@ -2,9 +2,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: XStreamity v4.38\n"
-"POT-Creation-Date: 2024-05-08 20:34+0100\n"
-"PO-Revision-Date: 2024-05-08 20:34+0100\n"
+"Project-Id-Version: XStreamity v4.47\n"
+"POT-Creation-Date: 2024-05-13 13:30+0200\n"
+"PO-Revision-Date: 2024-05-13 13:35+0200\n"
 "Last-Translator: Dario Croci <spaeleus@croci.org>\n"
 "Language-Team: Dario Croci <spaeleus@croci.org>\n"
 "Language: it_IT\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.4.4\n"
 "X-Poedit-Basepath: ../../../../../../../../..\n"
 "X-Poedit-SearchPath-0: .\n"
 
@@ -333,13 +333,24 @@ msgstr "Errore Catch-Up. Nessun dato per questo slot"
 msgid "Catchup currently not available. Missing EPG data"
 msgstr "Catch-Up al momento non disponibile. Dati EPG mancanti"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/catchupplayer.py:421
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/catchupplayer.py:413
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/vodplayer.py:418
+msgid "Do you want to resume this playback?"
+msgstr "Riprendere la riproduzione?"
+
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/catchupplayer.py:413
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/vodplayer.py:418
+#, python-format
+msgid "Resume position at %s"
+msgstr "Riprendere dalla posizione %s"
+
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/catchupplayer.py:496
 msgid "Catch Up"
 msgstr "Catch Up"
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/catchupplayer.py:598
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/catchupplayer.py:673
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/liveplayer.py:883
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/vodplayer.py:703
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/vodplayer.py:781
 msgid "Resolution Change Failed"
 msgstr "Modifica risoluzione fallita"
 
@@ -393,22 +404,16 @@ msgstr ""
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:436
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:444
-#, fuzzy
-#| msgid ""
-#| "Please update your wget library to download https lines\n"
-#| "\n"
-#| "opkg update\n"
-#| "opkg install wget"
 msgid ""
 "Please update your wget library to download https lines\n"
 "\n"
 "opkg update\n"
 "apt-get -y install wget"
 msgstr ""
-"Aggiornare la libreria wget per scaricare via https\n"
+"Aggiornare la libreria wget per scaricare linee https\n"
 "\n"
 "opkg update\n"
-"opkg install wget"
+"apt-get -y install wget"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:438
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:446
@@ -533,6 +538,9 @@ msgid ""
 "\n"
 "Trying installing older version from feeds first..."
 msgstr ""
+"Dipendenze non installate.\n"
+"\n"
+"Tentativo di installazione della versione precedente dai feed..."
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:136
 msgid "Playlists"
@@ -597,7 +605,7 @@ msgstr "Info"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:97
 msgid "No internet."
-msgstr ""
+msgstr "Niente internet"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:304
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:382
@@ -918,14 +926,9 @@ msgstr "Offset server:"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:80
 msgid "Unknown"
-msgstr ""
+msgstr "Sconosciuto"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:117
-#, fuzzy
-#| msgid ""
-#| "Please change default parental pin.\n"
-#| "\n"
-#| "Pin cannot be 0000, 1111 or 1234"
 msgid ""
 "Please change default parental pin.\n"
 "\n"
@@ -933,7 +936,7 @@ msgid ""
 msgstr ""
 "Modificare il PIN parentale predefinito.\n"
 "\n"
-"Il Pin non puo' essere 0000, 1111 o 1234"
+"Il Pin non può essere 0000, 1111 o 1234"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:134
 msgid "You need to restart the GUI"
@@ -1070,22 +1073,6 @@ msgstr ""
 "Plugin IMDb non installato.\n"
 "Provvedere all'installazione."
 
-#: lib/enigma2/python/Plugins/Extensions/XStreamity/vodplayer.py:431
+#: lib/enigma2/python/Plugins/Extensions/XStreamity/vodplayer.py:509
 msgid "VOD"
 msgstr "VOD"
-
-#~ msgid " of "
-#~ msgstr " di "
-
-#~ msgid "TV Series"
-#~ msgstr "Serie TV"
-
-#~ msgid "Download EPG on boot"
-#~ msgstr "Scaricare EPG all'avvio"
-
-#~ msgid "Do you want to resume this playback?"
-#~ msgstr "Riprendere la riproduzione?"
-
-#, python-format
-#~ msgid "Resume position at %s"
-#~ msgstr "Riprendere dalla posizione %s"

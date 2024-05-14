@@ -20,8 +20,9 @@ from Components.Label import Label
 from Components.Pixmap import MultiPixmap, Pixmap
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 from enigma import eTimer, eServiceReference, iPlayableService, ePicLoad
+from Tools import Notifications
 
-from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection, InfoBarSummarySupport, InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport
+from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection, InfoBarSummarySupport, InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport, InfoBarNotifications
 
 
 from Screens.MessageBox import MessageBox
@@ -48,7 +49,7 @@ except ImportError:
     HTTPConnection.debuglevel = 0
 
 try:
-    from .resumepoints import setResumePoint
+    from .resumepoints import setResumePoint, getResumePoint
 except ImportError as e:
     print(e)
 
@@ -363,12 +364,83 @@ class IPTVInfoBarPVRState:
 skin_path = os.path.join(skin_directory, cfg.skin.value)
 
 
+class XStreamityCueSheetSupport:
+    ENABLE_RESUME_SUPPORT = False
+
+    def __init__(self):
+        self.cut_list = []
+        self.is_closing = False
+        self.started = False
+        self.resume_point = ""
+        if not os.path.exists("/etc/enigma2/xstreamity/resumepoints.pkl"):
+            with open("/etc/enigma2/xstreamity/resumepoints.pkl", "w"):
+                pass
+
+        self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
+            iPlayableService.evUpdatedInfo: self.__serviceStarted,
+        })
+
+    def __serviceStarted(self):
+        print("*** service started ***")
+        if self.is_closing:
+            return
+
+        if self.ENABLE_RESUME_SUPPORT and not self.started:
+            print("*** true ***")
+
+            self.started = True
+            last = None
+
+            service = self.session.nav.getCurrentService()
+
+            if service is None:
+                return
+
+            seekable = service.seek()
+            if seekable is None:
+                return  # Should not happen?
+
+            length = seekable.getLength() or (None, 0)
+            length[1] = abs(length[1])
+
+            try:
+                last = getResumePoint(self.session)
+            except Exception as e:
+                print(e)
+                return
+
+            if last is None:
+                return
+            if (last > 900000) and (not length[1] or (last < length[1] - 900000)):
+                print("*** true 2 ***")
+                self.resume_point = last
+                newlast = last // 90000
+                Notifications.AddNotificationWithCallback(self.playLastCB, MessageBox, _("Do you want to resume this playback?") + "\n" + (_("Resume position at %s") % ("%d:%02d:%02d" % (newlast // 3600, newlast % 3600 // 60, newlast % 60))), MessageBox.TYPE_YESNO, 10)
+
+    def playLastCB(self, answer):
+        if answer is True and self.resume_point:
+            service = self.session.nav.getCurrentService()
+            seekable = service.seek()
+            if seekable is not None:
+                seekable.seekTo(self.resume_point)
+        self.hideAfterResume()
+
+    def hideAfterResume(self):
+        if isinstance(self, IPTVInfoBarShowHide):
+            try:
+                self.hide()
+            except Exception as e:
+                print(e)
+
+
 class XStreamity_VodPlayer(
     InfoBarBase,
     IPTVInfoBarShowHide,
     IPTVInfoBarPVRState,
+    XStreamityCueSheetSupport,
     InfoBarAudioSelection,
     InfoBarSeek,
+    InfoBarNotifications,
     InfoBarSummarySupport,
     InfoBarSubtitleSupport,
     InfoBarMoviePlayerSummarySupport,
@@ -388,11 +460,17 @@ class XStreamity_VodPlayer(
             IPTVInfoBarShowHide,
             InfoBarAudioSelection,
             InfoBarSeek,
+            InfoBarNotifications,
             InfoBarSummarySupport,
             InfoBarSubtitleSupport,
             InfoBarMoviePlayerSummarySupport
         ):
             x.__init__(self)
+
+        try:
+            XStreamityCueSheetSupport.__init__(self)
+        except Exception as e:
+            print(e)
 
         IPTVInfoBarPVRState.__init__(self, PVRState, True)
 

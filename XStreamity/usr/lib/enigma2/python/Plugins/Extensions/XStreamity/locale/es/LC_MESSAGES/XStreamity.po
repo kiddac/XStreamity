@@ -2,9 +2,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: XStreamity v4.38\n"
+"Project-Id-Version: XStreamity v4.47.20240511\n"
 "POT-Creation-Date: 2024-05-08 20:37+0100\n"
-"PO-Revision-Date: 2024-05-08 20:37+0100\n"
+"PO-Revision-Date: 2024-05-12 13:28+0200\n"
 "Last-Translator: weeping <a.weeping@gmail.com>\n"
 "Language-Team: weeping <a.weeping@gmail.com>\n"
 "Language: es_ES\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.4.4\n"
 "X-Poedit-Basepath: ../../..\n"
 "X-Poedit-SearchPath-0: .\n"
 
@@ -178,7 +178,7 @@ msgstr "No grabar y reproducir a la vez."
 
 #: catchup.py:885 series.py:1609 vod.py:1367
 msgid "Open download manager?"
-msgstr "Abrir Gestor de Descarga?"
+msgstr "Abrir Gestor de Descargas?"
 
 #: catchup.py:888 series.py:1612 vod.py:1370
 msgid "Already added to download manager"
@@ -242,12 +242,6 @@ msgstr ""
 "\n"
 
 #: downloadmanager.py:436 downloadmanager.py:444
-#, fuzzy
-#| msgid ""
-#| "Please update your wget library to download https lines\n"
-#| "\n"
-#| "opkg update\n"
-#| "opkg install wget"
 msgid ""
 "Please update your wget library to download https lines\n"
 "\n"
@@ -257,7 +251,7 @@ msgstr ""
 "Necesita actualizar la librería wget para descargar a través de https\n"
 "\n"
 "opkg update\n"
-"opkg install wget"
+"apt-get -y install wget"
 
 #: downloadmanager.py:438 downloadmanager.py:446
 msgid ""
@@ -313,7 +307,7 @@ msgstr "Categoría TV"
 
 #: live.py:151
 msgid "Live Streams"
-msgstr "Streams TV"
+msgstr "Canales TV"
 
 #: live.py:348 vod.py:263
 msgid "FAVOURITES"
@@ -365,6 +359,9 @@ msgid ""
 "\n"
 "Trying installing older version from feeds first..."
 msgstr ""
+"Dependencias no instaladas.\n"
+"\n"
+"Intentando la instalación de la versión anterior desde el feed..."
 
 #: mainmenu.py:136
 msgid "Playlists"
@@ -426,7 +423,7 @@ msgstr "Información"
 
 #: playlists.py:97
 msgid "No internet."
-msgstr ""
+msgstr "Sin conexión a Internet."
 
 #: playlists.py:304 playlists.py:382
 msgid "Server Not Responding"
@@ -513,11 +510,11 @@ msgstr "Salida:"
 
 #: playsettings.py:145
 msgid "Stream Type LIVE:"
-msgstr "Stream Tipo TV:"
+msgstr "Reproductor para Canales TV:"
 
 #: playsettings.py:148
 msgid "Stream Type VOD/SERIES:"
-msgstr "Stream Tipo VOD/SERIES:"
+msgstr "Reproductor para VOD/SERIES:"
 
 #: playsettings.py:151
 msgid "Stream Source URL:"
@@ -601,7 +598,7 @@ msgstr "Tipo Video:"
 
 #: series.py:1572 vod.py:1331
 msgid "Rating:"
-msgstr "Clasificación:"
+msgstr "Puntuación:"
 
 #: series.py:1573 vod.py:1332
 msgid "Genre:"
@@ -617,7 +614,7 @@ msgstr "Fecha Estreno:"
 
 #: series.py:1576 vod.py:1335
 msgid "Cast:"
-msgstr "Casting:"
+msgstr "Reparto:"
 
 #: series.py:1577 vod.py:1336
 msgid "Director:"
@@ -717,14 +714,9 @@ msgstr "Offset servidor:"
 
 #: serverinfo.py:80
 msgid "Unknown"
-msgstr ""
+msgstr "Desconocido"
 
 #: settings.py:117
-#, fuzzy
-#| msgid ""
-#| "Please change default parental pin.\n"
-#| "\n"
-#| "Pin cannot be 0000, 1111 or 1234"
 msgid ""
 "Please change default parental pin.\n"
 "\n"
@@ -732,7 +724,7 @@ msgid ""
 msgstr ""
 "Modifica el PIN parental predefinido.\n"
 "\n"
-"El PIN no puede ser 0000, 1111 o 1234"
+"El PIN no puede ser 0000, 111 o 1234"
 
 #: settings.py:134
 msgid "You need to restart the GUI"
@@ -752,11 +744,11 @@ msgstr "Ubicación de playlists.txt"
 
 #: settings.py:145 settings.py:154 settings.py:161 settings.py:166
 msgid " *Restart GUI Required"
-msgstr " *Requiere reinicio de GUI"
+msgstr " *Requiere reiniciar GUI"
 
 #: settings.py:146
 msgid "EPG download location"
-msgstr "Ubicación de descarga de EPG"
+msgstr "Ubicación de la descarga del EPG"
 
 #: settings.py:147
 msgid "VOD download folder"
@@ -764,19 +756,19 @@ msgstr "Directorio de descarga de VOD"
 
 #: settings.py:148
 msgid "Default LIVE stream type"
-msgstr "Tipo de stream TV predefinido"
+msgstr "Reproductor para Canales TV predefinido"
 
 #: settings.py:149
 msgid "Default VOD/SERIES stream type"
-msgstr "Tipo de stream VOD\\SERIES predefinido"
+msgstr "Reproductor para VOD\\SERIES predefinido"
 
 #: settings.py:150
 msgid "Preview LIVE streams in mini tv"
-msgstr "Previo de stream TV en Mini TV"
+msgstr "Previo del canal de TV en Mini TV"
 
 #: settings.py:151
 msgid "Stop stream on back button"
-msgstr "Detener stream al pulsar en VOLVER"
+msgstr "Detener reproducción al pulsar en VOLVER"
 
 #: settings.py:152
 msgid "XStreamity parental control"
@@ -844,7 +836,7 @@ msgstr "Seleccionar directorio:"
 
 #: settings.py:287
 msgid "Choose directory"
-msgstr "Selezionar directorio"
+msgstr "Seleccionar directorio"
 
 #: vod.py:90
 msgid "Vod Categories"

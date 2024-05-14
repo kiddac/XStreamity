@@ -660,7 +660,7 @@ class XStreamity_Categories(Screen):
         if current_item:
             channel_title = current_item[0]
             current_index = self["main_list"].getIndex()
-            
+
             position = current_index + 1
             position_all = len(self.pre_list) + len(self.main_list) if self.level == 1 else len(self.main_list)
             page = (position - 1) // self.itemsperpage + 1
@@ -755,6 +755,9 @@ class XStreamity_Categories(Screen):
             # remove xx|xx at start
             searchtitle = re.sub(r'^\w{2}\|\w{2}\s', '', searchtitle)
 
+            # remove xx - at start
+            searchtitle = re.sub(r'^.{2}\+? ?- ?', '', searchtitle)
+
             # remove all leading contend between and including ||
             searchtitle = re.sub(r'^\|\|.*?\|\|', '', searchtitle)
             searchtitle = re.sub(r'^\|.*?\|', '', searchtitle)
@@ -767,10 +770,13 @@ class XStreamity_Categories(Screen):
 
             # List of bad strings to remove
             bad_strings = [
-                "|ae|", "|al|", "|ar|", "|at|", "|ba|", "|be|", "|bg|", "|br|", "|cg|", "|ch|", "|cz|", "|da|", "|de|", "|dk|",
-                "|ee|", "|en|", "|es|", "|eu|", "|ex-yu|", "|fi|", "|fr|", "|gr|", "|hr|", "|hu|", "|in|", "|ir|", "|it|", "|lt|",
-                "|mk|", "|mx|", "|nl|", "|no|", "|pl|", "|pt|", "|ro|", "|rs|", "|ru|", "|se|", "|si|", "|sk|", "|sp|", "|tr|",
-                "|uk|", "|us|", "|yu|", "1080p", "1080p-dual-lat-cine-calidad.com", "1080p-dual-lat-cine-calidad.com-1",
+
+                "ae|", "al|", "ar|", "at|", "ba|", "be|", "bg|", "br|", "cg|", "ch|", "cz|", "da|", "de|", "dk|",
+                "ee|", "en|", "es|", "eu|", "ex-yu|", "fi|", "fr|", "gr|", "hr|", "hu|", "in|", "ir|", "it|", "lt|",
+                "mk|", "mx|", "nl|", "no|", "pl|", "pt|", "ro|", "rs|", "ru|", "se|", "si|", "sk|", "sp|", "tr|",
+                "uk|", "us|", "yu|",
+
+                "1080p", "1080p-dual-lat-cine-calidad.com", "1080p-dual-lat-cine-calidad.com-1",
                 "1080p-dual-lat-cinecalidad.mx", "1080p-lat-cine-calidad.com", "1080p-lat-cine-calidad.com-1",
                 "1080p-lat-cinecalidad.mx", "1080p.dual.lat.cine-calidad.com", "3d", "'", "#", "(", ")", "-", "[]", "/",
                 "4k", "720p", "aac", "blueray", "ex-yu:", "fhd", "hd", "hdrip", "hindi", "imdb", "multi:", "multi-audio",
@@ -1502,7 +1508,7 @@ class XStreamity_Categories(Screen):
 
     def clearWatched(self):
         if self.level == 4:
-            current_id = int(self["main_list"].getCurrent()[4])
+            current_id = str(self["main_list"].getCurrent()[4])
             watched_list = glob.active_playlist["player_info"].get("serieswatched", [])
             if current_id in watched_list:
                 watched_list.remove(current_id)

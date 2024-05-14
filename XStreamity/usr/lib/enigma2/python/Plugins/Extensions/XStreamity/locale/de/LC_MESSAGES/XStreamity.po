@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-05-08 20:36+0100\n"
-"PO-Revision-Date: 2024-05-08 20:36+0100\n"
+"POT-Creation-Date: 2024-05-11 14:51+0100\n"
+"PO-Revision-Date: 2024-05-11 14:51+0100\n"
 "Last-Translator: Masta2002\n"
 "Language-Team: \n"
 "Language: de\n"
@@ -190,11 +190,22 @@ msgstr "Mediathek Fehler. Keine Daten für diesen Sendeplatz"
 msgid "Catchup currently not available. Missing EPG data"
 msgstr "Mediathek derzeit nicht verfügbar. Fehlende EPG-Daten"
 
-#: catchupplayer.py:421
+#: catchupplayer.py:413 vodplayer.py:415
+#, fuzzy
+#| msgid "Do you want to restart now?"
+msgid "Do you want to resume this playback?"
+msgstr "Möchten Sie neu starten?"
+
+#: catchupplayer.py:413 vodplayer.py:415
+#, python-format
+msgid "Resume position at %s"
+msgstr ""
+
+#: catchupplayer.py:494
 msgid "Catch Up"
 msgstr "Mediathek"
 
-#: catchupplayer.py:598 liveplayer.py:883 vodplayer.py:703
+#: catchupplayer.py:671 liveplayer.py:883 vodplayer.py:776
 msgid "Resolution Change Failed"
 msgstr "Änderung der Auflösung fehlgeschlagen"
 
@@ -240,23 +251,17 @@ msgstr ""
 "\n"
 
 #: downloadmanager.py:436 downloadmanager.py:444
-#, fuzzy
-#| msgid ""
-#| "Please update your wget library to download https lines\n"
-#| "\n"
-#| "opkg update\n"
-#| "opkg install wget"
 msgid ""
 "Please update your wget library to download https lines\n"
 "\n"
 "opkg update\n"
 "apt-get -y install wget"
 msgstr ""
-"Die Wget Bibliothek muss aktualisiert werden, um https Zeilen herunterladen "
+"Die Wget Bibliothek muss aktualisiert werden, um https Lines herunterladen "
 "zu können\n"
 "\n"
 "opkg update\n"
-"opkg install wget"
+"apt-get -y install wget"
 
 #: downloadmanager.py:438 downloadmanager.py:446
 msgid ""
@@ -366,6 +371,9 @@ msgid ""
 "\n"
 "Trying installing older version from feeds first..."
 msgstr ""
+"Abhängigkeiten nicht installiert.\n"
+"\n"
+"Versuchen Sie zuerst, eine ältere Version aus den Feeds zu installieren..."
 
 #: mainmenu.py:136
 msgid "Playlists"
@@ -426,7 +434,7 @@ msgstr "Info"
 
 #: playlists.py:97
 msgid "No internet."
-msgstr ""
+msgstr "Kein Internet."
 
 #: playlists.py:304 playlists.py:382
 msgid "Server Not Responding"
@@ -716,14 +724,9 @@ msgstr "Server-Offset:"
 
 #: serverinfo.py:80
 msgid "Unknown"
-msgstr ""
+msgstr "Unbekannt"
 
 #: settings.py:117
-#, fuzzy
-#| msgid ""
-#| "Please change default parental pin.\n"
-#| "\n"
-#| "Pin cannot be 0000, 1111 or 1234"
 msgid ""
 "Please change default parental pin.\n"
 "\n"
@@ -866,22 +869,6 @@ msgstr ""
 "Das IMDb Plugin ist nicht installiert\n"
 "Bitte installien."
 
-#: vodplayer.py:431
+#: vodplayer.py:504
 msgid "VOD"
 msgstr "Video-on-Demand"
-
-#~ msgid " of "
-#~ msgstr " von "
-
-#~ msgid "TV Series"
-#~ msgstr "TV Serien"
-
-#~ msgid "Download EPG on boot"
-#~ msgstr "EPG beim Booten herunterladen"
-
-#~ msgid "Do you want to resume this playback?"
-#~ msgstr "Wiedergabe fortsetzen?"
-
-#, python-format
-#~ msgid "Resume position at %s"
-#~ msgstr "Position bei %s fortsetzen"

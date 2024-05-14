@@ -9,7 +9,7 @@
 from __future__ import division
 
 from . import _
-from .plugin import skin_directory, downloads_json, cfg, pythonVer, hdr, isDreambox
+from .plugin import skin_directory, downloads_json, cfg, pythonVer, hdr
 from .xStaticText import StaticText
 from .Task import job_manager as JobManager
 from .Task import Task, Job
@@ -55,7 +55,7 @@ def convert_size(size_bytes):
     i = int(math.floor(math.log(size_bytes, 1024)))
     p = math.pow(1024, i)
     s = round(size_bytes / p, 2)
-    return "{:.2f} {}".format(s, size_name[i])
+    return "%s %s" % (s, size_name[i])
 
 
 class downloadJob(Job):
@@ -317,7 +317,7 @@ class XStreamity_DownloadManager(Screen):
                 print(e)
                 extension = ""
 
-            filename = filmtitle + extension
+            filename = str(filmtitle) + str(extension)
             shortpath = str(cfg.downloadlocation.value)
             path = os.path.join(cfg.downloadlocation.value, filename)
 
@@ -327,13 +327,13 @@ class XStreamity_DownloadManager(Screen):
             if state != "Not Started":
                 if self.session.nav.getCurrentlyPlayingServiceReference():
                     playingstream = self.session.nav.getCurrentlyPlayingServiceReference().toString()
-                    if video_domain and video_domain in playingstream:
+                    if video_domain and str(video_domain) in playingstream:
                         if self.session.nav.getCurrentlyPlayingServiceReference():
                             self.session.nav.stopService()
 
-                cmd = "wget -U 'Enigma2 - XStreamity Plugin' -c '{0}' -O '{1}'".format(self.url, os.path.join(shortpath, filename))
-                if "https" in url:
-                    cmd = "wget --no-check-certificate -U 'Enigma2 - XStreamity Plugin' -c '{0}' -O '{1}'".format(self.url, os.path.join(shortpath, filename))
+                cmd = "wget -U 'Enigma2 - XStreamity Plugin' -c '%s' -O '%s%s'" % (url, shortpath, filename)
+                if "https" in str(url):
+                    cmd = "wget --no-check-certificate -U 'Enigma2 - XStreamity Plugin' -c '%s' -O '%s%s'" % (url, shortpath, filename)
 
                 try:
                     JobManager.AddJob(downloadJob(self, cmd, path, filmtitle), onFail=self.fail)
@@ -359,19 +359,23 @@ class XStreamity_DownloadManager(Screen):
         self.downloads_all.sort(key=lambda x: order.get(x[3], 3))  # Use get() with a default value of 3 for unmatched states
 
     def getprogress(self):
-        for job in JobManager.getPendingJobs():
-            if "XStreamity" in job.cmdline:
-                jobname = str(job.name)
-                for video in self.downloads_all:
-                    title = str(video[1])
-                    if title == jobname:
-                        if job.status == job.NOT_STARTED:
-                            video[3] = "Waiting"
-                        elif job.status == job.IN_PROGRESS:
-                            video[3] = "In progress"
-                        video[4] = job.progress
-                        break
-        self.buildList()
+        jobs = JobManager.getPendingJobs()
+        if len(jobs) >= 1:
+            for job in jobs:
+                if "XStreamity" in job.cmdline:
+                    jobname = str(job.name)
+                    for video in self.downloads_all:
+                        title = str(video[1])
+                        if title == jobname:
+                            if job.status == job.NOT_STARTED:
+                                video[3] = "Waiting"
+
+                            elif job.status == job.IN_PROGRESS:
+                                video[3] = "In progress"
+
+                            video[4] = job.progress
+                            self.buildList()
+                            break
 
     def saveJson(self):
         with open(downloads_json, "w") as f:
@@ -391,59 +395,54 @@ class XStreamity_DownloadManager(Screen):
         self.close()
 
     def download(self):
-        if not os.path.isdir(cfg.downloadlocation.value) or cfg.downloadlocation.value is None:
-            self.session.open(
-                MessageBox,
-                _("Vod Download folder location does not exist.\n\n" + str(cfg.downloadlocation.value) + _("Please set download folder in Main Settings.")),
-                type=MessageBox.TYPE_WARNING
-            )
+        if not os.path.exists(cfg.downloadlocation.value) or cfg.downloadlocation.value is None:
+            self.session.open(MessageBox, _("Vod Download folder location does not exist.\n\n" + str(cfg.downloadlocation.value) + _("Please set download folder in Main Settings.")), type=MessageBox.TYPE_WARNING)
             return
 
-        current_item = self["downloadlist"].getCurrent()
-        if current_item:
-            self.filmtitle = current_item[1]
-            self.url = current_item[2]
+        if self["downloadlist"].getCurrent():
+
+            self.filmtitle = self["downloadlist"].getCurrent()[1]
+
+            self.url = self["downloadlist"].getCurrent()[2]
 
             try:
                 self.extension = str(os.path.splitext(self.url)[-1])
-            except Exception as e:
-                print(e)
+            except:
                 self.extension = ""
 
-            filename = "{}{}".format(self.filmtitle, self.extension)
-            self.shortpath = str(cfg.downloadlocation.value)
-            self.path = os.path.join(cfg.downloadlocation.value, filename)
+            filename = str(self.filmtitle) + str(self.extension)
+            self.shortpath = str(cfg.downloadlocation.getValue())
+            self.path = os.path.join(cfg.downloadlocation.getValue(), filename)
 
             parsed_uri = urlparse(self.url)
             video_domain = parsed_uri.hostname
 
-            if current_item[3] == _("Not Started"):
+            if self["downloadlist"].getCurrent()[3] == _("Not Started"):
+
                 if self.session.nav.getCurrentlyPlayingServiceReference():
                     playingstream = self.session.nav.getCurrentlyPlayingServiceReference().toString()
-                    if str(video_domain) in playingstream:
-                        self.session.nav.stopService()
 
-                cmd = "wget -U 'Enigma2 - XStreamity Plugin' -c '{0}' -O '{1}'".format(self.url, os.path.join(self.shortpath, filename))
+                    if str(video_domain) in playingstream:
+                        # stop iptv
+                        if self.session.nav.getCurrentlyPlayingServiceReference():
+                            self.session.nav.stopService()
+
+                cmd = "wget -U 'Enigma2 - XStreamity Plugin' -c '%s' -O '%s%s'" % (self.url, self.shortpath, filename)
 
                 if "https" in str(self.url):
                     checkcmd = "strings $(which wget) | grep no-check-certificate"
                     if pythonVer == 2:
                         result = subprocess.call(checkcmd, shell=True)
                         if result == 0:
-                            cmd = "wget --no-check-certificate -U 'Enigma2 - XStreamity Plugin' -c '{0}' -O '{1}'".format(self.url, os.path.join(self.shortpath, filename))
+                            cmd = "wget --no-check-certificate -U 'Enigma2 - XStreamity Plugin' -c '%s' -O '%s%s'" % (self.url, self.shortpath, filename)
                         else:
-                            if isDreambox:
-                                self.session.open(MessageBox, _("Please update your wget library to download https lines\n\nopkg update\napt-get -y install wget"), type=MessageBox.TYPE_INFO)
-                            else:
-                                self.session.open(MessageBox, _("Please update your wget library to download https lines\n\nopkg update\nopkg install wget"), type=MessageBox.TYPE_INFO)
-
+                            self.session.open(MessageBox, _("Please update your wget library to download https lines\n\nopkg update\nopkg install wget"), type=MessageBox.TYPE_INFO)
                     else:
                         result = subprocess.run(checkcmd, shell=True)
                         if result.returncode == 0:
-                            if isDreambox:
-                                self.session.open(MessageBox, _("Please update your wget library to download https lines\n\nopkg update\napt-get -y install wget"), type=MessageBox.TYPE_INFO)
-                            else:
-                                self.session.open(MessageBox, _("Please update your wget library to download https lines\n\nopkg update\nopkg install wget"), type=MessageBox.TYPE_INFO)
+                            cmd = "wget --no-check-certificate -U 'Enigma2 - XStreamity Plugin' -c '%s' -O '%s%s'" % (self.url, self.shortpath, filename)
+                        else:
+                            self.session.open(MessageBox, _("Please update your wget library to download https lines\n\nopkg update\nopkg install wget"), type=MessageBox.TYPE_INFO)
 
                 try:
                     JobManager.AddJob(downloadJob(self, cmd, self.path, self.filmtitle), onFail=self.fail)
@@ -523,9 +522,12 @@ class XStreamity_DownloadManager(Screen):
                 except Exception as e:
                     print(e)
 
-        index_to_delete = next((i for i, video in enumerate(self.downloads_all) if str(video[1]) == str(filmtitle)), None)
-        if index_to_delete is not None:
-            del self.downloads_all[index_to_delete]
+        x = 0
+        for video in self.downloads_all:
+            if str(video[1]) == str(filmtitle):
+                break
+            x += 1
+        del self.downloads_all[x]
 
         if ui:
             self.sortlist()
