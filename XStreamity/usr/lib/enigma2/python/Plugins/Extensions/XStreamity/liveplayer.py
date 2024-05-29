@@ -383,7 +383,7 @@ class XStreamity_StreamPlayer(
 
     ALLOW_SUSPEND = True
 
-    def __init__(self, session, streamurl, servicetype, direct_source=None, stream_id=None):
+    def __init__(self, session, streamurl, servicetype, stream_id=None):
         Screen.__init__(self, session)
         self.session = session
 
@@ -406,7 +406,6 @@ class XStreamity_StreamPlayer(
         self.streamurl = streamurl
         self.servicetype = servicetype
         self.originalservicetype = self.servicetype
-        self.direct_source = direct_source
 
         skin = os.path.join(skin_path, "streamplayer.xml")
         with open(skin, "r") as f:
@@ -454,12 +453,12 @@ class XStreamity_StreamPlayer(
             "ok": self.OKButton,
         }, -2)
 
-        self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl, self.direct_source))
+        self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl))
 
     def restartStream(self):
         if self.session:
             self.session.nav.stopService()
-            self.playStream(self.servicetype, self.streamurl, self.direct_source)
+            self.playStream(self.servicetype, self.streamurl)
 
     def OKButton(self):
         self.refreshInfobar()
@@ -680,7 +679,7 @@ class XStreamity_StreamPlayer(
         with open(playlists_json, "w") as f:
             json.dump(self.playlists_all, f)
 
-    def playStream(self, servicetype, streamurl, direct_source):
+    def playStream(self, servicetype, streamurl):
         self["streamcat"].setText("Live")
         self["streamtype"].setText(str(servicetype))
 
@@ -688,8 +687,6 @@ class XStreamity_StreamPlayer(
             self["extension"].setText(str(os.path.splitext(streamurl)[-1]))
         except:
             pass
-
-        streamurl = direct_source if glob.active_playlist["player_info"]["directsource"] == "Direct Source" and direct_source else streamurl
 
         self.reference = eServiceReference(int(servicetype), 0, streamurl)
         self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
@@ -759,7 +756,7 @@ class XStreamity_StreamPlayer(
             self.servicetype = int(next(next_stream_type))
         except:
             pass
-        self.playStream(self.servicetype, self.streamurl, self.direct_source)
+        self.playStream(self.servicetype, self.streamurl)
 
     def downloadImage(self):
         self.loadDefaultImage()
@@ -855,8 +852,7 @@ class XStreamity_StreamPlayer(
             if glob.currentchannellistindex + 1 > list_length:
                 glob.currentchannellistindex = 0
             self.streamurl = glob.currentchannellist[glob.currentchannellistindex][3]
-            self.direct_source = glob.currentchannellist[glob.currentchannellistindex][7]
-            self.playStream(self.servicetype, self.streamurl, self.direct_source)
+            self.playStream(self.servicetype, self.streamurl)
 
     def prev(self):
         self.servicetype = self.originalservicetype
@@ -868,8 +864,7 @@ class XStreamity_StreamPlayer(
                 glob.currentchannellistindex = list_length - 1
 
             self.streamurl = glob.currentchannellist[glob.currentchannellistindex][3]
-            self.direct_source = glob.currentchannellist[glob.currentchannellistindex][7]
-            self.playStream(self.servicetype, self.streamurl, self.direct_source)
+            self.playStream(self.servicetype, self.streamurl)
 
     def nextARfunction(self):
         self.ar_id_player += 1

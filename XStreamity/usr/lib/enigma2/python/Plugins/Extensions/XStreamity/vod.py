@@ -348,8 +348,6 @@ class XStreamity_Categories(Screen):
 
                 year = str(channel.get("year", ""))
 
-                direct_source = str(channel.get("direct_source", ""))
-
                 next_url = "{}/movie/{}/{}/{}.{}".format(self.host, self.username, self.password, stream_id, container_extension)
 
                 favourite = False
@@ -361,7 +359,7 @@ class XStreamity_Categories(Screen):
                 else:
                     glob.active_playlist["player_info"]["vodfavourites"] = []
 
-                self.list2.append([index, str(name), str(stream_id), str(stream_icon), str(added), str(rating), str(next_url), favourite, container_extension, year, hidden, str(direct_source)])
+                self.list2.append([index, str(name), str(stream_id), str(stream_icon), str(added), str(rating), str(next_url), favourite, container_extension, year, hidden])
 
             glob.originalChannelList2 = self.list2[:]
 
@@ -408,9 +406,9 @@ class XStreamity_Categories(Screen):
         self.main_list = []
 
         if self.chosen_category == "favourites":
-            self.main_list = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[10], x[11]) for x in self.list2 if x[7] is True]
+            self.main_list = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[10]) for x in self.list2 if x[7] is True]
         else:
-            self.main_list = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[10], x[11]) for x in self.list2 if x[10] is False]
+            self.main_list = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[10]) for x in self.list2 if x[10] is False]
         self["main_list"].setList(self.main_list)
         self.showVod()
 
@@ -556,10 +554,10 @@ class XStreamity_Categories(Screen):
         searchtitle = re.sub(r'^\|.*?\|', '', searchtitle)
 
         # remove all leading contend between and including ()
-        searchtitle = re.sub(r'^\(\(.*\)\)|^\(.*\)', '', searchtitle)
+        searchtitle = re.sub(r'\(\(.*\)\)|\(.*\)', '', searchtitle)
 
         # remove all leading contend between and including []
-        searchtitle = re.sub(r'^\[\[.*\]\]|^\[.*\]', '', searchtitle)
+        searchtitle = re.sub(r'\[\[.*\]\]|\[.*\]', '', searchtitle)
 
         # List of bad strings to remove
         bad_strings = [
@@ -929,42 +927,42 @@ class XStreamity_Categories(Screen):
         self.selectionChanged()
 
     def sort(self):
-        sort_functions = {
-            _("Sort: A-Z"): lambda x: x[1].lower(),
-            _("Sort: Z-A"): lambda x: x[1].lower(),
-            _("Sort: Added"): lambda x: x[4],
-            _("Sort: Year"): lambda x: x[9],
-            _("Sort: Original"): lambda x: x[0],  # Use original order
-        }
+        current_sort = self["key_yellow"].getText()
+        if not current_sort:
+            return
 
-        if self.level == 1:
-            activelist = self.list1[:]
-            activeoriginal = glob.originalChannelList1[:]
-        else:
-            activelist = self.list2[:]
-            activeoriginal = glob.originalChannelList2[:]
-
-        print("*** self.list2 ***", self.list2)
+        activelist = self.list1 if self.level == 1 else self.list2
 
         if self.level == 1:
             sortlist = [_("Sort: A-Z"), _("Sort: Z-A"), _("Sort: Original")]
         else:
             sortlist = [_("Sort: A-Z"), _("Sort: Z-A"), _("Sort: Added"), _("Sort: Year"), _("Sort: Original")]
 
-        self.sortindex = sortlist.index(self.sortText)
+        for index, item in enumerate(sortlist):
+            if str(item) == str(self.sortText):
+                self.sortindex = index
+                break
 
         if self["main_list"].getCurrent():
             self["main_list"].setIndex(0)
 
-        current_sort = self["key_yellow"].getText()
+        if current_sort == _("Sort: A-Z"):
+            activelist.sort(key=lambda x: x[1].lower(), reverse=False)
 
-        if current_sort == _("Sort: Original"):
-            activelist = activeoriginal
-        else:
-            activelist.sort(key=sort_functions.get(current_sort, lambda x: x))
+        elif current_sort == _("Sort: Z-A"):
+            activelist.sort(key=lambda x: x[1].lower(), reverse=True)
 
-        nextSortType = islice(cycle(sortlist), self.sortindex + 1, None)
-        self.sortText = str(next(nextSortType))
+        elif current_sort == _("Sort: Added"):
+            activelist.sort(key=lambda x: x[4], reverse=True)
+
+        elif current_sort == _("Sort: Year"):
+            activelist.sort(key=lambda x: x[9], reverse=True)
+
+        elif current_sort == _("Sort: Original"):
+            activelist.sort(key=lambda x: x[0], reverse=False)
+
+        next_sort_type = next(islice(cycle(sortlist), self.sortindex + 1, None))
+        self.sortText = str(next_sort_type)
 
         self["key_yellow"].setText(self.sortText)
         glob.nextlist[-1]["sort"] = self["key_yellow"].getText()
@@ -1149,18 +1147,9 @@ class XStreamity_Categories(Screen):
                     next_url = self["main_list"].getCurrent()[3]
                     stream_id = self["main_list"].getCurrent()[4]
 
-                    try:
-                        direct_source = self["main_list"].getCurrent()[10]
-                    except Exception as e:
-                        print(e)
-                        direct_source = ""
-
                     self.reference = eServiceReference(int(streamtype), 0, next_url)
-
-                    if glob.active_playlist["player_info"]["directsource"] == "Direct Source" and direct_source:
-                        self.reference = eServiceReference(int(streamtype), 0, direct_source)
                     self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
-                    self.session.openWithCallback(self.setIndex, vodplayer.XStreamity_VodPlayer, str(next_url), str(streamtype), str(direct_source), stream_id)
+                    self.session.openWithCallback(self.setIndex, vodplayer.XStreamity_VodPlayer, str(next_url), str(streamtype), stream_id)
 
                 else:
                     self.createSetup()
@@ -1412,7 +1401,7 @@ def buildCategoryList(index, title, category_id, hidden):
     return (title, png, index, category_id, hidden)
 
 
-def buildVodStreamList(index, title, stream_id, stream_icon, added, rating, next_url, favourite, container_extension, hidden, direct_source):
+def buildVodStreamList(index, title, stream_id, stream_icon, added, rating, next_url, favourite, container_extension, hidden):
     png = LoadPixmap(os.path.join(common_path, "play.png"))
     if favourite:
         png = LoadPixmap(os.path.join(common_path, "favourite.png"))
@@ -1420,4 +1409,4 @@ def buildVodStreamList(index, title, stream_id, stream_icon, added, rating, next
         if int(stream_id) == int(channel):
             png = LoadPixmap(os.path.join(common_path, "watched.png"))
 
-    return (title, png, index, next_url, stream_id, stream_icon, added, rating, container_extension, hidden, direct_source)
+    return (title, png, index, next_url, stream_id, stream_icon, added, rating, container_extension, hidden)

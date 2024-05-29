@@ -611,16 +611,11 @@ class XStreamity_Categories(Screen):
         self.selectionChanged()
 
     def sort(self):
-        if self.selectedlist == self["epg_short_list"]:
-            self.reverse()
-            return
-
         current_sort = self["key_yellow"].getText()
         if not current_sort or current_sort == _("Reverse"):
             return
 
         activelist = self.list1 if self.level == 1 else self.list2
-        activeoriginal = glob.originalChannelList1 if self.level == 1 else glob.originalChannelList2
 
         sortlist = [_("Sort: A-Z"), _("Sort: Z-A")]
         if self.level == 1:
@@ -647,7 +642,7 @@ class XStreamity_Categories(Screen):
                 activelist.sort(key=lambda x: x[5], reverse=True)
 
         elif current_sort == _("Sort: Original"):
-            activelist[:] = activeoriginal
+            activelist.sort(key=lambda x: x[0], reverse=False)
 
         next_sort_type = next(islice(cycle(sortlist), self.sortindex + 1, None))
         self.sortText = str(next_sort_type)

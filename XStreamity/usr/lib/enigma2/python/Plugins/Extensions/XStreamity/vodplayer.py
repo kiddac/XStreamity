@@ -381,12 +381,12 @@ class XStreamityCueSheetSupport:
         })
 
     def __serviceStarted(self):
-        print("*** service started ***")
+        # print("*** service started ***")
         if self.is_closing:
             return
 
         if self.ENABLE_RESUME_SUPPORT and not self.started:
-            print("*** true ***")
+            # print("*** true ***")
 
             self.started = True
             last = None
@@ -412,7 +412,7 @@ class XStreamityCueSheetSupport:
             if last is None:
                 return
             if (last > 900000) and (not length[1] or (last < length[1] - 900000)):
-                print("*** true 2 ***")
+                # print("*** true 2 ***")
                 self.resume_point = last
                 newlast = last // 90000
                 Notifications.AddNotificationWithCallback(self.playLastCB, MessageBox, _("Do you want to resume this playback?") + "\n" + (_("Resume position at %s") % ("%d:%02d:%02d" % (newlast // 3600, newlast % 3600 // 60, newlast % 60))), MessageBox.TYPE_YESNO, 10)
@@ -451,7 +451,7 @@ class XStreamity_VodPlayer(
     ENABLE_RESUME_SUPPORT = True
     ALLOW_SUSPEND = True
 
-    def __init__(self, session, streamurl, servicetype, direct_source=None, stream_id=None):
+    def __init__(self, session, streamurl, servicetype, stream_id=None):
         Screen.__init__(self, session)
         self.session = session
 
@@ -480,7 +480,6 @@ class XStreamity_VodPlayer(
 
         self.streamurl = streamurl
         self.servicetype = servicetype
-        self.direct_source = direct_source
         self.stream_id = stream_id
 
         skin = os.path.join(skin_path, "vodplayer.xml")
@@ -518,7 +517,7 @@ class XStreamity_VodPlayer(
             "ok": self.refreshInfobar,
         }, -2)
 
-        self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl, self.direct_source))
+        self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl))
 
     def refreshInfobar(self):
         IPTVInfoBarShowHide.OkPressed(self)
@@ -602,7 +601,7 @@ class XStreamity_VodPlayer(
         with open(playlists_json, "w") as f:
             json.dump(self.playlists_all, f)
 
-    def playStream(self, servicetype, streamurl, direct_source):
+    def playStream(self, servicetype, streamurl):
         if cfg.infobarcovers.value is True:
             self.downloadImage()
 
@@ -613,9 +612,6 @@ class XStreamity_VodPlayer(
             self["extension"].setText(str(os.path.splitext(streamurl)[-1]))
         except:
             pass
-
-        if glob.active_playlist["player_info"]["directsource"] == "Direct Source" and direct_source:
-            streamurl = direct_source
 
         self.reference = eServiceReference(int(self.servicetype), 0, streamurl)
         self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
@@ -767,7 +763,7 @@ class XStreamity_VodPlayer(
         except:
             pass
 
-        self.playStream(self.servicetype, self.streamurl, self.direct_source)
+        self.playStream(self.servicetype, self.streamurl)
 
     def nextARfunction(self):
         self.ar_id_player += 1

@@ -535,7 +535,6 @@ class XStreamity_Categories(Screen):
                 title = item.get("title", "").replace(str(shorttitle) + " - ", "")
                 container_extension = item.get("container_extension", "mp4")
                 duration = item.get("info", {}).get("duration", "")
-                direct_source = item.get("direct_source", "")
                 episode_num = item.get("episode_num", 1)
                 tmdb_id = ""
 
@@ -568,7 +567,7 @@ class XStreamity_Categories(Screen):
 
                 next_url = "{}/series/{}/{}/{}.{}".format(self.host, self.username, self.password, stream_id, container_extension)
 
-                self.list4.append([index, str(title), str(stream_id), str(cover), str(plot), str(cast), str(director), str(genre), str(releasedate), str(rating), str(duration), str(container_extension), str(tmdb_id), str(next_url), str(shorttitle), str(last_modified), hidden, str(direct_source), episode_num])
+                self.list4.append([index, str(title), str(stream_id), str(cover), str(plot), str(cast), str(director), str(genre), str(releasedate), str(rating), str(duration), str(container_extension), str(tmdb_id), str(next_url), str(shorttitle), str(last_modified), hidden, episode_num])
                 index += 1
 
             glob.originalChannelList4 = self.list4[:]
@@ -763,10 +762,10 @@ class XStreamity_Categories(Screen):
             searchtitle = re.sub(r'^\|.*?\|', '', searchtitle)
 
             # remove all leading contend between and including ()
-            searchtitle = re.sub(r'^\(\(.*\)\)|^\(.*\)', '', searchtitle)
+            searchtitle = re.sub(r'\(\(.*\)\)|\(.*\)', '', searchtitle)
 
             # remove all leading contend between and including []
-            searchtitle = re.sub(r'^\[\[.*\]\]|^\[.*\]', '', searchtitle)
+            searchtitle = re.sub(r'\[\[.*\]\]|\[.*\]', '', searchtitle)
 
             # List of bad strings to remove
             bad_strings = [
@@ -887,7 +886,7 @@ class XStreamity_Categories(Screen):
             )
 
         elif self.level == 4:
-            self.storedepisode = self["main_list"].getCurrent()[19]
+            self.storedepisode = self["main_list"].getCurrent()[18]
             detailsurl = "http://api.themoviedb.org/3/tv/{}/season/{}/episode/{}?api_key={}&append_to_response=credits{}".format(
                 resultid, self.storedseason, self.storedepisode, self.check(self.token), languagestr
             )
@@ -1180,29 +1179,22 @@ class XStreamity_Categories(Screen):
         self.selectionChanged()
 
     def sort(self):
-        sort_functions = {
-            _("Sort: A-Z"): lambda x: x[1].lower(),
-            _("Sort: Z-A"): lambda x: x[1].lower(),
-            _("Sort: Added"): lambda x: x[4],
-            _("Sort: Year"): lambda x: x[9],
-            _("Sort: Original"): lambda x: x[0],  # Use original order
-        }
+
+        current_sort = self["key_yellow"].getText()
+        if not current_sort:
+            return
 
         if self.level == 1:
             activelist = self.list1[:]
-            activeoriginal = glob.originalChannelList1[:]
 
         elif self.level == 2:
             activelist = self.list2[:]
-            activeoriginal = glob.originalChannelList2[:]
 
         elif self.level == 3:
             activelist = self.list3[:]
-            activeoriginal = glob.originalChannelList3[:]
 
         elif self.level == 4:
             activelist = self.list4[:]
-            activeoriginal = glob.originalChannelList4[:]
 
         if self.level == 1:
             sortlist = [_("Sort: A-Z"), _("Sort: Z-A"), _("Sort: Original")]
@@ -1213,23 +1205,31 @@ class XStreamity_Categories(Screen):
         else:
             sortlist = [_("Sort: A-Z"), _("Sort: Z-A"), _("Sort: Added"), _("Sort: Year"), _("Sort: Original")]
 
-        self.sortindex = sortlist.index(self.sortText)
+        for index, item in enumerate(sortlist):
+            if str(item) == str(self.sortText):
+                self.sortindex = index
+                break
 
         if self["main_list"].getCurrent():
             self["main_list"].setIndex(0)
 
-        current_sort = self["key_yellow"].getText()
+        if current_sort == _("Sort: A-Z"):
+            activelist.sort(key=lambda x: x[1].lower(), reverse=False)
 
-        if current_sort == _("Sort: Original"):
-            activelist = activeoriginal
-        else:
-            activelist.sort(key=sort_functions.get(current_sort, lambda x: x))
+        elif current_sort == _("Sort: Z-A"):
+            activelist.sort(key=lambda x: x[1].lower(), reverse=True)
 
-        nextSortType = islice(cycle(sortlist), self.sortindex + 1, None)
-        self.sortText = str(next(nextSortType))
+        elif current_sort == _("Sort: Added"):
+            activelist.sort(key=lambda x: x[4], reverse=True)
 
-        self["key_yellow"].setText(self.sortText)
-        glob.nextlist[-1]["sort"] = self["key_yellow"].getText()
+        elif current_sort == _("Sort: Year"):
+            activelist.sort(key=lambda x: x[9], reverse=True)
+
+        elif current_sort == _("Sort: Original"):
+            activelist.sort(key=lambda x: x[0], reverse=False)
+
+        next_sort_type = next(islice(cycle(sortlist), self.sortindex + 1, None))
+        self.sortText = str(next_sort_type)
 
         if self.level == 1:
             self.list1 = activelist
@@ -1444,23 +1444,14 @@ class XStreamity_Categories(Screen):
 
             elif self.level == 4:
                 if self.list4:
-                    self.storedepisode = self["main_list"].getCurrent()[19]
+                    self.storedepisode = self["main_list"].getCurrent()[18]
                     streamtype = glob.active_playlist["player_info"]["vodtype"]
                     next_url = self["main_list"].getCurrent()[3]
                     stream_id = self["main_list"].getCurrent()[4]
 
-                    try:
-                        direct_source = self["main_list"].getCurrent()[18]
-                    except Exception as e:
-                        print(e)
-                        direct_source = ""
-
                     self.reference = eServiceReference(int(streamtype), 0, next_url)
-
-                    if glob.active_playlist["player_info"]["directsource"] == "Direct Source" and direct_source:
-                        self.reference = eServiceReference(int(streamtype), 0, direct_source)
                     self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
-                    self.session.openWithCallback(self.setIndex, vodplayer.XStreamity_VodPlayer, str(next_url), str(streamtype), str(direct_source), stream_id)
+                    self.session.openWithCallback(self.setIndex, vodplayer.XStreamity_VodPlayer, str(next_url), str(streamtype), stream_id)
 
                 else:
                     self.createSetup()
@@ -1658,9 +1649,9 @@ def buildSeriesSeasonsList(index, title, series_id, cover, plot, cast, director,
     return (title, png, index, next_url, series_id, cover, plot, cast, director, genre, airDate, rating, season_number, lastmodified, hidden, tmdb)
 
 
-def buildSeriesEpisodesList(index, title, series_id, cover, plot, cast, director, genre, releaseDate, rating, duration, container_extension, tmdb_id, next_url, shorttitle, lastmodified, hidden, direct_source, episode_number):
+def buildSeriesEpisodesList(index, title, series_id, cover, plot, cast, director, genre, releaseDate, rating, duration, container_extension, tmdb_id, next_url, shorttitle, lastmodified, hidden, episode_number):
     png = LoadPixmap(os.path.join(common_path, "play.png"))
     for channel in glob.active_playlist["player_info"]["serieswatched"]:
         if int(series_id) == int(channel):
             png = LoadPixmap(os.path.join(common_path, "watched.png"))
-    return (title, png, index, next_url, series_id, cover, plot, cast, director, genre, releaseDate, rating, duration, container_extension, tmdb_id, shorttitle, lastmodified, hidden, direct_source, episode_number)
+    return (title, png, index, next_url, series_id, cover, plot, cast, director, genre, releaseDate, rating, duration, container_extension, tmdb_id, shorttitle, lastmodified, hidden, episode_number)

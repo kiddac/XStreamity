@@ -3,18 +3,17 @@
 
 from __future__ import division
 
+# Standard library imports
 import base64
 import codecs
-from datetime import datetime, timedelta
-
+import json
+import math
 import os
 import re
-
 import tempfile
 import time
-import json
-import requests
-import math
+from datetime import datetime, timedelta
+from itertools import cycle, islice
 
 try:
     from http.client import HTTPConnection
@@ -28,38 +27,40 @@ try:
 except ImportError:
     from urllib.parse import urlparse
 
+try:
+    from xml.dom import minidom
+except ImportError:
+    pass
+
+# Third-party imports
+import requests
 from PIL import Image, ImageFile, PngImagePlugin
-from itertools import cycle, islice
 from requests.adapters import HTTPAdapter, Retry
 from twisted.web.client import downloadPage
 
+# Enigma2 components
 from Components.ActionMap import ActionMap
+from Components.Label import Label
 from Components.Pixmap import Pixmap
 from Components.ProgressBar import ProgressBar
 from Components.Sources.List import List
-from Components.config import ConfigClock, NoSave, ConfigText
+from Components.config import ConfigClock, ConfigText, NoSave
 from RecordTimer import RecordTimerEntry
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from ServiceReference import ServiceReference
 from Tools.LoadPixmap import LoadPixmap
-from enigma import eTimer, eServiceReference, eEPGCache
+from enigma import eEPGCache, eServiceReference, eTimer
 
+# Local application/library-specific imports
 from . import _
-from .import liveplayer
+from . import liveplayer
 from . import xstreamity_globals as glob
-
-from .plugin import skin_directory, screenwidth, hdr, cfg, common_path, dir_tmp, playlists_json, pythonVer
+from .plugin import cfg, common_path, dir_tmp, hdr, playlists_json, pythonVer, screenwidth, skin_directory
 from .xStaticText import StaticText
 
-try:
-    from xml.dom import minidom
-except:
-    pass
-
-
-# https twisted client hack #
+# HTTPS twisted client hack
 try:
     from twisted.internet import ssl
     from twisted.internet._sslverify import ClientTLSOptions
@@ -134,7 +135,7 @@ class XStreamity_Categories(Screen):
     ALLOW_SUSPEND = True
 
     def __init__(self, session):
-        # print("*** init ***")
+        # print("*** live init ***")
         Screen.__init__(self, session)
         self.session = session
         glob.categoryname = "live"
@@ -150,12 +151,11 @@ class XStreamity_Categories(Screen):
         self.setup_title = _("Live Categories")
         self.main_title = _("Live Streams")
 
-        self["main_title"] = StaticText(self.main_title)
-
+        self["main_title"] = Label(self.main_title)
         self.main_list = []  # displayed list
         self["main_list"] = List(self.main_list, enableWrapAround=True)
 
-        self["x_title"] = StaticText()
+        self["x_title"] = Label()
         self["x_description"] = StaticText()
 
         self["picon"] = Pixmap()
@@ -181,8 +181,8 @@ class XStreamity_Categories(Screen):
         self.xmltv_channel_list = []
 
         # pagination variables
-        self["page"] = StaticText("")
-        self["listposition"] = StaticText("")
+        self["page"] = Label("")
+        self["listposition"] = Label("")
         self.itemsperpage = 10
 
         # self.lastviewed_url = ""
@@ -398,7 +398,6 @@ class XStreamity_Categories(Screen):
                 stream_icon = str(channel.get("stream_icon", ""))
 
                 if stream_icon and stream_icon.startswith("http"):
-
                     if stream_icon.startswith("https://vignette.wikia.nocookie.net/tvfanon6528"):
                         if "scale-to-width-down" not in stream_icon:
                             stream_icon = str(stream_icon) + "/revision/latest/scale-to-width-down/220"
@@ -414,8 +413,6 @@ class XStreamity_Categories(Screen):
                 category_id = str(channel.get("category_id", ""))
                 if self.chosen_category == "all" and str(category_id) in glob.active_playlist["player_info"]["livehidden"]:
                     continue
-
-                direct_source = str(channel.get("direct_source", ""))
 
                 bouquet_id1 = int(stream_id) // 65535
                 bouquet_id2 = int(stream_id) - int(bouquet_id1 * 65535)
@@ -445,12 +442,12 @@ class XStreamity_Categories(Screen):
                     glob.active_playlist["player_info"]["livefavourites"] = []
 
                 self.list2.append([index, str(name), str(stream_id), str(stream_icon), str(epg_channel_id), str(added), str(category_id), str(custom_sid), str(service_ref),
-                                  "", "", "", "", "", "", str(next_url), favourite, False, hidden, str(direct_source)])
+                                  "", "", "", "", "", "", str(next_url), favourite, False, hidden])
 
         glob.originalChannelList2 = self.list2[:]
 
     def downloadApiData(self, url):
-        # print("**** downloadApiData ****")
+        # print("*** downloadApiData ***")
         try:
             retries = Retry(total=3, backoff_factor=1)
             adapter = HTTPAdapter(max_retries=retries)
@@ -520,17 +517,18 @@ class XStreamity_Categories(Screen):
         self.main_list = []
         self.epglist = []
         # index = 0, name = 1, stream_id = 2, stream_icon = 3, epg_channel_id = 4, added = 5, category_id = 6, custom_sid = 7, nowtime = 9
-        # nowTitle = 10, nowDesc = 11, nexttime = 12, nextTitle = 13, nextDesc = 14, next_url = 15, favourite = 16, watching = 17, hidden = 18, direct_source = 19
+        # nowTitle = 10, nowDesc = 11, nexttime = 12, nextTitle = 13, nextDesc = 14, next_url = 15, favourite = 16, watching = 17, hidden = 18
         if self.chosen_category == "favourites":
-            self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18], x[19]) for x in self.list2 if x[16] is True]
-            self.epglist = [buildEPGListEntry(x[0], x[2], x[9], x[10], x[11], x[12], x[13], x[14], x[18], x[19]) for x in self.list2 if x[16] is True]
+            self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18]) for x in self.list2 if x[16] is True]
+            self.epglist = [buildEPGListEntry(x[0], x[2], x[9], x[10], x[11], x[12], x[13], x[14], x[18]) for x in self.list2 if x[16] is True]
         else:
-            self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18], x[19]) for x in self.list2 if x[18] is False]
-            self.epglist = [buildEPGListEntry(x[0], x[2], x[9], x[10], x[11], x[12], x[13], x[14], x[18], x[19]) for x in self.list2 if x[18] is False]
+            self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18]) for x in self.list2 if x[18] is False]
+            self.epglist = [buildEPGListEntry(x[0], x[2], x[9], x[10], x[11], x[12], x[13], x[14], x[18]) for x in self.list2 if x[18] is False]
 
         self["main_list"].setList(self.main_list)
         self["epg_list"].setList(self.epglist)
-        self.showEPG()
+        if self.main_list:
+            self.showEPG()
 
         if self["main_list"].getCurrent() and glob.nextlist[-1]["index"] != 0:
             self["main_list"].setIndex(glob.nextlist[-1]["index"])
@@ -552,6 +550,7 @@ class XStreamity_Categories(Screen):
                 glob.nextlist[-1]["sort"] = self.sortText
 
             self["key_yellow"].setText(_(glob.nextlist[-1]["sort"]))
+
             self["key_menu"].setText("+/-")
 
             if self.chosen_category == "favourites" or self.chosen_category == "recent":
@@ -754,16 +753,12 @@ class XStreamity_Categories(Screen):
 
     def sort(self):
         # print("*** sort ***")
-        if self.selectedlist == self["epg_short_list"]:
-            self.reverse()
-            return
 
         current_sort = self["key_yellow"].getText()
         if not current_sort or current_sort == _("Reverse"):
             return
 
         activelist = self.list1 if self.level == 1 else self.list2
-        activeoriginal = glob.originalChannelList1 if self.level == 1 else glob.originalChannelList2
 
         sortlist = [_("Sort: A-Z"), _("Sort: Z-A")]
         if self.level == 1:
@@ -790,7 +785,7 @@ class XStreamity_Categories(Screen):
                 activelist.sort(key=lambda x: x[5], reverse=True)
 
         elif current_sort == _("Sort: Original"):
-            activelist[:] = activeoriginal
+            activelist.sort(key=lambda x: x[0], reverse=False)
 
         next_sort_type = next(islice(cycle(sortlist), self.sortindex + 1, None))
         self.sortText = str(next_sort_type)
@@ -934,10 +929,10 @@ class XStreamity_Categories(Screen):
     def next(self):
         # print("*** next ***")
         if self["main_list"].getCurrent():
-            currentindex = self["main_list"].getIndex()
-            glob.nextlist[-1]["index"] = currentindex
+            current_index = self["main_list"].getIndex()
+            glob.nextlist[-1]["index"] = current_index
             glob.currentchannellist = self.main_list[:]
-            glob.currentchannellistindex = currentindex
+            glob.currentchannellistindex = current_index
             glob.currentepglist = self.epglist[:]
 
             if self.level == 1:
@@ -977,20 +972,12 @@ class XStreamity_Categories(Screen):
                     next_url = self["main_list"].getCurrent()[3]
                     stream_id = self["main_list"].getCurrent()[4]
 
-                    try:
-                        direct_source = self["main_list"].getCurrent()[7]
-                    except Exception as e:
-                        print(e)
-                        direct_source = ""
-
                     if str(os.path.splitext(next_url)[-1]) == ".m3u8":
                         if streamtype == "1":
                             streamtype = "4097"
 
                     self.reference = eServiceReference(int(streamtype), 0, next_url)
 
-                    if glob.active_playlist["player_info"]["directsource"] == "Direct Source" and direct_source:
-                        self.reference = eServiceReference(int(streamtype), 0, direct_source)
                     self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
 
                     if self.session.nav.getCurrentlyPlayingServiceReference():
@@ -1029,14 +1016,14 @@ class XStreamity_Categories(Screen):
                             except:
                                 pass
 
-                            self.session.openWithCallback(self.setIndex, liveplayer.XStreamity_StreamPlayer, str(next_url), str(streamtype), str(direct_source), stream_id)
+                            self.session.openWithCallback(self.setIndex, liveplayer.XStreamity_StreamPlayer, str(next_url), str(streamtype), stream_id)
                     else:
                         try:
                             self.session.nav.stopService()
                         except:
                             pass
 
-                        self.session.openWithCallback(self.setIndex, liveplayer.XStreamity_StreamPlayer, str(next_url), str(streamtype), str(direct_source), stream_id)
+                        self.session.openWithCallback(self.setIndex, liveplayer.XStreamity_StreamPlayer, str(next_url), str(streamtype), stream_id)
 
                     self["category_actions"].setEnabled(False)
 
@@ -1098,7 +1085,7 @@ class XStreamity_Categories(Screen):
         if not self["main_list"].getCurrent():
             return
 
-        currentindex = self["main_list"].getIndex()
+        current_index = self["main_list"].getIndex()
         favExists = False
         favStream_id = ""
 
@@ -1108,19 +1095,19 @@ class XStreamity_Categories(Screen):
                 favStream_id = fav["stream_id"]
                 break
 
-        self.list2[currentindex][16] = not self.list2[currentindex][16]
+        self.list2[current_index][16] = not self.list2[current_index][16]
 
         if favExists:
             glob.active_playlist["player_info"]["livefavourites"] = [x for x in glob.active_playlist["player_info"]["livefavourites"] if str(x["stream_id"]) != str(favStream_id)]
         else:
             newfavourite = {
-                "name": self.list2[currentindex][1],
-                "stream_id": self.list2[currentindex][2],
-                "stream_icon": self.list2[currentindex][3],
-                "epg_channel_id": self.list2[currentindex][4],
-                "added": self.list2[currentindex][5],
-                "category_id": self.list2[currentindex][6],
-                "custom_sid": self.list2[currentindex][7]
+                "name": self.list2[current_index][1],
+                "stream_id": self.list2[current_index][2],
+                "stream_icon": self.list2[current_index][3],
+                "epg_channel_id": self.list2[current_index][4],
+                "added": self.list2[current_index][5],
+                "category_id": self.list2[current_index][6],
+                "custom_sid": self.list2[current_index][7]
             }
 
             glob.active_playlist["player_info"]["livefavourites"].insert(0, newfavourite)
@@ -1145,7 +1132,7 @@ class XStreamity_Categories(Screen):
             json.dump(self.playlists_all, f)
 
         if self.chosen_category == "favourites":
-            del self.list2[currentindex]
+            del self.list2[current_index]
 
         self.buildLists()
 
@@ -1229,7 +1216,7 @@ class XStreamity_Categories(Screen):
                                 except Exception as e:
                                     print(e)
 
-                    self.epglist = [buildEPGListEntry(x[0], x[1], x[9], x[10], x[11], x[12], x[13], x[14], x[18], x[19]) for x in self.list2 if x[18] is False]
+                    self.epglist = [buildEPGListEntry(x[0], x[1], x[9], x[10], x[11], x[12], x[13], x[14], x[18]) for x in self.list2 if x[18] is False]
                     self["epg_list"].updateList(self.epglist)
 
                     instance = self["epg_list"].master.master.instance
@@ -1440,7 +1427,7 @@ class XStreamity_Categories(Screen):
     def downloadStream(self, limitEvent=True):
         # print("*** downloadstream ***")
         from . import record
-        currentindex = self["main_list"].getIndex()
+        current_index = self["main_list"].getIndex()
 
         begin = int(time.time())
         end = begin + 3600
@@ -1448,28 +1435,28 @@ class XStreamity_Categories(Screen):
         self.date = time.time()
 
         # recording name - programme title = fallback channel name
-        if self.epglist[currentindex][3]:
-            name = self.epglist[currentindex][3]
+        if self.epglist[current_index][3]:
+            name = self.epglist[current_index][3]
         else:
-            name = self.epglist[currentindex][0]
+            name = self.epglist[current_index][0]
 
-        if self.epglist[currentindex][5]:  # end time
-            end_dt = datetime.strptime(str(self.epglist[currentindex][5]), "%H:%M")
+        if self.epglist[current_index][5]:  # end time
+            end_dt = datetime.strptime(str(self.epglist[current_index][5]), "%H:%M")
             end_dt = end_dt.replace(year=dt_now.year, month=dt_now.month, day=dt_now.day)
             end = int(time.mktime(end_dt.timetuple()))
 
         if self.showingshortEPG:
-            currentindex = self["epg_short_list"].getIndex()
+            current_index = self["epg_short_list"].getIndex()
 
-            if self.epgshortlist[currentindex][1]:
-                shortdate_dt = datetime.strptime(self.epgshortlist[currentindex][1], "%a %d/%m")
+            if self.epgshortlist[current_index][1]:
+                shortdate_dt = datetime.strptime(self.epgshortlist[current_index][1], "%a %d/%m")
                 shortdate_dt = shortdate_dt.replace(year=dt_now.year)
                 self.date = int(time.mktime(shortdate_dt.timetuple()))
 
-            if self.epgshortlist[currentindex][2]:
+            if self.epgshortlist[current_index][2]:
 
-                beginstring = self.epgshortlist[currentindex][2].partition(" - ")[0]
-                endstring = self.epgshortlist[currentindex][2].partition(" - ")[-1]
+                beginstring = self.epgshortlist[current_index][2].partition(" - ")[0]
+                endstring = self.epgshortlist[current_index][2].partition(" - ")[-1]
 
                 shortbegin_dt = datetime.strptime(beginstring, "%H:%M")
                 shortbegin_dt = shortbegin_dt.replace(year=dt_now.year, month=shortdate_dt.month, day=shortdate_dt.day)
@@ -1479,8 +1466,8 @@ class XStreamity_Categories(Screen):
                 shortend_dt = shortend_dt.replace(year=dt_now.year, month=shortdate_dt.month, day=shortdate_dt.day)
                 end = int(time.mktime(shortend_dt.timetuple()))
 
-            if self.epgshortlist[currentindex][0]:
-                name = self.epgshortlist[currentindex][0]
+            if self.epgshortlist[current_index][0]:
+                name = self.epgshortlist[current_index][0]
 
         self.name = NoSave(ConfigText(default=name, fixed_size=False))
         self.starttime = NoSave(ConfigClock(default=begin))
@@ -1495,19 +1482,18 @@ class XStreamity_Categories(Screen):
             end = data[2]
             name = data[3]
 
-            currentindex = self["main_list"].getIndex()
+            current_index = self["main_list"].getIndex()
             description = ""
             streamurl = self["main_list"].getCurrent()[3]
-            direct_source = self["main_list"].getCurrent()[7]
             streamtype = 1
 
-            if self.epglist[currentindex][4]:
-                description = self.epglist[currentindex][4]
+            if self.epglist[current_index][4]:
+                description = self.epglist[current_index][4]
 
             if self.showingshortEPG:
-                currentindex = self["epg_short_list"].getIndex()
-                if self.epgshortlist[currentindex][3]:
-                    description = str(self.epgshortlist[currentindex][3])
+                current_index = self["epg_short_list"].getIndex()
+                if self.epgshortlist[current_index][3]:
+                    description = str(self.epgshortlist[current_index][3])
 
             eventid = int(streamurl.rpartition("/")[-1].partition(".")[0])
 
@@ -1515,9 +1501,6 @@ class XStreamity_Categories(Screen):
                 streamtype = 4097
 
             self.reference = eServiceReference(streamtype, 0, streamurl)
-            if glob.active_playlist["player_info"]["directsource"] == "Direct Source":
-                if direct_source:
-                    self.reference = eServiceReference(streamtype, 0, direct_source)
 
             # switch channel to prevent multi active users
             if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString():
@@ -1619,6 +1602,7 @@ class XStreamity_Categories(Screen):
             sourcecat = root.find("sourcecat")
 
             exists = any(channelpath in sourceitem.attrib["channels"] for sourceitem in sourcecat)
+
             if not exists:
                 source = ET.SubElement(sourcecat, "source", type="gen_xmltv", nocheck="1", channels=channelpath)
                 description = ET.SubElement(source, "description")
@@ -1700,8 +1684,8 @@ class XStreamity_Categories(Screen):
         self.addEPG()
 
 
-def buildEPGListEntry(index, title, epgNowTime, epgNowTitle, epgNowDesc, epgNextTime, epgNextTitle, epgNextDesc, hidden, direct_source):
-    return (title, index, epgNowTime, epgNowTitle, epgNowDesc, epgNextTime, epgNextTitle, epgNextDesc, hidden, direct_source)
+def buildEPGListEntry(index, title, epgNowTime, epgNowTitle, epgNowDesc, epgNextTime, epgNextTitle, epgNextDesc, hidden):
+    return (title, index, epgNowTime, epgNowTitle, epgNowDesc, epgNextTime, epgNextTitle, epgNextDesc, hidden)
 
 
 def buildShortEPGListEntry(date_all, time_all, title, description, index, start_datetime, end_datetime):
@@ -1713,10 +1697,10 @@ def buildCategoryList(index, title, category_id, hidden):
     return (title, png, index, category_id, hidden)
 
 
-def buildLiveStreamList(index, name, stream_id, stream_icon, next_url, favourite, watching, hidden, direct_source):
+def buildLiveStreamList(index, name, stream_id, stream_icon, next_url, favourite, watching, hidden):
     png = LoadPixmap(os.path.join(common_path, "play.png"))
     if favourite:
         png = LoadPixmap(os.path.join(common_path, "favourite.png"))
     if watching:
         png = LoadPixmap(os.path.join(common_path, "watching.png"))
-    return (name, png, index, next_url, stream_id, stream_icon, hidden, direct_source)
+    return (name, png, index, next_url, stream_id, stream_icon, hidden)

@@ -357,7 +357,7 @@ class StartDelay:
 
 
 def bootstart(reason, **kwargs):
-    print("*** bootstart ***")
+    # print("*** bootstart ***")
     global glb_session
     global glb_startDelay
     if reason == 0 and "session" in kwargs:

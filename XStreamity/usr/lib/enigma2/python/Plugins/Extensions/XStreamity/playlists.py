@@ -175,7 +175,7 @@ class XStreamity_Playlists(Screen):
 
         if hasConcurrent or hasMultiprocessing:
             if hasConcurrent:
-                print("******* trying concurrent futures ******")
+                # print("******* trying concurrent futures ******")
                 try:
                     from concurrent.futures import ThreadPoolExecutor
                     with ThreadPoolExecutor(max_workers=threads) as executor:
@@ -201,7 +201,7 @@ class XStreamity_Playlists(Screen):
                     self.playlists_all[index]["user_info"] = {}
 
         else:
-            print("********** trying sequential download *******")
+            # print("********** trying sequential download *******")
             for url in self.url_list:
                 result = self.download_url(url)
                 index = result[0]

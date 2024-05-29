@@ -88,7 +88,6 @@ def process_files():
         epgoffset = 0
         epgalternative = False
         epgalternativeurl = ""
-        directsource = "Standard"
         customsids = False
         fail_count = 0
 
@@ -168,7 +167,6 @@ def process_files():
                                 "vodrecents": vodrecents,
                                 "vodwatched": vodwatched,
                                 "serieswatched": serieswatched,
-                                "directsource": directsource
                             },
                             "data": {
                                 "live_streams": live_streams,
@@ -245,7 +243,6 @@ def process_files():
                         ("epgoffset", epgoffset),
                         ("epgalternative", epgalternative),
                         ("epgalternativeurl", epgalternativeurl),
-                        ("directsource", directsource),
                     ]),
 
                     "data": {

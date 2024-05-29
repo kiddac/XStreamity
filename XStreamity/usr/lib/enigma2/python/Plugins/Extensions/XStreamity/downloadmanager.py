@@ -150,6 +150,7 @@ class XStreamity_DownloadManager(Screen):
 
         self.list = []
         self.drawList = []
+        self.downloads_all = []
 
         self.progress = 0
         self.timerDisplay = eTimer()
@@ -200,15 +201,17 @@ class XStreamity_DownloadManager(Screen):
         self.stopDownloads()
 
     def readJsonFile(self):
+        self.downloads_all = []
         if os.path.isfile(downloads_json):
             try:
                 with open(downloads_json, "r") as f:
                     self.downloads_all = json.load(f)
             except Exception as e:
                 print("Error reading JSON file:", e)
+                with open(downloads_json, "w") as f:
+                    json.dump(self.downloads_all, f)
         else:
             print("Downloads JSON file does not exist. Creating...")
-            self.downloads_all = []
             with open(downloads_json, "w") as f:
                 json.dump(self.downloads_all, f)
 

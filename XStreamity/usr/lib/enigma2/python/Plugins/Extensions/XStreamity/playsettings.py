@@ -114,7 +114,6 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.epgoffset = player_info.get("epgoffset", 0)
         self.epgalternative = player_info.get("epgalternative", False)
         self.epgalternativeurl = player_info.get("epgalternativeurl", "")
-        self.directsource = player_info.get("directsource", "Standard")
 
         self.nameCfg = NoSave(ConfigText(default=self.name, fixed_size=False))
         self.outputCfg = NoSave(ConfigSelection(default=self.output, choices=[("ts", "ts"), ("m3u8", "m3u8")]))
@@ -127,7 +126,6 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.epgoffsetCfg = NoSave(ConfigSelectionNumber(-9, 9, 1, default=self.epgoffset, wraparound=True))
         self.epgalternativeCfg = NoSave(ConfigYesNo(default=self.epgalternative))
         self.epgalternativeurlCfg = NoSave(ConfigText(default=self.epgalternativeurl, fixed_size=False))
-        self.directsourceCfg = NoSave(ConfigSelection(default=self.directsource, choices=[("Standard", "Standard"), ("Direct Source", "Direct Source")]))
 
         self.createSetup()
 
@@ -148,7 +146,6 @@ class XStreamity_Settings(ConfigListScreen, Screen):
             self.list.append(getConfigListEntry(_("Stream Type VOD/SERIES:"), self.vodTypeCfg))
 
         self.list.extend([
-            getConfigListEntry(_("Stream Source URL:"), self.directsourceCfg),
             getConfigListEntry(_("EPG offset:"), self.epgoffsetCfg),
             getConfigListEntry(_("Use alternative EPG url:"), self.epgalternativeCfg)
         ])
@@ -254,7 +251,6 @@ class XStreamity_Settings(ConfigListScreen, Screen):
             epgoffset = int(self.epgoffsetCfg.value)
             epgalternative = self.epgalternativeCfg.value
             epgalternativeurl = self.epgalternativeurlCfg.value
-            directsource = self.directsourceCfg.value
 
             playlist_info["name"] = self.name
             playlist_info["output"] = output
@@ -267,7 +263,6 @@ class XStreamity_Settings(ConfigListScreen, Screen):
             player_info["epgoffset"] = epgoffset
             player_info["epgalternative"] = epgalternative
             player_info["epgalternativeurl"] = epgalternativeurl
-            player_info["directsource"] = directsource
 
             playlistline = "{}/get.php?username={}&password={}&type={}&output={}&timeshift={} #{}".format(
                 self.host, self.username, self.password, self.listtype, output, epgoffset, self.name)

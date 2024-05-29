@@ -293,5 +293,5 @@ class XStreamity_Update:
                             yield channel.lower(), start, stop, title, desc
                     elem.clear()
         except Exception as e:
-            print("*** Error processing XML file: {} ***".format(fileobj))
+            # print("*** Error processing XML file: {} ***".format(fileobj))
             print(e)
