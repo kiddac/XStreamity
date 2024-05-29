@@ -151,11 +151,11 @@ class XStreamity_Categories(Screen):
         self.setup_title = _("Live Categories")
         self.main_title = _("Live Streams")
 
-        self["main_title"] = Label(self.main_title)
+        self["main_title"] = StaticText(self.main_title)
         self.main_list = []  # displayed list
         self["main_list"] = List(self.main_list, enableWrapAround=True)
 
-        self["x_title"] = Label()
+        self["x_title"] = StaticText()
         self["x_description"] = StaticText()
 
         self["picon"] = Pixmap()
@@ -181,8 +181,8 @@ class XStreamity_Categories(Screen):
         self.xmltv_channel_list = []
 
         # pagination variables
-        self["page"] = Label("")
-        self["listposition"] = Label("")
+        self["page"] = StaticText("")
+        self["listposition"] = StaticText("")
         self.itemsperpage = 10
 
         # self.lastviewed_url = ""
