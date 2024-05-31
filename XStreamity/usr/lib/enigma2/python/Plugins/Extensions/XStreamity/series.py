@@ -634,7 +634,7 @@ class XStreamity_Categories(Screen):
     def buildEpisodes(self):
         # print("*** buildEpisodes ***")
         if self.list4:
-            self.main_list = [buildSeriesEpisodesList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9], x[10], x[11], x[12], x[13], x[14], x[15], x[16], x[17], x[18]) for x in self.list4 if not x[16]]
+            self.main_list = [buildSeriesEpisodesList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9], x[10], x[11], x[12], x[13], x[14], x[15], x[16], x[17]) for x in self.list4 if not x[16]]
             self["main_list"].setList(self.main_list)
 
         if self["main_list"].getCurrent() and glob.nextlist[-1]["index"] != 0:
