@@ -509,7 +509,7 @@ class XStreamity_Categories(Screen):
 
         if response:
             currentChannelList = response.get("info", {})
-            episodes = response.get("episodes", [])
+            episodes = response.get("episodes", {})
             seasons = currentChannelList.get("seasons", [])
             tmdb_id = currentChannelList.get("tmdb", tmdb_id)
             shorttitle = currentChannelList.get("name", currentChannelList.get("title", shorttitle))
@@ -526,49 +526,50 @@ class XStreamity_Categories(Screen):
             if self.isdict is False:
                 season_number = int(self.storedseason)
 
-            for item in episodes.get((season_number), []):
-                if "id" in item:
-                    stream_id = item["id"]
-                else:
-                    # Skip this item if "id" key is missing
-                    continue
-                title = item.get("title", "").replace(str(shorttitle) + " - ", "")
-                container_extension = item.get("container_extension", "mp4")
-                duration = item.get("info", {}).get("duration", "")
-                episode_num = item.get("episode_num", 1)
-                tmdb_id = ""
+            if episodes:
+                for item in episodes.get((season_number), []):
+                    if "id" in item:
+                        stream_id = item["id"]
+                    else:
+                        # Skip this item if "id" key is missing
+                        continue
+                    title = item.get("title", "").replace(str(shorttitle) + " - ", "")
+                    container_extension = item.get("container_extension", "mp4")
+                    duration = item.get("info", {}).get("duration", "")
+                    episode_num = item.get("episode_num", 1)
+                    tmdb_id = ""
 
-                if "info" in item:
-                    info = item["info"]
-                    plot = info.get("plot", plot)
-                    rating = info.get("rating", rating)
-                    releasedate = info.get("releaseDate", info.get("release_date", releasedate))
+                    if "info" in item:
+                        info = item["info"]
+                        plot = info.get("plot", plot)
+                        rating = info.get("rating", rating)
+                        releasedate = info.get("releaseDate", info.get("release_date", releasedate))
 
-                for season in seasons:
-                    if int(season.get("season_number")) == int(self.storedseason):
-                        cover = season.get("cover_big", season.get("cover", cover))
-                        break
+                    for season in seasons:
+                        if int(season.get("season_number")) == int(self.storedseason):
+                            cover = season.get("cover_big", season.get("cover", cover))
+                            break
 
-                cover = cover.replace(r"\/", "/")
-                if cover and cover.startswith("http"):
-                    if cover == "https://image.tmdb.org/t/p/w600_and_h900_bestv2":
+                    cover = cover.replace(r"\/", "/")
+                    if cover and cover.startswith("http"):
+                        if cover == "https://image.tmdb.org/t/p/w600_and_h900_bestv2":
+                            cover = ""
+
+                        if cover.startswith("https://image.tmdb.org/t/p/") or cover.startswith("http://image.tmdb.org/t/p/"):
+                            dimensions = cover.partition("/p/")[2].partition("/")[0]
+                            if screenwidth.width() <= 1280:
+                                cover = cover.replace(dimensions, "w300")
+                            else:
+                                cover = cover.replace(dimensions, "w400")
+                    else:
                         cover = ""
 
-                    if cover.startswith("https://image.tmdb.org/t/p/") or cover.startswith("http://image.tmdb.org/t/p/"):
-                        dimensions = cover.partition("/p/")[2].partition("/")[0]
-                        if screenwidth.width() <= 1280:
-                            cover = cover.replace(dimensions, "w300")
-                        else:
-                            cover = cover.replace(dimensions, "w400")
-                else:
-                    cover = ""
+                    hidden = str(stream_id) in glob.active_playlist["player_info"]["seriesepisodeshidden"]
 
-                hidden = str(stream_id) in glob.active_playlist["player_info"]["seriesepisodeshidden"]
+                    next_url = "{}/series/{}/{}/{}.{}".format(self.host, self.username, self.password, stream_id, container_extension)
 
-                next_url = "{}/series/{}/{}/{}.{}".format(self.host, self.username, self.password, stream_id, container_extension)
-
-                self.list4.append([index, str(title), str(stream_id), str(cover), str(plot), str(cast), str(director), str(genre), str(releasedate), str(rating), str(duration), str(container_extension), str(tmdb_id), str(next_url), str(shorttitle), str(last_modified), hidden, episode_num])
-                index += 1
+                    self.list4.append([index, str(title), str(stream_id), str(cover), str(plot), str(cast), str(director), str(genre), str(releasedate), str(rating), str(duration), str(container_extension), str(tmdb_id), str(next_url), str(shorttitle), str(last_modified), hidden, episode_num])
+                    index += 1
 
             glob.originalChannelList4 = self.list4[:]
 
