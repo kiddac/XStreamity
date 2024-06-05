@@ -15,7 +15,7 @@ from xml.etree.cElementTree import iterparse
 import twisted.python.runtime
 from twisted.web.client import downloadPage
 from . import xstreamity_globals as glob
-from .plugin import playlists_json, pythonVer, cfg, hdr
+from .plugin import playlists_json, pythonVer, cfg
 
 from requests.adapters import HTTPAdapter, Retry
 
@@ -82,6 +82,9 @@ def get_time_utc(timestring, fdateparse):
     except Exception as e:
         print("[XMLTVConverter] get_time_utc error:", e)
         return 0
+
+
+hdr = {'User-Agent': str(cfg.useragent.value)}
 
 
 class XStreamity_Update:

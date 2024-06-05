@@ -47,7 +47,7 @@ from . import _
 from . import vodplayer
 from . import xstreamity_globals as glob
 
-from .plugin import skin_directory, screenwidth, hdr, cfg, common_path, dir_tmp, playlists_json, downloads_json, pythonVer
+from .plugin import skin_directory, screenwidth, cfg, common_path, dir_tmp, playlists_json, downloads_json, pythonVer
 from .xStaticText import StaticText
 
 # https twisted client hack #
@@ -68,6 +68,9 @@ if sslverify:
             if self.hostname:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
+
+
+hdr = {'User-Agent': str(cfg.useragent.value)}
 
 
 class XStreamity_Categories(Screen):
