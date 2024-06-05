@@ -9,7 +9,7 @@
 from __future__ import division
 
 from . import _
-from .plugin import skin_directory, downloads_json, cfg, pythonVer, hdr
+from .plugin import skin_directory, downloads_json, cfg, pythonVer
 from .xStaticText import StaticText
 from .Task import job_manager as JobManager
 from .Task import Task, Job
@@ -56,6 +56,9 @@ def convert_size(size_bytes):
     p = math.pow(1024, i)
     s = round(size_bytes / p, 2)
     return "%s %s" % (s, size_name[i])
+
+
+hdr = {'User-Agent': str(cfg.useragent.value)}
 
 
 class downloadJob(Job):

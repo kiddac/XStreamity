@@ -50,7 +50,7 @@ from enigma import eTimer, eServiceReference
 from . import _
 from . import catchupplayer
 from . import xstreamity_globals as glob
-from .plugin import skin_directory, screenwidth, hdr, cfg, common_path, dir_tmp, downloads_json, pythonVer
+from .plugin import skin_directory, screenwidth, cfg, common_path, dir_tmp, downloads_json, pythonVer
 from .xStaticText import StaticText
 
 
@@ -123,6 +123,8 @@ def _mypreinit():
 Image.preinit = _mypreinit
 
 epgimporter = os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/EPGImport")
+
+hdr = {'User-Agent': str(cfg.useragent.value)}
 
 
 class XStreamity_Categories(Screen):
@@ -285,7 +287,7 @@ class XStreamity_Categories(Screen):
 
         currentPlaylist = glob.active_playlist
         currentCategoryList = currentPlaylist.get("data", {}).get("live_categories", [])
-        currentHidden = set(currentPlaylist.get("player_info", {}).get("livehidden", []))
+        currentHidden = set(currentPlaylist.get("player_info", {}).get("catchuphidden", []))
 
         hidden = "0" in currentHidden
 
@@ -297,7 +299,7 @@ class XStreamity_Categories(Screen):
             if "tv_archive" in x and str(x["tv_archive"]) == "1"
             and "tv_archive_duration" in x
             and str(x["tv_archive_duration"]) != "0"
-            and x["category_id"] not in glob.active_playlist["player_info"]["livehidden"]
+            and x["category_id"] not in glob.active_playlist["player_info"]["catchuphidden"]
         ]
 
         if archivelist:

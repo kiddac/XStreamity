@@ -5,7 +5,7 @@ from __future__ import division
 
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import skin_directory, playlists_json, hdr, playlist_file, cfg, common_path, version, hasConcurrent, hasMultiprocessing
+from .plugin import skin_directory, playlists_json, playlist_file, cfg, common_path, version, hasConcurrent, hasMultiprocessing
 from .xStaticText import StaticText
 from . import checkinternet
 
@@ -35,6 +35,8 @@ except ImportError:
     HTTPConnection.debuglevel = 0
 
 epgimporter = os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/EPGImport")
+
+hdr = {'User-Agent': str(cfg.useragent.value)}
 
 
 class XStreamity_Playlists(Screen):

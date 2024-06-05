@@ -3,7 +3,7 @@
 
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import skin_directory, hdr, common_path, playlists_json, hasConcurrent, hasMultiprocessing, cfg
+from .plugin import skin_directory, common_path, playlists_json, hasConcurrent, hasMultiprocessing, cfg
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -27,6 +27,8 @@ try:
 except:
     from httplib import HTTPConnection
     HTTPConnection.debuglevel = 0
+
+hdr = {'User-Agent': str(cfg.useragent.value)}
 
 
 class XStreamity_Menu(Screen):

@@ -8,7 +8,7 @@ import requests
 from requests.adapters import HTTPAdapter, Retry
 
 from . import _
-from .plugin import skin_directory, playlist_file, hdr, cfg, playlists_json
+from .plugin import skin_directory, playlist_file, cfg, playlists_json
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -24,6 +24,8 @@ try:
 except ImportError:
     from httplib import HTTPConnection
     HTTPConnection.debuglevel = 0
+
+hdr = {'User-Agent': str(cfg.useragent.value)}
 
 
 class XStreamity_AddServer(ConfigListScreen, Screen):

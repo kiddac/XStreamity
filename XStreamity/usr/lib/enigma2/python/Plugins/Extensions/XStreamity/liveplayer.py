@@ -15,7 +15,7 @@ from itertools import cycle, islice
 from PIL import Image, ImageFile, PngImagePlugin
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import cfg, common_path, dir_tmp, hdr, playlists_json, pythonVer, screenwidth, skin_directory
+from .plugin import cfg, common_path, dir_tmp, playlists_json, pythonVer, screenwidth, skin_directory
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -182,6 +182,9 @@ def clear_caches():
             drop_caches.write("1\n2\n3\n")
     except IOError:
         pass
+
+
+hdr = {'User-Agent': str(cfg.useragent.value)}
 
 
 class IPTVInfoBarShowHide():

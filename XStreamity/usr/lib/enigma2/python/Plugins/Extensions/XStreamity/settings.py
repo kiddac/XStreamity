@@ -142,6 +142,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
     def initConfig(self):
         self.cfg_skin = getConfigListEntry(_("Select skin"), cfg.skin)
+        self.cfg_useragent = getConfigListEntry(_("Select fake web user-agent"), cfg.useragent)
         self.cfg_location = getConfigListEntry(_("playlists.txt location") + _(" *Restart GUI Required"), cfg.location)
         self.cfg_epglocation = getConfigListEntry(_("EPG download location"), cfg.epglocation)
         self.cfg_downloadlocation = getConfigListEntry(_("VOD download folder"), cfg.downloadlocation)
@@ -177,6 +178,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
     def createSetup(self):
         config_entries = [
             self.cfg_skin,
+            self.cfg_useragent,
             self.cfg_location,
             self.cfg_epglocation,
             self.cfg_downloadlocation,

@@ -40,7 +40,7 @@ from twisted.web.client import downloadPage
 
 # Enigma2 components
 from Components.ActionMap import ActionMap
-from Components.Label import Label
+# from Components.Label import Label
 from Components.Pixmap import Pixmap
 from Components.ProgressBar import ProgressBar
 from Components.Sources.List import List
@@ -57,7 +57,7 @@ from enigma import eEPGCache, eServiceReference, eTimer
 from . import _
 from . import liveplayer
 from . import xstreamity_globals as glob
-from .plugin import cfg, common_path, dir_tmp, hdr, playlists_json, pythonVer, screenwidth, skin_directory
+from .plugin import cfg, common_path, dir_tmp, playlists_json, pythonVer, screenwidth, skin_directory
 from .xStaticText import StaticText
 
 # HTTPS twisted client hack
@@ -129,6 +129,8 @@ def _mypreinit():
 Image.preinit = _mypreinit
 
 epgimporter = os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/EPGImport")
+
+hdr = {'User-Agent': str(cfg.useragent.value)}
 
 
 class XStreamity_Categories(Screen):

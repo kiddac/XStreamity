@@ -47,7 +47,7 @@ from . import _
 from . import vodplayer
 from . import xstreamity_globals as glob
 
-from .plugin import skin_directory, screenwidth, hdr, cfg, common_path, dir_tmp, playlists_json, downloads_json, pythonVer
+from .plugin import skin_directory, screenwidth, cfg, common_path, dir_tmp, playlists_json, downloads_json, pythonVer
 from .xStaticText import StaticText
 
 # https twisted client hack #
@@ -68,6 +68,8 @@ if sslverify:
             if self.hostname:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
+
+hdr = {'User-Agent': str(cfg.useragent.value)}
 
 
 class XStreamity_Categories(Screen):
@@ -1186,16 +1188,16 @@ class XStreamity_Categories(Screen):
             return
 
         if self.level == 1:
-            activelist = self.list1[:]
+            activelist = self.list1
 
         elif self.level == 2:
-            activelist = self.list2[:]
+            activelist = self.list2
 
         elif self.level == 3:
-            activelist = self.list3[:]
+            activelist = self.list3
 
         elif self.level == 4:
-            activelist = self.list4[:]
+            activelist = self.list4
 
         if self.level == 1:
             sortlist = [_("Sort: A-Z"), _("Sort: Z-A"), _("Sort: Original")]
@@ -1231,6 +1233,9 @@ class XStreamity_Categories(Screen):
 
         next_sort_type = next(islice(cycle(sortlist), self.sortindex + 1, None))
         self.sortText = str(next_sort_type)
+
+        self["key_yellow"].setText(self.sortText)
+        glob.nextlist[-1]["sort"] = self["key_yellow"].getText()
 
         if self.level == 1:
             self.list1 = activelist

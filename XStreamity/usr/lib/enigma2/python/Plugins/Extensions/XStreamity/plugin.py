@@ -79,7 +79,14 @@ languages = [
     ("sq-AL", "shqip")
 ]
 
+useragents = [
+    ("Enigma2 - XStreamity Plugin", "XStreamity"),
+    ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36", "Chrome 124"),
+    ("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0", "Firefox 125"),
+    ("Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.6422.165 Mobile Safari/537.36", "Android")
+]
 
+"""
 def defaultMoviePath():
     result = config.usage.default_path.value
     if not isdir(result):
@@ -94,6 +101,7 @@ if not isdir(config.movielist.last_videodir.value):
         config.movielist.last_videodir.save()
     except:
         pass
+        """
 
 # Configurations initialization
 config.plugins.XStreamity = ConfigSubsection()
@@ -118,6 +126,7 @@ if os.path.exists("/usr/bin/apt-get"):
 cfg.livetype = ConfigSelection(default="4097", choices=live_streamtype_choices)
 cfg.vodtype = ConfigSelection(default="4097", choices=vod_streamtype_choices)
 
+"""
 try:
     newdownloadlocation = cfg.downloadlocation.value
     if newdownloadlocation:
@@ -127,6 +136,25 @@ try:
 except Exception as e:
     print(e)
     cfg.downloadlocation = ConfigDirectory(default=config.movielist.last_videodir.value)
+    """
+
+try:
+    result = cfg.downloadlocation.value
+except:
+    result = ""
+if not isdir(result):
+    possible_locations = [
+        "/media/hdd/movie/",
+        "/media/usb/movie/",
+        config.usage.default_path.value,
+        config.movielist.last_videodir.value
+    ]
+
+    result = next((path for path in possible_locations if os.path.exists(path)), None)
+    if result is None:
+        result = config.movielist.last_videodir.value
+
+cfg.downloadlocation = ConfigDirectory(default=result)
 
 cfg.epglocation = ConfigDirectory(default="/etc/enigma2/xstreamity/epg/")
 cfg.location = ConfigDirectory(default=dir_etc)
@@ -154,8 +182,10 @@ cfg.channelpicons = ConfigYesNo(default=True)
 cfg.infobarpicons = ConfigYesNo(default=True)
 cfg.channelcovers = ConfigYesNo(default=True)
 cfg.infobarcovers = ConfigYesNo(default=True)
-
 cfg.boot = ConfigYesNo(default=False)
+
+cfg.useragent = ConfigSelection(default="Enigma2 - XStreamity Plugin", choices=useragents)
+
 # Set default file paths
 playlist_file = os.path.join(dir_etc, "playlists.txt")
 playlists_json = os.path.join(dir_etc, "x-playlists.json")
@@ -184,9 +214,9 @@ else:
 
 font_folder = os.path.join(dir_plugins, "fonts/")
 
-# hdr = {"User-Agent": "Enigma2 - XStreamity Plugin"}
+hdr = {"User-Agent": "Enigma2 - XStreamity Plugin"}
 # hdr = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0"}
-hdr = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"}
+# hdr = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"}
 
 # create folder for working files
 if not os.path.exists(dir_etc):
