@@ -86,23 +86,6 @@ useragents = [
     ("Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.6422.165 Mobile Safari/537.36", "Android")
 ]
 
-"""
-def defaultMoviePath():
-    result = config.usage.default_path.value
-    if not isdir(result):
-        from Tools import Directories
-        return Directories.defaultRecordingLocation(config.usage.default_path.value)
-    return result
-
-
-if not isdir(config.movielist.last_videodir.value):
-    try:
-        config.movielist.last_videodir.value = defaultMoviePath()
-        config.movielist.last_videodir.save()
-    except:
-        pass
-        """
-
 # Configurations initialization
 config.plugins.XStreamity = ConfigSubsection()
 cfg = config.plugins.XStreamity
@@ -126,32 +109,23 @@ if os.path.exists("/usr/bin/apt-get"):
 cfg.livetype = ConfigSelection(default="4097", choices=live_streamtype_choices)
 cfg.vodtype = ConfigSelection(default="4097", choices=vod_streamtype_choices)
 
-"""
-try:
-    newdownloadlocation = cfg.downloadlocation.value
-    if newdownloadlocation:
-        cfg.downloadlocation = ConfigDirectory(default=newdownloadlocation)
-    else:
-        cfg.downloadlocation = ConfigDirectory(default=config.movielist.last_videodir.value)
-except Exception as e:
-    print(e)
-    cfg.downloadlocation = ConfigDirectory(default=config.movielist.last_videodir.value)
-    """
 
 try:
     result = cfg.downloadlocation.value
 except:
     result = ""
-if not isdir(result):
-    possible_locations = [
-        "/media/hdd/movie/",
-        "/media/usb/movie/",
-        config.usage.default_path.value,
-        config.movielist.last_videodir.value
-    ]
 
-    result = next((path for path in possible_locations if os.path.exists(path)), None)
-    if result is None:
+if not result:
+    try:
+        if isdir("/media/hdd/movie/"):
+            result = "/media/hdd/movie/"
+        elif isdir("/media/usb/movie/"):
+            result = "/media/usb/movie/"
+        elif isdir(config.usage.instantrec_path.value):
+            result = config.usage.instantrec_path.value
+        else:
+            result = config.movielist.last_videodir.value
+    except:
         result = config.movielist.last_videodir.value
 
 cfg.downloadlocation = ConfigDirectory(default=result)
