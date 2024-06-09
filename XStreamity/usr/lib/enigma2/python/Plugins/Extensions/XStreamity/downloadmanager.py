@@ -362,7 +362,7 @@ class XStreamity_DownloadManager(Screen):
 
     def sortlist(self):
         order = {"In progress": 0, "Waiting": 1, "Not Started": 2}
-        self.downloads_all.sort(key=lambda x: order.get(x[3], 3))  # Use get() with a default value of 3 for unmatched states
+        self.downloads_all.sort(key=lambda x: order[x[3]])
 
     def getprogress(self):
         jobs = JobManager.getPendingJobs()
@@ -388,11 +388,13 @@ class XStreamity_DownloadManager(Screen):
             json.dump(self.downloads_all, f)
 
     def selectionChanged(self):
-        current_item = self["downloadlist"].getCurrent()
-        if current_item:
-            state = current_item[3]
-            self["key_green"].setText(_("Cancel") if state != _("Not Started") else _("Download"))
-            self["key_blue"].setText("") if state != _("Not Started") else _("Remove")
+        if self["downloadlist"].getCurrent():
+            if self["downloadlist"].getCurrent()[3] != _("Not Started"):
+                self["key_green"].setText(_("Cancel"))
+                self["key_blue"].setText("")
+            else:
+                self["key_green"].setText(_("Download"))
+                self["key_blue"].setText(_("Remove"))
 
     def keyCancel(self, answer=None):
         global ui
