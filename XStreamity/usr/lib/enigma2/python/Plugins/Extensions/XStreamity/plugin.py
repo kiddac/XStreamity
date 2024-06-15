@@ -187,6 +187,10 @@ else:
     cfg.save()
 
 font_folder = os.path.join(dir_plugins, "fonts/")
+addFont(os.path.join(font_folder, "m-plus-rounded-1c-regular.ttf"), "xstreamityregular", 100, 0)
+addFont(os.path.join(font_folder, "m-plus-rounded-1c-medium.ttf"), "xstreamitybold", 100, 0)
+addFont(os.path.join(font_folder, "slyk-medium.ttf"), "slykregular", 100, 0)
+addFont(os.path.join(font_folder, "slyk-bold.ttf"), "slykbold", 100, 0)
 
 hdr = {"User-Agent": "Enigma2 - XStreamity Plugin"}
 # hdr = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0"}
@@ -371,11 +375,6 @@ def bootstart(reason, **kwargs):
 
 
 def Plugins(**kwargs):
-    addFont(os.path.join(font_folder, "m-plus-rounded-1c-regular.ttf"), "xstreamityregular", 100, 0)
-    addFont(os.path.join(font_folder, "m-plus-rounded-1c-medium.ttf"), "xstreamitybold", 100, 0)
-    addFont(os.path.join(font_folder, "slyk-medium.ttf"), "slykregular", 100, 0)
-    addFont(os.path.join(font_folder, "slyk-bold.ttf"), "slykbold", 100, 0)
-
     iconFile = "icons/plugin-icon_sd.png"
     if screenwidth.width() > 1280:
         iconFile = "icons/plugin-icon.png"
