@@ -633,7 +633,7 @@ class XStreamity_Categories(Screen):
         searchtitle = bad_suffix_pattern.sub('', searchtitle)
 
         # Replace ".", "_", "'" with " "
-        searchtitle = re.sub(r'[._\']', ' ', searchtitle)
+        searchtitle = re.sub(r'[._\'\*]', ' ', searchtitle)
 
         # Replace "-" with space and strip trailing spaces
         searchtitle = searchtitle.strip(' -')

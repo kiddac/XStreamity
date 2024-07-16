@@ -148,7 +148,7 @@ class XStreamity_Playlists(Screen):
 
     def download_url(self, url):
         index = url[1]
-        response = ""
+        response = None
 
         retries = Retry(total=2, backoff_factor=1)
         adapter = HTTPAdapter(max_retries=retries)
@@ -158,17 +158,30 @@ class XStreamity_Playlists(Screen):
             http.mount("https://", adapter)
 
             try:
+                # Perform the initial request
                 r = http.get(url[0], headers=hdr, timeout=6, verify=False)
                 r.raise_for_status()
 
-                if r.status_code == requests.codes.ok:
+                # Follow redirects manually and check for JSON content
+                if r.history:
+                    for resp in r.history:
+                        if 'application/json' not in resp.headers.get('Content-Type', ''):
+                            print("Redirected to non-JSON content", url)
+                            return index, None
+
+                # Check final response for JSON content
+                if 'application/json' in r.headers.get('Content-Type', ''):
                     try:
                         response = r.json()
                     except ValueError as e:
                         print("Error decoding JSON:", e, url)
+                else:
+                    print("Error: Response is not JSON", url)
 
-            except Exception as e:
+            except requests.exceptions.RequestException as e:
                 print("Request error:", e)
+            except Exception as e:
+                print("Unexpected error:", e)
 
         return index, response
 

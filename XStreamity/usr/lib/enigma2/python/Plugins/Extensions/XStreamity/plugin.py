@@ -76,7 +76,8 @@ languages = [
     ("ar-SA", "العربية"),
     ("bg-BG", "български език"),
     ("el-GR", "ελληνικά"),
-    ("sq-AL", "shqip")
+    ("sq-AL", "shqip"),
+    ("zh-CN", "中文")
 ]
 
 useragents = [
@@ -176,7 +177,7 @@ if location:
         cfg.location_valid.setValue(True)
         cfg.save()
     else:
-        os.makedirs(location, exist_ok=True)  # Create directory if it doesn't exist
+        os.makedirs(location)  # Create directory if it doesn't exist
         playlist_file = os.path.join(location, "playlists.txt")
 
         cfg.location_valid.setValue(True)

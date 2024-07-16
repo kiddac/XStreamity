@@ -573,6 +573,7 @@ class XStreamity_Categories(Screen):
                         tmdb_id = ""
                         duration = ""
                         hidden = False
+                        episode_num = 1
 
                         if "id" in item:
                             stream_id = item["id"]
@@ -586,8 +587,8 @@ class XStreamity_Categories(Screen):
                         if "container_extension" in item:
                             container_extension = item["container_extension"]
 
-                        duration = item.get("info", {}).get("duration", "")
-                        episode_num = item.get("episode_num", 1)
+                        if "episode_num" in item:
+                            episode_num = item["episode_num"]
 
                         if "info" in item:
 
@@ -882,7 +883,7 @@ class XStreamity_Categories(Screen):
             searchtitle = bad_suffix_pattern.sub('', searchtitle)
 
             # Replace ".", "_", "'" with " "
-            searchtitle = re.sub(r'[._\']', ' ', searchtitle)
+            searchtitle = re.sub(r'[._\'\*]', ' ', searchtitle)
 
             # Replace "-" with space and strip trailing spaces
             searchtitle = searchtitle.strip(' -')

@@ -3,15 +3,16 @@
 
 from __future__ import division
 
+# Standard library imports
 import base64
 import codecs
-from datetime import datetime, timedelta
+import json
+import math
 import os
 import re
 import time
-import json
-import requests
-import math
+from datetime import datetime, timedelta
+from itertools import cycle, islice
 
 try:
     from http.client import HTTPConnection
@@ -25,36 +26,33 @@ try:
 except ImportError:
     from urllib.parse import urlparse
 
+# Third-party imports
+import requests
 from PIL import Image, ImageFile, PngImagePlugin
-from itertools import cycle, islice
-
 from requests.adapters import HTTPAdapter, Retry
+from twisted.web.client import downloadPage
 
-try:
-    from twisted.web.client import downloadPage
-except ImportError:
-    downloadPage = None
-
+# Enigma2 components
 from Components.ActionMap import ActionMap
 from Components.Pixmap import Pixmap
 from Components.ProgressBar import ProgressBar
 from Components.Sources.List import List
-
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Screens.VirtualKeyBoard import VirtualKeyBoard
-from Tools.LoadPixmap import LoadPixmap
 
+from Tools.LoadPixmap import LoadPixmap
 from enigma import eTimer, eServiceReference
 
+# Local application/library-specific imports
 from . import _
 from . import catchupplayer
 from . import xstreamity_globals as glob
-from .plugin import skin_directory, screenwidth, cfg, common_path, dir_tmp, downloads_json, pythonVer
+from .plugin import cfg, common_path, dir_tmp, downloads_json, pythonVer, screenwidth, skin_directory
 from .xStaticText import StaticText
 
 
-# https twisted client hack #
+# HTTPS twisted client hack
 try:
     from twisted.internet import ssl
     from twisted.internet._sslverify import ClientTLSOptions
