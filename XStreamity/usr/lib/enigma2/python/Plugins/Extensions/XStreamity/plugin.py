@@ -161,6 +161,9 @@ cfg.boot = ConfigYesNo(default=False)
 
 cfg.useragent = ConfigSelection(default="Enigma2 - XStreamity Plugin", choices=useragents)
 
+cfg.vodcategoryorder = ConfigSelection(default=(_("Sort: Original")), choices=[(_("Sort: A-Z"), "A-Z"), (_("Sort: Z-A"), "Z-A"), (_("Sort: Original"), _("Original"))])
+cfg.vodstreamorder = ConfigSelection(default=(_("Sort: Original")), choices=[(_("Sort: A-Z"), "A-Z"), (_("Sort: Z-A"), "Z-A"), (_("Sort: Added"), _("Added")), (_("Sort: Year"), _("Year")), (_("Sort: Original"), _("Original"))])
+
 # Set default file paths
 playlist_file = os.path.join(dir_etc, "playlists.txt")
 playlists_json = os.path.join(dir_etc, "x-playlists.json")

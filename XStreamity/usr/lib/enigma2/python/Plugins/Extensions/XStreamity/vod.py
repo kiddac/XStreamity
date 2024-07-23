@@ -135,7 +135,7 @@ class XStreamity_Categories(Screen):
         self.pin = False
         self.info = ""
         self.sortindex = 0
-        self.sortText = _("Sort: A-Z")
+        self.sortText = ""
 
         self.level = 1
 
@@ -231,7 +231,58 @@ class XStreamity_Categories(Screen):
         else:
             self.getVodCategoryStreams()
 
+        self.getSortOrder()
         self.buildLists()
+
+    def getSortOrder(self):
+        if self.level == 1:
+            self.sortText = cfg.vodcategoryorder.value
+            sortlist = [_("Sort: A-Z"), _("Sort: Z-A"), _("Sort: Original")]
+            activelist = self.list1
+        else:
+            self.sortText = cfg.vodstreamorder.value
+            sortlist = [_("Sort: A-Z"), _("Sort: Z-A"), _("Sort: Added"), _("Sort: Year"), _("Sort: Original")]
+            activelist = self.list2
+
+        current_sort = self.sortText
+
+        if not current_sort:
+            return
+
+        for index, item in enumerate(sortlist):
+            if str(item) == str(self.sortText):
+                self.sortindex = index
+                break
+
+        if self["main_list"].getCurrent():
+            self["main_list"].setIndex(0)
+
+        if current_sort == _("Sort: A-Z"):
+            activelist.sort(key=lambda x: x[1].lower(), reverse=False)
+
+        elif current_sort == _("Sort: Z-A"):
+            activelist.sort(key=lambda x: x[1].lower(), reverse=True)
+
+        elif current_sort == _("Sort: Added"):
+            activelist.sort(key=lambda x: x[4], reverse=True)
+
+        elif current_sort == _("Sort: Year"):
+            activelist.sort(key=lambda x: x[9], reverse=True)
+
+        elif current_sort == _("Sort: Original"):
+            activelist.sort(key=lambda x: x[0], reverse=False)
+
+        next_sort_type = next(islice(cycle(sortlist), self.sortindex + 1, None))
+        self.sortText = str(next_sort_type)
+
+        self["key_yellow"].setText(self.sortText)
+        glob.nextlist[-1]["sort"] = self["key_yellow"].getText()
+
+        if self.level == 1:
+            self.list1 = activelist
+        else:
+            self.list2 = activelist
+        self.sortindex = 0
 
     def buildLists(self):
         # print("*** buildLists ***")
@@ -848,7 +899,7 @@ class XStreamity_Categories(Screen):
             self["key_menu"].setText("")
         else:
             if not glob.nextlist[-1]["sort"]:
-                self.sortText = _("Sort: A-Z")
+                # self.sortText = _("Sort: A-Z")
                 glob.nextlist[-1]["sort"] = self.sortText
 
             self["key_blue"].setText(_("Search"))
@@ -1110,6 +1161,7 @@ class XStreamity_Categories(Screen):
         self.filterresult = ""
         glob.nextlist[-1]["filter"] = self.filterresult
 
+        self.getSortOrder()
         self.buildLists()
 
     def pinEntered(self, result=None):
