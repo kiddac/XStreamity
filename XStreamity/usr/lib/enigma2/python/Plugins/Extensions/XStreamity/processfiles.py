@@ -39,7 +39,7 @@ def process_files():
     with open(playlist_file, "w") as f:
         for line in lines:
             line = re.sub(" +", " ", line)
-            line = line.strip(" ")
+            line = line.strip()
             if not line.startswith(("http://", "https://", "#")):
                 line = "# " + line
             if "=mpegts" in line:

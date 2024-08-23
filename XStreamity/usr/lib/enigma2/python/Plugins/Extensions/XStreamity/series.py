@@ -134,6 +134,8 @@ class XStreamity_Categories(Screen):
         self.pin = False
         self.tmdbresults = ""
 
+        self.tmdbfailedcount = 0
+
         self.storedtitle = ""
         self.storedseason = ""
         self.storedepisode = ""
@@ -383,7 +385,9 @@ class XStreamity_Categories(Screen):
                 releaseDate = str(channel.get("releaseDate")) or str(channel.get("release_date")) or str(channel.get("releasedate")) or ""
 
                 next_url = "{}&action=get_series_info&series_id={}".format(str(self.player_api), str(series_id))
-                self.list2.append([index, str(name), str(series_id), str(cover), str(plot), str(cast), str(director), str(genre), str(releaseDate), str(rating), str(last_modified), str(tmdb), str(next_url), str(year), hidden])
+
+                # 0 index, 1 name, 2 series_id, 3 cover, 4 plot, 5 cast, 6 director, 7 genre, 8 releaseDate, 9 rating, 10 last_modified, 11 next_url, 12 tmdb, 13 hidden, 14 year
+                self.list2.append([index, str(name), str(series_id), str(cover), str(plot), str(cast), str(director), str(genre), str(releaseDate), str(rating), str(last_modified), str(next_url), str(tmdb), hidden, str(year)])
 
             glob.originalChannelList2 = self.list2[:]
 
@@ -430,7 +434,7 @@ class XStreamity_Categories(Screen):
                         x += 1
 
                 if seasonlist:
-                    for season in seasonlist:
+                    for index, season in enumerate(seasonlist):
                         name = _("Season ") + str(season)
 
                         if self.isdict:
@@ -496,7 +500,8 @@ class XStreamity_Categories(Screen):
 
                         next_url = self.seasons_url
 
-                        self.list3.append([index, str(name), str(series_id), str(cover), str(overview), str(cast), str(director), str(genre), str(airdate), str(rating), season_number, str(next_url), str(last_modified), hidden, tmdb])
+                        # 0 index, 1 name, 2 series_id, 3 cover, 4 overview, 5 cast, 6 director, 7 genre, 8 airdate, 9 rating, 10 last_modified, 11 next_url, 12 tmdb, 13 hidden, 14 season_number
+                        self.list3.append([index, str(name), str(series_id), str(cover), str(overview), str(cast), str(director), str(genre), str(airdate), str(rating), str(last_modified), str(next_url), tmdb, hidden, season_number])
 
                 self.list3.sort(key=self.natural_keys)
 
@@ -521,7 +526,7 @@ class XStreamity_Categories(Screen):
         genre = self["vod_genre"].getText()
         releasedate = self["vod_release_date"].getText()
         rating = self["vod_rating"].getText()
-        tmdb_id = self["main_list"].getCurrent()[15]
+        tmdb_id = self["main_list"].getCurrent()[14]
         last_modified = ""
 
         if currentChannelList:
@@ -566,7 +571,7 @@ class XStreamity_Categories(Screen):
                     if self.isdict is False:
                         season_number = int(self.storedseason)
 
-                    for item in currentChannelList["episodes"][season_number]:
+                    for index, item in enumerate(currentChannelList["episodes"][season_number]):
                         title = ""
                         stream_id = ""
                         container_extension = "mp4"
@@ -641,8 +646,8 @@ class XStreamity_Categories(Screen):
 
                         next_url = "{}/series/{}/{}/{}.{}".format(self.host, self.username, self.password, stream_id, container_extension)
 
-                        self.list4.append([index, str(title), str(stream_id), str(cover), str(plot), str(cast), str(director), str(genre), str(releasedate), str(rating), str(duration), str(container_extension), str(tmdb_id), str(next_url), str(shorttitle), str(last_modified), hidden, episode_num])
-                        index += 1
+                        # 0 index, 1 title, 2 stream_id, 3 cover, 4 plot, 5 cast, 6 director, 7 genre, 8 releasedate, 9 rating, 10 last_modified, 11 next_url, 12 tmdb_id, 13 hidden, 14 duration, 15 container_extension, 16 shorttitle, 17 episode_num
+                        self.list4.append([index, str(title), str(stream_id), str(cover), str(plot), str(cast), str(director), str(genre), str(releasedate), str(rating), str(last_modified), str(next_url), str(tmdb_id), hidden, str(duration), str(container_extension), str(shorttitle), episode_num])
 
             glob.originalChannelList4 = self.list4[:]
 
@@ -688,7 +693,7 @@ class XStreamity_Categories(Screen):
     def buildSeries(self):
         # print("*** buildSeries ***")
         if self.list2:
-            self.main_list = [buildSeriesTitlesList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9], x[10], x[11], x[12], x[13], x[14]) for x in self.list2 if not x[14]]
+            self.main_list = [buildSeriesTitlesList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9], x[10], x[11], x[12], x[13], x[14]) for x in self.list2 if not x[13]]
             self["main_list"].setList(self.main_list)
 
             self.showVod()
@@ -708,7 +713,7 @@ class XStreamity_Categories(Screen):
     def buildEpisodes(self):
         # print("*** buildEpisodes ***")
         if self.list4:
-            self.main_list = [buildSeriesEpisodesList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9], x[10], x[11], x[12], x[13], x[14], x[15], x[16], x[17]) for x in self.list4 if not x[16]]
+            self.main_list = [buildSeriesEpisodesList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9], x[10], x[11], x[12], x[13], x[14], x[15], x[16], x[17]) for x in self.list4 if not x[13]]
             self["main_list"].setList(self.main_list)
 
         if self["main_list"].getCurrent() and glob.nextlist[-1]["index"] != 0:
@@ -720,6 +725,7 @@ class XStreamity_Categories(Screen):
             if cfg.TMDB.value is True:
                 if self.level != 1:
                     self.tmdbValid = True
+                    self.tmdbfailedcount = 0
                     self.getTMDB()
 
             else:
@@ -773,6 +779,9 @@ class XStreamity_Categories(Screen):
 
     def getTMDB(self):
         # print("**** getTMDB ***")
+        if self.tmdbfailedcount > 2:
+            return
+
         title = ""
         searchtitle = ""
         self.searchtitle = ""
@@ -909,6 +918,7 @@ class XStreamity_Categories(Screen):
         if data:
             print(data)
             self.tmdbValid = False
+            self.tmdbfailedcount += 1
             self.getTMDB()
 
     def processTMDB(self, result=None):
@@ -923,8 +933,10 @@ class XStreamity_Categories(Screen):
                 self.searchresult = json.loads(response)
                 if "results" not in self.searchresult or not self.searchresult["results"]:
                     self.tmdbValid = False
+                    self.tmdbfailedcount += 1
                     self.getTMDB()
                 else:
+                    self.tmdbfailedcount = 0
                     resultid = self.searchresult["results"][0].get("id")
 
                     if not resultid:
@@ -985,9 +997,11 @@ class XStreamity_Categories(Screen):
             print(data)
             if self.level == 2:
                 self.tmdbValid = False
+                self.tmdbfailedcount += 1
                 self.getTMDB()
 
             else:
+                self.tmdbfailedcount = 0
                 self.tmdbresults = ""
                 self.displayTMDB()
                 return
@@ -1257,7 +1271,6 @@ class XStreamity_Categories(Screen):
         self.selectionChanged()
 
     def sort(self):
-
         current_sort = self["key_yellow"].getText()
         if not current_sort:
             return
@@ -1278,11 +1291,11 @@ class XStreamity_Categories(Screen):
             sortlist = [_("Sort: A-Z"), _("Sort: Z-A"), _("Sort: Original")]
 
         elif self.level == 2:
+            sortlist = [_("Sort: A-Z"), _("Sort: Z-A"), _("Sort: Added"), _("Sort: Year"), _("Sort: Original")]
+        else:
             sortlist = [_("Sort: A-Z"), _("Sort: Z-A"), _("Sort: Added"), _("Sort: Original")]
 
-        else:
-            sortlist = [_("Sort: A-Z"), _("Sort: Z-A"), _("Sort: Added"), _("Sort: Year"), _("Sort: Original")]
-
+        self.sortindex = 0
         for index, item in enumerate(sortlist):
             if str(item) == str(self.sortText):
                 self.sortindex = index
@@ -1298,10 +1311,10 @@ class XStreamity_Categories(Screen):
             activelist.sort(key=lambda x: x[1].lower(), reverse=True)
 
         elif current_sort == _("Sort: Added"):
-            activelist.sort(key=lambda x: x[4], reverse=True)
+            activelist.sort(key=lambda x: (x[10], x[1].lower()), reverse=(True, False))
 
         elif current_sort == _("Sort: Year"):
-            activelist.sort(key=lambda x: x[9], reverse=True)
+            activelist.sort(key=lambda x: (x[14], x[1].lower()), reverse=(True, False))
 
         elif current_sort == _("Sort: Original"):
             activelist.sort(key=lambda x: x[0], reverse=False)
@@ -1714,13 +1727,17 @@ def buildCategoryList(index, title, category_id, hidden):
     png = LoadPixmap(os.path.join(common_path, "more.png"))
     return (title, png, index, category_id, hidden)
 
+# 0 index, 1 name, 2 series_id, 3 cover, 4 plot, 5 cast, 6 director, 7 genre, 8 releaseDate, 9 rating, 10 last_modified, 11 next_url, 12 tmdb, 13 hidden, 14 year
+# 0 index, 1 name, 2 series_id, 3 cover, 4 overview, 5 cast, 6 director, 7 genre, 8 airdate, 9 rating, 10 last_modified, 11 next_url, 12 tmdb, 13 hidden, 14 season_number
+# 0 index, 1 title, 2 stream_id, 3 cover, 4 plot, 5 cast, 6 director, 7 genre, 8 releasedate, 9 rating, 10 last_modified, 11 next_url, 12 tmdb_id, 13 hidden, 14 duration, 15 container_extension, 16 shorttitle, 17 episode_num
 
-def buildSeriesTitlesList(index, title, series_id, cover, plot, cast, director, genre, releaseDate, rating, lastmodified, tmdb, next_url, year, hidden):
+
+def buildSeriesTitlesList(index, title, series_id, cover, plot, cast, director, genre, releaseDate, rating, lastmodified, next_url, tmdb, hidden, year):
     png = LoadPixmap(os.path.join(common_path, "more.png"))
     return (title, png, index, next_url, series_id, cover, plot, cast, director, genre, releaseDate, rating, lastmodified, year, tmdb, hidden)
 
 
-def buildSeriesSeasonsList(index, title, series_id, cover, plot, cast, director, genre, airDate, rating, season_number, next_url, lastmodified, hidden, tmdb):
+def buildSeriesSeasonsList(index, title, series_id, cover, plot, cast, director, genre, airDate, rating, lastmodified, next_url, tmdb, hidden, season_number):
     png = LoadPixmap(os.path.join(common_path, "more.png"))
     try:
         title = _("Season ") + str(int(title))
@@ -1730,7 +1747,7 @@ def buildSeriesSeasonsList(index, title, series_id, cover, plot, cast, director,
     return (title, png, index, next_url, series_id, cover, plot, cast, director, genre, airDate, rating, season_number, lastmodified, hidden, tmdb)
 
 
-def buildSeriesEpisodesList(index, title, series_id, cover, plot, cast, director, genre, releaseDate, rating, duration, container_extension, tmdb_id, next_url, shorttitle, lastmodified, hidden, episode_number):
+def buildSeriesEpisodesList(index, title, series_id, cover, plot, cast, director, genre, releaseDate, rating, lastmodified, next_url, tmdb_id, hidden, duration, container_extension, shorttitle, episode_number):
     png = LoadPixmap(os.path.join(common_path, "play.png"))
     for channel in glob.active_playlist["player_info"]["serieswatched"]:
         if int(series_id) == int(channel):

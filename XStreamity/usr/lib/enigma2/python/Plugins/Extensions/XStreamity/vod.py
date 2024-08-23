@@ -1053,10 +1053,10 @@ class XStreamity_Categories(Screen):
             activelist.sort(key=lambda x: x[1].lower(), reverse=True)
 
         elif current_sort == _("Sort: Added"):
-            activelist.sort(key=lambda x: x[4], reverse=True)
+            activelist.sort(key=lambda x: (x[4], x[1].lower()), reverse=(True, False))
 
         elif current_sort == _("Sort: Year"):
-            activelist.sort(key=lambda x: x[9], reverse=True)
+            activelist.sort(key=lambda x: (x[9], x[1].lower()), reverse=(True, False))
 
         elif current_sort == _("Sort: Original"):
             activelist.sort(key=lambda x: x[0], reverse=False)
