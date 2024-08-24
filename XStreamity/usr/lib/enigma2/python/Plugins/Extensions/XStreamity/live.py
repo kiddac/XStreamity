@@ -410,7 +410,7 @@ class XStreamity_Categories(Screen):
                 if epg_channel_id and "&" in epg_channel_id:
                     epg_channel_id = epg_channel_id.replace("&", "&amp;")
 
-                added = str(channel.get("added", ""))
+                added = str(channel.get("added", "0"))
 
                 category_id = str(channel.get("category_id", ""))
                 if self.chosen_category == "all" and str(category_id) in glob.active_playlist["player_info"]["livehidden"]:
@@ -784,7 +784,8 @@ class XStreamity_Categories(Screen):
 
         elif current_sort == _("Sort: Added"):
             if self.level != 1:
-                activelist.sort(key=lambda x: x[5], reverse=True)
+                activelist.sort(key=lambda x: x[1].lower(), reverse=False)
+                activelist.sort(key=lambda x: (x[5] or ""), reverse=True)
 
         elif current_sort == _("Sort: Original"):
             activelist.sort(key=lambda x: x[0], reverse=False)

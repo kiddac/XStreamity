@@ -275,7 +275,7 @@ class XStreamity_Menu(Screen):
                 self.session.open(live.XStreamity_Categories)
             elif category == 1:
                 from . import vod
-                self.session.open(vod.XStreamity_Categories)
+                self.session.open(vod.XStreamity_Vod_Categories)
             elif category == 2:
                 from . import series
                 self.session.open(series.XStreamity_Categories)

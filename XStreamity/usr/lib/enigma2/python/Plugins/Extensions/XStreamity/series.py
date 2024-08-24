@@ -155,7 +155,7 @@ class XStreamity_Categories(Screen):
         self.stored2_genre = ""
         self.stored2_date = ""
         self.stored2_releaseDate = ""
-        self.stored2_last_modified = ""
+        self.stored2_last_modified = "0"
         self.stored2_rating = ""
         self.stored2_tmdb = ""
 
@@ -362,7 +362,7 @@ class XStreamity_Categories(Screen):
                 else:
                     cover = ""
 
-                last_modified = str(channel.get("last_modified", ""))
+                last_modified = str(channel.get("last_modified", "0"))
 
                 category_id = str(channel.get("category_id", ""))
                 if self.chosen_category == "all" and str(category_id) in glob.active_playlist["player_info"]["serieshidden"]:
@@ -415,7 +415,7 @@ class XStreamity_Categories(Screen):
                 genre = infodict.get("genre", self.genre2)
                 airdate = infodict.get("releaseDate", self.releaseDate2) or currentChannelList.get("release_date", self.releaseDate2)
                 rating = infodict.get("rating", self.rating2)
-                last_modified = infodict.get("last_modified", "")
+                last_modified = infodict.get("last_modified", "0")
 
             if "episodes" in currentChannelList and currentChannelList["episodes"]:
                 episodes = currentChannelList["episodes"]
@@ -527,7 +527,7 @@ class XStreamity_Categories(Screen):
         releasedate = self["vod_release_date"].getText()
         rating = self["vod_rating"].getText()
         tmdb_id = self["main_list"].getCurrent()[14]
-        last_modified = ""
+        last_modified = "0"
 
         if currentChannelList:
             if "info" in currentChannelList:
@@ -1304,6 +1304,14 @@ class XStreamity_Categories(Screen):
         if self["main_list"].getCurrent():
             self["main_list"].setIndex(0)
 
+        if self.level != 1:
+            for item in activelist:
+                print("*** x[10] ***", item[10])
+
+        if self.level == 2:
+            for item in activelist:
+                print("*** x[14] ***", item[14])
+
         if current_sort == _("Sort: A-Z"):
             activelist.sort(key=lambda x: x[1].lower(), reverse=False)
 
@@ -1311,10 +1319,12 @@ class XStreamity_Categories(Screen):
             activelist.sort(key=lambda x: x[1].lower(), reverse=True)
 
         elif current_sort == _("Sort: Added"):
-            activelist.sort(key=lambda x: (x[10], x[1].lower()), reverse=(True, False))
+            activelist.sort(key=lambda x: x[1].lower(), reverse=False)
+            activelist.sort(key=lambda x: (x[10] or ""), reverse=True)
 
         elif current_sort == _("Sort: Year"):
-            activelist.sort(key=lambda x: (x[14], x[1].lower()), reverse=(True, False))
+            activelist.sort(key=lambda x: x[1].lower(), reverse=False)
+            activelist.sort(key=lambda x: (x[14] or ""), reverse=True)
 
         elif current_sort == _("Sort: Original"):
             activelist.sort(key=lambda x: x[0], reverse=False)
