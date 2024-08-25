@@ -1,17 +1,16 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+# Standard library imports
 import base64
 import codecs
 from datetime import datetime, timedelta
-
+import json
+import math
 import os
 import re
-
 import time
-import json
-import requests
-import math
+from itertools import cycle, islice
 import zlib
 
 try:
@@ -27,10 +26,12 @@ try:
 except ImportError:
     from urllib.parse import urlparse, quote
 
-from itertools import cycle, islice
+
+# Third-party imports
+import requests
 from requests.adapters import HTTPAdapter, Retry
 from twisted.web.client import downloadPage
-
+# Enigma2 components
 from Components.ActionMap import ActionMap
 from Components.Pixmap import Pixmap
 from Components.Sources.List import List
@@ -39,18 +40,17 @@ from Screens.Screen import Screen
 from Screens.VirtualKeyBoard import VirtualKeyBoard
 from Tools.LoadPixmap import LoadPixmap
 from collections import OrderedDict
+from enigma import ePicLoad, eServiceReference, eTimer
 
-from enigma import eTimer, eServiceReference, ePicLoad
-
+# Local imports
 from . import _
-# from . import streamplayer
 from . import vodplayer
 from . import xstreamity_globals as glob
 
-from .plugin import skin_directory, screenwidth, cfg, common_path, dir_tmp, playlists_json, downloads_json, pythonVer
+from .plugin import (cfg, common_path, dir_tmp, downloads_json, playlists_json, pythonVer, screenwidth, skin_directory)
 from .xStaticText import StaticText
 
-# https twisted client hack #
+# HTTPS Twisted client hack
 try:
     from twisted.internet import ssl
     from twisted.internet._sslverify import ClientTLSOptions
@@ -1303,14 +1303,6 @@ class XStreamity_Categories(Screen):
 
         if self["main_list"].getCurrent():
             self["main_list"].setIndex(0)
-
-        if self.level != 1:
-            for item in activelist:
-                print("*** x[10] ***", item[10])
-
-        if self.level == 2:
-            for item in activelist:
-                print("*** x[14] ***", item[14])
 
         if current_sort == _("Sort: A-Z"):
             activelist.sort(key=lambda x: x[1].lower(), reverse=False)

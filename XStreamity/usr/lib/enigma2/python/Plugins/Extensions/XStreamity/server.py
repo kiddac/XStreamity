@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-import shutil
 import json
 import requests
 from requests.adapters import HTTPAdapter, Retry
@@ -220,10 +219,7 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 
         with open(playlist_file, "a") as f:
             f.write("\n{}\n".format(playlistline))
-        try:
-            shutil.copyfile(playlist_file, '/home/playlists.txt')
-        except Exception as e:
-            print("Error copying file:", e)
+
         self.session.open(MessageBox, _("Playlist added successfully."), type=MessageBox.TYPE_INFO, timeout=5)
         self.close()
 

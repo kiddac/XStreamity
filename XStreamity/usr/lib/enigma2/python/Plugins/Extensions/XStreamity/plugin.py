@@ -213,18 +213,6 @@ if not os.path.isfile(playlist_file):
     with open(playlist_file, "a") as f:
         f.close()
 
-if os.stat(playlist_file).st_size == 0:
-    try:
-        shutil.copyfile('/home/playlists.txt', playlist_file)
-    except:
-        pass
-
-else:
-    try:
-        shutil.copyfile(playlist_file, '/home/playlists.txt')
-    except:
-        pass
-
 # check if x-playlists.json file exists in specified location
 if not os.path.isfile(playlists_json):
     with open(playlists_json, "a") as f:

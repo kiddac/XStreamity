@@ -356,7 +356,7 @@ class XStreamity_Categories(Screen):
                     if epg_channel_id and "&" in epg_channel_id:
                         epg_channel_id = epg_channel_id.replace("&", "&amp;")
 
-                    added = str(item.get("added", ""))
+                    added = str(item.get("added", "0"))
                     hidden = str(stream_id) in catchup_hidden_channels
 
                     if stream_id:
@@ -611,6 +611,8 @@ class XStreamity_Categories(Screen):
         self.selectionChanged()
 
     def sort(self):
+        # print("*** sort ***")
+
         current_sort = self["key_yellow"].getText()
         if not current_sort or current_sort == _("Reverse"):
             return
@@ -639,7 +641,8 @@ class XStreamity_Categories(Screen):
 
         elif current_sort == _("Sort: Added"):
             if self.level != 1:
-                activelist.sort(key=lambda x: x[5], reverse=True)
+                activelist.sort(key=lambda x: x[1].lower(), reverse=False)
+                activelist.sort(key=lambda x: (x[5] or ""), reverse=True)
 
         elif current_sort == _("Sort: Original"):
             activelist.sort(key=lambda x: x[0], reverse=False)

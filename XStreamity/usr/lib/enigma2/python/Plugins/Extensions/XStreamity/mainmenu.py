@@ -4,7 +4,7 @@
 from . import _
 from . import xstreamity_globals as glob
 from . import processfiles as loadfiles
-from .plugin import skin_directory, common_path, version, downloads_json, playlists_json, playlist_file, cfg
+from .plugin import skin_directory, common_path, version, downloads_json, playlists_json, cfg
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -17,7 +17,6 @@ from Tools.LoadPixmap import LoadPixmap
 
 import json
 import os
-import shutil
 import sys
 
 
@@ -176,11 +175,6 @@ class XStreamity_MainMenu(Screen):
                 self.downloadManager()
 
     def quit(self, data=None):
-        try:
-            shutil.copyfile(playlist_file, '/home/playlists.txt')
-        except Exception as e:
-            print("Error copying playlist file:", e)
-
         self.playOriginalChannel()
 
     def playOriginalChannel(self):
