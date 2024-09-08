@@ -309,7 +309,6 @@ class XStreamity_Categories(Screen):
     def getSeries(self):
         # print("*** getSeries ***")
         # print("*** url ***", glob.nextlist[-1]["next_url"])
-        response = ""
         response = self.downloadApiData(glob.nextlist[-1]["next_url"])
         index = 0
         self.list2 = []
@@ -331,11 +330,13 @@ class XStreamity_Categories(Screen):
                     if len(parts) > 1:
                         name = parts[0]
 
-                # restyle bouquet markers
-                if "stream_type" in channel and channel["stream_type"] and channel["stream_type"] != "movie":
-                    pattern = re.compile(r"[^\w\s()\[\]]", re.U)
-                    name = re.sub(r"_", "", re.sub(pattern, "", name))
-                    name = "** " + str(name) + " **"
+                # if "stream_type" in channel and channel["stream_type"] and channel["stream_type"] != "movie":
+                #   pattern = re.compile(r"[^\w\s()\[\]]", re.U)
+                #   name = re.sub(r"_", "", re.sub(pattern, "", name))
+                #   name = "** " + str(name) + " **"
+
+                if "stream_type" in channel and channel["stream_type"] and (channel["stream_type"] not in ["movie", "series"]):
+                    continue
 
                 series_id = channel.get("series_id", "")
                 if not series_id:
@@ -355,7 +356,10 @@ class XStreamity_Categories(Screen):
 
                     if cover.startswith("https://image.tmdb.org/t/p/") or cover.startswith("http://image.tmdb.org/t/p/"):
                         dimensions = cover.partition("/p/")[2].partition("/")[0]
+
                         if screenwidth.width() <= 1280:
+                            cover = cover.replace(dimensions, "w200")
+                        elif screenwidth.width() <= 1920:
                             cover = cover.replace(dimensions, "w300")
                         else:
                             cover = cover.replace(dimensions, "w400")
@@ -370,7 +374,18 @@ class XStreamity_Categories(Screen):
 
                 rating = str(channel.get("rating", ""))
 
+                # year not always available in hybrid apis
                 year = str(channel.get("year", ""))
+
+                if year == "":
+                    pattern = r'\b\d{4}\b'
+                    matches = re.findall(pattern, name)
+                    if matches:
+                        year = str(matches[-1])
+                if year:
+                    self.storedyear = year
+                else:
+                    self.storedyear = ""
 
                 plot = str(channel.get("plot", ""))
 
@@ -382,7 +397,8 @@ class XStreamity_Categories(Screen):
 
                 tmdb = channel.get("tmdb", "")
 
-                releaseDate = str(channel.get("releaseDate")) or str(channel.get("release_date")) or str(channel.get("releasedate")) or ""
+                releaseDate = (channel.get("releaseDate") or channel.get("release_date") or channel.get("releasedate") or "")
+                releaseDate = str(releaseDate) if releaseDate is not None else ""
 
                 next_url = "{}&action=get_series_info&series_id={}".format(str(self.player_api), str(series_id))
 
@@ -405,17 +421,24 @@ class XStreamity_Categories(Screen):
         if response:
             currentChannelList = response
             infodict = response.get("info", {})
+
             if infodict:
                 tmdb = infodict.get("tmdb", self.tmdb2)
+                if tmdb:
+                    self.tmdb2 = tmdb
                 name = infodict.get("name", self.title2)
-                cover = infodict.get("cover", "")
+                cover = infodict.get("cover", self.cover2)
+                if not cover.startswith("http"):
+                    cover = self.cover2
                 overview = infodict.get("plot", self.plot2)
                 cast = infodict.get("cast", self.cast2)
                 director = infodict.get("director", self.director2)
                 genre = infodict.get("genre", self.genre2)
-                airdate = infodict.get("releaseDate", self.releaseDate2) or currentChannelList.get("release_date", self.releaseDate2)
+                airdate = infodict.get("releaseDate") or infodict.get("release_date") or self.releaseDate2
                 rating = infodict.get("rating", self.rating2)
                 last_modified = infodict.get("last_modified", "0")
+            else:
+                return
 
             if "episodes" in currentChannelList and currentChannelList["episodes"]:
                 episodes = currentChannelList["episodes"]
@@ -447,7 +470,7 @@ class XStreamity_Categories(Screen):
 
                         if "seasons" in currentChannelList and currentChannelList["seasons"]:
                             for item in currentChannelList["seasons"]:
-                                if "season_number" in item and item["season_number"] == season_number:
+                                if "season_number" in item and str(item["season_number"]) == str(season_number):
 
                                     if "airdate" in item and item["airdate"]:
                                         airdate = item["airdate"]
@@ -460,17 +483,14 @@ class XStreamity_Categories(Screen):
                                     if "overview" in item and item["overview"] and len(item["overview"]) > 50 and "http" not in item["overview"]:
                                         overview = item["overview"]
 
-                                    if "cover_tmdb" in item and item["cover_tmdb"]:
-                                        if item["cover_tmdb"].startswith("http"):
-                                            cover = item["cover_tmdb"]
+                                    if "cover_tmdb" in item and item["cover_tmdb"] and item["cover_tmdb"].startswith("http") and len(item["cover_tmdb"]) > 50:
+                                        cover = item["cover_tmdb"]
 
-                                    elif "cover_big" in item and item["cover_big"]:
-                                        if item["cover_big"].startswith("http"):
-                                            cover = item["cover_big"]
+                                    elif "cover_big" in item and item["cover_big"] and item["cover_big"].startswith("http") and len(item["cover_big"]) > 50:
+                                        cover = item["cover_big"]
 
-                                    elif "cover" in item and item["cover"]:
-                                        if item["cover"].startswith("http"):
-                                            cover = item["cover"]
+                                    elif "cover" in item and item["cover"] and item["cover"].startswith("http") and len(item["cover_big"]) > 50:
+                                        cover = item["cover"]
 
                                     if "id" in item and item["id"]:
                                         series_id = item["id"]
@@ -487,16 +507,17 @@ class XStreamity_Categories(Screen):
                                 pass
 
                             if cover == "https://image.tmdb.org/t/p/w600_and_h900_bestv2":
-                                cover = ""
+                                cover = self.cover2
 
                             if cover.startswith("https://image.tmdb.org/t/p/") or cover.startswith("http://image.tmdb.org/t/p/"):
                                 dimensions = cover.partition("/p/")[2].partition("/")[0]
+
                                 if screenwidth.width() <= 1280:
+                                    cover = cover.replace(dimensions, "w200")
+                                elif screenwidth.width() <= 1920:
                                     cover = cover.replace(dimensions, "w300")
                                 else:
                                     cover = cover.replace(dimensions, "w400")
-                        else:
-                            cover = ""
 
                         next_url = self.seasons_url
 
@@ -526,7 +547,7 @@ class XStreamity_Categories(Screen):
         genre = self["vod_genre"].getText()
         releasedate = self["vod_release_date"].getText()
         rating = self["vod_rating"].getText()
-        tmdb_id = self["main_list"].getCurrent()[14]
+        tmdb_id = self.tmdb2
         last_modified = "0"
 
         if currentChannelList:
@@ -562,7 +583,7 @@ class XStreamity_Categories(Screen):
                     last_modified = currentChannelList["info"]["last_modified"]
 
                 if "tmdb_id" in currentChannelList["info"] and currentChannelList["info"]["tmdb_id"]:
-                    tmdb_id = currentChannelList["info"]["plot"]
+                    tmdb_id = currentChannelList["info"]["tmdb_id"]
 
             if "episodes" in currentChannelList:
                 if currentChannelList["episodes"]:
@@ -575,7 +596,7 @@ class XStreamity_Categories(Screen):
                         title = ""
                         stream_id = ""
                         container_extension = "mp4"
-                        tmdb_id = ""
+                        # tmdb_id = ""
                         duration = ""
                         hidden = False
                         episode_num = 1
@@ -583,7 +604,6 @@ class XStreamity_Categories(Screen):
                         if "id" in item:
                             stream_id = item["id"]
                         else:
-                            # Skip this item if "id" key is missing
                             continue
 
                         if "title" in item:
@@ -597,14 +617,19 @@ class XStreamity_Categories(Screen):
 
                         if "info" in item:
 
+                            """
                             if "tmdb_id" in item["info"]:
                                 tmdb_id = item["info"]["tmdb_id"]
+                                """
 
                             if "releaseDate" in item["info"]:
                                 releasedate = item["info"]["releaseDate"]
 
                             elif "release_date" in item["info"]:
                                 releasedate = item["info"]["release_date"]
+
+                            elif "air_date" in item["info"]:
+                                releasedate = item["info"]["air_date"]
 
                             if "plot" in item["info"]:
                                 plot = item["info"]["plot"]
@@ -653,7 +678,7 @@ class XStreamity_Categories(Screen):
 
     def downloadApiData(self, url):
         try:
-            retries = Retry(total=3, backoff_factor=1)
+            retries = Retry(total=2, backoff_factor=1)
             adapter = HTTPAdapter(max_retries=retries)
             http = requests.Session()
             http.mount("http://", adapter)
@@ -782,18 +807,6 @@ class XStreamity_Categories(Screen):
         if self.tmdbfailedcount > 2:
             return
 
-        title = ""
-        searchtitle = ""
-        self.searchtitle = ""
-        self.tmdb = ""
-        year = ""
-        tmdb = ""
-
-        try:
-            os.remove(os.path.join(dir_tmp, "search.txt"))
-        except:
-            pass
-
         current_item = self["main_list"].getCurrent()
         if current_item:
             if self.level == 2:
@@ -826,9 +839,17 @@ class XStreamity_Categories(Screen):
                 if self.level == 4:
                     tmdb = current_item[14]
 
-            if tmdb and self.tmdbValid:
+            # try tmdb via providers data tmdb id first
+            if tmdb and self.tmdbValid and tmdb != "0":
                 self.getTMDBDetails(tmdb)
                 return
+
+            # print("*** tmdb id is invalid searching via title ***")
+
+            try:
+                os.remove(os.path.join(dir_tmp, "search.txt"))
+            except:
+                pass
 
             searchtitle = title.lower()
 
@@ -845,15 +866,18 @@ class XStreamity_Categories(Screen):
             # remove xx - at start
             searchtitle = re.sub(r'^.{2}\+? ?- ?', '', searchtitle)
 
-            # remove all leading contend between and including ||
+            # remove all leading content between and including ||
             searchtitle = re.sub(r'^\|\|.*?\|\|', '', searchtitle)
             searchtitle = re.sub(r'^\|.*?\|', '', searchtitle)
 
-            # remove all leading contend between and including ()
-            searchtitle = re.sub(r'\(\(.*\)\)|\(.*\)', '', searchtitle)
+            # remove everything left between pipes.
+            searchtitle = re.sub(r'\|.*?\|', '', searchtitle)
 
-            # remove all leading contend between and including []
-            searchtitle = re.sub(r'\[\[.*\]\]|\[.*\]', '', searchtitle)
+            # remove all content between and including () multiple times
+            searchtitle = re.sub(r'\(\(.*?\)\)|\(.*?\)', '', searchtitle)
+
+            # remove all content between and including [] multiple times
+            searchtitle = re.sub(r'\[\[.*?\]\]|\[.*?\]', '', searchtitle)
 
             # List of bad strings to remove
             bad_strings = [
@@ -938,6 +962,7 @@ class XStreamity_Categories(Screen):
                 else:
                     self.tmdbfailedcount = 0
                     resultid = self.searchresult["results"][0].get("id")
+                    self.tmdb2 = resultid
 
                     if not resultid:
                         self.tmdbresults = ""
@@ -953,13 +978,11 @@ class XStreamity_Categories(Screen):
         detailsurl = ""
 
         try:
-            os.remove(os.path.join(dir_tmp, "tmdb.txt"))
+            os.remove(os.path.join(dir_tmp, "search.txt"))
         except OSError:
             pass
 
-        if cfg.TMDB.value is True:
-            language = cfg.TMDBLanguage2.value
-
+        language = cfg.TMDBLanguage2.value
         languagestr = ""
 
         if language:
@@ -985,7 +1008,7 @@ class XStreamity_Categories(Screen):
         if pythonVer == 3:
             detailsurl = detailsurl.encode()
 
-        filepath = os.path.join(dir_tmp, "tmdb.txt")
+        filepath = os.path.join(dir_tmp, "search.txt")
         try:
             downloadPage(detailsurl, filepath, timeout=10).addCallback(self.processTMDBDetails).addErrback(self.failed2)
         except Exception as e:
@@ -1014,7 +1037,7 @@ class XStreamity_Categories(Screen):
         director = []
 
         try:
-            with codecs.open(os.path.join(dir_tmp, "tmdb.txt"), "r", encoding="utf-8") as f:
+            with codecs.open(os.path.join(dir_tmp, "search.txt"), "r", encoding="utf-8") as f:
                 response = f.read()
         except Exception as e:
             print("Error reading TMDB response:", e)
@@ -1026,57 +1049,76 @@ class XStreamity_Categories(Screen):
                 print("Error parsing TMDB response:", e)
             else:
                 if self.tmdbdetails:
-                    self.tmdbresults["name"] = str(self.tmdbdetails.get("name", ""))
+                    if "name" in self.tmdbdetails and self.tmdbdetails["name"]:
+                        self.tmdbresults["name"] = str(self.tmdbdetails["name"])
 
-                    self.tmdbresults["description"] = str(self.tmdbdetails.get("overview", ""))
-                    rating_str = self.tmdbdetails.get("vote_average", "")
-                    self.tmdbresults["rating"] = str(rating_str)
-                    if rating_str and rating_str != 0:
-                        try:
-                            rating = float(rating_str)
-                            rounded_rating = round(rating, 1)
-                            self.tmdbresults["rating"] = "{:.1f}".format(rounded_rating)
-                        except ValueError:
-                            self.tmdbresults["rating"] = str(rating_str)
+                    if "overview" in self.tmdbdetails and self.tmdbdetails["overview"]:
+                        self.tmdbresults["description"] = str(self.tmdbdetails["overview"])
 
-                if self.level == 2:
-                    self.tmdbresults["o_name"] = str(self.tmdbdetails.get("original_name", ""))
-
-                    try:
-                        if "episode_run_time" in self.tmdbdetails and self.tmdbdetails["episode_run_time"] and self.tmdbdetails["episode_run_time"] != 0:
-                            self.tmdbresults["duration"] = str(timedelta(minutes=int(self.tmdbdetails["episode_run_time"][0])))
-
-                        elif "runtime" in self.tmdbdetails and self.tmdbdetails["runtime"] and self.tmdbdetails["runtime"] != 0:
-                            self.tmdbresults["duration"] = str(timedelta(minutes=int(self.tmdbdetails["runtime"])))
-                    except Exception as e:
-                        self.tmdbresults["duration"] = ""
-                        print(e)
-
-                    self.tmdbresults["releaseDate"] = str(self.tmdbdetails.get("first_air_date", ""))
-
-                    genre = " / ".join(str(genreitem["name"]) for genreitem in self.tmdbdetails.get("genres", []))
-                    self.tmdbresults["genre"] = genre
-
-                if self.level != 4:
-                    cast = ", ".join(actor["name"] for actor in self.tmdbdetails.get("credits", {}).get("cast", [])[:5])
-                    self.tmdbresults["cast"] = cast
-
-                    director = ", ".join(actor["name"] for actor in self.tmdbdetails.get("credits", {}).get("crew", []) if actor.get("job") == "Director") or ""
-                    self.tmdbresults["director"] = director
-
-                    poster_path = self.tmdbdetails.get("poster_path", "")
-                    size = "w300" if screenwidth.width() <= 1280 else "w400"
-                    self.tmdbresults["cover_big"] = "http://image.tmdb.org/t/p/{}/{}".format(size, poster_path) if poster_path else self.storedcover
-
-                if self.level != 2:
-                    self.tmdbresults["releaseDate"] = str(self.tmdbdetails.get("air_date", ""))
-
-                if self.level == 4:
-                    runtime = self.tmdbdetails.get("runtime", "")
-                    if runtime and runtime != 0:
-                        self.tmdbresults["duration"] = str(timedelta(minutes=runtime))
+                    if "vote_average" in self.tmdbdetails and self.tmdbdetails["vote_average"]:
+                        self.tmdbresults["rating"] = str(self.tmdbdetails["vote_average"])
+                        if self.tmdbresults["rating"] == "0" or self.tmdbresults["rating"] == "0.0":
+                            self.tmdbresults["rating"] = ""
                     else:
-                        self.tmdbresults["duration"] = ""
+                        self.tmdbresults["rating"] = ""
+
+                    if self.level == 2:
+                        if "original_name" in self.tmdbdetails and self.tmdbdetails["original_name"]:
+                            self.tmdbresults["o_name"] = str(self.tmdbdetails["original_name"])
+
+                        try:
+                            if "episode_run_time" in self.tmdbdetails and self.tmdbdetails["episode_run_time"] and self.tmdbdetails["episode_run_time"] != 0:
+                                self.tmdbresults["duration"] = str(timedelta(minutes=int(self.tmdbdetails["episode_run_time"][0])))
+
+                            elif "runtime" in self.tmdbdetails and self.tmdbdetails["runtime"] and self.tmdbdetails["runtime"] != 0:
+                                self.tmdbresults["duration"] = str(timedelta(minutes=int(self.tmdbdetails["runtime"])))
+                        except Exception as e:
+                            self.tmdbresults["duration"] = ""
+                            print(e)
+
+                        if "first_air_date" in self.tmdbdetails and self.tmdbdetails["first_air_date"]:
+                            self.tmdbresults["releaseDate"] = str(self.tmdbdetails["first_air_date"])
+
+                        if "genres" in self.tmdbdetails and self.tmdbdetails["genres"]:
+                            genre = []
+                            for genreitem in self.tmdbdetails["genres"]:
+                                genre.append(str(genreitem["name"]))
+                            genre = " / ".join(map(str, genre))
+                            self.tmdbresults["genre"] = genre
+
+                    if self.level != 4:
+                        if "credits" in self.tmdbdetails and self.tmdbdetails["credits"]:
+                            if "cast" in self.tmdbdetails["credits"] and self.tmdbdetails["credits"]["cast"]:
+                                cast = []
+                                for actor in self.tmdbdetails["credits"]["cast"]:
+                                    if "character" in actor and "name" in actor:
+                                        cast.append(str(actor["name"]))
+                                cast = ", ".join(map(str, cast[:5]))
+                                self.tmdbresults["cast"] = cast
+
+                            if "crew" in self.tmdbdetails["credits"] and self.tmdbdetails["credits"]["crew"]:
+                                directortext = False
+                                for actor in self.tmdbdetails["credits"]["crew"]:
+                                    if "job" in actor and actor["job"] == "Director":
+                                        director.append(str(actor["name"]))
+                                        directortext = True
+                                if directortext:
+                                    director = ", ".join(map(str, director))
+                                    self.tmdbresults["director"] = director
+
+                    if "poster_path" in self.tmdbdetails and self.tmdbdetails["poster_path"]:
+                        if screenwidth.width() <= 1280:
+                            self.tmdbresults["cover_big"] = "http://image.tmdb.org/t/p/w300" + str(self.tmdbdetails["poster_path"])
+                        else:
+                            self.tmdbresults["cover_big"] = "http://image.tmdb.org/t/p/w400" + str(self.tmdbdetails["poster_path"])
+
+                    if self.level != 2:
+                        if "air_date" in self.tmdbdetails and self.tmdbdetails["air_date"]:
+                            self.tmdbresults["releaseDate"] = str(self.tmdbdetails["air_date"])
+
+                    if self.level == 4:
+                        if "runtime" in self.tmdbdetails and self.tmdbdetails["runtime"] and self.tmdbdetails["runtime"] != 0:
+                            self.tmdbresults["duration"] = str(timedelta(minutes=int(self.tmdbdetails["runtime"])))
 
                 self.displayTMDB()
 
@@ -1112,32 +1154,51 @@ class XStreamity_Categories(Screen):
                 self["vod_video_type"].setText("")
 
             if self.tmdbresults:
-                info = self.tmdbresults
-                title = info.get("name") or info.get("o_name")
-                self["x_title"].setText(str(title).strip())
+                if "name" in self.tmdbresults:
+                    self["x_title"].setText(str(self.tmdbresults["name"]).strip())
+                elif "o_name" in self.tmdbresults:
+                    self["x_title"].setText(str(self.tmdbresults["o_name"]).strip())
 
-                description = info.get("description") or info.get("plot")
-                self["x_description"].setText(str(description).strip())
+                if "description" in self.tmdbresults:
+                    self["x_description"].setText(str(self.tmdbresults["description"]).strip())
+                elif "plot" in self.tmdbresults:
+                    self["x_description"].setText(str(self.tmdbresults["plot"]).strip())
 
-                self["vod_duration"].setText(str(info.get("duration", "")).strip())
-                self["vod_genre"].setText(str(info.get("genre", "")).strip())
-                self["vod_rating"].setText(str(info.get("rating", "")).strip())
-                self["vod_country"].setText(str(info.get("country", "")).strip())
+                if "duration" in self.tmdbresults:
+                    self["vod_duration"].setText(str(self.tmdbresults["duration"]).strip())
 
-                release_date = ""
-                for key in ["releaseDate", "release_date", "releasedate"]:
-                    if key in info and info[key]:
-                        try:
-                            release_date = datetime.strptime(info[key], "%Y-%m-%d").strftime("%d-%m-%Y")
-                            break
-                        except Exception:
-                            pass
+                if "genre" in self.tmdbresults:
+                    self["vod_genre"].setText(str(self.tmdbresults["genre"]).strip())
 
-                if release_date:
-                    self["vod_release_date"].setText(release_date)
+                if "rating" in self.tmdbresults:
+                    self["vod_rating"].setText(str(self.tmdbresults["rating"]).strip())
 
-                self["vod_director"].setText(str(info.get("director", "")).strip())
-                self["vod_cast"].setText(str(info.get("cast", info.get("actors", ""))).strip())
+                if "country" in self.tmdbresults:
+                    self["vod_country"].setText(str(self.tmdbresults["country"]).strip())
+
+                if "releaseDate" in self.tmdbresults and self.tmdbresults["releaseDate"]:
+                    try:
+                        self["vod_release_date"].setText(datetime.strptime(self.tmdbresults["releaseDate"], "%Y-%m-%d").strftime("%d-%m-%Y"))
+                    except:
+                        pass
+                elif "release_date" in self.tmdbresults and self.tmdbresults["release_date"]:
+                    try:
+                        self["vod_release_date"].setText(datetime.strptime(self.tmdbresults["release_date"], "%Y-%m-%d").strftime("%d-%m-%Y"))
+                    except:
+                        pass
+                elif "releasedate" in self.tmdbresults and self.tmdbresults["releasedate"]:
+                    try:
+                        self["vod_release_date"].setText(datetime.strptime(self.tmdbresults["releasedate"], "%Y-%m-%d").strftime("%d-%m-%Y"))
+                    except:
+                        pass
+
+                if "director" in self.tmdbresults:
+                    self["vod_director"].setText(str(self.tmdbresults["director"]).strip())
+
+                if "cast" in self.tmdbresults:
+                    self["vod_cast"].setText(str(self.tmdbresults["cast"]).strip())
+                elif "actors" in self.tmdbresults:
+                    self["vod_cast"].setText(str(self.tmdbresults["actors"]).strip())
 
             if self.level != 4 and cfg.channelcovers.value:
                 self.downloadImage()
@@ -1364,16 +1425,16 @@ class XStreamity_Categories(Screen):
             glob.nextlist[-1]["filter"] = self.filterresult
 
             if self.level == 1:
-                activelist = self.list1[:]
+                activelist = self.list1
 
             elif self.level == 2:
-                activelist = self.list2[:]
+                activelist = self.list2
 
             elif self.level == 3:
-                activelist = self.list3[:]
+                activelist = self.list3
 
             elif self.level == 4:
-                activelist = self.list4[:]
+                activelist = self.list4
 
             self.searchString = result
             activelist = [channel for channel in activelist if str(result).lower() in str(channel[1]).lower()]
@@ -1406,20 +1467,20 @@ class XStreamity_Categories(Screen):
         self["key_yellow"].setText(self.sortText)
 
         if self.level == 1:
-            activeoriginal = glob.originalChannelList1[:]
-            self.list1 = activeoriginal
+            activelist = glob.originalChannelList1[:]
+            self.list1 = activelist
 
         elif self.level == 2:
-            activeoriginal = glob.originalChannelList2[:]
-            self.list2 = activeoriginal
+            activelist = glob.originalChannelList2[:]
+            self.list2 = activelist
 
         elif self.level == 3:
-            activeoriginal = glob.originalChannelList3[:]
-            self.list3 = activeoriginal
+            activelist = glob.originalChannelList3[:]
+            self.list3 = activelist
 
         elif self.level == 4:
-            activeoriginal = glob.originalChannelList4[:]
-            self.list4 = activeoriginal
+            activelist = glob.originalChannelList4[:]
+            self.list4 = activelist
 
         self.filterresult = ""
         glob.nextlist[-1]["filter"] = self.filterresult
@@ -1501,13 +1562,15 @@ class XStreamity_Categories(Screen):
             elif self.level == 2:
                 if self.list2:
                     self.title2 = self["x_title"].getText()
+                    self.cover2 = self["main_list"].getCurrent()[5]
                     self.plot2 = self["x_description"].getText()
                     self.cast2 = self["vod_cast"].getText()
                     self.director2 = self["vod_director"].getText()
                     self.genre2 = self["vod_genre"].getText()
                     self.releaseDate2 = self["vod_release_date"].getText()
                     self.rating2 = self["vod_rating"].getText()
-                    self.tmdb2 = self["main_list"].getCurrent()[14]
+                    if self["main_list"].getCurrent()[14] and self["main_list"].getCurrent()[14] != "0":
+                        self.tmdb2 = self["main_list"].getCurrent()[14]
 
                     next_url = self["main_list"].getCurrent()[3]
                     if "&action=get_series_info" in next_url:

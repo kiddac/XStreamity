@@ -394,10 +394,13 @@ class XStreamity_Vod_Categories(Screen):
                         name = parts[0]
 
                 # restyle bouquet markers
-                if "stream_type" in channel and channel["stream_type"] and channel["stream_type"] != "movie":
-                    pattern = re.compile(r"[^\w\s()\[\]]", re.U)
-                    name = re.sub(r"_", "", re.sub(pattern, "", name))
-                    name = "** " + str(name) + " **"
+                # if "stream_type" in channel and channel["stream_type"] and channel["stream_type"] != "movie":
+                #    pattern = re.compile(r"[^\w\s()\[\]]", re.U)
+                #    name = re.sub(r"_", "", re.sub(pattern, "", name))
+                #    name = "** " + str(name) + " **"
+
+                if "stream_type" in channel and channel["stream_type"] and (channel["stream_type"] not in ["movie", "series"]):
+                    continue
 
                 stream_id = channel.get("stream_id", "")
                 if not stream_id:
@@ -465,7 +468,7 @@ class XStreamity_Vod_Categories(Screen):
     def downloadApiData(self, url):
         # print("*** downloadapidata ***", url)
         try:
-            retries = Retry(total=3, backoff_factor=1)
+            retries = Retry(total=2, backoff_factor=1)
             adapter = HTTPAdapter(max_retries=retries)
             http = requests.Session()
             http.mount("http://", adapter)
@@ -653,8 +656,14 @@ class XStreamity_Vod_Categories(Screen):
             title = self["main_list"].getCurrent()[0]
 
             if self.tmdbresults:
-                title = self.tmdbresults.get("name", self.tmdbresults.get("o_name", title))
-                year = self.tmdbresults.get("releasedate", "")[0:4]
+                if "name" in self.tmdbresults and self.tmdbresults["name"]:
+                    title = self.tmdbresults["name"]
+                elif "o_name" in self.tmdbresults and self.tmdbresults["o_name"]:
+                    title = self.tmdbresults["o_name"]
+
+                if "releasedate" in self.tmdbresults and self.tmdbresults["releasedate"]:
+                    year = self.tmdbresults["releasedate"]
+                    year = year[0:4]
 
                 if "tmdb_id" in self.tmdbresults and self.tmdbresults["tmdb_id"]:
                     if str(self.tmdbresults["tmdb_id"])[:1].isdigit():
@@ -793,7 +802,7 @@ class XStreamity_Vod_Categories(Screen):
         languagestr = ""
 
         try:
-            os.remove(os.path.join(dir_tmp, "tmdb.txt"))
+            os.remove(os.path.join(dir_tmp, "search.txt"))
         except:
             pass
 
@@ -808,7 +817,7 @@ class XStreamity_Vod_Categories(Screen):
         if pythonVer == 3:
             detailsurl = detailsurl.encode()
 
-        filepath = os.path.join(dir_tmp, "tmdb.txt")
+        filepath = os.path.join(dir_tmp, "search.txt")
         try:
             downloadPage(detailsurl, filepath, timeout=10).addCallback(self.processTMDBDetails).addErrback(self.failed)
         except Exception as e:
@@ -821,7 +830,7 @@ class XStreamity_Vod_Categories(Screen):
         director = []
 
         try:
-            with codecs.open(os.path.join(dir_tmp, "tmdb.txt"), "r", encoding="utf-8") as f:
+            with codecs.open(os.path.join(dir_tmp, "search.txt"), "r", encoding="utf-8") as f:
                 response = f.read()
         except Exception as e:
             print("Error reading TMDB response:", e)
@@ -911,8 +920,27 @@ class XStreamity_Vod_Categories(Screen):
             if self.tmdbresults:
                 info = self.tmdbresults
 
-                title = info.get("name") or info.get("o_name")
-                self["x_title"].setText(str(title).strip())
+                if "name" in self.tmdbresults:
+                    self["x_title"].setText(str(self.tmdbresults["name"]).strip())
+                elif "o_name" in self.tmdbresults:
+                    self["x_title"].setText(str(self.tmdbresults["o_name"]).strip())
+
+                if "description" in self.tmdbresults:
+                    self["x_description"].setText(str(self.tmdbresults["description"]).strip())
+                elif "plot" in self.tmdbresults:
+                    self["x_description"].setText(str(self.tmdbresults["plot"]).strip())
+
+                if "duration" in self.tmdbresults:
+                    self["vod_duration"].setText(str(self.tmdbresults["duration"]).strip())
+
+                if "genre" in self.tmdbresults:
+                    self["vod_genre"].setText(str(self.tmdbresults["genre"]).strip())
+
+                if "rating" in self.tmdbresults:
+                    self["vod_rating"].setText(str(self.tmdbresults["rating"]).strip())
+
+                if "country" in self.tmdbresults:
+                    self["vod_country"].setText(str(self.tmdbresults["country"]).strip())
 
                 release_date = ""
                 for key in ["releaseDate", "release_date", "releasedate"]:
@@ -925,29 +953,23 @@ class XStreamity_Vod_Categories(Screen):
 
                 release_date = str(release_date).strip()
 
-                genre = info.get("genre", "").strip()
+                if release_date:
+                    self["vod_release_date"].setText(release_date)
 
-                duration = info.get("duration", "").strip()
+                if "director" in self.tmdbresults:
+                    self["vod_director"].setText(str(self.tmdbresults["director"]).strip())
+
+                if "cast" in self.tmdbresults:
+                    self["vod_cast"].setText(str(self.tmdbresults["cast"]).strip())
+                elif "actors" in self.tmdbresults:
+                    self["vod_cast"].setText(str(self.tmdbresults["actors"]).strip())
 
                 try:
                     stream_format = stream_url.split(".")[-1]
                 except:
                     stream_format = ""
 
-                description = info.get("description") or info.get("plot")
-                if not description or description == "None":
-                    description = ""
-                self["x_description"].setText(str(description).strip())
-
-                self["vod_cast"].setText(str(info.get("cast", info.get("actors", ""))).strip())
-                self["vod_director"].setText(str(info.get("director", "")).strip())
-                self["vod_duration"].setText(str(duration).strip())
-                self["vod_genre"].setText(str(genre).strip())
-                self["vod_rating"].setText(str(info.get("rating", "")).strip())
-                self["vod_country"].setText(str(info.get("country", "")).strip())
                 self["vod_video_type"].setText(stream_format)
-                if release_date:
-                    self["vod_release_date"].setText(release_date)
 
     def resetButtons(self):
         if glob.nextlist[-1]["filter"]:
