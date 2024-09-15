@@ -14,6 +14,7 @@ from Screens.Console import Console
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools.LoadPixmap import LoadPixmap
+from Components.config import configfile
 
 import json
 import os
@@ -88,6 +89,7 @@ class XStreamity_MainMenu(Screen):
                 self.session.open(MessageBox, _("Playlists.txt location is invalid and has been reset."), type=MessageBox.TYPE_INFO, timeout=5)
                 cfg.location_valid.setValue(True)
                 cfg.save()
+                configfile.save()
         except Exception as e:
             print("Error checking location validity:", e)
 

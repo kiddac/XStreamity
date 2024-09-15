@@ -416,8 +416,11 @@ class XStreamity_Categories(Screen):
                 if self.chosen_category == "all" and str(category_id) in glob.active_playlist["player_info"]["livehidden"]:
                     continue
 
-                bouquet_id1 = int(stream_id) // 65535
-                bouquet_id2 = int(stream_id) - int(bouquet_id1 * 65535)
+                try:
+                    bouquet_id1 = int(stream_id) // 65535
+                    bouquet_id2 = int(stream_id) - int(bouquet_id1 * 65535)
+                except:
+                    continue
 
                 service_ref = "1:0:1:" + str(format(bouquet_id1, "x")) + ":" + str(format(bouquet_id2, "x")) + ":" + str(format(self.unique_ref, "x")) + ":0:0:0:0:" + "http%3a//example.m3u8"
 
@@ -1643,8 +1646,11 @@ class XStreamity_Categories(Screen):
                     channelid = channelid.replace("&", "&amp;")
 
                 stream_id = int(channel.get("stream_id", 0))
-                bouquet_id1 = int(stream_id) // 65535
-                bouquet_id2 = int(stream_id) - int(bouquet_id1 * 65535)
+                try:
+                    bouquet_id1 = int(stream_id) // 65535
+                    bouquet_id2 = int(stream_id) - int(bouquet_id1 * 65535)
+                except:
+                    continue
 
                 service_ref = "1:0:1:" + str(format(bouquet_id1, "x")) + ":" + str(format(bouquet_id2, "x")) + ":" + str(format(self.unique_ref, "x")) + ":0:0:0:0:" + "http%3a//example.m3u8"
 
