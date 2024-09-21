@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2024-09-14 23:13+0100\n"
-"PO-Revision-Date: 2024-09-14 23:14+0100\n"
+"PO-Revision-Date: 2024-09-15 15:57+0200\n"
 "Last-Translator: Masta2002\n"
 "Language-Team: \n"
 "Language: de\n"
@@ -539,11 +539,11 @@ msgstr "Name bereits verwendet. Bitte gib einen eindeutigen Namen ein."
 
 #: plugin.py:164 plugin.py:165
 msgid "Original"
-msgstr ""
+msgstr "Original"
 
 #: plugin.py:165
 msgid "Added"
-msgstr ""
+msgstr "Hinzugefügt"
 
 #: plugin.py:165 series.py:1355 series.py:1378 vod.py:276 vod.py:302
 #: vod.py:1080 vod.py:1100
@@ -552,7 +552,7 @@ msgstr "Sortierung: Jahr"
 
 #: plugin.py:165
 msgid "Year"
-msgstr ""
+msgstr "Jahr"
 
 #: plugin.py:266 plugin.py:379
 msgid "XStreamity"
@@ -728,6 +728,9 @@ msgid ""
 "\n"
 "Pin cannot be 0000, 111, or 1234"
 msgstr ""
+"Bitte ändern Sie den Standard-Eltern-Pin.\n"
+"\n"
+"Die PIN kann nicht 0000, 111 oder 1234 sein."
 
 #: settings.py:134
 msgid "You need to restart the GUI"
@@ -743,7 +746,7 @@ msgstr "Wähle Skin"
 
 #: settings.py:145
 msgid "Select fake web user-agent"
-msgstr ""
+msgstr "Unechten Web-Benutzer-Agenten auswählen"
 
 #: settings.py:146
 msgid "playlists.txt location"
@@ -840,11 +843,11 @@ msgstr "XStreamity beim Booten automatisch starten"
 
 #: settings.py:176
 msgid "Default VOD category sort order"
-msgstr ""
+msgstr "Standard-Sortierreihenfolge der VOD-Kategorien"
 
 #: settings.py:177
 msgid "Default VOD stream sort order"
-msgstr ""
+msgstr "Standard-Sortierreihenfolge für VOD-Streams"
 
 #: settings.py:293
 msgid "Choose Directory:"
@@ -871,6 +874,8 @@ msgid ""
 "The TMDB plugin is not installed!\n"
 "Please install it."
 msgstr ""
+"Das TMDB-Plugin ist nicht installiert!\n"
+"Bitte installieren Sie es."
 
 #: vod.py:1542
 msgid ""

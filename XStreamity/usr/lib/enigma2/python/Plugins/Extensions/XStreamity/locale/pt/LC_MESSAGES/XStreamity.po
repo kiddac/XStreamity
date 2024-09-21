@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2024-09-14 23:23+0100\n"
-"PO-Revision-Date: 2024-09-14 23:23+0100\n"
+"PO-Revision-Date: 2024-09-16 11:31+0100\n"
 "Last-Translator: extream87\n"
 "Language-Team: \n"
 "Language: pt_PT\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.4\n"
+"X-Generator: Poedit 3.5\n"
 "X-Poedit-Basepath: ../../../../../../../../../..\n"
 "X-Poedit-SearchPath-0: .\n"
 
@@ -24,6 +24,11 @@ msgstr ""
 msgid "%d Min"
 msgid_plural "%d Mins"
 msgstr[0] ""
+"%d Min\n"
+"\n"
+"\n"
+"\n"
+"%d Mins"
 msgstr[1] ""
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/Task.py:61
@@ -42,7 +47,7 @@ msgstr "Terminado"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/Task.py:61
 msgid "Failed"
-msgstr ""
+msgstr "Falhou"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/Task.py:326
 #, python-format
@@ -50,28 +55,30 @@ msgid ""
 "Error: %s\n"
 "Retry?"
 msgstr ""
+"Erro: %s\n"
+"Repetir?"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/Task.py:329
 msgid "Error"
-msgstr ""
+msgstr "Erro"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/Task.py:376
 msgid "An unknown error occurred!"
-msgstr ""
+msgstr "Ocorreu um erro desconhecido!"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/Task.py:401
 #, python-format
 msgid "A required tool (%s) was not found."
-msgstr ""
+msgstr "Não foi encontrada uma ferramenta necessária (%s)."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/Task.py:409
 msgid "Cancelled upon user request"
-msgstr ""
+msgstr "Cancelado mediante solicitação do usuário"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/Task.py:426
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/Task.py:441
 msgid "Error code"
-msgstr ""
+msgstr "Código de erro"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:144
 msgid "Catch Up Categories"
@@ -164,7 +171,7 @@ msgstr "TODOS"
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:699
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:489
 msgid "Server error or invalid link."
-msgstr ""
+msgstr "Erro no servidor ou link inválido."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:397
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:423
@@ -271,7 +278,7 @@ msgstr "Filtrar esta categoria..."
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1444
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1179
 msgid "No results found."
-msgstr ""
+msgstr "Não foram encontrados resultados."
 
 # Código de senha incorreto.
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:718
@@ -320,19 +327,19 @@ msgstr "Adicionado ao gerenciador de transferencia"
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1765
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1507
 msgid "Note recording acts as an open connection."
-msgstr ""
+msgstr "A gravação de notas funciona como uma conexão aberta."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:883
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1765
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1507
 msgid "Do not record and play streams at the same time."
-msgstr ""
+msgstr "Não grave e reproduza streams ao mesmo tempo."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:883
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1765
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1507
 msgid "Open download manager?"
-msgstr ""
+msgstr "Abrir o gerenciador de downloads?"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:886
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1768
@@ -359,7 +366,7 @@ msgstr "Quer retomar esta reprodução?"
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vodplayer.py:418
 #, python-format
 msgid "Resume position at %s"
-msgstr "Retome a posição em% s"
+msgstr "Retomar posição em %s"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchupplayer.py:496
 msgid "Catch Up"
@@ -369,7 +376,7 @@ msgstr "Gravações Automáticas"
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/liveplayer.py:881
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vodplayer.py:777
 msgid "Resolution Change Failed"
-msgstr ""
+msgstr "Falha na alteração da resolução"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:46
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:392
@@ -542,7 +549,7 @@ msgstr "Reiniciar JSON"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:89
 msgid "Playlists.txt location is invalid and has been reset."
-msgstr ""
+msgstr "Playlists.txt local é inválido e foi redefinido."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:117
 msgid ""
@@ -550,6 +557,9 @@ msgid ""
 "\n"
 "Trying installing older version from feeds first..."
 msgstr ""
+"Dependências não instaladas.\n"
+"\n"
+"Tentando instalar a versão mais antiga dos feeds primeiro..."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:137
 msgid "Playlists"
@@ -575,13 +585,11 @@ msgstr "Gerenciador de transferencia"
 # Você deseja continuar?
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:190
 msgid ""
-"Warning: delete stored json data for all playlists... Settings, favourites "
-"etc. \n"
+"Warning: delete stored json data for all playlists... Settings, favourites etc. \n"
 "Playlists will not be deleted.\n"
 "Do you wish to continue?"
 msgstr ""
-"Aviso: remove os dados json para todas as listas... Definições, favoritos, "
-"etc. \n"
+"Aviso: remove os dados json para todas as listas... Definições, favoritos, etc. \n"
 "As listas não serão removidas.\n"
 "Deseja continuar?"
 
@@ -598,12 +606,11 @@ msgstr "Forçar Atualização do EPG"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:264
 msgid "No data, blocked or playlist not compatible with XStreamity plugin."
-msgstr ""
-"Sem dados bloqueados ou lista de reprodução não compatível com XSTR ..."
+msgstr "Sem dados bloqueados ou lista de reprodução não compatível com XSTR ..."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:306
 msgid "Recordings in progress. EPG not downloaded."
-msgstr ""
+msgstr "Gravações em curso. EPG não baixado."
 
 # Baixando EPGs.
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:308
@@ -620,7 +627,7 @@ msgstr "Informação"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:99
 msgid "No internet."
-msgstr ""
+msgstr "Sem internet."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:319
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:397
@@ -678,6 +685,9 @@ msgid ""
 "\n"
 "Press Yellow button to soft delete dead playlists"
 msgstr ""
+"Você tem listas de reprodução mortas que estão atrasando o carregamento.\n"
+"\n"
+"Pressione o botão amarelo para excluir suavemente listas de reprodução inativas"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:412
 msgid "Delete selected playlist?"
@@ -743,24 +753,22 @@ msgid "Alternative EPG url:"
 msgstr "URL alternativo do EPG:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:232
-msgid ""
-"Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum 3 "
-"characters."
-msgstr ""
+msgid "Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum 3 characters."
+msgstr "O nome do buquê não pode estar em branco. Introduza um nome de bouquet exclusivo. Mínimo de 3 caracteres."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:238
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:213
 msgid "Name already used. Please enter a unique name."
-msgstr ""
+msgstr "Nome já utilizado. Introduza um nome exclusivo."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:164
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:165
 msgid "Original"
-msgstr ""
+msgstr "Original"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:165
 msgid "Added"
-msgstr ""
+msgstr "Adicionado"
 
 # Classificar: Ano
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:165
@@ -775,7 +783,7 @@ msgstr "Ordem: Ano"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:165
 msgid "Year"
-msgstr ""
+msgstr "Ano"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:266
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:379
@@ -824,7 +832,7 @@ msgstr "Séries"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:411
 msgid "No series found in this category."
-msgstr ""
+msgstr "Nenhuma série encontrada nesta categoria."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:461
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1808
@@ -881,7 +889,7 @@ msgstr "Protocolo:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:112
 msgid "Server URL: i.e. domain.xyz"
-msgstr ""
+msgstr "URL do servidor: ou seja, domain.xyz"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:113
 msgid "Port:"
@@ -901,10 +909,8 @@ msgid "Details are not valid or unauthorised"
 msgstr "Dados não validos ou não autorizado"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:207
-msgid ""
-"Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum 2 "
-"characters."
-msgstr ""
+msgid "Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum 2 characters."
+msgstr "O nome do buquê não pode estar em branco. Introduza um nome de bouquet exclusivo. Mínimo de 2 caracteres."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:223
 msgid "Playlist added successfully."
@@ -959,7 +965,7 @@ msgstr "Deslocamento do servidor:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:80
 msgid "Unknown"
-msgstr ""
+msgstr "Desconhecido"
 
 # Altere o PIN dos pais padrão..
 # O PIN não pode ser 0000, 1111 or 1234
@@ -969,6 +975,9 @@ msgid ""
 "\n"
 "Pin cannot be 0000, 111, or 1234"
 msgstr ""
+"Altere o PIN parental padrão.\n"
+"\n"
+"O pino não pode ser 0000, 111 ou 1234"
 
 # Você precisa reiniciar a GUI
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:134
@@ -982,11 +991,11 @@ msgstr "Quer reiniciar agora?"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:144
 msgid "Select skin"
-msgstr ""
+msgstr "Selecione a skin"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:145
 msgid "Select fake web user-agent"
-msgstr ""
+msgstr "Selecione um agente de usuário da web falso"
 
 # localização playlists.txt
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:146
@@ -998,7 +1007,7 @@ msgstr "localização playlists.txt"
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:162
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:167
 msgid " *Restart GUI Required"
-msgstr ""
+msgstr " *Reiniciar GUI necessário"
 
 # Localização de transferências do EPG
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:147
@@ -1037,7 +1046,7 @@ msgstr "XStreamityv senha de controlo parental"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:155
 msgid "Show in main menu"
-msgstr ""
+msgstr "Mostrar no menu principal"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:156
 msgid "Use Movie Database(TMDB) for VOD & Series"
@@ -1067,7 +1076,7 @@ msgstr "Saltar a tela de seleção de lista se houver apenas 1 lista"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:162
 msgid "Automatic EPG download time"
-msgstr ""
+msgstr "Tempo de download automático do EPG"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:163
 msgid "Show channel picons"
@@ -1087,15 +1096,15 @@ msgstr "Mostrar pôsteres da barra de informações"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:167
 msgid "Auto start XStreamity on boot"
-msgstr ""
+msgstr "Início automático do XStreamity na inicialização"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:176
 msgid "Default VOD category sort order"
-msgstr ""
+msgstr "Ordem de classificação de categoria VOD padrão"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:177
 msgid "Default VOD stream sort order"
-msgstr ""
+msgstr "Ordem de classificação de fluxo VOD padrão"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:293
 msgid "Choose Directory:"
@@ -1195,9 +1204,7 @@ msgstr "Filmes"
 
 # Tempo de download automático do EPG * Requer reinicialização da GUI
 #~ msgid "Auto start XStreamity on boot *Restart GUI Required"
-#~ msgstr ""
-#~ "Iniciar automaticamente o XStreamity na inicialização * Reiniciar GUI "
-#~ "necessário"
+#~ msgstr "Iniciar automaticamente o XStreamity na inicialização * Reiniciar GUI necessário"
 
 #~ msgid "Server timeout (seconds)"
 #~ msgstr "Tempo Limite do Servidor (segundos)"
@@ -1235,9 +1242,7 @@ msgstr "Filmes"
 
 # Transferencias múltiplas não permitidos. Aguarde ou cancele o transferencia.
 #~ msgid "Multiple downloads not allowed. Please wait or cancel download."
-#~ msgstr ""
-#~ "Transferencias múltiplas não permitidos. Aguarde ou cancele o "
-#~ "transferencia."
+#~ msgstr "Transferencias múltiplas não permitidos. Aguarde ou cancele o transferencia."
 
 #~ msgid "Download Failed!\n"
 #~ msgstr ""

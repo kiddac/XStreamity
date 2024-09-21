@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2024-09-14 23:14+0100\n"
-"PO-Revision-Date: 2024-09-14 23:14+0100\n"
+"PO-Revision-Date: 2024-09-15 15:54+0200\n"
 "Last-Translator: Masta2002\n"
 "Language-Team: \n"
 "Language: el\n"
@@ -51,7 +51,7 @@ msgid ""
 "Retry?"
 msgstr ""
 "Σφαλμα: %s\n"
-"Επαναληψη"
+"Επαναληψη?"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/Task.py:329
 msgid "Error"
@@ -329,7 +329,7 @@ msgstr "Η Εγγραφη και η Tαυτοχρονη παρακολούθησ
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1765
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1507
 msgid "Open download manager?"
-msgstr "Ανοιγμα Διαχείριστη Ληψεων"
+msgstr "Ανοιγμα Διαχείριστη Ληψεων?"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:886
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1768
@@ -469,7 +469,7 @@ msgstr "Επαναφορα"
 msgid "Error: All categories hidden. Please amend your selection."
 msgstr ""
 "Σφάλμα: Τροποποιήστε την επιλογή σας επιλέξατε να ειναι όλες οι κατηγορίες "
-"κρυφές. "
+"κρυφές."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:153
 msgid "Live Categories"
@@ -510,7 +510,7 @@ msgstr "Προσφατη Πληροφορια"
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:1527
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/liveplayer.py:632
 msgid "Recording Timer Set."
-msgstr "Σετ Χρονοδιακόπτη Εγγραφής"
+msgstr "Σετ Χρονοδιακόπτη Εγγραφής."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:1529
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/liveplayer.py:634
@@ -593,7 +593,7 @@ msgstr ""
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:306
 msgid "Recordings in progress. EPG not downloaded."
-msgstr "Καταγραφη σε εξέλιξη.Δεν εγινε ληψη ,Ηλεκτρονικόυ οδηγόυ προγράμματος "
+msgstr "Καταγραφη σε εξέλιξη.Δεν εγινε ληψη ,Ηλεκτρονικόυ οδηγόυ προγράμματος."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:308
 msgid "EPGs downloading."
@@ -605,11 +605,11 @@ msgstr "Επιλέξτε Λίστα Αναπαραγωγής"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:59
 msgid "Info"
-msgstr "Πληροφορίες?"
+msgstr "Πληροφορίες"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:99
 msgid "No internet."
-msgstr "Χωρίς Διαδίκτυο"
+msgstr "Χωρίς Διαδίκτυο."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:319
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:397
@@ -676,7 +676,7 @@ msgstr "Διαγραφή Επιλεγμένης  Λίστας Αναπαραγω
 msgid "Delete providers EPG data?"
 msgstr ""
 "Θελετε να γινει η Διαγραφή του Παρόχου των δεδομένων Ηλεκτρονικόυ οδηγόυ "
-"Προγγραματος "
+"Προγγραματος?"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:78
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/record.py:73
@@ -739,22 +739,22 @@ msgid ""
 "characters."
 msgstr ""
 "Βεβαιωθείτε ότι το Ονομα του Φακέλου δεν είναι Κενό και αντ' αυτού Παρέχετε "
-"ένα Μοναδικό Ονομα "
+"ένα Μοναδικό Ονομα."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:238
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:213
 msgid "Name already used. Please enter a unique name."
 msgstr ""
-"Αυτο το Όνομα το χρησιμοποιείται ήδη. Παρακαλώ εισάγετε ένα μοναδικό όνομα"
+"Αυτο το Όνομα το χρησιμοποιείται ήδη. Παρακαλώ εισάγετε ένα μοναδικό όνομα."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:164
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:165
 msgid "Original"
-msgstr ""
+msgstr "Πρωτότυπο"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:165
 msgid "Added"
-msgstr ""
+msgstr "Προστέθηκε"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:165
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1355
@@ -768,7 +768,7 @@ msgstr "Ταξινόμηση: Χρονος"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:165
 msgid "Year"
-msgstr ""
+msgstr "Έτος"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:266
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:379
@@ -820,7 +820,7 @@ msgstr "Δεν Βρέθηκαν Σειρές σε Αυτή την Κατηγορ
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:461
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1808
 msgid "Season "
-msgstr "Σεαζον"
+msgstr "Σεζόν "
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1727
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1470
@@ -896,7 +896,7 @@ msgid ""
 "characters."
 msgstr ""
 "Βεβαιωθείτε ότι το Ονομα του Φακέλου δεν είναι Κενό και αντ' αυτού Παρέχετε "
-"ένα Μοναδικό Ονομα "
+"ένα Μοναδικό Ονομα."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:223
 msgid "Playlist added successfully."
@@ -966,7 +966,7 @@ msgstr "Πρέπει να επανεκκινήσετε το GUI"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:134
 msgid "Do you want to restart now?"
-msgstr "Θέλετε να κάνετε επανεκκίνηση τώρα :"
+msgstr "Θέλετε να κάνετε επανεκκίνηση τώρα?"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:144
 msgid "Select skin"
@@ -974,7 +974,7 @@ msgstr "Επιλέξτε Θεμα Tαπετσαρίας"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:145
 msgid "Select fake web user-agent"
-msgstr ""
+msgstr "Επιλέξτε ψεύτικο web user-agent"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:146
 msgid "playlists.txt location"
@@ -993,7 +993,7 @@ msgstr "Ηλεκτρονικόυ Οδηγου Προγγραματος Τοπο�
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:148
 msgid "VOD download folder"
-msgstr "Ορισμος του Φακελου των Ληψεων για την Ταινιοθηκη  "
+msgstr "Ορισμος του Φακελου των Ληψεων για την Ταινιοθηκη "
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:149
 msgid "Default LIVE stream type"
@@ -1005,7 +1005,7 @@ msgstr "Προεπιλεγμένος τύπος Ροής Ταινιες / Σει
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:151
 msgid "Preview LIVE streams in mini tv"
-msgstr "Προεπισκόπηση ζωντανών ροών σε μίνι πλαισιο "
+msgstr "Προεπισκόπηση ζωντανών ροών σε μίνι πλαισιο"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:152
 msgid "Stop stream on back button"
@@ -1073,11 +1073,11 @@ msgstr "Αυτόματη εκκίνηση του XStreamity κατά την Εκ
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:176
 msgid "Default VOD category sort order"
-msgstr ""
+msgstr "Προεπιλεγμένη διάταξη ταξινόμησης κατηγοριών VOD"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:177
 msgid "Default VOD stream sort order"
-msgstr ""
+msgstr "Προεπιλεγμένη διάταξη ταξινόμησης ροής VOD"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:293
 msgid "Choose Directory:"
@@ -1104,6 +1104,8 @@ msgid ""
 "The TMDB plugin is not installed!\n"
 "Please install it."
 msgstr ""
+"Το πρόσθετο TMDB δεν είναι εγκατεστημένο!\n"
+"Παρακαλώ εγκαταστήστε το."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1542
 msgid ""
