@@ -540,6 +540,7 @@ class XStreamity_Categories(Screen):
         currentChannelList = response
 
         shorttitle = self.title2
+
         cover = self.storedcover
         plot = ""
         cast = self["vod_cast"].getText()
@@ -608,6 +609,7 @@ class XStreamity_Categories(Screen):
 
                         if "title" in item:
                             title = item["title"].replace(str(shorttitle) + " - ", "")
+                            title = re.sub(r'^.*?\.', '', title)
 
                         if "container_extension" in item:
                             container_extension = item["container_extension"]
@@ -855,7 +857,7 @@ class XStreamity_Categories(Screen):
 
             # if title ends in "the", move "the" to the beginning
             if searchtitle.endswith("the"):
-                searchtitle = "the " + searchtitle[:-4]
+                searchtitle = "the " + searchtitle[:-4].strip()
 
             # remove xx: at start
             searchtitle = re.sub(r'^\w{2}:', '', searchtitle)
@@ -879,14 +881,14 @@ class XStreamity_Categories(Screen):
             # remove all content between and including [] multiple times
             searchtitle = re.sub(r'\[\[.*?\]\]|\[.*?\]', '', searchtitle)
 
+            # Remove any prefix of characters followed by the special symbol ▎ and some content after it
+            searchtitle = re.sub(r'^.*?▎\s*', '', searchtitle)
+
+            # Remove any prefix of characters followed by the special symbol | and some content after it
+            searchtitle = re.sub(r'^.*?\|\s*', '', searchtitle)
+
             # List of bad strings to remove
             bad_strings = [
-
-                "ae|", "al|", "ar|", "at|", "ba|", "be|", "bg|", "br|", "cg|", "ch|", "cz|", "da|", "de|", "dk|",
-                "ee|", "en|", "es|", "eu|", "ex-yu|", "fi|", "fr|", "gr|", "hr|", "hu|", "in|", "ir|", "it|", "lt|",
-                "mk|", "mx|", "nl|", "no|", "pl|", "pt|", "ro|", "rs|", "ru|", "se|", "si|", "sk|", "sp|", "tr|",
-                "uk|", "us|", "yu|",
-
                 "1080p", "1080p-dual-lat-cine-calidad.com", "1080p-dual-lat-cine-calidad.com-1",
                 "1080p-dual-lat-cinecalidad.mx", "1080p-lat-cine-calidad.com", "1080p-lat-cine-calidad.com-1",
                 "1080p-lat-cinecalidad.mx", "1080p.dual.lat.cine-calidad.com", "3d", "'", "#", "(", ")", "-", "[]", "/",
@@ -1569,8 +1571,11 @@ class XStreamity_Categories(Screen):
                     self.genre2 = self["vod_genre"].getText()
                     self.releaseDate2 = self["vod_release_date"].getText()
                     self.rating2 = self["vod_rating"].getText()
+
                     if self["main_list"].getCurrent()[14] and self["main_list"].getCurrent()[14] != "0":
                         self.tmdb2 = self["main_list"].getCurrent()[14]
+                    else:
+                        self.tmdb2 = ""
 
                     next_url = self["main_list"].getCurrent()[3]
                     if "&action=get_series_info" in next_url:
