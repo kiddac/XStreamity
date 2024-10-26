@@ -79,7 +79,11 @@ try:
 except:
     TMDB_installed = False
 
-hdr = {'User-Agent': str(cfg.useragent.value)}
+hdr = {
+    'User-Agent': str(cfg.useragent.value),
+    'Connection': 'keep-alive',
+    'Accept-Encoding': 'gzip, deflate'
+}
 
 
 class XStreamity_Vod_Categories(Screen):
@@ -470,19 +474,20 @@ class XStreamity_Vod_Categories(Screen):
         try:
             retries = Retry(total=2, backoff_factor=1)
             adapter = HTTPAdapter(max_retries=retries)
-            http = requests.Session()
-            http.mount("http://", adapter)
-            http.mount("https://", adapter)
 
-            response = http.get(url, headers=hdr, timeout=(10, 30), verify=False)
-            response.raise_for_status()
+            with requests.Session() as http:
+                http.mount("http://", adapter)
+                http.mount("https://", adapter)
 
-            if response.status_code == requests.codes.ok:
-                try:
-                    return response.json()
-                except ValueError:
-                    print("JSON decoding failed.")
-                    return None
+                response = http.get(url, headers=hdr, timeout=(10, 30), verify=False)
+                response.raise_for_status()
+
+                if response.status_code == requests.codes.ok:
+                    try:
+                        return response.json()
+                    except ValueError:
+                        print("JSON decoding failed.")
+                        return None
         except Exception as e:
             print("Error occurred during API data download:", e)
 
@@ -531,65 +536,68 @@ class XStreamity_Vod_Categories(Screen):
 
             retries = Retry(total=1, backoff_factor=1)
             adapter = HTTPAdapter(max_retries=retries)
-            http = requests.Session()
-            http.mount("http://", adapter)
-            http.mount("https://", adapter)
-            try:
-                r = http.get(url, headers=hdr, timeout=(10, 20), verify=False)
-                r.raise_for_status()
-                if r.status_code == requests.codes.ok:
-                    try:
-                        content = r.json()
-                    except ValueError as e:
-                        print(e)
-                        content = None
 
-                if content and ("info" in content) and content["info"]:
-                    self.tmdbresults = content["info"]
+            with requests.Session() as http:
+                http.mount("http://", adapter)
+                http.mount("https://", adapter)
 
-                    if "name" not in self.tmdbresults and "movie_data" in content and content["movie_data"]:
-                        self.tmdbresults["name"] = content["movie_data"]["name"]
+                try:
+                    r = http.get(url, headers=hdr, timeout=(10, 30), verify=False)
+                    r.raise_for_status()
 
-                    if "cover_big" in self.tmdbresults:
-                        cover = self.tmdbresults["cover_big"]
+                    if r.status_code == requests.codes.ok:
+                        try:
+                            content = r.json()
+                        except ValueError as e:
+                            print(e)
+                            content = None
 
-                        if cover and cover.startswith("http"):
-                            try:
-                                cover = cover.replace(r"\/", "/")
-                            except:
-                                pass
+                    if content and ("info" in content) and content["info"]:
+                        self.tmdbresults = content["info"]
 
-                            if cover == "https://image.tmdb.org/t/p/w600_and_h900_bestv2":
+                        if "name" not in self.tmdbresults and "movie_data" in content and content["movie_data"]:
+                            self.tmdbresults["name"] = content["movie_data"]["name"]
+
+                        if "cover_big" in self.tmdbresults:
+                            cover = self.tmdbresults["cover_big"]
+
+                            if cover and cover.startswith("http"):
+                                try:
+                                    cover = cover.replace(r"\/", "/")
+                                except:
+                                    pass
+
+                                if cover == "https://image.tmdb.org/t/p/w600_and_h900_bestv2":
+                                    cover = ""
+
+                                if cover.startswith("https://image.tmdb.org/t/p/") or cover.startswith("http://image.tmdb.org/t/p/"):
+                                    dimensions = cover.partition("/p/")[2].partition("/")[0]
+
+                                    if screenwidth.width() <= 1280:
+                                        cover = cover.replace(dimensions, "w200")
+                                    elif screenwidth.width() <= 1920:
+                                        cover = cover.replace(dimensions, "w300")
+                                    else:
+                                        cover = cover.replace(dimensions, "w400")
+                            else:
                                 cover = ""
 
-                            if cover.startswith("https://image.tmdb.org/t/p/") or cover.startswith("http://image.tmdb.org/t/p/"):
-                                dimensions = cover.partition("/p/")[2].partition("/")[0]
+                            self.tmdbresults["cover_big"] = cover
 
-                                if screenwidth.width() <= 1280:
-                                    cover = cover.replace(dimensions, "w200")
-                                elif screenwidth.width() <= 1920:
-                                    cover = cover.replace(dimensions, "w300")
-                                else:
-                                    cover = cover.replace(dimensions, "w400")
-                        else:
-                            cover = ""
+                    elif "movie_data" in content and content["movie_data"]:
+                        self.tmdbresults = content["movie_data"]
+                    else:
+                        self.tmdbresults = ""
 
-                        self.tmdbresults["cover_big"] = cover
+                    if cfg.TMDB.value is True:
+                        self.getTMDB()
+                    else:
+                        self.displayTMDB()
+                        if cfg.channelcovers.value is True:
+                            self.downloadCover()
 
-                elif "movie_data" in content and content["movie_data"]:
-                    self.tmdbresults = content["movie_data"]
-                else:
-                    self.tmdbresults = ""
-
-                if cfg.TMDB.value is True:
-                    self.getTMDB()
-                else:
-                    self.displayTMDB()
-                    if cfg.channelcovers.value is True:
-                        self.downloadCover()
-
-            except Exception as e:
-                print(e)
+                except Exception as e:
+                    print(e)
 
     def selectionChanged(self):
         # print("*** selectionChanged ***")

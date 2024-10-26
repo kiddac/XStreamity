@@ -2,9 +2,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: XStreamity v4.47.20240511\n"
+"Project-Id-Version: XStreamity v4.61.20240927\n"
 "POT-Creation-Date: 2024-09-14 23:15+0100\n"
-"PO-Revision-Date: 2024-09-14 23:16+0100\n"
+"PO-Revision-Date: 2024-09-27 19:16+0200\n"
 "Last-Translator: weeping <a.weeping@gmail.com>\n"
 "Language-Team: weeping <a.weeping@gmail.com>\n"
 "Language: es_ES\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.4\n"
+"X-Generator: Poedit 3.5\n"
 "X-Poedit-Basepath: ../../..\n"
 "X-Poedit-SearchPath-0: .\n"
 
@@ -541,11 +541,11 @@ msgstr "Nombre usado. Introducir uno nuevo."
 
 #: plugin.py:164 plugin.py:165
 msgid "Original"
-msgstr ""
+msgstr "Original"
 
 #: plugin.py:165
 msgid "Added"
-msgstr ""
+msgstr "Nuevas entradas"
 
 #: plugin.py:165 series.py:1355 series.py:1378 vod.py:276 vod.py:302
 #: vod.py:1080 vod.py:1100
@@ -554,7 +554,7 @@ msgstr "Orden: Año"
 
 #: plugin.py:165
 msgid "Year"
-msgstr ""
+msgstr "Año"
 
 #: plugin.py:266 plugin.py:379
 msgid "XStreamity"
@@ -748,7 +748,7 @@ msgstr "Seleccionar skin"
 
 #: settings.py:145
 msgid "Select fake web user-agent"
-msgstr ""
+msgstr "Seleccionar el falso agente web de usuario"
 
 #: settings.py:146
 msgid "playlists.txt location"
@@ -844,11 +844,11 @@ msgstr "Inicio automático de XStreamity al iniciar"
 
 #: settings.py:176
 msgid "Default VOD category sort order"
-msgstr ""
+msgstr "Orden categorías VOD predefinido"
 
 #: settings.py:177
 msgid "Default VOD stream sort order"
-msgstr ""
+msgstr "Orden stream VOD predefinido"
 
 #: settings.py:293
 msgid "Choose Directory:"
@@ -875,6 +875,8 @@ msgid ""
 "The TMDB plugin is not installed!\n"
 "Please install it."
 msgstr ""
+"El plugin TMDB no esta instalado!\n"
+"Para usarlo, debe instalarse."
 
 #: vod.py:1542
 msgid ""

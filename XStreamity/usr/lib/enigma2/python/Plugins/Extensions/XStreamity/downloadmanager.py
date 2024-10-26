@@ -58,7 +58,11 @@ def convert_size(size_bytes):
     return "%s %s" % (s, size_name[i])
 
 
-hdr = {'User-Agent': str(cfg.useragent.value)}
+hdr = {
+    'User-Agent': str(cfg.useragent.value),
+    'Connection': 'keep-alive',
+    'Accept-Encoding': 'gzip, deflate'
+}
 
 
 class downloadJob(Job):
@@ -244,20 +248,21 @@ class XStreamity_DownloadManager(Screen):
 
                 retries = Retry(total=3, backoff_factor=1)
                 adapter = HTTPAdapter(max_retries=retries)
-                http = requests.Session()
-                http.mount("http://", adapter)
-                http.mount("https://", adapter)
 
-                try:
-                    with http.get(url, headers=hdr, timeout=10, verify=False, stream=True) as r:
-                        r.raise_for_status()
-                        if r.status_code == requests.codes.ok:
-                            content_length = float(r.headers.get("content-length", 0))
-                            video[5] = content_length
+                with requests.Session() as http:  # Use 'with' to ensure the session is closed
+                    http.mount("http://", adapter)
+                    http.mount("https://", adapter)
 
-                except Exception as e:
-                    print(e)
-                    video[5] = 0  # Set download size to 0 in case of any error
+                    try:
+                        with http.get(url, headers=hdr, timeout=10, verify=False, stream=True) as r:
+                            r.raise_for_status()
+                            if r.status_code == requests.codes.ok:
+                                content_length = float(r.headers.get("content-length", 0))
+                                video[5] = content_length
+
+                    except Exception as e:
+                        print(e)
+                        video[5] = 0  # Set download size to 0 in case of any error
 
                 x += 1
                 if x == 5:

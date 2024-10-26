@@ -130,7 +130,11 @@ Image.preinit = _mypreinit
 
 epgimporter = os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/EPGImport")
 
-hdr = {'User-Agent': str(cfg.useragent.value)}
+hdr = {
+    'User-Agent': str(cfg.useragent.value),
+    'Connection': 'keep-alive',
+    'Accept-Encoding': 'gzip, deflate'
+}
 
 
 class XStreamity_Categories(Screen):
@@ -456,19 +460,20 @@ class XStreamity_Categories(Screen):
         try:
             retries = Retry(total=3, backoff_factor=1)
             adapter = HTTPAdapter(max_retries=retries)
-            http = requests.Session()
-            http.mount("http://", adapter)
-            http.mount("https://", adapter)
 
-            response = http.get(url, headers=hdr, timeout=(10, 30), verify=False)
-            response.raise_for_status()
+            with requests.Session() as http:  # Use 'with' to ensure the session is closed
+                http.mount("http://", adapter)
+                http.mount("https://", adapter)
 
-            if response.status_code == requests.codes.ok:
-                try:
-                    return response.json()
-                except ValueError:
-                    print("JSON decoding failed.")
-                    return None
+                response = http.get(url, headers=hdr, timeout=(10, 30), verify=False)
+                response.raise_for_status()
+
+                if response.status_code == requests.codes.ok:
+                    try:
+                        return response.json()
+                    except ValueError:
+                        print("JSON decoding failed.")
+                        return None
         except Exception as e:
             print("Error occurred during API data download:", e)
 
@@ -1361,18 +1366,19 @@ class XStreamity_Categories(Screen):
 
                         retries = Retry(total=3, backoff_factor=1)
                         adapter = HTTPAdapter(max_retries=retries)
-                        http = requests.Session()
-                        http.mount("http://", adapter)
-                        http.mount("https://", adapter)
 
-                        try:
-                            r = http.get(url, headers=hdr, timeout=(10, 20), verify=False)
-                            r.raise_for_status()
+                        with requests.Session() as http:  # Use 'with' to ensure the session is closed
+                            http.mount("http://", adapter)
+                            http.mount("https://", adapter)
 
-                            if r.status_code == requests.codes.ok:
-                                response = r.json()
-                        except Exception as e:
-                            print("Error fetching short EPG:", e)
+                            try:
+                                r = http.get(url, headers=hdr, timeout=(10, 20), verify=False)
+                                r.raise_for_status()
+
+                                if r.status_code == requests.codes.ok:
+                                    response = r.json()
+                            except Exception as e:
+                                print("Error fetching short EPG:", e)
 
                         if response:
                             now = datetime.now()

@@ -69,7 +69,11 @@ if sslverify:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
 
-hdr = {'User-Agent': str(cfg.useragent.value)}
+hdr = {
+    'User-Agent': str(cfg.useragent.value),
+    'Connection': 'keep-alive',
+    'Accept-Encoding': 'gzip, deflate'
+}
 
 
 class XStreamity_Categories(Screen):
@@ -682,19 +686,20 @@ class XStreamity_Categories(Screen):
         try:
             retries = Retry(total=2, backoff_factor=1)
             adapter = HTTPAdapter(max_retries=retries)
-            http = requests.Session()
-            http.mount("http://", adapter)
-            http.mount("https://", adapter)
 
-            response = http.get(url, headers=hdr, timeout=(10, 30), verify=False)
-            response.raise_for_status()
+            with requests.Session() as http:
+                http.mount("http://", adapter)
+                http.mount("https://", adapter)
 
-            if response.status_code == requests.codes.ok:
-                try:
-                    return response.json()
-                except ValueError:
-                    print("JSON decoding failed.")
-                    return None
+                response = http.get(url, headers=hdr, timeout=(10, 30), verify=False)
+                response.raise_for_status()
+
+                if response.status_code == requests.codes.ok:
+                    try:
+                        return response.json()
+                    except ValueError:
+                        print("JSON decoding failed.")
+                        return None
         except Exception as e:
             print("Error occurred during API data download:", e)
 

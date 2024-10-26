@@ -122,7 +122,11 @@ Image.preinit = _mypreinit
 
 epgimporter = os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/EPGImport")
 
-hdr = {'User-Agent': str(cfg.useragent.value)}
+hdr = {
+    'User-Agent': str(cfg.useragent.value),
+    'Connection': 'keep-alive',
+    'Accept-Encoding': 'gzip, deflate'
+}
 
 
 class XStreamity_Categories(Screen):
@@ -370,24 +374,25 @@ class XStreamity_Categories(Screen):
             glob.originalChannelList2 = self.list2[:]
 
     def downloadApiData(self, url):
-        try:
-            retries = Retry(total=3, backoff_factor=1)
-            adapter = HTTPAdapter(max_retries=retries)
-            http = requests.Session()
+        retries = Retry(total=3, backoff_factor=1)
+        adapter = HTTPAdapter(max_retries=retries)
+
+        with requests.Session() as http:  # Use a context manager for the session
             http.mount("http://", adapter)
             http.mount("https://", adapter)
 
-            response = http.get(url, headers=hdr, timeout=(10, 30), verify=False)
-            response.raise_for_status()
+            try:
+                response = http.get(url, headers=hdr, timeout=(10, 60), verify=False)
+                response.raise_for_status()
 
-            if response.status_code == requests.codes.ok:
-                try:
-                    return response.json()
-                except ValueError:
-                    print("JSON decoding failed.")
-                    return None
-        except Exception as e:
-            print("Error occurred during API data download:", e)
+                if response.status_code == requests.codes.ok:
+                    try:
+                        return response.json()
+                    except ValueError:
+                        print("JSON decoding failed.")
+                        return None
+            except Exception as e:
+                print("Error occurred during API data download:", e)
 
         self.session.openWithCallback(self.back, MessageBox, _("Server error or invalid link."), MessageBox.TYPE_ERROR, timeout=3)
 
@@ -666,7 +671,7 @@ class XStreamity_Categories(Screen):
 
         current_filter = self["key_blue"].getText()
 
-        if current_filter == (_("Reset Search")):
+        if current_filter == _("Reset Search"):
             self.resetSearch()
         else:
             self.session.openWithCallback(self.filterChannels, VirtualKeyBoard, title=_("Filter this category..."), text=self.searchString)
@@ -917,20 +922,20 @@ class XStreamity_Categories(Screen):
                 self.session.open(MessageBox, _("Catchup error. No data for this slot"), MessageBox.TYPE_WARNING, timeout=5)
 
     def checkRedirect(self, url):
-        x = ""
         retries = Retry(total=3, backoff_factor=1)
         adapter = HTTPAdapter(max_retries=retries)
-        http = requests.Session()
-        http.mount("http://", adapter)
-        http.mount("https://", adapter)
-        try:
-            x = http.get(url, headers=hdr, timeout=30, verify=False, stream=True)
-            url = x.url
-            x.close()
-            return str(url)
-        except Exception as e:
-            print(e)
-            return str(url)
+
+        with requests.Session() as http:
+            http.mount("http://", adapter)
+            http.mount("https://", adapter)
+
+            try:
+                with http.get(url, headers=hdr, timeout=30, verify=False, stream=True) as response:
+                    url = response.url
+                    return str(url)
+            except Exception as e:
+                print(e)
+                return str(url)
 
     def parse_datetime(self, datetime_str):
         time_formats = ["%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H-%M-%S", "%Y-%m-%d-%H:%M:%S", "%Y- %m-%d %H:%M:%S"]
@@ -948,7 +953,7 @@ class XStreamity_Categories(Screen):
             return
 
         next_url = current_item[3]
-        if not next_url and next_url == "None" or "/live/" not in next_url:
+        if not next_url or next_url == "None" or "/live/" not in next_url:
             return
 
         stream_id = next_url.rpartition("/")[-1].partition(".")[0]
@@ -956,21 +961,23 @@ class XStreamity_Categories(Screen):
         url = "{}{}".format(self.simpledatatable, stream_id)
         url = self.checkRedirect(url)
 
-        try:
-            with requests.Session() as http:
-                retries = Retry(total=3, backoff_factor=1)
-                adapter = HTTPAdapter(max_retries=retries)
-                http.mount("http://", adapter)
-                http.mount("https://", adapter)
+        retries = Retry(total=3, backoff_factor=1)
+        adapter = HTTPAdapter(max_retries=retries)
 
-                response = http.get(url, headers=hdr, timeout=(10, 20), verify=False)
-                response.raise_for_status()
-                if response.status_code == requests.codes.ok:
-                    shortEPGJson = response.json()
+        with requests.Session() as http:
+            http.mount("http://", adapter)
+            http.mount("https://", adapter)
 
-        except Exception as e:
-            print("Error fetching catchup EPG:", e)
-            return
+            try:
+                with http.get(url, headers=hdr, timeout=(10, 20), verify=False) as response:
+                    response.raise_for_status()
+                    if response.status_code == requests.codes.ok:
+                        shortEPGJson = response.json()
+                        # Continue processing shortEPGJson as needed
+
+            except Exception as e:
+                print("Error fetching catchup EPG:", e)
+                return
 
         if "epg_listings" not in shortEPGJson or not shortEPGJson["epg_listings"]:
             self.session.open(MessageBox, _("Catchup currently not available. Missing EPG data"), type=MessageBox.TYPE_INFO, timeout=2)
@@ -1030,7 +1037,7 @@ class XStreamity_Categories(Screen):
 
                     epg_duration = int((end_datetime_margin - start_datetime_margin).total_seconds() / 60.0)
 
-                    url_datestring = start_datetime_original.strftime("%Y-%m-%d:%H-%M")
+                    url_datestring = start_datetime_margin.strftime("%Y-%m-%d:%H-%M")
 
                     if (epg_date_all, epg_time_all) not in duplicatecheck:
                         duplicatecheck.add((epg_date_all, epg_time_all))

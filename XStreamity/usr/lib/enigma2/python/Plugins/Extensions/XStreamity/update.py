@@ -84,7 +84,11 @@ def get_time_utc(timestring, fdateparse):
         return 0
 
 
-hdr = {'User-Agent': str(cfg.useragent.value)}
+hdr = {
+    'User-Agent': str(cfg.useragent.value),
+    'Connection': 'keep-alive',
+    'Accept-Encoding': 'gzip, deflate'
+}
 
 
 class XStreamity_Update:
@@ -115,20 +119,20 @@ class XStreamity_Update:
             pass
 
     def check_redirect(self, url):
-        x = ""
         retries = Retry(total=3, backoff_factor=1)
         adapter = HTTPAdapter(max_retries=retries)
-        http = requests.Session()
-        http.mount("http://", adapter)
-        http.mount("https://", adapter)
-        try:
-            x = http.get(url, headers=hdr, timeout=30, verify=False, stream=True)
-            url = x.url
-            x.close()
-            return str(url)
-        except Exception as e:
-            print(e)
-            return str(url)
+
+        with requests.Session() as http:
+            http.mount("http://", adapter)
+            http.mount("https://", adapter)
+
+            try:
+                response = http.get(url, headers=hdr, timeout=30, verify=False, stream=True)
+                url = response.url
+                return str(url)
+            except Exception as e:
+                print(e)
+                return str(url)
 
     def process_json_file(self):
         try:
@@ -201,9 +205,9 @@ class XStreamity_Update:
 
             if scheme == "https" and sslverify:
                 sniFactory = SNIFactory(domain)
-                downloadPage(url, epgxmlfile, sniFactory, timeout=120).addCallback(self.downloadComplete).addErrback(self.downloadFailed)
+                downloadPage(url, epgxmlfile, sniFactory).addCallback(self.downloadComplete).addErrback(self.downloadFailed)
             else:
-                downloadPage(url, epgxmlfile, timeout=120).addCallback(self.downloadComplete).addErrback(self.downloadFailed)
+                downloadPage(url, epgxmlfile).addCallback(self.downloadComplete).addErrback(self.downloadFailed)
 
         except Exception as e:
             print(e)

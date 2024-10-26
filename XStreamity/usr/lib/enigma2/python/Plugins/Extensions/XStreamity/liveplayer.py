@@ -184,7 +184,11 @@ def clear_caches():
         pass
 
 
-hdr = {'User-Agent': str(cfg.useragent.value)}
+hdr = {
+    'User-Agent': str(cfg.useragent.value),
+    'Connection': 'keep-alive',
+    'Accept-Encoding': 'gzip, deflate'
+}
 
 
 class IPTVInfoBarShowHide():
@@ -478,7 +482,7 @@ class XStreamity_StreamPlayer(
             end_time = datetime.strptime(end, "%H:%M")
 
             if end_time < start_time:
-                end_time = datetime.strptime(end, "%H:%M") + timedelta(hours=24)
+                end_time += timedelta(hours=24)
 
             total_time = end_time - start_time
             duration = 0
@@ -525,14 +529,15 @@ class XStreamity_StreamPlayer(
 
                     retries = Retry(total=3, backoff_factor=1)
                     adapter = HTTPAdapter(max_retries=retries)
-                    http = requests.Session()
-                    http.mount("http://", adapter)
-                    http.mount("https://", adapter)
-                    r = http.get(url, headers=hdr, timeout=(10, 20), verify=False)
-                    r.raise_for_status()
-                    if r.status_code == requests.codes.ok:
-                        response = r.json()
-                        shortEPGJson = response.get("epg_listings", [])
+
+                    with requests.Session() as http:
+                        http.mount("http://", adapter)
+                        http.mount("https://", adapter)
+                        r = http.get(url, headers=hdr, timeout=(10, 20), verify=False)
+                        r.raise_for_status()
+                        if r.status_code == requests.codes.ok:
+                            response = r.json()
+                            shortEPGJson = response.get("epg_listings", [])
 
                     if shortEPGJson and len(shortEPGJson) > 1:
                         self.epgshortlist = []
@@ -562,7 +567,6 @@ class XStreamity_StreamPlayer(
                             templist[5] = str(self.epgshortlist[1][2])  # next start
 
                         glob.currentepglist[glob.currentchannellistindex] = tuple(templist)
-                        # self["progress"].setValue(0)
                     else:
                         templist = list(glob.currentepglist[glob.currentchannellistindex])
                         templist[4] = glob.currentepglist[glob.currentchannellistindex][7]  # description
@@ -571,7 +575,6 @@ class XStreamity_StreamPlayer(
                         templist[6] = ""  # next title
                         templist[5] = ""  # next start
                         glob.currentepglist[glob.currentchannellistindex] = tuple(templist)
-                        # self["progress"].setValue(0)
                 except Exception as e:
                     print("Error during short EPG update:", e)
 
