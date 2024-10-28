@@ -930,9 +930,9 @@ class XStreamity_Categories(Screen):
             http.mount("https://", adapter)
 
             try:
-                with http.get(url, headers=hdr, timeout=30, verify=False, stream=True) as response:
-                    url = response.url
-                    return str(url)
+                response = http.get(url, headers=hdr, timeout=30, verify=False, stream=True)
+                url = response.url
+                return str(url)
             except Exception as e:
                 print(e)
                 return str(url)
@@ -969,11 +969,10 @@ class XStreamity_Categories(Screen):
             http.mount("https://", adapter)
 
             try:
-                with http.get(url, headers=hdr, timeout=(10, 20), verify=False) as response:
-                    response.raise_for_status()
-                    if response.status_code == requests.codes.ok:
-                        shortEPGJson = response.json()
-                        # Continue processing shortEPGJson as needed
+                response = http.get(url, headers=hdr, timeout=(10, 20), verify=False)
+                response.raise_for_status()
+                if response.status_code == requests.codes.ok:
+                    shortEPGJson = response.json()
 
             except Exception as e:
                 print("Error fetching catchup EPG:", e)
@@ -1004,6 +1003,7 @@ class XStreamity_Categories(Screen):
                     start_datetime_original = self.parse_datetime(start)
                     if start_datetime_original:
                         start_datetime = start_datetime_original + timedelta(hours=shift)
+                        start_datetime_original_margin = start_datetime_original - timedelta(minutes=catchupstart)
                     else:
                         print("Error parsing start datetime")
                         continue
@@ -1037,7 +1037,9 @@ class XStreamity_Categories(Screen):
 
                     epg_duration = int((end_datetime_margin - start_datetime_margin).total_seconds() / 60.0)
 
-                    url_datestring = start_datetime_margin.strftime("%Y-%m-%d:%H-%M")
+                    url_datestring = start_datetime_original_margin.strftime("%Y-%m-%d:%H-%M")
+
+                    # url_datestring = start_datetime_margin.strftime("%Y-%m-%d:%H-%M")
 
                     if (epg_date_all, epg_time_all) not in duplicatecheck:
                         duplicatecheck.add((epg_date_all, epg_time_all))
