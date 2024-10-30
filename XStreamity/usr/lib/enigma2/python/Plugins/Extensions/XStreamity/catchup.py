@@ -377,7 +377,7 @@ class XStreamity_Categories(Screen):
         retries = Retry(total=3, backoff_factor=1)
         adapter = HTTPAdapter(max_retries=retries)
 
-        with requests.Session() as http:  # Use a context manager for the session
+        with requests.Session() as http:
             http.mount("http://", adapter)
             http.mount("https://", adapter)
 
@@ -393,8 +393,7 @@ class XStreamity_Categories(Screen):
                         return None
             except Exception as e:
                 print("Error occurred during API data download:", e)
-
-        self.session.openWithCallback(self.back, MessageBox, _("Server error or invalid link."), MessageBox.TYPE_ERROR, timeout=3)
+                self.session.openWithCallback(self.back, MessageBox, _("Server error or invalid link."), MessageBox.TYPE_ERROR, timeout=3)
 
     def buildList1(self):
         self["picon"].hide()
