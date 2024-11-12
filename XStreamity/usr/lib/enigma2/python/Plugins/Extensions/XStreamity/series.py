@@ -809,6 +809,81 @@ class XStreamity_Categories(Screen):
             self["key_yellow"].setText("")
             self["key_blue"].setText("")
 
+    def stripjunk(self, text, database=None):
+        searchtitle = text.lower()
+
+        # if title ends in "the", move "the" to the beginning
+        if searchtitle.endswith("the"):
+            searchtitle = "the " + searchtitle[:-4]
+
+        # remove xx: at start
+        searchtitle = re.sub(r'^\w{2}:', '', searchtitle)
+
+        # remove xx|xx at start
+        searchtitle = re.sub(r'^\w{2}\|\w{2}\s', '', searchtitle)
+
+        # remove xx - at start
+        searchtitle = re.sub(r'^.{2}\+? ?- ?', '', searchtitle)
+
+        # remove all leading content between and including ||
+        searchtitle = re.sub(r'^\|\|.*?\|\|', '', searchtitle)
+        searchtitle = re.sub(r'^\|.*?\|', '', searchtitle)
+
+        # remove everything left between pipes.
+        searchtitle = re.sub(r'\|.*?\|', '', searchtitle)
+
+        # remove all content between and including () multiple times
+        if database == "TMDB":
+            searchtitle = re.sub(r'\(\(.*?\)\)|\(.*?\)', '', searchtitle)
+
+        # remove all content between and including [] multiple times
+        searchtitle = re.sub(r'\[\[.*?\]\]|\[.*?\]', '', searchtitle)
+
+        # List of bad strings to remove
+        bad_strings = [
+
+            "ae|", "al|", "ar|", "at|", "ba|", "be|", "bg|", "br|", "cg|", "ch|", "cz|", "da|", "de|", "dk|",
+            "ee|", "en|", "es|", "eu|", "ex-yu|", "fi|", "fr|", "gr|", "hr|", "hu|", "in|", "ir|", "it|", "lt|",
+            "mk|", "mx|", "nl|", "no|", "pl|", "pt|", "ro|", "rs|", "ru|", "se|", "si|", "sk|", "sp|", "tr|",
+            "uk|", "us|", "yu|",
+            "1080p", "1080p-dual-lat-cine-calidad.com", "1080p-dual-lat-cine-calidad.com-1",
+            "1080p-dual-lat-cinecalidad.mx", "1080p-lat-cine-calidad.com", "1080p-lat-cine-calidad.com-1",
+            "1080p-lat-cinecalidad.mx", "1080p.dual.lat.cine-calidad.com", "3d", "'", "#", "(", ")", "-", "[]", "/",
+            "4k", "720p", "aac", "blueray", "ex-yu:", "fhd", "hd", "hdrip", "hindi", "imdb", "multi:", "multi-audio",
+            "multi-sub", "multi-subs", "multisub", "ozlem", "sd", "top250", "u-", "uhd", "vod", "x264"
+        ]
+
+        # Remove numbers from 1900 to 2030
+        if database == "TMDB":
+            bad_strings.extend(map(str, range(1900, 2030)))
+
+        # Construct a regex pattern to match any of the bad strings
+        bad_strings_pattern = re.compile('|'.join(map(re.escape, bad_strings)))
+
+        # Remove bad strings using regex pattern
+        searchtitle = bad_strings_pattern.sub('', searchtitle)
+
+        # List of bad suffixes to remove
+        bad_suffix = [
+            " al", " ar", " ba", " da", " de", " en", " es", " eu", " ex-yu", " fi", " fr", " gr", " hr", " mk",
+            " nl", " no", " pl", " pt", " ro", " rs", " ru", " si", " swe", " sw", " tr", " uk", " yu"
+        ]
+
+        # Construct a regex pattern to match any of the bad suffixes at the end of the string
+        bad_suffix_pattern = re.compile(r'(' + '|'.join(map(re.escape, bad_suffix)) + r')$')
+
+        # Remove bad suffixes using regex pattern
+        searchtitle = bad_suffix_pattern.sub('', searchtitle)
+
+        # Replace ".", "_", "'" with " "
+        searchtitle = re.sub(r'[._\'\*]', ' ', searchtitle)
+
+        # Replace "-" with space and strip trailing spaces
+        searchtitle = searchtitle.strip(' -')
+
+        searchtitle = searchtitle.strip()
+        return str(searchtitle)
+
     def getTMDB(self):
         # print("**** getTMDB ***")
         if self.tmdbfailedcount > 2:
@@ -858,76 +933,7 @@ class XStreamity_Categories(Screen):
             except:
                 pass
 
-            searchtitle = title.lower()
-
-            # if title ends in "the", move "the" to the beginning
-            if searchtitle.endswith("the"):
-                searchtitle = "the " + searchtitle[:-4].strip()
-
-            # remove xx: at start
-            searchtitle = re.sub(r'^\w{2}:', '', searchtitle)
-
-            # remove xx|xx at start
-            searchtitle = re.sub(r'^\w{2}\|\w{2}\s', '', searchtitle)
-
-            # remove xx - at start
-            searchtitle = re.sub(r'^.{2}\+? ?- ?', '', searchtitle)
-
-            # remove all leading content between and including ||
-            searchtitle = re.sub(r'^\|\|.*?\|\|', '', searchtitle)
-            searchtitle = re.sub(r'^\|.*?\|', '', searchtitle)
-
-            # remove everything left between pipes.
-            searchtitle = re.sub(r'\|.*?\|', '', searchtitle)
-
-            # remove all content between and including () multiple times
-            searchtitle = re.sub(r'\(\(.*?\)\)|\(.*?\)', '', searchtitle)
-
-            # remove all content between and including [] multiple times
-            searchtitle = re.sub(r'\[\[.*?\]\]|\[.*?\]', '', searchtitle)
-
-            # Remove any prefix of characters followed by the special symbol ▎ and some content after it
-            searchtitle = re.sub(r'^.*?▎\s*', '', searchtitle)
-
-            # Remove any prefix of characters followed by the special symbol | and some content after it
-            searchtitle = re.sub(r'^.*?\|\s*', '', searchtitle)
-
-            # List of bad strings to remove
-            bad_strings = [
-                "1080p", "1080p-dual-lat-cine-calidad.com", "1080p-dual-lat-cine-calidad.com-1",
-                "1080p-dual-lat-cinecalidad.mx", "1080p-lat-cine-calidad.com", "1080p-lat-cine-calidad.com-1",
-                "1080p-lat-cinecalidad.mx", "1080p.dual.lat.cine-calidad.com", "3d", "'", "#", "(", ")", "-", "[]", "/",
-                "4k", "720p", "aac", "blueray", "ex-yu:", "fhd", "hd", "hdrip", "hindi", "imdb", "multi:", "multi-audio",
-                "multi-sub", "multi-subs", "multisub", "ozlem", "sd", "top250", "u-", "uhd", "vod", "x264"
-            ]
-
-            # Remove numbers from 1900 to 2030
-            bad_strings.extend(map(str, range(1900, 2030)))
-
-            # Construct a regex pattern to match any of the bad strings
-            bad_strings_pattern = re.compile('|'.join(map(re.escape, bad_strings)))
-
-            # Remove bad strings using regex pattern
-            searchtitle = bad_strings_pattern.sub('', searchtitle)
-
-            # List of bad suffixes to remove
-            bad_suffix = [
-                " al", " ar", " ba", " da", " de", " en", " es", " eu", " ex-yu", " fi", " fr", " gr", " hr", " mk",
-                " nl", " no", " pl", " pt", " ro", " rs", " ru", " si", " swe", " sw", " tr", " uk", " yu"
-            ]
-
-            # Construct a regex pattern to match any of the bad suffixes at the end of the string
-            bad_suffix_pattern = re.compile(r'(' + '|'.join(map(re.escape, bad_suffix)) + r')$')
-
-            # Remove bad suffixes using regex pattern
-            searchtitle = bad_suffix_pattern.sub('', searchtitle)
-
-            # Replace ".", "_", "'" with " "
-            searchtitle = re.sub(r'[._\'\*]', ' ', searchtitle)
-
-            # Replace "-" with space and strip trailing spaces
-            searchtitle = searchtitle.strip(' -')
-
+            searchtitle = self.stripjunk(title, "TMDB")
             searchtitle = quote(searchtitle, safe="")
 
             searchurl = 'http://api.themoviedb.org/3/search/tv?api_key={}&query={}'.format(self.check(self.token), searchtitle)
