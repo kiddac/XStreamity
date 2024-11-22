@@ -558,36 +558,35 @@ class XStreamity_Vod_Categories(Screen):
                         if "name" not in self.tmdbresults and "movie_data" in content and content["movie_data"]:
                             self.tmdbresults["name"] = content["movie_data"]["name"]
 
+                        cover = ""
                         if "cover_big" in self.tmdbresults:
                             cover = self.tmdbresults["cover_big"]
+                        elif "movie_image" in self.tmdbresults:
+                            cover = self.tmdbresults["movie_image"]
 
-                            if cover and cover.startswith("http"):
-                                try:
-                                    cover = cover.replace(r"\/", "/")
-                                except:
-                                    pass
+                        if cover and cover.startswith("http"):
+                            try:
+                                cover = cover.replace(r"\/", "/")
+                            except:
+                                pass
 
-                                if cover == "https://image.tmdb.org/t/p/w600_and_h900_bestv2":
-                                    cover = ""
-
-                                if cover.startswith("https://image.tmdb.org/t/p/") or cover.startswith("http://image.tmdb.org/t/p/"):
-                                    dimensions = cover.partition("/p/")[2].partition("/")[0]
-
-                                    if screenwidth.width() <= 1280:
-                                        cover = cover.replace(dimensions, "w200")
-                                    elif screenwidth.width() <= 1920:
-                                        cover = cover.replace(dimensions, "w300")
-                                    else:
-                                        cover = cover.replace(dimensions, "w400")
-                            else:
+                            if cover == "https://image.tmdb.org/t/p/w600_and_h900_bestv2":
                                 cover = ""
 
-                            self.tmdbresults["cover_big"] = cover
+                            if cover.startswith("https://image.tmdb.org/t/p/") or cover.startswith("http://image.tmdb.org/t/p/"):
+                                dimensions = cover.partition("/p/")[2].partition("/")[0]
+
+                                if screenwidth.width() <= 1280:
+                                    cover = cover.replace(dimensions, "w200")
+                                elif screenwidth.width() <= 1920:
+                                    cover = cover.replace(dimensions, "w300")
+                                else:
+                                    cover = cover.replace(dimensions, "w400")
+
+                        self.tmdbresults["cover_big"] = cover
 
                     elif "movie_data" in content and content["movie_data"]:
                         self.tmdbresults = content["movie_data"]
-                    else:
-                        self.tmdbresults = ""
 
                     if cfg.TMDB.value is True:
                         self.getTMDB()
@@ -601,6 +600,9 @@ class XStreamity_Vod_Categories(Screen):
 
     def selectionChanged(self):
         # print("*** selectionChanged ***")
+
+        self.tmdbresults = ""
+
         current_item = self["main_list"].getCurrent()
         if current_item:
             channel_title = current_item[0]
@@ -667,9 +669,8 @@ class XStreamity_Vod_Categories(Screen):
         # remove everything left between pipes.
         searchtitle = re.sub(r'\|.*?\|', '', searchtitle)
 
-        # remove all content between and including () multiple times
-        if database == "TMDB":
-            searchtitle = re.sub(r'\(\(.*?\)\)|\(.*?\)', '', searchtitle)
+        # remove all content between and including () multiple times unless it contains only numbers.
+        searchtitle = re.sub(r'\((?!\d+\))[^()]*\)', '', searchtitle)
 
         # remove all content between and including [] multiple times
         searchtitle = re.sub(r'\[\[.*?\]\]|\[.*?\]', '', searchtitle)
@@ -803,7 +804,7 @@ class XStreamity_Vod_Categories(Screen):
                 if not resultid:
                     self.displayTMDB()
                     if cfg.channelcovers.value:
-                        self.tmdbresults = ""
+                        # self.tmdbresults = ""
                         self.downloadCover()
                     return
 
@@ -841,6 +842,7 @@ class XStreamity_Vod_Categories(Screen):
     def processTMDBDetails(self, result=None):
         # print("*** processTMDBDetails ***")
         response = ""
+        poster_path = ""
         self.tmdbdetails = []
         director = []
 
@@ -893,20 +895,22 @@ class XStreamity_Vod_Categories(Screen):
                         coversize = "w400"
 
                     if poster_path:
-                        self.tmdbresults["cover_big"] = "http://image.tmdb.org/t/p/{}{}".format(coversize, poster_path) if poster_path else ""
+                        self.tmdbresults["cover_big"] = "http://image.tmdb.org/t/p/{}{}".format(coversize, poster_path)
 
                     if "overview" in self.tmdbdetails and self.tmdbdetails["overview"].strip():
                         self.tmdbresults["description"] = str(self.tmdbdetails["overview"])
 
                     if "vote_average" in self.tmdbdetails:
                         rating_str = self.tmdbdetails["vote_average"]
-                        if rating_str and rating_str != 0:
+                        if rating_str not in [None, 0, 0.0, "0", "0.0"]:
                             try:
                                 rating = float(rating_str)
                                 rounded_rating = round(rating, 1)
                                 self.tmdbresults["rating"] = "{:.1f}".format(rounded_rating)
                             except ValueError:
-                                self.tmdbresults["rating"] = str(rating_str)
+                                self.tmdbresults["rating"] = 0
+                    else:
+                        self.tmdbresults["rating"] = 0
 
                     if "genres" in self.tmdbdetails and self.tmdbdetails["genres"]:
                         genre = " / ".join(str(genreitem["name"]) for genreitem in self.tmdbdetails["genres"])
@@ -1033,7 +1037,7 @@ class XStreamity_Vod_Categories(Screen):
                 pass
 
             if self.tmdbresults:  # tmbdb
-                desc_image = str(self.tmdbresults.get("cover_big")).strip() or str(self.tmdbresults.get("movie_image")).strip() or ""
+                desc_image = str(self.tmdbresults.get("cover_big")).strip()
 
             if "http" in desc_image:
                 temp = os.path.join(dir_tmp, "cover.jpg")

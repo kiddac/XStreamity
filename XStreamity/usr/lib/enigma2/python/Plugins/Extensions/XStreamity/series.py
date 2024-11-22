@@ -266,16 +266,17 @@ class XStreamity_Categories(Screen):
 
     def buildLists(self):
         # print("*** buildLists ***")
-        if self.level == 1:
+
+        if self.level == 1 and self.list1:
             self.buildCategories()
 
-        elif self.level == 2:
+        elif self.level == 2 and self.list2:
             self.buildSeries()
 
-        elif self.level == 3:
+        elif self.level == 3 and self.list3:
             self.buildSeasons()
 
-        elif self.level == 4:
+        elif self.level == 4 and self.list4:
             self.buildEpisodes()
 
         if (self.level == 1 and self.list1) or (self.level == 2 and self.list2) or (self.level == 3 and self.list3) or (self.level == 4 and self.list4):
@@ -761,12 +762,13 @@ class XStreamity_Categories(Screen):
                     self.getTMDB()
 
             else:
-                self.tmdbresults = ""
+                # self.tmdbresults = ""
                 self.displayTMDB()
 
     def selectionChanged(self):
         # print("*** selectionChanged ***")
 
+        self.tmdbresults = {}
         current_item = self["main_list"].getCurrent()
         if current_item:
             channel_title = current_item[0]
@@ -832,9 +834,8 @@ class XStreamity_Categories(Screen):
         # remove everything left between pipes.
         searchtitle = re.sub(r'\|.*?\|', '', searchtitle)
 
-        # remove all content between and including () multiple times
-        if database == "TMDB":
-            searchtitle = re.sub(r'\(\(.*?\)\)|\(.*?\)', '', searchtitle)
+        # remove all content between and including () multiple times unless it contains only numbers.
+        searchtitle = re.sub(r'\((?!\d+\))[^()]*\)', '', searchtitle)
 
         # remove all content between and including [] multiple times
         searchtitle = re.sub(r'\[\[.*?\]\]|\[.*?\]', '', searchtitle)
@@ -978,7 +979,7 @@ class XStreamity_Categories(Screen):
                     self.tmdb2 = resultid
 
                     if not resultid:
-                        self.tmdbresults = ""
+                        # self.tmdbresults = ""
                         self.displayTMDB()
                         return
 
@@ -1038,7 +1039,7 @@ class XStreamity_Categories(Screen):
 
             else:
                 self.tmdbfailedcount = 0
-                self.tmdbresults = ""
+                # self.tmdbresults = ""
                 self.displayTMDB()
                 return
 
