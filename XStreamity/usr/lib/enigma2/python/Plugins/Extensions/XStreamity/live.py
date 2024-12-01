@@ -1468,8 +1468,9 @@ class XStreamity_Categories(Screen):
         begin = int(time.time())
         end = begin + 3600
         self.date = time.time()
+        name = ""
 
-        if len(self.epgshortlist) > current_index:
+        if len(self.epglist) > current_index:
 
             if self.epglist[current_index][3]:
                 name = self.epglist[current_index][3]
@@ -1479,18 +1480,18 @@ class XStreamity_Categories(Screen):
             if self.epglist[current_index][10]:
                 end = self.epglist[current_index][10]
 
-            if self.showingshortEPG:
-                current_index = self["epg_short_list"].getIndex()
+        if self.showingshortEPG:
+            current_index = self["epg_short_list"].getIndex()
 
-                if self.epgshortlist[current_index][0]:
-                    name = self.epgshortlist[current_index][0]
+            if self.epgshortlist[current_index][0]:
+                name = self.epgshortlist[current_index][0]
 
-                if self.epgshortlist[current_index][1]:
-                    self.date = self.epgshortlist[current_index][7]
+            if self.epgshortlist[current_index][1]:
+                self.date = self.epgshortlist[current_index][7]
 
-                if self.epgshortlist[current_index][2]:
-                    begin = self.epgshortlist[current_index][7]
-                    end = self.epgshortlist[current_index][8]
+            if self.epgshortlist[current_index][2]:
+                begin = self.epgshortlist[current_index][7]
+                end = self.epgshortlist[current_index][8]
 
         self.name = NoSave(ConfigText(default=name, fixed_size=False))
         self.starttime = NoSave(ConfigClock(default=begin))

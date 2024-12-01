@@ -432,13 +432,13 @@ class XStreamity_DownloadManager(Screen):
         if self["downloadlist"].getCurrent():
             if self["downloadlist"].getCurrent()[3] == _("In progress") or self["downloadlist"].getCurrent()[3] == _("Waiting"):
                 self["key_green"].setText(_("Cancel"))
-                self["key_yellow"].setText("")
+                self["key_blue"].setText("")
             elif self["downloadlist"].getCurrent()[3] == _("Not Started"):
                 self["key_green"].setText(_("Download"))
-                self["key_yellow"].setText(_("Remove"))
+                self["key_blue"].setText(_("Remove"))
             elif self["downloadlist"].getCurrent()[3] == _("Error") or self["downloadlist"].getCurrent()[3] == _("Downloaded"):
                 self["key_green"].setText("")
-                self["key_yellow"].setText(_("Remove"))
+                self["key_blue"].setText(_("Remove"))
 
     def keyCancel(self, answer=None):
         global ui
