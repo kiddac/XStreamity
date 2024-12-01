@@ -38,7 +38,9 @@
 	</widget>
 	<widget source="key_red" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/slyk1080r19/images/key_red.png" position="204,1262" size="48,48" alphatest="blend" zPosition="2"/>
 	<widget source="key_red" render="Label" position="268,1255" size="436,59" font="slykregular;52" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" noWrap="1" zPosition="2"/>
-	<widget source="key_green" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/slyk1080r19/images/key_green.png" position="704,1262" size="48,48" alphatest="blend" zPosition="2"/>
+	<widget source="key_green" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/slyk1080r19/images/key_green.png" position="704,1262" size="48,48" alphatest="blend" zPosition="2">
+			<convert type="ConditionalShowHide"/>
+	</widget>
 	<widget source="key_green" render="Label" position="768,1255" size="436,59" font="slykregular;52" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" noWrap="1" zPosition="2"/>
 	<widget source="key_blue" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/slyk1080r19/images/key_blue.png" position="1704,1262" size="48,48" alphatest="blend" zPosition="2">
 		<convert type="ConditionalShowHide"/>

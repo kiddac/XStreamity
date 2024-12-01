@@ -61,6 +61,8 @@ ui = False
 temp1 = _("Not Started")
 temp2 = _("In progress")
 temp3 = _("Waiting")
+temp4 = _("Error")
+temp5 = _("Downloaded")
 
 
 def convert_size(size_bytes):
@@ -92,7 +94,6 @@ class downloadJob(Job):
 
 # downloadtask code borrowed from old video plugins
 class downloadTask(Task):
-
     def __init__(self, job, cmdline, filename, filmtitle):
         Task.__init__(self, job, filmtitle)
         self.toolbox = job.toolbox
@@ -264,11 +265,15 @@ class XStreamity_DownloadManager(Screen):
                         if r.status_code == requests.codes.ok:
                             content_length = float(r.headers.get("content-length", 0))
                             video[5] = content_length
+                        else:
+                            video[3] = _("Error")
+                            self.saveJson()
 
                     except Exception as e:
                         print(e)
                         video[5] = 0
-
+                        video[3] = _("Error")
+                        self.saveJson()
                 x += 1
                 if x == 5:
                     x = 0
@@ -288,7 +293,6 @@ class XStreamity_DownloadManager(Screen):
 
             filename = str(filmtitle) + str(extension)
             path = str(cfg.downloadlocation.value) + str(filename)
-
             totalbytes = video[5]
 
             if os.path.exists(path):
@@ -301,14 +305,18 @@ class XStreamity_DownloadManager(Screen):
 
                     if video[4] < 0:
                         video[4] = 0
-                    templist.append(video)
+                if video[3] == "Downloaded":
+                    video[4] = 100
+            """
             else:
-                video[3] = "Not Started"
+                if video[3] != "Error" or video[3] != "Downloaded":
+                    video[3] = "Not Started"
                 video[4] = 0
-                templist.append(video)
+                """
+
+            templist.append(video)
 
         self.downloads_all[:] = templist
-
         self.buildList()
         self.saveJson()
 
@@ -325,6 +333,19 @@ class XStreamity_DownloadManager(Screen):
                     job.cancel()
 
         self.resumeDownloads()
+
+    def is_no_check_certificate_supported(self):
+        try:
+            checkcmd = "wget --help | grep no-check-certificate"
+            if pythonVer == 2:
+                result = subprocess.call(checkcmd, shell=True)
+                return result == 0
+            else:
+                result = subprocess.run(checkcmd, shell=True)
+                return result.returncode == 0
+        except Exception as e:
+            print("Error checking wget support:", str(e))
+            return False
 
     def resumeDownloads(self):
         for video in self.downloads_all:
@@ -344,8 +365,7 @@ class XStreamity_DownloadManager(Screen):
             parsed_uri = urlparse(url)
             video_domain = parsed_uri.hostname
 
-            if state != "Not Started":
-
+            if state == "In progress" or state == "Waiting":
                 if self.session.nav.getCurrentlyPlayingServiceReference():
                     playingstream = self.session.nav.getCurrentlyPlayingServiceReference().toString()
 
@@ -356,7 +376,11 @@ class XStreamity_DownloadManager(Screen):
                 cmd = "wget -U 'Enigma2 - XStreamity Plugin' -c '%s' -O '%s%s'" % (url, shortpath, filename)
 
                 if "https" in str(url):
-                    cmd = "wget --no-check-certificate -U 'Enigma2 - XStreamity Plugin' -c '%s' -O '%s%s'" % (url, shortpath, filename)
+                    if self.is_no_check_certificate_supported():
+                        cmd = "wget --no-check-certificate -U 'Enigma2 - XStreamity Plugin' -c '%s' -O '%s%s'" % (url, shortpath, filename)
+                    else:
+                        self.session.open(MessageBox, _("Please update your wget library to download https lines\n\nopkg update\nopkg install wget"), type=MessageBox.TYPE_INFO)
+                        return
 
                 try:
                     JobManager.AddJob(downloadJob(self, cmd, path, filmtitle), onFail=self.fail)
@@ -378,7 +402,7 @@ class XStreamity_DownloadManager(Screen):
         self.getprogress()
 
     def sortlist(self):
-        order = {"In progress": 0, "Waiting": 1, "Not Started": 2}
+        order = {"In progress": 0, "Waiting": 1, "Not Started": 2, "Error": 3, "Downloaded": 4}
         self.downloads_all.sort(key=lambda x: order[x[3]])
 
     def getprogress(self):
@@ -406,12 +430,15 @@ class XStreamity_DownloadManager(Screen):
 
     def selectionChanged(self):
         if self["downloadlist"].getCurrent():
-            if self["downloadlist"].getCurrent()[3] != _("Not Started"):
+            if self["downloadlist"].getCurrent()[3] == _("In progress") or self["downloadlist"].getCurrent()[3] == _("Waiting"):
                 self["key_green"].setText(_("Cancel"))
-                self["key_blue"].setText("")
-            else:
+                self["key_yellow"].setText("")
+            elif self["downloadlist"].getCurrent()[3] == _("Not Started"):
                 self["key_green"].setText(_("Download"))
-                self["key_blue"].setText(_("Remove"))
+                self["key_yellow"].setText(_("Remove"))
+            elif self["downloadlist"].getCurrent()[3] == _("Error") or self["downloadlist"].getCurrent()[3] == _("Downloaded"):
+                self["key_green"].setText("")
+                self["key_yellow"].setText(_("Remove"))
 
     def keyCancel(self, answer=None):
         global ui
@@ -420,6 +447,7 @@ class XStreamity_DownloadManager(Screen):
         self.close()
 
     def download(self):
+        # print("*** download ***")
         if not os.path.exists(cfg.downloadlocation.value) or cfg.downloadlocation.value is None:
             self.session.open(MessageBox, _("Vod Download folder location does not exist.\n\n" + str(cfg.downloadlocation.value) + _("Please set download folder in Main Settings.")), type=MessageBox.TYPE_WARNING)
             return
@@ -455,19 +483,11 @@ class XStreamity_DownloadManager(Screen):
                 cmd = "wget -U 'Enigma2 - XStreamity Plugin' -c '%s' -O '%s%s'" % (self.url, self.shortpath, filename)
 
                 if "https" in str(self.url):
-                    checkcmd = "strings $(which wget) | grep no-check-certificate"
-                    if pythonVer == 2:
-                        result = subprocess.call(checkcmd, shell=True)
-                        if result == 0:
-                            cmd = "wget --no-check-certificate -U 'Enigma2 - XStreamity Plugin' -c '%s' -O '%s%s'" % (self.url, self.shortpath, filename)
-                        else:
-                            self.session.open(MessageBox, _("Please update your wget library to download https lines\n\nopkg update\nopkg install wget"), type=MessageBox.TYPE_INFO)
+                    if self.is_no_check_certificate_supported():
+                        cmd = "wget --no-check-certificate -U 'Enigma2 - XStreamity Plugin' -c '%s' -O '%s%s'" % (self.url, self.shortpath, filename)
                     else:
-                        result = subprocess.run(checkcmd, shell=True)
-                        if result.returncode == 0:
-                            cmd = "wget --no-check-certificate -U 'Enigma2 - XStreamity Plugin' -c '%s' -O '%s%s'" % (self.url, self.shortpath, filename)
-                        else:
-                            self.session.open(MessageBox, _("Please update your wget library to download https lines\n\nopkg update\nopkg install wget"), type=MessageBox.TYPE_INFO)
+                        self.session.open(MessageBox, _("Please update your wget library to download https lines\n\nopkg update\nopkg install wget"), type=MessageBox.TYPE_INFO)
+                        return
 
                 try:
                     JobManager.AddJob(downloadJob(self, cmd, self.path, self.filmtitle), onFail=self.fail)
@@ -483,7 +503,7 @@ class XStreamity_DownloadManager(Screen):
                 except Exception as e:
                     print(e)
 
-            else:
+            elif self["downloadlist"].getCurrent()[3] == _("In progress") or self["downloadlist"].getCurrent()[3] == _("Waiting"):
                 self.cancelConfirm()
 
     def cancelConfirm(self, answer=None):
@@ -516,7 +536,7 @@ class XStreamity_DownloadManager(Screen):
     def delete(self):
         if self["downloadlist"].getCurrent():
             currentindex = self["downloadlist"].getIndex()
-            if self.downloads_all[currentindex][3] != "Not Started":
+            if self.downloads_all[currentindex][3] == _("In progress") or self.downloads_all[currentindex][3] == _("Waiting"):
                 return
             else:
                 self.delete_entry()
@@ -555,7 +575,10 @@ class XStreamity_DownloadManager(Screen):
             if str(video[1]) == str(filmtitle):
                 break
             x += 1
-        del self.downloads_all[x]
+        # del self.downloads_all[x]
+        self.downloads_all[x][3] = "Downloaded"
+        self.downloads_all[x][4] = 100
+
         if ui:
             self.sortlist()
             self.buildList()
