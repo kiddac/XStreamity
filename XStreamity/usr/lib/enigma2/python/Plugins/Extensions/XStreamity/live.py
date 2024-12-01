@@ -450,8 +450,32 @@ class XStreamity_Categories(Screen):
                 else:
                     glob.active_playlist["player_info"]["livefavourites"] = []
 
+                """
+                0 = index
+                1 = name
+                2 = stream_id
+                3 = stream_icon
+                4 = epg_channel_id
+                5 = add
+                6 = category_id
+                7 = custom_sid
+                8 = service_ref
+                9 = nowtime
+                10 = nowTitle
+                11 = nowDescription
+                12 = nexttime
+                13 = nextTitle
+                14 = nextDesc
+                15 = next_url
+                16 = favourite
+                17 = watched
+                18 = hidden
+                19 = nowunixtime
+                20 = nextunixtime
+                """
+
                 self.list2.append([index, str(name), str(stream_id), str(stream_icon), str(epg_channel_id), str(added), str(category_id), str(custom_sid), str(service_ref),
-                                  "", "", "", "", "", "", str(next_url), favourite, False, hidden])
+                                  "", "", "", "", "", "", str(next_url), favourite, False, hidden, None, None])
 
         glob.originalChannelList2 = self.list2[:]
 
@@ -527,13 +551,13 @@ class XStreamity_Categories(Screen):
         self.main_list = []
         self.epglist = []
         # index = 0, name = 1, stream_id = 2, stream_icon = 3, epg_channel_id = 4, added = 5, category_id = 6, custom_sid = 7, nowtime = 9
-        # nowTitle = 10, nowDesc = 11, nexttime = 12, nextTitle = 13, nextDesc = 14, next_url = 15, favourite = 16, watching = 17, hidden = 18
+        # nowTitle = 10, nowDesc = 11, nexttime = 12, nextTitle = 13, nextDesc = 14, next_url = 15, favourite = 16, watching = 17, hidden = 18, nowunixtime = 19, nowunixtime = 20
         if self.chosen_category == "favourites":
             self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18]) for x in self.list2 if x[16] is True]
-            self.epglist = [buildEPGListEntry(x[0], x[2], x[9], x[10], x[11], x[12], x[13], x[14], x[18]) for x in self.list2 if x[16] is True]
+            self.epglist = [buildEPGListEntry(x[0], x[2], x[9], x[10], x[11], x[12], x[13], x[14], x[18], x[19], x[20]) for x in self.list2 if x[16] is True]
         else:
             self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18]) for x in self.list2 if x[18] is False]
-            self.epglist = [buildEPGListEntry(x[0], x[2], x[9], x[10], x[11], x[12], x[13], x[14], x[18]) for x in self.list2 if x[18] is False]
+            self.epglist = [buildEPGListEntry(x[0], x[2], x[9], x[10], x[11], x[12], x[13], x[14], x[18], x[19], x[20]) for x in self.list2 if x[18] is False]
 
         self["main_list"].setList(self.main_list)
         self["epg_list"].setList(self.epglist)
@@ -944,7 +968,6 @@ class XStreamity_Categories(Screen):
             glob.nextlist[-1]["index"] = current_index
             glob.currentchannellist = self.main_list[:]
             glob.currentchannellistindex = current_index
-            glob.currentepglist = self.epglist[:]
 
             if self.level == 1:
                 if self.list1:
@@ -976,6 +999,8 @@ class XStreamity_Categories(Screen):
                     self.createSetup()
             else:
                 if self.list2:
+                    glob.currentepglist = self.epglist[:]
+
                     if self.selectedlist == self["epg_short_list"]:
                         self.shortEPG()
 
@@ -996,10 +1021,13 @@ class XStreamity_Categories(Screen):
                         if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString() and cfg.livepreview.value is True:
                             try:
                                 self.session.nav.stopService()
-                            except:
-                                pass
+                            except Exception as e:
+                                print(e)
 
-                            self.session.nav.playService(self.reference)
+                            try:
+                                self.session.nav.playService(self.reference)
+                            except Exception as e:
+                                print(e)
 
                             if self.session.nav.getCurrentlyPlayingServiceReference():
                                 glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
@@ -1176,10 +1204,12 @@ class XStreamity_Categories(Screen):
                                         channel[9] = str(time.strftime("%H:%M", time.localtime(int(entry[0]))))
                                         channel[10] = str(entry[2])
                                         channel[11] = str(entry[3])
+                                        channel[19] = int(entry[0])
 
                                         channel[12] = str(time.strftime("%H:%M", time.localtime(int(entry[1]))))
                                         channel[13] = str(next_el[2])
                                         channel[14] = str(next_el[3])
+                                        channel[20] = int(entry[1])
 
                                         break
                         else:
@@ -1199,6 +1229,7 @@ class XStreamity_Categories(Screen):
                                         # start time
                                         if self.eventslist[0][1]:
                                             channel[9] = str(time.strftime("%H:%M", time.localtime(self.eventslist[0][1])))
+                                            channel[19] = int(self.eventslist[0][1])
 
                                         # title
                                         if self.eventslist[0][3]:
@@ -1216,6 +1247,7 @@ class XStreamity_Categories(Screen):
                                     # next start time
                                     if self.eventslist[1][1]:
                                         channel[12] = str(time.strftime("%H:%M", time.localtime(self.eventslist[1][1])))
+                                        channel[20] = int(self.eventslist[1][1])
 
                                     # next title
                                     if self.eventslist[1][3]:
@@ -1227,7 +1259,7 @@ class XStreamity_Categories(Screen):
                                 except Exception as e:
                                     print(e)
 
-                    self.epglist = [buildEPGListEntry(x[0], x[1], x[9], x[10], x[11], x[12], x[13], x[14], x[18]) for x in self.list2 if x[18] is False]
+                    self.epglist = [buildEPGListEntry(x[0], x[1], x[9], x[10], x[11], x[12], x[13], x[14], x[18], x[19], x[20]) for x in self.list2 if x[18] is False]
                     self["epg_list"].updateList(self.epglist)
 
                     instance = self["epg_list"].master.master.instance
@@ -1261,10 +1293,12 @@ class XStreamity_Categories(Screen):
         instance = self["epg_list"].master.master.instance
         instance.setSelectionEnable(1)
 
-        startnowtime = current_item[2]
         titlenow = current_item[3]
         descriptionnow = current_item[4]
+        startnowtime = current_item[2]
         startnexttime = current_item[5]
+        startnowunixtime = current_item[9]
+        startnextunixtime = current_item[10]
 
         if titlenow:
             nowTitle = "{} - {}  {}".format(startnowtime, startnexttime, titlenow)
@@ -1279,30 +1313,14 @@ class XStreamity_Categories(Screen):
 
         percent = 0
 
-        if startnowtime and startnexttime:
+        if startnowunixtime and startnextunixtime:
             self["progress"].show()
 
-            start_time = datetime.strptime(startnowtime, "%H:%M")
-            end_time = datetime.strptime(startnexttime, "%H:%M")
+            now = int(time.time())
+            total_time = startnextunixtime - startnowunixtime
+            elapsed = now - startnowunixtime
 
-            if end_time < start_time:
-                end_time = datetime.strptime(startnexttime, "%H:%M") + timedelta(hours=24)
-
-            total_time = end_time - start_time
-            duration = float(total_time.total_seconds() / 60) if total_time.total_seconds() > 0 else 0
-
-            now = datetime.now().strftime("%H:%M")
-            current_time = datetime.strptime(now, "%H:%M")
-            elapsed = current_time - start_time
-
-            if elapsed.days < 0:
-                elapsed = timedelta(days=0, seconds=elapsed.seconds)
-
-            elapsedmins = 0
-            if elapsed.total_seconds() > 0:
-                elapsedmins = float(elapsed.total_seconds() / 60)
-
-            percent = int(elapsedmins / duration * 100) if duration > 0 else 100
+            percent = int(elapsed / total_time * 100) if total_time > 0 else 0
 
             self["progress"].setValue(percent)
         else:
@@ -1394,6 +1412,12 @@ class XStreamity_Categories(Screen):
                                         start = listing.get("start", "")
                                         end = listing.get("end", listing.get("stop", ""))
 
+                                        start_timestamp = int(listing.get("start_timestamp", 0))
+                                        stop_timestamp = int(listing.get("stop_timestamp", 0))
+
+                                        start_timestamp += (3600 * shift)
+                                        stop_timestamp += (3600 * shift)
+
                                         start_datetime = self.parse_datetime(start)
                                         end_datetime = self.parse_datetime(end)
 
@@ -1405,9 +1429,10 @@ class XStreamity_Categories(Screen):
 
                                             if [epg_date_all, epg_time_all] not in duplicatecheck and end_datetime >= now:
                                                 duplicatecheck.append([epg_date_all, epg_time_all])
-                                                self.epgshortlist.append(buildShortEPGListEntry(str(epg_date_all), str(epg_time_all), str(title), str(description), index, start_datetime, end_datetime))
+                                                self.epgshortlist.append(buildShortEPGListEntry(str(epg_date_all), str(epg_time_all), str(title), str(description), index, start_datetime, end_datetime, start_timestamp, stop_timestamp))
                                     except Exception as e:
                                         print("Error processing short EPG data:", e)
+
                             self["epg_short_list"].setList(self.epgshortlist)
                             instance = self["epg_short_list"].master.master.instance
                             instance.setSelectionEnable(1)
@@ -1440,46 +1465,32 @@ class XStreamity_Categories(Screen):
         # print("*** downloadstream ***")
         from . import record
         current_index = self["main_list"].getIndex()
-
         begin = int(time.time())
         end = begin + 3600
-        dt_now = datetime.now()
         self.date = time.time()
 
-        # recording name - programme title = fallback channel name
-        if self.epglist[current_index][3]:
-            name = self.epglist[current_index][3]
-        else:
-            name = self.epglist[current_index][0]
+        if len(self.epgshortlist) > current_index:
 
-        if self.epglist[current_index][5]:  # end time
-            end_dt = datetime.strptime(str(self.epglist[current_index][5]), "%H:%M")
-            end_dt = end_dt.replace(year=dt_now.year, month=dt_now.month, day=dt_now.day)
-            end = int(time.mktime(end_dt.timetuple()))
+            if self.epglist[current_index][3]:
+                name = self.epglist[current_index][3]
+            else:
+                name = self.epglist[current_index][0]
 
-        if self.showingshortEPG:
-            current_index = self["epg_short_list"].getIndex()
+            if self.epglist[current_index][10]:
+                end = self.epglist[current_index][10]
 
-            if self.epgshortlist[current_index][1]:
-                shortdate_dt = datetime.strptime(self.epgshortlist[current_index][1], "%a %d/%m")
-                shortdate_dt = shortdate_dt.replace(year=dt_now.year)
-                self.date = int(time.mktime(shortdate_dt.timetuple()))
+            if self.showingshortEPG:
+                current_index = self["epg_short_list"].getIndex()
 
-            if self.epgshortlist[current_index][2]:
+                if self.epgshortlist[current_index][0]:
+                    name = self.epgshortlist[current_index][0]
 
-                beginstring = self.epgshortlist[current_index][2].partition(" - ")[0]
-                endstring = self.epgshortlist[current_index][2].partition(" - ")[-1]
+                if self.epgshortlist[current_index][1]:
+                    self.date = self.epgshortlist[current_index][7]
 
-                shortbegin_dt = datetime.strptime(beginstring, "%H:%M")
-                shortbegin_dt = shortbegin_dt.replace(year=dt_now.year, month=shortdate_dt.month, day=shortdate_dt.day)
-                begin = int(time.mktime(shortbegin_dt.timetuple()))
-
-                shortend_dt = datetime.strptime(endstring, "%H:%M")
-                shortend_dt = shortend_dt.replace(year=dt_now.year, month=shortdate_dt.month, day=shortdate_dt.day)
-                end = int(time.mktime(shortend_dt.timetuple()))
-
-            if self.epgshortlist[current_index][0]:
-                name = self.epgshortlist[current_index][0]
+                if self.epgshortlist[current_index][2]:
+                    begin = self.epgshortlist[current_index][7]
+                    end = self.epgshortlist[current_index][8]
 
         self.name = NoSave(ConfigText(default=name, fixed_size=False))
         self.starttime = NoSave(ConfigClock(default=begin))
@@ -1699,12 +1710,12 @@ class XStreamity_Categories(Screen):
         self.addEPG()
 
 
-def buildEPGListEntry(index, title, epgNowTime, epgNowTitle, epgNowDesc, epgNextTime, epgNextTitle, epgNextDesc, hidden):
-    return (title, index, epgNowTime, epgNowTitle, epgNowDesc, epgNextTime, epgNextTitle, epgNextDesc, hidden)
+def buildEPGListEntry(index, title, epgNowTime, epgNowTitle, epgNowDesc, epgNextTime, epgNextTitle, epgNextDesc, hidden, epgNowUnixTime, epgNextUnixTime):
+    return (title, index, epgNowTime, epgNowTitle, epgNowDesc, epgNextTime, epgNextTitle, epgNextDesc, hidden, epgNowUnixTime, epgNextUnixTime)
 
 
-def buildShortEPGListEntry(date_all, time_all, title, description, index, start_datetime, end_datetime):
-    return (title, date_all, time_all, description, index, start_datetime, end_datetime)
+def buildShortEPGListEntry(date_all, time_all, title, description, index, start_datetime, end_datetime, start_timestamp, stop_timestamp):
+    return (title, date_all, time_all, description, index, start_datetime, end_datetime, start_timestamp, stop_timestamp)
 
 
 def buildCategoryList(index, title, category_id, hidden):

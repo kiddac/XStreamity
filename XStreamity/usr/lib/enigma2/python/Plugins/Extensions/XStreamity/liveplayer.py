@@ -24,7 +24,7 @@ from Components.ProgressBar import ProgressBar
 from Components.Pixmap import MultiPixmap, Pixmap
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 from Components.config import ConfigClock, ConfigText, NoSave
-from enigma import eTimer, eServiceReference, iPlayableService
+from enigma import eTimer, eServiceReference, iPlayableService, eEPGCache
 from RecordTimer import RecordTimerEntry
 
 
@@ -460,6 +460,10 @@ class XStreamity_StreamPlayer(
             "ok": self.OKButton,
         }, -2)
 
+        epg_cache = eEPGCache.getInstance()
+        if epg_cache:
+            epg_cache.save()
+
         self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl))
 
     def restartStream(self):
@@ -472,139 +476,131 @@ class XStreamity_StreamPlayer(
         IPTVInfoBarShowHide.OkPressed(self)
 
     def refreshInfobar(self):
-        start = glob.currentepglist[glob.currentchannellistindex][2]
-        end = glob.currentepglist[glob.currentchannellistindex][5]
-        percent = 0
+        # print("*** refreshinfobar ***")
+        if glob.currentepglist:
 
-        if start and end:
-            self["progress"].show()
-            start_time = datetime.strptime(start, "%H:%M")
-            end_time = datetime.strptime(end, "%H:%M")
+            startnowunixtime = glob.currentepglist[glob.currentchannellistindex][9]
+            startnextunixtime = glob.currentepglist[glob.currentchannellistindex][10]
 
-            if end_time < start_time:
-                end_time += timedelta(hours=24)
+            percent = 0
 
-            total_time = end_time - start_time
-            duration = 0
+            if startnowunixtime and startnextunixtime:
+                self["progress"].show()
 
-            if total_time.total_seconds() > 0:
-                duration = total_time.total_seconds() // 60
+                now = int(time.time())
+                total_time = startnextunixtime - startnowunixtime
+                elapsed = now - startnowunixtime
 
-            now = datetime.now().strftime("%H:%M")
-            current_time = datetime.strptime(now, "%H:%M")
-            elapsed = current_time - start_time
+                percent = int(elapsed / total_time * 100) if total_time > 0 else 0
 
-            if elapsed.days < 0:
-                elapsed = timedelta(days=0, seconds=elapsed.seconds)
-
-            elapsedmins = 0
-
-            if elapsed.total_seconds() > 0:
-                elapsedmins = elapsed.total_seconds() // 60
-
-            if duration > 0:
-                percent = int(elapsedmins / duration * 100)
+                self["progress"].setValue(percent)
             else:
-                percent = 100
+                self["progress"].hide()
 
-            self["progress"].setValue(percent)
+            # Check every 5 mins to see if EPG needs to be updated
+            nowtime = datetime.now()
+            minutes = nowtime.minute
+            if minutes % 5 == 1:
+
+                now = int(time.time())
+
+                if startnextunixtime and now >= startnextunixtime:
+                    try:
+                        player_api = str(glob.active_playlist["playlist_info"]["player_api"])
+                        stream_id = str(glob.currentchannellist[glob.currentchannellistindex][4])
+
+                        shortEPGJson = []
+                        url = player_api + "&action=get_short_epg&stream_id=" + str(stream_id) + "&limit=2"
+
+                        retries = Retry(total=3, backoff_factor=1)
+                        adapter = HTTPAdapter(max_retries=retries)
+
+                        with requests.Session() as http:
+                            http.mount("http://", adapter)
+                            http.mount("https://", adapter)
+
+                            try:
+                                r = http.get(url, headers=hdr, timeout=(10, 20), verify=False)
+                                r.raise_for_status()
+
+                                if r.status_code == requests.codes.ok:
+                                    response = r.json()
+                                    shortEPGJson = response.get("epg_listings", [])
+                            except Exception as e:
+                                print("Error fetching or processing response:", e)
+                                response = None
+                                shortEPGJson = []
+
+                        if shortEPGJson and len(shortEPGJson) > 1:
+                            self.epgshortlist = []
+                            for listing in shortEPGJson:
+                                title = base64.b64decode(listing.get("title", "")).decode("utf-8")
+                                description = base64.b64decode(listing.get("description", "")).decode("utf-8")
+                                shift = int(glob.active_playlist["player_info"].get("serveroffset", 0))
+                                start = listing.get("start", "")
+                                end = listing.get("end", "")
+                                if start and end:
+                                    time_formats = ["%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H-%M-%S", "%Y-%m-%d-%H:%M:%S", "%Y- %m-%d %H:%M:%S"]
+                                    for time_format in time_formats:
+                                        try:
+                                            start_datetime = datetime.strptime(start, time_format) + timedelta(hours=shift)
+                                            start_time = start_datetime.strftime("%H:%M")
+                                            self.epgshortlist.append([str(title), str(description), str(start_time)])
+                                            break
+                                        except ValueError:
+                                            pass
+
+                            templist = list(glob.currentepglist[glob.currentchannellistindex])
+                            if self.epgshortlist:
+                                templist[4] = str(self.epgshortlist[0][1])  # description
+                                templist[3] = str(self.epgshortlist[0][0])  # title
+                                templist[2] = str(self.epgshortlist[0][2])  # now start
+                                templist[6] = str(self.epgshortlist[1][0])  # next title
+                                templist[5] = str(self.epgshortlist[1][2])  # next start
+
+                            glob.currentepglist[glob.currentchannellistindex] = tuple(templist)
+                        else:
+                            templist = list(glob.currentepglist[glob.currentchannellistindex])
+                            templist[4] = glob.currentepglist[glob.currentchannellistindex][7]  # description
+                            templist[3] = glob.currentepglist[glob.currentchannellistindex][6]  # title
+                            templist[2] = glob.currentepglist[glob.currentchannellistindex][5]  # now start
+                            templist[6] = ""  # next title
+                            templist[5] = ""  # next start
+                            glob.currentepglist[glob.currentchannellistindex] = tuple(templist)
+                    except Exception as e:
+                        print("Error during short EPG update:", e)
+
+            self["x_description"].setText(glob.currentepglist[glob.currentchannellistindex][4])
+            self["nowchannel"].setText(glob.currentchannellist[glob.currentchannellistindex][0])
+            self["nowtitle"].setText(glob.currentepglist[glob.currentchannellistindex][3])
+            self["nexttitle"].setText(glob.currentepglist[glob.currentchannellistindex][6])
+            self["nowtime"].setText(glob.currentepglist[glob.currentchannellistindex][2])
+            self["nexttime"].setText(glob.currentepglist[glob.currentchannellistindex][5])
         else:
-            self["progress"].hide()
-
-        current_hour = int(datetime.now().hour)
-        current_minute = int(datetime.now().minute)
-        next_time = str(glob.currentepglist[glob.currentchannellistindex][5])
-
-        nowtime = datetime.now()
-        minutes = nowtime.minute
-        if minutes % 5 == 1:
-
-            if next_time and (current_hour >= int(next_time.split(":")[0])) and (current_minute >= int(next_time.split(":")[1])):
-                try:
-                    player_api = str(glob.active_playlist["playlist_info"]["player_api"])
-                    stream_id = str(glob.currentchannellist[glob.currentchannellistindex][4])
-
-                    shortEPGJson = []
-                    url = player_api + "&action=get_short_epg&stream_id=" + str(stream_id) + "&limit=2"
-
-                    retries = Retry(total=3, backoff_factor=1)
-                    adapter = HTTPAdapter(max_retries=retries)
-
-                    with requests.Session() as http:
-                        http.mount("http://", adapter)
-                        http.mount("https://", adapter)
-                        r = http.get(url, headers=hdr, timeout=(10, 20), verify=False)
-                        r.raise_for_status()
-                        if r.status_code == requests.codes.ok:
-                            response = r.json()
-                            shortEPGJson = response.get("epg_listings", [])
-
-                    if shortEPGJson and len(shortEPGJson) > 1:
-                        self.epgshortlist = []
-                        for listing in shortEPGJson:
-                            title = base64.b64decode(listing.get("title", "")).decode("utf-8")
-                            description = base64.b64decode(listing.get("description", "")).decode("utf-8")
-                            shift = int(glob.active_playlist["player_info"].get("serveroffset", 0))
-                            start = listing.get("start", "")
-                            end = listing.get("end", "")
-                            if start and end:
-                                time_formats = ["%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H-%M-%S", "%Y-%m-%d-%H:%M:%S", "%Y- %m-%d %H:%M:%S"]
-                                for time_format in time_formats:
-                                    try:
-                                        start_datetime = datetime.strptime(start, time_format) + timedelta(hours=shift)
-                                        start_time = start_datetime.strftime("%H:%M")
-                                        self.epgshortlist.append([str(title), str(description), str(start_time)])
-                                        break
-                                    except ValueError:
-                                        pass
-
-                        templist = list(glob.currentepglist[glob.currentchannellistindex])
-                        if self.epgshortlist:
-                            templist[4] = str(self.epgshortlist[0][1])  # description
-                            templist[3] = str(self.epgshortlist[0][0])  # title
-                            templist[2] = str(self.epgshortlist[0][2])  # now start
-                            templist[6] = str(self.epgshortlist[1][0])  # next title
-                            templist[5] = str(self.epgshortlist[1][2])  # next start
-
-                        glob.currentepglist[glob.currentchannellistindex] = tuple(templist)
-                    else:
-                        templist = list(glob.currentepglist[glob.currentchannellistindex])
-                        templist[4] = glob.currentepglist[glob.currentchannellistindex][7]  # description
-                        templist[3] = glob.currentepglist[glob.currentchannellistindex][6]  # title
-                        templist[2] = glob.currentepglist[glob.currentchannellistindex][5]  # now start
-                        templist[6] = ""  # next title
-                        templist[5] = ""  # next start
-                        glob.currentepglist[glob.currentchannellistindex] = tuple(templist)
-                except Exception as e:
-                    print("Error during short EPG update:", e)
-
-        self["x_description"].setText(glob.currentepglist[glob.currentchannellistindex][4])
-        self["nowchannel"].setText(glob.currentchannellist[glob.currentchannellistindex][0])
-        self["nowtitle"].setText(glob.currentepglist[glob.currentchannellistindex][3])
-        self["nexttitle"].setText(glob.currentepglist[glob.currentchannellistindex][6])
-        self["nowtime"].setText(glob.currentepglist[glob.currentchannellistindex][2])
-        self["nexttime"].setText(glob.currentepglist[glob.currentchannellistindex][5])
+            self["x_description"].setText("")
+            self["nowchannel"].setText(glob.currentchannellist[glob.currentchannellistindex][0])
+            self["nowtitle"].setText("")
+            self["nexttitle"].setText("")
+            self["nowtime"].setText("")
+            self["nexttime"].setText("")
 
     def IPTVstartInstantRecording(self, limitEvent=True):
         from . import record
+        name = glob.currentchannellist[glob.currentchannellistindex][0]
         begin = int(time.time())
         end = begin + 3600
-        dt_now = datetime.now()
+        self.date = time.time()
 
-        current_channel = glob.currentepglist[glob.currentchannellistindex]
-        if current_channel[3]:
-            name = current_channel[3]
-        else:
-            name = glob.currentchannellist[glob.currentchannellistindex][0]
+        try:
+            if glob.currentepglist[glob.currentchannellistindex][3]:
+                name = glob.currentepglist[glob.currentchannellistindex][3]
 
-        if current_channel[5]:
-            endstring = current_channel[5]
-            end_dt = datetime.strptime(str(endstring), "%H:%M")
-            end_dt = end_dt.replace(year=dt_now.year, month=dt_now.month, day=dt_now.day)
-            end = int(time.mktime(end_dt.timetuple()))
+            if glob.currentepglist[glob.currentchannellistindex][10]:
+                end = glob.currentepglist[glob.currentchannellistindex][10]
+        except:
+            pass
 
         self.name = NoSave(ConfigText(default=name, fixed_size=False))
-        self.date = time.time()
         self.starttime = NoSave(ConfigClock(default=begin))
         self.endtime = NoSave(ConfigClock(default=end))
         self.session.openWithCallback(self.RecordDateInputClosed, record.RecordDateInput, self.name, self.date, self.starttime, self.endtime, True)
@@ -614,8 +610,11 @@ class XStreamity_StreamPlayer(
             begin = ret[1]
             end = ret[2]
             name = ret[3]
+            description = ""
 
-            description = glob.currentepglist[glob.currentchannellistindex][4]
+            if glob.currentepglist[glob.currentchannellistindex][4]:
+                description = glob.currentepglist[glob.currentchannellistindex][4]
+
             eventid = int(self.streamurl.rpartition("/")[-1].partition(".")[0])
             serviceref = eServiceReference(1, 0, self.streamurl)
 
@@ -694,14 +693,57 @@ class XStreamity_StreamPlayer(
         except:
             pass
 
-        self.reference = eServiceReference(int(servicetype), 0, streamurl)
-        self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
+        startnowunixtime = glob.currentepglist[glob.currentchannellistindex][9]
+        startnextunixtime = glob.currentepglist[glob.currentchannellistindex][10]
+
+        service_ref = ""
+
+        if startnowunixtime and startnextunixtime:
+            title = glob.currentepglist[glob.currentchannellistindex][3]
+            description = glob.currentepglist[glob.currentchannellistindex][4]
+            eventid = int("99" + self.streamurl.rpartition("/")[-1].partition(".")[0])
+
+            start_time = startnowunixtime
+            end_time = startnextunixtime
+
+            self.unique_ref = 0
+            stream_id = str(glob.currentchannellist[glob.currentchannellistindex][4])
+
+            for j in str(self.streamurl):
+                value = ord(j)
+                self.unique_ref += value
+
+            bouquet_id1 = int(stream_id) // 65535
+            bouquet_id2 = int(stream_id) - int(bouquet_id1 * 65535)
+            service_ref = eServiceReference(str(servicetype) + ":0:1:" + str(format(bouquet_id1, "x")) + ":" + str(format(bouquet_id2, "x")) + ":" + str(format(self.unique_ref, "x")) + ":0:0:0:0:" + str(streamurl).replace(":", "%3a"))
+            service_ref.setName(glob.currentchannellist[glob.currentchannellistindex][0])
+            self.reference = service_ref
+
+            try:
+                epg_cache = eEPGCache.getInstance()
+                if epg_cache:
+                    duration = end_time - start_time
+
+                    epg_cache.importEvent(service_ref.toString(), [(start_time, duration, title, description, "", 0, eventid)])
+
+            except Exception as e:
+                print("Error adding event to EPG cache: %s" % e)
+
+        if not service_ref:
+            self.reference = eServiceReference(int(servicetype), 0, streamurl)
+            self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
 
         currently_playing_ref = self.session.nav.getCurrentlyPlayingServiceReference()
-        if currently_playing_ref and currently_playing_ref.toString() != self.reference.toString():
-            self.session.nav.stopService()
 
-        self.session.nav.playService(self.reference)
+        try:
+            self.session.nav.stopService()
+        except Exception as e:
+            print(e)
+
+        try:
+            self.session.nav.playService(self.reference)
+        except Exception as e:
+            print(e)
 
         currently_playing_ref = self.session.nav.getCurrentlyPlayingServiceReference()
         if currently_playing_ref:
@@ -749,6 +791,19 @@ class XStreamity_StreamPlayer(
             self.timerCache.stop()
         except:
             pass
+
+        startnowunixtime = glob.currentepglist[glob.currentchannellistindex][9]
+        startnextunixtime = glob.currentepglist[glob.currentchannellistindex][10]
+
+        if startnowunixtime and startnextunixtime:
+            try:
+                epg_cache = eEPGCache.getInstance()
+                if epg_cache:
+                    epg_cache.flushEPG()
+                    epg_cache.load()
+            except Exception as e:
+                print(e)
+
         self.close()
 
     def toggleStreamType(self):
