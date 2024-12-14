@@ -197,7 +197,6 @@ font_folder = os.path.join(dir_plugins, "fonts/")
 
 hdr = {
     'User-Agent': "Enigma2 - XStreamity Plugin",
-    'Connection': 'keep-alive',
     'Accept-Encoding': 'gzip, deflate'
 }
 

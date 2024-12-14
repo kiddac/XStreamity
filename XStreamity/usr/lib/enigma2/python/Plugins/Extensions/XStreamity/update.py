@@ -86,7 +86,6 @@ def get_time_utc(timestring, fdateparse):
 
 hdr = {
     'User-Agent': str(cfg.useragent.value),
-    'Connection': 'keep-alive',
     'Accept-Encoding': 'gzip, deflate'
 }
 

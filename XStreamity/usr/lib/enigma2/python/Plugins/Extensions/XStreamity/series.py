@@ -71,7 +71,6 @@ if sslverify:
 
 hdr = {
     'User-Agent': str(cfg.useragent.value),
-    'Connection': 'keep-alive',
     'Accept-Encoding': 'gzip, deflate'
 }
 

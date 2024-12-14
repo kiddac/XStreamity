@@ -1,24 +1,18 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# A Job consists of many "Tasks".
-# A task is the run of an external tool, with proper methods for failure handling
-
-from __future__ import division
-from __future__ import print_function
-
+from __future__ import division, print_function
 from . import _
-
-from Tools.CList import CList
 import os
 import sys
-from six.moves import map
-from six.moves import range
+from Tools.CList import CList
+from six.moves import map, range
+import Tools.Notifications
+from Screens.MessageBox import MessageBox
+from Screens.TaskView import JobView
+from enigma import eConsoleAppContainer
 
-isDreambox = False
-if os.path.exists("/usr/bin/apt-get"):
-    isDreambox = True
-
+isDreambox = os.path.exists("/usr/bin/apt-get")
 pythonVer = sys.version_info.major
 
 
@@ -41,13 +35,6 @@ class Job(object):
         self.status = self.NOT_STARTED
         self.onSuccess = None
 
-    # description is a dict
-    def fromDescription(self, description):
-        pass
-
-    def createDescription(self):
-        return None
-
     def getProgress(self):
         if self.current_task == len(self.tasks):
             return self.end
@@ -58,14 +45,16 @@ class Job(object):
     progress = property(getProgress)
 
     def getStatustext(self):
-        return {self.NOT_STARTED: _("Waiting"), self.IN_PROGRESS: _("In progress"), self.FINISHED: _("Finished"), self.FAILED: _("Failed")}[self.status]
-
-    def task_progress_changed_CB(self):
-        self.state_changed()
+        return {
+            self.NOT_STARTED: _("Waiting"),
+            self.IN_PROGRESS: _("In progress"),
+            self.FINISHED: _("Finished"),
+            self.FAILED: _("Failed")
+        }[self.status]
 
     def addTask(self, task):
         task.job = self
-        task.task_progress_changed = self.task_progress_changed_CB
+        task.task_progress_changed = self.state_changed
         self.tasks.append(task)
 
     def start(self, callback):
@@ -82,7 +71,7 @@ class Job(object):
 
     def runNext(self):
         if self.current_task == len(self.tasks):
-            if len(self.resident_tasks) == 0:
+            if not self.resident_tasks:
                 self.status = self.FINISHED
                 self.state_changed()
                 self.callback(self, None, [])
@@ -102,7 +91,7 @@ class Job(object):
             else:
                 print("[Task] keeps staying resident:", task)
                 return
-        if len(res):
+        if res:
             print(">>> Error:", res)
             self.status = self.FAILED
             self.state_changed()
@@ -141,7 +130,7 @@ class Task(object):
         self.postconditions = []
         self.returncode = None
         self.initial_input = None
-        self.job = None
+        self.job = job
         self.end = 100
         self.weighting = 100
         self.__progress = 0
@@ -168,14 +157,8 @@ class Task(object):
         self.cmdline = cmdline
 
     def checkPreconditions(self, immediate=False):
-        not_met = []
-        if immediate:
-            preconditions = self.immediate_preconditions
-        else:
-            preconditions = self.global_preconditions
-        for precondition in preconditions:
-            if not precondition.check(self):
-                not_met.append(precondition)
+        preconditions = self.immediate_preconditions if immediate else self.global_preconditions
+        not_met = [p for p in preconditions if not p.check(self)]
         return not_met
 
     def run(self, callback):
@@ -194,31 +177,29 @@ class Task(object):
             self.finish()
 
     def _run(self):
-        if (self.cmd is None) and (self.cmdline is None):
+        if not self.cmd and not self.cmdline:
             self.finish()
             return
-        from enigma import eConsoleAppContainer
+
         self.container = eConsoleAppContainer()
 
         if isDreambox:
             self.appClosed_conn = self.container.appClosed.connect(self.processFinished)
             self.stdoutAvail_conn = self.container.stdoutAvail.connect(self.processStdout)
             self.stderrAvail_conn = self.container.stderrAvail.connect(self.processStderr)
-
         else:
             self.container.appClosed.append(self.processFinished)
             self.container.stdoutAvail.append(self.processStdout)
             self.container.stderrAvail.append(self.processStderr)
 
-        if self.cwd is not None:
+        if self.cwd:
             self.container.setCWD(self.cwd)
 
-        if not self.cmd and self.cmdline:
+        if self.cmdline:
             print("[Task] execute:", self.container.execute(self.cmdline), self.cmdline)
         else:
-            assert self.cmd is not None
-            assert len(self.args) >= 1
             print("[Task] execute:", self.container.execute(self.cmd, *self.args), ' '.join(self.args))
+
         if self.initial_input:
             self.writeInput(self.initial_input)
 
@@ -247,7 +228,6 @@ class Task(object):
 
     def processOutputLine(self, line):
         print("[Task %s]" % self.name, line[:-1])
-        pass
 
     def processFinished(self, returncode):
         self.returncode = returncode
@@ -260,15 +240,15 @@ class Task(object):
 
     def finish(self, aborted=False):
         self.afterRun()
-        not_met = []
-        if aborted:
-            not_met.append(AbortedPostcondition())
-        else:
-            for postcondition in self.postconditions:
-                if not postcondition.check(self):
-                    not_met.append(postcondition)
+        not_met = [AbortedPostcondition()] if aborted else [p for p in self.postconditions if not p.check(self)]
         self.cleanup(not_met)
         self.callback(self, not_met)
+        self.cleanup_after_task()
+
+    def cleanup_after_task(self):
+        if self.container:
+            self.container.kill()
+            print("Connection closed")
 
     def afterRun(self):
         pass
@@ -280,11 +260,7 @@ class Task(object):
         return self.__progress
 
     def setProgress(self, progress):
-        if progress > self.end:
-            progress = self.end
-        if progress < 0:
-            progress = 0
-        self.__progress = progress
+        self.__progress = max(0, min(progress, self.end))
         if self.task_progress_changed:
             self.task_progress_changed()
 
@@ -295,33 +271,25 @@ class Task(object):
 
 
 class JobManager:
-
     def __init__(self):
         self.active_jobs = []
         self.failed_jobs = []
-        self.job_classes = []
         self.in_background = False
         self.visible = False
         self.active_job = None
 
     def AddJob(self, job, onSuccess=None, onFail=None):
         job.onSuccess = onSuccess
-        if onFail is None:
-            job.onFail = self.notifyFailed
-        else:
-            job.onFail = onFail
+        job.onFail = onFail if onFail else self.notifyFailed
         self.active_jobs.append(job)
         self.kick()
 
     def kick(self):
-        if self.active_job is None:
-            if self.active_jobs:
-                self.active_job = self.active_jobs.pop(0)
-                self.active_job.start(self.jobDone)
+        if self.active_job is None and self.active_jobs:
+            self.active_job = self.active_jobs.pop(0)
+            self.active_job.start(self.jobDone)
 
     def notifyFailed(self, job, task, problems):
-        import Tools.Notifications
-        from Screens.MessageBox import MessageBox
         if problems[0].RECOVERABLE:
             Tools.Notifications.AddNotificationWithCallback(self.errorCB, MessageBox, _("Error: %s\nRetry?") % (problems[0].getErrorMessage(task)))
             return True
@@ -343,8 +311,6 @@ class JobManager:
     # Set job.onSuccess to this function if you want to pop up the jobview when the job is done/
     def popupTaskView(self, job):
         if not self.visible:
-            import Tools.Notifications
-            from Screens.TaskView import JobView
             self.visible = True
             Tools.Notifications.AddNotification(JobView, job)
 
@@ -359,17 +325,10 @@ class JobManager:
             self.kick()
 
     def getPendingJobs(self):
-        list = []
-        if self.active_job:
-            list.append(self.active_job)
-        list += self.active_jobs
-        return list
+        return [self.active_job] if self.active_job else [] + self.active_jobs
 
 
 class Condition:
-    def __init__(self):
-        pass
-
     RECOVERABLE = False
 
     def getErrorMessage(self, task):
@@ -377,19 +336,14 @@ class Condition:
 
 
 class ToolExistsPrecondition(Condition):
-    def __init__(self):
-        pass
-
     def check(self, task):
-        import os
         if task.cmd[0] == '/':
             self.realpath = task.cmd
             print("[Task][ToolExistsPrecondition] WARNING: usage of absolute paths for tasks should be avoided!")
             return os.access(self.realpath, os.X_OK)
         else:
             self.realpath = task.cmd
-            path = os.environ.get('PATH', '').split(os.pathsep)
-            path.append(task.cwd + '/')
+            path = os.environ.get('PATH', '').split(os.pathsep) + [task.cwd + '/']
             absolutes = list(filter(lambda _file: os.access(_file, os.X_OK), map(lambda directory, _file=task.cmd: os.path.join(directory, _file), path)))
             if absolutes:
                 self.realpath = absolutes[0]
@@ -402,17 +356,11 @@ class ToolExistsPrecondition(Condition):
 
 
 class AbortedPostcondition(Condition):
-    def __init__(self):
-        pass
-
     def getErrorMessage(self, task):
         return _("Cancelled upon user request")
 
 
 class ReturncodePostcondition(Condition):
-    def __init__(self):
-        pass
-
     def check(self, task):
         return task.returncode == 0
 
@@ -442,7 +390,7 @@ class FailedPostcondition(Condition):
         return str(self.exception)
 
     def check(self, task):
-        return (self.exception is None) or (self.exception == 0)
+        return self.exception is None or self.exception == 0
 
 
 job_manager = JobManager()

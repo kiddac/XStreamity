@@ -14,7 +14,6 @@ import json
 import math
 import os
 import re
-import subprocess
 import time
 
 try:
@@ -52,7 +51,6 @@ from .Task import Task, Job
 
 hdr = {
     'User-Agent': str(cfg.useragent.value),
-    'Connection': 'keep-alive',
     'Accept-Encoding': 'gzip, deflate'
 }
 
@@ -231,6 +229,8 @@ class XStreamity_DownloadManager(Screen):
             with open(downloads_json, "w") as f:
                 json.dump(self.downloads_all, f)
 
+        self.sortlist()
+
     def diskspace(self):
         try:
             stat = os.statvfs(cfg.downloadlocation.value)
@@ -334,20 +334,10 @@ class XStreamity_DownloadManager(Screen):
 
         self.resumeDownloads()
 
-    def is_no_check_certificate_supported(self):
-        try:
-            checkcmd = "wget --help | grep no-check-certificate"
-            if pythonVer == 2:
-                result = subprocess.call(checkcmd, shell=True)
-                return result == 0
-            else:
-                result = subprocess.run(checkcmd, shell=True)
-                return result.returncode == 0
-        except Exception as e:
-            print("Error checking wget support:", str(e))
-            return False
-
     def resumeDownloads(self):
+
+        started_download = False
+
         for video in self.downloads_all:
             filmtitle = str(video[1])
             url = str(video[2])
@@ -366,6 +356,8 @@ class XStreamity_DownloadManager(Screen):
             video_domain = parsed_uri.hostname
 
             if state == "In progress" or state == "Waiting":
+                started_download = True
+
                 if self.session.nav.getCurrentlyPlayingServiceReference():
                     playingstream = self.session.nav.getCurrentlyPlayingServiceReference().toString()
 
@@ -376,16 +368,22 @@ class XStreamity_DownloadManager(Screen):
                 cmd = "wget -U 'Enigma2 - XStreamity Plugin' -c '%s' -O '%s%s'" % (url, shortpath, filename)
 
                 if "https" in str(url):
-                    if self.is_no_check_certificate_supported():
-                        cmd = "wget --no-check-certificate -U 'Enigma2 - XStreamity Plugin' -c '%s' -O '%s%s'" % (url, shortpath, filename)
-                    else:
-                        self.session.open(MessageBox, _("Please update your wget library to download https lines\n\nopkg update\nopkg install wget"), type=MessageBox.TYPE_INFO)
-                        return
+                    cmd = "wget --no-check-certificate -U 'Enigma2 - XStreamity Plugin' -c '%s' -O '%s%s'" % (url, shortpath, filename)
 
                 try:
                     JobManager.AddJob(downloadJob(self, cmd, path, filmtitle), onFail=self.fail)
                 except Exception as e:
                     print(e)
+
+                break
+
+        if not started_download:
+            for index, video in enumerate(self.downloads_all):
+                if video[3] == "Not Started":
+                    self["downloadlist"].setIndex(index)
+
+                    self.download()
+                    break
 
         self.updatescreen()
 
@@ -483,11 +481,7 @@ class XStreamity_DownloadManager(Screen):
                 cmd = "wget -U 'Enigma2 - XStreamity Plugin' -c '%s' -O '%s%s'" % (self.url, self.shortpath, filename)
 
                 if "https" in str(self.url):
-                    if self.is_no_check_certificate_supported():
-                        cmd = "wget --no-check-certificate -U 'Enigma2 - XStreamity Plugin' -c '%s' -O '%s%s'" % (self.url, self.shortpath, filename)
-                    else:
-                        self.session.open(MessageBox, _("Please update your wget library to download https lines\n\nopkg update\nopkg install wget"), type=MessageBox.TYPE_INFO)
-                        return
+                    cmd = "wget --no-check-certificate -U 'Enigma2 - XStreamity Plugin' -c '%s' -O '%s%s'" % (self.url, self.shortpath, filename)
 
                 try:
                     JobManager.AddJob(downloadJob(self, cmd, self.path, self.filmtitle), onFail=self.fail)

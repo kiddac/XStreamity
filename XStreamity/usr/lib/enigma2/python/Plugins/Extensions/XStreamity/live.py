@@ -132,7 +132,6 @@ epgimporter = os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/EPGImpor
 
 hdr = {
     'User-Agent': str(cfg.useragent.value),
-    'Connection': 'keep-alive',
     'Accept-Encoding': 'gzip, deflate'
 }
 
