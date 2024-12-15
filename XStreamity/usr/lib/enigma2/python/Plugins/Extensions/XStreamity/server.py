@@ -247,9 +247,9 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
             http.mount("https://", adapter)
 
             try:
-                response = http.get(self.apiline, headers=hdr, timeout=15, verify=False, stream=True)
+                response = http.get(self.apiline, headers=hdr, timeout=30, verify=False, stream=True)
                 response.raise_for_status()
-                if response.status_code == requests.codes.ok:
+                if r.status_code == requests.codes.ok or r.status_code == 206:
                     try:
                         json_response = response.json()
                         if "user_info" in json_response and "auth" in json_response["user_info"]:

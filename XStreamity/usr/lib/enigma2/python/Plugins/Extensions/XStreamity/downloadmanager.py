@@ -9,7 +9,7 @@
 
 # Standard library imports
 from __future__ import division
-
+from .plugin import debugs
 import json
 import math
 import os
@@ -153,6 +153,8 @@ class downloadTask(Task):
 class XStreamity_DownloadManager(Screen):
 
     def __init__(self, session):
+        if debugs:
+            print("*** init  ***")
         global ui
         ui = True
         Screen.__init__(self, session)
@@ -199,6 +201,8 @@ class XStreamity_DownloadManager(Screen):
         self.setTitle(self.setup_title)
 
     def cleantitle(self, title):
+        if debugs:
+            print("*** cleantitle ***")
         cleanName = re.sub(r'[\'\<\>\:\"\/\\\|\?\*\(\)\[\]]', "", str(title))
         cleanName = re.sub(r'\s+', ' ', cleanName)  # Replace multiple spaces with a single space
         cleanName = cleanName.strip()  # Remove leading and trailing spaces
@@ -207,6 +211,8 @@ class XStreamity_DownloadManager(Screen):
         return cleanName
 
     def start(self):
+        if debugs:
+            print("*** start ***")
         self.readJsonFile()
         self.cleanalltitles()
         self.diskspace()
@@ -215,6 +221,8 @@ class XStreamity_DownloadManager(Screen):
         self.stopDownloads()
 
     def readJsonFile(self):
+        if debugs:
+            print("*** readJsonFile ***")
         self.downloads_all = []
         if os.path.isfile(downloads_json):
             try:
@@ -232,6 +240,8 @@ class XStreamity_DownloadManager(Screen):
         self.sortlist()
 
     def diskspace(self):
+        if debugs:
+            print("*** diskspace ***")
         try:
             stat = os.statvfs(cfg.downloadlocation.value)
             free = convert_size(float(stat.f_bfree * stat.f_bsize))
@@ -243,12 +253,17 @@ class XStreamity_DownloadManager(Screen):
         self["diskspace"].setText(_("Free Space:") + " " + str(free) + " " + _("of") + " " + str(total))
 
     def cleanalltitles(self):
+        if debugs:
+            print("*** clean titles ***")
         for video in self.downloads_all:
             video[1] = self.cleantitle(video[1])
 
     def getDownloadSize(self):
+        if debugs:
+            print("*** getDownloadSize ***")
         x = 0
-        for video in self.downloads_all:
+        for idx, video in enumerate(self.downloads_all):
+
             if video[5] == 0:
                 url = video[2]
 
@@ -260,26 +275,51 @@ class XStreamity_DownloadManager(Screen):
                     http.mount("https://", adapter)
 
                     try:
-                        r = http.get(url, headers=hdr, timeout=10, verify=False, stream=True)
+                        r = http.get(url, headers=hdr, timeout=20, verify=False, stream=True)
+
                         r.raise_for_status()
-                        if r.status_code == requests.codes.ok:
-                            content_length = float(r.headers.get("content-length", 0))
+
+                        if r.status_code == requests.codes.ok or r.status_code == 206:
+
+                            content_length = r.headers.get("content-length")
+
+                            if content_length:
+                                content_length = float(content_length)
+                            else:
+                                content_range = r.headers.get("Content-Range")
+                                if content_range:
+                                    try:
+                                        range_info = content_range.split(" ")[1].split("/")
+                                        content_length = float(range_info[1])
+                                    except Exception:
+                                        content_length = 0
+                                else:
+                                    content_length = 0
+
                             video[5] = content_length
+
+                            if video[3] == _("Error"):
+                                video[3] = _("Not Started")
+
                         else:
                             video[3] = _("Error")
-                            self.saveJson()
 
-                    except Exception as e:
-                        print(e)
+                    except Exception:
                         video[5] = 0
                         video[3] = _("Error")
-                        self.saveJson()
-                x += 1
-                if x == 5:
-                    x = 0
-                    time.sleep(1)
+            else:
+                pass
+
+            x += 1
+            if x == 5:
+                x = 0
+                time.sleep(1)
+
+        self.saveJson()
 
     def checkactivedownloads(self):
+        if debugs:
+            print("***  checkactivedownloads ***")
         templist = []
         for video in self.downloads_all:
             recbytes = 0
@@ -299,7 +339,7 @@ class XStreamity_DownloadManager(Screen):
                 recbytes = os.path.getsize(path)
                 if int(totalbytes) != int(recbytes):
                     try:
-                        video[4] = int((recbytes / totalbytes) * 100) - 2
+                        video[4] = int((float(recbytes) / float(totalbytes)) * 100) - 2
                     except:
                         video[4] = 0
 
@@ -307,12 +347,8 @@ class XStreamity_DownloadManager(Screen):
                         video[4] = 0
                 if video[3] == "Downloaded":
                     video[4] = 100
-            """
             else:
-                if video[3] != "Error" or video[3] != "Downloaded":
-                    video[3] = "Not Started"
-                video[4] = 0
-                """
+                continue
 
             templist.append(video)
 
@@ -321,6 +357,8 @@ class XStreamity_DownloadManager(Screen):
         self.saveJson()
 
     def stopDownloads(self):
+        if debugs:
+            print("*** stopDownloads ***")
         # stop all active tasks
         for job in JobManager.getPendingJobs():
 
@@ -335,7 +373,8 @@ class XStreamity_DownloadManager(Screen):
         self.resumeDownloads()
 
     def resumeDownloads(self):
-
+        if debugs:
+            print("*** resumeDownloads ***")
         started_download = False
 
         for video in self.downloads_all:
@@ -388,22 +427,32 @@ class XStreamity_DownloadManager(Screen):
         self.updatescreen()
 
     def fail(self, job=None, task=None, problems=None):
+        if debugs:
+            print("*** fail ***")
         return False
 
     def buildList(self):
+        if debugs:
+            print("*** buildList ***")
         self.drawList = []
         self.drawList = [self.buildListEntry(x[0], x[1], x[2], str(x[3]), x[4], x[5]) for x in self.downloads_all]
         self["downloadlist"].setList(self.drawList)
 
     def updatescreen(self):
+        if debugs:
+            print("*** updatescreen ***")
         self.diskspace()
         self.getprogress()
 
     def sortlist(self):
+        if debugs:
+            print("*** sortlist ***")
         order = {"In progress": 0, "Waiting": 1, "Not Started": 2, "Error": 3, "Downloaded": 4}
         self.downloads_all.sort(key=lambda x: order[x[3]])
 
     def getprogress(self):
+        if debugs:
+            print("*** getprogress ***")
         jobs = JobManager.getPendingJobs()
         if len(jobs) >= 1:
             for job in jobs:
@@ -423,10 +472,14 @@ class XStreamity_DownloadManager(Screen):
                             break
 
     def saveJson(self):
+        if debugs:
+            print("*** savejson ***")
         with open(downloads_json, "w") as f:
             json.dump(self.downloads_all, f)
 
     def selectionChanged(self):
+        if debugs:
+            print("*** selectionchanged ***")
         if self["downloadlist"].getCurrent():
             if self["downloadlist"].getCurrent()[3] == _("In progress") or self["downloadlist"].getCurrent()[3] == _("Waiting"):
                 self["key_green"].setText(_("Cancel"))
@@ -445,7 +498,8 @@ class XStreamity_DownloadManager(Screen):
         self.close()
 
     def download(self):
-        # print("*** download ***")
+        if debugs:
+            print("*** download ***")
         if not os.path.exists(cfg.downloadlocation.value) or cfg.downloadlocation.value is None:
             self.session.open(MessageBox, _("Vod Download folder location does not exist.\n\n" + str(cfg.downloadlocation.value) + _("Please set download folder in Main Settings.")), type=MessageBox.TYPE_WARNING)
             return
@@ -501,6 +555,8 @@ class XStreamity_DownloadManager(Screen):
                 self.cancelConfirm()
 
     def cancelConfirm(self, answer=None):
+        if debugs:
+            print("*** cancelconfirm ***")
         if answer is None:
             self.session.openWithCallback(self.cancelConfirm, MessageBox, _("Cancel this download?"))
         elif answer:
@@ -509,6 +565,8 @@ class XStreamity_DownloadManager(Screen):
             return
 
     def cancelJob(self, answer=None):
+        if debugs:
+            print("*** canceljobs ***")
         jobs = JobManager.getPendingJobs()
 
         for job in jobs:
@@ -528,6 +586,8 @@ class XStreamity_DownloadManager(Screen):
                             job.cancel()
 
     def delete(self):
+        if debugs:
+            print("*** delete ***")
         if self["downloadlist"].getCurrent():
             currentindex = self["downloadlist"].getIndex()
             if self.downloads_all[currentindex][3] == _("In progress") or self.downloads_all[currentindex][3] == _("Waiting"):
@@ -536,6 +596,8 @@ class XStreamity_DownloadManager(Screen):
                 self.delete_entry()
 
     def delete_entry(self, answer=None):
+        if debugs:
+            print("*** delete_entry ***")
         if answer is None:
             self.session.openWithCallback(self.delete_entry, MessageBox, _("Delete this entry?"))
         elif answer:
@@ -547,6 +609,8 @@ class XStreamity_DownloadManager(Screen):
             self.saveJson()
 
     def createMetaFile(self, filename, filmtitle):
+        if debugs:
+            print("*** createmetafile ***")
         try:
             serviceref = eServiceReference(4097, 0, filename)
             with open("%s.meta" % (filename), "w") as f:
@@ -556,6 +620,8 @@ class XStreamity_DownloadManager(Screen):
         return
 
     def download_finished(self, filename, filmtitle):
+        if debugs:
+            print("*** downloaded_finished ***")
         global ui
         if os.path.isfile(downloads_json):
             with open(downloads_json, "r") as f:
