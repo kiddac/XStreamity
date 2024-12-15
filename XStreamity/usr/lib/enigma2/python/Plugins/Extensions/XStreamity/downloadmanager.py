@@ -298,15 +298,15 @@ class XStreamity_DownloadManager(Screen):
 
                             video[5] = content_length
 
-                            if video[3] == _("Error"):
-                                video[3] = _("Not Started")
+                            if video[3] == "Error":
+                                video[3] = "Not Started"
 
                         else:
-                            video[3] = _("Error")
+                            video[3] = "Error"
 
                     except Exception:
                         video[5] = 0
-                        video[3] = _("Error")
+                        video[3] = "Error"
             else:
                 pass
 
@@ -348,7 +348,8 @@ class XStreamity_DownloadManager(Screen):
                 if video[3] == "Downloaded":
                     video[4] = 100
             else:
-                continue
+                if video[3] != "Not Started":
+                    continue
 
             templist.append(video)
 
