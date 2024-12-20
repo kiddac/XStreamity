@@ -164,15 +164,30 @@ class XStreamity_Playlists(Screen):
                 r = http.get(url[0], headers=hdr, timeout=6, verify=False)
                 r.raise_for_status()
 
-                # Follow redirects manually and check for JSON content
-                if 'application/json' not in r.headers.get('Content-Type', ''):
-                    print("Final response is non-JSON content", r.url)
-                    return index, None
+                # Get Content-Type from headers
+                content_type = r.headers.get('Content-Type', '')
 
-                try:
-                    response = r.json()
-                except ValueError as e:
-                    print("Error decoding JSON:", e, url)
+                # Handle JSON content directly
+                if 'application/json' in content_type:
+                    try:
+                        response = r.json()
+                    except ValueError as e:
+                        print("Error decoding JSON:", e, url)
+                        return index, None
+
+                # Handle text/html content
+                elif 'text/html' in content_type:
+                    try:
+                        # Attempt to parse the HTML body as JSON
+                        response_text = r.text
+                        response = json.loads(response_text)
+                    except json.JSONDecodeError as e:
+                        print("Error decoding JSON from HTML content:", e, url)
+                        return index, None
+
+                else:
+                    print("Final response is non-JSON content:", r.url)
+                    return index, None
 
             except requests.exceptions.RequestException as e:
                 print("Request error:", e)
