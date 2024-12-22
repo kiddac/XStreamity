@@ -19,6 +19,7 @@ from Components.config import configfile
 import json
 import os
 import sys
+import datetime
 
 
 class XStreamity_MainMenu(Screen):
@@ -29,7 +30,6 @@ class XStreamity_MainMenu(Screen):
         self.session = session
 
         skin_path = os.path.join(skin_directory, cfg.skin.value)
-
         skin = os.path.join(skin_path, "mainmenu.xml")
         with open(skin, "r") as f:
             self.skin = f.read()
@@ -40,11 +40,9 @@ class XStreamity_MainMenu(Screen):
         self["list"] = List(self.drawList, enableWrapAround=True)
 
         self.setup_title = _("Main Menu")
-
         self["key_red"] = StaticText(_("Back"))
         self["key_green"] = StaticText(_("OK"))
         self["key_blue"] = StaticText(_("Reset JSON"))
-
         self["version"] = StaticText()
 
         self["actions"] = ActionMap(["XStreamityActions"], {
@@ -54,10 +52,23 @@ class XStreamity_MainMenu(Screen):
             "cancel": self.quit,
             "menu": self.settings,
             "help": self.resetData,
-            "blue": self.resetData
+            "blue": self.resetData,
+            "0": lambda: self.keyPressed('0'),
+            "1": lambda: self.keyPressed('1'),
+            "2": lambda: self.keyPressed('2'),
+            "3": lambda: self.keyPressed('3'),
+            "4": lambda: self.keyPressed('4'),
+            "5": lambda: self.keyPressed('5'),
+            "6": lambda: self.keyPressed('6'),
+            "7": lambda: self.keyPressed('7'),
+            "8": lambda: self.keyPressed('8'),
+            "9": lambda: self.keyPressed('9'),
         }, -2)
 
         self["version"].setText(version)
+
+        self.key_sequence = []
+        self.hackavision_added = False
 
         if self.session.nav.getCurrentlyPlayingServiceReference():
             glob.currentPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
@@ -70,6 +81,22 @@ class XStreamity_MainMenu(Screen):
 
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
+
+    def getDynamicKeyCombo(self):
+        today = datetime.date.today()
+        day = str(today.day).zfill(2)
+        year = str(today.month)[-2:]
+        return day + year
+
+    def keyPressed(self, key):
+        self.key_sequence.append(key)
+        if ''.join(self.key_sequence[-4:]) == self.getDynamicKeyCombo():
+            self.showHackAVision()
+
+    def showHackAVision(self):
+        if not self.hackavision_added:
+            self.hackavision_added = True
+            self.createSetup()
 
     def check_python_dependencies(self):
         try:
@@ -94,7 +121,6 @@ class XStreamity_MainMenu(Screen):
             print("Error checking location validity:", e)
 
         dependencies = True
-
         dependencies = self.check_python_dependencies()
 
         if not dependencies:
@@ -105,7 +131,6 @@ class XStreamity_MainMenu(Screen):
                 print(e)
 
             cmd = ". {}".format(script_file)
-
             self.session.openWithCallback(self.retry_check_dependencies, Console, title="Checking Python Dependencies", cmdlist=[cmd], closeOnSuccess=True)
         else:
             self.start()
@@ -135,13 +160,14 @@ class XStreamity_MainMenu(Screen):
 
         if self.playlists_all:
             self.list.extend([[1, _("Playlists")], [3, _("Add Playlist")], [2, _("Main Settings")]])
-            # self.list.append([5, _("Manual EPG Update")])
-
         else:
             self.list.extend([[3, _("Add Playlist")], [2, _("Main Settings")]])
 
         if downloads_all:
             self.list.append([4, _("Download Manager")])
+
+        if self.hackavision_added:
+            self.list.append([5, _("Hack-A-Vision")])
 
         self.drawList = [buildListEntry(x[0], x[1]) for x in self.list]
         self["list"].setList(self.drawList)
@@ -162,6 +188,10 @@ class XStreamity_MainMenu(Screen):
         from . import downloadmanager
         self.session.openWithCallback(lambda: self.start, downloadmanager.XStreamity_DownloadManager)
 
+    def hackavision(self):
+        from . import scanner
+        self.session.openWithCallback(lambda: self.start, scanner.XStreamity_Scanner)
+
     def __next__(self):
         current_entry = self["list"].getCurrent()
 
@@ -175,6 +205,8 @@ class XStreamity_MainMenu(Screen):
                 self.addServer()
             elif index == 4:
                 self.downloadManager()
+            elif index == 5:
+                self.hackavision()
 
     def quit(self, data=None):
         self.playOriginalChannel()
@@ -203,7 +235,8 @@ def buildListEntry(index, title):
         1: "playlists.png",
         2: "settings.png",
         3: "addplaylist.png",
-        4: "vod_download.png"
+        4: "vod_download.png",
+        5: "playlists.png"
     }
 
     png = None
