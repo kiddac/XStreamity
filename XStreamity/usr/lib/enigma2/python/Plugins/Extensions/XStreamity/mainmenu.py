@@ -85,7 +85,7 @@ class XStreamity_MainMenu(Screen):
     def getDynamicKeyCombo(self):
         today = datetime.date.today()
         day = str(today.day).zfill(2)
-        year = str(today.month)[-2:]
+        year = str(today.month).zfill(2)
         return day + year
 
     def keyPressed(self, key):

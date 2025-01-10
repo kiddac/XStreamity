@@ -254,7 +254,7 @@ class XStreamity_DownloadManager(Screen):
 
     def cleanalltitles(self):
         if debugs:
-            print("*** clean titles ***")
+            print("*** cleanalltitles ***")
         for video in self.downloads_all:
             video[1] = self.cleantitle(video[1])
 
@@ -262,7 +262,7 @@ class XStreamity_DownloadManager(Screen):
         if debugs:
             print("*** getDownloadSize ***")
         x = 0
-        for idx, video in enumerate(self.downloads_all):
+        for video in self.downloads_all:
 
             if video[5] == 0:
                 url = video[2]
@@ -276,11 +276,9 @@ class XStreamity_DownloadManager(Screen):
 
                     try:
                         r = http.get(url, headers=hdr, timeout=20, verify=False, stream=True)
-
                         r.raise_for_status()
 
                         if r.status_code == requests.codes.ok or r.status_code == 206:
-
                             content_length = r.headers.get("content-length")
 
                             if content_length:
@@ -298,17 +296,19 @@ class XStreamity_DownloadManager(Screen):
 
                             video[5] = content_length
 
-                            if video[3] == "Error":
-                                video[3] = "Not Started"
+                            if content_length:
+                                if video[3] == "Error":
+                                    video[3] = "Not Started"
+                            else:
+                                video[3] = "Error"
 
                         else:
                             video[3] = "Error"
 
-                    except Exception:
+                    except Exception as e:
+                        print(e)
                         video[5] = 0
                         video[3] = "Error"
-            else:
-                pass
 
             x += 1
             if x == 5:
@@ -340,17 +340,20 @@ class XStreamity_DownloadManager(Screen):
                 if int(totalbytes) != int(recbytes):
                     try:
                         video[4] = int((float(recbytes) / float(totalbytes)) * 100) - 2
-                    except:
+                    except Exception as e:
+                        print(e)
                         video[4] = 0
 
                     if video[4] < 0:
                         video[4] = 0
                 if video[3] == "Downloaded":
                     video[4] = 100
+            """
             else:
+                print("*** video not exist ***")
                 if video[3] != "Not Started":
                     continue
-
+                    """
             templist.append(video)
 
         self.downloads_all[:] = templist
@@ -360,11 +363,8 @@ class XStreamity_DownloadManager(Screen):
     def stopDownloads(self):
         if debugs:
             print("*** stopDownloads ***")
-        # stop all active tasks
         for job in JobManager.getPendingJobs():
-
             if "XStreamity" in job.cmdline:
-
                 if job.status == job.NOT_STARTED:
                     JobManager.active_jobs.remove(job)
 
@@ -376,8 +376,6 @@ class XStreamity_DownloadManager(Screen):
     def resumeDownloads(self):
         if debugs:
             print("*** resumeDownloads ***")
-        started_download = False
-
         for video in self.downloads_all:
             filmtitle = str(video[1])
             url = str(video[2])
@@ -396,8 +394,6 @@ class XStreamity_DownloadManager(Screen):
             video_domain = parsed_uri.hostname
 
             if state == "In progress" or state == "Waiting":
-                started_download = True
-
                 if self.session.nav.getCurrentlyPlayingServiceReference():
                     playingstream = self.session.nav.getCurrentlyPlayingServiceReference().toString()
 
@@ -416,14 +412,6 @@ class XStreamity_DownloadManager(Screen):
                     print(e)
 
                 break
-
-        if not started_download:
-            for index, video in enumerate(self.downloads_all):
-                if video[3] == "Not Started":
-                    self["downloadlist"].setIndex(index)
-
-                    self.download()
-                    break
 
         self.updatescreen()
 
@@ -568,30 +556,31 @@ class XStreamity_DownloadManager(Screen):
     def cancelJob(self, answer=None):
         if debugs:
             print("*** canceljobs ***")
+
+        for video in self.downloads_all:
+            if str(video[1]) == str(self.filmtitle):
+                video[3] = "Not Started"
+                self.buildList()
+                self.saveJson()
+
         jobs = JobManager.getPendingJobs()
 
         for job in jobs:
             jobname = str(job.name)
             if self.filmtitle == jobname:
 
-                for video in self.downloads_all:
-                    if str(video[1]) == str(self.filmtitle):
-                        video[3] = "Not Started"
-                        self.buildList()
-                        self.saveJson()
+                if job.status == job.NOT_STARTED:
+                    JobManager.active_jobs.remove(job)
 
-                        if job.status == job.NOT_STARTED:
-                            JobManager.active_jobs.remove(job)
-
-                        elif job.status == job.IN_PROGRESS:
-                            job.cancel()
+                elif job.status == job.IN_PROGRESS:
+                    job.cancel()
 
     def delete(self):
         if debugs:
             print("*** delete ***")
         if self["downloadlist"].getCurrent():
             currentindex = self["downloadlist"].getIndex()
-            if self.downloads_all[currentindex][3] == _("In progress") or self.downloads_all[currentindex][3] == _("Waiting"):
+            if self.downloads_all[currentindex][3] == "In progress" or self.downloads_all[currentindex][3] == "Waiting":
                 return
             else:
                 self.delete_entry()
