@@ -506,7 +506,7 @@ class XStreamity_Playlists(Screen):
             self.playlists_all = json.load(f)
 
         for playlist in self.playlists_all:
-            cleanName = re.sub(r'[\<\>\:\"\/\\\|\?\*]', "_", str(playlist["playlist_info"]["name"]))
+            cleanName = re.sub(r'[\'\<\>\:\"\/\\\|\?\*\(\)\[\]]', "_", str(playlist["playlist_info"]["name"]))
             cleanName = re.sub(r" +", "_", cleanName)
             cleanName = re.sub(r"_+", "_", cleanName)
             channelfilelist.append(cleanName)
