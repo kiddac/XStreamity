@@ -4,19 +4,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-09-14 23:18+0100\n"
-"PO-Revision-Date: 2024-09-14 23:19+0100\n"
-"Last-Translator: \n"
+"PO-Revision-Date: 2025-01-03 03:43+0100\n"
+"Last-Translator: Sólyom Balázs <balazs@solyom.online>\n"
 "Language-Team: \n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Loco-Source-Locale: nb_NO\n"
-"X-Generator: Poedit 3.4.4\n"
-"X-Poedit-Basepath: ../../../../../../../../../..\n"
-"X-Loco-Parser: loco_parse_po\n"
-"X-Poedit-SearchPath-0: .\n"
+"X-Generator: Poedit 3.5\n"
 
 #: usr/lib/enigma2/python/Components/Converter/XStreamityServicePosition.py:160
 #: usr/lib/enigma2/python/Components/Converter/XStreamityServicePosition.py:162
@@ -27,18 +23,18 @@ msgstr ""
 #, python-format
 msgid "%d Min"
 msgid_plural "%d Mins"
-msgstr[0] "%d Min"
-msgstr[1] "%d Mins"
+msgstr[0] "%d perc"
+msgstr[1] "%d perc"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/Task.py:61
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:48
 msgid "Waiting"
-msgstr ""
+msgstr "Várakozás..."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/Task.py:61
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:47
 msgid "In progress"
-msgstr ""
+msgstr "Folyamatban"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/Task.py:61
 msgid "Finished"
@@ -46,7 +42,7 @@ msgstr "Befejeződött"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/Task.py:61
 msgid "Failed"
-msgstr ""
+msgstr "Sikertelen"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/Task.py:326
 #, python-format
@@ -54,37 +50,43 @@ msgid ""
 "Error: %s\n"
 "Retry?"
 msgstr ""
+"Hiba: %s\n"
+"Újrapróbálkozás?"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/Task.py:329
 msgid "Error"
-msgstr ""
+msgstr "Hiba"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/Task.py:376
 msgid "An unknown error occurred!"
-msgstr ""
+msgstr "Egy ismeretlen hiba történt."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/Task.py:401
 #, python-format
 msgid "A required tool (%s) was not found."
-msgstr ""
+msgstr "Egy szükséges eszközt (%s) nem találtunk."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/Task.py:409
 msgid "Cancelled upon user request"
-msgstr ""
+msgstr "A felhasználó kérésére törlésre került"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/Task.py:426
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/Task.py:441
 msgid "Error code"
-msgstr ""
+msgstr "Hibakód"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:144
 msgid "Catch Up Categories"
-msgstr "Felzárkózási kategóriák"
+msgstr "Visszajátszható TV műsorok kategóriái"
+
+#: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:245
+msgid "TV Series"
+msgstr "Sorozatok"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:145
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:247
 msgid "Catch Up TV"
-msgstr "Catch Up TV"
+msgstr "Visszajátszható TV műsorok"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:183
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:432
@@ -115,7 +117,7 @@ msgstr "Catch Up TV"
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1090
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1280
 msgid "Sort: A-Z"
-msgstr "Rendezés: A-tól Z-ig"
+msgstr "Rendezés: A-Z"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:205
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:170
@@ -168,7 +170,7 @@ msgstr "ÖSSZES"
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:699
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:489
 msgid "Server error or invalid link."
-msgstr ""
+msgstr "Szerverhiba vagy érvénytelen hivatkozás."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:397
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:423
@@ -193,7 +195,7 @@ msgstr "Alaphelyzet"
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:617
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:760
 msgid "Reverse"
-msgstr "Visszafelé"
+msgstr "Megfordítás"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:463
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:488
@@ -273,7 +275,7 @@ msgstr "Szűrje ezt a kategóriát..."
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1444
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1179
 msgid "No results found."
-msgstr ""
+msgstr "Nincs találat."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:718
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:896
@@ -307,7 +309,7 @@ msgstr "Írja be a PIN kódot"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:878
 msgid "Catch-up"
-msgstr "Felzárkóztató"
+msgstr "Visszajátszható TV műsor"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:883
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1765
@@ -319,19 +321,19 @@ msgstr "Hozzáadva a letöltéskezelőhöz"
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1765
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1507
 msgid "Note recording acts as an open connection."
-msgstr ""
+msgstr "A felvétel során a kapcsolat folyamatosan nyitva marad."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:883
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1765
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1507
 msgid "Do not record and play streams at the same time."
-msgstr ""
+msgstr "Ne végezzen rögzítést és lejátszást egy időben."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:883
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1765
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1507
 msgid "Open download manager?"
-msgstr ""
+msgstr "Megnyitja a letöltéskezelőt?"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:886
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1768
@@ -341,16 +343,17 @@ msgstr "Már hozzá van adva a letöltéskezelőhöz"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:917
 msgid "Catchup error. No data for this slot"
-msgstr "Felzárkózási hiba. Nincsenek adatok ehhez a tárolóhelyhez"
+msgstr "Visszajátszható TV műsor hiba. Nincsenek adatok ehhez a tárolóhelyhez"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:976
 msgid "Catchup currently not available. Missing EPG data"
-msgstr "Felzárkózás jelenleg nem érhető el. Hiányzó EPG-adatok"
+msgstr ""
+"A visszajátszás jelenleg nem érhető el. A TV csatornához EPG-adatok hiányoznak"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchupplayer.py:413
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vodplayer.py:418
 msgid "Do you want to resume this playback?"
-msgstr "Szeretné folytatni ezt a lejátszást ahonnan abbahagyta?"
+msgstr "Szeretné folytatni a lejátszást ahol abbahagyta?"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchupplayer.py:413
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vodplayer.py:418
@@ -360,13 +363,13 @@ msgstr "Folytatás %s pozíciótól"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchupplayer.py:496
 msgid "Catch Up"
-msgstr "Felzárkózás"
+msgstr "Visszajátszható TV műsor"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/catchupplayer.py:673
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/liveplayer.py:881
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vodplayer.py:777
 msgid "Resolution Change Failed"
-msgstr ""
+msgstr "Felbontás módosítása sikertelen"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:46
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:392
@@ -376,7 +379,7 @@ msgstr "Kezdésre vár"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:151
 msgid "VOD Download Manager"
-msgstr "VOD letöltéskezelő"
+msgstr "Videó (VoD) letöltéskezelő"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:171
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:396
@@ -405,14 +408,14 @@ msgstr "Mégsem"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:407
 msgid "Please set download folder in Main Settings."
-msgstr ""
+msgstr "Kérjük, állítsa be a letöltési mappát az Alapbeállításokban."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:407
 msgid ""
 "Vod Download folder location does not exist.\n"
 "\n"
 msgstr ""
-"A Vod Download mappa helye nem létezik.\n"
+"A Videó (VoD) letöltés mappa helye nem létezik.\n"
 "\n"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:447
@@ -423,10 +426,10 @@ msgid ""
 "opkg update\n"
 "opkg install wget"
 msgstr ""
-"Kérjük, frissítse wget könyvtárát a https vonalak letöltéséhez\n"
+"Kérjük, frissítse a wget alkalmazást a https linkek eléréséhez\n"
 "\n"
-"OPKG frissítés\n"
-"OPKG telepítse a WGET-t"
+"opkg update\n"
+"opkg install wget"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:474
 msgid "Cancel this download?"
@@ -434,7 +437,7 @@ msgstr "Megszakítja a letöltést?"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:507
 msgid "Delete this entry?"
-msgstr ""
+msgstr "Törli ezt a bejegyzést?"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/hidden.py:27
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:32
@@ -472,11 +475,11 @@ msgstr "Hiba: Minden kategória rejtett. Kérjük, módosítsa a választását.
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:153
 msgid "Live Categories"
-msgstr "Élő kategóriák"
+msgstr "TV műsorok kategóriái"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:154
 msgid "Live Streams"
-msgstr "Élő közvetítések"
+msgstr "TV műsorok"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:350
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:351
@@ -486,7 +489,7 @@ msgstr "KEDVENCEK"
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:351
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:352
 msgid "RECENTLY WATCHED"
-msgstr ""
+msgstr "NEMRÉG MEGTEKINTVE"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:546
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:816
@@ -500,11 +503,11 @@ msgstr "Törlés"
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:1318
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:1327
 msgid "Next Info"
-msgstr "Következő információ"
+msgstr "Következő műsor"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:1322
 msgid "Now Info"
-msgstr "Most infó"
+msgstr "Most látható"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/live.py:1527
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/liveplayer.py:632
@@ -526,11 +529,11 @@ msgstr "Főmenü"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:46
 msgid "Reset JSON"
-msgstr ""
+msgstr "JSON alaphelyzetbe állítása"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:89
 msgid "Playlists.txt location is invalid and has been reset."
-msgstr ""
+msgstr "A Playlists.txt helye érvénytelen, ezért visszaállításra került."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:117
 msgid ""
@@ -538,21 +541,24 @@ msgid ""
 "\n"
 "Trying installing older version from feeds first..."
 msgstr ""
+"A függőségek nincsenek telepítve.\n"
+"\n"
+"Próbálkozzon először egy régebbi verzió telepítésével a csomagtárolóból..."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:137
 msgid "Playlists"
-msgstr "Játéklisták"
+msgstr "IPTV szolgáltatók"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:137
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:141
 msgid "Add Playlist"
-msgstr "Lejátszási lista hozzáadása"
+msgstr "IPTV szolgáltató hozzáadása"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:137
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:141
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:66
 msgid "Main Settings"
-msgstr "Fő beállítások"
+msgstr "Alapbeállítások"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/mainmenu.py:144
 msgid "Download Manager"
@@ -565,11 +571,15 @@ msgid ""
 "Playlists will not be deleted.\n"
 "Do you wish to continue?"
 msgstr ""
+"Figyelem: az összes IPTV szolgáltató tárolt JSON adatait törölni fogja "
+"(beállítások, kedvencek stb.)\n"
+"Az IPTV szolgáltatók azonban nem lesznek törölve.\n"
+"Folytatni kívánja?"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:250
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:41
 msgid "Playlist Settings"
-msgstr "Lejátszási lista beállításai"
+msgstr "IPTV szolgáltató beállításai"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:256
 msgid "Manual EPG Update"
@@ -578,20 +588,20 @@ msgstr "Kézi EPG frissítés"
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:264
 msgid "No data, blocked or playlist not compatible with XStreamity plugin."
 msgstr ""
-"Nincs adat, blokkolt vagy lejátszási lista, amely nem kompatibilis az "
-"XStreamity beépülő modullal."
+"Nincs adat, blokkolt vagy az XStreamity pluginnel nem kompatibilis IPTV "
+"szolgáltató."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:306
 msgid "Recordings in progress. EPG not downloaded."
-msgstr ""
+msgstr "Felvétel van folyamatban. Az EPG nem frissíthető."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:308
 msgid "EPGs downloading."
-msgstr "EPG-k letöltése."
+msgstr "EPG frissítése."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:54
 msgid "Select Playlist"
-msgstr "Lejátszási lista kiválasztása"
+msgstr "IPTV szolgáltató kiválasztása"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:59
 msgid "Info"
@@ -599,7 +609,7 @@ msgstr "Információ"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:99
 msgid "No internet."
-msgstr ""
+msgstr "Nincs internetkapcsolat."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:319
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:397
@@ -642,11 +652,11 @@ msgstr "Lejár: "
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:349
 msgid "Active Conn:"
-msgstr "Aktív Conn:"
+msgstr "Aktív kapcsolat(ok) száma:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:357
 msgid "Max Conn:"
-msgstr "Max Conn:"
+msgstr "Összes kapcsolat száma:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:378
 msgid ""
@@ -654,14 +664,17 @@ msgid ""
 "\n"
 "Press Yellow button to soft delete dead playlists"
 msgstr ""
+"Nem működő IPTV szolgáltatók vannak jelen, amelyek lassítják a betöltést.\n"
+"\n"
+"Nyomja meg a sárga gombot a nem működő IPTV szolgáltatók törléséhez"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:412
 msgid "Delete selected playlist?"
-msgstr "Törli a kiválasztott lejátszási listát?"
+msgstr "Törli a kiválasztott IPTV szolgáltatót?"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:433
 msgid "Delete providers EPG data?"
-msgstr "Törli a szolgáltatók EPG-adatait?"
+msgstr "Törli a szolgáltatók EPG adatait?"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:78
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/record.py:73
@@ -677,32 +690,32 @@ msgstr "Rövid név vagy szolgáltatónév:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:135
 msgid "Show LIVE category:"
-msgstr "Show LIVE kategória:"
+msgstr "Megjeleníti a TV műsorok kategóriát:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:136
 msgid "Show VOD category:"
-msgstr "VOD kategória megjelenítése:"
+msgstr "Megjeleníti a Videók (VoD) kategóriát:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:137
 msgid "Show SERIES category:"
-msgstr "Show SERIES kategória:"
+msgstr "Megjeleníti a Sorozatok kategóriát:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:138
 msgid "Show CATCHUP category:"
-msgstr "CATCHUP kategória megjelenítése:"
+msgstr "Megjeleníti a Visszajátszható TV műsorok kategóriát:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:139
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:116
 msgid "Output:"
-msgstr "Kivitel:"
+msgstr "Formátum:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:143
 msgid "Stream Type LIVE:"
-msgstr "Élő közvetítés típusa:"
+msgstr "A TV műsorok adatfolyamának típusa:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:146
 msgid "Stream Type VOD/SERIES:"
-msgstr "Stream típusa VOD/SERIES:"
+msgstr "A Videók (VoD)/Sorozatok adatfolyamának típusa:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:149
 msgid "EPG offset:"
@@ -710,31 +723,33 @@ msgstr "EPG eltolás:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:150
 msgid "Use alternative EPG url:"
-msgstr ""
+msgstr "Alternatív EPG hozzáférés használata:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:154
 msgid "Alternative EPG url:"
-msgstr ""
+msgstr "Alternatív EPG hozzáférés linkje:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:232
 msgid ""
 "Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum 3 "
 "characters."
 msgstr ""
+"A bouquet neve nem lehet üres. Kérjük, adjon meg egy egyedi bouquet nevet, "
+"legalább 3 karakter hosszúságban."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/playsettings.py:238
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:213
 msgid "Name already used. Please enter a unique name."
-msgstr ""
+msgstr "A megadott név már foglalt. Kérjük, adjon meg egy másik nevet."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:164
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:165
 msgid "Original"
-msgstr ""
+msgstr "Eredeti"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:165
 msgid "Added"
-msgstr ""
+msgstr "Hozzáadva"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:165
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1355
@@ -748,7 +763,7 @@ msgstr "Rendezés: Év"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:165
 msgid "Year"
-msgstr ""
+msgstr "Év"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:266
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:379
@@ -757,7 +772,7 @@ msgstr "XStreamity"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:378
 msgid "IPTV Xtream Codes playlists player by KiddaC"
-msgstr "IPTV Xtream kódok lejátszási listák lejátszója a KiddaC által"
+msgstr "IPTV Xtream Codes IPTV szolgáltató kezelő by KiddaC"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/record.py:39
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:60
@@ -795,12 +810,12 @@ msgstr "Sorozatok"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:411
 msgid "No series found in this category."
-msgstr ""
+msgstr "Ebben a kategóriában nem találhatók sorozatok."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:461
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1808
 msgid "Season "
-msgstr "Évszak "
+msgstr "Évad "
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1727
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1470
@@ -830,12 +845,12 @@ msgstr "Kiadás dátuma:"
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1732
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1475
 msgid "Cast:"
-msgstr "Önt:"
+msgstr "Szereplők:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1733
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1476
 msgid "Director:"
-msgstr "Igazgató:"
+msgstr "Rendező:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:1734
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1477
@@ -844,7 +859,7 @@ msgstr "Ország:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:45
 msgid "Add Xtream Codes Playlist"
-msgstr "Xtream kódok lejátszási listájának hozzáadása"
+msgstr "Xtream Codes IPTV szolgáltató hozzáadása"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:111
 msgid "Protocol:"
@@ -852,7 +867,7 @@ msgstr "Protokoll:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:112
 msgid "Server URL: i.e. domain.xyz"
-msgstr ""
+msgstr "Szerver címe: (pl. domain.xyz)"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:113
 msgid "Port:"
@@ -869,16 +884,20 @@ msgstr "Jelszó:"
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:202
 msgid "Details are not valid or unauthorised"
 msgstr ""
+"A megadott hozzáférési adatok nem megfelelőek vagy a hozzáférés nem "
+"engedélyezett"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:207
 msgid ""
 "Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum 2 "
 "characters."
 msgstr ""
+"A bouquet neve nem lehet üres. Kérjük, adjon meg egy egyedi bouquet nevet, "
+"legalább 2 karakter hosszúságban."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:223
 msgid "Playlist added successfully."
-msgstr "A lejátszási lista sikeresen hozzáadva."
+msgstr "Az IPTV szolgáltató sikeresen hozzáadva."
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:30
 msgid "User Information"
@@ -886,47 +905,47 @@ msgstr "Felhasználói adatok"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:43
 msgid "Status:"
-msgstr ""
+msgstr "Státusz:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:44
 msgid "Expiry Date:"
-msgstr ""
+msgstr "Lejárati dátum:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:45
 msgid "Created At:"
-msgstr ""
+msgstr "Létrehozva:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:46
 msgid "Is Trial:"
-msgstr ""
+msgstr "Próbaidőszak:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:47
 msgid "Active Connections:"
-msgstr ""
+msgstr "Aktív kapcsolatok száma:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:48
 msgid "Max Connections:"
-msgstr ""
+msgstr "Összes kapcsolat száma:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:49
 msgid "Allowed Output Formats:"
-msgstr ""
+msgstr "Engedélyezett formátumok:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:50
 msgid "Real URL:"
-msgstr ""
+msgstr "Valós URL:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:51
 msgid "Timezone:"
-msgstr ""
+msgstr "Időzóna:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:52
 msgid "Server Offset:"
-msgstr ""
+msgstr "A szerver időeltolódása:"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/serverinfo.py:80
 msgid "Unknown"
-msgstr ""
+msgstr "Ismeretlen"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:117
 msgid ""
@@ -934,10 +953,13 @@ msgid ""
 "\n"
 "Pin cannot be 0000, 111, or 1234"
 msgstr ""
+"Kérjük, változtassa meg az alapértelmezett PIN kódot!\n"
+"\n"
+"A PIN kód nem lehet 0000, 1111 vagy 1234"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:134
 msgid "You need to restart the GUI"
-msgstr "Újra kell indítania a grafikus felhasználói felületet"
+msgstr "Újra kell indítani a grafikus felhasználói felületet (GUI-t)"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:134
 msgid "Do you want to restart now?"
@@ -945,46 +967,46 @@ msgstr "Most szeretné újraindítani?"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:144
 msgid "Select skin"
-msgstr ""
+msgstr "Téma kiválasztása"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:145
 msgid "Select fake web user-agent"
-msgstr ""
+msgstr "Böngészőazonosító kiválasztása"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:146
 msgid "playlists.txt location"
-msgstr "playlists.txt helyére"
+msgstr "playlists.txt helye"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:146
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:155
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:162
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:167
 msgid " *Restart GUI Required"
-msgstr ""
+msgstr " *a grafikus felhasználói felület (GUI) újraindítása szükséges"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:147
 msgid "EPG download location"
-msgstr "EPG letöltési hely"
+msgstr "EPG letöltési helye"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:148
 msgid "VOD download folder"
-msgstr "VOD letöltési mappa"
+msgstr "Videók (VoD) letöltési mappa"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:149
 msgid "Default LIVE stream type"
-msgstr "Alapértelmezett ÉLŐ közvetítés típusa"
+msgstr "Alapértelmezett TV műsor adatfolyam típusa"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:150
 msgid "Default VOD/SERIES stream type"
-msgstr "Alapértelmezett VOD/SERIES adatfolyamtípus"
+msgstr "Alapértelmezett Videó (VoD) és Sorozat adatfolyam típusa"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:151
 msgid "Preview LIVE streams in mini tv"
-msgstr "ÉLŐ közvetítések előnézete mini tv-ben"
+msgstr "TV műsorok előnézete mini tv-ben"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:152
 msgid "Stop stream on back button"
-msgstr "Streamelés leállítása a Vissza gombon"
+msgstr "Streamelés leállítása a Vissza gomb megnyomásakor"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:153
 msgid "XStreamity parental control"
@@ -992,15 +1014,15 @@ msgstr "XStreamity szülői felügyelet"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:154
 msgid "XStreamity parental pin"
-msgstr "XStreamity szülői tű"
+msgstr "XStreamity szülői felügyelet PIN kód"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:155
 msgid "Show in main menu"
-msgstr ""
+msgstr "Megjelenítés a Főmenüben"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:156
 msgid "Use Movie Database(TMDB) for VOD & Series"
-msgstr "A Movie Database (TMDB) használata a VOD & sorozatokhoz"
+msgstr "A Movie Database (TMDB) használata a videókhoz (VoD) és a sorozatokhoz"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:157
 msgid "Movie Database language"
@@ -1008,53 +1030,52 @@ msgstr "Filmadatbázis nyelve"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:158
 msgid "Margin before catchup (mins)"
-msgstr "Margó a felzárkózás előtt (perc)"
+msgstr "Visszajátszáskor a műsorkezdés előtti extra idő (percben)"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:159
 msgid "Margin after catchup (mins)"
-msgstr "Margó a felzárkózás után (perc)"
+msgstr "Visszajátszáskor a műsor befejezése utáni extra idő (percben)"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:160
 msgid "Allow SubsSupport plugin in VOD"
-msgstr "A SubsSupport beépülő modul engedélyezése a VOD-ban"
+msgstr "A SubsSupport beépülő modul engedélyezése a videók (VoD) lejátszásakor"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:161
 msgid "Skip playlist selection screen if only 1 playlist"
 msgstr ""
-"Hagyja ki a lejátszási lista kiválasztási képernyőjét, ha csak 1 lejátszási "
-"lista"
+"Hagyja ki az IPTV szolgáltató választását, ha csak 1 szolgáltató érhető el"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:162
 msgid "Automatic EPG download time"
-msgstr ""
+msgstr "Az EPG automatikus letöltésének az időpontja"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:163
 msgid "Show channel picons"
-msgstr ""
+msgstr "Csatornaikonok (picon) megjelentése"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:164
 msgid "Show Vod/Series posters"
-msgstr ""
+msgstr "Videók (VoD) és sorozatok esetén borítók megjeleítése"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:165
 msgid "Show infobar picons"
-msgstr ""
+msgstr "Információs sávon a csatornaikonok megjelenítése"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:166
 msgid "Show infobar posters"
-msgstr ""
+msgstr "Az információs sávon a borítók megjelenítése"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:167
 msgid "Auto start XStreamity on boot"
-msgstr ""
+msgstr "Az XStreamity automatikus indítása a boot után"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:176
 msgid "Default VOD category sort order"
-msgstr ""
+msgstr "A videó (VoD) kategóriák alapértelmezett rendezési sorrendje"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:177
 msgid "Default VOD stream sort order"
-msgstr ""
+msgstr "A videó (VoD) fájlok alapértelemzett rendezési sorrendje"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:293
 msgid "Choose Directory:"
@@ -1066,11 +1087,11 @@ msgstr "Válasszon könyvtárat"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:102
 msgid "Vod Categories"
-msgstr "Vod kategóriák"
+msgstr "Videó (VoD) kategóriák"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:103
 msgid "Vod"
-msgstr "Vod"
+msgstr "Videók (VoD)"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1502
 msgid "Movie"
@@ -1081,20 +1102,20 @@ msgid ""
 "The TMDB plugin is not installed!\n"
 "Please install it."
 msgstr ""
-"Az TMDb bővítmény nincs telepítve!\n"
-"Kérem, telepítse."
+"A TMDB bővítmény nincs telepítve!\n"
+"Kérem, telepítse!"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1542
 msgid ""
 "The IMDb plugin is not installed!\n"
 "Please install it."
 msgstr ""
-"Az IMDb bővítmény nincs telepítve!\n"
-"Kérem, telepítse."
+"Az IMDB bővítmény nincs telepítve!\n"
+"Kérem, telepítse!"
 
 #: usr/lib/enigma2/python/Plugins/Extensions/XStreamity/vodplayer.py:508
 msgid "VOD"
-msgstr "VOD"
+msgstr "Videók (VoD)"
 
 #~ msgid "Hide/Show"
 #~ msgstr "Elrejtés/Megjelenítés"
@@ -1109,13 +1130,13 @@ msgstr "VOD"
 #~ msgstr "A LETÖLTÖTT FÁJL SÉRÜLT:"
 
 #~ msgid "COULD NOT READ RTMP PACKET:"
-#~ msgstr "NEM LEHET OLVASNI az RTMP CSOMAGOT:"
+#~ msgstr "NEM LEHET OLVASNI AZ RTMP CSOMAGOT:"
 
 #~ msgid "SEGMENTATION FAULT:"
 #~ msgstr "FELOSZTÁSI HIBA:"
 
 #~ msgid "SERVER RETURNED ERROR:"
-#~ msgstr "SZERVER VISSZA VISSZATÉRT HIBA:"
+#~ msgstr "SZERVER VISSZATÉRÉSI HIBA:"
 
 #~ msgid "UNKNOWN ERROR:"
 #~ msgstr "ISMERETLEN HIBA:"
@@ -1124,11 +1145,11 @@ msgstr "VOD"
 #~ msgstr "Letöltés"
 
 #~ msgid "File already downloaded."
-#~ msgstr "A fájl már letöltve."
+#~ msgstr "A fájl már letöltésre került."
 
 #~ msgid "Multiple downloads not allowed. Please wait or cancel download."
 #~ msgstr ""
-#~ "Több letöltés nem engedélyezett. Kérjük, várjon, vagy szakítsa meg a "
+#~ "Többszörös letöltés nem engedélyezett. Kérjük, várjon, vagy szakítsa meg a "
 #~ "letöltést."
 
 #~ msgid "Download Failed!\n"
@@ -1141,13 +1162,10 @@ msgstr "VOD"
 #~ msgstr "Frissítés"
 
 #~ msgid "Catchup channel check updated: "
-#~ msgstr "Felzárkóztató csatorna ellenőrzése frissítve: "
+#~ msgstr "A TV műsorok visszajátszási felülete ellenőrizve: "
 
 #~ msgid "Last catchup check: "
-#~ msgstr "Utolsó felzárkóztatási ellenőrzés: "
-
-#~ msgid "TV Series"
-#~ msgstr "TV Sorozat"
+#~ msgstr "Az utolsó visszajátszási felüelt ellenőrzés: "
 
 #~ msgid "Server timeout (seconds)"
 #~ msgstr "Szerver időtúllépése (másodperc)"
