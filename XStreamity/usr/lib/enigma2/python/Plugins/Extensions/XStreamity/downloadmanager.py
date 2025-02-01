@@ -39,6 +39,7 @@ from Components.ActionMap import ActionMap
 from Components.Sources.List import List
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
+from Screens.ChoiceBox import ChoiceBox
 from enigma import eTimer, eServiceReference
 
 
@@ -181,12 +182,12 @@ class XStreamity_DownloadManager(Screen):
         self["downloadlist"].onSelectionChanged.append(self.selectionChanged)
 
         self["key_red"] = StaticText(_("Back"))
-        self["key_green"] = StaticText(_("Download"))
-        self["key_blue"] = StaticText(_("Remove"))
+        self["key_green"] = StaticText()
+        self["key_blue"] = StaticText()
 
         self["diskspace"] = StaticText()
 
-        self["actions"] = ActionMap(["XStreamityActions"], {
+        self["xstreamity_actions"] = ActionMap(["XStreamityActions"], {
             "red": self.keyCancel,
             "cancel": self.keyCancel,
             "green": self.download,
@@ -346,6 +347,9 @@ class XStreamity_DownloadManager(Screen):
 
                     if video[4] < 0:
                         video[4] = 0
+                else:
+                    video[3] = "Downloaded"
+
                 if video[3] == "Downloaded":
                     video[4] = 100
             """
@@ -479,6 +483,9 @@ class XStreamity_DownloadManager(Screen):
             elif self["downloadlist"].getCurrent()[3] == _("Error") or self["downloadlist"].getCurrent()[3] == _("Downloaded"):
                 self["key_green"].setText("")
                 self["key_blue"].setText(_("Remove"))
+        else:
+            self["key_green"].setText("")
+            self["key_blue"].setText("")
 
     def keyCancel(self, answer=None):
         global ui
@@ -580,23 +587,52 @@ class XStreamity_DownloadManager(Screen):
             print("*** delete ***")
         if self["downloadlist"].getCurrent():
             currentindex = self["downloadlist"].getIndex()
-            if self.downloads_all[currentindex][3] == "In progress" or self.downloads_all[currentindex][3] == "Waiting":
+            if self.downloads_all[currentindex][3] in ["In progress", "Waiting"]:
                 return
             else:
-                self.delete_entry()
+                # Show a ChoiceBox with multiple options
+                self.session.openWithCallback(
+                    self.delete_callback,
+                    ChoiceBox,
+                    title=_("Select an action:"),
+                    list=[
+                        (_("Delete this entry"), "delete_entry"),
+                        (_("Delete all downloaded entries"), "delete_all"),
+                        (_("Cancel"), "cancel")
+                    ]
+                )
 
-    def delete_entry(self, answer=None):
+    def delete_callback(self, answer=None):
+        if debugs:
+            print("*** delete_callback ***", answer)
+        if answer is not None:
+            if answer[1] == "delete_entry":
+                self.delete_entry()
+            elif answer[1] == "delete_all":
+                self.delete_all()
+            elif answer[1] == "cancel":
+                return
+
+    def delete_entry(self):
         if debugs:
             print("*** delete_entry ***")
-        if answer is None:
-            self.session.openWithCallback(self.delete_entry, MessageBox, _("Delete this entry?"))
-        elif answer:
-            currentindex = self["downloadlist"].getIndex()
-            del self.downloads_all[currentindex]
+        currentindex = self["downloadlist"].getIndex()
+        del self.downloads_all[currentindex]
 
-            self.sortlist()
-            self.buildList()
-            self.saveJson()
+        self.sortlist()
+        self.buildList()
+        self.saveJson()
+
+    def delete_all(self):
+        if debugs:
+            print("*** delete_all ***")
+        self.downloads_all = [
+            entry for entry in self.downloads_all if entry[3] != "Downloaded"
+        ]
+
+        self.sortlist()
+        self.buildList()
+        self.saveJson()
 
     def createMetaFile(self, filename, filmtitle):
         if debugs:

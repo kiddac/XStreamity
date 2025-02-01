@@ -1,33 +1,33 @@
 <keymap>
     <map context="XStreamityActions">
-        <key id="KEY_EXIT" mapto="cancel" flags="m" />
+        <key id="KEY_EXIT" mapto="cancel" flags="b" />
         <key id="KEY_ESC" mapto="cancel" flags="m" />
         <key id="KEY_BACK" mapto="cancel" flags="m" />
-        <key id="KEY_INFO" mapto="info" flags="m" />
+        <key id="KEY_INFO" mapto="info" flags="b" />
         <key id="KEY_INFO" mapto="info_long" flags="l" />
-        <key id="KEY_EPG" mapto="epg" flags="m"/>
+        <key id="KEY_EPG" mapto="epg" flags="b"/>
         <key id="KEY_EPG" mapto="epg_long" flags="l"/>
-        <key id="KEY_TEXT" mapto="text" flags="m"/>
+        <key id="KEY_TEXT" mapto="text" flags="b"/>
         <key id="KEY_TEXT" mapto="text_long" flags="l"/>
-        <key id="KEY_MENU" mapto="menu" flags="m"/>
+        <key id="KEY_MENU" mapto="menu" flags="b"/>
         <key id="KEY_MENU" mapto="menu_long" flags="l"/>
         <key id="KEY_HELP" mapto="help" flags="m"/>
         <key id="KEY_TV" mapto="tv" flags="m"/>
         <key id="KEY_FAVORITES" mapto="tv" flags="m" />
         <key id="KEY_PVR" mapto="tv" flags="m" />
         <key id="KEY_MUTE" mapto="mute" flags="m" />
-        <key id="KEY_OK" mapto="ok" flags="m" />
+        <key id="KEY_OK" mapto="ok" flags="b" />
         <key id="KEY_OK" mapto="ok_long" flags="l" />
-        <key id="KEY_ENTER" mapto="ok" flags="m" />
+        <key id="KEY_ENTER" mapto="ok" flags="b" />
         <key id="KEY_ENTER" mapto="ok_long" flags="l" />
         <key id="KEY_STOP" mapto="stop" flags="m"/>
-        <key id="KEY_RED" mapto="red" flags="m"/>
+        <key id="KEY_RED" mapto="red" flags="b"/>
         <key id="KEY_RED" mapto="redlong" flags="l"/>
-        <key id="KEY_GREEN" mapto="green" flags="m"/>
+        <key id="KEY_GREEN" mapto="green" flags="b"/>
         <key id="KEY_GREEN" mapto="greenlong" flags="l"/>
-        <key id="KEY_YELLOW" mapto="yellow" flags="m"/>
+        <key id="KEY_YELLOW" mapto="yellow" flags="b"/>
         <key id="KEY_YELLOW" mapto="yellowlong" flags="l"/>
-        <key id="KEY_BLUE" mapto="blue" flags="m"/>
+        <key id="KEY_BLUE" mapto="blue" flags="b"/>
         <key id="KEY_BLUE" mapto="bluelong" flags="l"/>
         <key id="KEY_LEFT" mapto="left" flags="mr" />
         <key id="KEY_RIGHT" mapto="right" flags="mr" />
@@ -48,7 +48,7 @@
         <key id="KEY_9" mapto="9" flags="m" />
         <key id="KEY_0" mapto="0" flags="m" />
         <key id="KEY_SUBTITLE" mapto="subtitleSelection" flags="m" />
-        <key id="KEY_AUDIO" mapto="audioSelection" flags="m" />
+        <key id="KEY_AUDIO" mapto="audioSelection" flags="b" />
         <key id="KEY_AUDIO" mapto="audioSelectionLong" flags="l" />
         <key id="KEY_RECORD" mapto="rec" flags="m" />
         <key id="KEY_PAGEUP" mapto="pageUp" flags="mr" />
