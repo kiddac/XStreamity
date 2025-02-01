@@ -116,8 +116,10 @@ def process_files():
             username = query["username"][0].strip()
             password = query["password"][0].strip()
 
+            """
             if "type" in query:
                 type = query["type"][0].strip()
+                """
 
             if "output" in query:
                 output = query["output"][0].strip()
