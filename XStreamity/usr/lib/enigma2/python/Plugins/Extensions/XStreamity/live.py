@@ -40,7 +40,6 @@ from twisted.web.client import downloadPage
 
 # Enigma2 components
 from Components.ActionMap import ActionMap
-# from Components.Label import Label
 from Components.Pixmap import Pixmap
 from Components.ProgressBar import ProgressBar
 from Components.Sources.List import List
@@ -154,7 +153,7 @@ class XStreamity_Categories(Screen):
             self.skin = f.read()
 
         self.setup_title = _("Live Categories")
-        self.main_title = _("Live Streams")
+        self.main_title = _("Live TV")
 
         self["main_title"] = StaticText(self.main_title)
         self.main_list = []  # displayed list
@@ -1384,7 +1383,7 @@ class XStreamity_Categories(Screen):
                         retries = Retry(total=3, backoff_factor=1)
                         adapter = HTTPAdapter(max_retries=retries)
 
-                        with requests.Session() as http:  # Use 'with' to ensure the session is closed
+                        with requests.Session() as http:
                             http.mount("http://", adapter)
                             http.mount("https://", adapter)
 
@@ -1396,6 +1395,7 @@ class XStreamity_Categories(Screen):
                                     response = r.json()
                             except Exception as e:
                                 print("Error fetching short EPG:", e)
+                                response = None
 
                         if response:
                             now = datetime.now()

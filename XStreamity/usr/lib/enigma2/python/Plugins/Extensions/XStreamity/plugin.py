@@ -374,6 +374,7 @@ def Plugins(**kwargs):
     addFont(os.path.join(font_folder, "m-plus-rounded-1c-medium.ttf"), "xstreamitybold", 100, 0)
     addFont(os.path.join(font_folder, "slyk-medium.ttf"), "slykregular", 100, 0)
     addFont(os.path.join(font_folder, "slyk-bold.ttf"), "slykbold", 100, 0)
+    addFont(os.path.join(font_folder, "classfont2.ttf"), "klass", 100, 0)
 
     iconFile = "icons/plugin-icon_sd.png"
     if screenwidth.width() > 1280:
