@@ -21,16 +21,27 @@ except ImportError:
     HTTPConnection.debuglevel = 0
 
 try:
-    from urlparse import urlparse
     from urllib import quote
 except ImportError:
-    from urllib.parse import urlparse, quote
-
+    from urllib.parse import quote
 
 # Third-party imports
 import requests
+from PIL import Image
 from requests.adapters import HTTPAdapter, Retry
-from twisted.web.client import downloadPage
+from twisted.internet import reactor
+from twisted.web.client import Agent, downloadPage, readBody
+from twisted.web.http_headers import Headers
+
+try:
+    # Try to import BrowserLikePolicyForHTTPS
+    from twisted.web.client import BrowserLikePolicyForHTTPS
+    contextFactory = BrowserLikePolicyForHTTPS()
+except ImportError:
+    # Fallback to WebClientContextFactory if BrowserLikePolicyForHTTPS is not available
+    from twisted.web.client import WebClientContextFactory
+    contextFactory = WebClientContextFactory()
+
 # Enigma2 components
 from Components.ActionMap import ActionMap
 from Components.Pixmap import Pixmap
@@ -46,28 +57,8 @@ from enigma import ePicLoad, eServiceReference, eTimer
 from . import _
 from . import vodplayer
 from . import xstreamity_globals as glob
-
 from .plugin import (cfg, common_path, dir_tmp, downloads_json, playlists_json, pythonVer, screenwidth, skin_directory)
 from .xStaticText import StaticText
-
-# HTTPS Twisted client hack
-try:
-    from twisted.internet import ssl
-    from twisted.internet._sslverify import ClientTLSOptions
-    sslverify = True
-except ImportError:
-    sslverify = False
-
-if sslverify:
-    class SNIFactory(ssl.ClientContextFactory):
-        def __init__(self, hostname=None):
-            self.hostname = hostname
-
-        def getContext(self):
-            ctx = self._contextFactory(self.method)
-            if self.hostname:
-                ClientTLSOptions(self.hostname, ctx)
-            return ctx
 
 hdr = {
     'User-Agent': str(cfg.useragent.value),
@@ -84,8 +75,14 @@ class XStreamity_Categories(Screen):
         self.session = session
         glob.categoryname = "series"
 
+        self.agent = Agent(reactor, contextFactory=contextFactory)
+        self.cover_download_deferred = None
+        self.logo_download_deferred = None
+        self.backdrop_download_deferred = None
+
         self.skin_path = os.path.join(skin_directory, cfg.skin.value)
         skin = os.path.join(self.skin_path, "vod_categories.xml")
+
         if os.path.exists("/var/lib/dpkg/status"):
             skin = os.path.join(self.skin_path, "DreamOS/vod_categories.xml")
 
@@ -93,36 +90,39 @@ class XStreamity_Categories(Screen):
             self.skin = f.read()
 
         self.setup_title = _("Series Categories")
-        self.main_title = _("Series")
+        self.main_title = ("")
         self["main_title"] = StaticText(self.main_title)
 
-        self.main_list = []  # displayed list
+        self.screen_title = _("Series")
+        self["screen_title"] = StaticText(self.screen_title)
+
+        self.category = ("")
+        self["category"] = StaticText(self.category)
+
+        self.main_list = []
         self["main_list"] = List(self.main_list, enableWrapAround=True)
 
         self["x_title"] = StaticText()
         self["x_description"] = StaticText()
 
+        self["overview"] = StaticText()
+        self["tagline"] = StaticText()
+        self["facts"] = StaticText()
+
         # skin vod variables
-        self["vod_background"] = Pixmap()
-        self["vod_background"].hide()
         self["vod_cover"] = Pixmap()
         self["vod_cover"].hide()
-        self["vod_video_type_label"] = StaticText()
-        self["vod_duration_label"] = StaticText()
-        self["vod_genre_label"] = StaticText()
-        self["vod_rating_label"] = StaticText()
-        self["vod_country_label"] = StaticText()
-        self["vod_release_date_label"] = StaticText()
+        self["vod_backdrop"] = Pixmap()
+        self["vod_backdrop"].hide()
+        self["vod_logo"] = Pixmap()
+        self["vod_logo"].hide()
         self["vod_director_label"] = StaticText()
         self["vod_cast_label"] = StaticText()
-        self["vod_video_type"] = StaticText()
-        self["vod_duration"] = StaticText()
-        self["vod_genre"] = StaticText()
-        self["vod_rating"] = StaticText()
-        self["vod_country"] = StaticText()
-        self["vod_release_date"] = StaticText()
         self["vod_director"] = StaticText()
         self["vod_cast"] = StaticText()
+
+        self["rating_text"] = StaticText()
+        self["rating_percent"] = StaticText()
 
         # pagination variables
         self["page"] = StaticText("")
@@ -137,7 +137,7 @@ class XStreamity_Categories(Screen):
         self.pin = False
         self.tmdbresults = ""
 
-        self.tmdbfailedcount = 0
+        # self.tmdbfailedcount = 0
 
         self.storedtitle = ""
         self.storedseason = ""
@@ -145,30 +145,21 @@ class XStreamity_Categories(Screen):
         self.storedyear = ""
         self.storedcover = ""
         self.storedtmdb = ""
+        self.storedbackdrop = ""
+        self.storedlogo = ""
+        self.storeddescription = ""
+        self.storedcast = ""
+        self.storeddirector = ""
+        self.storedgenre = ""
+        self.storedreleasedate = ""
+        self.storedrating = ""
 
-        # level 2 data
-        self.stored2_name = ""
-        self.stored2_title = ""
-        self.stored2_year = ""
-        self.stored2_series_id = ""
-        self.stored2_cover = ""
-        self.stored2_plot = ""
-        self.stored2_cast = ""
-        self.stored2_director = ""
-        self.stored2_genre = ""
-        self.stored2_date = ""
-        self.stored2_releaseDate = ""
-        self.stored2_last_modified = "0"
-        self.stored2_rating = ""
-        self.stored2_tmdb = ""
+        self.repeatcount = 0
 
         self.sortindex = 0
         self.sortText = _("Sort: A-Z")
 
         self.level = 1
-
-        self.selectedlist = self["main_list"]
-
         self.host = glob.active_playlist["playlist_info"]["host"]
         self.username = glob.active_playlist["playlist_info"]["username"]
         self.password = glob.active_playlist["playlist_info"]["password"]
@@ -176,10 +167,13 @@ class XStreamity_Categories(Screen):
         self.name = glob.active_playlist["playlist_info"]["name"]
 
         self.player_api = glob.active_playlist["playlist_info"]["player_api"]
+        # self.liveStreamsData = []
 
         self.token = "ZUp6enk4cko4ZzBKTlBMTFNxN3djd25MOHEzeU5Zak1Bdkd6S3lPTmdqSjhxeUxMSTBNOFRhUGNBMjBCVmxBTzlBPT0K"
 
         next_url = str(self.player_api) + "&action=get_series_categories"
+
+        self.tmdbsetting = cfg.TMDB.value
 
         # buttons / keys
         self["key_red"] = StaticText(_("Back"))
@@ -204,7 +198,7 @@ class XStreamity_Categories(Screen):
             "channelDown": self.pageDown,
             "0": self.reset,
             "menu": self.showHiddenList,
-        }, -1)
+        }, -2)
 
         self["channel_actions"] = ActionMap(["XStreamityActions"], {
             "cancel": self.back,
@@ -224,25 +218,60 @@ class XStreamity_Categories(Screen):
             "0": self.reset,
             "menu": self.showHiddenList,
             "1": self.clearWatched
-        }, -1)
+        }, -2)
 
         self["channel_actions"].setEnabled(False)
 
         glob.nextlist = []
         glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self.sortText, "filter": ""})
 
-        self.PicLoad = ePicLoad()
-
+        self.coverLoad = ePicLoad()
         try:
-            self.PicLoad.PictureData.get().append(self.DecodePicture)
+            self.coverLoad.PictureData.get().append(self.DecodeCover)
         except:
-            self.PicLoad_conn = self.PicLoad.PictureData.connect(self.DecodePicture)
+            self.coverLoad_conn = self.coverLoad.PictureData.connect(self.DecodeCover)
+
+        self.backdropLoad = ePicLoad()
+        try:
+            self.backdropLoad.PictureData.get().append(self.DecodeBackdrop)
+        except:
+            self.backdropLoad_conn = self.backdropLoad.PictureData.connect(self.DecodeBackdrop)
+
+        self.logoLoad = ePicLoad()
+        try:
+            self.logoLoad.PictureData.get().append(self.DecodeLogo)
+        except:
+            self.logoLoad_conn = self.logoLoad.PictureData.connect(self.DecodeLogo)
 
         self.onFirstExecBegin.append(self.createSetup)
         self.onLayoutFinish.append(self.__layoutFinished)
 
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
+
+    def goUp(self):
+        instance = self["main_list"].master.master.instance
+        instance.moveSelection(instance.moveUp)
+        self.selectionChanged()
+
+    def goDown(self):
+        instance = self["main_list"].master.master.instance
+        instance.moveSelection(instance.moveDown)
+        self.selectionChanged()
+
+    def pageUp(self):
+        instance = self["main_list"].master.master.instance
+        instance.moveSelection(instance.pageUp)
+        self.selectionChanged()
+
+    def pageDown(self):
+        instance = self["main_list"].master.master.instance
+        instance.moveSelection(instance.pageDown)
+        self.selectionChanged()
+
+    def reset(self):
+        self["main_list"].setIndex(0)
+        self.selectionChanged()
 
     def createSetup(self, data=None):
         # print("*** createSetup ***")
@@ -264,8 +293,6 @@ class XStreamity_Categories(Screen):
         self.buildLists()
 
     def buildLists(self):
-        # print("*** buildLists ***")
-
         if self.level == 1 and self.list1:
             self.buildCategories()
 
@@ -314,12 +341,25 @@ class XStreamity_Categories(Screen):
         # print("*** getSeries ***")
         # print("*** url ***", glob.nextlist[-1]["next_url"])
         response = self.downloadApiData(glob.nextlist[-1]["next_url"])
+        self.series_info = ""
         index = 0
         self.list2 = []
 
-        self.storedyear = ""
         self.storedtitle = ""
+        self.storedseason = ""
+        self.storedepisode = ""
+        self.storedyear = ""
+        self.storedcover = ""
         self.storedtmdb = ""
+        self.storedbackdrop = ""
+        self.storedlogo = ""
+        self.storeddescription = ""
+        self.storedcast = ""
+        self.storeddirector = ""
+        self.storedgenre = ""
+        self.storedreleasedate = ""
+        self.storedrating = ""
+        self.tmdbretry = 0
 
         if response:
 
@@ -404,10 +444,18 @@ class XStreamity_Categories(Screen):
                 releaseDate = (channel.get("releaseDate") or channel.get("release_date") or channel.get("releasedate") or "")
                 releaseDate = str(releaseDate) if releaseDate is not None else ""
 
+                backdrop_path = channel.get("backdrop_path", "")
+
+                if backdrop_path:
+                    try:
+                        backdrop_path = channel["backdrop_path"][0]
+                    except:
+                        pass
+
                 next_url = "{}&action=get_series_info&series_id={}".format(str(self.player_api), str(series_id))
 
-                # 0 index, 1 name, 2 series_id, 3 cover, 4 plot, 5 cast, 6 director, 7 genre, 8 releaseDate, 9 rating, 10 last_modified, 11 next_url, 12 tmdb, 13 hidden, 14 year
-                self.list2.append([index, str(name), str(series_id), str(cover), str(plot), str(cast), str(director), str(genre), str(releaseDate), str(rating), str(last_modified), str(next_url), str(tmdb), hidden, str(year)])
+                # 0 index, 1 name, 2 series_id, 3 cover, 4 plot, 5 cast, 6 director, 7 genre, 8 releaseDate, 9 rating, 10 last_modified, 11 next_url, 12 tmdb, 13 hidden, 14 year, 15 backdrop
+                self.list2.append([index, str(name), str(series_id), str(cover), str(plot), str(cast), str(director), str(genre), str(releaseDate), str(rating), str(last_modified), str(next_url), str(tmdb), hidden, str(year), str(backdrop_path)])
 
             glob.originalChannelList2 = self.list2[:]
 
@@ -417,30 +465,41 @@ class XStreamity_Categories(Screen):
     def getSeasons(self):
         # print("**** getSeasons ****")
         # print("*** url ***", glob.nextlist[-1]["next_url"])
+        if not self.series_info:
+            response = self.downloadApiData(glob.nextlist[-1]["next_url"])
+            self.series_info = response
+        else:
+            response = self.series_info
 
-        response = self.downloadApiData(glob.nextlist[-1]["next_url"])
         index = 0
         self.list3 = []
 
         if response:
             currentChannelList = response
-            infodict = response.get("info", {})
+            if "info" in currentChannelList and currentChannelList["info"]:
+                infodict = response["info"]
+                if infodict:
+                    tmdb = infodict.get("tmdb", self.tmdb2)
+                    if tmdb:
+                        self.tmdb2 = tmdb
+                    name = infodict.get("name", self.title2)
+                    cover = infodict.get("cover", self.cover2)
+                    if not cover.startswith("http"):
+                        cover = self.cover2
+                    overview = infodict.get("plot", self.plot2)
+                    cast = infodict.get("cast", self.cast2)
+                    director = infodict.get("director", self.director2)
+                    genre = infodict.get("genre", self.genre2)
+                    airdate = infodict.get("releaseDate") or infodict.get("release_date") or self.releaseDate2
+                    rating = infodict.get("rating", self.rating2)
+                    last_modified = infodict.get("last_modified", "0")
+                    backdrop_path = infodict.get("backdrop_path", self.backdrop_path2)
 
-            if infodict:
-                tmdb = infodict.get("tmdb", self.tmdb2)
-                if tmdb:
-                    self.tmdb2 = tmdb
-                name = infodict.get("name", self.title2)
-                cover = infodict.get("cover", self.cover2)
-                if not cover.startswith("http"):
-                    cover = self.cover2
-                overview = infodict.get("plot", self.plot2)
-                cast = infodict.get("cast", self.cast2)
-                director = infodict.get("director", self.director2)
-                genre = infodict.get("genre", self.genre2)
-                airdate = infodict.get("releaseDate") or infodict.get("release_date") or self.releaseDate2
-                rating = infodict.get("rating", self.rating2)
-                last_modified = infodict.get("last_modified", "0")
+                    if "backdrop_path" in infodict and infodict["backdrop_path"]:
+                        try:
+                            backdrop_path = infodict["backdrop_path"][0]
+                        except:
+                            pass
             else:
                 return
 
@@ -525,8 +584,8 @@ class XStreamity_Categories(Screen):
 
                         next_url = self.seasons_url
 
-                        # 0 index, 1 name, 2 series_id, 3 cover, 4 overview, 5 cast, 6 director, 7 genre, 8 airdate, 9 rating, 10 last_modified, 11 next_url, 12 tmdb, 13 hidden, 14 season_number
-                        self.list3.append([index, str(name), str(series_id), str(cover), str(overview), str(cast), str(director), str(genre), str(airdate), str(rating), str(last_modified), str(next_url), tmdb, hidden, season_number])
+                        # 0 index, 1 name, 2 series_id, 3 cover, 4 overview, 5 cast, 6 director, 7 genre, 8 airdate, 9 rating, 10 last_modified, 11 next_url, 12 tmdb, 13 hidden, 14 season_number, 15 backdrop
+                        self.list3.append([index, str(name), str(series_id), str(cover), str(overview), str(cast), str(director), str(genre), str(airdate), str(rating), str(last_modified), str(next_url), tmdb, hidden, season_number, str(backdrop_path)])
 
                 self.list3.sort(key=self.natural_keys)
 
@@ -538,20 +597,20 @@ class XStreamity_Categories(Screen):
     def getEpisodes(self):
         # print("**** getEpisodes ****")
         # print("*** url ***", glob.nextlist[-1]["next_url"])
-        response = self.downloadApiData(glob.nextlist[-1]["next_url"])
+        response = self.series_info
         index = 0
         self.list4 = []
         currentChannelList = response
 
         shorttitle = self.title2
-
         cover = self.storedcover
         plot = ""
         cast = self["vod_cast"].getText()
         director = self["vod_director"].getText()
-        genre = self["vod_genre"].getText()
-        releasedate = self["vod_release_date"].getText()
-        rating = self["vod_rating"].getText()
+        genre = ""
+        releasedate = ""
+        rating = ""
+
         tmdb_id = self.tmdb2
         last_modified = "0"
 
@@ -604,7 +663,6 @@ class XStreamity_Categories(Screen):
                         # tmdb_id = ""
                         duration = ""
                         hidden = False
-                        episode_num = 1
 
                         if "id" in item:
                             stream_id = item["id"]
@@ -622,12 +680,6 @@ class XStreamity_Categories(Screen):
                             episode_num = item["episode_num"]
 
                         if "info" in item:
-
-                            """
-                            if "tmdb_id" in item["info"]:
-                                tmdb_id = item["info"]["tmdb_id"]
-                                """
-
                             if "releaseDate" in item["info"]:
                                 releasedate = item["info"]["releaseDate"]
 
@@ -676,21 +728,21 @@ class XStreamity_Categories(Screen):
                         hidden = str(stream_id) in glob.active_playlist["player_info"]["seriesepisodeshidden"]
 
                         next_url = "{}/series/{}/{}/{}.{}".format(self.host, self.username, self.password, stream_id, container_extension)
-
                         # 0 index, 1 title, 2 stream_id, 3 cover, 4 plot, 5 cast, 6 director, 7 genre, 8 releasedate, 9 rating, 10 last_modified, 11 next_url, 12 tmdb_id, 13 hidden, 14 duration, 15 container_extension, 16 shorttitle, 17 episode_num
-                        self.list4.append([index, str(title), str(stream_id), str(cover), str(plot), str(cast), str(director), str(genre), str(releasedate), str(rating), str(last_modified), str(next_url), str(tmdb_id), hidden, str(duration), str(container_extension), str(shorttitle), episode_num])
+                        self.list4.append([index, str(title), str(stream_id), str(cover), str(plot), str(cast), str(director), str(genre), str(releasedate), str(rating), str(last_modified), str(next_url), str(tmdb_id), hidden, str(duration), str(container_extension),  str(shorttitle), episode_num])
 
             glob.originalChannelList4 = self.list4[:]
 
     def downloadApiData(self, url):
-        try:
-            retries = Retry(total=2, backoff_factor=1)
-            adapter = HTTPAdapter(max_retries=retries)
+        # print("*** downloadapidata ***", url)
+        retries = Retry(total=2, backoff_factor=1)
+        adapter = HTTPAdapter(max_retries=retries)
 
-            with requests.Session() as http:
-                http.mount("http://", adapter)
-                http.mount("https://", adapter)
+        with requests.Session() as http:
+            http.mount("http://", adapter)
+            http.mount("https://", adapter)
 
+            try:
                 response = http.get(url, headers=hdr, timeout=(10, 30), verify=False)
                 response.raise_for_status()
 
@@ -700,10 +752,9 @@ class XStreamity_Categories(Screen):
                     except ValueError:
                         print("JSON decoding failed.")
                         return None
-        except Exception as e:
-            print("Error occurred during API data download:", e)
-
-        self.session.openWithCallback(self.back, MessageBox, _("Server error or invalid link."), MessageBox.TYPE_ERROR, timeout=3)
+            except Exception as e:
+                print("Error occurred during API data download:", e)
+                self.session.openWithCallback(self.back, MessageBox, _("Server error or invalid link."), MessageBox.TYPE_ERROR, timeout=3)
 
     def buildCategories(self):
         # print("*** buildCategories ***")
@@ -719,27 +770,26 @@ class XStreamity_Categories(Screen):
 
             self["main_list"].setList(self.pre_list + self.main_list)
 
-            if self["main_list"].getCurrent() and glob.nextlist[-1]["index"] != 0:
+            if self["main_list"].getCurrent():
                 self["main_list"].setIndex(glob.nextlist[-1]["index"])
 
     def buildSeries(self):
         # print("*** buildSeries ***")
         if self.list2:
-            self.main_list = [buildSeriesTitlesList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9], x[10], x[11], x[12], x[13], x[14]) for x in self.list2 if not x[13]]
+            # 0 index, 1 name, 2 series_id, 3, cover, 4 plot, 5 cast, 6 director, 7 genre, 8 releasedate, 9 last modified, 10 rating, 11 backdrop_path, 12 tmdb, 13 year, 14 next url, 15 hidden
+            self.main_list = [buildSeriesTitlesList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9], x[10], x[11], x[12], x[13], x[14], x[15]) for x in self.list2 if not x[13]]
             self["main_list"].setList(self.main_list)
 
             self.showVod()
-
-            if self["main_list"].getCurrent() and glob.nextlist[-1]["index"] != 0:
+            if self["main_list"].getCurrent():
                 self["main_list"].setIndex(glob.nextlist[-1]["index"])
 
     def buildSeasons(self):
         # print("*** buildSeasons ***")
         if self.list3:
-            self.main_list = [buildSeriesSeasonsList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9], x[10], x[11], x[12], x[13], x[14]) for x in self.list3 if not x[13]]
+            self.main_list = [buildSeriesSeasonsList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9], x[10], x[11], x[12], x[13], x[14], x[15]) for x in self.list3 if not x[13]]
             self["main_list"].setList(self.main_list)
-
-            if self["main_list"].getCurrent() and glob.nextlist[-1]["index"] != 0:
+            if self["main_list"].getCurrent():
                 self["main_list"].setIndex(glob.nextlist[-1]["index"])
 
     def buildEpisodes(self):
@@ -747,9 +797,8 @@ class XStreamity_Categories(Screen):
         if self.list4:
             self.main_list = [buildSeriesEpisodesList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9], x[10], x[11], x[12], x[13], x[14], x[15], x[16], x[17]) for x in self.list4 if not x[13]]
             self["main_list"].setList(self.main_list)
-
-        if self["main_list"].getCurrent() and glob.nextlist[-1]["index"] != 0:
-            self["main_list"].setIndex(glob.nextlist[-1]["index"])
+            if self["main_list"].getCurrent():
+                self["main_list"].setIndex(glob.nextlist[-1]["index"])
 
     def displaySeriesData(self):
         # print("*** displaySeriesData ***")
@@ -768,7 +817,19 @@ class XStreamity_Categories(Screen):
         # print("*** selectionChanged ***")
 
         self.tmdbresults = {}
+        self.tmdbretry = 0
+
+        if self.cover_download_deferred:
+            self.cover_download_deferred.cancel()
+
+        if self.logo_download_deferred:
+            self.logo_download_deferred.cancel()
+
+        if self.backdrop_download_deferred:
+            self.backdrop_download_deferred.cancel()
+
         current_item = self["main_list"].getCurrent()
+
         if current_item:
             channel_title = current_item[0]
             current_index = self["main_list"].getIndex()
@@ -780,14 +841,24 @@ class XStreamity_Categories(Screen):
 
             self["page"].setText(_("Page: ") + "{}/{}".format(page, page_all))
             self["listposition"].setText("{}/{}".format(position, position_all))
-            self["main_title"].setText("{}: {}".format(self.main_title, channel_title))
 
-            self.clearVod()
+            self["main_title"].setText("{}".format(channel_title))
 
-            if self.level != 4:
-                self.loadDefaultImage()
+            if self.level == 2:
+                self.loadDefaultCover()
+                self.loadDefaultBackdrop()
+
+                self["vod_cover"].hide()
+                self["vod_logo"].hide()
+                self["vod_backdrop"].hide()
+
+            if self.level == 3:
+                self.loadDefaultCover()
+                self["vod_cover"].hide()
+                self["vod_logo"].hide()
 
             if self.level != 1:
+                self.clearVod()
                 self.timerSeries = eTimer()
                 try:
                     self.timerSeries.stop()
@@ -886,8 +957,6 @@ class XStreamity_Categories(Screen):
 
     def getTMDB(self):
         # print("**** getTMDB ***")
-        if self.tmdbfailedcount > 2:
-            return
 
         current_item = self["main_list"].getCurrent()
         if current_item:
@@ -896,6 +965,7 @@ class XStreamity_Categories(Screen):
                 year = current_item[13]
                 tmdb = current_item[14]
                 cover = current_item[5]
+                backdrop = current_item[15]
 
                 if not year:
                     # Get year from release date
@@ -906,10 +976,14 @@ class XStreamity_Categories(Screen):
 
                 if year:
                     self.storedyear = year
+                else:
+                    self.storedyear = ""
                 if title:
                     self.storedtitle = title
                 if cover:
                     self.storedcover = cover
+                if backdrop:
+                    self.storedbackdrop = backdrop
 
             else:
                 title = self.storedtitle
@@ -921,12 +995,9 @@ class XStreamity_Categories(Screen):
                 if self.level == 4:
                     tmdb = current_item[14]
 
-            # try tmdb via providers data tmdb id first
             if tmdb and self.tmdbValid and tmdb != "0":
                 self.getTMDBDetails(tmdb)
                 return
-
-            # print("*** tmdb id is invalid searching via title ***")
 
             try:
                 os.remove(os.path.join(dir_tmp, "search.txt"))
@@ -944,7 +1015,6 @@ class XStreamity_Categories(Screen):
                 searchurl = searchurl.encode()
 
             filepath = os.path.join(dir_tmp, "search.txt")
-
             try:
                 downloadPage(searchurl, filepath, timeout=10).addCallback(self.processTMDB).addErrback(self.failed)
             except Exception as e:
@@ -955,7 +1025,6 @@ class XStreamity_Categories(Screen):
         if data:
             print(data)
             self.tmdbValid = False
-            self.tmdbfailedcount += 1
             self.getTMDB()
 
     def processTMDB(self, result=None):
@@ -968,12 +1037,7 @@ class XStreamity_Categories(Screen):
 
             if response:
                 self.searchresult = json.loads(response)
-                if "results" not in self.searchresult or not self.searchresult["results"]:
-                    self.tmdbValid = False
-                    self.tmdbfailedcount += 1
-                    self.getTMDB()
-                else:
-                    self.tmdbfailedcount = 0
+                if "results" in self.searchresult and self.searchresult["results"]:
                     resultid = self.searchresult["results"][0].get("id")
                     self.tmdb2 = resultid
 
@@ -983,6 +1047,18 @@ class XStreamity_Categories(Screen):
                         return
 
                     self.getTMDBDetails(resultid)
+                else:
+                    # self.tmdbValid = False
+                    self.storedyear = ""
+                    self.tmdbretry += 1
+                    if self.tmdbretry < 2:
+                        self.getTMDB()
+                    else:
+                        self.tmdbretry = 0
+                        # self.tmdbresults = ""
+                        self.displayTMDB()
+                        return
+
         except Exception as e:
             print("Error processing TMDB response:", e)
 
@@ -1002,19 +1078,19 @@ class XStreamity_Categories(Screen):
             languagestr = "&language=" + str(language)
 
         if self.level == 2:
-            detailsurl = "http://api.themoviedb.org/3/tv/{}?api_key={}&append_to_response=credits{}".format(
+            detailsurl = "http://api.themoviedb.org/3/tv/{}?api_key={}&append_to_response=credits,images,content_ratings{}&include_image_language=en".format(
                 resultid, self.check(self.token), languagestr
             )
 
         elif self.level == 3:
             self.storedseason = self["main_list"].getCurrent()[12]
-            detailsurl = "http://api.themoviedb.org/3/tv/{}/season/{}?api_key={}&append_to_response=credits{}".format(
+            detailsurl = "http://api.themoviedb.org/3/tv/{}/season/{}?api_key={}&append_to_response=credits,images,content_ratings{}&include_image_language=en".format(
                 resultid, self.storedseason, self.check(self.token), languagestr
             )
 
         elif self.level == 4:
             self.storedepisode = self["main_list"].getCurrent()[18]
-            detailsurl = "http://api.themoviedb.org/3/tv/{}/season/{}/episode/{}?api_key={}&append_to_response=credits{}".format(
+            detailsurl = "http://api.themoviedb.org/3/tv/{}/season/{}/episode/{}?api_key={}&append_to_response=credits,images,content_ratings{}&include_image_language=en".format(
                 resultid, self.storedseason, self.storedepisode, self.check(self.token), languagestr
             )
 
@@ -1022,6 +1098,9 @@ class XStreamity_Categories(Screen):
             detailsurl = detailsurl.encode()
 
         filepath = os.path.join(dir_tmp, "search.txt")
+
+        # print("*** getTMDBDetails detailurl ***", detailsurl)
+
         try:
             downloadPage(detailsurl, filepath, timeout=10).addCallback(self.processTMDBDetails).addErrback(self.failed2)
         except Exception as e:
@@ -1033,21 +1112,24 @@ class XStreamity_Categories(Screen):
             print(data)
             if self.level == 2:
                 self.tmdbValid = False
-                self.tmdbfailedcount += 1
-                self.getTMDB()
+                if self.repeatcount == 0:
+                    self.getTMDB()
+                    self.repeatcount += 1
 
             else:
-                self.tmdbfailedcount = 0
                 # self.tmdbresults = ""
                 self.displayTMDB()
                 return
 
     def processTMDBDetails(self, result=None):
         # print("*** processTMDBDetails ***")
+        self.repeatcount = 0
         response = ""
+
         self.tmdbresults = {}
         self.tmdbdetails = []
         director = []
+        logos = None
 
         try:
             with codecs.open(os.path.join(dir_tmp, "search.txt"), "r", encoding="utf-8") as f:
@@ -1068,26 +1150,36 @@ class XStreamity_Categories(Screen):
                     if "overview" in self.tmdbdetails and self.tmdbdetails["overview"]:
                         self.tmdbresults["description"] = str(self.tmdbdetails["overview"])
 
+                    # self.tmdbresults["description"] = str(self.tmdbdetails.get("overview") or self.storeddescription or "")
+
                     if "vote_average" in self.tmdbdetails and self.tmdbdetails["vote_average"]:
-                        self.tmdbresults["rating"] = str(self.tmdbdetails["vote_average"])
-                        if self.tmdbresults["rating"] == "0" or self.tmdbresults["rating"] == "0.0":
-                            self.tmdbresults["rating"] = ""
+                        rating_str = str(self.tmdbdetails["vote_average"])
+
+                    if rating_str not in [None, 0, 0.0, "0", "0.0"]:
+                        try:
+                            rating = float(rating_str)
+                            rounded_rating = round(rating, 1)
+                            self.tmdbresults["rating"] = "{:.1f}".format(rounded_rating)
+                        except ValueError:
+                            self.tmdbresults["rating"] = rating_str
                     else:
-                        self.tmdbresults["rating"] = ""
+                        self.tmdbresults["rating"] = 0
 
                     if self.level == 2:
                         if "original_name" in self.tmdbdetails and self.tmdbdetails["original_name"]:
                             self.tmdbresults["o_name"] = str(self.tmdbdetails["original_name"])
 
-                        try:
-                            if "episode_run_time" in self.tmdbdetails and self.tmdbdetails["episode_run_time"] and self.tmdbdetails["episode_run_time"] != 0:
-                                self.tmdbresults["duration"] = str(timedelta(minutes=int(self.tmdbdetails["episode_run_time"][0])))
+                        if "episode_run_time" in self.tmdbdetails and self.tmdbdetails["episode_run_time"]:
+                            runtime = self.tmdbdetails["episode_run_time"][0]
+                        elif "runtime" in self.tmdbdetails:
+                            runtime = self.tmdbdetails["runtime"]
+                        else:
+                            runtime = 0
 
-                            elif "runtime" in self.tmdbdetails and self.tmdbdetails["runtime"] and self.tmdbdetails["runtime"] != 0:
-                                self.tmdbresults["duration"] = str(timedelta(minutes=int(self.tmdbdetails["runtime"])))
-                        except Exception as e:
-                            self.tmdbresults["duration"] = ""
-                            print(e)
+                        if runtime and runtime != 0:
+                            duration_timedelta = timedelta(minutes=runtime)
+                            formatted_time = "{:0d}h {:02d}m".format(duration_timedelta.seconds // 3600, (duration_timedelta.seconds % 3600) // 60)
+                            self.tmdbresults["duration"] = str(formatted_time)
 
                         if "first_air_date" in self.tmdbdetails and self.tmdbdetails["first_air_date"]:
                             self.tmdbresults["releaseDate"] = str(self.tmdbdetails["first_air_date"])
@@ -1100,13 +1192,13 @@ class XStreamity_Categories(Screen):
                             self.tmdbresults["genre"] = genre
 
                     if self.level != 4:
-                        if "credits" in self.tmdbdetails and self.tmdbdetails["credits"]:
+                        if "credits" in self.tmdbdetails:
                             if "cast" in self.tmdbdetails["credits"] and self.tmdbdetails["credits"]["cast"]:
                                 cast = []
                                 for actor in self.tmdbdetails["credits"]["cast"]:
                                     if "character" in actor and "name" in actor:
                                         cast.append(str(actor["name"]))
-                                cast = ", ".join(map(str, cast[:5]))
+                                cast = ", ".join(map(str, cast[:10]))
                                 self.tmdbresults["cast"] = cast
 
                             if "crew" in self.tmdbdetails["credits"] and self.tmdbdetails["credits"]["crew"]:
@@ -1119,102 +1211,279 @@ class XStreamity_Categories(Screen):
                                     director = ", ".join(map(str, director))
                                     self.tmdbresults["director"] = director
 
-                    if "poster_path" in self.tmdbdetails and self.tmdbdetails["poster_path"]:
-                        if screenwidth.width() <= 1280:
-                            self.tmdbresults["cover_big"] = "http://image.tmdb.org/t/p/w300" + str(self.tmdbdetails["poster_path"])
-                        else:
-                            self.tmdbresults["cover_big"] = "http://image.tmdb.org/t/p/w400" + str(self.tmdbdetails["poster_path"])
+                        if "poster_path" in self.tmdbdetails and self.tmdbdetails["poster_path"]:
+                            if screenwidth.width() <= 1280:
+                                self.tmdbresults["cover_big"] = "http://image.tmdb.org/t/p/w200" + str(self.tmdbdetails["poster_path"])
+                            elif screenwidth.width() <= 1920:
+                                self.tmdbresults["cover_big"] = "http://image.tmdb.org/t/p/w300" + str(self.tmdbdetails["poster_path"])
+                            else:
+                                self.tmdbresults["cover_big"] = "http://image.tmdb.org/t/p/w400" + str(self.tmdbdetails["poster_path"])
+
+                        if "backdrop_path" in self.tmdbdetails and self.tmdbdetails["backdrop_path"]:
+                            self.tmdbresults["backdrop_path"] = "http://image.tmdb.org/t/p/w1280" + str(self.tmdbdetails["backdrop_path"])
+
+                        if "images" in self.tmdbdetails and "logos" in self.tmdbdetails["images"]:
+                            logos = self.tmdbdetails["images"]["logos"]
+                            if logos:
+                                logo_path = logos[0].get("file_path")
+
+                            if screenwidth.width() <= 1280:
+                                self.tmdbresults["logo"] = "http://image.tmdb.org/t/p/w300" + str(logo_path)
+                            elif screenwidth.width() <= 1920:
+                                self.tmdbresults["logo"] = "http://image.tmdb.org/t/p/w300" + str(logo_path)
+                            else:
+                                self.tmdbresults["logo"] = "http://image.tmdb.org/t/p/w500" + str(logo_path)
 
                     if self.level != 2:
                         if "air_date" in self.tmdbdetails and self.tmdbdetails["air_date"]:
                             self.tmdbresults["releaseDate"] = str(self.tmdbdetails["air_date"])
 
                     if self.level == 4:
-                        if "runtime" in self.tmdbdetails and self.tmdbdetails["runtime"] and self.tmdbdetails["runtime"] != 0:
-                            self.tmdbresults["duration"] = str(timedelta(minutes=int(self.tmdbdetails["runtime"])))
+                        if "run_time" in self.tmdbdetails and self.tmdbdetails["run_time"]:
+                            runtime = self.tmdbdetails["run_time"][0]
+                        elif "runtime" in self.tmdbdetails:
+                            runtime = self.tmdbdetails["runtime"]
+                        # else:
+                        #    runtime = 0
 
-                self.displayTMDB()
+                        if runtime and runtime != 0:
+                            duration_timedelta = timedelta(minutes=runtime)
+                            formatted_time = "{:0d}h {:02d}m".format(duration_timedelta.seconds // 3600, (duration_timedelta.seconds % 3600) // 60)
+                            self.tmdbresults["duration"] = str(formatted_time)
+
+                    def get_certification(data, language_code):
+                        fallback_codes = ["GB", "US"]
+
+                        # First attempt to find the certification with the specified language code
+                        if "content_ratings" in data and "results" in data["content_ratings"]:
+                            for result in data["content_ratings"]["results"]:
+                                if "iso_3166_1" in result and "rating" in result:
+                                    if result["iso_3166_1"] == language_code:
+                                        return result["rating"]
+
+                            # If no match found or language_code is blank, try the fallback codes
+                            for fallback_code in fallback_codes:
+                                for result in data["content_ratings"]["results"]:
+                                    if "iso_3166_1" in result and "rating" in result:
+                                        if result["iso_3166_1"] == fallback_code:
+                                            return result["rating"]
+
+                            # If no match found in fallback codes, return None or an appropriate default value
+                        return None
+
+                    language = cfg.TMDBLanguage2.value
+                    if not language:
+                        language = "en-GB"
+
+                    language = language.split("-")[1]
+
+                    certification = get_certification(self.tmdbdetails, language)
+
+                    if certification:
+                        self.tmdbresults["certification"] = str(certification)
+
+                    if "tagline" in self.tmdbdetails and self.tmdbdetails["tagline"].strip():
+                        self.tmdbresults["tagline"] = str(self.tmdbdetails["tagline"])
+
+                    self.displayTMDB()
 
     def displayTMDB(self):
         # print("*** displayTMDB ***")
-        current = self["main_list"].getCurrent()
 
-        if current and self.level != 1:
+        # title = ""
+        # description = ""
+        director = ""
+        cast = ""
+        facts = []
+        tagline = ""
+        duration = ""
+        certification = ""
+        release_date = ""
+        genre = ""
+        duration = ""
+        rating = "0"
+
+        current_item = self["main_list"].getCurrent()
+
+        if current_item and self.level != 1:
 
             if self.level == 4:
-                self["vod_duration"].setText(current[12])
-                self["vod_video_type"].setText(current[13])
+                duration = current_item[12]
+                try:
+                    time_obj = datetime.strptime(duration, '%H:%M:%S')
+                    duration = "{:0d}h {:02d}m".format(time_obj.hour, time_obj.minute)
+                except:
+                    pass
 
-            self["x_title"].setText(current[0])
-            self["x_description"].setText(current[6])
-            self["vod_genre"].setText(current[9])
-            self["vod_rating"].setText(current[11])
+                stream_format = current_item[13]
+
+            rating_texts = {
+                (0.0, 0.0): "",
+                (0.1, 0.5): "",
+                (0.6, 1.0): "",
+                (1.1, 1.5): "",
+                (1.6, 2.0): "",
+                (2.1, 2.5): "",
+                (2.6, 3.0): "",
+                (3.1, 3.5): "",
+                (3.6, 4.0): "",
+                (4.1, 4.5): "",
+                (4.6, 5.0): "",
+                (5.1, 5.5): "",
+                (5.6, 6.0): "",
+                (6.1, 6.5): "",
+                (6.6, 7.0): "",
+                (7.1, 7.5): "",
+                (7.6, 8.0): "",
+                (8.1, 8.5): "",
+                (8.6, 9.0): "",
+                (9.1, 9.5): "",
+                (9.6, 10.0): "",
+            }
+
+            self["x_title"].setText(current_item[0])
+            self["x_description"].setText(current_item[6])
+            genre = current_item[9]
+
             try:
-                self["vod_release_date"].setText(datetime.strptime(current[10], "%Y-%m-%d").strftime("%d-%m-%Y"))
+                rating = float(current_item[11])
             except:
-                self["vod_release_date"].setText("")
-                pass
-            self["vod_director"].setText(current[8])
-            self["vod_cast"].setText(current[7])
+                rating = 0
 
-            stream_url = current[3]
+            director = current_item[8]
+            cast = current_item[7]
+
+            release_date = current_item[10]
+
+            stream_url = current_item[3]
+
             if self.level == 4:
                 try:
-                    self["vod_video_type"].setText(stream_url.split(".")[-1])
-                except Exception:
+                    stream_format = stream_url.split(".")[-1]
+                except:
                     pass
             else:
-                self["vod_video_type"].setText("")
+                stream_format = ""
+
+            # # # # # # # # # # # # # # # # # # # # # # # # #
 
             if self.tmdbresults:
-                if "name" in self.tmdbresults:
-                    self["x_title"].setText(str(self.tmdbresults["name"]).strip())
-                elif "o_name" in self.tmdbresults:
-                    self["x_title"].setText(str(self.tmdbresults["o_name"]).strip())
+                info = self.tmdbresults
 
-                if "description" in self.tmdbresults:
-                    self["x_description"].setText(str(self.tmdbresults["description"]).strip())
-                elif "plot" in self.tmdbresults:
-                    self["x_description"].setText(str(self.tmdbresults["plot"]).strip())
+                if "name" in info:
+                    self["x_title"].setText(str(info["name"]).strip())
+                elif "o_name" in info:
+                    self["x_title"].setText(str(info["o_name"]).strip())
 
-                if "duration" in self.tmdbresults:
-                    self["vod_duration"].setText(str(self.tmdbresults["duration"]).strip())
+                if "description" in info:
+                    self["x_description"].setText(str(info["description"]).strip())
+                elif "plot" in info:
+                    self["x_description"].setText(str(info["plot"]).strip())
 
-                if "genre" in self.tmdbresults:
-                    self["vod_genre"].setText(str(self.tmdbresults["genre"]).strip())
+                if "duration" in info:
+                    duration = str(info["duration"]).strip()
 
-                if "rating" in self.tmdbresults:
-                    self["vod_rating"].setText(str(self.tmdbresults["rating"]).strip())
+                if "genre" in info:
+                    genre = str(info["genre"]).strip()
 
-                if "country" in self.tmdbresults:
-                    self["vod_country"].setText(str(self.tmdbresults["country"]).strip())
+                try:
+                    rating = float(info.get("rating", 0) or 0)
+                except:
+                    rating = 0
 
-                if "releaseDate" in self.tmdbresults and self.tmdbresults["releaseDate"]:
-                    try:
-                        self["vod_release_date"].setText(datetime.strptime(self.tmdbresults["releaseDate"], "%Y-%m-%d").strftime("%d-%m-%Y"))
-                    except:
-                        pass
-                elif "release_date" in self.tmdbresults and self.tmdbresults["release_date"]:
-                    try:
-                        self["vod_release_date"].setText(datetime.strptime(self.tmdbresults["release_date"], "%Y-%m-%d").strftime("%d-%m-%Y"))
-                    except:
-                        pass
-                elif "releasedate" in self.tmdbresults and self.tmdbresults["releasedate"]:
-                    try:
-                        self["vod_release_date"].setText(datetime.strptime(self.tmdbresults["releasedate"], "%Y-%m-%d").strftime("%d-%m-%Y"))
-                    except:
-                        pass
+                for key in ["releaseDate", "release_date", "releasedate"]:
+                    if key in info and info[key]:
+                        try:
+                            release_date = datetime.strptime(info[key], "%Y-%m-%d").strftime("%d-%m-%Y")
+                            break
+                        except Exception:
+                            pass
 
-                if "director" in self.tmdbresults:
-                    self["vod_director"].setText(str(self.tmdbresults["director"]).strip())
+                if "director" in info:
+                    director = str(info["director"]).strip()
 
-                if "cast" in self.tmdbresults:
-                    self["vod_cast"].setText(str(self.tmdbresults["cast"]).strip())
-                elif "actors" in self.tmdbresults:
-                    self["vod_cast"].setText(str(self.tmdbresults["actors"]).strip())
+                if "cast" in info:
+                    cast = str(info["cast"]).strip()
+                elif "actors" in info:
+                    cast = str(info["actors"]).strip()
 
-            if self.level != 4 and cfg.channelcovers.value:
-                self.downloadImage()
+                certification = info.get("certification", "").strip().upper()
+
+                if certification:
+                    certification = _("Rating: ") + certification
+
+                if "tagline" in info:
+                    tagline = str(info["tagline"]).strip()
+
+            for rating_range, rating_text in rating_texts.items():
+                if rating_range[0] <= rating <= rating_range[1]:
+                    text = rating_text
+                    break
+                else:
+                    text = ""
+
+            # percent dial
+            self["rating_percent"].setText(str(text))
+
+            rating_str = rating
+            if rating_str and rating_str != 0:
+                try:
+                    rating = float(rating_str)
+                    rounded_rating = round(rating, 1)
+                    rating = "{:.1f}".format(rounded_rating)
+                    if self.tmdbresults:
+                        info["rating"] = rating
+                except ValueError:
+                    if self.tmdbresults:
+                        info["rating"] = str(rating_str)
+
+            self["rating_text"].setText(str(rating).strip())
+
+            # # # facts section  # # #
+
+            release_date = str(release_date).strip()
+
+            try:
+                release_date = datetime.strptime(release_date, "%Y-%m-%d").strftime("%d-%m-%Y")
+            except Exception:
+                pass
+
+            facts = self.buildFacts(str(certification), str(release_date), str(genre), str(duration), str(stream_format))
+
+            # # # # # # # # # # # #
+
+            self["facts"].setText(str(facts))
+
+            self["tagline"].setText(str(tagline).strip())
+
+            self["vod_cast"].setText(str(cast).strip())
+
+            self["vod_director"].setText(str(director).strip())
+
+            if self["vod_cast"].getText() != "":
+                self["vod_cast_label"].setText(_("Cast:"))
+            else:
+                self["vod_cast_label"].setText("")
+
+            if self["vod_director"].getText() != "":
+                self["vod_director_label"].setText(_("Director:"))
+            else:
+                self["vod_director_label"].setText("")
+
+            if self["x_description"].getText() != "":
+                self["overview"].setText(_("Overview"))
+            else:
+                self["overview"].setText("")
+
+            if self.level == 2 and cfg.channelcovers.value:
+                self.downloadCover()
+                self.downloadBackdrop()
+                self.downloadLogo()
+
+            if self.level == 3 and cfg.channelcovers.value:
+                self.downloadCover()
+                self.downloadBackdrop()
+                self.downloadLogo()
 
     def resetButtons(self):
         if glob.nextlist[-1]["filter"]:
@@ -1230,25 +1499,14 @@ class XStreamity_Categories(Screen):
             self["key_yellow"].setText(_(glob.nextlist[-1]["sort"]))
             self["key_menu"].setText("+/-")
 
-    def stopStream(self):
-        # print("*** stopStream ***")
-        if glob.currentPlayingServiceRefString != glob.newPlayingServiceRefString:
-            if glob.newPlayingServiceRefString != "":
-                if self.session.nav.getCurrentlyPlayingServiceReference():
-                    self.session.nav.stopService()
-                self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
-                glob.newPlayingServiceRefString = glob.currentPlayingServiceRefString
-
-    def downloadImage(self):
-        # print("*** downloadimage ***")
-
+    def downloadCover(self):
+        # print("*** downloadCover ***")
         if cfg.channelcovers.value is False:
             return
 
         if self["main_list"].getCurrent():
             try:
-                os.remove(os.path.join(dir_tmp, "original.jpg"))
-                os.remove(os.path.join(dir_tmp, "temp.jpg"))
+                os.remove(os.path.join(dir_tmp, "cover.jpg"))
             except:
                 pass
 
@@ -1259,90 +1517,294 @@ class XStreamity_Categories(Screen):
                 pass
 
             if self.tmdbresults:
-                desc_image = str(self.tmdbresults.get("cover_big")).strip() or str(self.tmdbresults.get("movie_image")).strip() or ""
+                desc_image = str(self.tmdbresults.get("cover_big")).strip() or str(self.tmdbresults.get("movie_image")).strip() or self.storedcover or ""
 
-            if desc_image and desc_image != "n/A":
-                temp = os.path.join(dir_tmp, "temp.jpg")
+            if self.cover_download_deferred and not self.cover_download_deferred.called:
+                self.cover_download_deferred.cancel()
 
+            if "http" in desc_image:
+                self.redirect_count = 0
+                self.cover_download_deferred = self.agent.request(b'GET', desc_image.encode(), Headers({'User-Agent': [b"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"]}))
+                self.cover_download_deferred.addCallback(self.handleCoverResponse)
+                self.cover_download_deferred.addErrback(self.handleCoverError)
+            else:
+                self.loadDefaultCover()
+
+    def downloadLogo(self):
+        # print("*** downloadLogo ***")
+        if cfg.channelcovers.value is False:
+            return
+
+        if self["main_list"].getCurrent():
+            try:
+                os.remove(os.path.join(dir_tmp, "logo.png"))
+            except:
+                pass
+
+            logo_image = ""
+
+            if self.tmdbresults:  # tmbdb
+                logo_image = str(self.tmdbresults.get("logo")).strip() or self.storedlogo or ""
+
+                if self.logo_download_deferred and not self.logo_download_deferred.called:
+                    self.logo_download_deferred.cancel()
+
+                if "http" in logo_image:
+                    self.logo_download_deferred = self.agent.request(b'GET', logo_image.encode(), Headers({'User-Agent': [b"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"]}))
+                    self.logo_download_deferred.addCallback(self.handleLogoResponse)
+                    self.logo_download_deferred.addErrback(self.handleLogoError)
+                else:
+                    self.loadDefaultLogo()
+            else:
+                self.loadDefaultLogo()
+
+    def downloadBackdrop(self):
+        # print("*** downloadBackdrop ***")
+        if cfg.channelcovers.value is False:
+            return
+
+        if self["main_list"].getCurrent():
+            try:
+                os.remove(os.path.join(dir_tmp, "backdrop.jpg"))
+            except:
+                pass
+
+            backdrop_image = ""
+
+            if self.level == 2:
                 try:
-                    parsed = urlparse(desc_image)
-                    domain = parsed.hostname
-                    scheme = parsed.scheme
+                    backdrop_image = self["main_list"].getCurrent()[15]
+                except:
+                    pass
 
-                    if pythonVer == 3:
-                        desc_image = desc_image.encode()
+            elif self.level == 3:
+                try:
+                    backdrop_image = self["main_list"].getCurrent()[16]
+                except:
+                    pass
 
-                    if scheme == "https" and sslverify:
-                        sniFactory = SNIFactory(domain)
-                        downloadPage(desc_image, temp, sniFactory, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
+            if self.tmdbresults:  # tmbdb
+                # Check if "backdrop_path" exists and is not None
+                backdrop_path = self.tmdbresults.get("backdrop_path")
+                if backdrop_path:
+                    if isinstance(backdrop_path, list):
+                        backdrop_image = str(backdrop_path[0]).strip() or self.storedbackdrop or ""
                     else:
-                        downloadPage(desc_image, temp, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
+                        backdrop_image = str(backdrop_path).strip() or self.storedbackdrop or ""
+                else:
+                    backdrop_image = self.storedbackdrop or ""
+
+            if self.backdrop_download_deferred and not self.backdrop_download_deferred.called:
+                self.backdrop_download_deferred.cancel()
+
+            if "http" in backdrop_image:
+                self.backdrop_download_deferred = self.agent.request(b'GET', backdrop_image.encode(), Headers({'User-Agent': [b"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"]}))
+                self.backdrop_download_deferred.addCallback(self.handleBackdropResponse)
+                self.backdrop_download_deferred.addErrback(self.handleBackdropError)
+            else:
+                self.loadDefaultBackdrop()
+
+    def downloadCoverFromUrl(self, url):
+        self.cover_download_deferred = self.agent.request(
+            b'GET',
+            url.encode(),
+            Headers({'User-Agent': [b"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"]})
+        )
+        self.cover_download_deferred.addCallback(self.handleCoverResponse)
+        self.cover_download_deferred.addErrback(self.handleCoverError)
+
+    def handleCoverResponse(self, response):
+        # print("*** handlecoverresponse ***")
+        if response.code == 200:
+            d = readBody(response)
+            d.addCallback(self.handleCoverBody)
+            return d
+        elif response.code in (301, 302):
+            if self.redirect_count < 2:
+                self.redirect_count += 1
+                location = response.headers.getRawHeaders('location')[0]
+                self.downloadCoverFromUrl(location)
+        else:
+            self.handleCoverError("HTTP error code: %s" % response.code)
+
+    def handleLogoResponse(self, response):
+        # print("*** handlelogoresponse ***")
+        if response.code == 200:
+            d = readBody(response)
+            d.addCallback(self.handleLogoBody)
+            return d
+
+    def handleBackdropResponse(self, response):
+        # print("*** handlebackdropresponse ***")
+        if response.code == 200:
+            d = readBody(response)
+            d.addCallback(self.handleBackdropBody)
+            return d
+
+    def handleCoverBody(self, body):
+        # print("*** handlecoverbody ***")
+        temp = os.path.join(dir_tmp, "cover.jpg")
+        with open(temp, 'wb') as f:
+            f.write(body)
+        self.resizeCover(temp)
+
+    def handleLogoBody(self, body):
+        # print("*** handlelogobody ***")
+        temp = os.path.join(dir_tmp, "logo.png")
+        with open(temp, 'wb') as f:
+            f.write(body)
+        self.resizeLogo(temp)
+
+    def handleBackdropBody(self, body):
+        # print("*** handlebackdropbody ***")
+        temp = os.path.join(dir_tmp, "backdrop.jpg")
+        with open(temp, 'wb') as f:
+            f.write(body)
+        self.resizeBackdrop(temp)
+
+    def handleCoverError(self, error):
+        # print("*** handle error ***")
+        print(error)
+        self.loadDefaultCover()
+
+    def handleLogoError(self, error):
+        # print("*** handle error ***")
+        print(error)
+        self.loadDefaultLogo()
+
+    def handleBackdropError(self, error):
+        # print("*** handle error ***")
+        print(error)
+        self.loadDefaultBackdrop()
+
+    def loadDefaultCover(self, data=None):
+        # print("*** loadDefaultCover ***")
+        if self["vod_cover"].instance:
+            self["vod_cover"].instance.setPixmapFromFile(os.path.join(skin_directory, "common/blank.png"))
+
+    def loadDefaultLogo(self, data=None):
+        # print("*** loadDefaultLogo ***")
+        if self["vod_logo"].instance:
+            self["vod_logo"].instance.setPixmapFromFile(os.path.join(skin_directory, "common/blank.png"))
+
+    def loadDefaultBackdrop(self, data=None):
+        # print("*** loadDefaultBackdrop ***")
+        if self["vod_backdrop"].instance:
+            self["vod_backdrop"].instance.setPixmapFromFile(os.path.join(skin_directory, "common/blank.png"))
+
+    def resizeCover(self, data=None):
+        # print("*** resizeCover ***")
+        if self["main_list"].getCurrent() and self["vod_cover"].instance:
+            preview = os.path.join(dir_tmp, "cover.jpg")
+            if os.path.isfile(preview):
+                try:
+                    self.coverLoad.setPara([self["vod_cover"].instance.size().width(), self["vod_cover"].instance.size().height(), 1, 1, 0, 1, "FF000000"])
+                    self.coverLoad.startDecode(preview)
                 except Exception as e:
                     print(e)
-                    self.loadDefaultImage()
-            else:
-                self.loadDefaultImage()
 
-    def loadDefaultImage(self, data=None):
-        # print("*** loadDefaultImage ***")
-        if self["vod_cover"].instance:
-            self["vod_cover"].instance.setPixmapFromFile(os.path.join(skin_directory, "common/vod_cover.png"))
+    def resizeLogo(self, data=None):
+        # print("*** resizeLogo ***")
+        if self["main_list"].getCurrent() and self["vod_logo"].instance:
+            preview = os.path.join(dir_tmp, "logo.png")
+            if os.path.isfile(preview):
+                width = self["vod_logo"].instance.size().width()
+                height = self["vod_logo"].instance.size().height()
+                size = [width, height]
 
-    def resizeImage(self, data=None):
-        # print("*** resize image ***")
-        # Check if the current item exists in the main_list
-        if self["main_list"].getCurrent() and self["vod_cover"].instance:
-            width, height = 267, 400
-
-            if screenwidth.width() == 2560:
-                width, height = 534, 800
-            elif screenwidth.width() > 1280:
-                width, height = 400, 600
-
-            self.PicLoad.setPara([width, height, 1, 1, 0, 1, "FF000000"])
-
-            preview = os.path.join(dir_tmp, "temp.jpg")
-
-            if self.PicLoad.startDecode(preview):
-                # Retry decoding immediately
-                self.PicLoad = ePicLoad()
                 try:
-                    self.PicLoad.PictureData.get().append(self.DecodePicture)
-                except:
-                    self.PicLoad_conn = self.PicLoad.PictureData.connect(self.DecodePicture)
-                self.PicLoad.setPara([width, height, 1, 1, 0, 1, "FF000000"])
-                self.PicLoad.startDecode(preview)
+                    im = Image.open(preview)
+                    if im.mode != "RGBA":
+                        im = im.convert("RGBA")
 
-    def DecodePicture(self, PicInfo=None):
-        # print("*** DecodePicture ***")
-        ptr = self.PicLoad.getData()
+                    try:
+                        im.thumbnail(size, Image.Resampling.LANCZOS)
+                    except:
+                        im.thumbnail(size, Image.ANTIALIAS)
+
+                    bg = Image.new("RGBA", size, (255, 255, 255, 0))
+
+                    left = (size[0] - im.size[0])
+
+                    bg.paste(im, (left, 0), mask=im)
+
+                    bg.save(preview, "PNG")
+
+                    if self["vod_logo"].instance:
+                        self["vod_logo"].instance.setPixmapFromFile(preview)
+                        self["vod_logo"].show()
+                except Exception as e:
+                    print("Error resizing logo:", e)
+                    self["vod_logo"].hide()
+
+    def resizeBackdrop(self, data=None):
+        # print("*** resizeBackdrop ***")
+        if not (self["main_list"].getCurrent() and self["vod_backdrop"].instance):
+            return
+
+        preview = os.path.join(dir_tmp, "backdrop.jpg")
+        if not os.path.isfile(preview):
+            return
+
+        try:
+            bd_width, bd_height = self["vod_backdrop"].instance.size().width(), self["vod_backdrop"].instance.size().height()
+            bd_size = [bd_width, bd_height]
+
+            bg_size = [int(bd_width * 1.5), int(bd_height * 1.5)]
+
+            im = Image.open(preview)
+            if im.mode != "RGBA":
+                im = im.convert("RGBA")
+
+            try:
+                im.thumbnail(bd_size, Image.Resampling.LANCZOS)
+            except:
+                im.thumbnail(bd_size, Image.ANTIALIAS)
+
+            background = Image.open(os.path.join(self.skin_path, "images/background.png")).convert('RGBA')
+            bg = background.crop((bg_size[0] - bd_width, 0, bg_size[0], bd_height))
+            bg.save(os.path.join(dir_tmp, "backdrop2.png"), compress_level=0)
+            mask = Image.open(os.path.join(skin_directory, "common/mask.png")).convert('RGBA')
+            offset = (bg.size[0] - im.size[0], 0)
+            bg.paste(im, offset, mask)
+            bg.save(os.path.join(dir_tmp, "backdrop.png"), compress_level=0)
+
+            output = os.path.join(dir_tmp, "backdrop.png")
+
+            if self["vod_backdrop"].instance:
+                self["vod_backdrop"].instance.setPixmapFromFile(output)
+                self["vod_backdrop"].show()
+
+        except Exception as e:
+            print("Error resizing backdrop:", e)
+            self["vod_backdrop"].hide()
+
+    def DecodeCover(self, PicInfo=None):
+        # print("*** decodecover ***")
+        ptr = self.coverLoad.getData()
         if ptr is not None and self.level != 1:
             self["vod_cover"].instance.setPixmap(ptr)
+            self["vod_cover"].show()
+        else:
+            self["vod_cover"].hide()
 
-    def goUp(self):
-        instance = self.selectedlist.master.master.instance
-        instance.moveSelection(instance.moveUp)
-        self.selectionChanged()
+    def DecodeLogo(self, PicInfo=None):
+        # print("*** decodelogo ***")
+        ptr = self.logoLoad.getData()
+        if ptr is not None and self.level != 2:
+            self["vod_logo"].instance.setPixmap(ptr)
+            self["vod_logo"].show()
+        else:
+            self["vod_logo"].hide()
 
-    def goDown(self):
-        instance = self.selectedlist.master.master.instance
-        instance.moveSelection(instance.moveDown)
-        self.selectionChanged()
-
-    def pageUp(self):
-        instance = self.selectedlist.master.master.instance
-        instance.moveSelection(instance.pageUp)
-        self.selectionChanged()
-
-    def pageDown(self):
-        instance = self.selectedlist.master.master.instance
-        instance.moveSelection(instance.pageDown)
-        self.selectionChanged()
-
-    # button 0
-    def reset(self):
-        self.selectedlist.setIndex(0)
-        self.selectionChanged()
+    def DecodeBackdrop(self, PicInfo=None):
+        # print("*** decodebackdrop ***")
+        ptr = self.backdropLoad.getData()
+        if ptr is not None and self.level != 2:
+            self["vod_backdrop"].instance.setPixmap(ptr)
+            self["vod_backdrop"].show()
+        else:
+            self["vod_backdrop"].hide()
 
     def sort(self):
         current_sort = self["key_yellow"].getText()
@@ -1543,11 +2005,10 @@ class XStreamity_Categories(Screen):
     def next(self):
         # print("*** next ***")
         if self["main_list"].getCurrent():
-
-            currentindex = self["main_list"].getIndex()
-            glob.nextlist[-1]["index"] = currentindex
+            current_index = self["main_list"].getIndex()
+            glob.nextlist[-1]["index"] = current_index
             glob.currentchannellist = self.main_list[:]
-            glob.currentchannellistindex = currentindex
+            glob.currentchannellistindex = current_index
 
             if self.level == 1:
                 if self.list1:
@@ -1562,6 +2023,7 @@ class XStreamity_Categories(Screen):
 
                     self.level += 1
                     self["main_list"].setIndex(0)
+
                     self["category_actions"].setEnabled(False)
                     self["channel_actions"].setEnabled(True)
                     self["key_yellow"].setText(_("Sort: A-Z"))
@@ -1574,14 +2036,15 @@ class XStreamity_Categories(Screen):
 
             elif self.level == 2:
                 if self.list2:
-                    self.title2 = self["x_title"].getText()
+                    self.title2 = self["main_list"].getCurrent()[0]
                     self.cover2 = self["main_list"].getCurrent()[5]
-                    self.plot2 = self["x_description"].getText()
-                    self.cast2 = self["vod_cast"].getText()
-                    self.director2 = self["vod_director"].getText()
-                    self.genre2 = self["vod_genre"].getText()
-                    self.releaseDate2 = self["vod_release_date"].getText()
-                    self.rating2 = self["vod_rating"].getText()
+                    self.plot2 = self["main_list"].getCurrent()[6]
+                    self.cast2 = self["main_list"].getCurrent()[7]
+                    self.director2 = self["main_list"].getCurrent()[8]
+                    self.genre2 = self["main_list"].getCurrent()[9]
+                    self.releaseDate2 = self["main_list"].getCurrent()[10]
+                    self.rating2 = self["main_list"].getCurrent()[11]
+                    self.backdrop_path2 = self["main_list"].getCurrent()[15]
 
                     if self["main_list"].getCurrent()[14] and self["main_list"].getCurrent()[14] != "0":
                         self.tmdb2 = self["main_list"].getCurrent()[14]
@@ -1591,11 +2054,14 @@ class XStreamity_Categories(Screen):
                     next_url = self["main_list"].getCurrent()[3]
                     if "&action=get_series_info" in next_url:
                         self.seasons_url = self["main_list"].getCurrent()[3]
+
                     self.level += 1
+
                     self["main_list"].setIndex(0)
                     self["category_actions"].setEnabled(False)
                     self["channel_actions"].setEnabled(True)
                     self["key_yellow"].setText(_("Sort: A-Z"))
+
                     glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self["key_yellow"].getText(), "filter": ""})
 
                     self.createSetup()
@@ -1639,24 +2105,48 @@ class XStreamity_Categories(Screen):
 
     def back(self, data=None):
         # print("*** back ***")
-        del glob.nextlist[-1]
 
-        if len(glob.nextlist) == 0:
-            self.stopStream()
+        if self.level != 1:
+            try:
+                self.timerSeries.stop()
+            except:
+                pass
+
+            if self.cover_download_deferred:
+                self.cover_download_deferred.cancel()
+
+            if self.logo_download_deferred:
+                self.logo_download_deferred.cancel()
+
+            if self.backdrop_download_deferred:
+                self.backdrop_download_deferred.cancel()
+
+        try:
+            del glob.nextlist[-1]
+        except Exception as e:
+            print(e)
+            self.close()
+
+        # glob.current_category = ""
+        self["category"].setText("")
+
+        if self.level == 3:
+            self.series_info = ""
+
+        if not glob.nextlist:
             self.close()
         else:
             self["x_title"].setText("")
             self["x_description"].setText("")
-
-            if cfg.stopstream.value:
-                self.stopStream()
-
             self.level -= 1
-
             self["category_actions"].setEnabled(True)
             self["channel_actions"].setEnabled(False)
-
+            self["key_epg"].setText("")
             self.buildLists()
+
+            self.loadDefaultCover()
+            self.loadDefaultLogo()
+            self.loadDefaultBackdrop()
 
     def showHiddenList(self):
         if self["key_menu"].getText() and self["main_list"].getCurrent():
@@ -1702,52 +2192,37 @@ class XStreamity_Categories(Screen):
 
     def hideVod(self):
         # print("*** hideVod ***")
-        self["vod_background"].hide()
         self["vod_cover"].hide()
+        self["vod_logo"].hide()
+        self["vod_backdrop"].hide()
         self["x_title"].setText("")
         self["x_description"].setText("")
-        self["vod_video_type_label"].setText("")
-        self["vod_duration_label"].setText("")
-        self["vod_genre_label"].setText("")
-        self["vod_rating_label"].setText("")
-        self["vod_country_label"].setText("")
-        self["vod_release_date_label"].setText("")
+        self["tagline"].setText("")
+        self["facts"].setText("")
         self["vod_director_label"].setText("")
         self["vod_cast_label"].setText("")
-        self["vod_video_type"].setText("")
-        self["vod_duration"].setText("")
-        self["vod_genre"].setText("")
-        self["vod_rating"].setText("")
-        self["vod_country"].setText("")
-        self["vod_release_date"].setText("")
         self["vod_director"].setText("")
         self["vod_cast"].setText("")
+        self["rating_text"].setText("")
+        self["rating_percent"].setText("")
+        self["overview"].setText("")
 
     def clearVod(self):
         # print("*** clearVod ***")
         self["x_title"].setText("")
         self["x_description"].setText("")
-        self["vod_video_type"].setText("")
-        self["vod_duration"].setText("")
-        self["vod_genre"].setText("")
-        self["vod_rating"].setText("")
-        self["vod_country"].setText("")
-        self["vod_release_date"].setText("")
+        self["tagline"].setText("")
+        self["facts"].setText("")
         self["vod_director"].setText("")
         self["vod_cast"].setText("")
+        self["rating_text"].setText("")
+        self["rating_percent"].setText("")
 
     def showVod(self):
         # print("*** showVod ***")
         self["vod_cover"].show()
-        self["vod_background"].show()
-        self["vod_video_type_label"].setText(_("Video Type:"))
-        self["vod_rating_label"].setText(_("Rating:"))
-        self["vod_genre_label"].setText(_("Genre:"))
-        self["vod_duration_label"].setText(_("Duration:"))
-        self["vod_release_date_label"].setText(_("Release Date:"))
-        self["vod_cast_label"].setText(_("Cast:"))
-        self["vod_director_label"].setText(_("Director:"))
-        self["vod_country_label"].setText(_("Country:"))
+        self["vod_logo"].show()
+        self["vod_backdrop"].show()
 
     def downloadVideo(self):
         # print("*** downloadVideo ***")
@@ -1803,29 +2278,47 @@ class XStreamity_Categories(Screen):
     def natural_keys(self, text):
         return [self.atoi(c) for c in re.split(r"(\d+)", text[1])]
 
+    def buildFacts(self, certification, release_date, genre, duration, stream_format):
+        # print("*** buildfacts ***")
+
+        facts = []
+
+        if certification:
+            facts.append(certification)
+        if release_date:
+            facts.append(release_date)
+        if genre:
+            facts.append(genre)
+        if duration:
+            facts.append(duration)
+        if stream_format:
+            facts.append(str(stream_format).upper())
+
+        return " • ".join(facts)
+
 
 def buildCategoryList(index, title, category_id, hidden):
     png = LoadPixmap(os.path.join(common_path, "more.png"))
     return (title, png, index, category_id, hidden)
 
-# 0 index, 1 name, 2 series_id, 3 cover, 4 plot, 5 cast, 6 director, 7 genre, 8 releaseDate, 9 rating, 10 last_modified, 11 next_url, 12 tmdb, 13 hidden, 14 year
-# 0 index, 1 name, 2 series_id, 3 cover, 4 overview, 5 cast, 6 director, 7 genre, 8 airdate, 9 rating, 10 last_modified, 11 next_url, 12 tmdb, 13 hidden, 14 season_number
+# 0 index, 1 name, 2 series_id, 3 cover, 4 plot, 5 cast, 6 director, 7 genre, 8 releaseDate, 9 rating, 10 last_modified, 11 next_url, 12 tmdb, 13 hidden, 14 year, 15 backdrop
+# 0 index, 1 name, 2 series_id, 3 cover, 4 overview, 5 cast, 6 director, 7 genre, 8 airdate, 9 rating, 10 last_modified, 11 next_url, 12 tmdb, 13 hidden, 14 season_number, 15 backdrop
 # 0 index, 1 title, 2 stream_id, 3 cover, 4 plot, 5 cast, 6 director, 7 genre, 8 releasedate, 9 rating, 10 last_modified, 11 next_url, 12 tmdb_id, 13 hidden, 14 duration, 15 container_extension, 16 shorttitle, 17 episode_num
 
 
-def buildSeriesTitlesList(index, title, series_id, cover, plot, cast, director, genre, releaseDate, rating, lastmodified, next_url, tmdb, hidden, year):
+def buildSeriesTitlesList(index, title, series_id, cover, plot, cast, director, genre, releaseDate, rating, lastmodified, next_url, tmdb, hidden, year, backdrop_path):
     png = LoadPixmap(os.path.join(common_path, "more.png"))
-    return (title, png, index, next_url, series_id, cover, plot, cast, director, genre, releaseDate, rating, lastmodified, year, tmdb, hidden)
+    return (title, png, index, next_url, series_id, cover, plot, cast, director, genre, releaseDate, rating, lastmodified, year, tmdb, backdrop_path, hidden)
 
 
-def buildSeriesSeasonsList(index, title, series_id, cover, plot, cast, director, genre, airDate, rating, lastmodified, next_url, tmdb, hidden, season_number):
+def buildSeriesSeasonsList(index, title, series_id, cover, plot, cast, director, genre, airDate, rating, lastmodified, next_url, tmdb, hidden, season_number, backdrop_path):
     png = LoadPixmap(os.path.join(common_path, "more.png"))
     try:
         title = _("Season ") + str(int(title))
     except:
         pass
 
-    return (title, png, index, next_url, series_id, cover, plot, cast, director, genre, airDate, rating, season_number, lastmodified, hidden, tmdb)
+    return (title, png, index, next_url, series_id, cover, plot, cast, director, genre, airDate, rating, season_number, lastmodified, hidden, tmdb, backdrop_path)
 
 
 def buildSeriesEpisodesList(index, title, series_id, cover, plot, cast, director, genre, releaseDate, rating, lastmodified, next_url, tmdb_id, hidden, duration, container_extension, shorttitle, episode_number):

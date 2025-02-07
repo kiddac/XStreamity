@@ -76,7 +76,7 @@ hdr = {
     'Accept-Encoding': 'gzip, deflate'
 }
 
-agent = Agent(reactor)
+# agent = Agent(reactor)
 
 
 class XStreamity_Vod_Categories(Screen):
