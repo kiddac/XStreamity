@@ -1227,12 +1227,12 @@ class XStreamity_Categories(Screen):
                             if logos:
                                 logo_path = logos[0].get("file_path")
 
-                            if screenwidth.width() <= 1280:
-                                self.tmdbresults["logo"] = "http://image.tmdb.org/t/p/w300" + str(logo_path)
-                            elif screenwidth.width() <= 1920:
-                                self.tmdbresults["logo"] = "http://image.tmdb.org/t/p/w300" + str(logo_path)
-                            else:
-                                self.tmdbresults["logo"] = "http://image.tmdb.org/t/p/w500" + str(logo_path)
+                                if screenwidth.width() <= 1280:
+                                    self.tmdbresults["logo"] = "http://image.tmdb.org/t/p/w300" + str(logo_path)
+                                elif screenwidth.width() <= 1920:
+                                    self.tmdbresults["logo"] = "http://image.tmdb.org/t/p/w300" + str(logo_path)
+                                else:
+                                    self.tmdbresults["logo"] = "http://image.tmdb.org/t/p/w500" + str(logo_path)
 
                     if self.level != 2:
                         if "air_date" in self.tmdbdetails and self.tmdbdetails["air_date"]:
