@@ -5,7 +5,7 @@ from __future__ import division
 
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import skin_directory, playlists_json, playlist_file, cfg, common_path, version, hasConcurrent, hasMultiprocessing
+from .plugin import skin_directory, playlists_json, playlist_file, cfg, common_path, hasConcurrent, hasMultiprocessing
 from .xStaticText import StaticText
 from . import checkinternet
 
@@ -101,7 +101,7 @@ class XStreamity_Playlists(Screen):
         if not self.checkinternet:
             self.session.openWithCallback(self.quit, MessageBox, _("No internet."), type=MessageBox.TYPE_ERROR, timeout=5)
 
-        self["version"].setText(version)
+        self["version"].setText(cfg.version.value)
 
         if epgimporter:
             self.epgimportcleanup()

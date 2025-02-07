@@ -8,7 +8,7 @@ import time
 import twisted.python.runtime
 
 from . import _
-from Components.config import config, ConfigSubsection, ConfigSelection, ConfigDirectory, ConfigYesNo, ConfigSelectionNumber, ConfigClock, ConfigPIN, ConfigInteger, configfile
+from Components.config import config, ConfigSubsection, ConfigSelection, ConfigDirectory, ConfigYesNo, ConfigSelectionNumber, ConfigClock, ConfigPIN, ConfigInteger, configfile, ConfigText
 from enigma import eTimer, getDesktop, addFont
 from Plugins.Plugin import PluginDescriptor
 from os.path import isdir
@@ -166,6 +166,7 @@ cfg.useragent = ConfigSelection(default="Enigma2 - XStreamity Plugin", choices=u
 cfg.vodcategoryorder = ConfigSelection(default=(_("Sort: Original")), choices=[(_("Sort: A-Z"), "A-Z"), (_("Sort: Z-A"), "Z-A"), (_("Sort: Original"), _("Original"))])
 cfg.vodstreamorder = ConfigSelection(default=(_("Sort: Original")), choices=[(_("Sort: A-Z"), "A-Z"), (_("Sort: Z-A"), "Z-A"), (_("Sort: Added"), _("Added")), (_("Sort: Year"), _("Year")), (_("Sort: Original"), _("Original"))])
 
+cfg.version = ConfigText(version)
 # Set default file paths
 playlist_file = os.path.join(dir_etc, "playlists.txt")
 playlists_json = os.path.join(dir_etc, "x-playlists.json")

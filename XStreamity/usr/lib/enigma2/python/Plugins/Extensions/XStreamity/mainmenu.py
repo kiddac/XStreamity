@@ -4,7 +4,7 @@
 from . import _
 from . import xstreamity_globals as glob
 from . import processfiles as loadfiles
-from .plugin import skin_directory, common_path, version, downloads_json, playlists_json, cfg
+from .plugin import skin_directory, common_path, downloads_json, playlists_json, cfg
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -65,7 +65,7 @@ class XStreamity_MainMenu(Screen):
             "9": lambda: self.keyPressed('9'),
         }, -2)
 
-        self["version"].setText(version)
+        self["version"].setText(cfg.version.value)
 
         self.key_sequence = []
         self.hackavision_added = False
