@@ -128,7 +128,7 @@ hdr = {
 }
 
 
-class XStreamity_Categories(Screen):
+class XStreamity_Catchup_Categories(Screen):
     ALLOW_SUSPEND = True
 
     def __init__(self, session):

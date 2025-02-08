@@ -66,7 +66,7 @@ hdr = {
 }
 
 
-class XStreamity_Categories(Screen):
+class XStreamity_Series_Categories(Screen):
     ALLOW_SUSPEND = True
 
     def __init__(self, session):
@@ -82,7 +82,6 @@ class XStreamity_Categories(Screen):
 
         self.skin_path = os.path.join(skin_directory, cfg.skin.value)
         skin = os.path.join(self.skin_path, "vod_categories.xml")
-
         if os.path.exists("/var/lib/dpkg/status"):
             skin = os.path.join(self.skin_path, "DreamOS/vod_categories.xml")
 
@@ -90,14 +89,9 @@ class XStreamity_Categories(Screen):
             self.skin = f.read()
 
         self.setup_title = _("Series Categories")
-        self.main_title = ("")
+
+        self.main_title = _("Series")
         self["main_title"] = StaticText(self.main_title)
-
-        self.screen_title = _("Series")
-        self["screen_title"] = StaticText(self.screen_title)
-
-        self.category = ("")
-        self["category"] = StaticText(self.category)
 
         self.main_list = []
         self["main_list"] = List(self.main_list, enableWrapAround=True)
@@ -117,10 +111,11 @@ class XStreamity_Categories(Screen):
         self["vod_logo"] = Pixmap()
         self["vod_logo"].hide()
         self["vod_director_label"] = StaticText()
+        self["vod_country_label"] = StaticText()
         self["vod_cast_label"] = StaticText()
         self["vod_director"] = StaticText()
+        self["vod_country"] = StaticText()
         self["vod_cast"] = StaticText()
-
         self["rating_text"] = StaticText()
         self["rating_percent"] = StaticText()
 
@@ -160,6 +155,7 @@ class XStreamity_Categories(Screen):
         self.sortText = _("Sort: A-Z")
 
         self.level = 1
+
         self.host = glob.active_playlist["playlist_info"]["host"]
         self.username = glob.active_playlist["playlist_info"]["username"]
         self.password = glob.active_playlist["playlist_info"]["password"]
@@ -172,8 +168,6 @@ class XStreamity_Categories(Screen):
         self.token = "ZUp6enk4cko4ZzBKTlBMTFNxN3djd25MOHEzeU5Zak1Bdkd6S3lPTmdqSjhxeUxMSTBNOFRhUGNBMjBCVmxBTzlBPT0K"
 
         next_url = str(self.player_api) + "&action=get_series_categories"
-
-        self.tmdbsetting = cfg.TMDB.value
 
         # buttons / keys
         self["key_red"] = StaticText(_("Back"))
@@ -324,7 +318,9 @@ class XStreamity_Categories(Screen):
         currentHidden = set(currentPlaylist.get("player_info", {}).get("serieshidden", []))
 
         hidden = "0" in currentHidden
+
         i = 0
+
         self.prelist.extend([
             [i, _("ALL"), "0", hidden]
         ])
@@ -362,7 +358,6 @@ class XStreamity_Categories(Screen):
         self.tmdbretry = 0
 
         if response:
-
             for index, channel in enumerate(response):
                 name = str(channel.get("name", ""))
 
@@ -373,11 +368,6 @@ class XStreamity_Categories(Screen):
                     parts = name.split('\" ', 1)
                     if len(parts) > 1:
                         name = parts[0]
-
-                # if "stream_type" in channel and channel["stream_type"] and channel["stream_type"] != "movie":
-                #   pattern = re.compile(r"[^\w\s()\[\]]", re.U)
-                #   name = re.sub(r"_", "", re.sub(pattern, "", name))
-                #   name = "** " + str(name) + " **"
 
                 if "stream_type" in channel and channel["stream_type"] and (channel["stream_type"] not in ["movie", "series"]):
                     continue
@@ -418,7 +408,6 @@ class XStreamity_Categories(Screen):
 
                 rating = str(channel.get("rating", ""))
 
-                # year not always available in hybrid apis
                 year = str(channel.get("year", ""))
 
                 if year == "":
@@ -816,7 +805,7 @@ class XStreamity_Categories(Screen):
     def selectionChanged(self):
         # print("*** selectionChanged ***")
 
-        self.tmdbresults = {}
+        self.tmdbresults = ""
         self.tmdbretry = 0
 
         if self.cover_download_deferred:
@@ -842,7 +831,7 @@ class XStreamity_Categories(Screen):
             self["page"].setText(_("Page: ") + "{}/{}".format(page, page_all))
             self["listposition"].setText("{}/{}".format(position, position_all))
 
-            self["main_title"].setText("{}".format(channel_title))
+            self["main_title"].setText("{}: {}".format(self.main_title, channel_title))
 
             if self.level == 2:
                 self.loadDefaultCover()
@@ -959,6 +948,7 @@ class XStreamity_Categories(Screen):
         # print("**** getTMDB ***")
 
         current_item = self["main_list"].getCurrent()
+
         if current_item:
             if self.level == 2:
                 title = current_item[0]
@@ -1129,6 +1119,7 @@ class XStreamity_Categories(Screen):
         self.tmdbresults = {}
         self.tmdbdetails = []
         director = []
+
         logos = None
 
         try:
@@ -1475,12 +1466,7 @@ class XStreamity_Categories(Screen):
             else:
                 self["overview"].setText("")
 
-            if self.level == 2 and cfg.channelcovers.value:
-                self.downloadCover()
-                self.downloadBackdrop()
-                self.downloadLogo()
-
-            if self.level == 3 and cfg.channelcovers.value:
+            if self.level in (2, 3) and cfg.channelcovers.value:
                 self.downloadCover()
                 self.downloadBackdrop()
                 self.downloadLogo()
@@ -1517,7 +1503,7 @@ class XStreamity_Categories(Screen):
                 pass
 
             if self.tmdbresults:
-                desc_image = str(self.tmdbresults.get("cover_big")).strip() or str(self.tmdbresults.get("movie_image")).strip() or self.storedcover or ""
+                desc_image = (str(self.tmdbresults.get("cover_big") or "").strip() or str(self.tmdbresults.get("movie_image") or "").strip() or self.storedcover or "")
 
             if self.cover_download_deferred and not self.cover_download_deferred.called:
                 self.cover_download_deferred.cancel()
@@ -1544,7 +1530,7 @@ class XStreamity_Categories(Screen):
             logo_image = ""
 
             if self.tmdbresults:  # tmbdb
-                logo_image = str(self.tmdbresults.get("logo")).strip() or self.storedlogo or ""
+                logo_image = str(self.tmdbresults.get("logo") or "").strip() or self.storedlogo or ""
 
                 if self.logo_download_deferred and not self.logo_download_deferred.called:
                     self.logo_download_deferred.cancel()
@@ -1587,10 +1573,7 @@ class XStreamity_Categories(Screen):
                 # Check if "backdrop_path" exists and is not None
                 backdrop_path = self.tmdbresults.get("backdrop_path")
                 if backdrop_path:
-                    if isinstance(backdrop_path, list):
-                        backdrop_image = str(backdrop_path[0]).strip() or self.storedbackdrop or ""
-                    else:
-                        backdrop_image = str(backdrop_path).strip() or self.storedbackdrop or ""
+                    backdrop_image = str(backdrop_path[0] if isinstance(backdrop_path, list) else backdrop_path).strip() or self.storedbackdrop or ""
                 else:
                     backdrop_image = self.storedbackdrop or ""
 
@@ -2127,9 +2110,6 @@ class XStreamity_Categories(Screen):
             print(e)
             self.close()
 
-        # glob.current_category = ""
-        self["category"].setText("")
-
         if self.level == 3:
             self.series_info = ""
 
@@ -2200,8 +2180,10 @@ class XStreamity_Categories(Screen):
         self["tagline"].setText("")
         self["facts"].setText("")
         self["vod_director_label"].setText("")
+        self["vod_country_label"].setText("")
         self["vod_cast_label"].setText("")
         self["vod_director"].setText("")
+        self["vod_country"].setText("")
         self["vod_cast"].setText("")
         self["rating_text"].setText("")
         self["rating_percent"].setText("")

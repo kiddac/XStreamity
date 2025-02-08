@@ -24,7 +24,6 @@
 			"scrollbarMode": "showOnDemand"
 			}</convert>
 	</widget>
-
 	<widget name="vod_logo" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/blank.png" position="2080,40" size="400,240" alphatest="blend" zPosition="3"/>
 	<!-- rating background -->
 	<widget source="rating_text" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/facts-bg.png" position="680,528" size="1800,120" alphatest="blend" zPosition="3">
@@ -39,7 +38,6 @@
 	<widget source="rating_percent" render="Label" position="680,528" size="120,120" font="klass;120" foregroundColor="#57ffff" backgroundColor="#2a70a4" halign="center" valign="top" transparent="1" zPosition="4"/>
 	<widget name="vod_cover" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/vod_cover.png" position="680,720" size="400,600" alphatest="blend" zPosition="3"/>
 	<widget source="x_title" render="Label" position="680,400" size="1800,120" font="xstreamitybold;64" foregroundColor="#ffffff" backgroundColor="#2a70a4" halign="left" noWrap="1" transparent="1" zPosition="3"/>
-	
 	<widget source="facts" render="Label" position="840,544" size="1600,40" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#2a70a4" halign="left" valign="center" noWrap="1" transparent="1" zPosition="3"/>
 	<widget source="tagline" render="Label" position="840,583" size="1600,48" font="xstreamityregular;32" foregroundColor="#57ffff" backgroundColor="#2a70a4" halign="left" valign="center" noWrap="1" transparent="1" zPosition="4"/>
 	<widget source="overview" render="Label" position="1120,712" size="1360,80" font="xstreamityregular;40" foregroundColor="#ffffff" backgroundColor="#2a70a4" halign="left" noWrap="1" transparent="1" zPosition="3"/>
@@ -48,7 +46,8 @@
 	<widget source="vod_cast" render="Label" position="1120,1104" size="1360,96" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#2a70a4" halign="left" transparent="1" zPosition="3"/>
 	<widget source="vod_director_label" render="Label" position="1120,1228" size="320,80" font="xstreamitybold;32" foregroundColor="#ffffff" backgroundColor="#2a70a4" halign="left" noWrap="1" transparent="1" zPosition="3"/>
 	<widget source="vod_director" render="Label" position="1120,1276" size="640,80" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#2a70a4" halign="left" noWrap="1" transparent="1" zPosition="3"/>
-	
+	<widget source="vod_country_label" render="Label" position="1800,1228" size="320,80" font="xstreamitybold;24" foregroundColor="#ffffff" backgroundColor="#2a70a4" halign="left" noWrap="1" transparent="1" zPosition="3"/>
+	<widget source="vod_country" render="Label" position="1800,1276" size="640,80" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#2a70a4" halign="left" noWrap="1" transparent="1" zPosition="3"/>
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/button-bg.png" position="640,1360" size="1960,80" alphatest="blend" zPosition="1"/>
 	<widget source="key_red" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/key_red.png" position="672,1375" size="51,51" alphatest="blend" zPosition="2"/>
 	<widget source="key_red" render="Label" position="736,1360" size="300,80" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="2"/>

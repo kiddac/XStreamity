@@ -54,6 +54,8 @@
 	<widget source="vod_cast" render="Label" position="840,828" size="1020,72" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#40000000" halign="left" transparent="1" zPosition="3"/>
 	<widget source="vod_director_label" render="Label" position="840,921" size="240,60" font="xstreamitybold;24" foregroundColor="#ffffff" backgroundColor="#40000000" halign="left" noWrap="1" transparent="1" zPosition="3"/>
 	<widget source="vod_director" render="Label" position="840,957" size="480,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#40000000" halign="left" noWrap="1" transparent="1" zPosition="3"/>
+	<widget source="vod_country_label" render="Label" position="1350,921" size="240,60" font="xstreamitybold;24" foregroundColor="#ffffff" backgroundColor="#40000000" halign="left" noWrap="1" transparent="1" zPosition="3"/>
+	<widget source="vod_country" render="Label" position="1350,957" size="480,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#40000000" halign="left" noWrap="1" transparent="1" zPosition="3"/>
 	<eLabel position="0,1019" size="1920,1" backgroundColor="#ffffff" zPosition="-1"/>
 	<eLabel position="0,1020" size="1920,60" backgroundColor="#1a000000" zPosition="-1"/>
 	<widget source="key_red" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/key_red.png" position="504,1031" size="38,38" alphatest="blend" zPosition="2"/>
