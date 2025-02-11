@@ -7,7 +7,7 @@ import requests
 from requests.adapters import HTTPAdapter, Retry
 
 from . import _
-from .plugin import skin_directory, playlist_file, cfg, playlists_json
+from .plugin import skin_directory, cfg
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -28,6 +28,9 @@ hdr = {
     'User-Agent': str(cfg.useragent.value),
     'Accept-Encoding': 'gzip, deflate'
 }
+
+playlist_file = cfg.playlist_file.value
+playlists_json = cfg.playlists_json.value
 
 
 class XStreamity_AddServer(ConfigListScreen, Screen):

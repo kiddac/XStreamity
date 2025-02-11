@@ -6,6 +6,7 @@ import shutil
 import sys
 import time
 import twisted.python.runtime
+import glob
 
 from . import _
 from Components.config import config, ConfigSubsection, ConfigSelection, ConfigDirectory, ConfigYesNo, ConfigSelectionNumber, ConfigClock, ConfigPIN, ConfigInteger, configfile, ConfigText
@@ -43,6 +44,7 @@ screenwidth = getDesktop(0).size()
 dir_etc = "/etc/enigma2/xstreamity/"
 dir_tmp = "/tmp/xstreamity/"
 dir_plugins = "/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/"
+
 
 if screenwidth.width() == 2560:
     skin_directory = os.path.join(dir_plugins, "skin/uhd/")
@@ -167,6 +169,8 @@ cfg.vodcategoryorder = ConfigSelection(default=(_("Sort: Original")), choices=[(
 cfg.vodstreamorder = ConfigSelection(default=(_("Sort: Original")), choices=[(_("Sort: A-Z"), "A-Z"), (_("Sort: Z-A"), "Z-A"), (_("Sort: Added"), _("Added")), (_("Sort: Year"), _("Year")), (_("Sort: Original"), _("Original"))])
 
 cfg.version = ConfigText(version)
+
+
 # Set default file paths
 playlist_file = os.path.join(dir_etc, "playlists.txt")
 playlists_json = os.path.join(dir_etc, "x-playlists.json")
@@ -177,24 +181,26 @@ skin_path = os.path.join(skin_directory, cfg.skin.value)
 common_path = os.path.join(skin_directory, "common/")
 
 location = cfg.location.value
+
 if location:
     if os.path.exists(location):
         playlist_file = os.path.join(cfg.location.value, "playlists.txt")
         cfg.location_valid.setValue(True)
-        cfg.save()
-        configfile.save()
     else:
         os.makedirs(location)  # Create directory if it doesn't exist
         playlist_file = os.path.join(location, "playlists.txt")
 
         cfg.location_valid.setValue(True)
-        cfg.save()
-        configfile.save()
 else:
+
     cfg.location.setValue(dir_etc)
     cfg.location_valid.setValue(False)
-    cfg.save()
-    configfile.save()
+
+cfg.playlist_file = ConfigText(playlist_file)
+cfg.playlists_json = ConfigText(playlists_json)
+cfg.downloads_json = ConfigText(downloads_json)
+cfg.save()
+configfile.save()
 
 font_folder = os.path.join(dir_plugins, "fonts/")
 
@@ -216,18 +222,18 @@ if not os.path.exists(dir_tmp):
     os.makedirs(dir_tmp)
 
 # check if playlists.txt file exists in specified location
-if not os.path.isfile(playlist_file):
-    with open(playlist_file, "a") as f:
+if not os.path.isfile(cfg.playlist_file.value):
+    with open(cfg.playlist_file.value, "a") as f:
         f.close()
 
 # check if x-playlists.json file exists in specified location
-if not os.path.isfile(playlists_json):
-    with open(playlists_json, "a") as f:
+if not os.path.isfile(cfg.playlists_json.value):
+    with open(cfg.playlists_json.value, "a") as f:
         f.close()
 
 # check if x-downloads.json file exists in specified location
-if not os.path.isfile(downloads_json):
-    with open(downloads_json, "a") as f:
+if not os.path.isfile(cfg.downloads_json.value):
+    with open(cfg.downloads_json.value, "a") as f:
         f.close()
 
 # remove dodgy versions of my plugin
@@ -260,6 +266,15 @@ except Exception as e:
 
 
 def main(session, **kwargs):
+
+    epgfolder = '/etc/enigma2/xstreamity/epg/*/*.xml'
+
+    for file_path in glob.glob(epgfolder):
+        try:
+            os.remove(file_path)
+        except:
+            pass
+
     from . import mainmenu
     session.open(mainmenu.XStreamity_MainMenu)
     return

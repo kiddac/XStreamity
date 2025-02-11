@@ -10,33 +10,36 @@ try:
 except ImportError:
     from urlparse import urlparse, parse_qs
 
-from .plugin import playlists_json, playlist_file, cfg
+from .plugin import cfg
+
+scanner_playlist_file = "/tmp/scans/playlists.txt"
+scanner_playlists_json = "/tmp/scans/x-playlists.json"
 
 
 def process_files():
     # Check if playlists.txt file exists in specified location
-    if not os.path.isfile(playlist_file):
-        with open(playlist_file, "a"):
+    if not os.path.isfile(scanner_playlist_file):
+        with open(scanner_playlist_file, "a"):
             pass
 
     # Check if x-playlists.json file exists in specified location
-    if not os.path.isfile(playlists_json):
-        with open(playlists_json, "a"):
+    if not os.path.isfile(scanner_playlists_json):
+        with open(scanner_playlists_json, "a"):
             pass
 
     playlists_all = []
-    if os.path.isfile(playlists_json):
-        with open(playlists_json, "r") as f:
+    if os.path.isfile(scanner_playlists_json):
+        with open(scanner_playlists_json, "r") as f:
             try:
                 playlists_all = json.load(f)
             except ValueError:
-                os.remove(playlists_json)
+                os.remove(scanner_playlists_json)
 
     # Check playlist.txt entries are valid
-    with open(playlist_file, "r+") as f:
+    with open(scanner_playlist_file, "r+") as f:
         lines = f.readlines()
 
-    with open(playlist_file, "w") as f:
+    with open(scanner_playlist_file, "w") as f:
         for line in lines:
             line = re.sub(" +", " ", line)
             line = line.strip(" ")
@@ -190,7 +193,7 @@ def process_files():
             index += 1
 
     # Write new x-playlists.json file
-    with open(playlists_json, "w") as f:
+    with open(scanner_playlists_json, "w") as f:
         json.dump(playlists_all, f)
 
     return playlists_all

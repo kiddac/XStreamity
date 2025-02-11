@@ -3,7 +3,7 @@
 
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import skin_directory, playlist_file, playlists_json, cfg
+from .plugin import skin_directory, cfg
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -20,6 +20,9 @@ try:
     from urlparse import urlparse, parse_qs
 except ImportError:
     from urllib.parse import urlparse, parse_qs
+
+playlist_file = cfg.playlist_file.value
+playlists_json = cfg.playlists_json.value
 
 
 class XStreamity_Settings(ConfigListScreen, Screen):

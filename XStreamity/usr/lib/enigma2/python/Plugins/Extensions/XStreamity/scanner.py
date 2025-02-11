@@ -5,7 +5,7 @@ from __future__ import division
 
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import skin_directory, cfg, common_path, hasConcurrent, hasMultiprocessing, dir_etc
+from .plugin import skin_directory, cfg, common_path, hasConcurrent, hasMultiprocessing
 from .xStaticText import StaticText
 from . import checkinternet
 
@@ -25,7 +25,6 @@ import requests
 import base64
 import zlib
 import random
-import shutil
 
 try:
     from urlparse import urlparse, parse_qsl  # Python 2
@@ -48,12 +47,14 @@ hdr = {
 }
 
 location = cfg.location.value
-scanner_text = "/tmp/scans/scanner.txt"
+
 badurls_file = "/tmp/scans/badurls.txt"
-backup_playlists_json = os.path.join(dir_etc, "x-playlists-json.bak")
-backup_playlist_file = os.path.join(location, "playlists-txt.bak")
-playlists_json = os.path.join(dir_etc, "x-playlists.json")
-playlist_file = os.path.join(location, "playlists.txt")
+
+original_playlist_file = cfg.playlist_file.value
+original_playlists_json = cfg.playlists_json.value
+
+scanner_playlist_file = "/tmp/scans/playlists.txt"
+scanner_playlists_json = "/tmp/scans/x-playlists.json"
 
 compressed_base_url = b'x\x9c\xb3\xf5\xcc\xf2\xcd\t4\xf0\xcd\t\rO\xca0\xcdM\xce\xf1\x8bHq\xf7\x0b\xf1r\t\x0b\xf1*\xcfpO.\r\x8c\x88\xca\xf3\x02\xaaq\x04bW\x98\xba\xf0\xa8\xe2\x9c\xdc(KW\xe3\x80\xb2t\xa3\xc8J\xb7\xf0\xa8*\xcb`_#\xcb\xe0\xc4r7#\x9f\xb2\x9c\\\x9fR7\xa3\xc8\xaa\x8a\xdcdC\xcbJ\x1f3_\x8fd\x83 \x8fD\x00\xcc\xd4$a'
 
@@ -117,13 +118,8 @@ class XStreamity_Scanner(Screen):
         self.setTitle(self.setup_title)
 
     def start(self):
-        # Step 1: Rename playlists_json to a backup
-        if os.path.exists(playlists_json):
-            os.rename(playlists_json, backup_playlists_json)
-
-        # Step 2: Rename playlists_file to a backup
-        if os.path.exists(playlist_file):
-            os.rename(playlist_file, backup_playlist_file)
+        cfg.playlist_file.setValue(scanner_playlist_file)
+        cfg.playlists_json.setValue(scanner_playlists_json)
 
         self.checkinternet = checkinternet.check_internet()
         if not self.checkinternet:
@@ -135,7 +131,7 @@ class XStreamity_Scanner(Screen):
 
         scans_dir = "/tmp/scans"
         if os.path.exists(scans_dir):
-            for file_name in ["scanner.txt", "scanner.json"]:
+            for file_name in ["playlists.txt", "x-playlists.json"]:
                 file_path = os.path.join(scans_dir, file_name)
                 if os.path.exists(file_path):
                     os.remove(file_path)
@@ -168,7 +164,7 @@ class XStreamity_Scanner(Screen):
 
         final_urls_to_write_set = set()  # Use a set to store unique URLs
 
-        for i in range(10):
+        for i in range(5):
             if not search_after:
                 url = base_url
             else:
@@ -219,18 +215,14 @@ class XStreamity_Scanner(Screen):
         final_urls_to_write = list(final_urls_to_write_set)
         random.shuffle(final_urls_to_write)
 
-        with open(scanner_text, "a") as f:
+        with open(scanner_playlist_file, "a") as f:
             for url, domain in final_urls_to_write:
                 f.write(url + " #" + str(domain) + "\n")
-
-        # Copy scanner.json to dir_etc and rename to x-playlists.json
-        if os.path.exists(scanner_text):
-            shutil.copy(scanner_text, playlist_file)
 
         from . import processscanfiles as loadfiles
         self.playlists_all = loadfiles.process_files()
 
-        if self.playlists_all and os.path.isfile(playlist_file) and os.path.getsize(playlist_file) > 0:
+        if self.playlists_all and os.path.isfile(scanner_playlist_file) and os.path.getsize(scanner_playlist_file) > 0:
             self.delayedDownload()
         else:
             self.close()
@@ -411,7 +403,7 @@ class XStreamity_Scanner(Screen):
         self.writeJsonFile()
 
     def writeJsonFile(self):
-        with open(playlists_json, "w") as f:
+        with open(scanner_playlists_json, "w") as f:
             json.dump(self.playlists_all, f)
         self.createSetup()
 
@@ -520,21 +512,13 @@ class XStreamity_Scanner(Screen):
 
         scans_dir = "/tmp/scans"
         if os.path.exists(scans_dir):
-            for file_name in ["scanner.txt", "scanner.json"]:
+            for file_name in ["playlists.txt", "x-playlists.json"]:
                 file_path = os.path.join(scans_dir, file_name)
                 if os.path.exists(file_path):
                     os.remove(file_path)
 
-        # Restore the original x-playlists.json from backup
-        if os.path.exists(backup_playlists_json):
-            if os.path.exists(playlists_json):
-                os.remove(playlists_json)
-            os.rename(backup_playlists_json, playlists_json)
-
-        if os.path.exists(backup_playlist_file):
-            if os.path.exists(playlist_file):
-                os.remove(playlist_file)
-            os.rename(backup_playlist_file, playlist_file)
+        cfg.playlist_file.setValue(original_playlist_file)
+        cfg.playlists_json.setValue(original_playlists_json)
 
         self.close()
 

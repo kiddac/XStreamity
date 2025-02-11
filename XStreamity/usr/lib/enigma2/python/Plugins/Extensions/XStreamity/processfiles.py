@@ -10,7 +10,10 @@ try:
 except ImportError:
     from urlparse import urlparse, parse_qs
 
-from .plugin import playlists_json, playlist_file, cfg
+from .plugin import cfg
+
+playlist_file = cfg.playlist_file.value
+playlists_json = cfg.playlists_json.value
 
 
 def process_files():
