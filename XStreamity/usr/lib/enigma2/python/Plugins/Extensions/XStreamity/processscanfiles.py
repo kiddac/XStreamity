@@ -81,6 +81,7 @@ def process_files():
         showcatchup = True
         livefavourites = []
         vodfavourites = []
+        seriesfavourites = []
         liverecents = []
         vodrecents = []
         vodwatched = []
@@ -162,6 +163,7 @@ def process_files():
                     ("catchupchannelshidden", catchupchannelshidden),
                     ("livefavourites", livefavourites),
                     ("vodfavourites", vodfavourites),
+                    ("seriesfavourites", seriesfavourites),
                     ("liverecents", liverecents),
                     ("vodrecents", vodrecents),
                     ("vodwatched", vodwatched),

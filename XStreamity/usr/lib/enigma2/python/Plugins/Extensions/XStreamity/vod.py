@@ -1840,6 +1840,7 @@ class XStreamity_Vod_Categories(Screen):
             # next_url = 6
             # favourite = 7
             # container_extension = 8
+            # year = 9
 
             newfavourite = {
                 "name": self.list2[current_index][1],
@@ -1848,6 +1849,7 @@ class XStreamity_Vod_Categories(Screen):
                 "added": self.list2[current_index][4],
                 "rating": self.list2[current_index][5],
                 "container_extension": self.list2[current_index][8]
+                "year": self.list2[current_index][9]
             }
 
             glob.active_playlist["player_info"]["vodfavourites"].insert(0, newfavourite)

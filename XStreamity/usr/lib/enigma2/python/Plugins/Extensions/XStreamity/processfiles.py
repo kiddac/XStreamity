@@ -93,6 +93,7 @@ def process_files():
         epgalternativeurl = ""
         customsids = False
         fail_count = 0
+        seriesfavourites = []
 
         if not line.startswith("#") and line.startswith("http"):
             line = line.strip(" ")
@@ -172,6 +173,7 @@ def process_files():
                                 "vodrecents": vodrecents,
                                 "vodwatched": vodwatched,
                                 "serieswatched": serieswatched,
+                                "seriesfavourites": seriesfavourites,
                             },
                             "data": {
                                 "live_streams": live_streams,
@@ -235,6 +237,7 @@ def process_files():
                         ("catchupchannelshidden", catchupchannelshidden),
                         ("livefavourites", livefavourites),
                         ("vodfavourites", vodfavourites),
+                        ("seriesfavourites", seriesfavourites),
                         ("liverecents", liverecents),
                         ("vodrecents", vodrecents),
                         ("vodwatched", vodwatched),

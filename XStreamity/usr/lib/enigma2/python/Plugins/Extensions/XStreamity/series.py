@@ -211,7 +211,9 @@ class XStreamity_Series_Categories(Screen):
             "5": self.downloadVideo,
             "0": self.reset,
             "menu": self.showHiddenList,
-            "1": self.clearWatched
+            "1": self.clearWatched,
+            "tv": self.favourite,
+            "stop": self.favourite,
         }, -2)
 
         self["channel_actions"].setEnabled(False)
@@ -317,12 +319,14 @@ class XStreamity_Series_Categories(Screen):
         currentCategoryList = currentPlaylist.get("data", {}).get("series_categories", [])
         currentHidden = set(currentPlaylist.get("player_info", {}).get("serieshidden", []))
 
+        hiddenfavourites = "-1" in currentHidden
         hidden = "0" in currentHidden
 
         i = 0
 
         self.prelist.extend([
-            [i, _("ALL"), "0", hidden]
+            [i, _("FAVOURITES"), "-1", hiddenfavourites],
+            [i + 1, _("ALL"), "0", hidden]
         ])
 
         for index, item in enumerate(currentCategoryList, start=len(self.prelist)):
@@ -336,7 +340,12 @@ class XStreamity_Series_Categories(Screen):
     def getSeries(self):
         # print("*** getSeries ***")
         # print("*** url ***", glob.nextlist[-1]["next_url"])
-        response = self.downloadApiData(glob.nextlist[-1]["next_url"])
+
+        if self.chosen_category == "favourites":
+            response = glob.active_playlist["player_info"].get("seriesfavourites", [])
+        else:
+            response = self.downloadApiData(glob.nextlist[-1]["next_url"])
+
         self.series_info = ""
         index = 0
         self.list2 = []
@@ -441,10 +450,19 @@ class XStreamity_Series_Categories(Screen):
                     except:
                         pass
 
+                favourite = False
+                if "seriesfavourites" in glob.active_playlist["player_info"]:
+                    for fav in glob.active_playlist["player_info"]["seriesfavourites"]:
+                        if str(series_id) == str(fav["series_id"]):
+                            favourite = True
+                            break
+                else:
+                    glob.active_playlist["player_info"]["vodfavourites"] = []
+
                 next_url = "{}&action=get_series_info&series_id={}".format(str(self.player_api), str(series_id))
 
                 # 0 index, 1 name, 2 series_id, 3 cover, 4 plot, 5 cast, 6 director, 7 genre, 8 releaseDate, 9 rating, 10 last_modified, 11 next_url, 12 tmdb, 13 hidden, 14 year, 15 backdrop
-                self.list2.append([index, str(name), str(series_id), str(cover), str(plot), str(cast), str(director), str(genre), str(releaseDate), str(rating), str(last_modified), str(next_url), str(tmdb), hidden, str(year), str(backdrop_path)])
+                self.list2.append([index, str(name), str(series_id), str(cover), str(plot), str(cast), str(director), str(genre), str(releaseDate), str(rating), str(last_modified), str(next_url), str(tmdb), hidden, str(year), str(backdrop_path), favourite])
 
             glob.originalChannelList2 = self.list2[:]
 
@@ -766,7 +784,7 @@ class XStreamity_Series_Categories(Screen):
         # print("*** buildSeries ***")
         if self.list2:
             # 0 index, 1 name, 2 series_id, 3, cover, 4 plot, 5 cast, 6 director, 7 genre, 8 releasedate, 9 last modified, 10 rating, 11 backdrop_path, 12 tmdb, 13 year, 14 next url, 15 hidden
-            self.main_list = [buildSeriesTitlesList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9], x[10], x[11], x[12], x[13], x[14], x[15]) for x in self.list2 if not x[13]]
+            self.main_list = [buildSeriesTitlesList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9], x[10], x[11], x[12], x[13], x[14], x[15], x[16]) for x in self.list2 if not x[13]]
             self["main_list"].setList(self.main_list)
 
             self.showVod()
@@ -1485,6 +1503,9 @@ class XStreamity_Series_Categories(Screen):
             self["key_yellow"].setText(_(glob.nextlist[-1]["sort"]))
             self["key_menu"].setText("+/-")
 
+            if self.chosen_category in ("favourites"):
+                self["key_menu"].setText("")
+
     def downloadCover(self):
         # print("*** downloadCover ***")
         if cfg.channelcovers.value is False:
@@ -2004,6 +2025,9 @@ class XStreamity_Series_Categories(Screen):
                         next_url = "{0}&action=get_series".format(self.player_api)
                         self.chosen_category = "all"
 
+                    elif category_id == "-1":
+                        self.chosen_category = "favourites"
+
                     self.level += 1
                     self["main_list"].setIndex(0)
 
@@ -2135,7 +2159,7 @@ class XStreamity_Series_Categories(Screen):
             if self["main_list"].getCurrent():
                 if self.level == 1:
                     self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "series", self.prelist + self.list1, self.level)
-                elif self.level == 2:
+                elif self.level == 2 and self.chosen_category not in ["favourites"]:
                     self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "series", self.list2, self.level)
                 elif self.level == 3:
                     self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "series", self.list3, self.level)
@@ -2167,6 +2191,83 @@ class XStreamity_Series_Categories(Screen):
 
         with open(playlists_json, "w") as f:
             json.dump(self.playlists_all, f)
+
+        self.buildLists()
+
+    def favourite(self):
+        # print("*** favourite ***")
+        if not self["main_list"].getCurrent() and not self.level == 3 and not self.level == 4:
+            return
+
+        current_index = self["main_list"].getIndex()
+        favExists = False
+        favStream_id = ""
+
+        for fav in glob.active_playlist["player_info"]["seriesfavourites"]:
+            if self["main_list"].getCurrent()[4] == fav["series_id"]:
+                favExists = True
+                favStream_id = fav["series_id"]
+                break
+
+        self.list2[current_index][16] = not self.list2[current_index][16]
+
+        if favExists:
+            glob.active_playlist["player_info"]["seriesfavourites"] = [x for x in glob.active_playlist["player_info"]["seriesfavourites"] if str(x["series_id"]) != str(favStream_id)]
+        else:
+
+            # 1 name,
+            # 2 series_id,
+            # 3 cover,
+            # 4 plot,
+            # 5 cast,
+            # 6 director,
+            # 7 genre,
+            # 8 releaseDate,
+            # 9 rating,
+            # 10 last_modified,
+            # 12 tmdb,
+            # 14 year,
+            # 15 backdrop
+
+            newfavourite = {
+                "name": self.list2[current_index][1],
+                "series_id": self.list2[current_index][2],
+                "cover": self.list2[current_index][3],
+                "plot": self.list2[current_index][4],
+                "cast": self.list2[current_index][5],
+                "director": self.list2[current_index][6],
+                "genre": self.list2[current_index][7],
+                "releaseDate": self.list2[current_index][8],
+                "rating": self.list2[current_index][9],
+                "last_modified": self.list2[current_index][10],
+                "tmdb": self.list2[current_index][12],
+                "year": self.list2[current_index][14],
+                "backdrop": self.list2[current_index][15]
+            }
+
+            glob.active_playlist["player_info"]["seriesfavourites"].insert(0, newfavourite)
+            self.hideVod()
+
+        with open(playlists_json, "r") as f:
+            try:
+                self.playlists_all = json.load(f)
+            except Exception as e:
+                print("Error loading playlists JSON:", e)
+                os.remove(playlists_json)
+
+        if self.playlists_all:
+            for playlists in self.playlists_all:
+                if (playlists["playlist_info"]["domain"] == glob.active_playlist["playlist_info"]["domain"]
+                        and playlists["playlist_info"]["username"] == glob.active_playlist["playlist_info"]["username"]
+                        and playlists["playlist_info"]["password"] == glob.active_playlist["playlist_info"]["password"]):
+                    playlists.update(glob.active_playlist)
+                    break
+
+        with open(playlists_json, "w") as f:
+            json.dump(self.playlists_all, f)
+
+        if self.chosen_category == "favourites":
+            del self.list2[current_index]
 
         self.buildLists()
 
@@ -2288,9 +2389,11 @@ def buildCategoryList(index, title, category_id, hidden):
 # 0 index, 1 title, 2 stream_id, 3 cover, 4 plot, 5 cast, 6 director, 7 genre, 8 releasedate, 9 rating, 10 last_modified, 11 next_url, 12 tmdb_id, 13 hidden, 14 duration, 15 container_extension, 16 shorttitle, 17 episode_num
 
 
-def buildSeriesTitlesList(index, title, series_id, cover, plot, cast, director, genre, releaseDate, rating, lastmodified, next_url, tmdb, hidden, year, backdrop_path):
+def buildSeriesTitlesList(index, title, series_id, cover, plot, cast, director, genre, releaseDate, rating, lastmodified, next_url, tmdb, hidden, year, backdrop_path, favourite):
     png = LoadPixmap(os.path.join(common_path, "more.png"))
-    return (title, png, index, next_url, series_id, cover, plot, cast, director, genre, releaseDate, rating, lastmodified, year, tmdb, backdrop_path, hidden)
+    if favourite:
+        png = LoadPixmap(os.path.join(common_path, "favourite.png"))
+    return (title, png, index, next_url, series_id, cover, plot, cast, director, genre, releaseDate, rating, lastmodified, year, tmdb, backdrop_path, hidden, favourite)
 
 
 def buildSeriesSeasonsList(index, title, series_id, cover, plot, cast, director, genre, airDate, rating, lastmodified, next_url, tmdb, hidden, season_number, backdrop_path):
