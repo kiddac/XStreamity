@@ -1848,7 +1848,7 @@ class XStreamity_Vod_Categories(Screen):
                 "stream_icon": self.list2[current_index][3],
                 "added": self.list2[current_index][4],
                 "rating": self.list2[current_index][5],
-                "container_extension": self.list2[current_index][8]
+                "container_extension": self.list2[current_index][8],
                 "year": self.list2[current_index][9]
             }
 
