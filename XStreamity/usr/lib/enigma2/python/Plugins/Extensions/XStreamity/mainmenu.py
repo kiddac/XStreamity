@@ -76,6 +76,7 @@ class XStreamity_MainMenu(Screen):
             glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
             glob.newPlayingServiceRefString = glob.newPlayingServiceRef.toString()
 
+        self.onShow.append(self.createSetup)
         self.onFirstExecBegin.append(self.check_dependencies)
         self.onLayoutFinish.append(self.__layoutFinished)
 
