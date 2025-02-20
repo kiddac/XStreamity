@@ -3,26 +3,9 @@
 
 from __future__ import division
 
-from . import _
-from . import xstreamity_globals as glob
-from .plugin import skin_directory, cfg, common_path, version, hasConcurrent, hasMultiprocessing
-
-from .xStaticText import StaticText
-from . import checkinternet
-
-from Components.ActionMap import ActionMap
-from Components.Pixmap import Pixmap
-from Components.Sources.List import List
-from datetime import datetime
-from enigma import eTimer
-
-from Screens.MessageBox import MessageBox
-from Screens.Screen import Screen
-from Tools.LoadPixmap import LoadPixmap
-
+# Standard library imports
 import json
 import os
-import requests
 import base64
 import zlib
 import random
@@ -39,6 +22,28 @@ try:
 except ImportError:
     from httplib import HTTPConnection
     HTTPConnection.debuglevel = 0
+
+# Third-party imports
+import requests
+
+# Enigma2 components
+from Components.ActionMap import ActionMap
+from Components.Pixmap import Pixmap
+from Components.Sources.List import List
+from datetime import datetime
+from enigma import eTimer
+
+from Screens.MessageBox import MessageBox
+from Screens.Screen import Screen
+from Tools.LoadPixmap import LoadPixmap
+
+# Local application/library-specific imports
+from . import _
+from . import checkinternet
+from . import xstreamity_globals as glob
+from .plugin import skin_directory, cfg, common_path, version, hasConcurrent, hasMultiprocessing
+from .xStaticText import StaticText
+
 
 epgimporter = os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/EPGImport")
 
@@ -121,6 +126,7 @@ class XStreamity_Scanner(Screen):
     def start(self):
         cfg.playlist_file.setValue(scanner_playlist_file)
         cfg.playlists_json.setValue(scanner_playlists_json)
+        cfg.save()
 
         self.checkinternet = checkinternet.check_internet()
         if not self.checkinternet:
@@ -520,6 +526,8 @@ class XStreamity_Scanner(Screen):
 
         cfg.playlist_file.setValue(original_playlist_file)
         cfg.playlists_json.setValue(original_playlists_json)
+        glob.current_selection = 0
+        cfg.save()
 
         self.close()
 

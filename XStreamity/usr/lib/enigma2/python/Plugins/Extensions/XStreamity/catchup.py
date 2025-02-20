@@ -134,7 +134,6 @@ class XStreamity_Catchup_Categories(Screen):
     def __init__(self, session):
         Screen.__init__(self, session)
         self.session = session
-        glob.categoryname = "catchup"
 
         self.skin_path = os.path.join(skin_directory, cfg.skin.value)
         skin = os.path.join(self.skin_path, "live_categories.xml")
@@ -276,7 +275,7 @@ class XStreamity_Catchup_Categories(Screen):
         else:
             self.buildList2()
 
-        self.buttons()
+        self.resetButtons()
         self.selectionChanged()
 
     def getCategories(self):
@@ -335,45 +334,50 @@ class XStreamity_Catchup_Categories(Screen):
         if response:
             catchup_hidden_channels = set(glob.active_playlist["player_info"]["catchupchannelshidden"])
 
-            for item in response:
-                if item.get("tv_archive") == 1 and item.get("tv_archive_duration") != "0" and item.get("tv_archive_duration") != 0:
-                    name = str(item.get("name", ""))
+            for index, channel in enumerate(response):
 
-                    if not name or name == "None":
-                        continue
+                if channel.get("tv_archive") == 0 or channel.get("tv_archive") == "0" or channel.get("tv_archive_duration") == "0" or channel.get("tv_archive_duration") == 0:
+                    continue
 
-                    stream_id = item.get("stream_id", "")
-                    if not stream_id:
-                        continue
+                name = str(channel.get("name", ""))
 
-                    stream_icon = str(item.get("stream_icon", ""))
+                if not name or name == "None":
+                    continue
 
-                    if stream_icon and stream_icon.startswith("http"):
-                        if stream_icon.startswith("https://vignette.wikia.nocookie.net/tvfanon6528"):
-                            if "scale-to-width-down" not in stream_icon:
-                                stream_icon = str(stream_icon) + "/revision/latest/scale-to-width-down/220"
-                    else:
-                        stream_icon = ""
+                if name and '\" ' in name:
+                    parts = name.split('\" ', 1)
+                    if len(parts) > 1:
+                        name = parts[0]
 
-                    epg_channel_id = str(item.get("epg_channel_id", ""))
-                    if epg_channel_id and "&" in epg_channel_id:
-                        epg_channel_id = epg_channel_id.replace("&", "&amp;")
+                stream_id = channel.get("stream_id", "")
+                if not stream_id:
+                    continue
 
-                    added = str(item.get("added", "0"))
-                    hidden = str(stream_id) in catchup_hidden_channels
+                hidden = str(stream_id) in catchup_hidden_channels
 
-                    if stream_id:
-                        next_url = "{}/live/{}/{}/{}.{}".format(self.host, self.username, self.password, stream_id, self.output)
-                        self.list2.append([
-                            index, str(name), str(stream_id), str(stream_icon), str(epg_channel_id), str(added),
-                            str(next_url), "", "", "", "", "", "", hidden
-                        ])
-                        index += 1
+                stream_icon = str(channel.get("stream_icon", ""))
 
-            glob.originalChannelList2 = self.list2[:]
+                if stream_icon and stream_icon.startswith("http"):
+                    if stream_icon.startswith("https://vignette.wikia.nocookie.net/tvfanon6528"):
+                        if "scale-to-width-down" not in stream_icon:
+                            stream_icon = str(stream_icon) + "/revision/latest/scale-to-width-down/220"
+                else:
+                    stream_icon = ""
+
+                epg_channel_id = str(channel.get("epg_channel_id", ""))
+                if epg_channel_id and "&" in epg_channel_id:
+                    epg_channel_id = epg_channel_id.replace("&", "&amp;")
+
+                added = str(channel.get("added", "0"))
+
+                next_url = "{}/live/{}/{}/{}.{}".format(self.host, self.username, self.password, stream_id, self.output)
+
+                self.list2.append([index, str(name), str(stream_id), str(stream_icon), str(epg_channel_id), str(added), str(next_url), "", "", "", "", "", "", hidden])
+
+        glob.originalChannelList2 = self.list2[:]
 
     def downloadApiData(self, url):
-        retries = Retry(total=3, backoff_factor=1)
+        retries = Retry(total=2, backoff_factor=1)
         adapter = HTTPAdapter(max_retries=retries)
 
         with requests.Session() as http:
@@ -410,17 +414,14 @@ class XStreamity_Catchup_Categories(Screen):
             self["main_list"].setIndex(glob.nextlist[-1]["index"])
 
     def buildList2(self):
-        self.main_list = [
-            buildCatchupStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[13])
-            for x in self.list2 if not x[13]
-        ]
+        self.main_list = [buildCatchupStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[13]) for x in self.list2 if not x[13]]
         self["main_list"].setList(self.main_list)
         self["picon"].show()
 
         if self["main_list"].getCurrent() and glob.nextlist[-1]["index"] != 0:
             self["main_list"].setIndex(glob.nextlist[-1]["index"])
 
-    def buttons(self):
+    def resetButtons(self):
         if glob.nextlist[-1]["filter"]:
             self["key_yellow"].setText("")
             self["key_blue"].setText(_("Reset Search"))
@@ -614,8 +615,6 @@ class XStreamity_Catchup_Categories(Screen):
         self.selectionChanged()
 
     def sort(self):
-        # print("*** sort ***")
-
         current_sort = self["key_yellow"].getText()
         if not current_sort or current_sort == _("Reverse"):
             return
@@ -777,15 +776,16 @@ class XStreamity_Catchup_Categories(Screen):
                 if self.list2:
                     if self.selectedlist == self["main_list"]:
                         self.catchupEPG()
-                        self.buttons()
+                        self.resetButtons()
                     else:
                         self.playCatchup()
                 else:
                     self.createSetup()
 
     def setIndex(self, data=None):
-        self["main_list"].setIndex(glob.currentchannellistindex)
-        self.createSetup()
+        if self["main_list"].getCurrent():
+            self["main_list"].setIndex(glob.currentchannellistindex)
+            self.createSetup()
 
     def back(self, data=None):
         self.hideEPG()
@@ -797,7 +797,7 @@ class XStreamity_Catchup_Categories(Screen):
             main_instance = self["main_list"].master.master.instance
             main_instance.setSelectionEnable(1)
             self.selectedlist = self["main_list"]
-            self.buttons()
+            self.resetButtons()
         else:
             del glob.nextlist[-1]
 
@@ -805,6 +805,8 @@ class XStreamity_Catchup_Categories(Screen):
                 self.stopStream()
                 self.close()
             else:
+                self["x_title"].setText("")
+                self["x_description"].setText("")
                 self.stopStream()
                 self.level -= 1
                 self.createSetup()
@@ -823,6 +825,7 @@ class XStreamity_Catchup_Categories(Screen):
         self["epg_bg"].hide()
         self["x_title"].setText("")
         self["x_description"].setText("")
+        self["progress"].hide()
 
     def showEPG(self):
         self["picon"].show()

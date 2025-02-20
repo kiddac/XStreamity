@@ -1,24 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from . import _
-from . import xstreamity_globals as glob
-from .plugin import skin_directory, common_path, playlists_json, hasConcurrent, hasMultiprocessing, cfg
-from .xStaticText import StaticText
-
-from Components.ActionMap import ActionMap
-from Components.Pixmap import Pixmap
-from Components.Sources.List import List
-from enigma import eTimer
-from requests.adapters import HTTPAdapter, Retry
-from Screens.MessageBox import MessageBox
-from Screens.Screen import Screen
-
-from Tools.LoadPixmap import LoadPixmap
-
+# Standard library imports
 import os
 import json
-import requests
+
 import time
 
 try:
@@ -28,10 +14,32 @@ except:
     from httplib import HTTPConnection
     HTTPConnection.debuglevel = 0
 
+# Third-party imports
+import requests
+
+# Enigma2 components
+from Components.ActionMap import ActionMap
+from Components.Pixmap import Pixmap
+from Components.Sources.List import List
+from enigma import eTimer
+from requests.adapters import HTTPAdapter, Retry
+from Screens.MessageBox import MessageBox
+from Screens.Screen import Screen
+from Tools.LoadPixmap import LoadPixmap
+
+# Local application/library-specific imports
+from . import _
+from . import xstreamity_globals as glob
+from .plugin import skin_directory, common_path, hasConcurrent, hasMultiprocessing, cfg
+from .xStaticText import StaticText
+
+
 hdr = {
     'User-Agent': str(cfg.useragent.value),
     'Accept-Encoding': 'gzip, deflate'
 }
+
+playlists_json = cfg.playlists_json.value
 
 
 class XStreamity_Menu(Screen):
@@ -50,7 +58,7 @@ class XStreamity_Menu(Screen):
         self.drawList = []
         self["list"] = List(self.drawList, enableWrapAround=True)
 
-        self.setup_title = str(glob.active_playlist["playlist_info"]["name"])
+        self.setup_title = _("Playlist Menu") + " - " + str(glob.active_playlist["playlist_info"]["name"])
 
         self["key_red"] = StaticText(_("Back"))
         self["key_green"] = StaticText(_("OK"))

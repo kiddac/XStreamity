@@ -56,7 +56,7 @@ from enigma import eEPGCache, eServiceReference, eTimer
 from . import _
 from . import liveplayer
 from . import xstreamity_globals as glob
-from .plugin import cfg, common_path, dir_tmp, playlists_json, pythonVer, screenwidth, skin_directory
+from .plugin import cfg, common_path, dir_tmp, pythonVer, screenwidth, skin_directory
 from .xStaticText import StaticText
 
 # HTTPS twisted client hack
@@ -77,6 +77,8 @@ if sslverify:
             if self.hostname:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
+
+playlists_json = cfg.playlists_json.value
 
 
 # png hack
@@ -156,7 +158,7 @@ class XStreamity_Live_Categories(Screen):
         self.main_title = _("Live TV")
 
         self["main_title"] = StaticText(self.main_title)
-        self.main_list = []  # displayed list
+        self.main_list = []
         self["main_list"] = List(self.main_list, enableWrapAround=True)
 
         self["x_title"] = StaticText()
@@ -188,10 +190,6 @@ class XStreamity_Live_Categories(Screen):
         self["page"] = StaticText("")
         self["listposition"] = StaticText("")
         self.itemsperpage = 10
-
-        # self.lastviewed_url = ""
-        # self.lastviewed_id = ""
-        # self.lastviewed_index = 0
 
         self.searchString = ""
         self.filterresult = ""
@@ -330,7 +328,7 @@ class XStreamity_Live_Categories(Screen):
         else:
             self.buildList2()
 
-        self.buttons()
+        self.resetButtons()
         self.selectionChanged()
 
     def getCategories(self):
@@ -479,14 +477,14 @@ class XStreamity_Live_Categories(Screen):
 
     def downloadApiData(self, url):
         # print("*** downloadApiData ***")
-        try:
-            retries = Retry(total=3, backoff_factor=1)
-            adapter = HTTPAdapter(max_retries=retries)
+        retries = Retry(total=2, backoff_factor=1)
+        adapter = HTTPAdapter(max_retries=retries)
 
-            with requests.Session() as http:  # Use 'with' to ensure the session is closed
-                http.mount("http://", adapter)
-                http.mount("https://", adapter)
+        with requests.Session() as http:
+            http.mount("http://", adapter)
+            http.mount("https://", adapter)
 
+            try:
                 response = http.get(url, headers=hdr, timeout=(10, 30), verify=False)
                 response.raise_for_status()
 
@@ -496,10 +494,9 @@ class XStreamity_Live_Categories(Screen):
                     except ValueError:
                         print("JSON decoding failed.")
                         return None
-        except Exception as e:
-            print("Error occurred during API data download:", e)
-
-        self.session.openWithCallback(self.back, MessageBox, _("Server error or invalid link."), MessageBox.TYPE_ERROR, timeout=3)
+            except Exception as e:
+                print("Error occurred during API data download:", e)
+                self.session.openWithCallback(self.back, MessageBox, _("Server error or invalid link."), MessageBox.TYPE_ERROR, timeout=3)
 
     def xmltvCheckData(self):
         # print("*** xmltvCheckData ***")
@@ -565,7 +562,7 @@ class XStreamity_Live_Categories(Screen):
         if self["main_list"].getCurrent() and glob.nextlist[-1]["index"] != 0:
             self["main_list"].setIndex(glob.nextlist[-1]["index"])
 
-    def buttons(self):
+    def resetButtons(self):
         # print("*** buttons ***")
         if glob.nextlist[-1]["filter"]:
             self["key_yellow"].setText("")
@@ -621,7 +618,6 @@ class XStreamity_Live_Categories(Screen):
             self.loadBlankImage()
 
             if self.level == 2:
-
                 if not self.showingshortEPG:
                     self["epg_list"].setIndex(current_index)
 
@@ -630,6 +626,7 @@ class XStreamity_Live_Categories(Screen):
                         self.addEPG()
                     else:
                         self.refreshEPGInfo()
+
                     self.timerimage = eTimer()
                     try:
                         self.timerimage.stop()
@@ -1077,6 +1074,7 @@ class XStreamity_Live_Categories(Screen):
 
     def back(self, data=None):
         # print("*** back ***")
+
         if self.selectedlist == self["epg_short_list"]:
             self.shortEPG()
             return
@@ -1092,16 +1090,10 @@ class XStreamity_Live_Categories(Screen):
             self.stopStream()
             self.close()
         else:
-            # self.lastviewed_url = ""
-            # self.lastviewed_id = ""
-            # self.lastviewed_index = 0
-
             self["x_title"].setText("")
             self["x_description"].setText("")
-
             if cfg.stopstream.value or not cfg.livepreview.value:
                 self.stopStream()
-
             self.level -= 1
 
             self["category_actions"].setEnabled(True)
@@ -1113,7 +1105,7 @@ class XStreamity_Live_Categories(Screen):
         if self["key_menu"].getText() and self["main_list"].getCurrent():
             from . import hidden
             current_list = self.prelist + self.list1 if self.level == 1 else self.list2
-            if self.level == 1 or (self.level == 2 and self.chosen_category not in ["favourites", "recents"]):
+            if self.level == 1 or (self.level == 2 and self.chosen_category != "favourites" and self.chosen_category != "recents"):
                 self.xmltvdownloaded = False
                 self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "live", current_list, self.level)
 

@@ -1,12 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from . import _
-from . import xstreamity_globals as glob
-from . import processfiles as loadfiles
-from .plugin import skin_directory, common_path, version, downloads_json, playlists_json, cfg
-from .xStaticText import StaticText
+# Standard library imports
+import json
+import os
+import sys
+import datetime
 
+# Enigma2 components
 from Components.ActionMap import ActionMap
 from Components.Sources.List import List
 from enigma import eServiceReference
@@ -16,10 +17,15 @@ from Screens.Screen import Screen
 from Tools.LoadPixmap import LoadPixmap
 from Components.config import configfile
 
-import json
-import os
-import sys
-import datetime
+# Local application/library-specific imports
+from . import _
+from . import xstreamity_globals as glob
+from . import processfiles as loadfiles
+from .plugin import skin_directory, common_path, version, downloads_json, cfg
+from .xStaticText import StaticText
+
+
+playlists_json = cfg.playlists_json.value
 
 
 class XStreamity_MainMenu(Screen):

@@ -4,6 +4,7 @@
 from __future__ import absolute_import, print_function
 from __future__ import division
 
+# Standard library imports
 import base64
 import json
 import os
@@ -12,41 +13,10 @@ import time
 from datetime import datetime, timedelta
 from itertools import cycle, islice
 
-from PIL import Image, ImageFile, PngImagePlugin
-from . import _
-from . import xstreamity_globals as glob
-from .plugin import cfg, common_path, dir_tmp, playlists_json, pythonVer, screenwidth, skin_directory
-from .xStaticText import StaticText
-
-from Components.ActionMap import ActionMap
-from Components.Label import Label
-from Components.ProgressBar import ProgressBar
-from Components.Pixmap import MultiPixmap, Pixmap
-from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
-from Components.config import ConfigClock, ConfigText, NoSave
-from enigma import eTimer, eServiceReference, iPlayableService, eEPGCache
-from RecordTimer import RecordTimerEntry
-
-
-from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection, InfoBarSummarySupport, InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport
-
-
-from Screens.MessageBox import MessageBox
-from Screens.Screen import Screen
-from ServiceReference import ServiceReference
-from Tools.BoundFunction import boundFunction
-
-from twisted.web.client import downloadPage
-
 try:
     from urlparse import urlparse
 except ImportError:
     from urllib.parse import urlparse
-
-try:
-    from enigma import eAVSwitch
-except Exception:
-    from enigma import eAVControl as eAVSwitch
 
 try:
     from http.client import HTTPConnection
@@ -55,9 +25,56 @@ except ImportError:
     from httplib import HTTPConnection
     HTTPConnection.debuglevel = 0
 
-
+# Third-party imports
+from PIL import Image, ImageFile, PngImagePlugin
 import requests
 from requests.adapters import HTTPAdapter, Retry
+from twisted.web.client import downloadPage
+
+# https twisted client hack #
+try:
+    from twisted.internet import ssl
+    from twisted.internet._sslverify import ClientTLSOptions
+    sslverify = True
+except:
+    sslverify = False
+
+if sslverify:
+    class SNIFactory(ssl.ClientContextFactory):
+        def __init__(self, hostname=None):
+            self.hostname = hostname
+
+        def getContext(self):
+            ctx = self._contextFactory(self.method)
+            if self.hostname:
+                ClientTLSOptions(self.hostname, ctx)
+            return ctx
+
+# Enigma2 components
+from Components.ActionMap import ActionMap
+from Components.Label import Label
+from Components.ProgressBar import ProgressBar
+from Components.Pixmap import MultiPixmap, Pixmap
+from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
+from Components.config import ConfigClock, ConfigText, NoSave
+from enigma import eTimer, eServiceReference, iPlayableService, eEPGCache
+from RecordTimer import RecordTimerEntry
+from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection, InfoBarSummarySupport, InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport
+from Screens.MessageBox import MessageBox
+from Screens.Screen import Screen
+from ServiceReference import ServiceReference
+from Tools.BoundFunction import boundFunction
+
+try:
+    from enigma import eAVSwitch
+except Exception:
+    from enigma import eAVControl as eAVSwitch
+
+# Local application/library-specific imports
+from . import _
+from . import xstreamity_globals as glob
+from .plugin import cfg, common_path, dir_tmp, pythonVer, screenwidth, skin_directory
+from .xStaticText import StaticText
 
 if cfg.subs.value is True:
     try:
@@ -79,24 +96,7 @@ else:
         def __init__(self, *args, **kwargs):
             pass
 
-# https twisted client hack #
-try:
-    from twisted.internet import ssl
-    from twisted.internet._sslverify import ClientTLSOptions
-    sslverify = True
-except:
-    sslverify = False
-
-if sslverify:
-    class SNIFactory(ssl.ClientContextFactory):
-        def __init__(self, hostname=None):
-            self.hostname = hostname
-
-        def getContext(self):
-            ctx = self._contextFactory(self.method)
-            if self.hostname:
-                ClientTLSOptions(self.hostname, ctx)
-            return ctx
+playlists_json = cfg.playlists_json.value
 
 
 # png hack
@@ -184,12 +184,6 @@ def clear_caches():
         pass
 
 
-hdr = {
-    'User-Agent': str(cfg.useragent.value),
-    'Accept-Encoding': 'gzip, deflate'
-}
-
-
 class IPTVInfoBarShowHide():
     STATE_HIDDEN = 0
     STATE_HIDING = 1
@@ -199,15 +193,6 @@ class IPTVInfoBarShowHide():
     skipToggleShow = False
 
     def __init__(self):
-        """
-        self["ShowHideActions"] = ActionMap(["InfobarShowHideActions", "OKCancelActions"], {
-            "ok": self.OkPressed,
-            "toggleShow": self.OkPressed,
-            "cancel": self.hide,
-            "hide": self.hide,
-        }, 1)
-        """
-
         self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
             iPlayableService.evStart: self.serviceStarted,
         })
@@ -374,6 +359,11 @@ class IPTVInfoBarPVRState:
 
 
 skin_path = os.path.join(skin_directory, cfg.skin.value)
+
+hdr = {
+    'User-Agent': str(cfg.useragent.value),
+    'Accept-Encoding': 'gzip, deflate'
+}
 
 
 class XStreamity_StreamPlayer(

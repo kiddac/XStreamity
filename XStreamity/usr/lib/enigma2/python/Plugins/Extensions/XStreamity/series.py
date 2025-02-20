@@ -57,7 +57,7 @@ from enigma import ePicLoad, eServiceReference, eTimer
 from . import _
 from . import vodplayer
 from . import xstreamity_globals as glob
-from .plugin import (cfg, common_path, dir_tmp, downloads_json, playlists_json, pythonVer, screenwidth, skin_directory, debugs)
+from .plugin import (cfg, common_path, dir_tmp, downloads_json, pythonVer, screenwidth, skin_directory, debugs)
 from .xStaticText import StaticText
 
 hdr = {
@@ -65,12 +65,16 @@ hdr = {
     'Accept-Encoding': 'gzip, deflate'
 }
 
+playlists_json = cfg.playlists_json.value
+
 
 class XStreamity_Series_Categories(Screen):
     ALLOW_SUSPEND = True
 
     def __init__(self, session):
-        # print("*** init ***")
+        if debugs:
+            print("*** init ***")
+
         Screen.__init__(self, session)
         self.session = session
         glob.categoryname = "series"
@@ -130,9 +134,7 @@ class XStreamity_Series_Categories(Screen):
         self.chosen_category = ""
 
         self.pin = False
-        self.tmdbresults = ""
-
-        # self.tmdbfailedcount = 0
+        self.tmdbresults = {}
 
         self.storedtitle = ""
         self.storedseason = ""
@@ -270,7 +272,9 @@ class XStreamity_Series_Categories(Screen):
         self.selectionChanged()
 
     def createSetup(self, data=None):
-        # print("*** createSetup ***")
+        if debugs:
+            print("*** createSetup ***")
+
         self["x_title"].setText("")
         self["x_description"].setText("")
 
@@ -312,7 +316,9 @@ class XStreamity_Series_Categories(Screen):
             self.back()
 
     def getCategories(self):
-        # print("*** getCategories **")
+        if debugs:
+            print("*** getCategories **")
+
         index = 0
         self.list1 = []
         self.prelist = []
@@ -341,8 +347,8 @@ class XStreamity_Series_Categories(Screen):
         glob.originalChannelList1 = self.list1[:]
 
     def getSeries(self):
-        # print("*** getSeries ***")
-        # print("*** url ***", glob.nextlist[-1]["next_url"])
+        if debugs:
+            print("*** getSeries ***")
 
         if self.chosen_category == "favourites":
             response = glob.active_playlist["player_info"].get("seriesfavourites", [])
@@ -476,8 +482,9 @@ class XStreamity_Series_Categories(Screen):
                 self.session.open(MessageBox, _("No Favourites added."), type=MessageBox.TYPE_ERROR, timeout=5)
 
     def getSeasons(self):
-        # print("**** getSeasons ****")
-        # print("*** url ***", glob.nextlist[-1]["next_url"])
+        if debugs:
+            print("**** getSeasons ****")
+
         if not self.series_info:
             response = self.downloadApiData(glob.nextlist[-1]["next_url"])
             self.series_info = response
@@ -611,8 +618,9 @@ class XStreamity_Series_Categories(Screen):
             glob.originalChannelList3 = self.list3[:]
 
     def getEpisodes(self):
-        # print("**** getEpisodes ****")
-        # print("*** url ***", glob.nextlist[-1]["next_url"])
+        if debugs:
+            print("**** getEpisodes ****")
+
         response = self.series_info
         index = 0
         self.list4 = []
@@ -754,7 +762,9 @@ class XStreamity_Series_Categories(Screen):
             glob.originalChannelList4 = self.list4[:]
 
     def downloadApiData(self, url):
-        # print("*** downloadapidata ***", url)
+        if debugs:
+            print("*** downloadApiData ***", url)
+
         retries = Retry(total=2, backoff_factor=1)
         adapter = HTTPAdapter(max_retries=retries)
 
@@ -848,7 +858,6 @@ class XStreamity_Series_Categories(Screen):
                     self.getTMDB()
 
             else:
-                # self.tmdbresults = ""
                 self.displayTMDB()
 
     def selectionChanged(self):
@@ -998,7 +1007,8 @@ class XStreamity_Series_Categories(Screen):
         return str(searchtitle)
 
     def getTMDB(self):
-        # print("**** getTMDB ***")
+        if debugs:
+            print("**** getTMDB ***")
 
         current_item = self["main_list"].getCurrent()
 
@@ -1064,14 +1074,18 @@ class XStreamity_Series_Categories(Screen):
                 print("download TMDB error {}".format(e))
 
     def failed(self, data=None):
-        # print("*** failed ***")
+        if debugs:
+            print("*** failed ***")
+
         if data:
             print(data)
             self.tmdbValid = False
             self.getTMDB()
 
     def processTMDB(self, result=None):
-        # print("*** processTMDB ***")
+        if debugs:
+            print("*** processTMDB ***")
+
         resultid = ""
         search_file_path = os.path.join(dir_tmp, "search.txt")
         try:
@@ -1085,20 +1099,17 @@ class XStreamity_Series_Categories(Screen):
                     self.tmdb2 = resultid
 
                     if not resultid:
-                        # self.tmdbresults = ""
                         self.displayTMDB()
                         return
 
                     self.getTMDBDetails(resultid)
                 else:
-                    # self.tmdbValid = False
                     self.storedyear = ""
                     self.tmdbretry += 1
                     if self.tmdbretry < 2:
                         self.getTMDB()
                     else:
                         self.tmdbretry = 0
-                        # self.tmdbresults = ""
                         self.displayTMDB()
                         return
 
@@ -1106,7 +1117,9 @@ class XStreamity_Series_Categories(Screen):
             print("Error processing TMDB response:", e)
 
     def getTMDBDetails(self, resultid=None):
-        # print(" *** getTMDBDetails ***")
+        if debugs:
+            print(" *** getTMDBDetails ***")
+
         detailsurl = ""
 
         try:
@@ -1142,15 +1155,15 @@ class XStreamity_Series_Categories(Screen):
 
         filepath = os.path.join(dir_tmp, "search.txt")
 
-        # print("*** getTMDBDetails detailurl ***", detailsurl)
-
         try:
             downloadPage(detailsurl, filepath, timeout=10).addCallback(self.processTMDBDetails).addErrback(self.failed2)
         except Exception as e:
             print("download TMDB details error:", e)
 
     def failed2(self, data=None):
-        # print("*** failed 2 ***")
+        if debugs:
+            print("*** failed 2 ***")
+
         if data:
             print(data)
             if self.level == 2:
@@ -1160,12 +1173,13 @@ class XStreamity_Series_Categories(Screen):
                     self.repeatcount += 1
 
             else:
-                # self.tmdbresults = ""
                 self.displayTMDB()
                 return
 
     def processTMDBDetails(self, result=None):
-        # print("*** processTMDBDetails ***")
+        if debugs:
+            print("*** processTMDBDetails ***")
+
         self.repeatcount = 0
         response = ""
 
@@ -1332,10 +1346,9 @@ class XStreamity_Series_Categories(Screen):
                     self.displayTMDB()
 
     def displayTMDB(self):
-        # print("*** displayTMDB ***")
+        if debugs:
+            print("*** displayTMDB ***")
 
-        # title = ""
-        # description = ""
         director = ""
         cast = ""
         facts = []
@@ -1541,11 +1554,13 @@ class XStreamity_Series_Categories(Screen):
             self["key_yellow"].setText(_(glob.nextlist[-1]["sort"]))
             self["key_menu"].setText("+/-")
 
-            if self.chosen_category in ("favourites"):
+            if self.chosen_category == "favourites":
                 self["key_menu"].setText("")
 
     def downloadCover(self):
-        # print("*** downloadCover ***")
+        if debugs:
+            print("*** downloadCover ***")
+
         if cfg.channelcovers.value is False:
             return
 
@@ -1576,7 +1591,9 @@ class XStreamity_Series_Categories(Screen):
                 self.loadDefaultCover()
 
     def downloadLogo(self):
-        # print("*** downloadLogo ***")
+        if debugs:
+            print("*** downloadLogo ***")
+
         if cfg.channelcovers.value is False:
             return
 
@@ -1604,7 +1621,9 @@ class XStreamity_Series_Categories(Screen):
                 self.loadDefaultLogo()
 
     def downloadBackdrop(self):
-        # print("*** downloadBackdrop ***")
+        if debugs:
+            print("*** downloadBackdrop ***")
+
         if cfg.channelcovers.value is False:
             return
 
@@ -1647,6 +1666,9 @@ class XStreamity_Series_Categories(Screen):
                 self.loadDefaultBackdrop()
 
     def downloadCoverFromUrl(self, url):
+        if debugs:
+            print("*** downloadCoverFromUrl ***")
+
         self.cover_download_deferred = self.agent.request(
             b'GET',
             url.encode(),
@@ -1656,7 +1678,9 @@ class XStreamity_Series_Categories(Screen):
         self.cover_download_deferred.addErrback(self.handleCoverError)
 
     def handleCoverResponse(self, response):
-        # print("*** handlecoverresponse ***")
+        if debugs:
+            print("*** handleCoverResponse ***")
+
         if response.code == 200:
             d = readBody(response)
             d.addCallback(self.handleCoverBody)
@@ -1670,72 +1694,93 @@ class XStreamity_Series_Categories(Screen):
             self.handleCoverError("HTTP error code: %s" % response.code)
 
     def handleLogoResponse(self, response):
-        # print("*** handlelogoresponse ***")
+        if debugs:
+            print("*** handleLogoResponse ***")
+
         if response.code == 200:
             d = readBody(response)
             d.addCallback(self.handleLogoBody)
             return d
 
     def handleBackdropResponse(self, response):
-        # print("*** handlebackdropresponse ***")
+        if debugs:
+            print("*** handleBackdropResponse ***")
+
         if response.code == 200:
             d = readBody(response)
             d.addCallback(self.handleBackdropBody)
             return d
 
     def handleCoverBody(self, body):
-        # print("*** handlecoverbody ***")
+        if debugs:
+            print("*** handleCoverBody ***")
+
         temp = os.path.join(dir_tmp, "cover.jpg")
         with open(temp, 'wb') as f:
             f.write(body)
         self.resizeCover(temp)
 
     def handleLogoBody(self, body):
-        # print("*** handlelogobody ***")
+        if debugs:
+            print("***  handleLogoBody ***")
         temp = os.path.join(dir_tmp, "logo.png")
         with open(temp, 'wb') as f:
             f.write(body)
         self.resizeLogo(temp)
 
     def handleBackdropBody(self, body):
-        # print("*** handlebackdropbody ***")
+        if debugs:
+            print("*** handleBackdropBody ***")
         temp = os.path.join(dir_tmp, "backdrop.jpg")
         with open(temp, 'wb') as f:
             f.write(body)
         self.resizeBackdrop(temp)
 
     def handleCoverError(self, error):
-        # print("*** handle error ***")
+        if debugs:
+            print("*** handleCoverError ***")
+
         print(error)
         self.loadDefaultCover()
 
     def handleLogoError(self, error):
-        # print("*** handle error ***")
+        if debugs:
+            print("*** handleLogoError ***")
+
         print(error)
         self.loadDefaultLogo()
 
     def handleBackdropError(self, error):
-        # print("*** handle error ***")
+        if debugs:
+            print("*** handleBackdropError ***")
+
         print(error)
         self.loadDefaultBackdrop()
 
     def loadDefaultCover(self, data=None):
-        # print("*** loadDefaultCover ***")
+        if debugs:
+            print("*** loadDefaultCover ***")
+
         if self["vod_cover"].instance:
             self["vod_cover"].instance.setPixmapFromFile(os.path.join(skin_directory, "common/blank.png"))
 
     def loadDefaultLogo(self, data=None):
-        # print("*** loadDefaultLogo ***")
+        if debugs:
+            print("*** loadDefaultLogo ***")
+
         if self["vod_logo"].instance:
             self["vod_logo"].instance.setPixmapFromFile(os.path.join(skin_directory, "common/blank.png"))
 
     def loadDefaultBackdrop(self, data=None):
-        # print("*** loadDefaultBackdrop ***")
+        if debugs:
+            print("*** loadDefaultBackdrop ***")
+
         if self["vod_backdrop"].instance:
             self["vod_backdrop"].instance.setPixmapFromFile(os.path.join(skin_directory, "common/blank.png"))
 
     def resizeCover(self, data=None):
-        # print("*** resizeCover ***")
+        if debugs:
+            print("*** resizeCover ***")
         if self["main_list"].getCurrent() and self["vod_cover"].instance:
             preview = os.path.join(dir_tmp, "cover.jpg")
             if os.path.isfile(preview):
@@ -1746,7 +1791,9 @@ class XStreamity_Series_Categories(Screen):
                     print(e)
 
     def resizeLogo(self, data=None):
-        # print("*** resizeLogo ***")
+        if debugs:
+            print("*** resizeLogo ***")
+
         if self["main_list"].getCurrent() and self["vod_logo"].instance:
             preview = os.path.join(dir_tmp, "logo.png")
             if os.path.isfile(preview):
@@ -1780,7 +1827,9 @@ class XStreamity_Series_Categories(Screen):
                     self["vod_logo"].hide()
 
     def resizeBackdrop(self, data=None):
-        # print("*** resizeBackdrop ***")
+        if debugs:
+            print("*** resizeBackdrop ***")
+
         if not (self["main_list"].getCurrent() and self["vod_backdrop"].instance):
             return
 
@@ -1822,7 +1871,9 @@ class XStreamity_Series_Categories(Screen):
             self["vod_backdrop"].hide()
 
     def DecodeCover(self, PicInfo=None):
-        # print("*** decodecover ***")
+        if debugs:
+            print("*** DecodeCover ***")
+
         ptr = self.coverLoad.getData()
         if ptr is not None and self.level != 1:
             self["vod_cover"].instance.setPixmap(ptr)
@@ -1831,7 +1882,9 @@ class XStreamity_Series_Categories(Screen):
             self["vod_cover"].hide()
 
     def DecodeLogo(self, PicInfo=None):
-        # print("*** decodelogo ***")
+        if debugs:
+            print("*** DecodeLogo ***")
+
         ptr = self.logoLoad.getData()
         if ptr is not None and self.level != 2:
             self["vod_logo"].instance.setPixmap(ptr)
@@ -1840,7 +1893,9 @@ class XStreamity_Series_Categories(Screen):
             self["vod_logo"].hide()
 
     def DecodeBackdrop(self, PicInfo=None):
-        # print("*** decodebackdrop ***")
+        if debugs:
+            print("*** DecodeBackdrop ***")
+
         ptr = self.backdropLoad.getData()
         if ptr is not None and self.level != 2:
             self["vod_backdrop"].instance.setPixmap(ptr)
@@ -1849,6 +1904,9 @@ class XStreamity_Series_Categories(Screen):
             self["vod_backdrop"].hide()
 
     def sort(self):
+        if debugs:
+            print("*** sort ***")
+
         current_sort = self["key_yellow"].getText()
         if not current_sort:
             return
@@ -1920,7 +1978,9 @@ class XStreamity_Series_Categories(Screen):
         self.buildLists()
 
     def search(self, result=None):
-        # print("*** search ***")
+        if debugs:
+            print("*** search ***")
+
         if not self["key_blue"].getText():
             return
 
@@ -1933,7 +1993,8 @@ class XStreamity_Series_Categories(Screen):
             self.session.openWithCallback(self.filterChannels, VirtualKeyBoard, title=_("Filter this category..."), text=self.searchString)
 
     def filterChannels(self, result=None):
-        # print("*** filterChannels ***")
+        if debugs:
+            print("*** filterChannels ***")
 
         activelist = []
 
@@ -1979,7 +2040,9 @@ class XStreamity_Series_Categories(Screen):
                 self.buildLists()
 
     def resetSearch(self):
-        # print("*** resetSearch ***")
+        if debugs:
+            print("*** resetSearch ***")
+
         self["key_blue"].setText(_("Search"))
         self["key_yellow"].setText(self.sortText)
 
@@ -2005,7 +2068,9 @@ class XStreamity_Series_Categories(Screen):
         self.buildLists()
 
     def pinEntered(self, result=None):
-        # print("*** pinEntered ***")
+        if debugs:
+            print("*** pinEntered ***")
+
         if not result:
             self.pin = False
             self.session.open(MessageBox, _("Incorrect pin code."), type=MessageBox.TYPE_ERROR, timeout=5)
@@ -2021,7 +2086,9 @@ class XStreamity_Series_Categories(Screen):
             return
 
     def parentalCheck(self):
-        # print("*** parentalcheck ***")
+        if debugs:
+            print("*** parentalCheck ***")
+
         self.pin = True
         nowtime = int(time.mktime(datetime.now().timetuple())) if pythonVer == 2 else int(datetime.timestamp(datetime.now()))
 
@@ -2045,7 +2112,9 @@ class XStreamity_Series_Categories(Screen):
             self.next()
 
     def next(self):
-        # print("*** next ***")
+        if debugs:
+            print("*** next ***")
+
         if self["main_list"].getCurrent():
             current_index = self["main_list"].getIndex()
             glob.nextlist[-1]["index"] = current_index
@@ -2143,13 +2212,16 @@ class XStreamity_Series_Categories(Screen):
                     self.createSetup()
 
     def setIndex(self, data=None):
-        # print("*** set index ***")
+        if debugs:
+            print("*** setIndex ***")
+
         if self["main_list"].getCurrent():
             self["main_list"].setIndex(glob.currentchannellistindex)
             self.createSetup()
 
     def back(self, data=None):
-        # print("*** back ***")
+        if debugs:
+            print("*** back ***")
 
         if self.level != 1:
             try:
@@ -2192,20 +2264,26 @@ class XStreamity_Series_Categories(Screen):
             self.loadDefaultBackdrop()
 
     def showHiddenList(self):
+        if debugs:
+            print("*** showHiddenList ***")
+
         if self["key_menu"].getText() and self["main_list"].getCurrent():
             from . import hidden
 
             if self["main_list"].getCurrent():
                 if self.level == 1:
                     self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "series", self.prelist + self.list1, self.level)
-                elif self.level == 2 and self.chosen_category not in ["favourites"]:
+                elif self.level == 2 and self.chosen_category != "favourites":
                     self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "series", self.list2, self.level)
-                elif self.level == 3:
+                elif self.level == 3 and self.chosen_category != "favourites":
                     self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "series", self.list3, self.level)
-                elif self.level == 4:
+                elif self.level == 4 and self.chosen_category != "favourites":
                     self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "series", self.list4, self.level)
 
     def clearWatched(self):
+        if debugs:
+            print("*** clearWatched ***")
+
         if self.level == 4:
             current_id = str(self["main_list"].getCurrent()[4])
             watched_list = glob.active_playlist["player_info"].get("serieswatched", [])
@@ -2236,8 +2314,7 @@ class XStreamity_Series_Categories(Screen):
     def favourite(self):
         if debugs:
             print("*** favourite ***")
-
-        print("*** self.level ***", self.level)
+            print("*** self.level ***", self.level)
 
         if not self["main_list"].getCurrent():
             return
@@ -2252,9 +2329,6 @@ class XStreamity_Series_Categories(Screen):
         if self.level == 2:
             series_id = str(self["main_list"].getCurrent()[4])
             current_index = self["main_list"].getIndex()
-
-            if self.chosen_category == "favourites":
-                del self.list2[current_index]
 
         elif self.level == 3:
             current_index = self["main_list"].getCurrent()[17]
@@ -2317,13 +2391,17 @@ class XStreamity_Series_Categories(Screen):
             json.dump(self.playlists_all, f)
 
         if self.level == 2:
-            self.buildLists()
+            self.createSetup()
         else:
             if not favExists:
                 self.session.open(MessageBox, _("Series group added to favourites."), type=MessageBox.TYPE_INFO, timeout=2)
+            else:
+                self.session.open(MessageBox, _("Series group removed from favourites."), type=MessageBox.TYPE_INFO, timeout=2)
 
     def hideVod(self):
-        # print("*** hideVod ***")
+        if debugs:
+            print("*** hideVod ***")
+
         self["vod_cover"].hide()
         self["vod_logo"].hide()
         self["vod_backdrop"].hide()
@@ -2342,12 +2420,15 @@ class XStreamity_Series_Categories(Screen):
         self["overview"].setText("")
 
     def clearVod(self):
-        # print("*** clearVod ***")
+        if debugs:
+            print("*** clearVod ***")
+
         self["x_title"].setText("")
         self["x_description"].setText("")
         self["tagline"].setText("")
         self["facts"].setText("")
         self["vod_director"].setText("")
+        self["vod_country"].setText("")
         self["vod_cast"].setText("")
         self["rating_text"].setText("")
         self["rating_percent"].setText("")
@@ -2361,7 +2442,9 @@ class XStreamity_Series_Categories(Screen):
         self["vod_backdrop"].show()
 
     def downloadVideo(self):
-        # print("*** downloadVideo ***")
+        if debugs:
+            print("*** downloadVideo ***")
+
         if self.level != 4:
             return
 
@@ -2395,6 +2478,9 @@ class XStreamity_Series_Categories(Screen):
                 self.session.open(MessageBox, _(title) + "\n\n" + _("Already added to download manager"), MessageBox.TYPE_ERROR, timeout=5)
 
     def opendownloader(self, answer=None):
+        if debugs:
+            print("*** opendownloader ***")
+
         if not answer:
             return
         else:
@@ -2415,7 +2501,8 @@ class XStreamity_Series_Categories(Screen):
         return [self.atoi(c) for c in re.split(r"(\d+)", text[1])]
 
     def buildFacts(self, certification, release_date, genre, duration, stream_format):
-        # print("*** buildfacts ***")
+        if debugs:
+            print("*** buildFacts ***")
 
         facts = []
 

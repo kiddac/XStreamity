@@ -1,15 +1,18 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+# Standard library imports
 from collections import OrderedDict
 import json
 import os
 import re
+
 try:
     from urllib.parse import urlparse, parse_qs
 except ImportError:
     from urlparse import urlparse, parse_qs
 
+# Local application/library-specific imports
 from .plugin import cfg
 
 playlist_file = cfg.playlist_file.value
@@ -95,7 +98,7 @@ def process_files():
         fail_count = 0
         seriesfavourites = []
 
-        if not line.startswith("#") and line.startswith("http"):
+        if line.startswith("http"):
             line = line.strip(" ")
             parsed_uri = urlparse(line)
             protocol = parsed_uri.scheme + "://"

@@ -1,13 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from . import _
-from . import xstreamity_globals as glob
-
-from .plugin import skin_directory, common_path, playlists_json, cfg
-from .xStaticText import StaticText
-
+# Standard library imports
+import os
+import json
 from collections import OrderedDict
+
+# Enigma2 components
 from Components.config import config
 from Components.ActionMap import ActionMap
 from Components.Sources.List import List
@@ -17,8 +16,13 @@ from Tools.LoadPixmap import LoadPixmap
 from Screens.InputBox import PinInput
 from Tools.BoundFunction import boundFunction
 
-import os
-import json
+# Local application/library-specific imports
+from . import _
+from . import xstreamity_globals as glob
+from .plugin import skin_directory, common_path, cfg
+from .xStaticText import StaticText
+
+playlists_json = cfg.playlists_json.value
 
 
 class ProtectedScreen:

@@ -1,21 +1,9 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+# Standard library imports
 import os
 import json
-import requests
-from requests.adapters import HTTPAdapter, Retry
-
-from . import _
-from .plugin import skin_directory, cfg
-from .xStaticText import StaticText
-
-from Components.ActionMap import ActionMap
-from Components.ConfigList import ConfigListScreen
-from Components.config import getConfigListEntry, NoSave, ConfigText, ConfigSelection, ConfigNumber, ConfigYesNo, ConfigEnableDisable
-from Components.Pixmap import Pixmap
-from Screens.MessageBox import MessageBox
-from Screens.Screen import Screen
 
 try:
     from http.client import HTTPConnection
@@ -23,6 +11,24 @@ try:
 except ImportError:
     from httplib import HTTPConnection
     HTTPConnection.debuglevel = 0
+
+# Third-party imports
+import requests
+from requests.adapters import HTTPAdapter, Retry
+
+# Enigma2 components
+from Components.ActionMap import ActionMap
+from Components.ConfigList import ConfigListScreen
+from Components.config import getConfigListEntry, NoSave, ConfigText, ConfigSelection, ConfigNumber, ConfigYesNo, ConfigEnableDisable
+from Components.Pixmap import Pixmap
+from Screens.MessageBox import MessageBox
+from Screens.Screen import Screen
+
+# Local application/library-specific imports
+from . import _
+from .plugin import skin_directory, cfg
+from .xStaticText import StaticText
+
 
 hdr = {
     'User-Agent': str(cfg.useragent.value),

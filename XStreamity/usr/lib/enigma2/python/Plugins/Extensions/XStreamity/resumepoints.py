@@ -12,7 +12,6 @@ except ImportError:
 
 
 def setResumePoint(session):
-    # print("*** setresumepoint ***")
     global resumePointCache
     service = session.nav.getCurrentService()
     ref = session.nav.getCurrentlyPlayingServiceReference()
@@ -44,7 +43,6 @@ def setResumePoint(session):
 
 
 def delResumePoint(ref):
-    # print("*** delresumepoint ***")
     global resumePointCache
     try:
         del resumePointCache[ref.toString()]
@@ -55,7 +53,6 @@ def delResumePoint(ref):
 
 
 def getResumePoint(session):
-    # print("*** getresumepoint ***")
     global resumePointCache
     resumePointCache = loadResumePoints()
 
@@ -74,7 +71,6 @@ def getResumePoint(session):
 
 
 def saveResumePoints():
-    # print("*** saveresumepoint ***")
     global resumePointCache
     try:
         with open(os.path.join("/etc/enigma2/xstreamity", "resumepoints.pkl"), "wb") as f:
@@ -84,7 +80,6 @@ def saveResumePoints():
 
 
 def loadResumePoints():
-    # print("*** loadresumepoints ***")
     try:
         with open(os.path.join("/etc/enigma2/xstreamity", "resumepoints.pkl"), "rb") as f:
             PickleFile = cPickle.load(f)
@@ -95,7 +90,6 @@ def loadResumePoints():
 
 
 def updateresumePointCache():
-    # print("*** updateresumepoint ***")
     global resumePointCache
     resumePointCache = loadResumePoints()
 

@@ -34,11 +34,9 @@ from twisted.web.client import Agent, downloadPage, readBody
 from twisted.web.http_headers import Headers
 
 try:
-    # Try to import BrowserLikePolicyForHTTPS
     from twisted.web.client import BrowserLikePolicyForHTTPS
     contextFactory = BrowserLikePolicyForHTTPS()
 except ImportError:
-    # Fallback to WebClientContextFactory if BrowserLikePolicyForHTTPS is not available
     from twisted.web.client import WebClientContextFactory
     contextFactory = WebClientContextFactory()
 
@@ -57,7 +55,7 @@ from enigma import ePicLoad, eServiceReference, eTimer
 from . import _
 from . import vodplayer
 from . import xstreamity_globals as glob
-from .plugin import (cfg, common_path, dir_tmp, downloads_json, playlists_json, pythonVer, screenwidth, skin_directory, debugs)
+from .plugin import (cfg, common_path, dir_tmp, downloads_json, pythonVer, screenwidth, skin_directory, debugs)
 from .xStaticText import StaticText
 
 if os.path.exists("/var/lib/dpkg/status"):
@@ -75,6 +73,8 @@ hdr = {
     'User-Agent': str(cfg.useragent.value),
     'Accept-Encoding': 'gzip, deflate'
 }
+
+playlists_json = cfg.playlists_json.value
 
 
 class XStreamity_Vod_Categories(Screen):
@@ -129,6 +129,7 @@ class XStreamity_Vod_Categories(Screen):
         self["vod_director"] = StaticText()
         self["vod_country"] = StaticText()
         self["vod_cast"] = StaticText()
+
         self["rating_text"] = StaticText()
         self["rating_percent"] = StaticText()
 
@@ -263,6 +264,7 @@ class XStreamity_Vod_Categories(Screen):
     def reset(self):
         if debugs:
             print("*** reset ***")
+
         self["main_list"].setIndex(0)
         self.selectionChanged()
 
@@ -351,6 +353,7 @@ class XStreamity_Vod_Categories(Screen):
     def getCategories(self):
         if debugs:
             print("*** getCategories **")
+
         index = 0
         self.list1 = []
         self.prelist = []
@@ -466,6 +469,8 @@ class XStreamity_Vod_Categories(Screen):
                     if matches:
                         year = str(matches[-1])
 
+                tmdb = str(channel.get("tmdb", ""))
+
                 next_url = "{}/movie/{}/{}/{}.{}".format(self.host, self.username, self.password, stream_id, container_extension)
 
                 favourite = False
@@ -477,7 +482,7 @@ class XStreamity_Vod_Categories(Screen):
                 else:
                     glob.active_playlist["player_info"]["vodfavourites"] = []
 
-                self.list2.append([index, str(name), str(stream_id), str(cover), str(added), str(rating), str(next_url), favourite, container_extension, year, hidden])
+                self.list2.append([index, str(name), str(stream_id), str(cover), str(added), str(rating), str(next_url), favourite, container_extension, year, hidden, tmdb])
 
             glob.originalChannelList2 = self.list2[:]
 
@@ -533,9 +538,9 @@ class XStreamity_Vod_Categories(Screen):
 
         if self.list2:
             if self.chosen_category == "favourites":
-                self.main_list = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[10]) for x in self.list2 if x[7] is True]
+                self.main_list = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[10], x[11]) for x in self.list2 if x[7] is True]
             else:
-                self.main_list = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[10]) for x in self.list2 if x[10] is False]
+                self.main_list = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[10], x[11]) for x in self.list2 if x[10] is False]
             self["main_list"].setList(self.main_list)
 
             self.showVod()
@@ -679,7 +684,6 @@ class XStreamity_Vod_Categories(Screen):
 
             self["page"].setText(_("Page: ") + "{}/{}".format(page, page_all))
             self["listposition"].setText("{}/{}".format(position, position_all))
-
             self["main_title"].setText("{}: {}".format(self.main_title, channel_title))
 
             self["vod_cover"].hide()
@@ -1236,7 +1240,7 @@ class XStreamity_Vod_Categories(Screen):
             self["key_yellow"].setText(_(glob.nextlist[-1]["sort"]))
             self["key_menu"].setText("+/-")
 
-            if self.chosen_category in ("favourites", "recents"):
+            if self.chosen_category == "favourites" or self.chosen_category == "recent":
                 self["key_menu"].setText("")
 
             if self.chosen_category == "recents":
@@ -1245,6 +1249,7 @@ class XStreamity_Vod_Categories(Screen):
     def stopStream(self):
         if debugs:
             print("*** stopStream ***")
+
         if glob.currentPlayingServiceRefString != glob.newPlayingServiceRefString:
             if glob.newPlayingServiceRefString != "":
                 if self.session.nav.getCurrentlyPlayingServiceReference():
@@ -1834,6 +1839,7 @@ class XStreamity_Vod_Categories(Screen):
     def setIndex(self, data=None):
         if debugs:
             print("*** set index ***")
+
         if self["main_list"].getCurrent():
             self["main_list"].setIndex(glob.currentchannellistindex)
             self.createSetup()
@@ -1887,7 +1893,7 @@ class XStreamity_Vod_Categories(Screen):
         if self["key_menu"].getText() and self["main_list"].getCurrent():
             from . import hidden
             current_list = self.prelist + self.list1 if self.level == 1 else self.list2
-            if self.level == 1 or (self.level == 2 and self.chosen_category not in ["favourites", "recents"]):
+            if self.level == 1 or (self.level == 2 and self.chosen_category != "favourites" and self.chosen_category != "recents"):
                 self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "vod", current_list, self.level)
 
     def clearWatched(self):
@@ -2071,6 +2077,7 @@ class XStreamity_Vod_Categories(Screen):
     def opendownloader(self, answer=None):
         if debugs:
             print("*** opendownloader ***")
+
         if not answer:
             return
         else:
@@ -2142,7 +2149,7 @@ def buildCategoryList(index, title, category_id, hidden):
     return (title, png, index, category_id, hidden)
 
 
-def buildVodStreamList(index, title, stream_id, cover, added, rating, next_url, favourite, container_extension, hidden):
+def buildVodStreamList(index, title, stream_id, cover, added, rating, next_url, favourite, container_extension, hidden, tmdb):
     png = LoadPixmap(os.path.join(common_path, "play.png"))
     if favourite:
         png = LoadPixmap(os.path.join(common_path, "favourite.png"))
@@ -2150,4 +2157,4 @@ def buildVodStreamList(index, title, stream_id, cover, added, rating, next_url, 
         if int(stream_id) == int(channel):
             png = LoadPixmap(os.path.join(common_path, "watched.png"))
 
-    return (title, png, index, next_url, stream_id, cover, added, rating, container_extension, hidden)
+    return (title, png, index, next_url, stream_id, cover, added, rating, container_extension, hidden, tmdb)

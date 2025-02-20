@@ -1,31 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+# Standard library imports
 from __future__ import division
-
-from . import _
-from . import xstreamity_globals as glob
-from .plugin import skin_directory, cfg, common_path, version, hasConcurrent, hasMultiprocessing
-from .xStaticText import StaticText
-from . import checkinternet
-
-from Components.ActionMap import ActionMap
-from Components.Pixmap import Pixmap
-from Components.Sources.List import List
-from datetime import datetime
-from enigma import eTimer
-
-from requests.adapters import HTTPAdapter, Retry
-from Screens.MessageBox import MessageBox
-from Screens.Screen import Screen
-from Tools.LoadPixmap import LoadPixmap
 
 import json
 import glob as pythonglob
 import os
 import re
-import requests
 import shutil
+from datetime import datetime
 
 try:
     from http.client import HTTPConnection
@@ -33,6 +17,27 @@ try:
 except ImportError:
     from httplib import HTTPConnection
     HTTPConnection.debuglevel = 0
+
+# Third-party imports
+import requests
+from requests.adapters import HTTPAdapter, Retry
+
+# Enigma2 components
+from Components.ActionMap import ActionMap
+from Components.Pixmap import Pixmap
+from Components.Sources.List import List
+from enigma import eTimer
+from Screens.MessageBox import MessageBox
+from Screens.Screen import Screen
+from Tools.LoadPixmap import LoadPixmap
+
+# Local application/library-specific imports
+from . import _
+from . import xstreamity_globals as glob
+from .plugin import skin_directory, cfg, common_path, version, hasConcurrent, hasMultiprocessing
+from .xStaticText import StaticText
+from . import checkinternet
+
 
 epgimporter = os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/EPGImport")
 
@@ -57,13 +62,13 @@ class XStreamity_Playlists(Screen):
         with open(skin, "r") as f:
             self.skin = f.read()
 
-        self.setup_title = _("Select Playlist")
+        self.setup_title = _("Manage Playlist")
 
         self["key_red"] = StaticText(_("Back"))
         self["key_green"] = StaticText(_("OK"))
         self["key_yellow"] = StaticText(_("Delete"))
         self["key_blue"] = StaticText(_("Info"))
-        self["version"] = StaticText()
+        self["version"] = StaticText(version)
 
         self.list = []
         self.drawList = []
@@ -103,8 +108,6 @@ class XStreamity_Playlists(Screen):
         self.checkinternet = checkinternet.check_internet()
         if not self.checkinternet:
             self.session.openWithCallback(self.quit, MessageBox, _("No internet."), type=MessageBox.TYPE_ERROR, timeout=5)
-
-        self["version"].setText(version)
 
         if epgimporter:
             self.epgimportcleanup()
@@ -200,7 +203,7 @@ class XStreamity_Playlists(Screen):
         return index, response
 
     def process_downloads(self):
-        threads = min(len(self.url_list), 10)
+        threads = min(len(self.url_list), 5)
 
         if hasConcurrent or hasMultiprocessing:
             if hasConcurrent:

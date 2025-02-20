@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+# Standard library imports
 from __future__ import absolute_import, print_function
 from __future__ import division
 
@@ -9,37 +10,10 @@ import os
 import re
 from itertools import cycle, islice
 
-from PIL import Image, ImageFile, PngImagePlugin
-from . import _
-from . import xstreamity_globals as glob
-from .plugin import cfg, dir_tmp, playlists_json, pythonVer, screenwidth, skin_directory
-from .xStaticText import StaticText
-
-from Components.ActionMap import ActionMap
-from Components.Label import Label
-from Components.Pixmap import MultiPixmap, Pixmap
-from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
-from enigma import eTimer, eServiceReference, iPlayableService, ePicLoad
-from Tools import Notifications
-
-from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection, InfoBarSummarySupport, InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport, InfoBarNotifications
-
-
-from Screens.MessageBox import MessageBox
-from Screens.Screen import Screen
-from Tools.BoundFunction import boundFunction
-
-from twisted.web.client import downloadPage
-
 try:
     from urlparse import urlparse
 except ImportError:
     from urllib.parse import urlparse
-
-try:
-    from enigma import eAVSwitch
-except Exception:
-    from enigma import eAVControl as eAVSwitch
 
 try:
     from http.client import HTTPConnection
@@ -48,10 +22,38 @@ except ImportError:
     from httplib import HTTPConnection
     HTTPConnection.debuglevel = 0
 
+# Third-party imports
+from PIL import Image, ImageFile, PngImagePlugin
+from twisted.web.client import downloadPage
+
+# Enigma2 components
+from Components.ActionMap import ActionMap
+from Components.Label import Label
+from Components.Pixmap import MultiPixmap, Pixmap
+from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
+from enigma import eTimer, eServiceReference, iPlayableService, ePicLoad
+from Tools import Notifications
+from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection, InfoBarSummarySupport, InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport, InfoBarNotifications
+from Screens.MessageBox import MessageBox
+from Screens.Screen import Screen
+from Tools.BoundFunction import boundFunction
+
+try:
+    from enigma import eAVSwitch
+except Exception:
+    from enigma import eAVControl as eAVSwitch
+
 try:
     from .resumepoints import setResumePoint, getResumePoint
 except ImportError as e:
     print(e)
+
+# Local application/library-specific imports
+from . import _
+from . import xstreamity_globals as glob
+from .plugin import cfg, dir_tmp, pythonVer, screenwidth, skin_directory
+from .xStaticText import StaticText
+
 
 if cfg.subs.value is True:
     try:
@@ -178,6 +180,9 @@ def clear_caches():
         pass
 
 
+playlists_json = cfg.playlists_json.value
+
+
 class IPTVInfoBarShowHide():
     STATE_HIDDEN = 0
     STATE_HIDING = 1
@@ -187,15 +192,6 @@ class IPTVInfoBarShowHide():
     skipToggleShow = False
 
     def __init__(self):
-        """
-        self["ShowHideActions"] = ActionMap(["InfobarShowHideActions", "OKCancelActions"], {
-            "ok": self.OkPressed,
-            "toggleShow": self.OkPressed,
-            "cancel": self.hide,
-            "hide": self.hide,
-        }, 1)
-        """
-
         self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
             iPlayableService.evStart: self.serviceStarted,
         })
@@ -573,12 +569,10 @@ class XStreamity_VodPlayer(
         stream_id = self.stream_id
 
         if glob.categoryname == "vod":
-
             if stream_id not in glob.active_playlist["player_info"]["vodwatched"]:
                 glob.active_playlist["player_info"]["vodwatched"].append(stream_id)
 
         elif glob.categoryname == "series":
-
             if stream_id not in glob.active_playlist["player_info"]["serieswatched"]:
                 glob.active_playlist["player_info"]["serieswatched"].append(stream_id)
 
@@ -658,8 +652,7 @@ class XStreamity_VodPlayer(
     def downloadImage(self):
         self.loadDefaultImage()
         try:
-            os.remove(os.path.join(dir_tmp, "original.jpg"))
-            os.remove(os.path.join(dir_tmp, "temp.jpg"))
+            os.remove(os.path.join(dir_tmp, "cover.jpg"))
         except:
             pass
 
@@ -670,7 +663,7 @@ class XStreamity_VodPlayer(
             pass
 
         if desc_image and desc_image != "n/A":
-            temp = os.path.join(dir_tmp, "temp.jpg")
+            temp = os.path.join(dir_tmp, "cover.jpg")
             try:
                 parsed = urlparse(desc_image)
                 domain = parsed.hostname
@@ -695,7 +688,7 @@ class XStreamity_VodPlayer(
 
     def resizeImage(self, data=None):
         if self["cover"].instance:
-            preview = os.path.join(dir_tmp, "temp.jpg")
+            preview = os.path.join(dir_tmp, "cover.jpg")
 
             if screenwidth.width() == 2560:
                 width = 293

@@ -92,7 +92,7 @@ def process_files():
         epgalternative = False
         epgalternativeurl = ""
 
-        if not line.startswith("#") and line.startswith("http"):
+        if line.startswith("http"):
             line = line.strip(" ")
             parsed_uri = urlparse(line)
             protocol = parsed_uri.scheme + "://"

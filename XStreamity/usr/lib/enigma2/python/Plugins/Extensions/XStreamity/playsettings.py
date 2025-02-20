@@ -1,11 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from . import _
-from . import xstreamity_globals as glob
-from .plugin import skin_directory, cfg
-from .xStaticText import StaticText
+# Standard library imports
+import os
+import json
+try:
+    from urlparse import urlparse, parse_qs
+except ImportError:
+    from urllib.parse import urlparse, parse_qs
 
+# Enigma2 components
 from Components.ActionMap import ActionMap
 from Components.ConfigList import ConfigListScreen
 from Components.config import getConfigListEntry, ConfigText, ConfigSelection, ConfigYesNo, ConfigEnableDisable, NoSave, ConfigSelectionNumber
@@ -13,13 +17,11 @@ from Components.Pixmap import Pixmap
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 
-import os
-import json
-
-try:
-    from urlparse import urlparse, parse_qs
-except ImportError:
-    from urllib.parse import urlparse, parse_qs
+# Local application/library-specific imports
+from . import _
+from . import xstreamity_globals as glob
+from .plugin import skin_directory, cfg
+from .xStaticText import StaticText
 
 playlist_file = cfg.playlist_file.value
 playlists_json = cfg.playlists_json.value

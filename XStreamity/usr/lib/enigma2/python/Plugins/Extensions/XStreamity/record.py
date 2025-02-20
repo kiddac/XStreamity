@@ -1,11 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from . import _
+# Standard library imports
+import datetime
+import time
+import os
 
-from .plugin import skin_directory, cfg
-from .xStaticText import StaticText
-
+# Enigma2 components
 from Components.ActionMap import ActionMap
 from Components.ConfigList import ConfigListScreen
 from Components.config import getConfigListEntry, ConfigText
@@ -13,9 +14,10 @@ from Components.Pixmap import Pixmap
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 
-import datetime
-import time
-import os
+# Local application/library-specific imports
+from . import _
+from .plugin import skin_directory, cfg
+from .xStaticText import StaticText
 
 
 class RecordDateInput(ConfigListScreen, Screen):

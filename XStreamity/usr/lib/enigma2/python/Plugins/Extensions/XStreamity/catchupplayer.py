@@ -1,43 +1,18 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+# Standard library imports
 from __future__ import absolute_import, print_function
 from __future__ import division
-
 import os
 import re
 from itertools import cycle, islice
 from datetime import datetime, timedelta
 
-from PIL import Image, ImageFile, PngImagePlugin
-from . import _
-from . import xstreamity_globals as glob
-from .plugin import cfg, common_path, dir_tmp, pythonVer, screenwidth, skin_directory
-from .xStaticText import StaticText
-
-from Components.ActionMap import ActionMap
-from Components.Label import Label
-from Components.Pixmap import MultiPixmap, Pixmap
-from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
-from enigma import eTimer, eServiceReference, iPlayableService
-from Tools import Notifications
-
-from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection, InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport, InfoBarNotifications
-from Screens.MessageBox import MessageBox
-from Screens.Screen import Screen
-from Tools.BoundFunction import boundFunction
-
-from twisted.web.client import downloadPage
-
 try:
     from urlparse import urlparse
 except ImportError:
     from urllib.parse import urlparse
-
-try:
-    from enigma import eAVSwitch
-except Exception:
-    from enigma import eAVControl as eAVSwitch
 
 try:
     from http.client import HTTPConnection
@@ -46,10 +21,57 @@ except ImportError:
     from httplib import HTTPConnection
     HTTPConnection.debuglevel = 0
 
+# Third-party imports
+from PIL import Image, ImageFile, PngImagePlugin
+from twisted.web.client import downloadPage
+
+# https twisted client hack #
+try:
+    from twisted.internet import ssl
+    from twisted.internet._sslverify import ClientTLSOptions
+    sslverify = True
+except:
+    sslverify = False
+
+if sslverify:
+    class SNIFactory(ssl.ClientContextFactory):
+        def __init__(self, hostname=None):
+            self.hostname = hostname
+
+        def getContext(self):
+            ctx = self._contextFactory(self.method)
+            if self.hostname:
+                ClientTLSOptions(self.hostname, ctx)
+            return ctx
+
+# Enigma2 components
+from Components.ActionMap import ActionMap
+from Components.Label import Label
+from Components.Pixmap import MultiPixmap, Pixmap
+from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
+from enigma import eTimer, eServiceReference, iPlayableService
+from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection, InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport, InfoBarNotifications
+from Screens.MessageBox import MessageBox
+from Screens.Screen import Screen
+from Tools import Notifications
+from Tools.BoundFunction import boundFunction
+
+try:
+    from enigma import eAVSwitch
+except Exception:
+    from enigma import eAVControl as eAVSwitch
+
 try:
     from .resumepoints import setResumePoint, getResumePoint
 except ImportError as e:
     print(e)
+
+# Local application/library-specific imports
+from . import _
+from . import xstreamity_globals as glob
+from .plugin import cfg, common_path, dir_tmp, pythonVer, screenwidth, skin_directory
+from .xStaticText import StaticText
+
 
 if cfg.subs.value is True:
     try:
@@ -70,25 +92,6 @@ else:
     class SubsSupportStatus(object):
         def __init__(self, *args, **kwargs):
             pass
-
-# https twisted client hack #
-try:
-    from twisted.internet import ssl
-    from twisted.internet._sslverify import ClientTLSOptions
-    sslverify = True
-except:
-    sslverify = False
-
-if sslverify:
-    class SNIFactory(ssl.ClientContextFactory):
-        def __init__(self, hostname=None):
-            self.hostname = hostname
-
-        def getContext(self):
-            ctx = self._contextFactory(self.method)
-            if self.hostname:
-                ClientTLSOptions(self.hostname, ctx)
-            return ctx
 
 
 # png hack
@@ -185,15 +188,6 @@ class IPTVInfoBarShowHide():
     skipToggleShow = False
 
     def __init__(self):
-        """
-        self["ShowHideActions"] = ActionMap(["InfobarShowHideActions", "OKCancelActions"], {
-            "ok": self.OkPressed,
-            "toggleShow": self.OkPressed,
-            "cancel": self.hide,
-            "hide": self.hide,
-        }, 1)
-        """
-
         self.__event_tracker = ServiceEventTracker(screen=self, eventmap={
             iPlayableService.evStart: self.serviceStarted,
         })

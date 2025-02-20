@@ -1,23 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+# Standard library imports
 from __future__ import division
-
 import calendar
 import json
 import os
-import requests
 import time
-
 from time import time as rtime
 from xml.etree.cElementTree import iterparse
-
-import twisted.python.runtime
-from twisted.web.client import downloadPage
-from . import xstreamity_globals as glob
-from .plugin import playlists_json, pythonVer, cfg
-
-from requests.adapters import HTTPAdapter, Retry
 
 try:
     from urlparse import urlparse
@@ -30,6 +21,16 @@ try:
 except ImportError:
     from httplib import HTTPConnection
     HTTPConnection.debuglevel = 0
+
+# Third-party imports
+import requests
+from requests.adapters import HTTPAdapter, Retry
+import twisted.python.runtime
+from twisted.web.client import downloadPage
+
+# Local application/library-specific imports
+from . import xstreamity_globals as glob
+from .plugin import pythonVer, cfg
 
 # https twisted client hack #
 sslverify = False
@@ -50,22 +51,6 @@ if sslverify:
             if self.hostname:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
-
-"""
-from datetime import datetime, timedelta
-
-# Get the current system time
-system_time = datetime.now()
-
-# Get the current UTC time
-utc_time = datetime.utcnow()
-
-# Calculate the time difference
-time_difference = system_time - utc_time
-
-# Print the time difference
-print("Time difference between system time and UTC time:", time_difference)
-"""
 
 
 def quickptime(str):
@@ -88,6 +73,8 @@ hdr = {
     'User-Agent': str(cfg.useragent.value),
     'Accept-Encoding': 'gzip, deflate'
 }
+
+playlists_json = cfg.playlists_json.value
 
 
 class XStreamity_Update:
@@ -299,5 +286,4 @@ class XStreamity_Update:
                             yield channel.lower(), start, stop, title, desc
                     elem.clear()
         except Exception as e:
-            # print("*** Error processing XML file: {} ***".format(fileobj))
             print(e)
