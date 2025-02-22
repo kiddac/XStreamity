@@ -34,7 +34,7 @@
 	<!-- rating percent -->
 	<widget source="rating_text" render="Label" position="860,600" size="120,120" font="slykregular;32" foregroundColor="#ffffff" backgroundColor="#2a70a4" halign="center" valign="center" noWrap="1" transparent="1" zPosition="3"/>
 	<!-- rating dial -->
-	<widget source="rating_percent" render="Label" position="860,600" size="120,120" font="klass;120" foregroundColor="#57ffff" backgroundColor="#2a70a4" halign="center" valign="top" transparent="1" zPosition="4"/>
+	<widget source="rating_percent" render="Label" position="860,588" size="120,132" font="klass;120" foregroundColor="#57ffff" backgroundColor="#2a70a4" halign="center" valign="top" transparent="1" zPosition="4"/>
 	<widget source="facts" render="Label" position="1020,616" size="1340,40" font="slykregular;32" foregroundColor="#ffffff" backgroundColor="#2a70a4" halign="left" valign="center" noWrap="1" transparent="1" zPosition="3"/>
 	<widget source="tagline" render="Label" position="1020,655" size="1340,48" font="slykregular;32" foregroundColor="#57ffff" backgroundColor="#2a70a4" halign="left" valign="center" noWrap="1" transparent="1" zPosition="4"/>
 	<widget name="vod_logo" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/blank.png" position="860,760" size="334,200" scale="1" alphatest="blend" zPosition="3"/>

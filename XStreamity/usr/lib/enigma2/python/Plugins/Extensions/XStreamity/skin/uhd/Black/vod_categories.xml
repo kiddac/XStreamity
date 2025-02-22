@@ -35,7 +35,7 @@
 	<!-- rating percent -->
 	<widget source="rating_text" render="Label" position="680,528" size="120,120" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#000000" halign="center" valign="center" noWrap="1" transparent="1" zPosition="3"/>
 	<!-- rating dial -->
-	<widget source="rating_percent" render="Label" position="680,528" size="120,120" font="klass;120" foregroundColor="#57ffff" backgroundColor="#000000" halign="center" valign="top" transparent="1" zPosition="4"/>
+	<widget source="rating_percent" render="Label" position="680,516" size="120,132" font="klass;120" foregroundColor="#57ffff" backgroundColor="#000000" halign="center" valign="top" transparent="1" zPosition="4"/>
 	<widget name="vod_cover" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/vod_cover.png" position="680,720" size="400,600" alphatest="blend" zPosition="3"/>
 	<widget source="x_title" render="Label" position="680,400" size="1800,120" font="xstreamitybold;64" foregroundColor="#ffffff" backgroundColor="#000000" halign="left" noWrap="1" transparent="1" zPosition="3"/>
 	<widget source="facts" render="Label" position="840,544" size="1600,40" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#000000" halign="left" valign="center" noWrap="1" transparent="1" zPosition="3"/>

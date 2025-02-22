@@ -426,18 +426,6 @@ class XStreamity_Series_Categories(Screen):
 
                 rating = str(channel.get("rating", ""))
 
-                year = str(channel.get("year", ""))
-
-                if year == "":
-                    pattern = r'\b\d{4}\b'
-                    matches = re.findall(pattern, name)
-                    if matches:
-                        year = str(matches[-1])
-                if year:
-                    self.storedyear = year
-                else:
-                    self.storedyear = ""
-
                 plot = str(channel.get("plot", ""))
 
                 cast = str(channel.get("cast", ""))
@@ -450,6 +438,24 @@ class XStreamity_Series_Categories(Screen):
 
                 releaseDate = (channel.get("releaseDate") or channel.get("release_date") or channel.get("releasedate") or "")
                 releaseDate = str(releaseDate) if releaseDate is not None else ""
+
+                year = str(channel.get("year", ""))
+
+                if year == "":
+                    pattern = r'\b\d{4}\b'
+                    matches = re.findall(pattern, name)
+                    if matches:
+                        year = str(matches[-1])
+
+                if not year and releaseDate:
+                    year_match = re.match(r'(\d{4})', releaseDate)
+                    if year_match:
+                        year = year_match.group(1)
+
+                if year:
+                    self.storedyear = year
+                else:
+                    self.storedyear = ""
 
                 backdrop_path = channel.get("backdrop_path", "")
 
