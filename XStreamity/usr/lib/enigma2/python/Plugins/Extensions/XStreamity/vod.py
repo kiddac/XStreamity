@@ -965,7 +965,14 @@ class XStreamity_Vod_Categories(Screen):
                             formatted_time = "{:0d}h {:02d}m".format(duration_timedelta.seconds // 3600, (duration_timedelta.seconds % 3600) // 60)
                             self.tmdbresults["duration"] = str(formatted_time)
 
-                    if "production_countries" in self.tmdbdetails and self.tmdbdetails["production_countries"]:
+                    if "origin_country" in self.tmdbdetails and self.tmdbdetails["origin_country"]:
+                        try:
+                            country = self.tmdbdetails["origin_country"][0]
+                            self.tmdbresults["country"] = country
+                        except:
+                            pass
+
+                    if not country and "production_countries" in self.tmdbdetails and self.tmdbdetails["production_countries"]:
                         country = ", ".join(str(pcountry["name"]) for pcountry in self.tmdbdetails["production_countries"])
                         self.tmdbresults["country"] = country
 
@@ -1075,13 +1082,6 @@ class XStreamity_Vod_Categories(Screen):
 
                     if certification:
                         self.tmdbresults["certification"] = str(certification)
-
-                    """
-                    if cfg.channelcovers.value:
-                        self.downloadCover()
-                        self.downloadLogo()
-                        self.downloadBackdrop()
-                        """
 
                     self.displayTMDB()
 

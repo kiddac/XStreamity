@@ -120,6 +120,7 @@ class XStreamity_Series_Categories(Screen):
         self["vod_director"] = StaticText()
         self["vod_country"] = StaticText()
         self["vod_cast"] = StaticText()
+
         self["rating_text"] = StaticText()
         self["rating_percent"] = StaticText()
 
@@ -1192,6 +1193,7 @@ class XStreamity_Series_Categories(Screen):
         self.tmdbresults = {}
         self.tmdbdetails = []
         director = []
+        country = []
 
         logos = None
 
@@ -1213,8 +1215,6 @@ class XStreamity_Series_Categories(Screen):
 
                     if "overview" in self.tmdbdetails and self.tmdbdetails["overview"]:
                         self.tmdbresults["description"] = str(self.tmdbdetails["overview"])
-
-                    # self.tmdbresults["description"] = str(self.tmdbdetails.get("overview") or self.storeddescription or "")
 
                     if "vote_average" in self.tmdbdetails and self.tmdbdetails["vote_average"]:
                         rating_str = str(self.tmdbdetails["vote_average"])
@@ -1254,6 +1254,17 @@ class XStreamity_Series_Categories(Screen):
                                 genre.append(str(genreitem["name"]))
                             genre = " / ".join(map(str, genre))
                             self.tmdbresults["genre"] = genre
+
+                        if "origin_country" in self.tmdbdetails and self.tmdbdetails["origin_country"]:
+                            try:
+                                country = self.tmdbdetails["origin_country"][0]
+                                self.tmdbresults["country"] = country
+                            except:
+                                pass
+
+                        if not country and "production_countries" in self.tmdbdetails and self.tmdbdetails["production_countries"]:
+                            country = ", ".join(str(pcountry["name"]) for pcountry in self.tmdbdetails["production_countries"])
+                            self.tmdbresults["country"] = country
 
                     if self.level != 4:
                         if "credits" in self.tmdbdetails:
@@ -1365,6 +1376,7 @@ class XStreamity_Series_Categories(Screen):
         genre = ""
         duration = ""
         rating = "0"
+        country = ""
 
         current_item = self["main_list"].getCurrent()
 
@@ -1465,6 +1477,9 @@ class XStreamity_Series_Categories(Screen):
                 if "director" in info:
                     director = str(info["director"]).strip()
 
+                if "country" in info:
+                    country = str(info["country"]).strip()
+
                 if "cast" in info:
                     cast = str(info["cast"]).strip()
                 elif "actors" in info:
@@ -1523,6 +1538,8 @@ class XStreamity_Series_Categories(Screen):
 
             self["vod_director"].setText(str(director).strip())
 
+            self["vod_country"].setText(str(country).strip())
+
             if self["vod_cast"].getText() != "":
                 self["vod_cast_label"].setText(_("Cast:"))
             else:
@@ -1532,6 +1549,11 @@ class XStreamity_Series_Categories(Screen):
                 self["vod_director_label"].setText(_("Director:"))
             else:
                 self["vod_director_label"].setText("")
+
+            if self["vod_country"].getText() != "":
+                self["vod_country_label"].setText(_("Country:"))
+            else:
+                self["vod_country_label"].setText("")
 
             if self["x_description"].getText() != "":
                 self["overview"].setText(_("Overview"))
