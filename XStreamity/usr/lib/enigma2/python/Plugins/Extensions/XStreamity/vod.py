@@ -9,6 +9,9 @@ import json
 import math
 import os
 import re
+import shutil
+import subprocess
+import tarfile
 import time
 from itertools import cycle, islice
 import zlib
@@ -209,7 +212,8 @@ class XStreamity_Vod_Categories(Screen):
             "stop": self.favourite,
             "0": self.reset,
             "menu": self.showHiddenList,
-            "1": self.clearWatched
+            "1": self.clearWatched,
+            "ok_long": self.trailer
         }, -2)
 
         self["channel_actions"].setEnabled(False)
@@ -471,6 +475,11 @@ class XStreamity_Vod_Categories(Screen):
 
                 tmdb = str(channel.get("tmdb", ""))
 
+                trailer = str(channel.get("trailer", ""))
+
+                if not trailer:
+                    trailer = str(channel.get("youtube_trailer", ""))
+
                 next_url = "{}/movie/{}/{}/{}.{}".format(self.host, self.username, self.password, stream_id, container_extension)
 
                 favourite = False
@@ -482,8 +491,7 @@ class XStreamity_Vod_Categories(Screen):
                 else:
                     glob.active_playlist["player_info"]["vodfavourites"] = []
 
-                self.list2.append([index, str(name), str(stream_id), str(cover), str(added), str(rating), str(next_url), favourite, container_extension, year, hidden, tmdb])
-
+                self.list2.append([index, str(name), str(stream_id), str(cover), str(added), str(rating), str(next_url), favourite, container_extension, year, hidden, tmdb, str(trailer)])
             glob.originalChannelList2 = self.list2[:]
 
     def downloadApiData(self, url):
@@ -538,9 +546,9 @@ class XStreamity_Vod_Categories(Screen):
 
         if self.list2:
             if self.chosen_category == "favourites":
-                self.main_list = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[10], x[11]) for x in self.list2 if x[7] is True]
+                self.main_list = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[10], x[11], x[12]) for x in self.list2 if x[7] is True]
             else:
-                self.main_list = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[10], x[11]) for x in self.list2 if x[10] is False]
+                self.main_list = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[10], x[11], x[12]) for x in self.list2 if x[10] is False]
             self["main_list"].setList(self.main_list)
 
             self.showVod()
@@ -2143,18 +2151,213 @@ class XStreamity_Vod_Categories(Screen):
 
         return " • ".join(facts)
 
+    def trailer(self):
+        if debugs:
+            print("*** trailer ***")
+
+        if pythonVer == 2:
+            return
+
+        ffmpeg_installed = check_and_install_ffmpeg()
+
+        if not ffmpeg_installed:
+            return
+
+        pytubefix_installed = check_and_install_pytubefix()
+
+        if not pytubefix_installed:
+            return
+
+        current_item = self["main_list"].getCurrent()
+        if current_item:
+            trailer_id = str(current_item[11])
+
+            if not trailer_id:
+                return
+
+            from pytubefix import YouTube
+
+            youtubelink = "https://www.youtube.com/watch?v=" + str(trailer_id)
+
+            # print("*** youtubelink ***", youtubelink)
+
+            yt = YouTube(youtubelink)
+
+            video_stream = max(
+                [s for s in yt.streams.filter(mime_type="video/webm", progressive=False) if s.resolution and int(s.resolution[:-1]) <= 1080],
+                key=lambda s: int(s.resolution[:-1]),
+                default=None
+            )
+
+            audio_stream = yt.streams.filter(mime_type="audio/mp4", progressive=False, only_audio=True).order_by("abr").desc().last()
+
+            if not video_stream or not audio_stream:
+                return
+
+            download_dir = "/tmp/"
+            video_file = "video_{}.mp4".format(trailer_id)
+            audio_file = "audio_{}.mp4".format(trailer_id)
+            output_file = "output_{}.mkv".format(trailer_id)
+
+            video_stream.download(output_path=download_dir, filename=video_file, skip_existing=False)
+            audio_stream.download(output_path=download_dir, filename=audio_file, skip_existing=False)
+
+            # Merge video and audio with FFmpeg
+            ffmpeg_cmd = [
+                "ffmpeg",
+                "-i", download_dir + video_file,
+                "-i", download_dir + audio_file,
+                "-c:v", "copy",
+                "-c:a", "copy",
+                "-y", download_dir + output_file  # Overwrite if exists
+            ]
+
+            result = subprocess.run(ffmpeg_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+            if result.returncode != 0:
+                print("FFmpeg failed to merge the files!")
+                return
+
+            self.trailer_next(download_dir + output_file, yt.title)
+
+    def trailer_next(self, file, title):
+        if debugs:
+            print("*** trailer_next ***")
+
+        if self["main_list"].getCurrent():
+            current_index = self["main_list"].getIndex()
+            glob.nextlist[-1]["index"] = current_index
+            glob.currentchannellist = self.main_list[:]
+            glob.currentchannellistindex = current_index
+
+            streamtype = glob.active_playlist["player_info"]["vodtype"]
+            next_url = file
+
+            self.reference = eServiceReference(int(streamtype), 0, next_url)
+            self.reference.setName(title)
+            self.session.openWithCallback(self.trailer_cleanup, vodplayer.XStreamity_VodPlayer, str(next_url), str(streamtype), None)
+
+    def trailer_cleanup(self, *args):
+        if debugs:
+            print("*** trailer_cleanup ***")
+
+        for file in os.listdir("/tmp/"):
+            if file.startswith("video_") or file.startswith("audio_") or file.startswith("output_"):
+                try:
+                    os.remove(os.path.join("/tmp/", file))
+                except:
+                    pass
+
+        self.setIndex()
+
+
+def check_and_install_ffmpeg():
+    try:
+        subprocess.run(["ffmpeg", "-version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        return True
+    except subprocess.CalledProcessError:
+        print("FFmpeg is not installed. Installing...")
+
+    # Check if opkg exists to determine the package manager
+    if os.path.exists("/etc/opkg/"):
+        if install_ffmpeg_opkg():
+            return True
+    else:
+        if install_ffmpeg_apt():
+            return True
+
+    return False
+
+
+def install_ffmpeg_opkg():
+    try:
+        subprocess.run(["opkg", "update"], check=True)
+        subprocess.run(["opkg", "install", "ffmpeg"], check=True)
+        print("FFmpeg installed successfully.")
+        return True
+    except subprocess.CalledProcessError:
+        print("Failed to install FFmpeg using opkg.")
+        return False
+
+
+def install_ffmpeg_apt():
+    try:
+        subprocess.run(["apt-get", "update"], check=True)
+        subprocess.run(["apt-get", "-y", "install", "ffmpeg"], check=True)
+        print("FFmpeg installed successfully.")
+        return True
+    except subprocess.CalledProcessError:
+        print("Failed to install FFmpeg using apt-get.")
+        return False
+
+
+def get_python_site_packages():
+    python_dirs = sorted([d for d in os.listdir("/usr/lib/") if d.startswith("python")], reverse=True)
+    for py_dir in python_dirs:
+        site_packages = os.path.join("/usr/lib", py_dir, "site-packages")
+
+        if os.path.exists(site_packages):
+            return site_packages
+    return None
+
+
+def check_and_install_pytubefix():
+    site_packages = get_python_site_packages()
+    pytubefix_path = os.path.join(site_packages, "pytubefix") if site_packages else None
+
+    # Check if pytubefix is installed and the folder is not empty
+    if pytubefix_path and os.path.exists(pytubefix_path) and os.listdir(pytubefix_path):
+        return True
+
+    # Download pytubefix tarball
+    url = "https://files.pythonhosted.org/packages/dd/c0/5201796b7df003368ac718225f26109300a9ac9c8c1cce9966c163b8636c/pytubefix-8.12.1.tar.gz"
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        tarball_path = "/tmp/pytubefix-8.12.1.tar.gz"
+        with open(tarball_path, "wb") as f:
+            f.write(response.content)
+
+        print("Tarball downloaded successfully at", tarball_path)
+
+        # Extract the tarball
+        with tarfile.open(tarball_path, "r:gz") as tar:
+            tar.extractall(path="/tmp/")
+
+        extracted_path = "/tmp/pytubefix-8.12.1/pytubefix"
+        print("Checking if extracted pytubefix folder exists at", extracted_path)
+
+        if os.path.exists(extracted_path):
+            print("pytubefix folder found at", extracted_path, ". Copying it to", pytubefix_path)
+            try:
+                shutil.copytree(extracted_path, pytubefix_path)
+                print("pytubefix installed successfully at", pytubefix_path)
+                return True
+            except Exception as e:
+                print("Failed to copy pytubefix:", str(e))
+                return False
+        else:
+            print("Failed to find pytubefix folder at", extracted_path)
+            return False
+    else:
+        print("Failed to download pytubefix tarball. HTTP status code:", response.status_code)
+        return False
+
 
 def buildCategoryList(index, title, category_id, hidden):
     png = LoadPixmap(os.path.join(common_path, "more.png"))
     return (title, png, index, category_id, hidden)
 
 
-def buildVodStreamList(index, title, stream_id, cover, added, rating, next_url, favourite, container_extension, hidden, tmdb):
+def buildVodStreamList(index, title, stream_id, cover, added, rating, next_url, favourite, container_extension, hidden, tmdb, trailer):
     png = LoadPixmap(os.path.join(common_path, "play.png"))
+    if trailer and pythonVer == 3:
+        png = LoadPixmap(os.path.join(common_path, "play2.png"))
+
     if favourite:
         png = LoadPixmap(os.path.join(common_path, "favourite.png"))
     for channel in glob.active_playlist["player_info"]["vodwatched"]:
         if int(stream_id) == int(channel):
             png = LoadPixmap(os.path.join(common_path, "watched.png"))
 
-    return (title, png, index, next_url, stream_id, cover, added, rating, container_extension, hidden, tmdb)
+    return (title, png, index, next_url, stream_id, cover, added, rating, container_extension, hidden, tmdb, trailer)

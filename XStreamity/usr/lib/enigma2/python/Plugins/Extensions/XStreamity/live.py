@@ -1589,6 +1589,10 @@ class XStreamity_Live_Categories(Screen):
         safeName = re.sub(r"_+", "_", safeName)
 
         filepath = "/etc/epgimport/"
+
+        if not os.path.exists(filepath):
+            os.makedirs(filepath)
+
         epgfilename = "xstreamity." + str(safeName) + ".channels.xml"
         channelpath = os.path.join(filepath, epgfilename)
 
@@ -1612,7 +1616,10 @@ class XStreamity_Live_Categories(Screen):
         try:
             import xml.etree.ElementTree as ET
 
-            tree = ET.parse(sourcefile, parser=ET.XMLParser(encoding="utf-8"))
+            try:
+                tree = ET.parse(sourcefile, parser=ET.XMLParser(encoding="utf-8"))
+            except:
+                return
             root = tree.getroot()
             sourcecat = root.find("sourcecat")
 
@@ -1629,6 +1636,7 @@ class XStreamity_Live_Categories(Screen):
                 tree.write(sourcefile)
         except Exception as e:
             print(e)
+            return
 
         try:
             with open(sourcefile, "r+") as f:
