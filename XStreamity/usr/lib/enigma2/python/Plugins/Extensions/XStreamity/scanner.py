@@ -376,13 +376,16 @@ class XStreamity_Scanner(Screen):
                             pass
 
                 if "timestamp_now" in server_info:
-                    timestamp = server_info["timestamp_now"]
-                    timestamp_dt = datetime.utcfromtimestamp(timestamp)
-                    current_dt = datetime.now()
-                    time_difference = current_dt - timestamp_dt
-                    hour_difference = int(time_difference.total_seconds() / 3600)
-                    catchupoffset = hour_difference
-                    playlists["player_info"]["catchupoffset"] = catchupoffset
+                    try:
+                        timestamp = int(server_info["timestamp_now"])
+                        timestamp_dt = datetime.utcfromtimestamp(timestamp)
+                        current_dt = datetime.now()
+                        time_difference = current_dt - timestamp_dt
+                        hour_difference = int(time_difference.total_seconds() / 3600)
+                        catchupoffset = hour_difference
+                        playlists["player_info"]["catchupoffset"] = catchupoffset
+                    except:
+                        pass
 
                 auth = user_info.get("auth", 1)
                 if not isinstance(auth, int):

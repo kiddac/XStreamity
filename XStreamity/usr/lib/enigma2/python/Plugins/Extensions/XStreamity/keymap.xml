@@ -16,10 +16,12 @@
         <key id="KEY_FAVORITES" mapto="tv" flags="m" />
         <key id="KEY_PVR" mapto="tv" flags="m" />
         <key id="KEY_MUTE" mapto="mute" flags="m" />
-        <key id="KEY_OK" mapto="ok" flags="b" />
-        <key id="KEY_OK" mapto="ok_long" flags="l" />
-        <key id="KEY_ENTER" mapto="ok" flags="b" />
-        <key id="KEY_ENTER" mapto="ok_long" flags="l" />
+		<key id="KEY_OK" mapto="ok" flags="m" />
+		<key id="KEY_OK" mapto="OK" flags="b" />
+		<key id="KEY_OK" mapto="OKLong" flags="l" />
+		<key id="KEY_ENTER" mapto="ok" flags="m" />
+		<key id="KEY_ENTER" mapto="OK" flags="b" />
+		<key id="KEY_ENTER" mapto="OKLong" flags="l" />
         <key id="KEY_STOP" mapto="stop" flags="m"/>
         <key id="KEY_RED" mapto="red" flags="b"/>
         <key id="KEY_RED" mapto="redlong" flags="l"/>

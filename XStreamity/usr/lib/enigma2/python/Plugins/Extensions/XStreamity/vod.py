@@ -213,7 +213,7 @@ class XStreamity_Vod_Categories(Screen):
             "0": self.reset,
             "menu": self.showHiddenList,
             "1": self.clearWatched,
-            "ok_long": self.trailer
+            "OKLong": self.trailer
         }, -2)
 
         self["channel_actions"].setEnabled(False)

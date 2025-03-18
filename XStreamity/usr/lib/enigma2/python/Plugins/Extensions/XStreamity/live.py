@@ -1092,7 +1092,7 @@ class XStreamity_Live_Categories(Screen):
         else:
             self["x_title"].setText("")
             self["x_description"].setText("")
-            if cfg.stopstream.value or not cfg.livepreview.value:
+            if cfg.stopstream.value:
                 self.stopStream()
             self.level -= 1
 

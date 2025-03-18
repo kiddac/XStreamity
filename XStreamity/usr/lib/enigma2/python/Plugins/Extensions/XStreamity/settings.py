@@ -176,6 +176,9 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.cfg_vodcategoryorder = getConfigListEntry(_("Default VOD category sort order"), cfg.vodcategoryorder)
         self.cfg_vodstreamorder = getConfigListEntry(_("Default VOD stream sort order"), cfg.vodstreamorder)
 
+        self.cfg_seriescategoryorder = getConfigListEntry(_("Default Series category sort order"), cfg.seriescategoryorder)
+        self.cfg_seriesorder = getConfigListEntry(_("Default Series sort order"), cfg.seriesorder)
+
         self.createSetup()
 
     def createSetup(self):
@@ -190,6 +193,8 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
             self.cfg_vodtype,
             self.cfg_vodcategoryorder,
             self.cfg_vodstreamorder,
+            self.cfg_seriescategoryorder,
+            self.cfg_seriesorder,
             self.cfg_livepreview,
             self.cfg_stopstream,
             self.cfg_wakeup,

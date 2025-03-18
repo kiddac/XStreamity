@@ -273,18 +273,21 @@ class XStreamity_Playlists(Screen):
                             pass
 
                 if "timestamp_now" in server_info:
-                    timestamp = server_info["timestamp_now"]
-                    timestamp_dt = datetime.utcfromtimestamp(timestamp)
+                    try:
+                        timestamp = int(server_info["timestamp_now"])
+                        timestamp_dt = datetime.utcfromtimestamp(timestamp)
 
-                    # Get the current system time
-                    current_dt = datetime.now()
+                        # Get the current system time
+                        current_dt = datetime.now()
 
-                    # Calculate the difference
-                    time_difference = current_dt - timestamp_dt
-                    hour_difference = int(time_difference.total_seconds() / 3600)
-                    catchupoffset = hour_difference
-                    # print("hour_difference:", hour_difference)
-                    playlists["player_info"]["catchupoffset"] = catchupoffset
+                        # Calculate the difference
+                        time_difference = current_dt - timestamp_dt
+                        hour_difference = int(time_difference.total_seconds() / 3600)
+                        catchupoffset = hour_difference
+                        # print("hour_difference:", hour_difference)
+                        playlists["player_info"]["catchupoffset"] = catchupoffset
+                    except:
+                        pass
 
                 auth = user_info.get("auth", 1)
                 if not isinstance(auth, int):
