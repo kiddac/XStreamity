@@ -1,9 +1,8 @@
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-02-19 21:04+0000\n"
-"PO-Revision-Date: 2024-09-14 23:15+0100\n"
+"POT-Creation-Date: 2025-03-25 20:58+0000\n"
+"PO-Revision-Date: 2025-03-25 20:59+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en\n"
@@ -70,95 +69,98 @@ msgid "Catch Up TV"
 msgstr ""
 
 #: catchup.py:185 catchup.py:436 catchup.py:624 catchup.py:638 catchup.py:770
-#: live.py:204 live.py:578 live.py:792 live.py:806 live.py:988 plugin.py:168
-#: plugin.py:169 series.py:157 series.py:1550 series.py:1927 series.py:1930
-#: series.py:1932 series.py:1943 series.py:2143 series.py:2177 series.py:2194
-#: vod.py:292 vod.py:296 vod.py:312 vod.py:1602 vod.py:1604 vod.py:1614
-#: vod.py:1818
+#: live.py:204 live.py:578 live.py:793 live.py:807 live.py:989 plugin.py:168
+#: plugin.py:169 plugin.py:171 plugin.py:172 series.py:158 series.py:303
+#: series.py:307 series.py:327 series.py:1641 series.py:2018 series.py:2021
+#: series.py:2023 series.py:2034 series.py:2235 series.py:2269 series.py:2286
+#: vod.py:296 vod.py:300 vod.py:316 vod.py:1610 vod.py:1612 vod.py:1622
+#: vod.py:1826
 msgid "Sort: A-Z"
 msgstr ""
 
 #: catchup.py:207 downloadmanager.py:184 live.py:236 mainmenu.py:49 menu.py:63
-#: playlists.py:67 playsettings.py:53 scanner.py:89 series.py:175 server.py:65
-#: settings.py:73 vod.py:166
+#: playlists.py:67 playsettings.py:53 scanner.py:89 series.py:176 server.py:65
+#: settings.py:73 vod.py:169
 msgid "Back"
 msgstr ""
 
 #: catchup.py:208 live.py:237 mainmenu.py:50 menu.py:64 playlists.py:68
-#: scanner.py:90 series.py:176 vod.py:167
+#: scanner.py:90 series.py:177 vod.py:170
 msgid "OK"
 msgstr ""
 
 #: catchup.py:210 catchup.py:439 catchup.py:702 live.py:239 live.py:575
-#: live.py:904 series.py:178 series.py:1553 series.py:2046 vod.py:169
-#: vod.py:1239 vod.py:1726
+#: live.py:905 series.py:179 series.py:1644 series.py:2137 vod.py:172
+#: vod.py:1247 vod.py:1734
 msgid "Search"
 msgstr ""
 
-#: catchup.py:307 live.py:352 series.py:338 vod.py:377
+#: catchup.py:307 live.py:352 series.py:401 vod.py:381
 msgid "ALL"
 msgstr ""
 
-#: catchup.py:399 live.py:499 series.py:787 vod.py:512
+#: catchup.py:399 live.py:499 series.py:860 vod.py:520
 msgid "Server error or invalid link."
 msgstr ""
 
 #: catchup.py:404 catchup.py:427 catchup.py:671 catchup.py:696 live.py:532
-#: live.py:569 live.py:840 live.py:897 series.py:795 series.py:1546
-#: series.py:1989 series.py:2036 vod.py:520 vod.py:1232 vod.py:1653 vod.py:1716
+#: live.py:569 live.py:841 live.py:898 series.py:868 series.py:1637
+#: series.py:2080 series.py:2127 vod.py:528 vod.py:1240 vod.py:1661 vod.py:1724
 msgid "Reset Search"
 msgstr ""
 
-#: catchup.py:432 catchup.py:619 live.py:787
+#: catchup.py:432 catchup.py:619 live.py:788
 msgid "Reverse"
 msgstr ""
 
-#: catchup.py:467 catchup.py:492 live.py:614 live.py:648 series.py:893
-#: series.py:930 vod.py:685 vod.py:712
+#: catchup.py:467 catchup.py:492 live.py:614 live.py:648 series.py:962
+#: series.py:999 vod.py:692 vod.py:719
 msgid "Page: "
 msgstr ""
 
-#: catchup.py:624 catchup.py:641 live.py:792 live.py:809 plugin.py:168
-#: plugin.py:169 series.py:1927 series.py:1930 series.py:1932 series.py:1946
-#: vod.py:292 vod.py:296 vod.py:315 vod.py:1602 vod.py:1604 vod.py:1617
+#: catchup.py:624 catchup.py:641 live.py:793 live.py:810 plugin.py:168
+#: plugin.py:169 plugin.py:171 plugin.py:172 series.py:303 series.py:307
+#: series.py:330 series.py:2018 series.py:2021 series.py:2023 series.py:2037
+#: vod.py:296 vod.py:300 vod.py:319 vod.py:1610 vod.py:1612 vod.py:1625
 msgid "Sort: Z-A"
 msgstr ""
 
-#: catchup.py:626 catchup.py:628 catchup.py:649 live.py:794 live.py:796
-#: live.py:817 plugin.py:168 plugin.py:169 series.py:1927 series.py:1930
-#: series.py:1932 series.py:1957 vod.py:292 vod.py:296 vod.py:326 vod.py:1602
-#: vod.py:1604 vod.py:1628
+#: catchup.py:626 catchup.py:628 catchup.py:649 live.py:795 live.py:797
+#: live.py:818 plugin.py:168 plugin.py:169 plugin.py:171 plugin.py:172
+#: series.py:303 series.py:307 series.py:341 series.py:2018 series.py:2021
+#: series.py:2023 series.py:2048 vod.py:296 vod.py:300 vod.py:330 vod.py:1610
+#: vod.py:1612 vod.py:1636
 msgid "Sort: Original"
 msgstr ""
 
-#: catchup.py:628 catchup.py:644 live.py:796 live.py:812 plugin.py:169
-#: series.py:1930 series.py:1932 series.py:1949 vod.py:296 vod.py:318
-#: vod.py:1604 vod.py:1620
+#: catchup.py:628 catchup.py:644 live.py:797 live.py:813 plugin.py:169
+#: plugin.py:172 series.py:307 series.py:333 series.py:2021 series.py:2023
+#: series.py:2040 vod.py:300 vod.py:322 vod.py:1612 vod.py:1628
 msgid "Sort: Added"
 msgstr ""
 
-#: catchup.py:674 live.py:847 series.py:1993 vod.py:1660
+#: catchup.py:674 live.py:848 series.py:2084 vod.py:1668
 msgid "Filter this category..."
 msgstr ""
 
-#: catchup.py:689 live.py:890 series.py:2022 vod.py:1709
+#: catchup.py:689 live.py:891 series.py:2113 vod.py:1717
 msgid "No results found."
 msgstr ""
 
-#: catchup.py:720 live.py:923 series.py:2076 vod.py:1748
+#: catchup.py:720 live.py:924 series.py:2168 vod.py:1756
 msgid "Incorrect pin code."
 msgstr ""
 
-#: catchup.py:740 live.py:944 series.py:2099 vod.py:1771
+#: catchup.py:740 live.py:945 series.py:2191 vod.py:1779
 msgid "all"
 msgstr ""
 
-#: catchup.py:749 live.py:953 series.py:2108 vod.py:1780
+#: catchup.py:749 live.py:954 series.py:2200 vod.py:1788
 msgid "Please enter the parental control pin code"
 msgstr ""
 
-#: catchup.py:749 hidden.py:31 live.py:953 series.py:2108 settings.py:32
-#: vod.py:1780
+#: catchup.py:749 hidden.py:31 live.py:954 series.py:2200 settings.py:32
+#: vod.py:1788
 msgid "Enter pin code"
 msgstr ""
 
@@ -166,23 +168,23 @@ msgstr ""
 msgid "Catch-up"
 msgstr ""
 
-#: catchup.py:889 series.py:2475 vod.py:2072
+#: catchup.py:889 series.py:2566 vod.py:2082
 msgid "Added to download manager"
 msgstr ""
 
-#: catchup.py:889 series.py:2475 vod.py:2072
+#: catchup.py:889 series.py:2566 vod.py:2082
 msgid "Note recording acts as an open connection."
 msgstr ""
 
-#: catchup.py:889 series.py:2475 vod.py:2072
+#: catchup.py:889 series.py:2566 vod.py:2082
 msgid "Do not record and play streams at the same time."
 msgstr ""
 
-#: catchup.py:889 series.py:2475 vod.py:2072
+#: catchup.py:889 series.py:2566 vod.py:2082
 msgid "Open download manager?"
 msgstr ""
 
-#: catchup.py:892 series.py:2478 vod.py:2075
+#: catchup.py:892 series.py:2569 vod.py:2085
 msgid "Already added to download manager"
 msgstr ""
 
@@ -305,31 +307,31 @@ msgstr ""
 msgid "Live TV"
 msgstr ""
 
-#: live.py:350 series.py:337 vod.py:375
+#: live.py:350 series.py:400 vod.py:379
 msgid "FAVOURITES"
 msgstr ""
 
-#: live.py:351 vod.py:376
+#: live.py:351 vod.py:380
 msgid "RECENTLY WATCHED"
 msgstr ""
 
-#: live.py:573 live.py:843 playlists.py:69 vod.py:1247 vod.py:1656
+#: live.py:573 live.py:844 playlists.py:69 vod.py:1255 vod.py:1664
 msgid "Delete"
 msgstr ""
 
-#: live.py:1295 live.py:1334 live.py:1343
+#: live.py:1299 live.py:1338 live.py:1347
 msgid "Next Info"
 msgstr ""
 
-#: live.py:1338
+#: live.py:1342
 msgid "Now Info"
 msgstr ""
 
-#: live.py:1539 liveplayer.py:623
+#: live.py:1543 liveplayer.py:623
 msgid "Recording Timer Set."
 msgstr ""
 
-#: live.py:1541 liveplayer.py:625
+#: live.py:1545 liveplayer.py:625
 msgid "Recording Failed."
 msgstr ""
 
@@ -420,59 +422,59 @@ msgstr ""
 msgid "No internet."
 msgstr ""
 
-#: playlists.py:336 playlists.py:416 scanner.py:424 scanner.py:511
+#: playlists.py:339 playlists.py:419 scanner.py:427 scanner.py:514
 msgid "Server Not Responding"
 msgstr ""
 
-#: playlists.py:346 playlists.py:418 scanner.py:451 scanner.py:513
+#: playlists.py:349 playlists.py:421 scanner.py:454 scanner.py:516
 msgid "Not Authorised"
 msgstr ""
 
-#: playlists.py:351 playlists.py:404 scanner.py:457 scanner.py:499
+#: playlists.py:354 playlists.py:407 scanner.py:460 scanner.py:502
 #: serverinfo.py:73
 msgid "Active"
 msgstr ""
 
-#: playlists.py:352 playlists.py:410 scanner.py:458 scanner.py:505
+#: playlists.py:355 playlists.py:413 scanner.py:461 scanner.py:508
 #: serverinfo.py:74
 msgid "Banned"
 msgstr ""
 
-#: playlists.py:353 playlists.py:414 scanner.py:459 scanner.py:509
+#: playlists.py:356 playlists.py:417 scanner.py:462 scanner.py:512
 #: serverinfo.py:75
 msgid "Disabled"
 msgstr ""
 
-#: playlists.py:354 playlists.py:412 scanner.py:460 scanner.py:507
+#: playlists.py:357 playlists.py:415 scanner.py:463 scanner.py:510
 #: serverinfo.py:76
 msgid "Expired"
 msgstr ""
 
-#: playlists.py:362 playlists.py:364 playlists.py:366 scanner.py:468
-#: scanner.py:470 scanner.py:472
+#: playlists.py:365 playlists.py:367 playlists.py:369 scanner.py:471
+#: scanner.py:473 scanner.py:475
 msgid "Expires: "
 msgstr ""
 
-#: playlists.py:368 scanner.py:474
+#: playlists.py:371 scanner.py:477
 msgid "Active Conn:"
 msgstr ""
 
-#: playlists.py:376 scanner.py:482
+#: playlists.py:379 scanner.py:485
 msgid "Max Conn:"
 msgstr ""
 
-#: playlists.py:397
+#: playlists.py:400
 msgid ""
 "You have dead playlists that are slowing down loading.\n"
 "\n"
 "Press Yellow button to soft delete dead playlists"
 msgstr ""
 
-#: playlists.py:431
+#: playlists.py:434
 msgid "Delete selected playlist?"
 msgstr ""
 
-#: playlists.py:452
+#: playlists.py:455
 msgid "Delete providers EPG data?"
 msgstr ""
 
@@ -534,28 +536,28 @@ msgstr ""
 msgid "Name already used. Please enter a unique name."
 msgstr ""
 
-#: plugin.py:168 plugin.py:169
+#: plugin.py:168 plugin.py:169 plugin.py:171 plugin.py:172
 msgid "Original"
 msgstr ""
 
-#: plugin.py:169
+#: plugin.py:169 plugin.py:172
 msgid "Added"
 msgstr ""
 
-#: plugin.py:169 series.py:1930 series.py:1953 vod.py:296 vod.py:322
-#: vod.py:1604 vod.py:1624
+#: plugin.py:169 plugin.py:172 series.py:307 series.py:337 series.py:2021
+#: series.py:2044 vod.py:300 vod.py:326 vod.py:1612 vod.py:1632
 msgid "Sort: Year"
 msgstr ""
 
-#: plugin.py:169
+#: plugin.py:169 plugin.py:172
 msgid "Year"
 msgstr ""
 
-#: plugin.py:282 plugin.py:396
+#: plugin.py:286 plugin.py:400
 msgid "XStreamity"
 msgstr ""
 
-#: plugin.py:395
+#: plugin.py:399
 msgid "IPTV Xtream Codes playlists player by KiddaC"
 msgstr ""
 
@@ -591,43 +593,39 @@ msgstr ""
 msgid "Series Categories"
 msgstr ""
 
-#: series.py:97 series.py:2470
+#: series.py:97 series.py:2561
 msgid "Series"
 msgstr ""
 
-#: series.py:480
-msgid "No series found in this category."
-msgstr ""
-
-#: series.py:482
-msgid "No Favourites added."
-msgstr ""
-
-#: series.py:547 series.py:2542
+#: series.py:620 series.py:2633
 msgid "Season "
 msgstr ""
 
-#: series.py:1470 vod.py:1210
+#: series.py:1554 vod.py:1218
 msgid "Rating: "
 msgstr ""
 
-#: series.py:1521 vod.py:1201
+#: series.py:1607 vod.py:1209
 msgid "Cast:"
 msgstr ""
 
-#: series.py:1526 vod.py:1183
+#: series.py:1612 vod.py:1191
 msgid "Director:"
 msgstr ""
 
-#: series.py:1531 vod.py:1158
+#: series.py:1617 vod.py:1199
+msgid "Country:"
+msgstr ""
+
+#: series.py:1622 vod.py:1166
 msgid "Overview"
 msgstr ""
 
-#: series.py:2397
+#: series.py:2487
 msgid "Series group added to favourites."
 msgstr ""
 
-#: series.py:2399
+#: series.py:2489
 msgid "Series group removed from favourites."
 msgstr ""
 
@@ -840,37 +838,41 @@ msgstr ""
 msgid "Default VOD stream sort order"
 msgstr ""
 
-#: settings.py:293
+#: settings.py:179
+msgid "Default Series category sort order"
+msgstr ""
+
+#: settings.py:180
+msgid "Default Series sort order"
+msgstr ""
+
+#: settings.py:298
 msgid "Choose Directory:"
 msgstr ""
 
-#: settings.py:294
+#: settings.py:299
 msgid "Choose directory"
 msgstr ""
 
-#: vod.py:104
+#: vod.py:107
 msgid "Vod Categories"
 msgstr ""
 
-#: vod.py:106
+#: vod.py:109
 msgid "Movies"
 msgstr ""
 
-#: vod.py:1191
-msgid "Country:"
-msgstr ""
-
-#: vod.py:2067
+#: vod.py:2077
 msgid "Movie"
 msgstr ""
 
-#: vod.py:2105
+#: vod.py:2115
 msgid ""
 "The TMDB plugin is not installed!\n"
 "Please install it."
 msgstr ""
 
-#: vod.py:2116
+#: vod.py:2126
 msgid ""
 "The IMDb plugin is not installed!\n"
 "Please install it."

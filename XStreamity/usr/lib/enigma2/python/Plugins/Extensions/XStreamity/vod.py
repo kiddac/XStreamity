@@ -492,7 +492,7 @@ class XStreamity_Vod_Categories(Screen):
                     glob.active_playlist["player_info"]["vodfavourites"] = []
 
                 self.list2.append([index, str(name), str(stream_id), str(cover), str(added), str(rating), str(next_url), favourite, container_extension, year, hidden, tmdb, str(trailer)])
-            glob.originalChannelList2 = self.list2[:]
+        glob.originalChannelList2 = self.list2[:]
 
     def downloadApiData(self, url):
         if debugs:
@@ -544,17 +544,16 @@ class XStreamity_Vod_Categories(Screen):
 
         self.main_list = []
 
-        if self.list2:
-            if self.chosen_category == "favourites":
-                self.main_list = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[10], x[11], x[12]) for x in self.list2 if x[7] is True]
-            else:
-                self.main_list = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[10], x[11], x[12]) for x in self.list2 if x[10] is False]
-            self["main_list"].setList(self.main_list)
+        if self.chosen_category == "favourites":
+            self.main_list = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[10], x[11], x[12]) for x in self.list2 if x[7] is True]
+        else:
+            self.main_list = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[10], x[11], x[12]) for x in self.list2 if x[10] is False]
+        self["main_list"].setList(self.main_list)
 
-            self.showVod()
+        self.showVod()
 
-            if self["main_list"].getCurrent():
-                self["main_list"].setIndex(glob.nextlist[-1]["index"])
+        if self["main_list"].getCurrent():
+            self["main_list"].setIndex(glob.nextlist[-1]["index"])
 
     def downloadVodInfo(self):
         if debugs:
@@ -721,6 +720,7 @@ class XStreamity_Vod_Categories(Screen):
             self["listposition"].setText("{}/{}".format(position, position_all))
             self["key_yellow"].setText("")
             self["key_blue"].setText("")
+            self.hideVod()
 
     def stripjunk(self, text, database=None):
         if debugs:
@@ -1952,7 +1952,10 @@ class XStreamity_Vod_Categories(Screen):
                 favStream_id = fav["stream_id"]
                 break
 
-        self.list2[current_index][7] = not self.list2[current_index][7]
+        try:
+            self.list2[current_index][7] = not self.list2[current_index][7]
+        except:
+            pass
 
         if favExists:
             glob.active_playlist["player_info"]["vodfavourites"] = [x for x in glob.active_playlist["player_info"]["vodfavourites"] if str(x["stream_id"]) != str(favStream_id)]
@@ -1979,8 +1982,6 @@ class XStreamity_Vod_Categories(Screen):
             }
 
             glob.active_playlist["player_info"]["vodfavourites"].insert(0, newfavourite)
-
-            self.hideVod()
 
         with open(playlists_json, "r") as f:
             try:
@@ -2013,6 +2014,7 @@ class XStreamity_Vod_Categories(Screen):
         self["vod_cover"].hide()
         self["vod_logo"].hide()
         self["vod_backdrop"].hide()
+        self["main_title"].setText("")
         self["x_title"].setText("")
         self["x_description"].setText("")
         self["tagline"].setText("")
@@ -2030,7 +2032,7 @@ class XStreamity_Vod_Categories(Screen):
     def clearVod(self):
         if debugs:
             print("*** clearVod ***")
-
+        self["main_title"].setText("")
         self["x_title"].setText("")
         self["x_description"].setText("")
         self["tagline"].setText("")
@@ -2044,10 +2046,10 @@ class XStreamity_Vod_Categories(Screen):
     def showVod(self):
         if debugs:
             print("*** showVod ***")
-
-        self["vod_cover"].show()
-        self["vod_logo"].show()
-        self["vod_backdrop"].show()
+        if self["main_list"].getCurrent():
+            self["vod_cover"].show()
+            self["vod_logo"].show()
+            self["vod_backdrop"].show()
 
     def downloadVideo(self):
         if debugs:

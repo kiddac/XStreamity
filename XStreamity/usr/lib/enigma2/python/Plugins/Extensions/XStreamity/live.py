@@ -649,6 +649,7 @@ class XStreamity_Live_Categories(Screen):
             self["listposition"].setText("{}/{}".format(position, position_all))
             self["key_yellow"].setText("")
             self["key_blue"].setText("")
+            self.hideEPG()
 
     def downloadImage(self):
         # print("*** downloadimage ***")
@@ -1070,7 +1071,7 @@ class XStreamity_Live_Categories(Screen):
             self["main_list"].setIndex(glob.currentchannellistindex)
             self["epg_list"].setIndex(glob.currentchannellistindex)
             self.xmltvdownloaded = False
-            self.createSetup()
+            # self.createSetup()
 
     def back(self, data=None):
         # print("*** back ***")
@@ -1124,7 +1125,10 @@ class XStreamity_Live_Categories(Screen):
                 favStream_id = fav["stream_id"]
                 break
 
-        self.list2[current_index][16] = not self.list2[current_index][16]
+        try:
+            self.list2[current_index][16] = not self.list2[current_index][16]
+        except:
+            pass
 
         if favExists:
             glob.active_playlist["player_info"]["livefavourites"] = [x for x in glob.active_playlist["player_info"]["livefavourites"] if str(x["stream_id"]) != str(favStream_id)]
@@ -1260,19 +1264,19 @@ class XStreamity_Live_Categories(Screen):
                     print(e)
 
     def hideEPG(self):
-        # print("*** hideEPG ***")
         self["epg_list"].setList([])
         self["picon"].hide()
         self["epg_bg"].hide()
+        self["main_title"].setText("")
         self["x_title"].setText("")
         self["x_description"].setText("")
         self["progress"].hide()
 
     def showEPG(self):
-        # print("*** showEPG ***")
-        self["picon"].show()
-        self["epg_bg"].show()
-        self["progress"].show()
+        if self["main_list"].getCurrent():
+            self["picon"].show()
+            self["epg_bg"].show()
+            self["progress"].show()
 
     def refreshEPGInfo(self):
         # print("*** refreshEPG ***")
