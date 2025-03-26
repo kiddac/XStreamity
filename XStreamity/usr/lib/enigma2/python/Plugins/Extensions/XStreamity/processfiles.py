@@ -66,8 +66,8 @@ def process_files():
         port = ""
         username = ""
         password = ""
-        type = "m3u_plus"
-        output = "ts"
+        media_type = ""
+        output = ""
         livehidden = []
         channelshidden = []
         vodhidden = []
@@ -84,6 +84,7 @@ def process_files():
         showcatchup = True
         livefavourites = []
         vodfavourites = []
+        seriesfavourites = []
         liverecents = []
         vodrecents = []
         vodwatched = []
@@ -96,7 +97,6 @@ def process_files():
         epgalternativeurl = ""
         customsids = False
         fail_count = 0
-        seriesfavourites = []
 
         if line.startswith("http"):
             line = line.strip(" ")
@@ -126,13 +126,27 @@ def process_files():
             username = query["username"][0].strip()
             password = query["password"][0].strip()
 
-            """
             if "type" in query:
-                type = query["type"][0].strip()
-                """
+                media_type = query["type"][0].strip()
+            else:
+                media_type = "m3u_plus"
+
+            if media_type not in ["m3u", "m3u_plus"]:
+                media_type = "m3u_plus"
 
             if "output" in query:
                 output = query["output"][0].strip()
+            else:
+                output = "ts"
+
+            if output not in ["ts", "m3u8", "mpegts", "hls"]:
+                output = "ts"
+
+            if output == "mpegts":
+                output = "ts"
+
+            if output == "hls":
+                output = "m3u8"
 
             if "timeshift" in query:
                 try:
@@ -142,7 +156,7 @@ def process_files():
 
             player_api = host + "/player_api.php?username=" + username + "&password=" + password
             xmltv_api = host + "/xmltv.php?username=" + username + "&password=" + password
-            full_url = host + "/get.php?username=" + username + "&password=" + password + "&type=" + type + "&output=" + output
+            full_url = host + "/get.php?username=" + username + "&password=" + password + "&type=" + media_type + "&output=" + output
 
             playlist_exists = False
 
@@ -192,7 +206,7 @@ def process_files():
                                     playlist[key][sub_key] = sub_value
 
                         playlist["playlist_info"]["name"] = name
-                        playlist["playlist_info"]["type"] = type
+                        playlist["playlist_info"]["type"] = media_type
                         playlist["playlist_info"]["output"] = output
                         playlist["playlist_info"]["full_url"] = full_url
                         playlist["playlist_info"]["index"] = index
@@ -218,7 +232,7 @@ def process_files():
                         "port": port,
                         "username": username,
                         "password": password,
-                        "type": type,
+                        "type": media_type,
                         "output": output,
                         "host": host,
                         "player_api": player_api,

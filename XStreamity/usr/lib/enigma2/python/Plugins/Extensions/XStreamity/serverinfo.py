@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 # Standard library imports
-import json
 import os
 
 # Enigma2 components
@@ -92,7 +91,8 @@ class XStreamity_UserInfo(Screen):
         self["activeconn"].setText(str(user_info.get("active_cons", "")))
         self["maxconn"].setText(str(user_info.get("max_connections", "")))
 
-        self["formats"].setText(str(json.dumps(user_info.get("allowed_output_formats", []))).lstrip("[").rstrip("]"))
+        allowed_formats = user_info.get("allowed_output_formats") or []
+        self["formats"].setText(", ".join(map(str, allowed_formats)) if allowed_formats else "N/A")
 
         self["realurl"].setText(str(server_info.get("url", "")))
         self["timezone"].setText(str(server_info.get("timezone", "")))

@@ -225,7 +225,7 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.port = playlist_info.get("port", "")
         self.username = playlist_info.get("username", "")
         self.password = playlist_info.get("password", "")
-        self.listtype = "m3u"
+        self.media_type = "m3u"
 
         self.host = "{}{}:{}".format(self.protocol, self.domain, self.port) if self.port else "{}{}".format(self.protocol, self.domain)
 
@@ -270,9 +270,9 @@ class XStreamity_Settings(ConfigListScreen, Screen):
             player_info["epgalternativeurl"] = epgalternativeurl
 
             playlistline = "{}/get.php?username={}&password={}&type={}&output={}&timeshift={} #{}".format(
-                self.host, self.username, self.password, self.listtype, output, epgoffset, self.name)
+                self.host, self.username, self.password, self.media_type, output, epgoffset, self.name)
             self.full_url = "{}/get.php?username={}&password={}&type={}&output={}".format(
-                self.host, self.username, self.password, self.listtype, output)
+                self.host, self.username, self.password, self.media_type, output)
 
             playlist_info["full_url"] = self.full_url
             if epgalternativeurl:
@@ -313,10 +313,10 @@ class XStreamity_Settings(ConfigListScreen, Screen):
 
                         if hastimeshift or int(epgoffset) != 0:
                             playlistline = "{}/get.php?username={}&password={}&type={}&output={}&timeshift={} #{}".format(
-                                host, username.strip(), password.strip(), self.listtype, output, epgoffset, self.name)
+                                host, username.strip(), password.strip(), self.media_type, output, epgoffset, self.name)
                         else:
                             playlistline = "{}/get.php?username={}&password={}&type={}&output={} #{}".format(
-                                host, username.strip(), password.strip(), self.listtype, output, self.name)
+                                host, username.strip(), password.strip(), self.media_type, output, self.name)
 
                         line = str(playlistline) + "\n"
                         exists = True

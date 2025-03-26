@@ -403,8 +403,9 @@ class XStreamity_Scanner(Screen):
                     user_info["max_connections"] = 0
 
                 if 'allowed_output_formats' in user_info:
-                    allowed_formats = user_info['allowed_output_formats']
+                    allowed_formats = user_info['allowed_output_formats'] or []  # Ensure it's always a list
                     output_format = playlists["playlist_info"]["output"]
+
                     if output_format not in allowed_formats:
                         playlists["playlist_info"]["output"] = str(allowed_formats[0]) if allowed_formats else "ts"
 

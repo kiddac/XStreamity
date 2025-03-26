@@ -63,8 +63,8 @@ def process_files():
         port = ""
         username = ""
         password = ""
-        type = "m3u_plus"
-        output = "ts"
+        media_type = ""
+        output = ""
         livehidden = []
         channelshidden = []
         vodhidden = []
@@ -120,17 +120,31 @@ def process_files():
             username = query["username"][0].strip()
             password = query["password"][0].strip()
 
-            """
             if "type" in query:
-                type = query["type"][0].strip()
-                """
+                media_type = query["type"][0].strip()
+            else:
+                media_type = "m3u_plus"
+
+            if media_type not in ["m3u", "m3u_plus"]:
+                media_type = "m3u_plus"
 
             if "output" in query:
                 output = query["output"][0].strip()
+            else:
+                output = "ts"
+
+            if output not in ["ts", "m3u8", "mpegts", "hls"]:
+                output = "ts"
+
+            if output == "mpegts":
+                output = "ts"
+
+            if output == "hls":
+                output = "m3u8"
 
             player_api = host + "/player_api.php?username=" + username + "&password=" + password
             xmltv_api = host + "/xmltv.php?username=" + username + "&password=" + password
-            full_url = host + "/get.php?username=" + username + "&password=" + password + "&type=" + type + "&output=" + output
+            full_url = host + "/get.php?username=" + username + "&password=" + password + "&type=" + media_type + "&output=" + output
 
             playlists_all.append({
                 "playlist_info": {
@@ -141,7 +155,7 @@ def process_files():
                     "port": port,
                     "username": username,
                     "password": password,
-                    "type": type,
+                    "type": media_type,
                     "output": output,
                     "host": host,
                     "player_api": player_api,
