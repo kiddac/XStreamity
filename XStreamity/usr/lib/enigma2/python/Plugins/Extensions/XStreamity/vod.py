@@ -567,7 +567,7 @@ class XStreamity_Vod_Categories(Screen):
 
             self.tmdbresults = ""
 
-            content = ""
+            content = None
 
             retries = Retry(total=1, backoff_factor=1)
             adapter = HTTPAdapter(max_retries=retries)
@@ -579,87 +579,57 @@ class XStreamity_Vod_Categories(Screen):
                 try:
                     r = http.get(url, headers=hdr, timeout=(10, 20), verify=False)
                     r.raise_for_status()
-
-                    if r.status_code == requests.codes.ok:
-                        try:
-                            content = r.json()
-                        except ValueError as e:
-                            print("JSON decoding failed:", e)
-                            content = None
-                except Exception as e:
-                    print("Error during request:", e)
+                    content = r.json() if r.status_code == requests.codes.ok else None
+                except (requests.RequestException, ValueError) as e:
+                    print("Error during request or JSON decoding:", e)
                     content = None
 
-            if content and ("info" in content) and content["info"]:
+            if not content:
+                return
+
+            if "info" in content and content["info"]:
                 self.tmdbresults = content["info"]
 
                 if "name" not in self.tmdbresults and "movie_data" in content and content["movie_data"]:
                     self.tmdbresults["name"] = content["movie_data"]["name"]
 
-                cover = ""
-                if "cover_big" in self.tmdbresults:
-                    cover = self.tmdbresults["cover_big"]
-                elif "movie_image" in self.tmdbresults:
-                    cover = self.tmdbresults["movie_image"]
-
-                if cover and cover.startswith("http"):
-                    try:
-                        cover = cover.replace(r"\/", "/")
-                    except:
-                        pass
-
-                    if cover == "https://image.tmdb.org/t/p/w600_and_h900_bestv2":
-                        cover = ""
-
-                    if cover.startswith("https://image.tmdb.org/t/p/") or cover.startswith("http://image.tmdb.org/t/p/"):
-                        dimensions = cover.partition("/p/")[2].partition("/")[0]
-
-                        if screenwidth.width() <= 1280:
-                            cover = cover.replace(dimensions, "w200")
-                        elif screenwidth.width() <= 1920:
-                            cover = cover.replace(dimensions, "w300")
-                        else:
-                            cover = cover.replace(dimensions, "w400")
-
-                self.tmdbresults["cover_big"] = cover
-
-                if "duration" in self.tmdbresults:
-                    duration = self.tmdbresults["duration"]
-                    try:
-                        hours, minutes, seconds = map(int, duration.split(':'))
-                        duration = "{}h {}m".format(hours, minutes)
-                        self.tmdbresults["duration"] = duration
-                    except:
-                        pass
-
-                if "backdrop_path" in self.tmdbresults:
-                    if isinstance(self.tmdbresults["backdrop_path"], list):
-                        try:
-                            backdrop_path = self.tmdbresults["backdrop_path"][0]
-                            self.tmdbresults["backdrop_path"] = backdrop_path
-                        except:
-                            pass
+            cover = self.tmdbresults.get("cover_big") or self.tmdbresults.get("movie_image", "")
+            if cover.startswith("http"):
+                cover = cover.replace(r"\/", "/")
+                if cover == "https://image.tmdb.org/t/p/w600_and_h900_bestv2":
+                    cover = ""
+                elif cover.startswith("https://image.tmdb.org/t/p/") or cover.startswith("http://image.tmdb.org/t/p/"):
+                    dimensions = cover.partition("/p/")[2].partition("/")[0]
+                    if screenwidth.width() <= 1280:
+                        cover = cover.replace(dimensions, "w200")
+                    elif screenwidth.width() <= 1920:
+                        cover = cover.replace(dimensions, "w300")
                     else:
-                        backdrop_path = self.tmdbresults["backdrop_path"]
+                        cover = cover.replace(dimensions, "w400")
+            self.tmdbresults["cover_big"] = cover
 
-                if "genre" in self.tmdbresults:
-                    genres_list = self.tmdbresults["genre"].split(', ')
-                    genre = ' / '.join(genres_list)
-                    self.tmdbresults["genre"] = genre
+            if "duration" in self.tmdbresults:
+                duration = self.tmdbresults["duration"]
+                try:
+                    hours, minutes, seconds = map(int, duration.split(':'))
+                    self.tmdbresults["duration"] = "{}h {}m".format(hours, minutes)
+                except ValueError:
+                    print("Invalid duration format.")
 
-            elif "movie_data" in content and content["movie_data"]:
-                self.tmdbresults = content["movie_data"]
+            if "backdrop_path" in self.tmdbresults:
+                if isinstance(self.tmdbresults["backdrop_path"], list) and self.tmdbresults["backdrop_path"]:
+                    self.tmdbresults["backdrop_path"] = self.tmdbresults["backdrop_path"][0]
+                else:
+                    self.tmdbresults["backdrop_path"] = self.tmdbresults["backdrop_path"]
+
+            if "genre" in self.tmdbresults:
+                self.tmdbresults["genre"] = ' / '.join(self.tmdbresults["genre"].split(', '))
 
             if cfg.TMDB.value is True:
                 self.getTMDB()
             else:
                 self.displayTMDB()
 
-                """
-                if cfg.channelcovers.value is True:
-                    self.downloadCover()
-                    self.downloadBackdrop()
-                    """
 
     def selectionChanged(self):
         if debugs:
