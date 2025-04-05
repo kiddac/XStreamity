@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-09-14 23:27+0100\n"
+"POT-Creation-Date: 2025-04-05 01:11+0200\n"
 "PO-Revision-Date: 2024-09-15 17:57+0200\n"
 "Last-Translator: Petar Majstorović\n"
 "Language-Team: commando\n"
@@ -14,24 +14,25 @@ msgstr ""
 "X-Poedit-Basepath: ../../..\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: Task.py:61 downloadmanager.py:48
+#: Task.py:49 downloadmanager.py:62 downloadmanager.py:477
+#: downloadmanager.py:550
 msgid "Waiting"
 msgstr "Чекање"
 
-#: Task.py:61 downloadmanager.py:47
+#: Task.py:50 downloadmanager.py:61 downloadmanager.py:477
+#: downloadmanager.py:550
 msgid "In progress"
 msgstr "У процесу"
 
-#: Task.py:61
+#: Task.py:51
 msgid "Finished"
 msgstr "Завршен"
 
-#: Task.py:61
+#: Task.py:52
 msgid "Failed"
 msgstr "Неуспешно"
 
-#: Task.py:326
-#, python-format
+#: Task.py:294
 msgid ""
 "Error: %s\n"
 "Retry?"
@@ -39,316 +40,320 @@ msgstr ""
 "Грешка: %s\n"
 "Покушајте поново?"
 
-#: Task.py:329
+#: Task.py:297 downloadmanager.py:63 downloadmanager.py:483
 msgid "Error"
 msgstr "Грешка"
 
-#: Task.py:376
+#: Task.py:335
 msgid "An unknown error occurred!"
 msgstr "Догодила се непозната грешка!"
 
-#: Task.py:401
-#, python-format
+#: Task.py:355
 msgid "A required tool (%s) was not found."
 msgstr "Потребан алат (%s) није пронађен."
 
-#: Task.py:409
+#: Task.py:360
 msgid "Cancelled upon user request"
 msgstr "Отказано на захтев корисника"
 
-#: Task.py:426 Task.py:441
+#: Task.py:374 Task.py:389
 msgid "Error code"
 msgstr "Код грешке"
 
-#: catchup.py:144
+#: catchup.py:146
 msgid "Catch Up Categories"
 msgstr "Категорије Catch Up"
 
-#: catchup.py:145 menu.py:247
+#: catchup.py:147 menu.py:258
 msgid "Catch Up TV"
 msgstr "Odloženo gledanje TV"
 
-#: catchup.py:183 catchup.py:432 catchup.py:622 catchup.py:636 catchup.py:768
-#: live.py:204 live.py:551 live.py:765 live.py:779 live.py:962 plugin.py:164
-#: plugin.py:165 series.py:163 series.py:1213 series.py:1352 series.py:1355
-#: series.py:1357 series.py:1368 series.py:1554 series.py:1582 series.py:1598
-#: vod.py:272 vod.py:276 vod.py:292 vod.py:1078 vod.py:1080 vod.py:1090
-#: vod.py:1280
+#: catchup.py:185 catchup.py:453 catchup.py:641 catchup.py:659 catchup.py:802
+#: live.py:204 live.py:590 live.py:805 live.py:823 live.py:1016 plugin.py:168
+#: plugin.py:169 plugin.py:171 plugin.py:172 series.py:158 series.py:302
+#: series.py:305 series.py:330 series.py:1667 series.py:2044 series.py:2047
+#: series.py:2049 series.py:2060 series.py:2261 series.py:2295 series.py:2312
+#: vod.py:296 vod.py:300 vod.py:320 vod.py:1607 vod.py:1609 vod.py:1619
+#: vod.py:1823
 msgid "Sort: A-Z"
 msgstr "Sortiranje: A-Z"
 
-#: catchup.py:205 downloadmanager.py:170 live.py:236 mainmenu.py:44 menu.py:52
-#: playlists.py:56 playsettings.py:48 series.py:182 server.py:53 settings.py:73
-#: vod.py:164
+#: catchup.py:207 downloadmanager.py:184 live.py:236 mainmenu.py:49 menu.py:63
+#: playlists.py:67 playsettings.py:53 scanner.py:89 series.py:176 server.py:65
+#: settings.py:73 vod.py:169
 msgid "Back"
 msgstr "Nazad"
 
-#: catchup.py:206 live.py:237 mainmenu.py:45 menu.py:53 playlists.py:57
-#: series.py:183 vod.py:165
+#: catchup.py:208 live.py:237 mainmenu.py:50 menu.py:64 playlists.py:68
+#: scanner.py:90 series.py:177 vod.py:170
 msgid "OK"
 msgstr "OK"
 
-#: catchup.py:208 catchup.py:435 catchup.py:700 live.py:239 live.py:548
-#: live.py:877 series.py:185 series.py:1216 series.py:1466 vod.py:167
-#: vod.py:984 vod.py:1194
+#: catchup.py:210 catchup.py:456 catchup.py:734 live.py:239 live.py:587
+#: live.py:932 series.py:179 series.py:1670 series.py:2163 vod.py:172
+#: vod.py:1244 vod.py:1731
 msgid "Search"
 msgstr "Pretraga"
 
-#: catchup.py:305 live.py:352 series.py:298 vod.py:353
+#: catchup.py:324 live.py:354 series.py:417 vod.py:398
 msgid "ALL"
 msgstr "SVE"
 
-#: catchup.py:392 live.py:472 series.py:699 vod.py:489
+#: catchup.py:416 live.py:511 series.py:886 vod.py:547
 msgid "Server error or invalid link."
 msgstr "Грешка сервера или неисправна веза."
 
-#: catchup.py:397 catchup.py:423 catchup.py:669 catchup.py:694 live.py:505
-#: live.py:542 live.py:813 live.py:870 series.py:705 series.py:1209
-#: series.py:1412 series.py:1458 vod.py:495 vod.py:977 vod.py:1127 vod.py:1186
+#: catchup.py:421 catchup.py:444 catchup.py:703 catchup.py:728 live.py:544
+#: live.py:581 live.py:868 live.py:925 series.py:894 series.py:1663
+#: series.py:2106 series.py:2153 vod.py:555 vod.py:1237 vod.py:1658 vod.py:1721
 msgid "Reset Search"
 msgstr "Resetuj pretragu"
 
-#: catchup.py:428 catchup.py:617 live.py:760
+#: catchup.py:449 catchup.py:636 live.py:800
 msgid "Reverse"
 msgstr "Obrnuto"
 
-#: catchup.py:463 catchup.py:488 live.py:587 live.py:621 series.py:773
-#: series.py:800 vod.py:608 vod.py:634
+#: catchup.py:484 catchup.py:509 live.py:626 live.py:660 series.py:988
+#: series.py:1025 vod.py:689 vod.py:716
 msgid "Page: "
 msgstr "Strana: "
 
-#: catchup.py:622 catchup.py:639 live.py:765 live.py:782 plugin.py:164
-#: plugin.py:165 series.py:1352 series.py:1355 series.py:1357 series.py:1371
-#: vod.py:272 vod.py:276 vod.py:295 vod.py:1078 vod.py:1080 vod.py:1093
+#: catchup.py:641 catchup.py:662 live.py:805 live.py:826 plugin.py:168
+#: plugin.py:169 plugin.py:171 plugin.py:172 series.py:302 series.py:305
+#: series.py:333 series.py:2044 series.py:2047 series.py:2049 series.py:2063
+#: vod.py:296 vod.py:300 vod.py:323 vod.py:1607 vod.py:1609 vod.py:1622
 msgid "Sort: Z-A"
 msgstr "Sortiranje: Z-A"
 
-#: catchup.py:624 catchup.py:626 catchup.py:647 live.py:767 live.py:769
-#: live.py:790 plugin.py:164 plugin.py:165 series.py:1352 series.py:1355
-#: series.py:1357 series.py:1382 vod.py:272 vod.py:276 vod.py:306 vod.py:1078
-#: vod.py:1080 vod.py:1104
+#: catchup.py:643 catchup.py:645 catchup.py:670 live.py:807 live.py:809
+#: live.py:834 plugin.py:168 plugin.py:169 plugin.py:171 plugin.py:172
+#: series.py:302 series.py:305 series.py:344 series.py:2044 series.py:2047
+#: series.py:2049 series.py:2074 vod.py:296 vod.py:300 vod.py:334 vod.py:1607
+#: vod.py:1609 vod.py:1633
 msgid "Sort: Original"
 msgstr "Sortiranje: Original"
 
-#: catchup.py:626 catchup.py:642 live.py:769 live.py:785 plugin.py:165
-#: series.py:1355 series.py:1357 series.py:1374 vod.py:276 vod.py:298
-#: vod.py:1080 vod.py:1096
+#: catchup.py:645 catchup.py:665 live.py:809 live.py:829 plugin.py:169
+#: plugin.py:172 series.py:305 series.py:336 series.py:2047 series.py:2049
+#: series.py:2066 vod.py:300 vod.py:326 vod.py:1609 vod.py:1625
 msgid "Sort: Added"
 msgstr "Сортирање: Додато"
 
-#: catchup.py:672 live.py:820 series.py:1416 vod.py:1134
+#: catchup.py:649 catchup.py:673 live.py:813 live.py:837 series.py:312
+#: series.py:347 vod.py:305 vod.py:337
+msgid "Sort: Custom"
+msgstr ""
+
+#: catchup.py:706 live.py:875 series.py:2110 vod.py:1665
 msgid "Filter this category..."
 msgstr "Filtriraj ovu kategoriju ..."
 
-#: catchup.py:687 live.py:863 series.py:1444 vod.py:1179
+#: catchup.py:721 live.py:918 series.py:2139 vod.py:1714
 msgid "No results found."
 msgstr "Резултати нису пронађени."
 
-#: catchup.py:718 live.py:896 series.py:1494 vod.py:1214
+#: catchup.py:752 live.py:951 series.py:2194 vod.py:1753
 msgid "Incorrect pin code."
 msgstr "Netačan PIN kod."
 
-#: catchup.py:738 live.py:917 series.py:1515 vod.py:1235
+#: catchup.py:772 live.py:972 series.py:2217 vod.py:1776
 msgid "all"
 msgstr "Sve"
 
-#: catchup.py:747 live.py:926 series.py:1524 vod.py:1244
-msgid "Please enter the parental control pin code"
-msgstr "Unesite PIN kod roditeljskog nadzora"
-
-#: catchup.py:747 hidden.py:27 live.py:926 series.py:1524 settings.py:32
-#: vod.py:1244
+#: catchup.py:781 hidden.py:31 live.py:981 series.py:2226 settings.py:32
+#: vod.py:1785
 msgid "Enter pin code"
 msgstr "Unesite pin kod"
 
-#: catchup.py:878
+#: catchup.py:781 live.py:981 series.py:2226 vod.py:1785
+msgid "Please enter the parental control pin code"
+msgstr "Unesite PIN kod roditeljskog nadzora"
+
+#: catchup.py:916
 msgid "Catch-up"
 msgstr "Odloženo gledanje"
 
-#: catchup.py:883 series.py:1765 vod.py:1507
+#: catchup.py:921 series.py:2592 vod.py:2079
 msgid "Added to download manager"
 msgstr "Dodato u menadžer preuzimanja"
 
-#: catchup.py:883 series.py:1765 vod.py:1507
-msgid "Note recording acts as an open connection."
-msgstr "Бележење белешки врши се као отворена веза."
-
-#: catchup.py:883 series.py:1765 vod.py:1507
+#: catchup.py:921 series.py:2592 vod.py:2079
 msgid "Do not record and play streams at the same time."
 msgstr "Не снимајте или репродукујте стримове истовремено."
 
-#: catchup.py:883 series.py:1765 vod.py:1507
+#: catchup.py:921 series.py:2592 vod.py:2079
+msgid "Note recording acts as an open connection."
+msgstr "Бележење белешки врши се као отворена веза."
+
+#: catchup.py:921 series.py:2592 vod.py:2079
 msgid "Open download manager?"
 msgstr "Отворите менаџер преузимања?"
 
-#: catchup.py:886 series.py:1768 vod.py:1510
+#: catchup.py:924 series.py:2595 vod.py:2082
 msgid "Already added to download manager"
 msgstr "Već je dodato u menadžer preuzimanja"
 
-#: catchup.py:917
+#: catchup.py:955
 msgid "Catchup error. No data for this slot"
 msgstr "Greška odloženog gledanja. Nema podataka za ovo mesto"
 
-#: catchup.py:976
+#: catchup.py:1015
 msgid "Catchup currently not available. Missing EPG data"
 msgstr "Odloženo gledanje trenutno nije dostupno. Nedostaju EPG podaci"
 
-#: catchupplayer.py:413 vodplayer.py:418
+#: catchupplayer.py:407 vodplayer.py:414
 msgid "Do you want to resume this playback?"
 msgstr "Да ли желите да наставите ову репродукцију?"
 
-#: catchupplayer.py:413 vodplayer.py:418
-#, python-format
+#: catchupplayer.py:407 vodplayer.py:414
 msgid "Resume position at %s"
 msgstr "Наставите са радом у %sје успела"
 
-#: catchupplayer.py:496
+#: catchupplayer.py:490
 msgid "Catch Up"
 msgstr "Odloženo gledanje"
 
-#: catchupplayer.py:673 liveplayer.py:881 vodplayer.py:777
+#: catchupplayer.py:667 liveplayer.py:928 vodplayer.py:770
 msgid "Resolution Change Failed"
 msgstr "Промена резолуције није успела"
 
-#: downloadmanager.py:46 downloadmanager.py:392 downloadmanager.py:428
+#: downloadmanager.py:60 downloadmanager.py:480 downloadmanager.py:521
 msgid "Not Started"
 msgstr "Nije počeo"
 
-#: downloadmanager.py:151
+#: downloadmanager.py:64 downloadmanager.py:483
+#, fuzzy
+msgid "Downloaded"
+msgstr "Preuzimanje"
+
+#: downloadmanager.py:165
 msgid "VOD Download Manager"
 msgstr "VOD menadžer preuzimanja"
 
-#: downloadmanager.py:171 downloadmanager.py:396
-msgid "Download"
-msgstr "Preuzimanje"
-
-#: downloadmanager.py:172 downloadmanager.py:397
-msgid "Remove"
-msgstr "Избриши"
-
-#: downloadmanager.py:228 downloadmanager.py:231
+#: downloadmanager.py:254
 msgid "Free Space:"
 msgstr "Slobodan prostor:"
 
-#: downloadmanager.py:228 downloadmanager.py:231
+#: downloadmanager.py:254
 msgid "of"
 msgstr "od strane"
 
-#: downloadmanager.py:393 hidden.py:69
+#: downloadmanager.py:478 downloadmanager.py:601 hidden.py:73
 msgid "Cancel"
 msgstr "Otkaži"
 
-#: downloadmanager.py:407
+#: downloadmanager.py:481
+msgid "Download"
+msgstr "Preuzimanje"
+
+#: downloadmanager.py:482 downloadmanager.py:485
+msgid "Remove"
+msgstr "Избриши"
+
+#: downloadmanager.py:500
 msgid "Please set download folder in Main Settings."
 msgstr "Подесите фасциклу за преузимање у основним подешавањима."
 
-#: downloadmanager.py:407
-msgid ""
-"Vod Download folder location does not exist.\n"
-"\n"
-msgstr "Локација фасцикле за преузимање ВОД-а не постоји.\n"
-
-#: downloadmanager.py:447 downloadmanager.py:453
-msgid ""
-"Please update your wget library to download https lines\n"
-"\n"
-"opkg update\n"
-"opkg install wget"
-msgstr ""
-"Ажурирајте своју вгет библиотеку да бисте учитали хттпс низове\n"
-"\n"
-"opkg ажурирање\n"
-"opkg инсталирајте wget"
-
-#: downloadmanager.py:474
+#: downloadmanager.py:557
 msgid "Cancel this download?"
 msgstr "Otkazati ovo preuzimanje?"
 
-#: downloadmanager.py:507
-msgid "Delete this entry?"
+#: downloadmanager.py:597
+#, fuzzy
+msgid "Select an action:"
+msgstr "Изаберите ГУИ"
+
+#: downloadmanager.py:599
+#, fuzzy
+msgid "Delete this entry"
 msgstr "Избришите овај унос?"
 
-#: hidden.py:27 settings.py:32
+#: downloadmanager.py:600
+#, fuzzy
+msgid "Delete all downloaded entries"
+msgstr "Otkazati sva preuzimanja i izaći?"
+
+#: hidden.py:31 settings.py:32
 msgid "Please enter the correct pin code"
 msgstr "Унесите тачан ПИН"
 
-#: hidden.py:36 settings.py:41
+#: hidden.py:40 settings.py:41
 msgid "The pin code you entered is wrong."
 msgstr "Унели сте нетачан ПИН."
 
-#: hidden.py:62
+#: hidden.py:66
 msgid "Hidden Categories"
 msgstr "Skrivene kategorije"
 
-#: hidden.py:70 playsettings.py:49 record.py:40 server.py:54 settings.py:74
+#: hidden.py:74 playsettings.py:54 record.py:42 server.py:66 settings.py:74
 msgid "Save"
 msgstr "Snimi"
 
-#: hidden.py:71
+#: hidden.py:75
 msgid "Invert"
 msgstr "Obrni"
 
-#: hidden.py:72
+#: hidden.py:76
 msgid "Reset"
 msgstr "Ресетовање"
 
-#: hidden.py:161
+#: hidden.py:165
 msgid "Error: All categories hidden. Please amend your selection."
 msgstr "Greška: Sve kategorije su skrivene. Molimo vas da izmenite svoj izbor."
 
-#: live.py:153
+#: live.py:157
 msgid "Live Categories"
 msgstr "Категорије преноса уживо"
 
-#: live.py:154
-msgid "Live Streams"
-msgstr "Prenosi uživo"
+#: live.py:158
+msgid "Live TV"
+msgstr ""
 
-#: live.py:350 vod.py:351
+#: live.py:352 series.py:416 vod.py:396
 msgid "FAVOURITES"
 msgstr "FAVORITI"
 
-#: live.py:351 vod.py:352
+#: live.py:353 vod.py:397
 msgid "RECENTLY WATCHED"
 msgstr "НЕДАВНО ПОСМАТРАО"
 
-#: live.py:546 live.py:816 playlists.py:58 vod.py:992 vod.py:1130
+#: live.py:585 live.py:871 playlists.py:69 vod.py:1252 vod.py:1661
 msgid "Delete"
 msgstr "Obriši"
 
-#: live.py:1263 live.py:1318 live.py:1327
+#: live.py:1326 live.py:1365 live.py:1374
 msgid "Next Info"
 msgstr "Sledeća informacija"
 
-#: live.py:1322
+#: live.py:1369
 msgid "Now Info"
 msgstr "Nova informacija"
 
-#: live.py:1527 liveplayer.py:632
+#: live.py:1570 liveplayer.py:623
 msgid "Recording Timer Set."
 msgstr "Tajmer snimanja je podešen."
 
-#: live.py:1529 liveplayer.py:634
+#: live.py:1572 liveplayer.py:625
 msgid "Recording Failed."
 msgstr "Snimanje nije uspelo."
 
-#: liveplayer.py:441
+#: liveplayer.py:434
 msgid "TV"
 msgstr "TV"
 
-#: mainmenu.py:42
+#: mainmenu.py:48
 msgid "Main Menu"
 msgstr "Glavni meni"
 
-#: mainmenu.py:46
+#: mainmenu.py:51
 msgid "Reset JSON"
 msgstr "Ресетујте ЈСОН"
 
-#: mainmenu.py:89
+#: mainmenu.py:123
 msgid "Playlists.txt location is invalid and has been reset."
 msgstr "Playlists.ТКСТ погрешна локација је ресетована."
 
-#: mainmenu.py:117
+#: mainmenu.py:149
 msgid ""
 "Dependencies not installed.\n"
 "\n"
@@ -358,23 +363,27 @@ msgstr ""
 "\n"
 "Прво покушавам да инсталирам старију верзију из извора..."
 
-#: mainmenu.py:137
+#: mainmenu.py:169
 msgid "Playlists"
 msgstr "Liste za reprodukciju"
 
-#: mainmenu.py:137 mainmenu.py:141
+#: mainmenu.py:169 mainmenu.py:171
 msgid "Add Playlist"
 msgstr "Dodaj listu za reprodukciju"
 
-#: mainmenu.py:137 mainmenu.py:141 settings.py:66
+#: mainmenu.py:169 mainmenu.py:171 settings.py:66
 msgid "Main Settings"
 msgstr "Glavna podešavanja"
 
-#: mainmenu.py:144
+#: mainmenu.py:174
 msgid "Download Manager"
 msgstr "Menadžer preuzimanja"
 
-#: mainmenu.py:190
+#: mainmenu.py:177
+msgid "Hack-A-Vision"
+msgstr ""
+
+#: mainmenu.py:229
 msgid ""
 "Warning: delete stored json data for all playlists... Settings, favourites "
 "etc. \n"
@@ -386,77 +395,88 @@ msgstr ""
 "Плејлисте неће бити избрисане.\n"
 "Желите да наставите?"
 
-#: menu.py:250 playsettings.py:41
+#: menu.py:61
+#, fuzzy
+msgid "Playlist Menu"
+msgstr "Podešavanja liste"
+
+#: menu.py:261 playsettings.py:46
 msgid "Playlist Settings"
 msgstr "Podešavanja liste"
 
-#: menu.py:256
+#: menu.py:267
 msgid "Manual EPG Update"
 msgstr "Ручно ажурирање ЕПГ"
 
-#: menu.py:264
+#: menu.py:275
 msgid "No data, blocked or playlist not compatible with XStreamity plugin."
 msgstr ""
 "Nema podataka, blokirani su ili lista za reprodukciju nije kompatibilna sa "
 "dodatkom XStreamiti."
 
-#: menu.py:306
+#: menu.py:317
 msgid "Recordings in progress. EPG not downloaded."
 msgstr "Води се запис. ЕПГ датотека није преузета."
 
-#: menu.py:308
+#: menu.py:319
 msgid "EPGs downloading."
 msgstr "Преузимање ЕПГ-А."
 
-#: playlists.py:54
-msgid "Select Playlist"
-msgstr "Izaberite listu"
+#: playlists.py:65
+#, fuzzy
+msgid "Manage Playlist"
+msgstr "Dodaj listu za reprodukciju"
 
-#: playlists.py:59
+#: playlists.py:70
 msgid "Info"
 msgstr "Informacije"
 
-#: playlists.py:99
+#: playlists.py:110 scanner.py:133
 msgid "No internet."
 msgstr "Нема интернета."
 
-#: playlists.py:319 playlists.py:397
+#: playlists.py:340 playlists.py:420 scanner.py:428 scanner.py:515
 msgid "Server Not Responding"
 msgstr "Server ne reaguje"
 
-#: playlists.py:329 playlists.py:399
+#: playlists.py:350 playlists.py:422 scanner.py:455 scanner.py:517
 msgid "Not Authorised"
 msgstr "Nije Ovlašćen"
 
-#: playlists.py:334 playlists.py:385 serverinfo.py:70
+#: playlists.py:355 playlists.py:408 scanner.py:461 scanner.py:503
+#: serverinfo.py:72
 msgid "Active"
 msgstr "Aktivno"
 
-#: playlists.py:335 playlists.py:391 serverinfo.py:71
+#: playlists.py:356 playlists.py:414 scanner.py:462 scanner.py:509
+#: serverinfo.py:73
 msgid "Banned"
 msgstr "Zabranjeno"
 
-#: playlists.py:336 playlists.py:395 serverinfo.py:72
+#: playlists.py:357 playlists.py:418 scanner.py:463 scanner.py:513
+#: serverinfo.py:74
 msgid "Disabled"
 msgstr "Onemogućeno"
 
-#: playlists.py:337 playlists.py:393 serverinfo.py:73
+#: playlists.py:358 playlists.py:416 scanner.py:464 scanner.py:511
+#: serverinfo.py:75
 msgid "Expired"
 msgstr "Istekao"
 
-#: playlists.py:345 playlists.py:347
+#: playlists.py:366 playlists.py:368 playlists.py:370 scanner.py:472
+#: scanner.py:474 scanner.py:476
 msgid "Expires: "
 msgstr "Ističe: "
 
-#: playlists.py:349
+#: playlists.py:372 scanner.py:478
 msgid "Active Conn:"
 msgstr "Aktivnih veza:"
 
-#: playlists.py:357
+#: playlists.py:380 scanner.py:486
 msgid "Max Conn:"
 msgstr "Maksimalno konekcija:"
 
-#: playlists.py:378
+#: playlists.py:401
 msgid ""
 "You have dead playlists that are slowing down loading.\n"
 "\n"
@@ -466,63 +486,63 @@ msgstr ""
 "\n"
 "Притисните жуто дугме да бисте аутоматски избрисали неактивне листе песама"
 
-#: playlists.py:412
+#: playlists.py:435
 msgid "Delete selected playlist?"
 msgstr "Izbrisati izabranu plejlistu?"
 
-#: playlists.py:433
+#: playlists.py:456
 msgid "Delete providers EPG data?"
 msgstr "Izbrisati EPG podatke provajdera?"
 
-#: playsettings.py:78 record.py:73 server.py:83 settings.py:105
+#: playsettings.py:83 record.py:75 server.py:95 settings.py:105
 msgid "Really close without saving settings?"
 msgstr "Zatvarate bez čuvanja postavki?"
 
-#: playsettings.py:134 server.py:110
+#: playsettings.py:139 server.py:122
 msgid "Short name or provider name:"
 msgstr "Kratko ime ili ime provajdera:"
 
-#: playsettings.py:135
+#: playsettings.py:140
 msgid "Show LIVE category:"
 msgstr "Prikaži kategoriju UŽIVO:"
 
-#: playsettings.py:136
+#: playsettings.py:141
 msgid "Show VOD category:"
 msgstr "Prikaži kategoriju FILM:"
 
-#: playsettings.py:137
+#: playsettings.py:142
 msgid "Show SERIES category:"
 msgstr "Prikaži kategoriju SERIJE:"
 
-#: playsettings.py:138
+#: playsettings.py:143
 msgid "Show CATCHUP category:"
 msgstr "Prikaži kategoriju ODLOŽENO:"
 
-#: playsettings.py:139 server.py:116
+#: playsettings.py:144 server.py:128
 msgid "Output:"
 msgstr "Izlaz:"
 
-#: playsettings.py:143
+#: playsettings.py:148
 msgid "Stream Type LIVE:"
 msgstr "Tip strima UŽIVO:"
 
-#: playsettings.py:146
+#: playsettings.py:151
 msgid "Stream Type VOD/SERIES:"
 msgstr "Tip strima FILM/SERIJE:"
 
-#: playsettings.py:149
+#: playsettings.py:154
 msgid "EPG offset:"
 msgstr "ЕПГ офсет:"
 
-#: playsettings.py:150
+#: playsettings.py:155
 msgid "Use alternative EPG url:"
 msgstr "Користите алтернативни ЕПГ УРЛ:"
 
-#: playsettings.py:154
+#: playsettings.py:159
 msgid "Alternative EPG url:"
 msgstr "Алтернативни ЕПГ УРЛ:"
 
-#: playsettings.py:232
+#: playsettings.py:237
 msgid ""
 "Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum 3 "
 "characters."
@@ -530,136 +550,133 @@ msgstr ""
 "У називу букета не би требало бити празних редова. Унесите јединствено име "
 "букета. Најмање 3 знака."
 
-#: playsettings.py:238 server.py:213
+#: playsettings.py:243 server.py:225
 msgid "Name already used. Please enter a unique name."
 msgstr "Име се већ користи. Унесите јединствено име."
 
-#: plugin.py:164 plugin.py:165
+#: plugin.py:168 plugin.py:169 plugin.py:171 plugin.py:172
 msgid "Original"
 msgstr "Оригинал"
 
-#: plugin.py:165
+#: plugin.py:169 plugin.py:172
 msgid "Added"
 msgstr "Додато"
 
-#: plugin.py:165 series.py:1355 series.py:1378 vod.py:276 vod.py:302
-#: vod.py:1080 vod.py:1100
-msgid "Sort: Year"
-msgstr "Сорта: год издавања"
-
-#: plugin.py:165
+#: plugin.py:169 plugin.py:172
 msgid "Year"
 msgstr "Год"
 
-#: plugin.py:266 plugin.py:379
+#: plugin.py:169 plugin.py:172 series.py:305 series.py:340 series.py:2047
+#: series.py:2070 vod.py:300 vod.py:330 vod.py:1609 vod.py:1629
+msgid "Sort: Year"
+msgstr "Сорта: год издавања"
+
+#: plugin.py:286 plugin.py:400
 msgid "XStreamity"
 msgstr "XStreamity"
 
-#: plugin.py:378
+#: plugin.py:399
 msgid "IPTV Xtream Codes playlists player by KiddaC"
 msgstr "KiddaC plejer plejlista IPTV Xstream kodova"
 
-#: record.py:39 serverinfo.py:60
+#: record.py:41 serverinfo.py:62
 msgid "Close"
 msgstr "Zatvori"
 
-#: record.py:53
+#: record.py:55
 msgid "Please enter recording time"
 msgstr "Unesite vreme snimanja"
 
-#: record.py:56
+#: record.py:58
 msgid "Please enter recording end time"
 msgstr "Unesite vreme završetka snimanja"
 
-#: record.py:92
+#: record.py:94
 msgid "Name"
 msgstr "Ime"
 
-#: record.py:94
+#: record.py:96
 msgid "Start Time"
 msgstr "Početno vreme"
 
-#: record.py:96
+#: record.py:98
 msgid "End Time"
 msgstr "Vreme završetka"
 
-#: series.py:92
+#: scanner.py:87
+msgid "Select Playlist"
+msgstr "Izaberite listu"
+
+#: series.py:95
 msgid "Series Categories"
 msgstr "Категорије серија"
 
-#: series.py:93 series.py:1760
+#: series.py:97 series.py:2587
 msgid "Series"
 msgstr "Серије"
 
-#: series.py:411
-msgid "No series found in this category."
-msgstr "У овој категорији нису пронађене серије."
-
-#: series.py:461 series.py:1808
+#: series.py:646 series.py:2659
 msgid "Season "
 msgstr "Sezona "
 
-#: series.py:1727 vod.py:1470
-msgid "Video Type:"
-msgstr "Vrsta videa:"
-
-#: series.py:1728 vod.py:1471
-msgid "Rating:"
+#: series.py:1580 vod.py:1215
+#, fuzzy
+msgid "Rating: "
 msgstr "Ocena:"
 
-#: series.py:1729 vod.py:1472
-msgid "Genre:"
-msgstr "Žanr:"
-
-#: series.py:1730 vod.py:1473
-msgid "Duration:"
-msgstr "Trajanje:"
-
-#: series.py:1731 vod.py:1474
-msgid "Release Date:"
-msgstr "Datum izlaska:"
-
-#: series.py:1732 vod.py:1475
+#: series.py:1633 vod.py:1206
 msgid "Cast:"
 msgstr "Uloge:"
 
-#: series.py:1733 vod.py:1476
+#: series.py:1638 vod.py:1188
 msgid "Director:"
 msgstr "Režija:"
 
-#: series.py:1734 vod.py:1477
+#: series.py:1643 vod.py:1196
 msgid "Country:"
 msgstr "Zemlja:"
 
-#: server.py:45
+#: series.py:1648 vod.py:1163
+msgid "Overview"
+msgstr ""
+
+#: series.py:2513
+msgid "Series group added to favourites."
+msgstr ""
+
+#: series.py:2515
+msgid "Series group removed from favourites."
+msgstr ""
+
+#: server.py:57
 msgid "Add Xtream Codes Playlist"
 msgstr "Dodajte plejlistu Xstream kodova"
 
-#: server.py:111
+#: server.py:123
 msgid "Protocol:"
 msgstr "Protokol:"
 
-#: server.py:112
+#: server.py:124
 msgid "Server URL: i.e. domain.xyz"
 msgstr "УРЛ сервера: тј.домен.xyz"
 
-#: server.py:113
+#: server.py:125
 msgid "Port:"
 msgstr "Port:"
 
-#: server.py:114
+#: server.py:126
 msgid "Username:"
 msgstr "Korisničko ime:"
 
-#: server.py:115
+#: server.py:127
 msgid "Password:"
 msgstr "Lozinka:"
 
-#: server.py:202
+#: server.py:214
 msgid "Details are not valid or unauthorised"
 msgstr "Подаци нису валидни или неовлашћени"
 
-#: server.py:207
+#: server.py:219
 msgid ""
 "Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum 2 "
 "characters."
@@ -667,55 +684,55 @@ msgstr ""
 "У називу букета не би требало бити празних редова. Унесите јединствено име "
 "букета. Најмање 2 знака."
 
-#: server.py:223
+#: server.py:235
 msgid "Playlist added successfully."
 msgstr "Plejlista je uspešno dodata."
 
-#: serverinfo.py:30
+#: serverinfo.py:32
 msgid "User Information"
 msgstr "Korisničke informacije"
 
-#: serverinfo.py:43
+#: serverinfo.py:45
 msgid "Status:"
 msgstr "Статус:"
 
-#: serverinfo.py:44
+#: serverinfo.py:46
 msgid "Expiry Date:"
 msgstr "датум истека:"
 
-#: serverinfo.py:45
+#: serverinfo.py:47
 msgid "Created At:"
 msgstr "Створен на:"
 
-#: serverinfo.py:46
+#: serverinfo.py:48
 msgid "Is Trial:"
 msgstr "То је тест:"
 
-#: serverinfo.py:47
+#: serverinfo.py:49
 msgid "Active Connections:"
 msgstr "Активна једињења:"
 
-#: serverinfo.py:48
+#: serverinfo.py:50
 msgid "Max Connections:"
 msgstr "Максималан број веза:"
 
-#: serverinfo.py:49
+#: serverinfo.py:51
 msgid "Allowed Output Formats:"
 msgstr "Дозвољени излазни формати:"
 
-#: serverinfo.py:50
+#: serverinfo.py:52
 msgid "Real URL:"
 msgstr "Прави УРЛ:"
 
-#: serverinfo.py:51
+#: serverinfo.py:53
 msgid "Timezone:"
 msgstr "Временска зона:"
 
-#: serverinfo.py:52
+#: serverinfo.py:54
 msgid "Server Offset:"
 msgstr "Офсет сервера:"
 
-#: serverinfo.py:80
+#: serverinfo.py:82
 msgid "Unknown"
 msgstr "Непознато"
 
@@ -730,12 +747,12 @@ msgstr ""
 "Пин не може бити 0000, 111 или 1234"
 
 #: settings.py:134
-msgid "You need to restart the GUI"
-msgstr "Морате поново покренути графички кориснички интерфејс"
-
-#: settings.py:134
 msgid "Do you want to restart now?"
 msgstr "Да ли желите да се поново покренете сада?"
+
+#: settings.py:134
+msgid "You need to restart the GUI"
+msgstr "Морате поново покренути графички кориснички интерфејс"
 
 #: settings.py:144
 msgid "Select skin"
@@ -845,27 +862,38 @@ msgstr "Подразумевани редослед сортирања вод К
 msgid "Default VOD stream sort order"
 msgstr "Подразумевани редослед сортирања вод нити"
 
-#: settings.py:293
+#: settings.py:179
+#, fuzzy
+msgid "Default Series category sort order"
+msgstr "Подразумевани редослед сортирања вод Категорија"
+
+#: settings.py:180
+#, fuzzy
+msgid "Default Series sort order"
+msgstr "Подразумевани редослед сортирања вод нити"
+
+#: settings.py:298
 msgid "Choose Directory:"
 msgstr "Odaberite direktorijum:"
 
-#: settings.py:294
+#: settings.py:299
 msgid "Choose directory"
 msgstr "Odaberite direktorijum"
 
-#: vod.py:102
+#: vod.py:107
 msgid "Vod Categories"
 msgstr "Категорије Vod"
 
-#: vod.py:103
-msgid "Vod"
-msgstr "FILM"
+#: vod.py:109
+#, fuzzy
+msgid "Movies"
+msgstr "Film"
 
-#: vod.py:1502
+#: vod.py:2074
 msgid "Movie"
 msgstr "Film"
 
-#: vod.py:1532
+#: vod.py:2112
 msgid ""
 "The TMDB plugin is not installed!\n"
 "Please install it."
@@ -873,7 +901,7 @@ msgstr ""
 "Dodatak TMDb nije instaliran!\n"
 "Molimo vas da ga instalirate."
 
-#: vod.py:1542
+#: vod.py:2123
 msgid ""
 "The IMDb plugin is not installed!\n"
 "Please install it."
@@ -881,9 +909,46 @@ msgstr ""
 "Dodatak IMDb nije instaliran!\n"
 "Molimo vas da ga instalirate."
 
-#: vodplayer.py:508
+#: vodplayer.py:504
 msgid "VOD"
 msgstr "FILM"
+
+#~ msgid ""
+#~ "Vod Download folder location does not exist.\n"
+#~ "\n"
+#~ msgstr "Локација фасцикле за преузимање ВОД-а не постоји.\n"
+
+#~ msgid ""
+#~ "Please update your wget library to download https lines\n"
+#~ "\n"
+#~ "opkg update\n"
+#~ "opkg install wget"
+#~ msgstr ""
+#~ "Ажурирајте своју вгет библиотеку да бисте учитали хттпс низове\n"
+#~ "\n"
+#~ "opkg ажурирање\n"
+#~ "opkg инсталирајте wget"
+
+#~ msgid "Live Streams"
+#~ msgstr "Prenosi uživo"
+
+#~ msgid "No series found in this category."
+#~ msgstr "У овој категорији нису пронађене серије."
+
+#~ msgid "Video Type:"
+#~ msgstr "Vrsta videa:"
+
+#~ msgid "Genre:"
+#~ msgstr "Žanr:"
+
+#~ msgid "Duration:"
+#~ msgstr "Trajanje:"
+
+#~ msgid "Release Date:"
+#~ msgstr "Datum izlaska:"
+
+#~ msgid "Vod"
+#~ msgstr "FILM"
 
 #~ msgid " of "
 #~ msgstr " od strane "
@@ -914,9 +979,6 @@ msgstr "FILM"
 
 #~ msgid "Download All"
 #~ msgstr "Preuzmi sve"
-
-#~ msgid "Cancel all downloads and exit?"
-#~ msgstr "Otkazati sva preuzimanja i izaći?"
 
 #~ msgid "Waiting..."
 #~ msgstr "Čeka se ..."

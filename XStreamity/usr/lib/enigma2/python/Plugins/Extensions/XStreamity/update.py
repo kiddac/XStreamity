@@ -256,7 +256,7 @@ class XStreamity_Update:
                 epgitems.setdefault(channel, []).append([start, stop, title, desc])
 
         with open(epgjsonfile, "w") as jsonFile:
-            json.dump(epgitems, jsonFile, ensure_ascii=False)
+            json.dump(epgitems, jsonFile, ensure_ascii=False, indent=4)
 
         if os.path.exists(epgxmlfile):
             os.remove(epgxmlfile)

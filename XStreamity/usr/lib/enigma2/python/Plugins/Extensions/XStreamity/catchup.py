@@ -288,19 +288,36 @@ class XStreamity_Catchup_Categories(Screen):
         currentPlaylist = glob.active_playlist
         currentCategoryList = currentPlaylist.get("data", {}).get("live_categories", [])
         currentHidden = set(currentPlaylist.get("player_info", {}).get("catchuphidden", []))
+        catchup_categories_only = currentPlaylist.get("player_info", {}).get("catchup_categories_only", [])
+        catchup_categories_exclude = currentPlaylist.get("player_info", {}).get("catchup_categories_exclude", [])
 
         hidden = "0" in currentHidden
 
         if not self.liveStreamsData:
             self.liveStreamsData = self.downloadApiData(self.liveStreamsUrl)
 
-        archivelist = [
-            x for x in self.liveStreamsData
-            if "tv_archive" in x and str(x["tv_archive"]) == "1"
-            and "tv_archive_duration" in x
-            and str(x["tv_archive_duration"]) != "0"
-            and x["category_id"] not in glob.active_playlist["player_info"]["catchuphidden"]
-        ]
+        archivelist = []
+        for item in self.liveStreamsData:
+            if "tv_archive" not in item:
+                continue
+            if str(item["tv_archive"]) != "1":
+                continue
+            if "tv_archive_duration" not in item:
+                continue
+            if str(item["tv_archive_duration"]) == "0":
+                continue
+            if item["category_id"] in glob.active_playlist["player_info"]["catchuphidden"]:
+                continue
+            if "category_name" in item:
+                if catchup_categories_only:
+                    # category pattern must match one of the onlypatterns
+                    if not any([re.fullmatch(f"^{re.escape(pattern)}.*$", item["category_name"]) for pattern in catchup_categories_only]):
+                        continue
+                if catchup_categories_exclude:
+                    # exclude if matching one of the excludepatterns
+                    if any([re.fullmatch(f"^{re.escape(pattern)}.*$", item["category_name"]) for pattern in catchup_categories_exclude]):
+                        continue
+            archivelist.append(item)
 
         if archivelist:
             self.prelist.append(
@@ -627,6 +644,10 @@ class XStreamity_Catchup_Categories(Screen):
         else:
             sortlist.extend([_("Sort: Added"), _("Sort: Original")])
 
+        custom_sort = set(glob.active_playlist.get("player_info", {}).get("catchup_custom_sort", []))
+        if custom_sort:
+            sortlist.append(_("Sort: Custom"))
+
         for index, item in enumerate(sortlist):
             if str(item) == str(self.sortText):
                 self.sortindex = index
@@ -648,6 +669,17 @@ class XStreamity_Catchup_Categories(Screen):
 
         elif current_sort == _("Sort: Original"):
             activelist.sort(key=lambda x: x[0], reverse=False)
+
+        elif current_sort == _("Sort: Custom"):
+            def get_custom_index(name, patternlist):
+                result = len(patternlist) # initialize: in the end
+                for index, pattern in enumerate(patternlist):
+                    if pattern.lower() in name.lower(): # case insensitive
+                        result = index
+                        break;
+                return result
+            activelist.sort(key=lambda x: x[0], reverse=False) # original sort first
+            activelist.sort(key=lambda x: get_custom_index(x[1], custom_sort), reverse=False)
 
         next_sort_type = next(islice(cycle(sortlist), self.sortindex + 1, None))
         self.sortText = str(next_sort_type)
@@ -884,7 +916,7 @@ class XStreamity_Catchup_Categories(Screen):
                 downloads_all.append([_("Catch-up"), title, playurl, "Not Started", 0, 0])
 
                 with open(downloads_json, "w") as f:
-                    json.dump(downloads_all, f)
+                    json.dump(downloads_all, f, indent=4)
 
                 self.session.openWithCallback(self.opendownloader, MessageBox, _(title) + "\n\n" + _("Added to download manager") + "\n\n" + _("Note recording acts as an open connection.") + "\n" + _("Do not record and play streams at the same time.") + "\n\n" + _("Open download manager?"))
 

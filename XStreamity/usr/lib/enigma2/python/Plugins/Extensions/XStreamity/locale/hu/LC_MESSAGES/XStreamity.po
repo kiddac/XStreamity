@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2025-02-19 21:03+0000\n"
+"POT-Creation-Date: 2025-04-05 01:11+0200\n"
 "PO-Revision-Date: 2025-02-21 07:01+0100\n"
 "Last-Translator: Warder <ciksa@seznam.cz>\n"
 "Language-Team: \n"
@@ -34,7 +34,6 @@ msgid "Failed"
 msgstr "Sikertelen"
 
 #: Task.py:294
-#, python-format
 msgid ""
 "Error: %s\n"
 "Retry?"
@@ -51,7 +50,6 @@ msgid "An unknown error occurred!"
 msgstr "Ismeretlen hiba történt!"
 
 #: Task.py:355
-#, python-format
 msgid "A required tool (%s) was not found."
 msgstr "A szükséges eszköz (%s) nem található."
 
@@ -71,128 +69,136 @@ msgstr "Felzárkózási kategóriák"
 msgid "Catch Up TV"
 msgstr "Catch Up TV"
 
-#: catchup.py:185 catchup.py:436 catchup.py:624 catchup.py:638 catchup.py:770
-#: live.py:204 live.py:578 live.py:792 live.py:806 live.py:988 plugin.py:168
-#: plugin.py:169 series.py:157 series.py:1550 series.py:1927 series.py:1930
-#: series.py:1932 series.py:1943 series.py:2143 series.py:2177 series.py:2194
-#: vod.py:292 vod.py:296 vod.py:312 vod.py:1602 vod.py:1604 vod.py:1614
-#: vod.py:1818
+#: catchup.py:185 catchup.py:453 catchup.py:641 catchup.py:659 catchup.py:802
+#: live.py:204 live.py:590 live.py:805 live.py:823 live.py:1016 plugin.py:168
+#: plugin.py:169 plugin.py:171 plugin.py:172 series.py:158 series.py:302
+#: series.py:305 series.py:330 series.py:1667 series.py:2044 series.py:2047
+#: series.py:2049 series.py:2060 series.py:2261 series.py:2295 series.py:2312
+#: vod.py:296 vod.py:300 vod.py:320 vod.py:1607 vod.py:1609 vod.py:1619
+#: vod.py:1823
 msgid "Sort: A-Z"
 msgstr "Rendezés: A-tól Z-ig"
 
 #: catchup.py:207 downloadmanager.py:184 live.py:236 mainmenu.py:49 menu.py:63
-#: playlists.py:67 playsettings.py:53 scanner.py:89 series.py:175 server.py:65
-#: settings.py:73 vod.py:166
+#: playlists.py:67 playsettings.py:53 scanner.py:89 series.py:176 server.py:65
+#: settings.py:73 vod.py:169
 msgid "Back"
 msgstr "Vissza"
 
 #: catchup.py:208 live.py:237 mainmenu.py:50 menu.py:64 playlists.py:68
-#: scanner.py:90 series.py:176 vod.py:167
+#: scanner.py:90 series.py:177 vod.py:170
 msgid "OK"
 msgstr "OK"
 
-#: catchup.py:210 catchup.py:439 catchup.py:702 live.py:239 live.py:575
-#: live.py:904 series.py:178 series.py:1553 series.py:2046 vod.py:169
-#: vod.py:1239 vod.py:1726
+#: catchup.py:210 catchup.py:456 catchup.py:734 live.py:239 live.py:587
+#: live.py:932 series.py:179 series.py:1670 series.py:2163 vod.py:172
+#: vod.py:1244 vod.py:1731
 msgid "Search"
 msgstr "Keresés"
 
-#: catchup.py:307 live.py:352 series.py:338 vod.py:377
+#: catchup.py:324 live.py:354 series.py:417 vod.py:398
 msgid "ALL"
 msgstr "ÖSSZES"
 
-#: catchup.py:399 live.py:499 series.py:787 vod.py:512
+#: catchup.py:416 live.py:511 series.py:886 vod.py:547
 msgid "Server error or invalid link."
 msgstr "Szerverhiba vagy érvénytelen hivatkozás."
 
-#: catchup.py:404 catchup.py:427 catchup.py:671 catchup.py:696 live.py:532
-#: live.py:569 live.py:840 live.py:897 series.py:795 series.py:1546
-#: series.py:1989 series.py:2036 vod.py:520 vod.py:1232 vod.py:1653 vod.py:1716
+#: catchup.py:421 catchup.py:444 catchup.py:703 catchup.py:728 live.py:544
+#: live.py:581 live.py:868 live.py:925 series.py:894 series.py:1663
+#: series.py:2106 series.py:2153 vod.py:555 vod.py:1237 vod.py:1658 vod.py:1721
 msgid "Reset Search"
 msgstr "Alaphelyzet"
 
-#: catchup.py:432 catchup.py:619 live.py:787
+#: catchup.py:449 catchup.py:636 live.py:800
 msgid "Reverse"
 msgstr "Visszafelé"
 
-#: catchup.py:467 catchup.py:492 live.py:614 live.py:648 series.py:893
-#: series.py:930 vod.py:685 vod.py:712
+#: catchup.py:484 catchup.py:509 live.py:626 live.py:660 series.py:988
+#: series.py:1025 vod.py:689 vod.py:716
 msgid "Page: "
 msgstr "Oldal: "
 
-#: catchup.py:624 catchup.py:641 live.py:792 live.py:809 plugin.py:168
-#: plugin.py:169 series.py:1927 series.py:1930 series.py:1932 series.py:1946
-#: vod.py:292 vod.py:296 vod.py:315 vod.py:1602 vod.py:1604 vod.py:1617
+#: catchup.py:641 catchup.py:662 live.py:805 live.py:826 plugin.py:168
+#: plugin.py:169 plugin.py:171 plugin.py:172 series.py:302 series.py:305
+#: series.py:333 series.py:2044 series.py:2047 series.py:2049 series.py:2063
+#: vod.py:296 vod.py:300 vod.py:323 vod.py:1607 vod.py:1609 vod.py:1622
 msgid "Sort: Z-A"
 msgstr "Rendezés: Z-A"
 
-#: catchup.py:626 catchup.py:628 catchup.py:649 live.py:794 live.py:796
-#: live.py:817 plugin.py:168 plugin.py:169 series.py:1927 series.py:1930
-#: series.py:1932 series.py:1957 vod.py:292 vod.py:296 vod.py:326 vod.py:1602
-#: vod.py:1604 vod.py:1628
+#: catchup.py:643 catchup.py:645 catchup.py:670 live.py:807 live.py:809
+#: live.py:834 plugin.py:168 plugin.py:169 plugin.py:171 plugin.py:172
+#: series.py:302 series.py:305 series.py:344 series.py:2044 series.py:2047
+#: series.py:2049 series.py:2074 vod.py:296 vod.py:300 vod.py:334 vod.py:1607
+#: vod.py:1609 vod.py:1633
 msgid "Sort: Original"
 msgstr "Rendezés: Eredeti"
 
-#: catchup.py:628 catchup.py:644 live.py:796 live.py:812 plugin.py:169
-#: series.py:1930 series.py:1932 series.py:1949 vod.py:296 vod.py:318
-#: vod.py:1604 vod.py:1620
+#: catchup.py:645 catchup.py:665 live.py:809 live.py:829 plugin.py:169
+#: plugin.py:172 series.py:305 series.py:336 series.py:2047 series.py:2049
+#: series.py:2066 vod.py:300 vod.py:326 vod.py:1609 vod.py:1625
 msgid "Sort: Added"
 msgstr "Rendezés: Hozzáadva"
 
-#: catchup.py:674 live.py:847 series.py:1993 vod.py:1660
+#: catchup.py:649 catchup.py:673 live.py:813 live.py:837 series.py:312
+#: series.py:347 vod.py:305 vod.py:337
+msgid "Sort: Custom"
+msgstr ""
+
+#: catchup.py:706 live.py:875 series.py:2110 vod.py:1665
 msgid "Filter this category..."
 msgstr "Szűrje ezt a kategóriát..."
 
-#: catchup.py:689 live.py:890 series.py:2022 vod.py:1709
+#: catchup.py:721 live.py:918 series.py:2139 vod.py:1714
 msgid "No results found."
 msgstr "Nincs találat."
 
-#: catchup.py:720 live.py:923 series.py:2076 vod.py:1748
+#: catchup.py:752 live.py:951 series.py:2194 vod.py:1753
 msgid "Incorrect pin code."
 msgstr "Helytelen PIN-kód."
 
-#: catchup.py:740 live.py:944 series.py:2099 vod.py:1771
+#: catchup.py:772 live.py:972 series.py:2217 vod.py:1776
 msgid "all"
 msgstr "összes"
 
-#: catchup.py:749 live.py:953 series.py:2108 vod.py:1780
-msgid "Please enter the parental control pin code"
-msgstr "Kérjük, adja meg a szülői felügyelet PIN-kódját"
-
-#: catchup.py:749 hidden.py:31 live.py:953 series.py:2108 settings.py:32
-#: vod.py:1780
+#: catchup.py:781 hidden.py:31 live.py:981 series.py:2226 settings.py:32
+#: vod.py:1785
 msgid "Enter pin code"
 msgstr "Írja be a PIN kódot"
 
-#: catchup.py:884
+#: catchup.py:781 live.py:981 series.py:2226 vod.py:1785
+msgid "Please enter the parental control pin code"
+msgstr "Kérjük, adja meg a szülői felügyelet PIN-kódját"
+
+#: catchup.py:916
 msgid "Catch-up"
 msgstr "Felzárkóztató"
 
-#: catchup.py:889 series.py:2475 vod.py:2072
+#: catchup.py:921 series.py:2592 vod.py:2079
 msgid "Added to download manager"
 msgstr "Hozzáadva a letöltéskezelőhöz"
 
-#: catchup.py:889 series.py:2475 vod.py:2072
-msgid "Note recording acts as an open connection."
-msgstr "Megjegyzés: A felvétel nyitott kapcsolatként működik."
-
-#: catchup.py:889 series.py:2475 vod.py:2072
+#: catchup.py:921 series.py:2592 vod.py:2079
 msgid "Do not record and play streams at the same time."
 msgstr "Ne rögzítsen és játsszon le egyszerre streameket."
 
-#: catchup.py:889 series.py:2475 vod.py:2072
+#: catchup.py:921 series.py:2592 vod.py:2079
+msgid "Note recording acts as an open connection."
+msgstr "Megjegyzés: A felvétel nyitott kapcsolatként működik."
+
+#: catchup.py:921 series.py:2592 vod.py:2079
 msgid "Open download manager?"
 msgstr "Nyissa meg a letöltéskezelőt?"
 
-#: catchup.py:892 series.py:2478 vod.py:2075
+#: catchup.py:924 series.py:2595 vod.py:2082
 msgid "Already added to download manager"
 msgstr "Már hozzá van adva a letöltéskezelőhöz"
 
-#: catchup.py:923
+#: catchup.py:955
 msgid "Catchup error. No data for this slot"
 msgstr "Felzárkózási hiba. Nincsenek adatok ehhez a tárolóhelyhez"
 
-#: catchup.py:983
+#: catchup.py:1015
 msgid "Catchup currently not available. Missing EPG data"
 msgstr "Felzárkózás jelenleg nem érhető el. Hiányzó EPG-adatok"
 
@@ -201,7 +207,6 @@ msgid "Do you want to resume this playback?"
 msgstr "Szeretné folytatni ezt a lejátszást ahonnan abbahagyta?"
 
 #: catchupplayer.py:407 vodplayer.py:414
-#, python-format
 msgid "Resume position at %s"
 msgstr "Folytatás %s pozíciótól"
 
@@ -248,14 +253,6 @@ msgstr "Eltávolítás"
 #: downloadmanager.py:500
 msgid "Please set download folder in Main Settings."
 msgstr "Kérjük, állítsa be a letöltési mappát a Főbeállításokban."
-
-#: downloadmanager.py:500
-msgid ""
-"Vod Download folder location does not exist.\n"
-"\n"
-msgstr ""
-"A Vod Download mappa helye nem létezik.\n"
-"\n"
 
 #: downloadmanager.py:557
 msgid "Cancel this download?"
@@ -309,31 +306,31 @@ msgstr "Élő kategóriák"
 msgid "Live TV"
 msgstr "Élő TV"
 
-#: live.py:350 series.py:337 vod.py:375
+#: live.py:352 series.py:416 vod.py:396
 msgid "FAVOURITES"
 msgstr "KEDVENCEK"
 
-#: live.py:351 vod.py:376
+#: live.py:353 vod.py:397
 msgid "RECENTLY WATCHED"
 msgstr "NEMRÉG MEGFIGYELTÉK"
 
-#: live.py:573 live.py:843 playlists.py:69 vod.py:1247 vod.py:1656
+#: live.py:585 live.py:871 playlists.py:69 vod.py:1252 vod.py:1661
 msgid "Delete"
 msgstr "Törlés"
 
-#: live.py:1295 live.py:1334 live.py:1343
+#: live.py:1326 live.py:1365 live.py:1374
 msgid "Next Info"
 msgstr "Következő információ"
 
-#: live.py:1338
+#: live.py:1369
 msgid "Now Info"
 msgstr "Most infó"
 
-#: live.py:1539 liveplayer.py:623
+#: live.py:1570 liveplayer.py:623
 msgid "Recording Timer Set."
 msgstr "Felvételi időzítő beállítás."
 
-#: live.py:1541 liveplayer.py:625
+#: live.py:1572 liveplayer.py:625
 msgid "Recording Failed."
 msgstr "A felvétel nem sikerült."
 
@@ -434,48 +431,48 @@ msgstr "Információ"
 msgid "No internet."
 msgstr "Nincs internet."
 
-#: playlists.py:336 playlists.py:416 scanner.py:424 scanner.py:511
+#: playlists.py:340 playlists.py:420 scanner.py:428 scanner.py:515
 msgid "Server Not Responding"
 msgstr "A kiszolgáló nem válaszol"
 
-#: playlists.py:346 playlists.py:418 scanner.py:451 scanner.py:513
+#: playlists.py:350 playlists.py:422 scanner.py:455 scanner.py:517
 msgid "Not Authorised"
 msgstr "Nem engedélyezett"
 
-#: playlists.py:351 playlists.py:404 scanner.py:457 scanner.py:499
-#: serverinfo.py:73
+#: playlists.py:355 playlists.py:408 scanner.py:461 scanner.py:503
+#: serverinfo.py:72
 msgid "Active"
 msgstr "Aktív"
 
-#: playlists.py:352 playlists.py:410 scanner.py:458 scanner.py:505
-#: serverinfo.py:74
+#: playlists.py:356 playlists.py:414 scanner.py:462 scanner.py:509
+#: serverinfo.py:73
 msgid "Banned"
 msgstr "Tiltott"
 
-#: playlists.py:353 playlists.py:414 scanner.py:459 scanner.py:509
-#: serverinfo.py:75
+#: playlists.py:357 playlists.py:418 scanner.py:463 scanner.py:513
+#: serverinfo.py:74
 msgid "Disabled"
 msgstr "Kikapcsolva"
 
-#: playlists.py:354 playlists.py:412 scanner.py:460 scanner.py:507
-#: serverinfo.py:76
+#: playlists.py:358 playlists.py:416 scanner.py:464 scanner.py:511
+#: serverinfo.py:75
 msgid "Expired"
 msgstr "Lejárt"
 
-#: playlists.py:362 playlists.py:364 playlists.py:366 scanner.py:468
-#: scanner.py:470 scanner.py:472
+#: playlists.py:366 playlists.py:368 playlists.py:370 scanner.py:472
+#: scanner.py:474 scanner.py:476
 msgid "Expires: "
 msgstr "Lejár: "
 
-#: playlists.py:368 scanner.py:474
+#: playlists.py:372 scanner.py:478
 msgid "Active Conn:"
 msgstr "Aktív Conn:"
 
-#: playlists.py:376 scanner.py:482
+#: playlists.py:380 scanner.py:486
 msgid "Max Conn:"
 msgstr "Max Conn:"
 
-#: playlists.py:397
+#: playlists.py:401
 msgid ""
 "You have dead playlists that are slowing down loading.\n"
 "\n"
@@ -485,11 +482,11 @@ msgstr ""
 "\n"
 "Nyomja meg a Sárga gombot a halott lejátszási listák lágy törléséhez"
 
-#: playlists.py:431
+#: playlists.py:435
 msgid "Delete selected playlist?"
 msgstr "Törli a kiválasztott lejátszási listát?"
 
-#: playlists.py:452
+#: playlists.py:456
 msgid "Delete providers EPG data?"
 msgstr "Törli a szolgáltatók EPG-adatait?"
 
@@ -553,32 +550,32 @@ msgstr ""
 msgid "Name already used. Please enter a unique name."
 msgstr "Már használt név. Kérjük, adjon meg egy egyedi nevet."
 
-#: plugin.py:168 plugin.py:169
+#: plugin.py:168 plugin.py:169 plugin.py:171 plugin.py:172
 msgid "Original"
 msgstr "Eredeti"
 
-#: plugin.py:169
+#: plugin.py:169 plugin.py:172
 msgid "Added"
 msgstr "Hozzáadva"
 
-#: plugin.py:169 series.py:1930 series.py:1953 vod.py:296 vod.py:322
-#: vod.py:1604 vod.py:1624
-msgid "Sort: Year"
-msgstr "Rendezés: Év"
-
-#: plugin.py:169
+#: plugin.py:169 plugin.py:172
 msgid "Year"
 msgstr "Év"
 
-#: plugin.py:282 plugin.py:396
+#: plugin.py:169 plugin.py:172 series.py:305 series.py:340 series.py:2047
+#: series.py:2070 vod.py:300 vod.py:330 vod.py:1609 vod.py:1629
+msgid "Sort: Year"
+msgstr "Rendezés: Év"
+
+#: plugin.py:286 plugin.py:400
 msgid "XStreamity"
 msgstr "XStreamity"
 
-#: plugin.py:395
+#: plugin.py:399
 msgid "IPTV Xtream Codes playlists player by KiddaC"
 msgstr "IPTV Xtream kódok lejátszási listák lejátszója a KiddaC által"
 
-#: record.py:41 serverinfo.py:63
+#: record.py:41 serverinfo.py:62
 msgid "Close"
 msgstr "Bezár"
 
@@ -610,43 +607,39 @@ msgstr "Lejátszási lista kiválasztása"
 msgid "Series Categories"
 msgstr "Sorozat kategóriák"
 
-#: series.py:97 series.py:2470
+#: series.py:97 series.py:2587
 msgid "Series"
 msgstr "Sorozatok"
 
-#: series.py:480
-msgid "No series found in this category."
-msgstr "Ebben a kategóriában nem találtunk sorozatot."
-
-#: series.py:482
-msgid "No Favourites added."
-msgstr "Nincsenek hozzáadva kedvencek."
-
-#: series.py:547 series.py:2542
+#: series.py:646 series.py:2659
 msgid "Season "
 msgstr "Évszak "
 
-#: series.py:1470 vod.py:1210
+#: series.py:1580 vod.py:1215
 msgid "Rating: "
 msgstr "Értékelés: "
 
-#: series.py:1521 vod.py:1201
+#: series.py:1633 vod.py:1206
 msgid "Cast:"
 msgstr "Önt:"
 
-#: series.py:1526 vod.py:1183
+#: series.py:1638 vod.py:1188
 msgid "Director:"
 msgstr "Igazgató:"
 
-#: series.py:1531 vod.py:1158
+#: series.py:1643 vod.py:1196
+msgid "Country:"
+msgstr "Ország:"
+
+#: series.py:1648 vod.py:1163
 msgid "Overview"
 msgstr "Áttekintés"
 
-#: series.py:2397
+#: series.py:2513
 msgid "Series group added to favourites."
 msgstr "Sorozatcsoport hozzáadva a kedvencekhez."
 
-#: series.py:2399
+#: series.py:2515
 msgid "Series group removed from favourites."
 msgstr "A sorozatcsoport eltávolítva a kedvencek közül."
 
@@ -690,51 +683,51 @@ msgstr ""
 msgid "Playlist added successfully."
 msgstr "A lejátszási lista sikeresen hozzáadva."
 
-#: serverinfo.py:33
+#: serverinfo.py:32
 msgid "User Information"
 msgstr "Felhasználói adatok"
 
-#: serverinfo.py:46
+#: serverinfo.py:45
 msgid "Status:"
 msgstr "Állapot:"
 
-#: serverinfo.py:47
+#: serverinfo.py:46
 msgid "Expiry Date:"
 msgstr "Lejárati:"
 
-#: serverinfo.py:48
+#: serverinfo.py:47
 msgid "Created At:"
 msgstr "Létrehozva:"
 
-#: serverinfo.py:49
+#: serverinfo.py:48
 msgid "Is Trial:"
 msgstr "A próbaverzió:"
 
-#: serverinfo.py:50
+#: serverinfo.py:49
 msgid "Active Connections:"
 msgstr "Aktív kapcsolatok:"
 
-#: serverinfo.py:51
+#: serverinfo.py:50
 msgid "Max Connections:"
 msgstr "Kapcsolatok maximális száma:"
 
-#: serverinfo.py:52
+#: serverinfo.py:51
 msgid "Allowed Output Formats:"
 msgstr "Engedélyezett kimeneti formátumok:"
 
-#: serverinfo.py:53
+#: serverinfo.py:52
 msgid "Real URL:"
 msgstr "Valódi URL:"
 
-#: serverinfo.py:54
+#: serverinfo.py:53
 msgid "Timezone:"
 msgstr "Időzóna:"
 
-#: serverinfo.py:55
+#: serverinfo.py:54
 msgid "Server Offset:"
 msgstr "Szerver eltolás:"
 
-#: serverinfo.py:83
+#: serverinfo.py:82
 msgid "Unknown"
 msgstr "Ismeretlen"
 
@@ -749,12 +742,12 @@ msgstr ""
 "A PIN kód nem lehet 0000, 111 vagy 1234"
 
 #: settings.py:134
-msgid "You need to restart the GUI"
-msgstr "Újra kell indítania a grafikus felhasználói felületet"
-
-#: settings.py:134
 msgid "Do you want to restart now?"
 msgstr "Most szeretné újraindítani?"
+
+#: settings.py:134
+msgid "You need to restart the GUI"
+msgstr "Újra kell indítania a grafikus felhasználói felületet"
 
 #: settings.py:144
 msgid "Select skin"
@@ -866,31 +859,37 @@ msgstr "Alapértelmezett VOD kategória rendezési sorrend"
 msgid "Default VOD stream sort order"
 msgstr "Alapértelmezett VOD adatfolyam rendezési sorrend"
 
-#: settings.py:293
+#: settings.py:179
+#, fuzzy
+msgid "Default Series category sort order"
+msgstr "Alapértelmezett VOD kategória rendezési sorrend"
+
+#: settings.py:180
+#, fuzzy
+msgid "Default Series sort order"
+msgstr "Alapértelmezett VOD adatfolyam rendezési sorrend"
+
+#: settings.py:298
 msgid "Choose Directory:"
 msgstr "Válasszon könyvtárat:"
 
-#: settings.py:294
+#: settings.py:299
 msgid "Choose directory"
 msgstr "Válasszon könyvtárat"
 
-#: vod.py:104
+#: vod.py:107
 msgid "Vod Categories"
 msgstr "Vod kategóriák"
 
-#: vod.py:106
+#: vod.py:109
 msgid "Movies"
 msgstr "Filmek"
 
-#: vod.py:1191
-msgid "Country:"
-msgstr "Ország:"
-
-#: vod.py:2067
+#: vod.py:2074
 msgid "Movie"
 msgstr "Film"
 
-#: vod.py:2105
+#: vod.py:2112
 msgid ""
 "The TMDB plugin is not installed!\n"
 "Please install it."
@@ -898,7 +897,7 @@ msgstr ""
 "A TMDB bővítmény nincs telepítve!\n"
 "Kérjük, telepítse."
 
-#: vod.py:2116
+#: vod.py:2123
 msgid ""
 "The IMDb plugin is not installed!\n"
 "Please install it."
@@ -909,3 +908,16 @@ msgstr ""
 #: vodplayer.py:504
 msgid "VOD"
 msgstr "VOD"
+
+#~ msgid ""
+#~ "Vod Download folder location does not exist.\n"
+#~ "\n"
+#~ msgstr ""
+#~ "A Vod Download mappa helye nem létezik.\n"
+#~ "\n"
+
+#~ msgid "No series found in this category."
+#~ msgstr "Ebben a kategóriában nem találtunk sorozatot."
+
+#~ msgid "No Favourites added."
+#~ msgstr "Nincsenek hozzáadva kedvencek."

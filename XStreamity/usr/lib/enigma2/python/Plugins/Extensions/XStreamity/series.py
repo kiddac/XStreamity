@@ -299,17 +299,20 @@ class XStreamity_Series_Categories(Screen):
             print("*** getSortOrder ***")
 
         if self.level == 1:
-            self.sortText = cfg.seriescategoryorder.value
             sortlist = [_("Sort: A-Z"), _("Sort: Z-A"), _("Sort: Original")]
             activelist = self.list1
         elif self.level == 2:
-            self.sortText = cfg.seriesorder.value
             sortlist = [_("Sort: A-Z"), _("Sort: Z-A"), _("Sort: Added"), _("Sort: Year"), _("Sort: Original")]
             activelist = self.list2
         else:
             return
 
-        current_sort = self.sortText
+        custom_sort = set(glob.active_playlist.get("player_info", {}).get("series_custom_sort", []))
+        if custom_sort:
+            sortlist.append(_("Sort: Custom"))
+
+        current_sort_index = sortlist.index(self.sortText) - 1
+        current_sort = sortlist[current_sort_index]
 
         if not current_sort:
             return
@@ -317,7 +320,7 @@ class XStreamity_Series_Categories(Screen):
         self.sortindex = 0
 
         for index, item in enumerate(sortlist):
-            if str(item) == str(self.sortText):
+            if str(item) == str(current_sort):
                 self.sortindex = index
                 break
 
@@ -340,6 +343,17 @@ class XStreamity_Series_Categories(Screen):
 
         elif current_sort == _("Sort: Original"):
             activelist.sort(key=lambda x: x[0], reverse=False)
+
+        elif current_sort == _("Sort: Custom"):
+            def get_custom_index(name, patternlist):
+                result = len(patternlist) # initialize: in the end
+                for index, pattern in enumerate(patternlist):
+                    if pattern.lower() in name.lower(): # case insensitive
+                        result = index
+                        break;
+                return result
+            activelist.sort(key=lambda x: x[0], reverse=False) # original sort first
+            activelist.sort(key=lambda x: get_custom_index(x[1], custom_sort), reverse=False)
 
         next_sort_type = next(islice(cycle(sortlist), self.sortindex + 1, None))
         self.sortText = str(next_sort_type)
@@ -390,6 +404,8 @@ class XStreamity_Series_Categories(Screen):
         currentPlaylist = glob.active_playlist
         currentCategoryList = currentPlaylist.get("data", {}).get("series_categories", [])
         currentHidden = set(currentPlaylist.get("player_info", {}).get("serieshidden", []))
+        series_categories_exclude = set(currentPlaylist.get("player_info", {}).get("series_categories_exclude", []))
+        series_categories_only = set(currentPlaylist.get("player_info", {}).get("series_categories_only", []))
 
         hiddenfavourites = "-1" in currentHidden
         hidden = "0" in currentHidden
@@ -405,6 +421,16 @@ class XStreamity_Series_Categories(Screen):
             category_name = item.get("category_name", "No category")
             category_id = item.get("category_id", "999999")
             hidden = category_id in currentHidden
+            if series_categories_exclude:
+                if not any([re.fullmatch(f"^{re.escape(pattern)}.*$", category_name) for pattern in series_categories_exclude]):
+                    # TODO: persistently hide?
+                    # currentPlaylist.get("player_info", {}).get("serieshidden", []).append(category_id)
+                    continue # TODO: omit or just hide?
+            if series_categories_only:
+                if any([re.fullmatch(f"^{re.escape(pattern)}.*$", category_name) for pattern in series_categories_only]):
+                    # TODO: persistently hide?
+                    # currentPlaylist.get("player_info", {}).get("serieshidden", []).append(category_id)
+                    continue # TODO: omit or just hide?
             self.list1.append([index, str(category_name), str(category_id), hidden])
 
         glob.originalChannelList1 = self.list1[:]
@@ -2399,7 +2425,7 @@ class XStreamity_Series_Categories(Screen):
                     break
 
         with open(playlists_json, "w") as f:
-            json.dump(self.playlists_all, f)
+            json.dump(self.playlists_all, f, indent=4)
 
         self.buildLists()
 
@@ -2478,7 +2504,7 @@ class XStreamity_Series_Categories(Screen):
                     break
 
         with open(playlists_json, "w") as f:
-            json.dump(self.playlists_all, f)
+            json.dump(self.playlists_all, f, indent=4)
 
         if self.level == 2:
             self.createSetup()
@@ -2561,7 +2587,7 @@ class XStreamity_Series_Categories(Screen):
                 downloads_all.append([_("Series"), title, stream_url, "Not Started", 0, 0])
 
                 with open(downloads_json, "w") as f:
-                    json.dump(downloads_all, f)
+                    json.dump(downloads_all, f, indent=4)
 
                 self.session.openWithCallback(self.opendownloader, MessageBox, _(title) + "\n\n" + _("Added to download manager") + "\n\n" + _("Note recording acts as an open connection.") + "\n" + _("Do not record and play streams at the same time.") + "\n\n" + _("Open download manager?"))
 
@@ -2643,3 +2669,4 @@ def buildSeriesEpisodesList(index, title, series_id, cover, plot, cast, director
         if int(series_id) == int(channel):
             png = LoadPixmap(os.path.join(common_path, "watched.png"))
     return (title, png, index, next_url, series_id, cover, plot, cast, director, genre, releaseDate, rating, duration, container_extension, tmdb_id, shorttitle, lastmodified, hidden, episode_number, parent_index, parent_id)
+

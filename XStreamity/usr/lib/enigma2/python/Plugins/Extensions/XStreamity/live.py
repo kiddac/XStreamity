@@ -339,6 +339,8 @@ class XStreamity_Live_Categories(Screen):
         currentPlaylist = glob.active_playlist
         currentCategoryList = currentPlaylist.get("data", {}).get("live_categories", [])
         currentHidden = set(currentPlaylist.get("player_info", {}).get("livehidden", []))
+        live_categories_only = set(currentPlaylist.get("player_info", {}).get("live_categories_only", []))
+        live_categories_exclude = set(currentPlaylist.get("player_info", {}).get("live_categories_exclude", []))
 
         hiddenfavourites = "-1" in currentHidden
         hiddenrecent = "-2" in currentHidden
@@ -356,6 +358,16 @@ class XStreamity_Live_Categories(Screen):
             category_name = item.get("category_name", "No category")
             category_id = item.get("category_id", "999999")
             hidden = category_id in currentHidden
+            if live_categories_only:
+                if not any([re.fullmatch(f"^{re.escape(pattern)}.*$", category_name) for pattern in live_categories_only]):
+                    # TODO: persistently hide?
+                    # currentPlaylist.get("player_info", {}).get("livehidden", []).append(category_id)
+                    continue # TODO: omit or just hide?
+            if live_categories_exclude:
+                if any([re.fullmatch(f"^{re.escape(pattern)}.*$", category_name) for pattern in live_categories_exclude]):
+                    # TODO: persistently hide?
+                    # currentPlaylist.get("player_info", {}).get("livehidden", []).append(category_id)
+                    continue # TODO: omit or just hide?
             self.list1.append([index, str(category_name), str(category_id), hidden])
 
         glob.originalChannelList1 = self.list1[:]
@@ -796,6 +808,10 @@ class XStreamity_Live_Categories(Screen):
         else:
             sortlist.extend([_("Sort: Added"), _("Sort: Original")])
 
+        custom_sort = glob.active_playlist.get("player_info", {}).get("live_custom_sort", [])
+        if custom_sort:
+            sortlist.append(_("Sort: Custom"))
+
         for index, item in enumerate(sortlist):
             if str(item) == str(self.sortText):
                 self.sortindex = index
@@ -817,6 +833,17 @@ class XStreamity_Live_Categories(Screen):
 
         elif current_sort == _("Sort: Original"):
             activelist.sort(key=lambda x: x[0], reverse=False)
+
+        elif current_sort == _("Sort: Custom"):
+            def get_custom_index(name, patternlist):
+                result = len(patternlist) # initialize: in the end
+                for index, pattern in enumerate(patternlist):
+                    if pattern.lower() in name.lower(): # case insensitive
+                        result = index
+                        break;
+                return result
+            activelist.sort(key=lambda x: x[0], reverse=False) # original sort first
+            activelist.sort(key=lambda x: get_custom_index(x[1], custom_sort), reverse=False)
 
         next_sort_type = next(islice(cycle(sortlist), self.sortindex + 1, None))
         self.sortText = str(next_sort_type)
@@ -869,7 +896,7 @@ class XStreamity_Live_Categories(Screen):
                         break
 
             with open(playlists_json, "w") as f:
-                json.dump(self.playlists_all, f)
+                json.dump(self.playlists_all, f, indent=4)
 
             del self.list2[current_index]
             self.buildLists()
@@ -1162,7 +1189,7 @@ class XStreamity_Live_Categories(Screen):
                     break
 
         with open(playlists_json, "w") as f:
-            json.dump(self.playlists_all, f)
+            json.dump(self.playlists_all, f, indent=4)
 
         if self.chosen_category == "favourites":
             del self.list2[current_index]
@@ -1734,3 +1761,4 @@ def buildLiveStreamList(index, name, stream_id, stream_icon, next_url, favourite
     if watching:
         png = LoadPixmap(os.path.join(common_path, "watching.png"))
     return (name, png, index, next_url, stream_id, stream_icon, hidden)
+

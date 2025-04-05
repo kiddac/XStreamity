@@ -65,15 +65,27 @@ def process_files():
         password = ""
         media_type = ""
         output = ""
+        live_custom_sort = []
+        vod_custom_sort = []
+        series_custom_sort = []
+        catchup_custom_sort = []
         livehidden = []
+        live_categories_only = []
+        live_categories_exclude = []
         channelshidden = []
         vodhidden = []
+        vod_categories_only = []
+        vod_categories_exclude = []
         vodstreamshidden = []
         serieshidden = []
+        series_categories_exclude = []
+        series_categories_only = []
         seriestitleshidden = []
         seriesseasonshidden = []
         seriesepisodeshidden = []
         catchuphidden = []
+        catchup_categories_only = []
+        catchup_categories_exclude = []
         catchupchannelshidden = []
         showlive = True
         showvod = True
@@ -166,14 +178,26 @@ def process_files():
                     ("livetype", livetype),
                     ("vodtype", vodtype),
                     ("livehidden", livehidden),
+                    ("live_custom_sort", live_custom_sort),
+                    ("vod_custom_sort", vod_custom_sort),
+                    ("series_custom_sort", series_custom_sort),
+                    ("catchup_custom_sort", catchup_custom_sort),
+                    ("live_categories_only", live_categories_only),
+                    ("live_categories_exclude", live_categories_exclude),
                     ("channelshidden", channelshidden),
                     ("vodhidden", vodhidden),
+                    ("vod_categories_only", vod_categories_only),
+                    ("vod_categories_exclude", vod_categories_exclude),
                     ("vodstreamshidden", vodstreamshidden),
                     ("serieshidden", serieshidden),
+                    ("series_categories_exclude", series_categories_exclude),
+                    ("series_categories_only", series_categories_only),
                     ("seriestitleshidden", seriestitleshidden),
                     ("seriesseasonshidden", seriesseasonshidden),
                     ("seriesepisodeshidden", seriesepisodeshidden),
                     ("catchuphidden", catchuphidden),
+                    ("catchup_categories_only", catchup_categories_only),
+                    ("catchup_categories_exclude", catchup_categories_exclude),
                     ("catchupchannelshidden", catchupchannelshidden),
                     ("livefavourites", livefavourites),
                     ("vodfavourites", vodfavourites),
@@ -210,6 +234,6 @@ def process_files():
 
     # Write new x-playlists.json file
     with open(scanner_playlists_json, "w") as f:
-        json.dump(playlists_all, f)
+        json.dump(playlists_all, f, indent=4)
 
     return playlists_all

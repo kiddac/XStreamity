@@ -300,6 +300,10 @@ class XStreamity_Vod_Categories(Screen):
             sortlist = [_("Sort: A-Z"), _("Sort: Z-A"), _("Sort: Added"), _("Sort: Year"), _("Sort: Original")]
             activelist = self.list2
 
+        custom_sort = set(glob.active_playlist.get("player_info", {}).get("vod_custom_sort", []))
+        if custom_sort:
+            sortlist.append(_("Sort: Custom"))
+
         current_sort = self.sortText
 
         if not current_sort:
@@ -329,6 +333,17 @@ class XStreamity_Vod_Categories(Screen):
 
         elif current_sort == _("Sort: Original"):
             activelist.sort(key=lambda x: x[0], reverse=False)
+
+        elif current_sort == _("Sort: Custom"):
+            def get_custom_index(name, patternlist):
+                result = len(patternlist) # initialize: in the end
+                for index, pattern in enumerate(patternlist):
+                    if pattern.lower() in name.lower(): # case insensitive
+                        result = index
+                        break;
+                return result
+            activelist.sort(key=lambda x: x[0], reverse=False) # original sort first
+            activelist.sort(key=lambda x: get_custom_index(x[1], custom_sort), reverse=False)
 
         next_sort_type = next(islice(cycle(sortlist), self.sortindex + 1, None))
         self.sortText = str(next_sort_type)
@@ -368,6 +383,8 @@ class XStreamity_Vod_Categories(Screen):
         currentPlaylist = glob.active_playlist
         currentCategoryList = currentPlaylist.get("data", {}).get("vod_categories", [])
         currentHidden = set(currentPlaylist.get("player_info", {}).get("vodhidden", []))
+        vod_categories_only = set(currentPlaylist.get("player_info", {}).get("vod_categories_only", []))
+        vod_categories_exclude = set(currentPlaylist.get("player_info", {}).get("vod_categories_exclude", []))
 
         hiddenfavourites = "-1" in currentHidden
         hiddenrecent = "-2" in currentHidden
@@ -385,6 +402,16 @@ class XStreamity_Vod_Categories(Screen):
             category_name = item.get("category_name", "No category")
             category_id = item.get("category_id", "999999")
             hidden = category_id in currentHidden
+            if vod_categories_only:
+                if not any([re.fullmatch(f"^{re.escape(pattern)}.*$", category_name) for pattern in vod_categories_only]):
+                    # TODO: persistently hide?
+                    # currentPlaylist.get("player_info", {}).get("vodhidden", []).append(category_id)
+                    continue # TODO: omit or just hide?
+            if vod_categories_exclude:
+                if any([re.fullmatch(f"^{re.escape(pattern)}.*$", category_name) for pattern in vod_categories_exclude]):
+                    # TODO: persistently hide?
+                    # currentPlaylist.get("player_info", {}).get("vodhidden", []).append(category_id)
+                    continue # TODO: omit or just hide?
             self.list1.append([index, str(category_name), str(category_id), hidden])
 
         glob.originalChannelList1 = self.list1[:]
@@ -567,7 +594,7 @@ class XStreamity_Vod_Categories(Screen):
 
             self.tmdbresults = ""
 
-            content = ""
+            content = None
 
             retries = Retry(total=1, backoff_factor=1)
             adapter = HTTPAdapter(max_retries=retries)
@@ -579,87 +606,57 @@ class XStreamity_Vod_Categories(Screen):
                 try:
                     r = http.get(url, headers=hdr, timeout=(10, 20), verify=False)
                     r.raise_for_status()
-
-                    if r.status_code == requests.codes.ok:
-                        try:
-                            content = r.json()
-                        except ValueError as e:
-                            print("JSON decoding failed:", e)
-                            content = None
-                except Exception as e:
-                    print("Error during request:", e)
+                    content = r.json() if r.status_code == requests.codes.ok else None
+                except (requests.RequestException, ValueError) as e:
+                    print("Error during request or JSON decoding:", e)
                     content = None
 
-            if content and ("info" in content) and content["info"]:
+            if not content:
+                return
+
+            if "info" in content and content["info"]:
                 self.tmdbresults = content["info"]
 
                 if "name" not in self.tmdbresults and "movie_data" in content and content["movie_data"]:
                     self.tmdbresults["name"] = content["movie_data"]["name"]
 
-                cover = ""
-                if "cover_big" in self.tmdbresults:
-                    cover = self.tmdbresults["cover_big"]
-                elif "movie_image" in self.tmdbresults:
-                    cover = self.tmdbresults["movie_image"]
-
-                if cover and cover.startswith("http"):
-                    try:
-                        cover = cover.replace(r"\/", "/")
-                    except:
-                        pass
-
-                    if cover == "https://image.tmdb.org/t/p/w600_and_h900_bestv2":
-                        cover = ""
-
-                    if cover.startswith("https://image.tmdb.org/t/p/") or cover.startswith("http://image.tmdb.org/t/p/"):
-                        dimensions = cover.partition("/p/")[2].partition("/")[0]
-
-                        if screenwidth.width() <= 1280:
-                            cover = cover.replace(dimensions, "w200")
-                        elif screenwidth.width() <= 1920:
-                            cover = cover.replace(dimensions, "w300")
-                        else:
-                            cover = cover.replace(dimensions, "w400")
-
-                self.tmdbresults["cover_big"] = cover
-
-                if "duration" in self.tmdbresults:
-                    duration = self.tmdbresults["duration"]
-                    try:
-                        hours, minutes, seconds = map(int, duration.split(':'))
-                        duration = "{}h {}m".format(hours, minutes)
-                        self.tmdbresults["duration"] = duration
-                    except:
-                        pass
-
-                if "backdrop_path" in self.tmdbresults:
-                    if isinstance(self.tmdbresults["backdrop_path"], list):
-                        try:
-                            backdrop_path = self.tmdbresults["backdrop_path"][0]
-                            self.tmdbresults["backdrop_path"] = backdrop_path
-                        except:
-                            pass
+            cover = self.tmdbresults.get("cover_big") or self.tmdbresults.get("movie_image", "")
+            if cover.startswith("http"):
+                cover = cover.replace(r"\/", "/")
+                if cover == "https://image.tmdb.org/t/p/w600_and_h900_bestv2":
+                    cover = ""
+                elif cover.startswith("https://image.tmdb.org/t/p/") or cover.startswith("http://image.tmdb.org/t/p/"):
+                    dimensions = cover.partition("/p/")[2].partition("/")[0]
+                    if screenwidth.width() <= 1280:
+                        cover = cover.replace(dimensions, "w200")
+                    elif screenwidth.width() <= 1920:
+                        cover = cover.replace(dimensions, "w300")
                     else:
-                        backdrop_path = self.tmdbresults["backdrop_path"]
+                        cover = cover.replace(dimensions, "w400")
+            self.tmdbresults["cover_big"] = cover
 
-                if "genre" in self.tmdbresults:
-                    genres_list = self.tmdbresults["genre"].split(', ')
-                    genre = ' / '.join(genres_list)
-                    self.tmdbresults["genre"] = genre
+            if "duration" in self.tmdbresults:
+                duration = self.tmdbresults["duration"]
+                try:
+                    hours, minutes, seconds = map(int, duration.split(':'))
+                    self.tmdbresults["duration"] = "{}h {}m".format(hours, minutes)
+                except ValueError:
+                    print("Invalid duration format.")
 
-            elif "movie_data" in content and content["movie_data"]:
-                self.tmdbresults = content["movie_data"]
+            if "backdrop_path" in self.tmdbresults:
+                if isinstance(self.tmdbresults["backdrop_path"], list) and self.tmdbresults["backdrop_path"]:
+                    self.tmdbresults["backdrop_path"] = self.tmdbresults["backdrop_path"][0]
+                else:
+                    self.tmdbresults["backdrop_path"] = self.tmdbresults["backdrop_path"]
+
+            if "genre" in self.tmdbresults:
+                self.tmdbresults["genre"] = ' / '.join(self.tmdbresults["genre"].split(', '))
 
             if cfg.TMDB.value is True:
                 self.getTMDB()
             else:
                 self.displayTMDB()
 
-                """
-                if cfg.channelcovers.value is True:
-                    self.downloadCover()
-                    self.downloadBackdrop()
-                    """
 
     def selectionChanged(self):
         if debugs:
@@ -1691,7 +1688,7 @@ class XStreamity_Vod_Categories(Screen):
                         break
 
             with open(playlists_json, "w") as f:
-                json.dump(self.playlists_all, f)
+                json.dump(self.playlists_all, f, indent=4)
 
             del self.list2[current_index]
 
@@ -1931,7 +1928,7 @@ class XStreamity_Vod_Categories(Screen):
                     break
 
         with open(playlists_json, "w") as f:
-            json.dump(self.playlists_all, f)
+            json.dump(self.playlists_all, f, indent=4)
 
         self.buildLists()
 
@@ -2000,7 +1997,7 @@ class XStreamity_Vod_Categories(Screen):
                     break
 
         with open(playlists_json, "w") as f:
-            json.dump(self.playlists_all, f)
+            json.dump(self.playlists_all, f, indent=4)
 
         if self.chosen_category == "favourites":
             del self.list2[current_index]
@@ -2077,7 +2074,7 @@ class XStreamity_Vod_Categories(Screen):
                 downloads_all.append([_("Movie"), title, stream_url, "Not Started", 0, 0])
 
                 with open(downloads_json, "w") as f:
-                    json.dump(downloads_all, f)
+                    json.dump(downloads_all, f, indent=4)
 
                 self.session.openWithCallback(self.opendownloader, MessageBox, _(title) + "\n\n" + _("Added to download manager") + "\n\n" + _("Note recording acts as an open connection.") + "\n" + _("Do not record and play streams at the same time.") + "\n\n" + _("Open download manager?"))
 
