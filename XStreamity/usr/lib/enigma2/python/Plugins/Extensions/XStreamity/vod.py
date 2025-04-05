@@ -565,7 +565,7 @@ class XStreamity_Vod_Categories(Screen):
             stream_id = self["main_list"].getCurrent()[4]
             url = str(glob.active_playlist["playlist_info"]["player_api"]) + "&action=get_vod_info&vod_id=" + str(stream_id)
 
-            self.tmdbresults = ""
+            self.tmdbresults = {}
 
             content = None
 
@@ -593,7 +593,11 @@ class XStreamity_Vod_Categories(Screen):
                 if "name" not in self.tmdbresults and "movie_data" in content and content["movie_data"]:
                     self.tmdbresults["name"] = content["movie_data"]["name"]
 
-            cover = self.tmdbresults.get("cover_big") or self.tmdbresults.get("movie_image", "")
+            if "cover_big" in self.tmdbresults:
+                cover = self.tmdbresults["cover_big"]
+            elif "movie_image" in self.tmdbresults:
+                cover = self.tmdbresults["movie_image"]
+
             if cover.startswith("http"):
                 cover = cover.replace(r"\/", "/")
                 if cover == "https://image.tmdb.org/t/p/w600_and_h900_bestv2":
@@ -622,14 +626,13 @@ class XStreamity_Vod_Categories(Screen):
                 else:
                     self.tmdbresults["backdrop_path"] = self.tmdbresults["backdrop_path"]
 
-            if "genre" in self.tmdbresults:
+            if "genre" in self.tmdbresults and self.tmdbresults["genre"]:
                 self.tmdbresults["genre"] = ' / '.join(self.tmdbresults["genre"].split(', '))
 
             if cfg.TMDB.value is True:
                 self.getTMDB()
             else:
                 self.displayTMDB()
-
 
     def selectionChanged(self):
         if debugs:
