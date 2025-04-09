@@ -210,6 +210,6 @@ def process_files():
 
     # Write new x-playlists.json file
     with open(scanner_playlists_json, "w") as f:
-        json.dump(playlists_all, f)
+        json.dump(playlists_all, f, indent=4)
 
     return playlists_all
