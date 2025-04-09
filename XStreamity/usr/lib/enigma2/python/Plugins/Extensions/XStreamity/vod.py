@@ -593,10 +593,7 @@ class XStreamity_Vod_Categories(Screen):
                 if "name" not in self.tmdbresults and "movie_data" in content and content["movie_data"]:
                     self.tmdbresults["name"] = content["movie_data"]["name"]
 
-            if "cover_big" in self.tmdbresults:
-                cover = self.tmdbresults["cover_big"]
-            elif "movie_image" in self.tmdbresults:
-                cover = self.tmdbresults["movie_image"]
+            cover = self.tmdbresults.get("cover_big") or self.tmdbresults.get("movie_image", "")
 
             if cover.startswith("http"):
                 cover = cover.replace(r"\/", "/")
