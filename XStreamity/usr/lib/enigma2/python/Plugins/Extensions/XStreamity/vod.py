@@ -613,6 +613,8 @@ class XStreamity_Vod_Categories(Screen):
                 duration = self.tmdbresults["duration"]
                 try:
                     hours, minutes, seconds = map(int, duration.split(':'))
+                    total_minutes = hours * 60 + minutes
+                    self.tmdbresults["originalduration"] = total_minutes
                     self.tmdbresults["duration"] = "{}h {}m".format(hours, minutes)
                 except ValueError:
                     print("Invalid duration format.")
@@ -939,6 +941,7 @@ class XStreamity_Vod_Categories(Screen):
                     if "runtime" in self.tmdbdetails:
                         runtime = self.tmdbdetails["runtime"]
                         if runtime and runtime != 0:
+                            self.tmdbresults["originalduration"] = runtime
                             duration_timedelta = timedelta(minutes=runtime)
                             formatted_time = "{:0d}h {:02d}m".format(duration_timedelta.seconds // 3600, (duration_timedelta.seconds % 3600) // 60)
                             self.tmdbresults["duration"] = str(formatted_time)
@@ -2028,6 +2031,10 @@ class XStreamity_Vod_Categories(Screen):
         if self["main_list"].getCurrent():
             title = self["main_list"].getCurrent()[0]
             stream_url = self["main_list"].getCurrent()[3]
+            description = str(self.tmdbresults["description"])
+            duration = int(self.tmdbresults["originalduration"])
+            timestamp = ""
+            channel = _("VOD")
 
             downloads_all = []
             if os.path.isfile(downloads_json):
@@ -2044,7 +2051,7 @@ class XStreamity_Vod_Categories(Screen):
                     exists = True
 
             if exists is False:
-                downloads_all.append([_("Movie"), title, stream_url, "Not Started", 0, 0])
+                downloads_all.append([_("Movie"), title, stream_url, "Not Started", 0, 0, description, duration, channel, timestamp])
 
                 with open(downloads_json, "w") as f:
                     json.dump(downloads_all, f, indent=4)

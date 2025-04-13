@@ -2542,6 +2542,17 @@ class XStreamity_Series_Categories(Screen):
         if self["main_list"].getCurrent():
             title = self["main_list"].getCurrent()[0]
             stream_url = self["main_list"].getCurrent()[3]
+            description = self["main_list"].getCurrent()[6]
+            duration = self["main_list"].getCurrent()[12]
+
+            try:
+                h, m, s = map(int, duration.split(":"))
+                duration = h * 60 + m + s // 60
+            except:
+                duration = 0
+
+            timestamp = ""
+            channel = _("Series")
 
             downloads_all = []
             if os.path.isfile(downloads_json):
@@ -2558,7 +2569,7 @@ class XStreamity_Series_Categories(Screen):
                     exists = True
 
             if exists is False:
-                downloads_all.append([_("Series"), title, stream_url, "Not Started", 0, 0])
+                downloads_all.append([_("Series"), title, stream_url, "Not Started", 0, 0, description, duration, channel, timestamp])
 
                 with open(downloads_json, "w") as f:
                     json.dump(downloads_all, f, indent=4)

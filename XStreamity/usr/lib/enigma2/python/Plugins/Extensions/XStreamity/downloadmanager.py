@@ -352,6 +352,7 @@ class XStreamity_DownloadManager(Screen):
 
                 if video[3] == "Downloaded":
                     video[4] = 100
+
             """
             else:
                 print("*** video not exist ***")
@@ -428,7 +429,16 @@ class XStreamity_DownloadManager(Screen):
         if debugs:
             print("*** buildList ***")
         self.drawList = []
-        self.drawList = [self.buildListEntry(x[0], x[1], x[2], str(x[3]), x[4], x[5]) for x in self.downloads_all]
+        self.drawList = [
+            self.buildListEntry(
+                x[0], x[1], x[2], str(x[3]), x[4], x[5],
+                x[6] if len(x) > 6 else "",
+                x[7] if len(x) > 7 else "",
+                x[8] if len(x) > 8 else "",
+                x[9] if len(x) > 9 else ""
+            )
+            for x in self.downloads_all
+        ]
         self["downloadlist"].setList(self.drawList)
 
     def updatescreen(self):
@@ -502,7 +512,30 @@ class XStreamity_DownloadManager(Screen):
 
         if self["downloadlist"].getCurrent():
 
+            self.dtype = self["downloadlist"].getCurrent()[0]
             self.filmtitle = self["downloadlist"].getCurrent()[1]
+
+            current = self["downloadlist"].getCurrent()
+
+            if current and len(current) > 7:
+                self.filmdescription = current[7]
+            else:
+                self.filmdescription = ""
+
+            if current and len(current) > 8:
+                self.filmduration = current[8]
+            else:
+                self.filmduration = ""
+
+            if current and len(current) > 9:
+                self.filmchannel = current[9]
+            else:
+                self.filmchannel = ""
+
+            if current and len(current) > 10:
+                self.filmdate = current[10]
+            else:
+                self.filmdate = ""
 
             self.url = self["downloadlist"].getCurrent()[2]
 
@@ -634,15 +667,44 @@ class XStreamity_DownloadManager(Screen):
         self.buildList()
         self.saveJson()
 
-    def createMetaFile(self, filename, filmtitle):
+    def createMetaFile(self, filename, dtype, filmtitle, filmdescription, filmduration, filmchannel, filmdate):
         if debugs:
-            print("*** createmetafile ***")
+            print("*** createmetafile ***", filename, filmtitle, filmdescription, filmduration, filmchannel, filmdate)
+
         try:
             serviceref = eServiceReference(4097, 0, filename)
-            with open("%s.meta" % (filename), "w") as f:
-                f.write("%s\n%s\n%s\n%i\n" % (serviceref.toString(), filmtitle, "", time.time()))
+            meta_path = "%s.meta" % filename
+
+            recording_time = int(time.time())
+
+            if filmdate:
+                recording_time = filmdate
+
+            tags = dtype
+
+            try:
+                duration_minutes = float(filmduration)
+                length_in_pts = int(duration_minutes * 60 * 90000)
+            except Exception as e:
+                print(e)
+                length_in_pts = 0
+
+            filesize = 0
+            if os.path.exists(filename):
+                filesize = os.path.getsize(filename)
+
+            with open(meta_path, "w") as f:
+                f.write("%s:%s\n" % (serviceref.toString(), filmchannel))
+                f.write("%s\n" % filmtitle)
+                f.write("%s\n" % filmdescription)
+                f.write("%s\n" % recording_time)
+                f.write("%s\n" % tags)
+                f.write("%i\n" % length_in_pts)
+                f.write("%i\n" % filesize)
+
         except Exception as e:
             print(e)
+
         return
 
     def download_finished(self, filename, filmtitle):
@@ -668,10 +730,10 @@ class XStreamity_DownloadManager(Screen):
         if ui:
             self.sortlist()
             self.buildList()
-        self.createMetaFile(filename, self.filmtitle)
+        self.createMetaFile(filename, self.dtype, self.filmtitle, self.filmdescription, self.filmduration, self.filmchannel, self.filmdate)
         self.saveJson()
 
-    def buildListEntry(self, dtype, title, url, state, progress, length):
+    def buildListEntry(self, dtype, title, url, state, progress, length, description, duration, channel, date):
         progresspercent = str(progress) + "%"
         length = convert_size(length)
-        return (str(dtype), str(title), str(url), _(state), int(progress), str(progresspercent), str(length))
+        return (str(dtype), str(title), str(url), _(state), int(progress), str(progresspercent), str(length), str(description), str(duration), str(channel), str(date))
