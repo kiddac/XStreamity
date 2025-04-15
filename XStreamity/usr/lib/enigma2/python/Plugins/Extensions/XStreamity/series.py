@@ -420,6 +420,18 @@ class XStreamity_Series_Categories(Screen):
         else:
             response = self.downloadApiData(glob.nextlist[-1]["next_url"])
 
+        def sanitize_false(obj):
+            if isinstance(obj, dict):
+                return {k: sanitize_false(v) for k, v in obj.items()}
+            elif isinstance(obj, list):
+                return [sanitize_false(i) for i in obj]
+            elif obj is False:
+                return ""
+            else:
+                return obj
+
+        response = sanitize_false(response)
+
         self.series_info = ""
         index = 0
         self.list2 = []
@@ -468,7 +480,7 @@ class XStreamity_Series_Categories(Screen):
                     except:
                         pass
 
-                    if cover == "https://image.tmdb.org/t/p/w600_and_h900_bestv2":
+                    if cover == "https://image.tmdb.org/t/p/w600_and_h900_bestv2" or cover == "https://image.tmdb.org/t/p/w500":
                         cover = ""
 
                     if cover.startswith("https://image.tmdb.org/t/p/") or cover.startswith("http://image.tmdb.org/t/p/"):
@@ -563,6 +575,18 @@ class XStreamity_Series_Categories(Screen):
             self.series_info = response
         else:
             response = self.series_info
+
+        def sanitize_false(obj):
+            if isinstance(obj, dict):
+                return {k: sanitize_false(v) for k, v in obj.items()}
+            elif isinstance(obj, list):
+                return [sanitize_false(i) for i in obj]
+            elif obj is False:
+                return ""
+            else:
+                return obj
+
+        response = sanitize_false(response)
 
         index = 0
         self.list3 = []
@@ -665,7 +689,7 @@ class XStreamity_Series_Categories(Screen):
                             except:
                                 pass
 
-                            if cover == "https://image.tmdb.org/t/p/w600_and_h900_bestv2":
+                            if cover == "https://image.tmdb.org/t/p/w600_and_h900_bestv2" or cover == "https://image.tmdb.org/t/p/w500":
                                 cover = self.cover2
 
                             if cover.startswith("https://image.tmdb.org/t/p/") or cover.startswith("http://image.tmdb.org/t/p/"):
@@ -812,7 +836,7 @@ class XStreamity_Series_Categories(Screen):
                         if cover:
                             cover = cover.replace(r"\/", "/")
                             if cover and cover.startswith("http"):
-                                if cover == "https://image.tmdb.org/t/p/w600_and_h900_bestv2":
+                                if cover == "https://image.tmdb.org/t/p/w600_and_h900_bestv2" or cover == "https://image.tmdb.org/t/p/w500":
                                     cover = ""
 
                                 if cover.startswith("https://image.tmdb.org/t/p/") or cover.startswith("http://image.tmdb.org/t/p/"):
@@ -2513,6 +2537,9 @@ class XStreamity_Series_Categories(Screen):
     def clearVod(self):
         if debugs:
             print("*** clearVod ***")
+        # self["vod_cover"].hide()
+        # self["vod_logo"].hide()
+        # self["vod_backdrop"].hide()
         self["main_title"].setText("")
         self["x_title"].setText("")
         self["x_description"].setText("")
@@ -2521,7 +2548,7 @@ class XStreamity_Series_Categories(Screen):
         self["vod_director"].setText("")
         self["vod_country"].setText("")
         self["vod_cast"].setText("")
-        self["rating_text"].setText("")
+        self["rating_text"].setText("0.0")
         self["rating_percent"].setText("")
 
     def showVod(self):

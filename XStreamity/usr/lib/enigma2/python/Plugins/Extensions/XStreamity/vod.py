@@ -434,13 +434,12 @@ class XStreamity_Vod_Categories(Screen):
                 cover = str(channel.get("stream_icon", ""))
 
                 if cover and cover.startswith("http"):
-
                     try:
                         cover = cover.replace(r"\/", "/")
                     except:
                         pass
 
-                    if cover == "https://image.tmdb.org/t/p/w600_and_h900_bestv2":
+                    if cover == "https://image.tmdb.org/t/p/w600_and_h900_bestv2" or cover == "https://image.tmdb.org/t/p/w500":
                         cover = ""
 
                     if cover.startswith("https://image.tmdb.org/t/p/") or cover.startswith("http://image.tmdb.org/t/p/"):
@@ -587,6 +586,18 @@ class XStreamity_Vod_Categories(Screen):
             if not content:
                 return
 
+            def sanitize_false(obj):
+                if isinstance(obj, dict):
+                    return {k: sanitize_false(v) for k, v in obj.items()}
+                elif isinstance(obj, list):
+                    return [sanitize_false(i) for i in obj]
+                elif obj is False:
+                    return ""
+                else:
+                    return obj
+
+            content = sanitize_false(content)
+
             if "info" in content and content["info"]:
                 self.tmdbresults = content["info"]
 
@@ -595,10 +606,12 @@ class XStreamity_Vod_Categories(Screen):
 
             cover = self.tmdbresults.get("cover_big") or self.tmdbresults.get("movie_image", "")
 
-            if cover.startswith("http"):
+            if cover and cover.startswith("http"):
                 cover = cover.replace(r"\/", "/")
-                if cover == "https://image.tmdb.org/t/p/w600_and_h900_bestv2":
+
+                if cover == "https://image.tmdb.org/t/p/w600_and_h900_bestv2" or cover == "https://image.tmdb.org/t/p/w500":
                     cover = ""
+
                 elif cover.startswith("https://image.tmdb.org/t/p/") or cover.startswith("http://image.tmdb.org/t/p/"):
                     dimensions = cover.partition("/p/")[2].partition("/")[0]
                     if screenwidth.width() <= 1280:
@@ -607,6 +620,9 @@ class XStreamity_Vod_Categories(Screen):
                         cover = cover.replace(dimensions, "w300")
                     else:
                         cover = cover.replace(dimensions, "w400")
+            else:
+                cover = ""
+
             self.tmdbresults["cover_big"] = cover
 
             if "duration" in self.tmdbresults:
@@ -665,9 +681,9 @@ class XStreamity_Vod_Categories(Screen):
             self["listposition"].setText("{}/{}".format(position, position_all))
             self["main_title"].setText("{}: {}".format(self.main_title, channel_title))
 
-            self["vod_cover"].hide()
-            self["vod_logo"].hide()
-            self["vod_backdrop"].hide()
+            # self["vod_cover"].hide()
+            # self["vod_logo"].hide()
+            # self["vod_backdrop"].hide()
 
             if self.level == 2:
                 self.timerVOD = eTimer()
@@ -2005,6 +2021,9 @@ class XStreamity_Vod_Categories(Screen):
     def clearVod(self):
         if debugs:
             print("*** clearVod ***")
+        self["vod_cover"].hide()
+        self["vod_logo"].hide()
+        self["vod_backdrop"].hide()
         self["main_title"].setText("")
         self["x_title"].setText("")
         self["x_description"].setText("")
@@ -2013,7 +2032,7 @@ class XStreamity_Vod_Categories(Screen):
         self["vod_director"].setText("")
         self["vod_country"].setText("")
         self["vod_cast"].setText("")
-        self["rating_text"].setText("")
+        self["rating_text"].setText("0.0")
         self["rating_percent"].setText("")
 
     def showVod(self):
