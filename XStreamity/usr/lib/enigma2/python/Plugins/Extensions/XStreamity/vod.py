@@ -193,7 +193,7 @@ class XStreamity_Vod_Categories(Screen):
         self["channel_actions"] = ActionMap(["XStreamityActions"], {
             "cancel": self.back,
             "red": self.back,
-            "ok": self.parentalCheck,
+            "OK": self.parentalCheck,
             "green": self.parentalCheck,
             "yellow": self.sort,
             "blue": self.search,
@@ -2157,29 +2157,26 @@ class XStreamity_Vod_Categories(Screen):
             return
 
         ffmpeg_installed = check_and_install_ffmpeg()
-
         if not ffmpeg_installed:
             return
 
         pytubefix_installed = check_and_install_pytubefix()
-
         if not pytubefix_installed:
             return
 
         current_item = self["main_list"].getCurrent()
-        if current_item:
-            trailer_id = str(current_item[11])
+        if not current_item:
+            return
 
-            if not trailer_id:
-                return
+        trailer_id = str(current_item[11])
+        if not trailer_id:
+            return
 
+        try:
             from pytubefix import YouTube
+            from pytubefix.exceptions import AgeRestrictedError
 
-            youtubelink = "https://www.youtube.com/watch?v=" + str(trailer_id)
-
-            # print("*** youtubelink ***", youtubelink)
-
-            yt = YouTube(youtubelink)
+            yt = YouTube("https://www.youtube.com/watch?v=" + str(trailer_id))
 
             video_stream = max(
                 [s for s in yt.streams.filter(mime_type="video/webm", progressive=False) if s.resolution and int(s.resolution[:-1]) <= 1080],
@@ -2190,6 +2187,7 @@ class XStreamity_Vod_Categories(Screen):
             audio_stream = yt.streams.filter(mime_type="audio/mp4", progressive=False, only_audio=True).order_by("abr").desc().last()
 
             if not video_stream or not audio_stream:
+                self.session.open(MessageBox, _("No trailer found."), type=MessageBox.TYPE_INFO, timeout=5)
                 return
 
             download_dir = "/tmp/"
@@ -2217,6 +2215,12 @@ class XStreamity_Vod_Categories(Screen):
                 return
 
             self.trailer_next(download_dir + output_file, yt.title)
+
+        except AgeRestrictedError:
+            self.session.open(MessageBox, _("Trailer is age restricted, and can't be accessed without logging in."), type=MessageBox.TYPE_INFO, timeout=5)
+
+        except Exception as e:
+            print(e)
 
     def trailer_next(self, file, title):
         if debugs:
@@ -2299,35 +2303,90 @@ def get_python_site_packages():
     return None
 
 
+def get_latest_pytubefix_version():
+    url = "https://pypi.org/project/pytubefix/#files"
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        matches = re.findall(r'href="[^"]+/pytubefix-(\d+\.\d+\.\d+)\.tar\.gz"', response.text)
+
+        if matches:
+            latest_version = sorted(matches, key=lambda s: list(map(int, s.split('.'))), reverse=True)[0]
+            return latest_version
+        else:
+            print("No .tar.gz versions found on PyPI.")
+            return None
+    else:
+        print("Failed to fetch PyPI page. Status:", response.status_code)
+        return None
+
+
+def check_pytubefix_version():
+    try:
+        import pytubefix
+
+        if hasattr(pytubefix, '__version__'):
+            return pytubefix.__version__
+        else:
+            try:
+                import pkg_resources
+                return pkg_resources.get_distribution("pytubefix").version
+            except Exception:
+                return None
+    except Exception:
+        return None
+
+
 def check_and_install_pytubefix():
     site_packages = get_python_site_packages()
     pytubefix_path = os.path.join(site_packages, "pytubefix") if site_packages else None
 
-    # Check if pytubefix is installed and the folder is not empty
-    if pytubefix_path and os.path.exists(pytubefix_path) and os.listdir(pytubefix_path):
-        return True
+    # Attempt to get the latest version from PyPI
+    expected_version = get_latest_pytubefix_version()
 
-    # Download pytubefix tarball
-    url = "https://files.pythonhosted.org/packages/dd/c0/5201796b7df003368ac718225f26109300a9ac9c8c1cce9966c163b8636c/pytubefix-8.12.1.tar.gz"
+    # Fallback to 8.12.3 if PyPI version retrieval fails
+    if not expected_version:
+        print("Using fallback version 8.12.3")
+        expected_version = "8.12.3"
+
+    # Define static URL for fallback version 8.12.3
+    if expected_version == "8.12.3":
+        url = "https://files.pythonhosted.org/packages/2f/43/528a5c70382499fdad0af998c8d06bcd0ada1a92ed30623396c144f9b9c0/pytubefix-8.12.3.tar.gz"
+    else:
+        # Dynamic URL for the latest version fetched from PyPI
+        url = "https://files.pythonhosted.org/packages/source/p/pytubefix/pytubefix-%s.tar.gz" % expected_version
+
+    # Check if pytubefix is already installed and verify version
+    if pytubefix_path and os.path.exists(pytubefix_path) and os.listdir(pytubefix_path):
+        installed_version = check_pytubefix_version()
+        if installed_version == expected_version:
+            print("pytubefix version %s is already installed" % installed_version)
+            return True
+        else:
+            print("pytubefix version is %s, expected %s. Reinstalling..." % (installed_version, expected_version))
+
+    # Download the correct tarball version
     response = requests.get(url)
 
     if response.status_code == 200:
-        tarball_path = "/tmp/pytubefix-8.12.1.tar.gz"
+        tarball_path = "/tmp/pytubefix-%s.tar.gz" % expected_version
         with open(tarball_path, "wb") as f:
             f.write(response.content)
 
         print("Tarball downloaded successfully at", tarball_path)
 
-        # Extract the tarball
         with tarfile.open(tarball_path, "r:gz") as tar:
             tar.extractall(path="/tmp/")
 
-        extracted_path = "/tmp/pytubefix-8.12.1/pytubefix"
+        extracted_path = "/tmp/pytubefix-%s/pytubefix" % expected_version
         print("Checking if extracted pytubefix folder exists at", extracted_path)
 
         if os.path.exists(extracted_path):
             print("pytubefix folder found at", extracted_path, ". Copying it to", pytubefix_path)
             try:
+                if os.path.exists(pytubefix_path):
+                    shutil.rmtree(pytubefix_path)
+
                 shutil.copytree(extracted_path, pytubefix_path)
                 print("pytubefix installed successfully at", pytubefix_path)
                 return True
