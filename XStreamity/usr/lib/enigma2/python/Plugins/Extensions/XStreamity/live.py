@@ -549,10 +549,10 @@ class XStreamity_Live_Categories(Screen):
         # nowTitle = 10, nowDesc = 11, nexttime = 12, nextTitle = 13, nextDesc = 14, next_url = 15, favourite = 16, watching = 17, hidden = 18, nowunixtime = 19, nowunixtime = 20
         if self.chosen_category == "favourites":
             self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18]) for x in self.list2 if x[16] is True]
-            self.epglist = [buildEPGListEntry(x[0], x[2], x[9], x[10], x[11], x[12], x[13], x[14], x[18], x[19], x[20]) for x in self.list2 if x[16] is True]
+            self.epglist = [buildEPGListEntry(x[0], x[1], x[9], x[10], x[11], x[12], x[13], x[14], x[18], x[19], x[20]) for x in self.list2 if x[16] is True]
         else:
             self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18]) for x in self.list2 if x[18] is False]
-            self.epglist = [buildEPGListEntry(x[0], x[2], x[9], x[10], x[11], x[12], x[13], x[14], x[18], x[19], x[20]) for x in self.list2 if x[18] is False]
+            self.epglist = [buildEPGListEntry(x[0], x[1], x[9], x[10], x[11], x[12], x[13], x[14], x[18], x[19], x[20]) for x in self.list2 if x[18] is False]
 
         self["main_list"].setList(self.main_list)
         self["epg_list"].setList(self.epglist)
@@ -942,10 +942,15 @@ class XStreamity_Live_Categories(Screen):
             adult_keywords = {"adult", "+18", "18+", "18 rated", "xxx", "sex", "porn", "voksen", "volwassen", "aikuinen", "Erwachsene", "dorosly", "взрослый", "vuxen", "£дорослий"}
             current_title_lower = str(self["main_list"].getCurrent()[0]).lower()
 
-            if current_title_lower in {"all", _("all")} or "sport" in current_title_lower:
+            if current_title_lower == "all" or current_title_lower == _("all"):
+                glob.adultChannel = True
+
+            elif "sport" in current_title_lower:
                 glob.adultChannel = False
+
             elif any(keyword in current_title_lower for keyword in adult_keywords):
                 glob.adultChannel = True
+
             else:
                 glob.adultChannel = False
 

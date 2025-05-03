@@ -737,10 +737,15 @@ class XStreamity_Catchup_Categories(Screen):
             adult_keywords = {"adult", "+18", "18+", "18 rated", "xxx", "sex", "porn", "voksen", "volwassen", "aikuinen", "Erwachsene", "dorosly", "взрослый", "vuxen", "£дорослий"}
             current_title_lower = str(self["main_list"].getCurrent()[0]).lower()
 
-            if current_title_lower in {"all", _("all")} or "sport" in current_title_lower:
+            if current_title_lower == "all" or current_title_lower == _("all"):
+                glob.adultChannel = True
+
+            elif "sport" in current_title_lower:
                 glob.adultChannel = False
+
             elif any(keyword in current_title_lower for keyword in adult_keywords):
                 glob.adultChannel = True
+
             else:
                 glob.adultChannel = False
 
@@ -851,6 +856,7 @@ class XStreamity_Catchup_Categories(Screen):
 
             next_url = self["main_list"].getCurrent()[3]
             stream = next_url.rpartition("/")[-1]
+
             description = str(self["epg_short_list"].getCurrent()[3])
 
             date = str(self["epg_short_list"].getCurrent()[4])  # "2025-04-09:18-55"
@@ -868,11 +874,18 @@ class XStreamity_Catchup_Categories(Screen):
                     dt = datetime.strptime(cleaned, "%Y-%m-%d %H:%M")
                     timestamp = int(time.mktime(dt.timetuple()))
 
+            date_all = str(self["epg_short_list"].getCurrent()[1]).strip()
+            time_all = str(self["epg_short_list"].getCurrent()[2]).strip()
+            time_start = time_all.partition(" - ")[0].strip()
+            current_year = int(datetime.now().year)
+            date2 = str(datetime.strptime(str(current_year) + str(date_all) + str(time_start), "%Y%a %d/%m%H:%M")).replace("-", "").replace(":", "")[:-2]
+
             duration = str(self["epg_short_list"].getCurrent()[5])
             playurl = "%s/timeshift/%s/%s/%s/%s/%s" % (self.host, self.username, self.password, duration, date, stream)
 
             otitle = str(self["epg_short_list"].getCurrent()[0])
             channel = str(self["main_list"].getCurrent()[0])
+            title = str(date2) + " - " + str(channel) + " - " + str(otitle)
 
             downloads_all = []
             if os.path.isfile(downloads_json):
@@ -890,15 +903,15 @@ class XStreamity_Catchup_Categories(Screen):
                     exists = True
 
             if exists is False:
-                downloads_all.append([_("Catch-up"), otitle, playurl, "Not Started", 0, 0, description, duration, channel, timestamp])
+                downloads_all.append([_("Catch-up"), title, playurl, "Not Started", 0, 0, description, duration, channel, timestamp])
 
                 with open(downloads_json, "w") as f:
                     json.dump(downloads_all, f, indent=4)
 
-                self.session.openWithCallback(self.opendownloader, MessageBox, _(otitle) + "\n\n" + _("Added to download manager") + "\n\n" + _("Note recording acts as an open connection.") + "\n" + _("Do not record and play streams at the same time.") + "\n\n" + _("Open download manager?"))
+                self.session.openWithCallback(self.opendownloader, MessageBox, _(title) + "\n\n" + _("Added to download manager") + "\n\n" + _("Note recording acts as an open connection.") + "\n" + _("Do not record and play streams at the same time.") + "\n\n" + _("Open download manager?"))
 
             else:
-                self.session.open(MessageBox, _(otitle) + "\n\n" + _("Already added to download manager"), MessageBox.TYPE_ERROR, timeout=5)
+                self.session.open(MessageBox, _(title) + "\n\n" + _("Already added to download manager"), MessageBox.TYPE_ERROR, timeout=5)
 
     def opendownloader(self, answer=None):
         if not answer:

@@ -2212,10 +2212,15 @@ class XStreamity_Series_Categories(Screen):
             adult_keywords = {"adult", "+18", "18+", "18 rated", "xxx", "sex", "porn", "voksen", "volwassen", "aikuinen", "Erwachsene", "dorosly", "взрослый", "vuxen", "£дорослий"}
             current_title_lower = str(self["main_list"].getCurrent()[0]).lower()
 
-            if current_title_lower in {"all", _("all")} or "sport" in current_title_lower:
+            if current_title_lower == "all" or current_title_lower == _("all"):
+                glob.adultChannel = True
+
+            elif "sport" in current_title_lower:
                 glob.adultChannel = False
+
             elif any(keyword in current_title_lower for keyword in adult_keywords):
                 glob.adultChannel = True
+
             else:
                 glob.adultChannel = False
 

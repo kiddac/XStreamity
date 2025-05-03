@@ -89,6 +89,7 @@ class XStreamity_Playlists(Screen):
             "blue": self.openUserInfo,
             "info": self.openUserInfo,
             "yellow": self.deleteServer,
+            "0": self.goTop
         }, -2)
 
         self.onFirstExecBegin.append(self.start)
@@ -544,3 +545,6 @@ class XStreamity_Playlists(Screen):
                 tree.write(sourcefile)
             except Exception as e:
                 print("Error:", e)
+
+    def goTop(self):
+        self["playlists"].setIndex(0)
