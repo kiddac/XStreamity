@@ -2202,23 +2202,26 @@ class XStreamity_Series_Categories(Screen):
             return
 
     def parentalCheck(self):
-        if debugs:
-            print("*** parentalCheck ***")
-
+        # print("*** parentalcheck ***")
         self.pin = True
         nowtime = int(time.mktime(datetime.now().timetuple())) if pythonVer == 2 else int(datetime.timestamp(datetime.now()))
 
         if self.level == 1 and self["main_list"].getCurrent():
-            adult_keywords = {"adult", "+18", "18+", "18 rated", "xxx", "sex", "porn", "voksen", "volwassen", "aikuinen", "Erwachsene", "dorosly", "взрослый", "vuxen", "£дорослий"}
-            current_title_lower = str(self["main_list"].getCurrent()[0]).lower()
+            adult_keywords = {
+                "adult", "+18", "18+", "18 rated", "xxx", "sex", "porn",
+                "voksen", "volwassen", "aikuinen", "Erwachsene", "dorosly",
+                "взрослый", "vuxen", "£дорослий"
+            }
 
-            if current_title_lower == "all" or current_title_lower == _("all"):
+            current_title = str(self["main_list"].getCurrent()[0])
+
+            if current_title == "ALL" or current_title == _("ALL"):
                 glob.adultChannel = True
 
-            elif "sport" in current_title_lower:
+            elif "sport" in current_title.lower():
                 glob.adultChannel = False
 
-            elif any(keyword in current_title_lower for keyword in adult_keywords):
+            elif any(keyword in current_title.lower() for keyword in adult_keywords):
                 glob.adultChannel = True
 
             else:
@@ -2226,7 +2229,14 @@ class XStreamity_Series_Categories(Screen):
 
             if cfg.adult.value and nowtime - int(glob.pintime) > 900 and glob.adultChannel:
                 from Screens.InputBox import PinInput
-                self.session.openWithCallback(self.pinEntered, PinInput, pinList=[cfg.adultpin.value], triesEntry=cfg.retries.adultpin, title=_("Please enter the parental control pin code"), windowTitle=_("Enter pin code"))
+                self.session.openWithCallback(
+                    self.pinEntered,
+                    PinInput,
+                    pinList=[cfg.adultpin.value],
+                    triesEntry=cfg.retries.adultpin,
+                    title=_("Please enter the parental control pin code"),
+                    windowTitle=_("Enter pin code")
+                )
             else:
                 self.next()
         else:
