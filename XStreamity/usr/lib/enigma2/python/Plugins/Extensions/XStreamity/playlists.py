@@ -489,19 +489,18 @@ class XStreamity_Playlists(Screen):
             glob.active_playlist = {}
 
     def openUserInfo(self):
-        from . import serverinfo
-
         if self.list:
             current_playlist = glob.active_playlist
 
             if "user_info" in current_playlist and "auth" in current_playlist["user_info"] and str(current_playlist["user_info"]["auth"]) == "1":
+                from . import serverinfo
                 self.session.open(serverinfo.XStreamity_UserInfo)
 
     def getStreamTypes(self):
-        from . import menu
         if "user_info" in glob.active_playlist:
             if "auth" in glob.active_playlist["user_info"]:
                 if str(glob.active_playlist["user_info"]["auth"]) == "1" and glob.active_playlist["user_info"]["status"] == "Active":
+                    from . import menu
                     self.session.open(menu.XStreamity_Menu)
                     self.checkoneplaylist()
 

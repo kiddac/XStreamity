@@ -46,7 +46,6 @@ from enigma import eTimer, eServiceReference
 
 # Local application/library-specific imports
 from . import _
-from . import catchupplayer
 from . import xstreamity_globals as glob
 from .plugin import cfg, common_path, dir_tmp, downloads_json, pythonVer, screenwidth, skin_directory
 from .xStaticText import StaticText
@@ -831,11 +830,9 @@ class XStreamity_Catchup_Categories(Screen):
 
     def showHiddenList(self):
         if self["key_menu"].getText():
-            from . import hidden
-
             current_list = self.prelist + self.list1 if self.level == 1 else self.list2
-
             if current_list and self["main_list"].getCurrent():
+                from . import hidden
                 self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "catchup", current_list, self.level)
 
     def hideEPG(self):
@@ -950,11 +947,11 @@ class XStreamity_Catchup_Categories(Screen):
 
             playurl = "{}/timeshift/{}/{}/{}/{}/{}".format(self.host, self.username, self.password, duration, date, stream)
             if next_url and next_url != "None" and "/live/" in next_url:
+                from . import catchupplayer
                 streamtype = glob.active_playlist["player_info"]["vodtype"]
                 glob.catchupdata = [str(epg_short_list_current_item[0]), str(epg_short_list_current_item[3])]
                 self.session.openWithCallback(self.setIndex, catchupplayer.XStreamity_CatchupPlayer, str(playurl), str(streamtype))
             else:
-                from Screens.MessageBox import MessageBox
                 self.session.open(MessageBox, _("Catchup error. No data for this slot"), MessageBox.TYPE_WARNING, timeout=5)
 
     def checkRedirect(self, url):

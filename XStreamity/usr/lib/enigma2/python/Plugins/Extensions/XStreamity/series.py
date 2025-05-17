@@ -55,7 +55,6 @@ from enigma import ePicLoad, eServiceReference, eTimer
 
 # Local imports
 from . import _
-from . import vodplayer
 from . import xstreamity_globals as glob
 from .plugin import (cfg, common_path, dir_tmp, downloads_json, pythonVer, screenwidth, skin_directory, debugs)
 from .xStaticText import StaticText
@@ -2330,6 +2329,7 @@ class XStreamity_Series_Categories(Screen):
 
             elif self.level == 4:
                 if self.list4:
+                    from . import vodplayer
                     self.storedepisode = self["main_list"].getCurrent()[18]
                     streamtype = glob.active_playlist["player_info"]["vodtype"]
                     next_url = self["main_list"].getCurrent()[3]
