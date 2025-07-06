@@ -1059,6 +1059,8 @@ class XStreamity_Live_Categories(Screen):
                                 self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18]) for x in self.list2 if x[18] is False]
 
                             self["main_list"].setList(self.main_list)
+                            if self["main_list"].getCurrent() and glob.nextlist[-1]["index"] != 0:
+                                self["main_list"].setIndex(glob.nextlist[-1]["index"])
 
                         else:
                             for channel in self.list2:
@@ -1073,6 +1075,9 @@ class XStreamity_Live_Categories(Screen):
                                 self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18]) for x in self.list2 if x[18] is False]
 
                             self["main_list"].setList(self.main_list)
+
+                            if self["main_list"].getCurrent() and glob.nextlist[-1]["index"] != 0:
+                                self["main_list"].setIndex(glob.nextlist[-1]["index"])
 
                             try:
                                 self.session.nav.stopService()
