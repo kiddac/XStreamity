@@ -206,6 +206,8 @@ class XStreamity_Live_Categories(Screen):
 
         self.selectedlist = self["main_list"]
 
+        self.timerimage = eTimer()
+
         self.host = glob.active_playlist["playlist_info"]["host"]
         self.username = glob.active_playlist["playlist_info"]["username"]
         self.password = glob.active_playlist["playlist_info"]["password"]
@@ -625,18 +627,18 @@ class XStreamity_Live_Categories(Screen):
                     else:
                         self.refreshEPGInfo()
 
-                    self.timerimage = eTimer()
+                if cfg.channelpicons.value:
                     try:
                         self.timerimage.stop()
                     except:
                         pass
 
-                if cfg.channelpicons.value:
                     try:
                         self.timerimage.callback.append(self.downloadImage)
                     except:
                         self.timerimage_conn = self.timerimage.timeout.connect(self.downloadImage)
                     self.timerimage.start(250, True)
+
         else:
             position = 0
             position_all = 0

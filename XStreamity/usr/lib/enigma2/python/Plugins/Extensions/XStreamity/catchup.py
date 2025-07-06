@@ -7,7 +7,7 @@ from __future__ import division
 import base64
 import codecs
 import json
-import math
+# import math
 import os
 import re
 import time
@@ -184,6 +184,8 @@ class XStreamity_Catchup_Categories(Screen):
         self.sortText = _("Sort: A-Z")
 
         self.level = 1
+
+        self.timerimage = eTimer()
 
         self.selectedlist = self["main_list"]
 
@@ -470,7 +472,6 @@ class XStreamity_Catchup_Categories(Screen):
             self.loadBlankImage()
 
             if self.level == 2:
-                self.timerimage = eTimer()
                 try:
                     self.timerimage.stop()
                 except:
@@ -615,7 +616,7 @@ class XStreamity_Catchup_Categories(Screen):
 
     def sort(self):
         current_sort = self["key_yellow"].getText()
-        if not current_sort or current_sort == _("Reverse"):
+        if not current_sort:
             return
 
         activelist = self.list1 if self.level == 1 else self.list2
