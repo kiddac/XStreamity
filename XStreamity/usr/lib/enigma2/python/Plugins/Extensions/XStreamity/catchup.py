@@ -461,7 +461,7 @@ class XStreamity_Catchup_Categories(Screen):
             position = current_index + 1
             position_all = len(self.pre_list) + len(self.main_list) if self.level == 1 else len(self.main_list)
             page = (position - 1) // self.itemsperpage + 1
-            page_all = int(math.ceil(position_all // self.itemsperpage) + 1)
+            page_all = (position_all + self.itemsperpage - 1) // self.itemsperpage
 
             self["page"].setText(_("Page: ") + "{}/{}".format(page, page_all))
             self["listposition"].setText("{}/{}".format(position, position_all))
@@ -522,9 +522,9 @@ class XStreamity_Catchup_Categories(Screen):
 
                     if scheme == "https" and sslverify:
                         sniFactory = SNIFactory(domain)
-                        downloadPage(desc_image, temp, sniFactory, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
+                        downloadPage(desc_image, temp, sniFactory, timeout=2).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
                     else:
-                        downloadPage(desc_image, temp, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
+                        downloadPage(desc_image, temp, timeout=2).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
                 except Exception:
                     self.loadDefaultImage()
             else:

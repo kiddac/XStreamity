@@ -56,7 +56,6 @@
 	<widget name="picon" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/picon.png" position="2187,120" size="294,176" alphatest="blend" zPosition="2"/>
 	<widget name="progress" position="2187,340" size="294,16" borderWidth="2" borderColor="#ffffff" foregroundColor="#2a70a4" backgroundColor="#102e4b" zPosition="3"/>
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/button-bg.png" position="640,1360" size="1960,80" alphatest="blend" zPosition="1"/>
-	
 	<widget source="key_red" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/key_red.png" position="672,1375" size="51,51" alphatest="blend" zPosition="2"/>
 	<widget source="key_red" render="Label" position="736,1360" size="300,80" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="2"/>
 	

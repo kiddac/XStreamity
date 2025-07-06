@@ -431,6 +431,8 @@ class XStreamity_StreamPlayer(
 
         self.ar_id_player = 0
 
+        self.timerimage = eTimer()
+
         self.setup_title = _("TV")
 
         self["actions"] = ActionMap(["XStreamityActions"], {
@@ -739,7 +741,16 @@ class XStreamity_StreamPlayer(
             glob.newPlayingServiceRef = currently_playing_ref
             glob.newPlayingServiceRefString = currently_playing_ref.toString()
         if cfg.infobarpicons.value is True:
-            self.downloadImage()
+            try:
+                self.timerimage.stop()
+            except:
+                pass
+
+            try:
+                self.timerimage.callback.append(self.downloadImage)
+            except:
+                self.timerimage_conn = self.timerimage.timeout.connect(self.downloadImage)
+            self.timerimage.start(250, True)
 
         # clear cache
         self.timerCache = eTimer()
@@ -899,7 +910,7 @@ class XStreamity_StreamPlayer(
         if glob.currentchannellist:
             list_length = len(glob.currentchannellist)
             glob.currentchannellistindex += 1
-            if glob.currentchannellistindex + 1 > list_length:
+            if glob.currentchannellistindex >= list_length:
                 glob.currentchannellistindex = 0
             self.streamurl = glob.currentchannellist[glob.currentchannellistindex][3]
             self.playStream(self.servicetype, self.streamurl)
@@ -910,7 +921,7 @@ class XStreamity_StreamPlayer(
         if glob.currentchannellist:
             list_length = len(glob.currentchannellist)
             glob.currentchannellistindex -= 1
-            if glob.currentchannellistindex + 1 == 0:
+            if glob.currentchannellistindex < 0:
                 glob.currentchannellistindex = list_length - 1
 
             self.streamurl = glob.currentchannellist[glob.currentchannellistindex][3]

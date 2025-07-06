@@ -6,7 +6,7 @@ import base64
 import codecs
 from datetime import datetime, timedelta
 import json
-import math
+# import math
 import os
 import re
 import time
@@ -980,7 +980,7 @@ class XStreamity_Series_Categories(Screen):
             position = current_index + 1
             position_all = len(self.pre_list) + len(self.main_list) if self.level == 1 else len(self.main_list)
             page = (position - 1) // self.itemsperpage + 1
-            page_all = int(math.ceil(position_all // self.itemsperpage) + 1)
+            page_all = (position_all + self.itemsperpage - 1) // self.itemsperpage
 
             self["page"].setText(_("Page: ") + "{}/{}".format(page, page_all))
             self["listposition"].setText("{}/{}".format(position, position_all))
@@ -1026,6 +1026,9 @@ class XStreamity_Series_Categories(Screen):
             self.hideVod()
 
     def stripjunk(self, text, database=None):
+        if debugs:
+            print("*** stripjunk ***")
+
         searchtitle = text.lower()
 
         # if title ends in "the", move "the" to the beginning
@@ -1048,11 +1051,22 @@ class XStreamity_Series_Categories(Screen):
         # remove everything left between pipes.
         searchtitle = re.sub(r'\|.*?\|', '', searchtitle)
 
+        # remove all leading content between and including ┃┃
+        searchtitle = re.sub(r'^┃┃.*?┃┃', '', searchtitle)
+        searchtitle = re.sub(r'^┃.*?┃', '', searchtitle)
+
+        # remove everything left between heavy vertical pipes.
+        searchtitle = re.sub(r'┃.*?┃', '', searchtitle)
+
         # remove all content between and including () multiple times unless it contains only numbers.
         searchtitle = re.sub(r'\((?!\d+\))[^()]*\)', '', searchtitle)
 
         # remove all content between and including [] multiple times
         searchtitle = re.sub(r'\[\[.*?\]\]|\[.*?\]', '', searchtitle)
+
+        # Remove year patterns at the end, unless the entire title is a year.
+        if not re.match(r'^\d{4}$', searchtitle):
+            searchtitle = re.sub(r'[\s\-]*(?:[\(\[\"]?\d{4}[\)\]\"]?)$', '', searchtitle)
 
         # List of bad strings to remove
         bad_strings = [
@@ -1067,10 +1081,6 @@ class XStreamity_Series_Categories(Screen):
             "4k", "720p", "aac", "blueray", "ex-yu:", "fhd", "hd", "hdrip", "hindi", "imdb", "multi:", "multi-audio",
             "multi-sub", "multi-subs", "multisub", "ozlem", "sd", "top250", "u-", "uhd", "vod", "x264"
         ]
-
-        # Remove numbers from 1900 to 2030
-        if database == "TMDB":
-            bad_strings.extend(map(str, range(1900, 2030)))
 
         # Construct a regex pattern to match any of the bad strings
         bad_strings_pattern = re.compile('|'.join(map(re.escape, bad_strings)))
@@ -1281,7 +1291,7 @@ class XStreamity_Series_Categories(Screen):
         director = []
         country = []
 
-        logos = None
+        logos = []
 
         try:
             with codecs.open(os.path.join(dir_tmp, "search.txt"), "r", encoding="utf-8") as f:
@@ -2353,6 +2363,8 @@ class XStreamity_Series_Categories(Screen):
     def back(self, data=None):
         if debugs:
             print("*** back ***")
+
+        self.chosen_category = ""
 
         if self.level != 1:
             try:

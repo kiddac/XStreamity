@@ -34,13 +34,13 @@
 			MultiContentEntryText(pos = (1065, 0), size = (240, 54), font=1, color = 0x00ffffff, color_sel = 0x00133171, backcolor_sel = None, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER, text = 4), 
 			
 			<!-- Active Conn Num -->
-			MultiContentEntryText(pos = (1365-30, 0), size = (90, 54), font=1, color = 0x00ffffff, color_sel = 0x00133171, backcolor_sel = None, flags = RT_HALIGN_RIGHT | RT_VALIGN_CENTER, text = 7),
+			MultiContentEntryText(pos = (1335, 0), size = (90, 54), font=1, color = 0x00ffffff, color_sel = 0x00133171, backcolor_sel = None, flags = RT_HALIGN_RIGHT | RT_VALIGN_CENTER, text = 7),
 			
 			<!-- Max Conn Num --> 
-			MultiContentEntryText(pos = (1485-30, 0), size = (90, 54), font=1, color = 0x00ffffff, color_sel = 0x00133171, backcolor_sel = None, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER, text = 9),
+			MultiContentEntryText(pos = (1455, 0), size = (90, 54), font=1, color = 0x00ffffff, color_sel = 0x00133171, backcolor_sel = None, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER, text = 9),
 			
 			<!-- Authorised LED -->
-			MultiContentEntryPixmapAlphaBlend(pos = (1575-30, 15), size = (23, 24), png = 5),
+			MultiContentEntryPixmapAlphaBlend(pos = (1545, 15), size = (23, 24), png = 5),
 			
 			<!-- Max Conn -->
 			<!-- MultiContentEntryText(pos = (645, 75), size = (120, 30), font=1, color = 0x00ffffff, color_sel = 0x00133171, backcolor = 0x00133171, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 8),-->
@@ -53,6 +53,7 @@
 			"scrollbarMode": "showOnDemand"
 			}
 		</convert>
+
 	</widget>
 	<widget source="key_red" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/key_red.png" position="153,946" size="36,36" alphatest="blend" zPosition="2"/>
 	<widget source="key_red" render="Label" position="201,941" size="327,44" font="slykregular;39" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" noWrap="1" zPosition="2"/>

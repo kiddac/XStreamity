@@ -487,6 +487,8 @@ class XStreamity_CatchupPlayer(
 
         self.ar_id_player = 0
 
+        self.timerimage = eTimer()
+
         self.setup_title = _("Catch Up")
 
         self["actions"] = ActionMap(["XStreamityActions"], {

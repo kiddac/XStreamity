@@ -6,7 +6,6 @@ import base64
 import codecs
 from datetime import datetime, timedelta
 import json
-import math
 import os
 import re
 import shutil
@@ -674,15 +673,11 @@ class XStreamity_Vod_Categories(Screen):
             position = current_index + 1
             position_all = len(self.pre_list) + len(self.main_list) if self.level == 1 else len(self.main_list)
             page = (position - 1) // self.itemsperpage + 1
-            page_all = int(math.ceil(position_all // self.itemsperpage) + 1)
+            page_all = (position_all + self.itemsperpage - 1) // self.itemsperpage
 
             self["page"].setText(_("Page: ") + "{}/{}".format(page, page_all))
             self["listposition"].setText("{}/{}".format(position, position_all))
             self["main_title"].setText("{}: {}".format(self.main_title, channel_title))
-
-            # self["vod_cover"].hide()
-            # self["vod_logo"].hide()
-            # self["vod_backdrop"].hide()
 
             if self.level == 2:
                 self.timerVOD = eTimer()
@@ -735,11 +730,22 @@ class XStreamity_Vod_Categories(Screen):
         # remove everything left between pipes.
         searchtitle = re.sub(r'\|.*?\|', '', searchtitle)
 
+        # remove all leading content between and including ┃┃
+        searchtitle = re.sub(r'^┃┃.*?┃┃', '', searchtitle)
+        searchtitle = re.sub(r'^┃.*?┃', '', searchtitle)
+
+        # remove everything left between heavy vertical pipes.
+        searchtitle = re.sub(r'┃.*?┃', '', searchtitle)
+
         # remove all content between and including () multiple times unless it contains only numbers.
         searchtitle = re.sub(r'\((?!\d+\))[^()]*\)', '', searchtitle)
 
         # remove all content between and including [] multiple times
         searchtitle = re.sub(r'\[\[.*?\]\]|\[.*?\]', '', searchtitle)
+
+        # Remove year patterns at the end, unless the entire title is a year.
+        if not re.match(r'^\d{4}$', searchtitle):
+            searchtitle = re.sub(r'[\s\-]*(?:[\(\[\"]?\d{4}[\)\]\"]?)$', '', searchtitle)
 
         # List of bad strings to remove
         bad_strings = [
@@ -754,10 +760,6 @@ class XStreamity_Vod_Categories(Screen):
             "4k", "720p", "aac", "blueray", "ex-yu:", "fhd", "hd", "hdrip", "hindi", "imdb", "multi:", "multi-audio",
             "multi-sub", "multi-subs", "multisub", "ozlem", "sd", "top250", "u-", "uhd", "vod", "x264"
         ]
-
-        # Remove numbers from 1900 to 2030
-        if database == "TMDB":
-            bad_strings.extend(map(str, range(1900, 2030)))
 
         # Construct a regex pattern to match any of the bad strings
         bad_strings_pattern = re.compile('|'.join(map(re.escape, bad_strings)))
@@ -909,7 +911,7 @@ class XStreamity_Vod_Categories(Screen):
             if language:
                 languagestr = "&language=" + str(language)
 
-        detailsurl = "http://api.themoviedb.org/3/movie/{}?api_key={}&append_to_response=credits,images,release_dates{}&include_image_language=en".format(
+        detailsurl = "http://api.themoviedb.org/3/movie/{}?api_key={}&append_to_response=credits,images,release_dates,videos{}&include_image_language=en".format(
             resultid, self.check(self.token), languagestr)
 
         if pythonVer == 3:
@@ -932,6 +934,7 @@ class XStreamity_Vod_Categories(Screen):
         poster_path = ""
         backdrop_path = ""
         logo_path = ""
+        logos = []
 
         try:
             with codecs.open(os.path.join(dir_tmp, "search.txt"), "r", encoding="utf-8") as f:
@@ -1047,6 +1050,29 @@ class XStreamity_Vod_Categories(Screen):
                         if "crew" in self.tmdbdetails["credits"] and self.tmdbdetails["credits"]["crew"]:
                             director = ", ".join(actor["name"] for actor in self.tmdbdetails["credits"]["crew"] if actor.get("job") == "Director")
                             self.tmdbresults["director"] = director
+
+                    if pythonVer == 3 and "videos" in self.tmdbdetails and "results" in self.tmdbdetails["videos"]:
+                        current_index = self["main_list"].getIndex()
+                        for video in self.tmdbdetails["videos"]["results"]:
+                            if video.get("site") == "YouTube" and video.get("type") == "Trailer" and "key" in video:
+                                try:
+                                    print("*** adding trailer id ***", video["key"])
+                                    self.list2[current_index][12] = str(video["key"])
+                                except:
+                                    pass
+
+                                self.updateList2()
+                                break  # Stop after first match
+
+                            elif video.get("site") == "YouTube" and video.get("type") == "Clip" and "key" in video:
+                                try:
+                                    print("*** adding clip id ***", video["key"])
+                                    self.list2[current_index][12] = str(video["key"])
+                                except:
+                                    pass
+
+                                self.updateList2()
+                                break  # Stop after first match
 
                     def get_certification(data, language_code):
                         fallback_codes = ["GB", "US"]
@@ -1860,6 +1886,8 @@ class XStreamity_Vod_Categories(Screen):
         if debugs:
             print("*** back ***")
 
+        self.chosen_category = ""
+
         if self.level == 2:
             try:
                 self.timerVOD.stop()
@@ -2192,13 +2220,23 @@ class XStreamity_Vod_Categories(Screen):
             from pytubefix.exceptions import AgeRestrictedError
 
             yt = YouTube("https://www.youtube.com/watch?v=" + str(trailer_id))
-
             video_stream = max(
-                [s for s in yt.streams.filter(mime_type="video/webm", progressive=False) if s.resolution and int(s.resolution[:-1]) <= 1080],
+                [s for s in yt.streams.filter(mime_type="video/webm", progressive=False)
+                 if s.resolution and int(s.resolution[:-1]) <= 1080],
                 key=lambda s: int(s.resolution[:-1]),
                 default=None
             )
 
+            # If no WebM stream found, try MP4
+            if video_stream is None:
+                video_stream = max(
+                    [s for s in yt.streams.filter(mime_type="video/mp4", progressive=False)
+                     if s.resolution and int(s.resolution[:-1]) <= 1080],
+                    key=lambda s: int(s.resolution[:-1]),
+                    default=None
+                )
+
+            # Get lowest quality audio stream
             audio_stream = yt.streams.filter(mime_type="audio/mp4", progressive=False, only_audio=True).order_by("abr").desc().last()
 
             if not video_stream or not audio_stream:
@@ -2324,7 +2362,8 @@ def get_latest_pytubefix_version():
     response = requests.get(url)
 
     if response.status_code == 200:
-        matches = re.findall(r'href="[^"]+/pytubefix-(\d+\.\d+\.\d+)\.tar\.gz"', response.text)
+        # matches = re.findall(r'href="[^"]+/pytubefix-(\d+\.\d+\.\d+)\.tar\.gz"', response.text)
+        matches = re.findall(r'href="[^"]*/pytubefix-([\w\.\-]+)\.tar\.gz"', response.text)
 
         if matches:
             latest_version = sorted(matches, key=lambda s: list(map(int, s.split('.'))), reverse=True)[0]

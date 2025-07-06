@@ -34,13 +34,13 @@
 			MultiContentEntryText(pos = (1420, 0), size = (320, 72), font=1, color = 0x00ffffff, color_sel = 0x00133171, backcolor_sel = None, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER, text = 4), 
 			
 			<!-- Active Conn Num -->
-			MultiContentEntryText(pos = (1820-30, 0), size = (120, 72), font=1, color = 0x00ffffff, color_sel = 0x00133171, backcolor_sel = None, flags = RT_HALIGN_RIGHT | RT_VALIGN_CENTER, text = 7),
+			MultiContentEntryText(pos = (1780, 0), size = (120, 72), font=1, color = 0x00ffffff, color_sel = 0x00133171, backcolor_sel = None, flags = RT_HALIGN_RIGHT | RT_VALIGN_CENTER, text = 7),
 			
 			<!-- Max Conn Num --> 
-			MultiContentEntryText(pos = (1980-30, 0), size = (120, 72), font=1, color = 0x00ffffff, color_sel = 0x00133171, backcolor_sel = None, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER, text = 9),
+			MultiContentEntryText(pos = (1940, 0), size = (120, 72), font=1, color = 0x00ffffff, color_sel = 0x00133171, backcolor_sel = None, flags = RT_HALIGN_LEFT | RT_VALIGN_CENTER, text = 9),
 			
 			<!-- Authorised LED -->
-			MultiContentEntryPixmapAlphaBlend(pos = (2100-30, 20), size = (31, 32), png = 5),
+			MultiContentEntryPixmapAlphaBlend(pos = (2060, 20), size = (31, 32), png = 5),
 			
 			<!-- Max Conn -->
 			<!-- MultiContentEntryText(pos = (860, 100), size = (160, 40), font=1, color = 0x00ffffff, color_sel = 0x00133171, backcolor = 0x00133171, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 8),-->
@@ -53,6 +53,7 @@
 			"scrollbarMode": "showOnDemand"
 			}
 		</convert>
+
 	</widget>
 	<widget source="key_red" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/slyk1080r19/images/key_red.png" position="204,1262" size="48,48" alphatest="blend" zPosition="2"/>
 	<widget source="key_red" render="Label" position="268,1255" size="436,59" font="slykregular;52" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" noWrap="1" zPosition="2"/>
@@ -62,5 +63,5 @@
 	<widget source="key_yellow" render="Label" position="1268,1255" size="436,59" font="slykregular;52" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" zPosition="2"/>
 	<widget source="key_blue" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/slyk1080r19/images/key_blue.png" position="1704,1262" size="48,48" alphatest="blend" zPosition="2"/>
 	<widget source="key_blue" render="Label" position="1768,1255" size="436,59" font="slykregular;52" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" zPosition="2"/>
-	<!-- <eLabel text="Press SELECT to view" position="203,1323" size="576,64" font="slykregular;52" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="top" halign="left" transparent="1" zPosition="1"/>-->
+	<!-- <eLabel text="Press SELECT to view" position="203,1323" size="576,64" font="slykregular;52" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="top" halign="left" transparent="1" zPosition="1"/> -->
 </screen>

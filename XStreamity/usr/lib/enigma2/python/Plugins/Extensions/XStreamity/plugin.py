@@ -258,17 +258,19 @@ if os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd
         pass
 
 # try and override epgimport settings
+"""
 try:
     config.plugins.epgimport.import_onlybouquet.value = False
     config.plugins.epgimport.import_onlybouquet.save()
     configfile.save()
 except Exception as e:
     print(e)
+    """
 
 
 def main(session, **kwargs):
 
-    epgfolder = '/etc/enigma2/xstreamity/epg/*/*.xml'
+    epgfolder = os.path.join(cfg.epglocation.value, '*', '*.xml')
 
     for file_path in glob.glob(epgfolder):
         try:

@@ -85,7 +85,7 @@
 		<convert type="ConditionalShowHide"/>
 	</widget>
 	<widget source="key_menu" render="Label" position="2463,1360" size="300,80" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#1a000000" valign="center" transparent="1" zPosition="2"/>
-	
+
 	<widget source="page" render="Label" position="24,1360" size="292,80" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#1a000000" valign="center" transparent="1" noWrap="1" zPosition="2"/>
 	<widget source="listposition" render="Label" position="396,1360" size="220,80" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#1a000000" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
 </screen>

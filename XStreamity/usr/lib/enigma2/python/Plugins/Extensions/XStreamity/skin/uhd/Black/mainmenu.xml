@@ -28,7 +28,7 @@
 	
 	<widget source="key_green" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/key_green.png" position="660,1375" size="51,51" alphatest="blend" zPosition="2"/>
 	<widget source="key_green" render="Label" position="740,1360" size="500,80" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" transparent="1" noWrap="1" zPosition="2"/>
-
+	
 	<widget source="key_blue" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/key_blue.png" position="1900,1375" size="51,51" alphatest="blend" zPosition="2">
 		<convert type="ConditionalShowHide"/>
 	</widget>

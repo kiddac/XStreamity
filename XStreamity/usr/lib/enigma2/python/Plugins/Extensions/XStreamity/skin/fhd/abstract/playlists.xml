@@ -15,22 +15,22 @@
 			MultiContentEntryText(pos = (21, 9), size = (480, 42), font=0, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 1),
 
 			<!-- Authorised LED -->
-			MultiContentEntryPixmapAlphaBlend(pos = (879-30, 24), size = (23, 24), png = 5),
+			MultiContentEntryPixmapAlphaBlend(pos = (849, 24), size = (23, 24), png = 5),
 			
 			<!-- Authorised -->
-			MultiContentEntryText(pos = (501-30, 21), size = (288, 30), font=1, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_RIGHT, text = 4),
+			MultiContentEntryText(pos = (471, 21), size = (288, 30), font=1, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_RIGHT, text = 4),
 			
 			<!-- Active Conn -->
-			MultiContentEntryText(pos = (501-30, 48), size = (288, 30), font=1, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_RIGHT, text = 6),
+			MultiContentEntryText(pos = (471, 48), size = (288, 30), font=1, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_RIGHT, text = 6),
 			
 			<!-- Active Conn Num -->
-			MultiContentEntryText(pos = (819-30, 48), size = (78, 30), font=1, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_RIGHT, text = 7),
+			MultiContentEntryText(pos = (789, 48), size = (78, 30), font=1, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_RIGHT, text = 7),
 			
 			<!-- Max Conn -->
-			MultiContentEntryText(pos = (501-30, 75), size = (288, 30), font=1, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_RIGHT, text = 8),
+			MultiContentEntryText(pos = (471, 75), size = (288, 30), font=1, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_RIGHT, text = 8),
 			
 			<!-- Max Conn Num --> 
-			MultiContentEntryText(pos = (819-30, 75), size = (78, 30), font=1, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_RIGHT, text = 9),
+			MultiContentEntryText(pos = (789, 75), size = (78, 30), font=1, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_RIGHT, text = 9),
 			
 			<!-- Expires -->
 			MultiContentEntryText(pos = (21, 75), size = (432, 30), font=1, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT, text = 3),
