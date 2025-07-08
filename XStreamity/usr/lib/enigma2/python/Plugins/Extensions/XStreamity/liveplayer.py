@@ -749,11 +749,6 @@ class XStreamity_StreamPlayer(
         # clear cache
         self.timerCache = eTimer()
         try:
-            self.timerCache.stop()
-        except:
-            pass
-
-        try:
             self.timerCache.callback.append(clear_caches)
         except:
             self.timerCache_conn = self.timerCache.timeout.connect(clear_caches)

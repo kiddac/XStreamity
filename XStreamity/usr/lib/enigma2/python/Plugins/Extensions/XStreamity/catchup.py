@@ -470,9 +470,8 @@ class XStreamity_Catchup_Categories(Screen):
             self.loadBlankImage()
 
             if self.level == 2:
-                self.timerimage = eTimer()
-
                 if cfg.channelpicons.value:
+                    self.timerimage = eTimer()
                     try:
                         self.timerimage.callback.append(self.downloadImage)
                     except:

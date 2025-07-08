@@ -531,8 +531,8 @@ class XStreamity_CatchupPlayer(
             glob.newPlayingServiceRefString = currently_playing_ref.toString()
 
         if cfg.infobarpicons.value is True:
-            self.timerimage = eTimer()
             try:
+                self.timerimage = eTimer()
                 self.timerimage.callback.append(self.downloadImage)
             except:
                 self.timerimage_conn = self.timerimage.timeout.connect(self.downloadImage)

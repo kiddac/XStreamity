@@ -40,7 +40,7 @@ from Components.Sources.List import List
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Screens.ChoiceBox import ChoiceBox
-from enigma import eTimer, eServiceReference
+from enigma import eServiceReference
 
 
 # Local application/library-specific imports
