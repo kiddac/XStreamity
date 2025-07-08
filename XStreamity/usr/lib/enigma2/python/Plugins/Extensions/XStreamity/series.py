@@ -1004,10 +1004,6 @@ class XStreamity_Series_Categories(Screen):
                 self.clearVod()
                 self.timerSeries = eTimer()
                 try:
-                    self.timerSeries.stop()
-                except:
-                    pass
-                try:
                     self.timerSeries.callback.append(self.displaySeriesData)
                 except:
                     self.timerSeries_conn = self.timerSeries.timeout.connect(self.displaySeriesData)

@@ -185,8 +185,6 @@ class XStreamity_Catchup_Categories(Screen):
 
         self.level = 1
 
-        self.timerimage = eTimer()
-
         self.selectedlist = self["main_list"]
 
         self.host = glob.active_playlist["playlist_info"]["host"]
@@ -472,10 +470,7 @@ class XStreamity_Catchup_Categories(Screen):
             self.loadBlankImage()
 
             if self.level == 2:
-                try:
-                    self.timerimage.stop()
-                except:
-                    pass
+                self.timerimage = eTimer()
 
                 if cfg.channelpicons.value:
                     try:

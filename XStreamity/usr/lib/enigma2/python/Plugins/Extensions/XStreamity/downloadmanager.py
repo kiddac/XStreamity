@@ -170,7 +170,6 @@ class XStreamity_DownloadManager(Screen):
         self.downloads_all = []
 
         self.progress = 0
-        self.timerDisplay = eTimer()
 
         skin_path = os.path.join(skin_directory, cfg.skin.value)
         skin = os.path.join(skin_path, "downloadmanager.xml")

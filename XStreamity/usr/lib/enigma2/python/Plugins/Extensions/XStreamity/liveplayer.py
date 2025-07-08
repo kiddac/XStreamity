@@ -431,8 +431,6 @@ class XStreamity_StreamPlayer(
 
         self.ar_id_player = 0
 
-        self.timerimage = eTimer()
-
         self.setup_title = _("TV")
 
         self["actions"] = ActionMap(["XStreamityActions"], {
@@ -741,11 +739,7 @@ class XStreamity_StreamPlayer(
             glob.newPlayingServiceRef = currently_playing_ref
             glob.newPlayingServiceRefString = currently_playing_ref.toString()
         if cfg.infobarpicons.value is True:
-            try:
-                self.timerimage.stop()
-            except:
-                pass
-
+            self.timerimage = eTimer()
             try:
                 self.timerimage.callback.append(self.downloadImage)
             except:
