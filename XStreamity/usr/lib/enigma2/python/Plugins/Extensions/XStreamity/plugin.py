@@ -34,7 +34,7 @@ pythonVer = sys.version_info.major
 
 isDreambox = os.path.exists("/usr/bin/apt-get")
 
-debugs = True
+debugs = False
 
 with open("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/version.txt", "r") as f:
     version = f.readline()

@@ -476,6 +476,7 @@ class XStreamity_VodPlayer(
 
         self.streamurl = streamurl
         self.servicetype = servicetype
+        self.originalservicetype = self.servicetype
         self.stream_id = stream_id
 
         skin = os.path.join(skin_path, "vodplayer.xml")
@@ -507,13 +508,42 @@ class XStreamity_VodPlayer(
             "cancel": self.back,
             "stop": self.back,
             "red": self.back,
+            "channelUp": self.__next__,
+            "down": self.__next__,
+            "channelDown": self.prev,
+            "up": self.prev,
             "tv": self.toggleStreamType,
             "info": self.toggleStreamType,
             "green": self.nextAR,
             "ok": self.refreshInfobar,
         }, -2)
 
+        self.tracker = ServiceEventTracker(screen=self, eventmap={
+            iPlayableService.evEOF: self.onEOF,
+            iPlayableService.evStopped: self.onEOF,
+        })
+
         self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl))
+
+    def onEOF(self):
+        if glob.categoryname == "series":
+            if glob.currentchannellist:
+                list_length = len(glob.currentchannellist)
+                glob.currentchannellistindex += 1
+                if not glob.currentchannellistindex >= list_length:
+                    self.session.openWithCallback(self.playnext, MessageBox, _("Do you want to play the next episode?"), MessageBox.TYPE_YESNO, timeout=10, default=True)
+                else:
+                    self.close()
+        else:
+            self.close()
+
+    def playnext(self, answer):
+        if answer is True:
+            self.servicetype = self.originalservicetype
+            self.streamurl = glob.currentchannellist[glob.currentchannellistindex][3]
+            self.playStream(self.servicetype, self.streamurl)
+        else:
+            self.close()
 
     def refreshInfobar(self):
         IPTVInfoBarShowHide.OkPressed(self)
@@ -757,6 +787,29 @@ class XStreamity_VodPlayer(
             pass
 
         self.playStream(self.servicetype, self.streamurl)
+
+    def __next__(self):
+        if glob.categoryname == "series":
+            self.servicetype = self.originalservicetype
+
+            if glob.currentchannellist:
+                list_length = len(glob.currentchannellist)
+                glob.currentchannellistindex += 1
+                if glob.currentchannellistindex >= list_length:
+                    return
+                self.streamurl = glob.currentchannellist[glob.currentchannellistindex][3]
+                self.playStream(self.servicetype, self.streamurl)
+
+    def prev(self):
+        if glob.categoryname == "series":
+            self.servicetype = self.originalservicetype
+
+            if glob.currentchannellist:
+                glob.currentchannellistindex -= 1
+                if glob.currentchannellistindex < 0:
+                    return
+                self.streamurl = glob.currentchannellist[glob.currentchannellistindex][3]
+                self.playStream(self.servicetype, self.streamurl)
 
     def nextARfunction(self):
         self.ar_id_player += 1

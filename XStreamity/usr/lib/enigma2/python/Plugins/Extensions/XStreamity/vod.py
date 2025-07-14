@@ -630,7 +630,7 @@ class XStreamity_Vod_Categories(Screen):
                     total_minutes = hours * 60 + minutes
                     self.tmdbresults["originalduration"] = total_minutes
                     self.tmdbresults["duration"] = "{}h {}m".format(hours, minutes)
-                except ValueError:
+                except:
                     print("Invalid duration format.")
 
             if "backdrop_path" in self.tmdbresults:
