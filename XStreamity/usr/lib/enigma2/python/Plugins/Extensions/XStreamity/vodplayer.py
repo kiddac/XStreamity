@@ -518,32 +518,7 @@ class XStreamity_VodPlayer(
             "ok": self.refreshInfobar,
         }, -2)
 
-        self.tracker = ServiceEventTracker(screen=self, eventmap={
-            iPlayableService.evEOF: self.onEOF,
-            iPlayableService.evStopped: self.onEOF,
-        })
-
         self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl))
-
-    def onEOF(self):
-        if glob.categoryname == "series":
-            if glob.currentchannellist:
-                list_length = len(glob.currentchannellist)
-                glob.currentchannellistindex += 1
-                if not glob.currentchannellistindex >= list_length:
-                    self.session.openWithCallback(self.playnext, MessageBox, _("Do you want to play the next episode?"), MessageBox.TYPE_YESNO, timeout=10, default=True)
-                else:
-                    self.close()
-        else:
-            self.close()
-
-    def playnext(self, answer):
-        if answer is True:
-            self.servicetype = self.originalservicetype
-            self.streamurl = glob.currentchannellist[glob.currentchannellistindex][3]
-            self.playStream(self.servicetype, self.streamurl)
-        else:
-            self.close()
 
     def refreshInfobar(self):
         IPTVInfoBarShowHide.OkPressed(self)
