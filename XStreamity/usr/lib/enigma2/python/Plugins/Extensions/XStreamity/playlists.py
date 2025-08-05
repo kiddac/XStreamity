@@ -501,8 +501,7 @@ class XStreamity_Playlists(Screen):
             if "auth" in glob.active_playlist["user_info"]:
                 if str(glob.active_playlist["user_info"]["auth"]) == "1" and glob.active_playlist["user_info"]["status"] == "Active":
                     from . import menu
-                    self.session.open(menu.XStreamity_Menu)
-                    self.checkoneplaylist()
+                    self.session.openWithCallback(self.checkoneplaylist, menu.XStreamity_Menu)
 
     def checkoneplaylist(self):
         if len(self.list) == 1 and cfg.skipplaylistsscreen.value is True:

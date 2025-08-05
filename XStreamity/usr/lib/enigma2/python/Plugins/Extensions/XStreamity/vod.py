@@ -599,48 +599,48 @@ class XStreamity_Vod_Categories(Screen):
             if "info" in content and content["info"]:
                 self.tmdbresults = content["info"]
 
-                if "name" not in self.tmdbresults and "movie_data" in content and content["movie_data"]:
-                    self.tmdbresults["name"] = content["movie_data"]["name"]
+                movie_data = content.get("movie_data") or {}
 
-            cover = self.tmdbresults.get("cover_big") or self.tmdbresults.get("movie_image", "")
+                if "name" not in self.tmdbresults and movie_data:
+                    self.tmdbresults["name"] = movie_data.get("name", "")
 
-            if cover and cover.startswith("http"):
-                cover = cover.replace(r"\/", "/")
+                self.tmdbresults["description"] = self.tmdbresults.get("description") or self.tmdbresults.get("plot", "")
 
-                if cover == "https://image.tmdb.org/t/p/w600_and_h900_bestv2" or cover == "https://image.tmdb.org/t/p/w500":
+                cover = self.tmdbresults.get("cover_big") or self.tmdbresults.get("movie_image", "")
+                if cover and cover.startswith("http"):
+                    cover = cover.replace(r"\/", "/")
+                    if cover in [
+                        "https://image.tmdb.org/t/p/w600_and_h900_bestv2",
+                        "https://image.tmdb.org/t/p/w500"
+                    ]:
+                        cover = ""
+                    elif "image.tmdb.org/t/p/" in cover:
+                        dimensions = cover.partition("/p/")[2].partition("/")[0]
+                        width = screenwidth.width()
+                        new_dim = "w200" if width <= 1280 else "w300" if width <= 1920 else "w400"
+                        cover = cover.replace(dimensions, new_dim)
+                else:
                     cover = ""
+                self.tmdbresults["cover_big"] = cover
 
-                elif cover.startswith("https://image.tmdb.org/t/p/") or cover.startswith("http://image.tmdb.org/t/p/"):
-                    dimensions = cover.partition("/p/")[2].partition("/")[0]
-                    if screenwidth.width() <= 1280:
-                        cover = cover.replace(dimensions, "w200")
-                    elif screenwidth.width() <= 1920:
-                        cover = cover.replace(dimensions, "w300")
-                    else:
-                        cover = cover.replace(dimensions, "w400")
-            else:
-                cover = ""
+                duration = self.tmdbresults.get("duration")
+                if duration:
+                    try:
+                        hours, minutes, seconds = map(int, duration.split(':'))
+                        self.tmdbresults["originalduration"] = hours * 60 + minutes
+                        self.tmdbresults["duration"] = "{}h {}m".format(hours, minutes)
+                    except:
+                        print("Invalid duration format.")
 
-            self.tmdbresults["cover_big"] = cover
-
-            if "duration" in self.tmdbresults:
-                duration = self.tmdbresults["duration"]
-                try:
-                    hours, minutes, seconds = map(int, duration.split(':'))
-                    total_minutes = hours * 60 + minutes
-                    self.tmdbresults["originalduration"] = total_minutes
-                    self.tmdbresults["duration"] = "{}h {}m".format(hours, minutes)
-                except:
-                    print("Invalid duration format.")
-
-            if "backdrop_path" in self.tmdbresults:
-                if isinstance(self.tmdbresults["backdrop_path"], list) and self.tmdbresults["backdrop_path"]:
-                    self.tmdbresults["backdrop_path"] = self.tmdbresults["backdrop_path"][0]
+                backdrop = self.tmdbresults.get("backdrop_path")
+                if isinstance(backdrop, list) and backdrop:
+                    self.tmdbresults["backdrop_path"] = backdrop[0]
                 else:
                     self.tmdbresults["backdrop_path"] = self.tmdbresults["backdrop_path"]
 
-            if "genre" in self.tmdbresults and self.tmdbresults["genre"]:
-                self.tmdbresults["genre"] = ' / '.join(self.tmdbresults["genre"].split(', '))
+                genre = self.tmdbresults.get("genre")
+                if genre:
+                    self.tmdbresults["genre"] = ' / '.join(genre.split(', '))
 
             if cfg.TMDB.value is True:
                 self.getTMDB()
@@ -700,51 +700,43 @@ class XStreamity_Vod_Categories(Screen):
             self.hideVod()
 
     def stripjunk(self, text, database=None):
-        if debugs:
-            print("*** stripjunk ***")
+        searchtitle = text
 
-        searchtitle = text.lower()
+        # Move "the" from the end to the beginning (case-insensitive)
+        if searchtitle.strip().lower().endswith("the"):
+            searchtitle = "The " + searchtitle[:-3].strip()
 
-        # if title ends in "the", move "the" to the beginning
-        if searchtitle.endswith("the"):
-            searchtitle = "the " + searchtitle[:-4]
+        # remove xx: at start (case-insensitive)
+        searchtitle = re.sub(r'^\w{2}:', '', searchtitle, flags=re.IGNORECASE)
 
-        # remove xx: at start
-        searchtitle = re.sub(r'^\w{2}:', '', searchtitle)
+        # remove xx|xx at start (case-insensitive)
+        searchtitle = re.sub(r'^\w{2}\|\w{2}\s', '', searchtitle, flags=re.IGNORECASE)
 
-        # remove xx|xx at start
-        searchtitle = re.sub(r'^\w{2}\|\w{2}\s', '', searchtitle)
+        # remove xx - at start (case-insensitive)
+        searchtitle = re.sub(r'^.{2}\+? ?- ?', '', searchtitle, flags=re.IGNORECASE)
 
-        # remove xx - at start
-        searchtitle = re.sub(r'^.{2}\+? ?- ?', '', searchtitle)
-
-        # remove all leading content between and including ||
+        # remove all leading content between and including || or |
         searchtitle = re.sub(r'^\|\|.*?\|\|', '', searchtitle)
         searchtitle = re.sub(r'^\|.*?\|', '', searchtitle)
-
-        # remove everything left between pipes.
         searchtitle = re.sub(r'\|.*?\|', '', searchtitle)
 
-        # remove all leading content between and including ┃┃
+        # remove all leading content between and including ┃┃ or ┃
         searchtitle = re.sub(r'^┃┃.*?┃┃', '', searchtitle)
         searchtitle = re.sub(r'^┃.*?┃', '', searchtitle)
-
-        # remove everything left between heavy vertical pipes.
         searchtitle = re.sub(r'┃.*?┃', '', searchtitle)
 
-        # remove all content between and including () multiple times unless it contains only numbers.
+        # remove all content between and including () unless it's all digits
         searchtitle = re.sub(r'\((?!\d+\))[^()]*\)', '', searchtitle)
 
-        # remove all content between and including [] multiple times
+        # remove all content between and including []
         searchtitle = re.sub(r'\[\[.*?\]\]|\[.*?\]', '', searchtitle)
 
-        # Remove year patterns at the end, unless the entire title is a year.
-        if not re.match(r'^\d{4}$', searchtitle):
+        # remove trailing year (but not if the whole title *is* a year)
+        if not re.match(r'^\d{4}$', searchtitle.strip()):
             searchtitle = re.sub(r'[\s\-]*(?:[\(\[\"]?\d{4}[\)\]\"]?)$', '', searchtitle)
 
-        # List of bad strings to remove
+        # Bad substrings to strip (case-insensitive)
         bad_strings = [
-
             "ae|", "al|", "ar|", "at|", "ba|", "be|", "bg|", "br|", "cg|", "ch|", "cz|", "da|", "de|", "dk|",
             "ee|", "en|", "es|", "eu|", "ex-yu|", "fi|", "fr|", "gr|", "hr|", "hu|", "in|", "ir|", "it|", "lt|",
             "mk|", "mx|", "nl|", "no|", "pl|", "pt|", "ro|", "rs|", "ru|", "se|", "si|", "sk|", "sp|", "tr|",
@@ -756,31 +748,24 @@ class XStreamity_Vod_Categories(Screen):
             "multi-sub", "multi-subs", "multisub", "ozlem", "sd", "top250", "u-", "uhd", "vod", "x264"
         ]
 
-        # Construct a regex pattern to match any of the bad strings
-        bad_strings_pattern = re.compile('|'.join(map(re.escape, bad_strings)))
-
-        # Remove bad strings using regex pattern
+        bad_strings_pattern = re.compile('|'.join(map(re.escape, bad_strings)), flags=re.IGNORECASE)
         searchtitle = bad_strings_pattern.sub('', searchtitle)
 
-        # List of bad suffixes to remove
+        # Bad suffixes to remove (case-insensitive, only if at end)
         bad_suffix = [
             " al", " ar", " ba", " da", " de", " en", " es", " eu", " ex-yu", " fi", " fr", " gr", " hr", " mk",
             " nl", " no", " pl", " pt", " ro", " rs", " ru", " si", " swe", " sw", " tr", " uk", " yu"
         ]
 
-        # Construct a regex pattern to match any of the bad suffixes at the end of the string
-        bad_suffix_pattern = re.compile(r'(' + '|'.join(map(re.escape, bad_suffix)) + r')$')
-
-        # Remove bad suffixes using regex pattern
+        bad_suffix_pattern = re.compile(r'(' + '|'.join(map(re.escape, bad_suffix)) + r')$', flags=re.IGNORECASE)
         searchtitle = bad_suffix_pattern.sub('', searchtitle)
 
-        # Replace ".", "_", "'" with " "
+        # Replace '.', '_', "'", '*' with space
         searchtitle = re.sub(r'[._\'\*]', ' ', searchtitle)
 
-        # Replace "-" with space and strip trailing spaces
-        searchtitle = searchtitle.strip(' -')
+        # Trim leading/trailing hyphens and whitespace
+        searchtitle = searchtitle.strip(' -').strip()
 
-        searchtitle = searchtitle.strip()
         return str(searchtitle)
 
     def getTMDB(self):

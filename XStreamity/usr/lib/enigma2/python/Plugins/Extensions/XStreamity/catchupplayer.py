@@ -353,9 +353,6 @@ class IPTVInfoBarPVRState:
                 cb(state_summary, speed_summary, statusicon_summary)
 
 
-skin_path = os.path.join(skin_directory, cfg.skin.value)
-
-
 class XStreamityCueSheetSupport:
     ENABLE_RESUME_SUPPORT = False
 
@@ -468,7 +465,7 @@ class XStreamity_CatchupPlayer(
 
         self.streamurl = streamurl
         self.servicetype = servicetype
-
+        skin_path = os.path.join(skin_directory, cfg.skin.value)
         skin = os.path.join(skin_path, "catchupplayer.xml")
         with open(skin, "r") as f:
             self.skin = f.read()
