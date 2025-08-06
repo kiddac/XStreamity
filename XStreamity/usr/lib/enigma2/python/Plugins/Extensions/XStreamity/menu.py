@@ -221,10 +221,16 @@ class XStreamity_Menu(Screen):
         self.index = 0
 
         def add_category_to_list(title, category_type, index):
-            if category_type in glob.active_playlist["data"] and glob.active_playlist["data"][category_type]:
-                if "category_id" in glob.active_playlist["data"][category_type][0] and "user_info" not in glob.active_playlist["data"][category_type]:
-                    self.index += 1
-                    self.list.append([self.index, _(title), index, ""])
+            category_data = glob.active_playlist["data"].get(category_type)
+            if (
+                isinstance(category_data, list)
+                and len(category_data) > 0
+                and isinstance(category_data[0], dict)
+                and "category_id" in category_data[0]
+                and "user_info" not in category_data
+            ):
+                self.index += 1
+                self.list.append([self.index, _(title), index, ""])
 
         show_live = glob.active_playlist["player_info"].get("showlive", False)
         show_vod = glob.active_playlist["player_info"].get("showvod", False)

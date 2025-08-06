@@ -636,7 +636,7 @@ class XStreamity_Vod_Categories(Screen):
                 if isinstance(backdrop, list) and backdrop:
                     self.tmdbresults["backdrop_path"] = backdrop[0]
                 else:
-                    self.tmdbresults["backdrop_path"] = self.tmdbresults["backdrop_path"]
+                    self.tmdbresults["backdrop_path"] = backdrop or ""
 
                 genre = self.tmdbresults.get("genre")
                 if genre:
