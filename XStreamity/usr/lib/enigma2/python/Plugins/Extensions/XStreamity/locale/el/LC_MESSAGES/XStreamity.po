@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: XStreamity\n"
-"POT-Creation-Date: 2025-07-06 12:30+0100\n"
-"PO-Revision-Date: 2025-07-07 22:31+0300\n"
+"POT-Creation-Date: 2025-08-07 21:14+0100\n"
+"PO-Revision-Date: 2025-08-07 21:14+0100\n"
 "Last-Translator: \n"
 "Language-Team: giorbak\n"
 "Language: el\n"
@@ -10,16 +10,18 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.2\n"
+"X-Generator: Poedit 3.6\n"
 "X-Poedit-Basepath: ../../..\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: Task.py:49 downloadmanager.py:62 downloadmanager.py:487 downloadmanager.py:583
+#: Task.py:49 downloadmanager.py:62 downloadmanager.py:486
+#: downloadmanager.py:582
 msgid "Waiting"
 msgstr "Αναμονή"
 
-#: Task.py:50 downloadmanager.py:61 downloadmanager.py:487 downloadmanager.py:583
+#: Task.py:50 downloadmanager.py:61 downloadmanager.py:486
+#: downloadmanager.py:582
 msgid "In progress"
 msgstr "Σε εξέλιξη"
 
@@ -40,7 +42,7 @@ msgstr ""
 "Σφάλμα: %s\n"
 "Θα προσπαθήστε ξανά;"
 
-#: Task.py:297 downloadmanager.py:63 downloadmanager.py:493
+#: Task.py:297 downloadmanager.py:63 downloadmanager.py:492
 msgid "Error"
 msgstr "Σφάλμα"
 
@@ -65,138 +67,157 @@ msgstr "Κωδικός σφάλματος"
 msgid "Catch Up Categories"
 msgstr "Κατηγορίες Catch Up"
 
-#: catchup.py:146 menu.py:258
+#: catchup.py:146 menu.py:264
 msgid "Catch Up TV"
 msgstr "Catch Up TV"
 
-#: catchup.py:184 catchup.py:435 catchup.py:623 catchup.py:637 catchup.py:787 live.py:202 live.py:576 live.py:791 live.py:805 live.py:1004 plugin.py:168 plugin.py:169 plugin.py:171
-#: plugin.py:172 series.py:157 series.py:302 series.py:306 series.py:326 series.py:1674 series.py:2051 series.py:2054 series.py:2056 series.py:2067 series.py:2283 series.py:2317
-#: series.py:2334 vod.py:294 vod.py:298 vod.py:314 vod.py:1624 vod.py:1626 vod.py:1636 vod.py:1855
+#: catchup.py:184 catchup.py:435 catchup.py:618 catchup.py:632 catchup.py:782
+#: live.py:202 live.py:576 live.py:788 live.py:802 live.py:1001 plugin.py:168
+#: plugin.py:169 plugin.py:171 plugin.py:172 series.py:157 series.py:302
+#: series.py:306 series.py:326 series.py:1646 series.py:2023 series.py:2026
+#: series.py:2028 series.py:2039 series.py:2255 series.py:2289 series.py:2306
+#: vod.py:294 vod.py:298 vod.py:314 vod.py:1612 vod.py:1614 vod.py:1624
+#: vod.py:1843
 msgid "Sort: A-Z"
 msgstr "Ταξινόμηση: A-Z"
 
-#: catchup.py:206 downloadmanager.py:184 live.py:234 mainmenu.py:49 menu.py:63 playlists.py:67 playsettings.py:53 scanner.py:89 series.py:175 server.py:65 settings.py:73 vod.py:167
+#: catchup.py:206 downloadmanager.py:183 live.py:234 mainmenu.py:49 menu.py:63
+#: playlists.py:67 playsettings.py:53 scanner.py:89 series.py:175 server.py:65
+#: settings.py:73 vod.py:167
 msgid "Back"
 msgstr "Πίσω"
 
-#: catchup.py:207 live.py:235 mainmenu.py:50 menu.py:64 playlists.py:68 scanner.py:90 series.py:176 vod.py:168
+#: catchup.py:207 live.py:235 mainmenu.py:50 menu.py:64 playlists.py:68
+#: scanner.py:90 series.py:176 vod.py:168
 msgid "OK"
 msgstr "Εντάξει"
 
-#: catchup.py:209 catchup.py:438 catchup.py:701 live.py:237 live.py:573 live.py:903 series.py:178 series.py:1677 series.py:2170 vod.py:170 vod.py:1261 vod.py:1748
+#: catchup.py:209 catchup.py:438 catchup.py:696 live.py:237 live.py:573
+#: live.py:900 series.py:178 series.py:1649 series.py:2142 vod.py:170
+#: vod.py:1249 vod.py:1736
 msgid "Search"
 msgstr "Αναζήτηση"
 
-#: catchup.py:306 catchup.py:745 live.py:350 live.py:948 series.py:400 series.py:2227 vod.py:379 vod.py:1796
+#: catchup.py:306 catchup.py:740 live.py:350 live.py:945 series.py:400
+#: series.py:2199 vod.py:379 vod.py:1784
 msgid "ALL"
 msgstr "ΟΛΑ"
 
-#: catchup.py:398 live.py:497 series.py:883 vod.py:517
+#: catchup.py:398 live.py:497 series.py:875 vod.py:517
 msgid "Server error or invalid link."
 msgstr "Σφάλμα διακομιστή ή μη έγκυρος σύνδεσμος."
 
-#: catchup.py:403 catchup.py:426 catchup.py:670 catchup.py:695 live.py:530 live.py:567 live.py:839 live.py:896 series.py:891 series.py:1670 series.py:2113 series.py:2160 vod.py:525
-#: vod.py:1254 vod.py:1675 vod.py:1738
+#: catchup.py:403 catchup.py:426 catchup.py:665 catchup.py:690 live.py:530
+#: live.py:567 live.py:836 live.py:893 series.py:883 series.py:1642
+#: series.py:2085 series.py:2132 vod.py:525 vod.py:1242 vod.py:1663 vod.py:1726
 msgid "Reset Search"
 msgstr "Επαναφορά αναζήτησης"
 
-#: catchup.py:431 catchup.py:618
+#: catchup.py:431
 msgid "Reverse"
 msgstr "Αντιστροφή"
 
-#: catchup.py:466 catchup.py:491 live.py:612 live.py:646 series.py:985 series.py:1022 vod.py:678 vod.py:701
+#: catchup.py:466 catchup.py:486 live.py:612 live.py:643 series.py:976
+#: series.py:1009 vod.py:678 vod.py:696
 msgid "Page: "
 msgstr "Σελίδα: "
 
-#: catchup.py:623 catchup.py:640 live.py:791 live.py:808 plugin.py:168 plugin.py:169 plugin.py:171 plugin.py:172 series.py:302 series.py:306 series.py:329 series.py:2051 series.py:2054
-#: series.py:2056 series.py:2070 vod.py:294 vod.py:298 vod.py:317 vod.py:1624 vod.py:1626 vod.py:1639
+#: catchup.py:618 catchup.py:635 live.py:788 live.py:805 plugin.py:168
+#: plugin.py:169 plugin.py:171 plugin.py:172 series.py:302 series.py:306
+#: series.py:329 series.py:2023 series.py:2026 series.py:2028 series.py:2042
+#: vod.py:294 vod.py:298 vod.py:317 vod.py:1612 vod.py:1614 vod.py:1627
 msgid "Sort: Z-A"
 msgstr "Ταξινόμηση: Z-A"
 
-#: catchup.py:625 catchup.py:627 catchup.py:648 live.py:793 live.py:795 live.py:816 plugin.py:168 plugin.py:169 plugin.py:171 plugin.py:172 series.py:302 series.py:306 series.py:340
-#: series.py:2051 series.py:2054 series.py:2056 series.py:2081 vod.py:294 vod.py:298 vod.py:328 vod.py:1624 vod.py:1626 vod.py:1650
+#: catchup.py:620 catchup.py:622 catchup.py:643 live.py:790 live.py:792
+#: live.py:813 plugin.py:168 plugin.py:169 plugin.py:171 plugin.py:172
+#: series.py:302 series.py:306 series.py:340 series.py:2023 series.py:2026
+#: series.py:2028 series.py:2053 vod.py:294 vod.py:298 vod.py:328 vod.py:1612
+#: vod.py:1614 vod.py:1638
 msgid "Sort: Original"
 msgstr "Ταξιν: Πρωτότυπο"
 
-#: catchup.py:627 catchup.py:643 live.py:795 live.py:811 plugin.py:169 plugin.py:172 series.py:306 series.py:332 series.py:2054 series.py:2056 series.py:2073 vod.py:298 vod.py:320
-#: vod.py:1626 vod.py:1642
+#: catchup.py:622 catchup.py:638 live.py:792 live.py:808 plugin.py:169
+#: plugin.py:172 series.py:306 series.py:332 series.py:2026 series.py:2028
+#: series.py:2045 vod.py:298 vod.py:320 vod.py:1614 vod.py:1630
 msgid "Sort: Added"
 msgstr "Ταξιν: Προσθήκη"
 
-#: catchup.py:673 live.py:846 series.py:2117 vod.py:1682
+#: catchup.py:668 live.py:843 series.py:2089 vod.py:1670
 msgid "Filter this category..."
 msgstr "Φιλτράρισμα αυτής της κατηγορίας..."
 
-#: catchup.py:688 live.py:889 series.py:2146 vod.py:1731
+#: catchup.py:683 live.py:886 series.py:2118 vod.py:1719
 msgid "No results found."
 msgstr "Δεν βρέθηκαν αποτελέσματα."
 
-#: catchup.py:719 live.py:922 series.py:2201 vod.py:1770
+#: catchup.py:714 live.py:919 series.py:2173 vod.py:1758
 msgid "Incorrect pin code."
 msgstr "Λανθασμένος κωδικός PIN."
 
-#: catchup.py:764 live.py:967 series.py:2246 vod.py:1815
+#: catchup.py:759 live.py:964 series.py:2218 vod.py:1803
 msgid "Please enter the parental control pin code"
 msgstr "Παρακαλώ εισάγετε τον κωδικό PIN γονικού ελέγχου"
 
-#: catchup.py:765 hidden.py:31 live.py:968 series.py:2247 settings.py:32 vod.py:1816
+#: catchup.py:760 hidden.py:31 live.py:965 series.py:2219 settings.py:32
+#: vod.py:1804
 msgid "Enter pin code"
 msgstr "Εισάγετε τον κωδικό PIN"
 
-#: catchup.py:916
+#: catchup.py:911
 msgid "Catch-up"
 msgstr "Catch-up"
 
-#: catchup.py:921 series.py:2631 vod.py:2121
+#: catchup.py:916 series.py:2603 vod.py:2109
 msgid "Added to download manager"
 msgstr "Προστέθηκε στη Διαχείριση λήψεων"
 
-#: catchup.py:921 series.py:2631 vod.py:2121
+#: catchup.py:916 series.py:2603 vod.py:2109
 msgid "Note recording acts as an open connection."
 msgstr "Σημειώστε η εγγραφή λειτουργεί ως ανοιχτή σύνδεση."
 
-#: catchup.py:921 series.py:2631 vod.py:2121
+#: catchup.py:916 series.py:2603 vod.py:2109
 msgid "Do not record and play streams at the same time."
 msgstr "Μην κάνετε ταυτόχρονα εγγραφή και αναπαραγωγή ροών."
 
-#: catchup.py:921 series.py:2631 vod.py:2121
+#: catchup.py:916 series.py:2603 vod.py:2109
 msgid "Open download manager?"
 msgstr "Άνοιγμα της Διαχείρισης λήψεων;"
 
-#: catchup.py:924 series.py:2634 vod.py:2124
+#: catchup.py:919 series.py:2606 vod.py:2112
 msgid "Already added to download manager"
 msgstr "Ήδη προστέθηκε στην Διαχείριση λήψεων"
 
-#: catchup.py:955
+#: catchup.py:950
 msgid "Catchup error. No data for this slot"
 msgstr "Σφάλμα Catchup. Δεν υπάρχουν δεδομένα για αυτή τη θέση"
 
-#: catchup.py:1015
+#: catchup.py:1010
 msgid "Catchup currently not available. Missing EPG data"
 msgstr "Το Catchup δεν είναι διαθέσιμο προσωρινά. Λείπουν δεδομένα EPG"
 
-#: catchupplayer.py:407 vodplayer.py:414
+#: catchupplayer.py:404 vodplayer.py:411
 msgid "Do you want to resume this playback?"
 msgstr "Θέλετε να συνεχίσετε αυτή την αναπαραγωγή;"
 
-#: catchupplayer.py:407 vodplayer.py:414
+#: catchupplayer.py:404 vodplayer.py:411
 #, python-format
 msgid "Resume position at %s"
 msgstr "Συνέχιση από τη θέση %s"
 
-#: catchupplayer.py:492
+#: catchupplayer.py:487
 msgid "Catch Up"
 msgstr "Catch Up"
 
-#: catchupplayer.py:669 liveplayer.py:939 vodplayer.py:770
+#: catchupplayer.py:669 liveplayer.py:927 vodplayer.py:796
 msgid "Resolution Change Failed"
 msgstr "Αποτυχία αλλαγής ανάλυσης"
 
-#: downloadmanager.py:60 downloadmanager.py:490 downloadmanager.py:554
+#: downloadmanager.py:60 downloadmanager.py:489 downloadmanager.py:553
 msgid "Not Started"
 msgstr "Δεν ξεκίνησε"
 
-#: downloadmanager.py:64 downloadmanager.py:493
+#: downloadmanager.py:64 downloadmanager.py:492
 msgid "Downloaded"
 msgstr "Έχει ληφθεί"
 
@@ -204,31 +225,31 @@ msgstr "Έχει ληφθεί"
 msgid "VOD Download Manager"
 msgstr "Διαχείριση λήψης Ταινιών"
 
-#: downloadmanager.py:254
+#: downloadmanager.py:253
 msgid "Free Space:"
 msgstr "Ελεύθερος χώρος:"
 
-#: downloadmanager.py:254
+#: downloadmanager.py:253
 msgid "of"
 msgstr "από"
 
-#: downloadmanager.py:488 downloadmanager.py:634 hidden.py:73
+#: downloadmanager.py:487 downloadmanager.py:633 hidden.py:73
 msgid "Cancel"
 msgstr "Άκυρο"
 
-#: downloadmanager.py:491
+#: downloadmanager.py:490
 msgid "Download"
 msgstr "Λήψη"
 
-#: downloadmanager.py:492 downloadmanager.py:495
+#: downloadmanager.py:491 downloadmanager.py:494
 msgid "Remove"
 msgstr "Αφαίρεση"
 
-#: downloadmanager.py:510
+#: downloadmanager.py:509
 msgid "Please set download folder in Main Settings."
 msgstr "Παρακαλώ ορίστε φάκελο λήψεων στις βασικές ρυθμίσεις."
 
-#: downloadmanager.py:510
+#: downloadmanager.py:509
 msgid ""
 "Vod Download folder location does not exist.\n"
 "\n"
@@ -236,19 +257,19 @@ msgstr ""
 "Η θέση του φακέλου λήψης ταινιών δεν υπάρχει.\n"
 "\n"
 
-#: downloadmanager.py:590
+#: downloadmanager.py:589
 msgid "Cancel this download?"
 msgstr "Να ακυρωθεί αυτή η λήψη;"
 
-#: downloadmanager.py:630
+#: downloadmanager.py:629
 msgid "Select an action:"
 msgstr "Επιλέξτε ενέργεια:"
 
-#: downloadmanager.py:632
+#: downloadmanager.py:631
 msgid "Delete this entry"
 msgstr "Διαγραφή αυτής της καταχώρησης"
 
-#: downloadmanager.py:633
+#: downloadmanager.py:632
 msgid "Delete all downloaded entries"
 msgstr "Διαγραφή όλων των ληφθέντων καταχωρήσεων"
 
@@ -278,7 +299,9 @@ msgstr "Επαναφορά"
 
 #: hidden.py:165
 msgid "Error: All categories hidden. Please amend your selection."
-msgstr "Σφάλμα: Όλες οι κατηγορίες είναι κρυφές. Παρακαλώ τροποποιήστε την επιλογή σας."
+msgstr ""
+"Σφάλμα: Όλες οι κατηγορίες είναι κρυφές. Παρακαλώ τροποποιήστε την επιλογή "
+"σας."
 
 #: live.py:155
 msgid "Live Categories"
@@ -296,27 +319,27 @@ msgstr "ΑΓΑΠΗΜΕΝΑ"
 msgid "RECENTLY WATCHED"
 msgstr "ΠΡΟΣΦΑΤΗ ΠΑΡΑΚΟΛΟΥΘΗΣΗ"
 
-#: live.py:571 live.py:842 playlists.py:69 vod.py:1269 vod.py:1678
+#: live.py:571 live.py:839 playlists.py:69 vod.py:1257 vod.py:1666
 msgid "Delete"
 msgstr "Διαγραφή"
 
-#: live.py:1327 live.py:1366 live.py:1375
+#: live.py:1329 live.py:1368 live.py:1377
 msgid "Next Info"
 msgstr "Πληροφορίες επόμενου"
 
-#: live.py:1370
+#: live.py:1372
 msgid "Now Info"
 msgstr "Πληροφορίες τρέχοντος"
 
-#: live.py:1571 liveplayer.py:625
+#: live.py:1573 liveplayer.py:622
 msgid "Recording Timer Set."
 msgstr "Ο χρονοδιακόπτης εγγραφής ορίστηκε."
 
-#: live.py:1573 liveplayer.py:627
+#: live.py:1575 liveplayer.py:624
 msgid "Recording Failed."
 msgstr "Η εγγραφή απέτυχε."
 
-#: liveplayer.py:436
+#: liveplayer.py:433
 msgid "TV"
 msgstr "TV-Ζωντανά"
 
@@ -364,12 +387,14 @@ msgstr "Hack-A-Vision"
 
 #: mainmenu.py:229
 msgid ""
-"Warning: delete stored json data for all playlists... Settings, favourites etc. \n"
+"Warning: delete stored json data for all playlists... Settings, favourites "
+"etc. \n"
 "Playlists will not be deleted.\n"
 "Do you wish to continue?"
 msgstr ""
 "Προειδοποίηση:\n"
-"Θα γίνει διαγραφή των αποθηκευμένων δεδομένων json σε όλες τις λίστες (ρυθμίσεις, αγαπημένα κτλ.).\n"
+"Θα γίνει διαγραφή των αποθηκευμένων δεδομένων json σε όλες τις λίστες "
+"(ρυθμίσεις, αγαπημένα κτλ.).\n"
 "Οι λίστες αναπαραγωγής δεν θα διαγραφούν.\n"
 "Θέλετε να συνεχίσετε;"
 
@@ -377,23 +402,37 @@ msgstr ""
 msgid "Playlist Menu"
 msgstr "Μενού λίστας αναπαραγωγής"
 
-#: menu.py:261 playsettings.py:46
+#: menu.py:254
+msgid "Live Streams"
+msgstr ""
+
+#: menu.py:257
+msgid "Vod"
+msgstr ""
+
+#: menu.py:260
+msgid "TV Series"
+msgstr ""
+
+#: menu.py:267 playsettings.py:46
 msgid "Playlist Settings"
 msgstr "Ρυθμίσεις λίστας αναπαραγωγής"
 
-#: menu.py:267
+#: menu.py:273
 msgid "Manual EPG Update"
 msgstr "Χειροκίνητη ενημέρωση EPG"
 
-#: menu.py:275
+#: menu.py:281
 msgid "No data, blocked or playlist not compatible with XStreamity plugin."
-msgstr "Δεν υπάρχουν δεδομένα, είναι μπλοκαρισμένα ή η λίστα αναπαραγωγής δεν είναι συμβατή με το πρόσθετο XStreamity."
+msgstr ""
+"Δεν υπάρχουν δεδομένα, είναι μπλοκαρισμένα ή η λίστα αναπαραγωγής δεν είναι "
+"συμβατή με το πρόσθετο XStreamity."
 
-#: menu.py:317
+#: menu.py:323
 msgid "Recordings in progress. EPG not downloaded."
 msgstr "Η εγγραφή βρίσκεται σε εξέλιξη. Δεν έγινε λήψη EPG."
 
-#: menu.py:319
+#: menu.py:325
 msgid "EPGs downloading."
 msgstr "Λήψη EPG σε εξέλιξη."
 
@@ -417,23 +456,28 @@ msgstr "Μη απόκριση διακομιστή"
 msgid "Not Authorised"
 msgstr "Μη εξουσιοδοτημένη"
 
-#: playlists.py:356 playlists.py:409 scanner.py:461 scanner.py:503 serverinfo.py:72
+#: playlists.py:356 playlists.py:409 scanner.py:461 scanner.py:503
+#: serverinfo.py:72
 msgid "Active"
 msgstr "Ενεργό"
 
-#: playlists.py:357 playlists.py:415 scanner.py:462 scanner.py:509 serverinfo.py:73
+#: playlists.py:357 playlists.py:415 scanner.py:462 scanner.py:509
+#: serverinfo.py:73
 msgid "Banned"
 msgstr "Αποκλεισμένο"
 
-#: playlists.py:358 playlists.py:419 scanner.py:463 scanner.py:513 serverinfo.py:74
+#: playlists.py:358 playlists.py:419 scanner.py:463 scanner.py:513
+#: serverinfo.py:74
 msgid "Disabled"
 msgstr "Απενεργοποιημένο"
 
-#: playlists.py:359 playlists.py:417 scanner.py:464 scanner.py:511 serverinfo.py:75
+#: playlists.py:359 playlists.py:417 scanner.py:464 scanner.py:511
+#: serverinfo.py:75
 msgid "Expired"
 msgstr "Έληξε"
 
-#: playlists.py:367 playlists.py:369 playlists.py:371 scanner.py:472 scanner.py:474 scanner.py:476
+#: playlists.py:367 playlists.py:369 playlists.py:371 scanner.py:472
+#: scanner.py:474 scanner.py:476
 msgid "Expires: "
 msgstr "Λήγει: "
 
@@ -453,7 +497,8 @@ msgid ""
 msgstr ""
 "Έχετε μη λειτουργικές λίστες αναπαραγωγής που επιβραδύνουν τη φόρτωση.\n"
 "\n"
-"Πατήστε το κίτρινο κουμπί για ήπια διαγραφή των μη λειτουργικών λιστών αναπαραγωγής"
+"Πατήστε το κίτρινο κουμπί για ήπια διαγραφή των μη λειτουργικών λιστών "
+"αναπαραγωγής"
 
 #: playlists.py:436
 msgid "Delete selected playlist?"
@@ -512,8 +557,12 @@ msgid "Alternative EPG url:"
 msgstr "Εναλλακτικό URL EPG:"
 
 #: playsettings.py:237
-msgid "Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum 3 characters."
-msgstr "Το όνομα του μπουκέτου δεν μπορεί να είναι κενό. Παρακαλώ εισάγετε ένα μοναδικό όνομα τουλάχιστον 3 χαρακτήρων."
+msgid ""
+"Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum 3 "
+"characters."
+msgstr ""
+"Το όνομα του μπουκέτου δεν μπορεί να είναι κενό. Παρακαλώ εισάγετε ένα "
+"μοναδικό όνομα τουλάχιστον 3 χαρακτήρων."
 
 #: playsettings.py:243 server.py:225
 msgid "Name already used. Please enter a unique name."
@@ -527,7 +576,8 @@ msgstr "Πρωτότυπο"
 msgid "Added"
 msgstr "Προσθήκη"
 
-#: plugin.py:169 plugin.py:172 series.py:306 series.py:336 series.py:2054 series.py:2077 vod.py:298 vod.py:324 vod.py:1626 vod.py:1646
+#: plugin.py:169 plugin.py:172 series.py:306 series.py:336 series.py:2026
+#: series.py:2049 vod.py:298 vod.py:324 vod.py:1614 vod.py:1634
 msgid "Sort: Year"
 msgstr "Ταξινόμηση: Έτος"
 
@@ -535,11 +585,11 @@ msgstr "Ταξινόμηση: Έτος"
 msgid "Year"
 msgstr "Έτος"
 
-#: plugin.py:288 plugin.py:402
+#: plugin.py:293 plugin.py:401
 msgid "XStreamity"
 msgstr "XStreamity"
 
-#: plugin.py:401
+#: plugin.py:400
 msgid "IPTV Xtream Codes playlists player by KiddaC"
 msgstr "IPTV Xtream Codes playlists player από τον KiddaC"
 
@@ -575,39 +625,39 @@ msgstr "Επιλέξτε λίστα αναπαραγωγής"
 msgid "Series Categories"
 msgstr "Κατηγορίες σειρών"
 
-#: series.py:96 series.py:2609 series.py:2626
+#: series.py:96 series.py:2581 series.py:2598
 msgid "Series"
 msgstr "Σειρές"
 
-#: series.py:643 series.py:2698
+#: series.py:635 series.py:2670
 msgid "Season "
 msgstr "Σεζόν "
 
-#: series.py:1587 vod.py:1232
+#: series.py:1559 vod.py:1220
 msgid "Rating: "
 msgstr "Αξιολόγηση: "
 
-#: series.py:1640 vod.py:1223
+#: series.py:1612 vod.py:1211
 msgid "Cast:"
 msgstr "Ηθοποιοί:"
 
-#: series.py:1645 vod.py:1205
+#: series.py:1617 vod.py:1193
 msgid "Director:"
 msgstr "Σκηνοθέτης:"
 
-#: series.py:1650 vod.py:1213
+#: series.py:1622 vod.py:1201
 msgid "Country:"
 msgstr "Χώρα:"
 
-#: series.py:1655 vod.py:1180
+#: series.py:1627 vod.py:1168
 msgid "Overview"
 msgstr "Περίληψη"
 
-#: series.py:2538
+#: series.py:2510
 msgid "Series group added to favourites."
 msgstr "Η ομάδα σειρών προστέθηκε στα αγαπημένα."
 
-#: series.py:2540
+#: series.py:2512
 msgid "Series group removed from favourites."
 msgstr "Η ομάδα σειρών αφαιρέθηκε από τα αγαπημένα."
 
@@ -640,8 +690,12 @@ msgid "Details are not valid or unauthorised"
 msgstr "Τα στοιχεία δεν είναι έγκυρα ή δεν είναι εξουσιοδοτημένα"
 
 #: server.py:219
-msgid "Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum 2 characters."
-msgstr "Το όνομα του μπουκέτου δεν μπορεί να είναι κενό. Παρακαλώ εισάγετε ένα μοναδικό όνομα τουλάχιστον 2 χαρακτήρων."
+msgid ""
+"Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum 2 "
+"characters."
+msgstr ""
+"Το όνομα του μπουκέτου δεν μπορεί να είναι κενό. Παρακαλώ εισάγετε ένα "
+"μοναδικό όνομα τουλάχιστον 2 χαρακτήρων."
 
 #: server.py:235
 msgid "Playlist added successfully."
@@ -787,7 +841,8 @@ msgstr "Ενεργοποίηση πρόσθετου SubsSupport στις Ται�
 
 #: settings.py:161
 msgid "Skip playlist selection screen if only 1 playlist"
-msgstr "Παράλειψη οθόνης για επιλογή λίστας αναπαραγωγής αν υπάρχει μόνο 1 λίστα"
+msgstr ""
+"Παράλειψη οθόνης για επιλογή λίστας αναπαραγωγής αν υπάρχει μόνο 1 λίστα"
 
 #: settings.py:162
 msgid "Automatic EPG download time"
@@ -845,15 +900,15 @@ msgstr "Κατηγορίες Ταινιών"
 msgid "Movies"
 msgstr "Ταινίες"
 
-#: vod.py:2099 vodplayer.py:504
+#: vod.py:2087 vodplayer.py:503
 msgid "VOD"
 msgstr "Ταινίες"
 
-#: vod.py:2116
+#: vod.py:2104
 msgid "Movie"
 msgstr "Ταινία"
 
-#: vod.py:2154
+#: vod.py:2142
 msgid ""
 "The TMDB plugin is not installed!\n"
 "Please install it."
@@ -861,7 +916,7 @@ msgstr ""
 "Το πρόσθετο TMDB δεν είναι εγκατεστημένο!\n"
 "Παρακαλώ εγκαταστήστε το."
 
-#: vod.py:2165
+#: vod.py:2153
 msgid ""
 "The IMDb plugin is not installed!\n"
 "Please install it."
@@ -869,10 +924,11 @@ msgstr ""
 "Το πρόσθετο IMDb δεν είναι εγκατεστημένο!\n"
 "Παρακαλώ εγκαταστήστε το."
 
-#: vod.py:2243
+#: vod.py:2231
 msgid "No trailer found."
 msgstr "Δεν βρέθηκε τρέιλερ."
 
-#: vod.py:2273
+#: vod.py:2261
 msgid "Trailer is age restricted, and can't be accessed without logging in."
-msgstr "Το τρέιλερ έχει περιορισμό ηλικίας και δεν είναι προσβάσιμο χωρίς σύνδεση."
+msgstr ""
+"Το τρέιλερ έχει περιορισμό ηλικίας και δεν είναι προσβάσιμο χωρίς σύνδεση."
