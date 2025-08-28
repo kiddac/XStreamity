@@ -74,11 +74,10 @@ hdr = {
     'Accept-Encoding': 'gzip, deflate'
 }
 
-playlists_json = cfg.playlists_json.value
-
 
 class XStreamity_Update:
     def __init__(self, session=None, mode=None):
+        self.playlists_json = cfg.playlists_json.value
         self.mode = mode
         self.session = session
         self.urllist = []
@@ -122,7 +121,7 @@ class XStreamity_Update:
 
     def process_json_file(self):
         try:
-            with open(playlists_json, "r") as f:
+            with open(self.playlists_json, "r") as f:
                 self.playlists_all = json.load(f)
         except Exception as e:
             print("Error loading playlists JSON file:", e)

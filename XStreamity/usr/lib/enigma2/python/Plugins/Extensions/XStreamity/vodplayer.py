@@ -180,9 +180,6 @@ def clear_caches():
         pass
 
 
-playlists_json = cfg.playlists_json.value
-
-
 class IPTVInfoBarShowHide():
     STATE_HIDDEN = 0
     STATE_HIDING = 1
@@ -361,6 +358,7 @@ class XStreamityCueSheetSupport:
     ENABLE_RESUME_SUPPORT = False
 
     def __init__(self):
+        self.playlists_json = cfg.playlists_json.value
         self.cut_list = []
         self.is_closing = False
         self.started = False
@@ -549,11 +547,11 @@ class XStreamity_VodPlayer(
         if len(glob.active_playlist["player_info"]["vodrecents"]) >= 20:
             glob.active_playlist["player_info"]["vodrecents"].pop(0)
 
-        with open(playlists_json, "r") as f:
+        with open(self.playlists_json, "r") as f:
             try:
                 self.playlists_all = json.load(f)
             except:
-                os.remove(playlists_json)
+                os.remove(self.playlists_json)
 
         if self.playlists_all:
             for index, playlists in enumerate(self.playlists_all):
@@ -565,7 +563,7 @@ class XStreamity_VodPlayer(
                     self.playlists_all[index] = glob.active_playlist
                     break
 
-        with open(playlists_json, "w") as f:
+        with open(self.playlists_json, "w") as f:
             json.dump(self.playlists_all, f, indent=4)
 
     def addWatchedList(self):
@@ -579,11 +577,11 @@ class XStreamity_VodPlayer(
             if stream_id not in glob.active_playlist["player_info"]["serieswatched"]:
                 glob.active_playlist["player_info"]["serieswatched"].append(stream_id)
 
-        with open(playlists_json, "r") as f:
+        with open(self.playlists_json, "r") as f:
             try:
                 self.playlists_all = json.load(f)
             except:
-                os.remove(playlists_json)
+                os.remove(self.playlists_json)
 
         if self.playlists_all:
             for index, playlists in enumerate(self.playlists_all):
@@ -595,7 +593,7 @@ class XStreamity_VodPlayer(
                     self.playlists_all[index] = glob.active_playlist
                     break
 
-        with open(playlists_json, "w") as f:
+        with open(self.playlists_json, "w") as f:
             json.dump(self.playlists_all, f, indent=4)
 
     def playStream(self, servicetype, streamurl):

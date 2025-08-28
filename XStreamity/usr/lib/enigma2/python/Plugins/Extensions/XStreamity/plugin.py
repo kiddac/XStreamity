@@ -200,8 +200,18 @@ else:
 cfg.playlist_file = ConfigText(playlist_file)
 cfg.playlists_json = ConfigText(playlists_json)
 cfg.downloads_json = ConfigText(downloads_json)
+
+cfg.playlist_file.value = playlist_file  # Force overwrite
+cfg.playlist_file.save()
+
+cfg.playlists_json.value = playlists_json  # Force overwrite
+cfg.playlists_json.save()
+
 cfg.save()
 configfile.save()
+
+glob.original_playlist_file = cfg.playlist_file.value
+glob.original_playlists_json = cfg.playlists_json.value
 
 font_folder = os.path.join(dir_plugins, "fonts/")
 addFont(os.path.join(font_folder, "m-plus-rounded-1c-regular.ttf"), "xstreamityregular", 100, 0)

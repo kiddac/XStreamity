@@ -17,3 +17,5 @@ currentDownloadTotalBytes = 0
 pintime = 0
 adultChannel = False
 categoryname = None
+original_playlist_file = ""
+original_playlists_json = ""

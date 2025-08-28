@@ -25,9 +25,6 @@ from .plugin import skin_directory, common_path, version, downloads_json, cfg
 from .xStaticText import StaticText
 
 
-playlists_json = cfg.playlists_json.value
-
-
 class XStreamity_MainMenu(Screen):
     ALLOW_SUSPEND = True
 
@@ -45,6 +42,7 @@ class XStreamity_MainMenu(Screen):
         self.playlists_all = []
         self["list"] = List(self.drawList, enableWrapAround=True)
 
+        self.playlists_json = cfg.playlists_json.value
         self.setup_title = _("Main Menu")
         self["key_red"] = StaticText(_("Back"))
         self["key_green"] = StaticText(_("OK"))
@@ -229,8 +227,8 @@ class XStreamity_MainMenu(Screen):
             self.session.openWithCallback(self.resetData, MessageBox, _("Warning: delete stored json data for all playlists... Settings, favourites etc. \nPlaylists will not be deleted.\nDo you wish to continue?"))
         elif answer:
             try:
-                os.remove(playlists_json)
-                with open(playlists_json, "a"):
+                os.remove(self.playlists_json)
+                with open(self.playlists_json, "a"):
                     pass
             except OSError as e:
                 print("Error deleting or recreating JSON file:", e)

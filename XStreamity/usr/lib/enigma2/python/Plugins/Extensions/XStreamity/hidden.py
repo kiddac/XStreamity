@@ -22,8 +22,6 @@ from . import xstreamity_globals as glob
 from .plugin import skin_directory, common_path, cfg
 from .xStaticText import StaticText
 
-playlists_json = cfg.playlists_json.value
-
 
 class ProtectedScreen:
     def __init__(self):
@@ -49,6 +47,7 @@ class XStreamity_HiddenCategories(Screen, ProtectedScreen):
     def __init__(self, session, category_type, channellist, level=1):
         Screen.__init__(self, session)
 
+        self.playlists_json = cfg.playlists_json.value
         if cfg.adult.value:
             ProtectedScreen.__init__(self)
 
@@ -198,7 +197,7 @@ class XStreamity_HiddenCategories(Screen, ProtectedScreen):
             # Update player_info with the modified list
             player_info[list_key] = selected_list
 
-        with open(playlists_json) as f:
+        with open(self.playlists_json) as f:
             self.playlists_all = json.load(f, object_pairs_hook=OrderedDict)
 
         for idx, playlist in enumerate(self.playlists_all):
@@ -210,7 +209,7 @@ class XStreamity_HiddenCategories(Screen, ProtectedScreen):
                 self.playlists_all[idx] = glob.active_playlist
                 break
 
-        with open(playlists_json, "w") as f:
+        with open(self.playlists_json, "w") as f:
             json.dump(self.playlists_all, f, indent=4)
 
         self.close()

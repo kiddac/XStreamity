@@ -15,11 +15,12 @@ except ImportError:
 # Local application/library-specific imports
 from .plugin import cfg
 
-playlist_file = cfg.playlist_file.value
-playlists_json = cfg.playlists_json.value
-
 
 def process_files():
+
+    playlist_file = cfg.playlist_file.value
+    playlists_json = cfg.playlists_json.value
+
     # Check if playlists.txt file exists in specified location
     if not os.path.isfile(playlist_file):
         with open(playlist_file, "a"):

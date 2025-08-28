@@ -23,9 +23,6 @@ from . import xstreamity_globals as glob
 from .plugin import skin_directory, cfg
 from .xStaticText import StaticText
 
-playlist_file = cfg.playlist_file.value
-playlists_json = cfg.playlists_json.value
-
 
 class XStreamity_Settings(ConfigListScreen, Screen):
     ALLOW_SUSPEND = True
@@ -42,6 +39,9 @@ class XStreamity_Settings(ConfigListScreen, Screen):
 
         with open(skin, "r") as f:
             self.skin = f.read()
+
+        self.playlist_file = cfg.playlist_file.value
+        self.playlists_json = cfg.playlists_json.value
 
         self.setup_title = _("Playlist Settings")
 
@@ -279,11 +279,11 @@ class XStreamity_Settings(ConfigListScreen, Screen):
                 player_info["xmltv_api"] = epgalternativeurl
 
             # Update playlists.txt file
-            if not os.path.isfile(playlist_file):
-                with open(playlist_file, "w+") as f:
+            if not os.path.isfile(self.playlist_file):
+                with open(self.playlist_file, "w+") as f:
                     f.close()
 
-            with open(playlist_file, "r+") as f:
+            with open(self.playlist_file, "r+") as f:
                 lines = f.readlines()
                 f.seek(0)
                 exists = False
@@ -328,13 +328,13 @@ class XStreamity_Settings(ConfigListScreen, Screen):
 
     def getPlaylistJson(self):
         playlists_all = []
-        if os.path.exists(playlists_json) and os.stat(playlists_json).st_size > 0:
+        if os.path.exists(self.playlists_json) and os.stat(self.playlists_json).st_size > 0:
             try:
-                with open(playlists_json) as f:
+                with open(self.playlists_json) as f:
                     playlists_all = json.load(f)
             except json.JSONDecodeError as e:
                 print("Error loading playlists:", e)
-                os.remove(playlists_json)
+                os.remove(self.playlists_json)
         return playlists_all
 
     def getPlaylistUserFile(self):
@@ -347,7 +347,7 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.writeJsonFile()
 
     def writeJsonFile(self):
-        with open(playlists_json, "w") as f:
+        with open(self.playlists_json, "w") as f:
             json.dump(self.playlists_all, f, indent=4)
         self.clear_caches()
         self.close()

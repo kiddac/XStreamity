@@ -46,9 +46,6 @@ hdr = {
     'Accept-Encoding': 'gzip, deflate'
 }
 
-playlist_file = cfg.playlist_file.value
-playlists_json = cfg.playlists_json.value
-
 
 class XStreamity_Playlists(Screen):
     ALLOW_SUSPEND = True
@@ -61,6 +58,9 @@ class XStreamity_Playlists(Screen):
         skin = os.path.join(skin_path, "playlists.xml")
         with open(skin, "r") as f:
             self.skin = f.read()
+
+        self.playlist_file = cfg.playlist_file.value
+        self.playlists_json = cfg.playlists_json.value
 
         self.setup_title = _("Manage Playlist")
 
@@ -106,6 +106,18 @@ class XStreamity_Playlists(Screen):
         self.setTitle(self.setup_title)
 
     def start(self):
+
+        if glob.original_playlist_file and glob.original_playlist_file:
+            cfg.playlist_file.setValue(glob.original_playlist_file)
+            cfg.playlists_json.setValue(glob.original_playlists_json)
+            glob.current_selection = 0
+            cfg.save()
+            glob.original_playlist_file = ""
+            glob.original_playlists_json = ""
+
+        self.playlist_file = cfg.playlist_file.value
+        self.playlists_json = cfg.playlists_json.value
+
         self.checkinternet = checkinternet.check_internet()
         if not self.checkinternet:
             self.session.openWithCallback(self.quit, MessageBox, _("No internet."), type=MessageBox.TYPE_ERROR, timeout=5)
@@ -116,15 +128,15 @@ class XStreamity_Playlists(Screen):
         self.playlists_all = []
 
         # check if playlists.json file exists in specified location
-        if os.path.isfile(playlists_json):
-            with open(playlists_json, "r") as f:
+        if os.path.isfile(self.playlists_json):
+            with open(self.playlists_json, "r") as f:
                 try:
                     self.playlists_all = json.load(f)
                     self.playlists_all.sort(key=lambda e: e["playlist_info"]["index"], reverse=False)
                 except:
-                    os.remove(playlists_json)
+                    os.remove(self.playlists_json)
 
-        if self.playlists_all and os.path.isfile(playlist_file) and os.path.getsize(playlist_file) > 0:
+        if self.playlists_all and os.path.isfile(self.playlist_file) and os.path.getsize(self.playlist_file) > 0:
             self.delayedDownload()
         else:
             self.close()
@@ -325,7 +337,7 @@ class XStreamity_Playlists(Screen):
         self.writeJsonFile()
 
     def writeJsonFile(self):
-        with open(playlists_json, "w") as f:
+        with open(self.playlists_json, "w") as f:
             json.dump(self.playlists_all, f, indent=4)
         self.createSetup()
 
@@ -402,7 +414,7 @@ class XStreamity_Playlists(Screen):
             self.session.open(MessageBox, _("You have dead playlists that are slowing down loading.\n\nPress Yellow button to soft delete dead playlists"), MessageBox.TYPE_WARNING)
             for playlist in self.playlists_all:
                 playlist["data"]["fail_count"] = 0
-            with open(playlists_json, "w") as f:
+            with open(self.playlists_json, "w") as f:
                 json.dump(self.playlists_all, f, indent=4)
 
     def buildListEntry(self, index, name, url, expires, status, active, activenum, maxc, maxnum):
@@ -435,7 +447,7 @@ class XStreamity_Playlists(Screen):
             if answer is None:
                 self.session.openWithCallback(self.deleteServer, MessageBox, _("Delete selected playlist?"))
             elif answer:
-                with open(playlist_file, "r+") as f:
+                with open(self.playlist_file, "r+") as f:
                     lines = f.readlines()
                     f.seek(0)
                     f.truncate()
@@ -511,7 +523,7 @@ class XStreamity_Playlists(Screen):
         channelfilelist = []
         oldchannelfiles = pythonglob.glob("/etc/epgimport/xstreamity.*.channels.xml")
 
-        with open(playlists_json, "r") as f:
+        with open(self.playlists_json, "r") as f:
             self.playlists_all = json.load(f)
 
         for playlist in self.playlists_all:

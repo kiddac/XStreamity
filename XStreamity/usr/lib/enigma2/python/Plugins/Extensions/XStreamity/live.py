@@ -76,8 +76,6 @@ if sslverify:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
 
-playlists_json = cfg.playlists_json.value
-
 
 # png hack
 def mycall(self, cid, pos, length):
@@ -152,6 +150,7 @@ class XStreamity_Live_Categories(Screen):
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
 
+        self.playlists_json = cfg.playlists_json.value
         self.setup_title = _("Live Categories")
         self.main_title = _("Live TV")
 
@@ -848,11 +847,11 @@ class XStreamity_Live_Categories(Screen):
         if current_item:
             current_index = self["main_list"].getIndex()
 
-            with open(playlists_json, "r") as f:
+            with open(self.playlists_json, "r") as f:
                 try:
                     self.playlists_all = json.load(f)
                 except Exception:
-                    os.remove(playlists_json)
+                    os.remove(self.playlists_json)
 
             del glob.active_playlist["player_info"]['liverecents'][current_index]
             self.hideEPG()
@@ -863,7 +862,7 @@ class XStreamity_Live_Categories(Screen):
                         self.playlists_all[idx] = glob.active_playlist
                         break
 
-            with open(playlists_json, "w") as f:
+            with open(self.playlists_json, "w") as f:
                 json.dump(self.playlists_all, f, indent=4)
 
             del self.list2[current_index]
@@ -1176,12 +1175,12 @@ class XStreamity_Live_Categories(Screen):
             glob.active_playlist["player_info"]["livefavourites"].insert(0, newfavourite)
             # self.hideEPG()
 
-        with open(playlists_json, "r") as f:
+        with open(self.playlists_json, "r") as f:
             try:
                 self.playlists_all = json.load(f)
             except Exception as e:
                 print("Error loading playlists JSON:", e)
-                os.remove(playlists_json)
+                os.remove(self.playlists_json)
 
         if self.playlists_all:
             for playlists in self.playlists_all:
@@ -1191,7 +1190,7 @@ class XStreamity_Live_Categories(Screen):
                     playlists.update(glob.active_playlist)
                     break
 
-        with open(playlists_json, "w") as f:
+        with open(self.playlists_json, "w") as f:
             json.dump(self.playlists_all, f, indent=4)
 
         if self.chosen_category == "favourites":

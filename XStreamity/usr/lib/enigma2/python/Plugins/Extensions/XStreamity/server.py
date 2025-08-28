@@ -35,9 +35,6 @@ hdr = {
     'Accept-Encoding': 'gzip, deflate'
 }
 
-playlist_file = cfg.playlist_file.value
-playlists_json = cfg.playlists_json.value
-
 
 class XStreamity_AddServer(ConfigListScreen, Screen):
 
@@ -53,6 +50,9 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 
         with open(skin, "r") as f:
             self.skin = f.read()
+
+        self.playlist_file = cfg.playlist_file.value
+        self.playlists_json = cfg.playlists_json.value
 
         self.setup_title = _("Add Xtream Codes Playlist")
 
@@ -178,13 +178,13 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
         playlists_all = []
 
         # Check if the playlist file exists and is not empty
-        if os.path.exists(playlists_json) and os.path.getsize(playlists_json) > 0:
+        if os.path.exists(self.playlists_json) and os.path.getsize(self.playlists_json) > 0:
             try:
-                with open(playlists_json) as f:
+                with open(self.playlists_json) as f:
                     playlists_all = json.load(f)
             except Exception as e:
                 print("Error loading playlist JSON:", e)
-                os.remove(playlists_json)
+                os.remove(self.playlists_json)
 
         return playlists_all
 
@@ -225,11 +225,11 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
             self.session.open(MessageBox, _("Name already used. Please enter a unique name."), MessageBox.TYPE_ERROR, timeout=10)
             return
 
-        if not os.path.exists(playlist_file):
-            with open(playlist_file, "a") as f:
+        if not os.path.exists(self.playlist_file):
+            with open(self.playlist_file, "a") as f:
                 pass
 
-        with open(playlist_file, "a") as f:
+        with open(self.playlist_file, "a") as f:
             f.write("\n{}\n".format(playlistline))
 
         self.session.open(MessageBox, _("Playlist added successfully."), type=MessageBox.TYPE_INFO, timeout=5)

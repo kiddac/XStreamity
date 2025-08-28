@@ -39,8 +39,6 @@ hdr = {
     'Accept-Encoding': 'gzip, deflate'
 }
 
-playlists_json = cfg.playlists_json.value
-
 
 class XStreamity_Menu(Screen):
     ALLOW_SUSPEND = True
@@ -58,6 +56,7 @@ class XStreamity_Menu(Screen):
         self.drawList = []
         self["list"] = List(self.drawList, enableWrapAround=True)
 
+        self.playlists_json = cfg.playlists_json.value
         self.setup_title = _("Playlist Menu") + " - " + str(glob.active_playlist["playlist_info"]["name"])
 
         self["key_red"] = StaticText(_("Back"))
@@ -208,12 +207,12 @@ class XStreamity_Menu(Screen):
         self.createSetup()
 
     def writeJsonFile(self):
-        with open(playlists_json, "r") as f:
+        with open(self.playlists_json, "r") as f:
             playlists_all = json.load(f)
 
         playlists_all[glob.current_selection] = glob.active_playlist
 
-        with open(playlists_json, "w") as f:
+        with open(self.playlists_json, "w") as f:
             json.dump(playlists_all, f, indent=4)
 
     def createSetup(self):

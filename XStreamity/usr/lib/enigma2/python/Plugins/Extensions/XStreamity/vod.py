@@ -75,8 +75,6 @@ hdr = {
     'Accept-Encoding': 'gzip, deflate'
 }
 
-playlists_json = cfg.playlists_json.value
-
 
 class XStreamity_Vod_Categories(Screen):
     ALLOW_SUSPEND = True
@@ -101,6 +99,8 @@ class XStreamity_Vod_Categories(Screen):
 
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
+
+        self.playlists_json = cfg.playlists_json.value
 
         self.setup_title = _("Vod Categories")
 
@@ -1677,11 +1677,11 @@ class XStreamity_Vod_Categories(Screen):
         if current_item:
             current_index = self["main_list"].getIndex()
 
-            with open(playlists_json, "r") as f:
+            with open(self.playlists_json, "r") as f:
                 try:
                     self.playlists_all = json.load(f)
                 except Exception:
-                    os.remove(playlists_json)
+                    os.remove(self.playlists_json)
 
             del glob.active_playlist["player_info"]['vodrecents'][current_index]
             self.hideVod()
@@ -1692,7 +1692,7 @@ class XStreamity_Vod_Categories(Screen):
                         self.playlists_all[idx] = glob.active_playlist
                         break
 
-            with open(playlists_json, "w") as f:
+            with open(self.playlists_json, "w") as f:
                 json.dump(self.playlists_all, f, indent=4)
 
             del self.list2[current_index]
@@ -1934,11 +1934,11 @@ class XStreamity_Vod_Categories(Screen):
             if current_id in watched_list:
                 watched_list.remove(current_id)
 
-        with open(playlists_json, "r") as f:
+        with open(self.playlists_json, "r") as f:
             try:
                 self.playlists_all = json.load(f)
             except:
-                os.remove(playlists_json)
+                os.remove(self.playlists_json)
                 return
 
             for i, playlist in enumerate(self.playlists_all):
@@ -1950,7 +1950,7 @@ class XStreamity_Vod_Categories(Screen):
                     self.playlists_all[i] = glob.active_playlist
                     break
 
-        with open(playlists_json, "w") as f:
+        with open(self.playlists_json, "w") as f:
             json.dump(self.playlists_all, f, indent=4)
 
         self.buildLists()
@@ -2003,12 +2003,12 @@ class XStreamity_Vod_Categories(Screen):
 
             glob.active_playlist["player_info"]["vodfavourites"].insert(0, newfavourite)
 
-        with open(playlists_json, "r") as f:
+        with open(self.playlists_json, "r") as f:
             try:
                 self.playlists_all = json.load(f)
             except Exception as e:
                 print("Error loading playlists JSON:", e)
-                os.remove(playlists_json)
+                os.remove(self.playlists_json)
                 self.playlists_all = []
 
         if self.playlists_all:
@@ -2019,7 +2019,7 @@ class XStreamity_Vod_Categories(Screen):
                     playlists.update(glob.active_playlist)
                     break
 
-        with open(playlists_json, "w") as f:
+        with open(self.playlists_json, "w") as f:
             json.dump(self.playlists_all, f, indent=4)
 
         if self.chosen_category == "favourites":

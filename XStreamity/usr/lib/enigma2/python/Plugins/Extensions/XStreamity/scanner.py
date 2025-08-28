@@ -8,7 +8,7 @@ import json
 import os
 import base64
 import zlib
-import random
+# import random
 
 try:
     from urlparse import urlparse, parse_qsl  # Python 2
@@ -52,12 +52,13 @@ hdr = {
     'Accept-Encoding': 'gzip, deflate'
 }
 
-location = cfg.location.value
-
 badurls_file = "/tmp/scans/badurls.txt"
 
 original_playlist_file = cfg.playlist_file.value
 original_playlists_json = cfg.playlists_json.value
+
+glob.original_playlist_file = original_playlist_file
+glob.original_playlists_json = original_playlists_json
 
 scanner_playlist_file = "/tmp/scans/playlists.txt"
 scanner_playlists_json = "/tmp/scans/x-playlists.json"
@@ -70,6 +71,24 @@ def get_base_url():
     encoded = reversed_encoded[::-1]
     original_url = base64.b64decode(encoded).decode('utf-8')
     return original_url
+
+
+def sort_key(item):
+    index, name, url, expires, status, active, activenum, maxc, maxnum, exp_ts = item
+
+    # Primary: maxnum (desc)
+    primary = -maxnum
+
+    # Secondary: difference between maxnum and activenum (desc)
+    secondary = -(maxnum - activenum)
+
+    # Third: expiry timestamp (Null first)
+    if exp_ts is None:
+        tertiary = float("inf")  # Null sorts higher
+    else:
+        tertiary = -exp_ts  # later date first
+
+    return (primary, secondary, tertiary)
 
 
 class XStreamity_Scanner(Screen):
@@ -124,9 +143,15 @@ class XStreamity_Scanner(Screen):
         self.setTitle(self.setup_title)
 
     def start(self):
-        cfg.playlist_file.setValue(scanner_playlist_file)
-        cfg.playlists_json.setValue(scanner_playlists_json)
-        cfg.save()
+        # cfg.playlist_file.setValue(scanner_playlist_file)
+        # cfg.playlists_json.setValue(scanner_playlists_json)
+        # cfg.save()
+
+        cfg.playlist_file.value = scanner_playlist_file  # Force overwrite
+        cfg.playlist_file.save()
+
+        cfg.playlists_json.value = scanner_playlists_json  # Force overwrite
+        cfg.playlists_json.save()
 
         self.checkinternet = checkinternet.check_internet()
         if not self.checkinternet:
@@ -220,7 +245,7 @@ class XStreamity_Scanner(Screen):
 
         # Convert the set back to a list and shuffle to randomize the order
         final_urls_to_write = list(final_urls_to_write_set)
-        random.shuffle(final_urls_to_write)
+        # random.shuffle(final_urls_to_write)
 
         with open(scanner_playlist_file, "a") as f:
             for url, domain in final_urls_to_write:
@@ -467,9 +492,11 @@ class XStreamity_Scanner(Screen):
 
                     if user_status == "Active":
                         exp_date = user_info.get("exp_date")
+                        exp_ts = None
                         if exp_date:
                             try:
-                                expires = _("Expires: ") + datetime.fromtimestamp(int(exp_date)).strftime("%d-%m-%Y")
+                                exp_ts = int(exp_date)  # already in seconds
+                                expires = _("Expires: ") + datetime.fromtimestamp(exp_ts).strftime("%d-%m-%Y")
                             except:
                                 expires = _("Expires: ") + "Null"
                         else:
@@ -491,8 +518,9 @@ class XStreamity_Scanner(Screen):
                         except:
                             maxnum = 0
 
-            self.list.append([index, name, url, expires, status, active, activenum, maxc, maxnum])
+            self.list.append([index, name, url, expires, status, active, activenum, maxc, maxnum, exp_ts])
 
+        self.list.sort(key=sort_key)
         self.drawList = [self.buildListEntry(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8]) for x in self.list]
         self["playlists"].setList(self.drawList)
 

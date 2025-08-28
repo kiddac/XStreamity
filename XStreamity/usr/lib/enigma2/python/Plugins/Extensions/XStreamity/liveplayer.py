@@ -96,8 +96,6 @@ else:
         def __init__(self, *args, **kwargs):
             pass
 
-playlists_json = cfg.playlists_json.value
-
 
 # png hack
 def mycall(self, cid, pos, length):
@@ -397,6 +395,7 @@ class XStreamity_StreamPlayer(
 
         IPTVInfoBarPVRState.__init__(self, PVRState, True)
 
+        self.playlists_json = cfg.playlists_json.value
         self.streamurl = streamurl
         self.servicetype = servicetype
         self.originalservicetype = self.servicetype
@@ -656,12 +655,12 @@ class XStreamity_StreamPlayer(
         if len(recent_entries) >= 20:
             recent_entries.pop()
 
-        if os.path.exists(playlists_json):
-            with open(playlists_json, "r") as f:
+        if os.path.exists(self.playlists_json):
+            with open(self.playlists_json, "r") as f:
                 try:
                     self.playlists_all = json.load(f)
                 except:
-                    os.remove(playlists_json)
+                    os.remove(self.playlists_json)
 
             if self.playlists_all:
                 for index, playlist in enumerate(self.playlists_all):
@@ -669,7 +668,7 @@ class XStreamity_StreamPlayer(
                         self.playlists_all[index] = glob.active_playlist
                         break
 
-        with open(playlists_json, "w") as f:
+        with open(self.playlists_json, "w") as f:
             json.dump(self.playlists_all, f, indent=4)
 
     def playStream(self, servicetype, streamurl):

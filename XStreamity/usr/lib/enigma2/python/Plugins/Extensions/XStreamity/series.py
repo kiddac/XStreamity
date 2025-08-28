@@ -64,8 +64,6 @@ hdr = {
     'Accept-Encoding': 'gzip, deflate'
 }
 
-playlists_json = cfg.playlists_json.value
-
 
 class XStreamity_Series_Categories(Screen):
     ALLOW_SUSPEND = True
@@ -90,6 +88,8 @@ class XStreamity_Series_Categories(Screen):
 
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
+
+        self.playlists_json = cfg.playlists_json.value
 
         self.setup_title = _("Series Categories")
 
@@ -2405,11 +2405,11 @@ class XStreamity_Series_Categories(Screen):
             if current_id in watched_list:
                 watched_list.remove(current_id)
 
-        with open(playlists_json, "r") as f:
+        with open(self.playlists_json, "r") as f:
             try:
                 self.playlists_all = json.load(f)
             except:
-                os.remove(playlists_json)
+                os.remove(self.playlists_json)
                 return
 
             for i, playlist in enumerate(self.playlists_all):
@@ -2421,7 +2421,7 @@ class XStreamity_Series_Categories(Screen):
                     self.playlists_all[i] = glob.active_playlist
                     break
 
-        with open(playlists_json, "w") as f:
+        with open(self.playlists_json, "w") as f:
             json.dump(self.playlists_all, f, indent=4)
 
         self.buildLists()
@@ -2485,11 +2485,11 @@ class XStreamity_Series_Categories(Screen):
 
             glob.active_playlist["player_info"]["seriesfavourites"].insert(0, newfavourite)
 
-        with open(playlists_json, "r") as f:
+        with open(self.playlists_json, "r") as f:
             try:
                 self.playlists_all = json.load(f)
             except:
-                os.remove(playlists_json)
+                os.remove(self.playlists_json)
                 self.playlists_all = []
 
         if self.playlists_all:
@@ -2500,7 +2500,7 @@ class XStreamity_Series_Categories(Screen):
                     playlists.update(glob.active_playlist)
                     break
 
-        with open(playlists_json, "w") as f:
+        with open(self.playlists_json, "w") as f:
             json.dump(self.playlists_all, f, indent=4)
 
         if self.level == 2:
