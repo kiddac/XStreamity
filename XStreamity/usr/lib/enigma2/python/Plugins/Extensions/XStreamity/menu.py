@@ -30,7 +30,7 @@ from Tools.LoadPixmap import LoadPixmap
 # Local application/library-specific imports
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import skin_directory, common_path, hasConcurrent, hasMultiprocessing, cfg
+from .plugin import skin_directory, common_path, hasConcurrent, hasMultiprocessing, cfg, pythonVer
 from .xStaticText import StaticText
 
 
@@ -39,6 +39,26 @@ hdr = {
     'Accept-Encoding': 'gzip, deflate'
 }
 
+
+if pythonVer == 3:
+    superscript_to_normal = str.maketrans(
+        '⁰¹²³⁴⁵⁶⁷⁸⁹ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖʳˢᵗᵘᵛʷˣʸᶻ'
+        'ᴬᴮᴰᴱᴳᴴᴵᴶᴷᴸᴹᴺᴼᴾᴿᵀᵁⱽᵂ⁺⁻⁼⁽⁾',
+        '0123456789abcdefghijklmnoprstuvwxyz'
+        'ABDEGHIJKLMNOPRTUVW+-=()'
+    )
+
+
+def normalize_superscripts(text):
+    return text.translate(superscript_to_normal)
+
+
+def clean_names(streams):
+    """Clean only the 'name' field in each stream entry."""
+    for item in streams:
+        if "name" in item and isinstance(item["name"], str):
+            item["name"] = normalize_superscripts(item["name"])
+    return streams
 
 class XStreamity_Menu(Screen):
     ALLOW_SUSPEND = True
@@ -134,6 +154,10 @@ class XStreamity_Menu(Screen):
                 if r.status_code == requests.codes.ok:
                     try:
                         response = r.json()
+
+                        if pythonVer == 3:
+                            response = clean_names(response)
+
                     except ValueError as e:
                         print("Error decoding JSON:", e)
             except Exception as e:
