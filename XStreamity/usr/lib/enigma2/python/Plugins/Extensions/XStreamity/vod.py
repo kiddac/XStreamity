@@ -724,6 +724,16 @@ class XStreamity_Vod_Categories(Screen):
             self["key_blue"].setText("")
             self.hideVod()
 
+    def strip_foreign_mixed(self, text):
+        has_ascii = bool(re.search(r'[\x00-\x7F]', text))
+        has_non_ascii = bool(re.search(r'[^\x00-\x7F]', text))
+
+        if has_ascii and has_non_ascii:
+            # Remove only non-ASCII characters
+            text = re.sub(r'[^\x00-\x7F]+', '', text)
+
+        return text
+
     def stripjunk(self, text, database=None):
         searchtitle = text
 
@@ -738,7 +748,7 @@ class XStreamity_Vod_Categories(Screen):
         searchtitle = re.sub(r'^\w{2}\|\w{2}\s', '', searchtitle, flags=re.IGNORECASE)
 
         # remove xx - at start (case-insensitive)
-        searchtitle = re.sub(r'^.{2}\+? ?- ?', '', searchtitle, flags=re.IGNORECASE)
+        # searchtitle = re.sub(r'^.{2}\+? ?- ?', '', searchtitle, flags=re.IGNORECASE)
 
         # remove all leading content between and including || or |
         searchtitle = re.sub(r'^\|\|.*?\|\|', '', searchtitle)
@@ -748,10 +758,12 @@ class XStreamity_Vod_Categories(Screen):
         # remove all leading content between and including ┃┃ or ┃
         searchtitle = re.sub(r'^┃┃.*?┃┃', '', searchtitle)
         searchtitle = re.sub(r'^┃.*?┃', '', searchtitle)
+        searchtitle = re.sub(r'^┃.*?┃', '', searchtitle)
         searchtitle = re.sub(r'┃.*?┃', '', searchtitle)
 
         # remove all content between and including () unless it's all digits
-        searchtitle = re.sub(r'\((?!\d+\))[^()]*\)', '', searchtitle)
+        # searchtitle = re.sub(r'\((?!\d+\))[^()]*\)', '', searchtitle)
+        searchtitle = re.sub(r'\(\(.*?\)\)|\([^()]*\)', '', searchtitle)
 
         # remove all content between and including []
         searchtitle = re.sub(r'\[\[.*?\]\]|\[.*?\]', '', searchtitle)
@@ -759,6 +771,12 @@ class XStreamity_Vod_Categories(Screen):
         # remove trailing year (but not if the whole title *is* a year)
         if not re.match(r'^\d{4}$', searchtitle.strip()):
             searchtitle = re.sub(r'[\s\-]*(?:[\(\[\"]?\d{4}[\)\]\"]?)$', '', searchtitle)
+
+        # remove up to 6 characters followed by space and dash at start (e.g. "EN -", "BE-NL -")
+        searchtitle = re.sub(r'^[A-Za-z0-9\-]{1,7}\s*-\s*', '', searchtitle, flags=re.IGNORECASE)
+
+        # Strip foreign / non-ASCII characters
+        searchtitle = self.strip_foreign_mixed(searchtitle)
 
         # Bad substrings to strip (case-insensitive)
         bad_strings = [
@@ -770,7 +788,8 @@ class XStreamity_Vod_Categories(Screen):
             "1080p-dual-lat-cinecalidad.mx", "1080p-lat-cine-calidad.com", "1080p-lat-cine-calidad.com-1",
             "1080p-lat-cinecalidad.mx", "1080p.dual.lat.cine-calidad.com", "3d", "'", "#", "(", ")", "-", "[]", "/",
             "4k", "720p", "aac", "blueray", "ex-yu:", "fhd", "hd", "hdrip", "hindi", "imdb", "multi:", "multi-audio",
-            "multi-sub", "multi-subs", "multisub", "ozlem", "sd", "top250", "u-", "uhd", "vod", "x264"
+            "multi-sub", "multi-subs", "multisub", "ozlem", "sd", "top250", "u-", "uhd", "vod", "x264",
+            "amz", "dolby", "audio", "8k", "3840p", "50fps", "60fps", "hevc", "raw ", "vip ", "NF", "d+", "a+", "vp", "prmt", "mrvl"
         ]
 
         bad_strings_pattern = re.compile('|'.join(map(re.escape, bad_strings)), flags=re.IGNORECASE)
@@ -1116,14 +1135,6 @@ class XStreamity_Vod_Categories(Screen):
         if debugs:
             print("*** displayTMDB ***")
 
-        facts = []
-        duration = ""
-        certification = ""
-        release_date = ""
-        genre = ""
-        duration = ""
-        rating = "0"
-
         current_item = self["main_list"].getCurrent()
 
         if current_item and self.level == 2:
@@ -1132,7 +1143,22 @@ class XStreamity_Vod_Categories(Screen):
             if self.tmdbresults:
                 info = self.tmdbresults
 
-                rating = float(info.get("rating", 0) or 0)
+                # Initialize all optional fields
+                duration = ""
+                genre = ""
+                release_date = ""
+                director = ""
+                country = ""
+                cast = ""
+                certification = ""
+                rating = 0
+                text = ""
+
+                # Rating
+                try:
+                    rating = float(info.get("rating", 0) or 0)
+                except Exception:
+                    rating = 0
 
                 rating_texts = {
                     (0.0, 0.0): "",
@@ -1162,95 +1188,71 @@ class XStreamity_Vod_Categories(Screen):
                     if rating_range[0] <= rating <= rating_range[1]:
                         text = rating_text
                         break
-                    else:
-                        text = ""
 
                 # percent dial
                 self["rating_percent"].setText(str(text))
 
-                if rating:
-                    try:
-                        rating = float(rating)
-                        rounded_rating = round(rating, 1)
-                        rating = "{:.1f}".format(rounded_rating)
-                    except Exception as e:
-                        print("*** rating2 error ***", e)
-                        pass
+                try:
+                    rounded_rating = round(rating, 1)
+                    rating_str = "{:.1f}".format(rounded_rating)
+                except Exception:
+                    rating_str = str(rating)
 
-                self["rating_text"].setText(str(rating).strip())
+                self["rating_text"].setText(rating_str)
 
-                if "name" in info:
-                    self["x_title"].setText(str(info["name"]).strip())
-                elif "o_name" in info:
-                    self["x_title"].setText(str(info["o_name"]).strip())
+                # Titles
+                self["x_title"].setText(str(info.get("name") or info.get("o_name") or "").strip())
 
-                if "description" in info:
-                    self["x_description"].setText(str(info["description"]).strip())
-                elif "plot" in info:
-                    self["x_description"].setText(str(info["plot"]).strip())
+                # Description / overview
+                self["x_description"].setText(str(info.get("description") or info.get("plot") or "").strip())
+                self["overview"].setText(_("Overview") if self["x_description"].getText() else "")
 
-                if self["x_description"].getText() != "":
-                    self["overview"].setText(_("Overview"))
-                else:
-                    self["overview"].setText("")
+                # Duration
+                duration = str(info.get("duration") or "").strip()
 
-                if "duration" in info:
-                    duration = str(info["duration"]).strip()
+                # Genre
+                genre = str(info.get("genre") or "").strip()
 
-                if "genre" in info:
-                    genre = str(info["genre"]).strip()
-
-                release_date = ""
+                # Release date
                 for key in ["releaseDate", "release_date", "releasedate"]:
                     if key in info and info[key]:
                         try:
                             release_date = datetime.strptime(info[key], "%Y-%m-%d").strftime("%d-%m-%Y")
                             break
                         except Exception:
-                            pass
+                            release_date = str(info[key]).strip()
 
-                release_date = str(release_date).strip()
+                # Director
+                director = str(info.get("director") or "").strip()
+                self["vod_director"].setText(director)
+                self["vod_director_label"].setText(_("Director:") if director else "")
 
-                if "director" in info:
-                    self["vod_director"].setText(str(info["director"]).strip())
+                # Country
+                country = str(info.get("country") or "").strip()
+                self["vod_country"].setText(country)
+                self["vod_country_label"].setText(_("Country:") if country else "")
 
-                if self["vod_director"].getText() != "":
-                    self["vod_director_label"].setText(_("Director:"))
-                else:
-                    self["vod_director_label"].setText("")
+                # Cast
+                cast = str(info.get("cast") or info.get("actors") or "").strip()
+                self["vod_cast"].setText(cast)
+                self["vod_cast_label"].setText(_("Cast:") if cast else "")
 
-                if "country" in info:
-                    self["vod_country"].setText(str(info["country"]).strip())
+                # Tagline
+                self["tagline"].setText(str(info.get("tagline") or "").strip())
 
-                if self["vod_country"].getText() != "":
-                    self["vod_country_label"].setText(_("Country:"))
-                else:
-                    self["vod_country_label"].setText("")
-
-                if "cast" in info:
-                    self["vod_cast"].setText(str(info["cast"]).strip())
-                elif "actors" in info:
-                    self["vod_cast"].setText(str(info["actors"]).strip())
-
-                if self["vod_cast"].getText() != "":
-                    self["vod_cast_label"].setText(_("Cast:"))
-                else:
-                    self["vod_cast_label"].setText("")
-
-                if "tagline" in info:
-                    self["tagline"].setText(str(info["tagline"]).strip())
-
-                certification = info.get("certification", "").strip().upper()
+                # Certification
+                certification = str(info.get("certification") or "").strip().upper()
                 if certification:
                     certification = _("Rating: ") + certification
 
+                # Stream format
                 try:
                     stream_format = stream_url.split(".")[-1]
-                except:
+                except Exception:
                     stream_format = ""
 
+                # Facts
                 facts = self.buildFacts(str(certification), str(release_date), str(genre), str(duration), str(stream_format))
-
                 self["facts"].setText(str(facts))
 
                 if self.level == 2 and cfg.channelcovers.value:
