@@ -41,7 +41,7 @@ from Tools.LoadPixmap import LoadPixmap
 from . import _
 from . import checkinternet
 from . import xstreamity_globals as glob
-from .plugin import skin_directory, cfg, common_path, version, hasConcurrent, hasMultiprocessing
+from .plugin import skin_directory, cfg, common_path, version, hasConcurrent, hasMultiprocessing, dir_tmp
 from .xStaticText import StaticText
 
 
@@ -52,7 +52,8 @@ hdr = {
     'Accept-Encoding': 'gzip, deflate'
 }
 
-badurls_file = "/tmp/scans/badurls.txt"
+scans_dir = os.path.join(dir_tmp, "scans")
+badurls_file = os.path.join(scans_dir, "badurls.txt")
 
 original_playlist_file = cfg.playlist_file.value
 original_playlists_json = cfg.playlists_json.value
@@ -60,8 +61,8 @@ original_playlists_json = cfg.playlists_json.value
 glob.original_playlist_file = original_playlist_file
 glob.original_playlists_json = original_playlists_json
 
-scanner_playlist_file = "/tmp/scans/playlists.txt"
-scanner_playlists_json = "/tmp/scans/x-playlists.json"
+scanner_playlist_file = os.path.join(scans_dir, "playlists.txt")
+scanner_playlists_json = os.path.join(scans_dir, "x-playlists.json")
 
 compressed_base_url = b'x\x9c\xb3\xf5\xcc\xf2\xcd\t4\xf0\xcd\t\rO\xca0\xcdM\xce\xf1\x8bHq\xf7\x0b\xf1r\t\x0b\xf1*\xcfpO.\r\x8c\x88\xca\xf3\x02\xaaq\x04bW\x98\xba\xf0\xa8\xe2\x9c\xdc(KW\xe3\x80\xb2t\xa3\xc8J\xb7\xf0\xa8*\xcb`_#\xcb\xe0\xc4r7#\x9f\xb2\x9c\\\x9fR7\xa3\xc8\xaa\x8a\xdcdC\xcbJ\x1f3_\x8fd\x83 \x8fD\x00\xcc\xd4$a'
 
@@ -161,7 +162,6 @@ class XStreamity_Scanner(Screen):
 
         self.playlists_all = []
 
-        scans_dir = "/tmp/scans"
         if os.path.exists(scans_dir):
             for file_name in ["playlists.txt", "x-playlists.json"]:
                 file_path = os.path.join(scans_dir, file_name)
@@ -183,10 +183,9 @@ class XStreamity_Scanner(Screen):
     def makeScanUrlData(self):
         base_url = get_base_url()
         search_after = None
-        output_dir = "/tmp/scans"
 
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
+        if not os.path.exists(scans_dir):
+            os.makedirs(scans_dir)
 
         bad_urls = set()
 
@@ -548,8 +547,6 @@ class XStreamity_Scanner(Screen):
         return (index, str(name), str(url), str(expires), str(status), pixmap, str(active), str(activenum), str(maxc), str(maxnum))
 
     def quit(self, answer=None):
-
-        scans_dir = "/tmp/scans"
         if os.path.exists(scans_dir):
             for file_name in ["playlists.txt", "x-playlists.json"]:
                 file_path = os.path.join(scans_dir, file_name)

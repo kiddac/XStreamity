@@ -42,7 +42,7 @@ with open("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/version.txt", "
 screenwidth = getDesktop(0).size()
 
 dir_etc = "/etc/enigma2/xstreamity/"
-dir_tmp = "/tmp/xstreamity/"
+dir_tmp = "/etc/enigma2/xstreamity/tmp/"
 dir_plugins = "/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/"
 
 
@@ -230,8 +230,11 @@ if not os.path.exists(dir_etc):
     os.makedirs(dir_etc)
 
 # delete temporary folder and contents
+if os.path.exists("/tmp/xstreamity/"):
+    shutil.rmtree("/tmp/xstreamity/")
+
 if os.path.exists(dir_tmp):
-    shutil.rmtree("/tmp/xstreamity")
+    shutil.rmtree("/etc/enigma2/xstreamity/tmp/")
 
 # create temporary folder for downloaded files
 if not os.path.exists(dir_tmp):

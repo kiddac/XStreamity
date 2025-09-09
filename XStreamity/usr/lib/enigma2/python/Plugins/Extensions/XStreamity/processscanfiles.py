@@ -10,10 +10,11 @@ try:
 except ImportError:
     from urlparse import urlparse, parse_qs
 
-from .plugin import cfg
+from .plugin import cfg, dir_tmp
 
-scanner_playlist_file = "/tmp/scans/playlists.txt"
-scanner_playlists_json = "/tmp/scans/x-playlists.json"
+scans_dir = os.path.join(dir_tmp, "scans")
+scanner_playlist_file = os.path.join(scans_dir, "playlists.txt")
+scanner_playlists_json = os.path.join(scans_dir, "x-playlists.json")
 
 
 def process_files():

@@ -1930,30 +1930,51 @@ class XStreamity_Series_Categories(Screen):
             return
 
         try:
+            # Get final size from vod_backdrop instance
             bd_width, bd_height = self["vod_backdrop"].instance.size().width(), self["vod_backdrop"].instance.size().height()
-            bd_size = [bd_width, bd_height]
+            bd_size = (bd_width, bd_height)
 
-            bg_size = [int(bd_width * 1.5), int(bd_height * 1.5)]
-
+            # Load and process the source image
             im = Image.open(preview)
             if im.mode != "RGBA":
                 im = im.convert("RGBA")
 
+            # Backward-compatible resampling method selection
             try:
-                im.thumbnail(bd_size, Image.Resampling.LANCZOS)
-            except:
-                im.thumbnail(bd_size, Image.ANTIALIAS)
+                # New versions (Pillow >= 9.1.0)
+                resample_method = Image.Resampling.LANCZOS
+            except AttributeError:
+                try:
+                    # Older versions (Pillow 2.0+)
+                    resample_method = Image.LANCZOS
+                except AttributeError:
+                    # Very old versions (pre-2.0)
+                    resample_method = Image.ANTIALIAS
 
-            background = Image.open(os.path.join(self.skin_path, "images/background.png")).convert('RGBA')
-            bg = background.crop((bg_size[0] - bd_width, 0, bg_size[0], bd_height))
-            bg.save(os.path.join(dir_tmp, "backdrop2.png"), compress_level=0)
-            mask = Image.open(os.path.join(skin_directory, "common/mask.png")).convert('RGBA')
-            offset = (bg.size[0] - im.size[0], 0)
-            bg.paste(im, offset, mask)
-            bg.save(os.path.join(dir_tmp, "backdrop.png"), compress_level=0)
+            # Resize image
+            im.thumbnail(bd_size, resample_method)
 
-            output = os.path.join(dir_tmp, "backdrop.png")
+            # Load and resize mask with same resampling method
+            mask = Image.open(os.path.join(skin_directory, "common/mask2.png"))
+            if mask.mode != "RGBA":
+                mask = mask.convert("RGBA")
+            mask = mask.resize(im.size, resample_method)
 
+            # Create transparent background
+            background = Image.new('RGBA', bd_size, (0, 0, 0, 0))
+
+            # Calculate position (center horizontally)
+            x_offset = (bd_width - im.width) // 2
+            y_offset = 0
+
+            # Paste with mask for gradient transparency
+            background.paste(im, (x_offset, y_offset), mask)
+
+            # Save result
+            output = os.path.join(dir_tmp, "background.png")
+            background.save(output, "PNG")
+
+            # Update backdrop
             if self["vod_backdrop"].instance:
                 self["vod_backdrop"].instance.setPixmapFromFile(output)
                 self["vod_backdrop"].show()
