@@ -2256,6 +2256,9 @@ class XStreamity_Vod_Categories(Screen):
             from pytubefix.exceptions import AgeRestrictedError
 
             yt = YouTube("https://www.youtube.com/watch?v=" + str(trailer_id))
+            # print("*** trying to play trailer ***", yt)
+            # print("*** yt.streams ***", yt.streams)
+
             video_stream = max(
                 [s for s in yt.streams.filter(mime_type="video/webm", progressive=False)
                  if s.resolution and int(s.resolution[:-1]) <= 1080],

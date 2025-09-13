@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Xstreamity_4.91.20250326\n"
+"Project-Id-Version: Xstreamity_5.12.20250903\n"
 "POT-Creation-Date: 2025-08-07 21:15+0100\n"
-"PO-Revision-Date: 2025-08-07 21:15+0100\n"
+"PO-Revision-Date: 2025-09-07 13:34+0200\n"
 "Last-Translator: weeping <a.weeping@gmail.com>\n"
 "Language-Team: weeping <a.weeping@gmail.com>\n"
 "Language: es_ES\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: Poedit 3.5\n"
 "X-Poedit-Basepath: ../../..\n"
 "X-Poedit-SearchPath-0: .\n"
 
@@ -400,15 +400,15 @@ msgstr "Menu de Listas"
 
 #: menu.py:254
 msgid "Live Streams"
-msgstr ""
+msgstr "Canales TV"
 
 #: menu.py:257
 msgid "Vod"
-msgstr ""
+msgstr "VOD"
 
 #: menu.py:260
 msgid "TV Series"
-msgstr ""
+msgstr "Series TV"
 
 #: menu.py:267 playsettings.py:46
 msgid "Playlist Settings"
@@ -921,11 +921,12 @@ msgstr ""
 
 #: vod.py:2231
 msgid "No trailer found."
-msgstr ""
+msgstr "Trailer no encontrado."
 
 #: vod.py:2261
 msgid "Trailer is age restricted, and can't be accessed without logging in."
 msgstr ""
+"Trailer con restricción de edad. No se puede acceder sin iniciar sesión."
 
 #~ msgid "all"
 #~ msgstr "todo"
