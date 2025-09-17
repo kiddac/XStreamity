@@ -231,11 +231,11 @@ class XStreamity_DownloadManager(Screen):
             except Exception as e:
                 print("Error reading JSON file:", e)
                 with open(downloads_json, "w") as f:
-                    json.dump(self.downloads_all, f, indent=4)
+                    json.dump(self.downloads_all, f)
         else:
             print("Downloads JSON file does not exist. Creating...")
             with open(downloads_json, "w") as f:
-                json.dump(self.downloads_all, f, indent=4)
+                json.dump(self.downloads_all, f)
 
         self.sortlist()
 
@@ -477,7 +477,7 @@ class XStreamity_DownloadManager(Screen):
         if debugs:
             print("*** savejson ***")
         with open(downloads_json, "w") as f:
-            json.dump(self.downloads_all, f, indent=4)
+            json.dump(self.downloads_all, f)
 
     def selectionChanged(self):
         if debugs:

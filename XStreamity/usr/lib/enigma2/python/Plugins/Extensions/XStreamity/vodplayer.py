@@ -564,7 +564,7 @@ class XStreamity_VodPlayer(
                     break
 
         with open(self.playlists_json, "w") as f:
-            json.dump(self.playlists_all, f, indent=4)
+            json.dump(self.playlists_all, f)
 
     def addWatchedList(self):
         stream_id = self.stream_id
@@ -594,7 +594,7 @@ class XStreamity_VodPlayer(
                     break
 
         with open(self.playlists_json, "w") as f:
-            json.dump(self.playlists_all, f, indent=4)
+            json.dump(self.playlists_all, f)
 
     def playStream(self, servicetype, streamurl):
         if cfg.infobarcovers.value is True:
@@ -767,6 +767,7 @@ class XStreamity_VodPlayer(
                 list_length = len(glob.currentchannellist)
                 glob.currentchannellistindex += 1
                 if glob.currentchannellistindex >= list_length:
+                    glob.currentchannellistindex -= 1
                     return
                 self.streamurl = glob.currentchannellist[glob.currentchannellistindex][3]
                 self.playStream(self.servicetype, self.streamurl)
@@ -778,6 +779,7 @@ class XStreamity_VodPlayer(
             if glob.currentchannellist:
                 glob.currentchannellistindex -= 1
                 if glob.currentchannellistindex < 0:
+                    glob.currentchannellistindex = 0
                     return
                 self.streamurl = glob.currentchannellist[glob.currentchannellistindex][3]
                 self.playStream(self.servicetype, self.streamurl)

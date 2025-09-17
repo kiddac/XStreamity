@@ -237,7 +237,7 @@ class XStreamity_Menu(Screen):
         playlists_all[glob.current_selection] = glob.active_playlist
 
         with open(self.playlists_json, "w") as f:
-            json.dump(playlists_all, f, indent=4)
+            json.dump(playlists_all, f)
 
     def createSetup(self):
         self.list = []

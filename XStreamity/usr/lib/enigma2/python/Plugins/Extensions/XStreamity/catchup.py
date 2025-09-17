@@ -936,7 +936,7 @@ class XStreamity_Catchup_Categories(Screen):
                 downloads_all.append([_("Catch-up"), title, playurl, "Not Started", 0, 0, description, duration, channel, timestamp])
 
                 with open(downloads_json, "w") as f:
-                    json.dump(downloads_all, f, indent=4)
+                    json.dump(downloads_all, f)
 
                 self.session.openWithCallback(self.opendownloader, MessageBox, _(title) + "\n\n" + _("Added to download manager") + "\n\n" + _("Note recording acts as an open connection.") + "\n" + _("Do not record and play streams at the same time.") + "\n\n" + _("Open download manager?"))
 

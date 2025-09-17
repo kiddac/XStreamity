@@ -338,7 +338,7 @@ class XStreamity_Playlists(Screen):
 
     def writeJsonFile(self):
         with open(self.playlists_json, "w") as f:
-            json.dump(self.playlists_all, f, indent=4)
+            json.dump(self.playlists_all, f)
         self.createSetup()
 
     def createSetup(self):
@@ -415,7 +415,7 @@ class XStreamity_Playlists(Screen):
             for playlist in self.playlists_all:
                 playlist["data"]["fail_count"] = 0
             with open(self.playlists_json, "w") as f:
-                json.dump(self.playlists_all, f, indent=4)
+                json.dump(self.playlists_all, f)
 
     def buildListEntry(self, index, name, url, expires, status, active, activenum, maxc, maxnum):
         if status == _("Active"):

@@ -404,6 +404,9 @@ class XStreamity_Vod_Categories(Screen):
         ])
 
         for index, item in enumerate(currentCategoryList, start=len(self.prelist)):
+            if not isinstance(item, dict):
+                continue
+
             category_name = item.get("category_name", "No category")
             category_id = item.get("category_id", "999999")
             hidden = category_id in currentHidden
@@ -1741,7 +1744,7 @@ class XStreamity_Vod_Categories(Screen):
                         break
 
             with open(self.playlists_json, "w") as f:
-                json.dump(self.playlists_all, f, indent=4)
+                json.dump(self.playlists_all, f)
 
             del self.list2[current_index]
 
@@ -1999,7 +2002,7 @@ class XStreamity_Vod_Categories(Screen):
                     break
 
         with open(self.playlists_json, "w") as f:
-            json.dump(self.playlists_all, f, indent=4)
+            json.dump(self.playlists_all, f)
 
         self.buildLists()
 
@@ -2068,7 +2071,7 @@ class XStreamity_Vod_Categories(Screen):
                     break
 
         with open(self.playlists_json, "w") as f:
-            json.dump(self.playlists_all, f, indent=4)
+            json.dump(self.playlists_all, f)
 
         if self.chosen_category == "favourites":
             del self.list2[current_index]
@@ -2152,7 +2155,7 @@ class XStreamity_Vod_Categories(Screen):
                 downloads_all.append([_("Movie"), title, stream_url, "Not Started", 0, 0, description, duration, channel, timestamp])
 
                 with open(downloads_json, "w") as f:
-                    json.dump(downloads_all, f, indent=4)
+                    json.dump(downloads_all, f)
 
                 self.session.openWithCallback(self.opendownloader, MessageBox, _(title) + "\n\n" + _("Added to download manager") + "\n\n" + _("Note recording acts as an open connection.") + "\n" + _("Do not record and play streams at the same time.") + "\n\n" + _("Open download manager?"))
 
