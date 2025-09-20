@@ -1967,7 +1967,15 @@ class XStreamity_Series_Categories(Screen):
             background = Image.new('RGBA', bd_size, (0, 0, 0, 0))
 
             # Calculate position (center horizontally)
-            x_offset = (bd_width - im.width) // 2
+
+            # Get actual resized image dimensions (fallback for older Pillow)
+            try:
+                im_w, im_h = im.width, im.height
+            except AttributeError:
+                im_w, im_h = im.size
+
+            # Calculate position (center horizontally)
+            x_offset = (bd_width - im_w) // 2
             y_offset = 0
 
             # Paste with mask for gradient transparency
