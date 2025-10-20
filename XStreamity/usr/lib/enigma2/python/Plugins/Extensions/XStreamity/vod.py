@@ -485,7 +485,7 @@ class XStreamity_Vod_Categories(Screen):
                 if self.chosen_category == "all" and str(category_id) in glob.active_playlist["player_info"]["vodhidden"]:
                     continue
 
-                container_extension = channel.get("container_extension", "mp4")
+                container_extension = channel.get("container_extension", "mp4").replace("vod", "mp4")
 
                 rating = str(channel.get("rating", ""))
 

@@ -126,12 +126,15 @@ if not result:
             result = "/media/hdd/movie/"
         elif isdir("/media/usb/movie/"):
             result = "/media/usb/movie/"
-        elif isdir(config.usage.instantrec_path.value):
+        elif config.usage.instantrec_path.value:
             result = config.usage.instantrec_path.value
-        else:
+        elif config.movielist.last_videodir.value:
             result = config.movielist.last_videodir.value
-    except:
-        result = config.movielist.last_videodir.value
+        else:
+            result = "/media/"
+    except Exception as e:
+        print(e)
+        result = "/media/"
 
 cfg.downloadlocation = ConfigDirectory(default=result)
 
