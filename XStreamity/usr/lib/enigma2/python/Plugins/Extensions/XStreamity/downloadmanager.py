@@ -74,6 +74,58 @@ def convert_size(size_bytes):
     return "%s %s" % (s, size_name[i])
 
 
+def detect_video_extension(file_path):
+    """Try to detect the correct video extension from .mp4, .mkv, .avi, .ts"""
+
+    # First try mimetypes if available
+    try:
+        import mimetypes
+        # Get MIME type based on file content
+        mime_type, encoding = mimetypes.guess_type(file_path)
+
+        if mime_type:
+            # Map MIME types to our 4 allowed extensions
+            mime_to_extension = {
+                'video/mp4': '.mp4',
+                'video/x-matroska': '.mkv',
+                'video/avi': '.avi',
+                'video/msvideo': '.avi',
+                'video/x-msvideo': '.avi',
+                'video/mpeg': '.ts',  # MPEG often uses .ts
+                'video/MP2T': '.ts',
+            }
+
+            extension = mime_to_extension.get(mime_type)
+            if extension:
+                return extension
+    except Exception as e:
+        print("Error detecting file type with mimetypes: " + str(e))
+
+    # Fallback to file signature detection
+    try:
+        with open(file_path, 'rb') as f:
+            header = f.read(20)
+
+        # File signatures for our 4 formats
+        signatures = {
+            b'\x00\x00\x00\x18ftypmp4': '.mp4',  # MP4
+            b'\x1A\x45\xDF\xA3': '.mkv',         # Matroska/MKV
+            b'RIFF': '.avi',                     # AVI
+            b'\x00\x00\x01\xBA': '.ts',          # MPEG-TS
+            b'\x00\x00\x01\xB3': '.ts',          # MPEG
+        }
+
+        for signature, extension in signatures.items():
+            if header.startswith(signature):
+                return extension
+
+    except Exception as e:
+        print("Error reading file signature: " + str(e))
+
+    # Default to .mp4 if detection fails
+    return '.mp4'
+
+
 class downloadJob(Job):
     def __init__(self, toolbox, cmdline, filename, filmtitle):
         Job.__init__(self, filmtitle)
@@ -320,6 +372,7 @@ class XStreamity_DownloadManager(Screen):
     def checkactivedownloads(self):
         if debugs:
             print("***  checkactivedownloads ***")
+        standard_extensions = ['.mp4', '.mkv', '.avi', '.ts']
         templist = []
         for video in self.downloads_all:
             recbytes = 0
@@ -331,8 +384,20 @@ class XStreamity_DownloadManager(Screen):
                 print(e)
                 extension = ""
 
-            filename = str(filmtitle) + str(extension)
-            path = str(cfg.downloadlocation.value) + str(filename)
+            # Check for file with original extension first
+            original_filename = str(filmtitle) + str(extension)
+            original_path = os.path.join(cfg.downloadlocation.value, original_filename)
+
+            # If file doesn't exist with original extension, check with our 4 standard extensions
+            if not os.path.exists(original_path):
+                for ext in standard_extensions:
+                    alt_filename = str(filmtitle) + ext
+                    alt_path = os.path.join(cfg.downloadlocation.value, alt_filename)
+                    if os.path.exists(alt_path):
+                        original_path = alt_path
+                        break
+
+            path = original_path
             totalbytes = video[5]
 
             if os.path.exists(path):
@@ -352,12 +417,6 @@ class XStreamity_DownloadManager(Screen):
                 if video[3] == "Downloaded":
                     video[4] = 100
 
-            """
-            else:
-                print("*** video not exist ***")
-                if video[3] != "Not Started":
-                    continue
-                    """
             templist.append(video)
 
         self.downloads_all[:] = templist
@@ -710,6 +769,24 @@ class XStreamity_DownloadManager(Screen):
         if debugs:
             print("*** downloaded_finished ***")
         global ui
+
+        standard_extensions = ['.mp4', '.mkv', '.avi', '.ts']
+
+        # Check if the current file extension is not standard
+        file_name, current_extension = os.path.splitext(filename)
+        current_extension = current_extension.lower()
+
+        if current_extension not in standard_extensions and os.path.exists(filename):
+            detected_extension = detect_video_extension(filename)
+
+            new_filename = file_name + detected_extension
+            try:
+                os.rename(filename, new_filename)
+                # Update filename for metadata creation
+                filename = new_filename
+            except Exception as e:
+                print("Error renaming file: " + str(e))
+
         if os.path.isfile(downloads_json):
             with open(downloads_json, "r") as f:
                 try:
@@ -722,7 +799,6 @@ class XStreamity_DownloadManager(Screen):
             if str(video[1]) == str(filmtitle):
                 break
             x += 1
-        # del self.downloads_all[x]
         self.downloads_all[x][3] = "Downloaded"
         self.downloads_all[x][4] = 100
 
