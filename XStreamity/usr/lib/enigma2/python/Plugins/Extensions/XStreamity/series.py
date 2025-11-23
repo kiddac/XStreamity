@@ -2432,6 +2432,8 @@ class XStreamity_Series_Categories(Screen):
             watched_list = glob.active_playlist["player_info"].get("serieswatched", [])
             if current_id in watched_list:
                 watched_list.remove(current_id)
+            else:
+                watched_list.append(current_id)
 
         with open(self.playlists_json, "r") as f:
             try:

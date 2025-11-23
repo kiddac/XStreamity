@@ -1047,77 +1047,85 @@ class XStreamity_Live_Categories(Screen):
                         if streamtype == "1":
                             streamtype = "4097"
 
-                    self.reference = eServiceReference(int(streamtype), 0, next_url)
-
+                    self.reference = eServiceReference(int(streamtype), 0, str(next_url))
                     self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
 
-                    if self.session.nav.getCurrentlyPlayingServiceReference():
+                    def update_channel_icons_and_list():
+                        for channel in self.list2:
+                            channel[17] = (channel[2] == stream_id)
+
+                        if self.chosen_category == "favourites":
+                            self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18]) for x in self.list2 if x[16] is True]
+                        else:
+                            self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18]) for x in self.list2 if x[18] is False]
+
+                        self["main_list"].setList(self.main_list)
+                        if self["main_list"].getCurrent() and glob.nextlist[-1]["index"] != 0:
+                            self["main_list"].setIndex(glob.nextlist[-1]["index"])
+
+                    playing = self.session.nav.getCurrentlyPlayingServiceReference()
+
+                    if playing:
 
                         if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString() and cfg.livepreview.value is True:
-                            try:
-                                self.session.nav.stopService()
-                            except Exception as e:
-                                print(e)
-
                             try:
                                 self.session.nav.playService(self.reference)
                             except Exception as e:
                                 print(e)
 
-                            if self.session.nav.getCurrentlyPlayingServiceReference():
-                                glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
-                                glob.newPlayingServiceRefString = glob.newPlayingServiceRef.toString()
+                            nowref = self.session.nav.getCurrentlyPlayingServiceReference()
+                            if nowref:
+                                glob.newPlayingServiceRef = nowref
+                                glob.newPlayingServiceRefString = nowref.toString()
 
-                            for channel in self.list2:
-                                if channel[2] == stream_id:
-                                    channel[17] = True  # set watching icon
-                                else:
-                                    channel[17] = False
-
-                            if self.chosen_category == "favourites":
-                                self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18]) for x in self.list2 if x[16] is True]
-                            else:
-                                self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18]) for x in self.list2 if x[18] is False]
-
-                            self["main_list"].setList(self.main_list)
-                            if self["main_list"].getCurrent() and glob.nextlist[-1]["index"] != 0:
-                                self["main_list"].setIndex(glob.nextlist[-1]["index"])
-
+                            update_channel_icons_and_list()
                         else:
-                            for channel in self.list2:
-                                if channel[2] == stream_id:
-                                    channel[17] = True  # set watching icon
-                                else:
-                                    channel[17] = False
-
-                            if self.chosen_category == "favourites":
-                                self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18]) for x in self.list2 if x[16] is True]
-                            else:
-                                self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18]) for x in self.list2 if x[18] is False]
-
-                            self["main_list"].setList(self.main_list)
-
-                            if self["main_list"].getCurrent() and glob.nextlist[-1]["index"] != 0:
-                                self["main_list"].setIndex(glob.nextlist[-1]["index"])
-
-                            try:
-                                self.session.nav.stopService()
-                            except:
-                                pass
-
-                            self.session.openWithCallback(self.setIndex, liveplayer.XStreamity_StreamPlayer, str(next_url), str(streamtype), stream_id)
+                            update_channel_icons_and_list()
+                            self.session.openWithCallback(self.reload, liveplayer.XStreamity_StreamPlayer, str(next_url), str(streamtype), stream_id)
                     else:
-                        try:
-                            self.session.nav.stopService()
-                        except:
-                            pass
+                        if cfg.livepreview.value is True:
+                            try:
+                                self.session.nav.playService(self.reference)
+                            except Exception as e:
+                                print(e)
 
-                        self.session.openWithCallback(self.setIndex, liveplayer.XStreamity_StreamPlayer, str(next_url), str(streamtype), stream_id)
+                            nowref = self.session.nav.getCurrentlyPlayingServiceReference()
+                            if nowref:
+                                glob.newPlayingServiceRef = nowref
+                                glob.newPlayingServiceRefString = nowref.toString()
+
+                            update_channel_icons_and_list()
+                        else:
+                            update_channel_icons_and_list()
+                            self.session.openWithCallback(self.reload, liveplayer.XStreamity_StreamPlayer, str(next_url), str(streamtype), stream_id)
 
                     self["category_actions"].setEnabled(False)
 
                 else:
                     self.createSetup()
+
+    def reload(self):
+        self.setIndex()
+        self.setWatchingIcon(glob.currentchannellistindex)
+
+    def setWatchingIcon(self, idx):
+        if self["main_list"].getCurrent() and self.list2:
+            # Clear all watching flags
+            for channel in self.list2:
+                channel[17] = False
+
+            # Set watching for currently active channel index
+            try:
+                self.list2[idx][17] = True
+            except:
+                pass
+
+            if self.chosen_category == "favourites":
+                self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18]) for x in self.list2 if x[16] is True]
+            else:
+                self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18]) for x in self.list2 if x[18] is False]
+
+            self["main_list"].setList(self.main_list)
 
     def setIndex(self, data=None):
         # print("*** setindex ***")

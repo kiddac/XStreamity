@@ -720,22 +720,26 @@ class XStreamity_StreamPlayer(
             self.reference = eServiceReference(int(servicetype), 0, streamurl)
             self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
 
-        currently_playing_ref = self.session.nav.getCurrentlyPlayingServiceReference()
+        playing = self.session.nav.getCurrentlyPlayingServiceReference()
 
-        try:
-            self.session.nav.stopService()
-        except Exception as e:
-            print(e)
+        if playing:
 
-        try:
-            self.session.nav.playService(self.reference)
-        except Exception as e:
-            print(e)
+            if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString():
+                try:
+                    self.session.nav.playService(self.reference)
+                except Exception as e:
+                    print(e)
+        else:
+            try:
+                self.session.nav.playService(self.reference)
+            except Exception as e:
+                print(e)
 
-        currently_playing_ref = self.session.nav.getCurrentlyPlayingServiceReference()
-        if currently_playing_ref:
-            glob.newPlayingServiceRef = currently_playing_ref
-            glob.newPlayingServiceRefString = currently_playing_ref.toString()
+        nowref = self.session.nav.getCurrentlyPlayingServiceReference()
+        if nowref:
+            glob.newPlayingServiceRef = nowref
+            glob.newPlayingServiceRefString = nowref.toString()
+
         if cfg.infobarpicons.value is True:
             self.timerimage = eTimer()
             try:
