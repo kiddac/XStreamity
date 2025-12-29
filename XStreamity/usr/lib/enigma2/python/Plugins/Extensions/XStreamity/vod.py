@@ -716,7 +716,6 @@ class XStreamity_Vod_Categories(Screen):
                 except:
                     self.timerVOD_conn = self.timerVOD.timeout.connect(self.downloadVodInfo)
                 self.timerVOD.start(300, True)
-
         else:
             position = 0
             position_all = 0
@@ -1747,12 +1746,13 @@ class XStreamity_Vod_Categories(Screen):
 
             if self.playlists_all:
                 for idx, playlists in enumerate(self.playlists_all):
-                    if playlists["playlist_info"]["domain"] == glob.active_playlist["playlist_info"]["domain"] and playlists["playlist_info"]["username"] == glob.active_playlist["playlist_info"]["username"] and playlists["playlist_info"]["password"] == glob.active_playlist["playlist_info"]["password"]:
+                    if (playlists["playlist_info"]["domain"] == glob.active_playlist["playlist_info"]["domain"]
+                            and playlists["playlist_info"]["username"] == glob.active_playlist["playlist_info"]["username"]):
                         self.playlists_all[idx] = glob.active_playlist
                         break
 
             with open(self.playlists_json, "w") as f:
-                json.dump(self.playlists_all, f)
+                json.dump(self.playlists_all, f, indent=4)
 
             del self.list2[current_index]
 
@@ -2012,7 +2012,7 @@ class XStreamity_Vod_Categories(Screen):
                     break
 
         with open(self.playlists_json, "w") as f:
-            json.dump(self.playlists_all, f)
+            json.dump(self.playlists_all, f, indent=4)
 
         self.buildLists()
 
@@ -2075,13 +2075,12 @@ class XStreamity_Vod_Categories(Screen):
         if self.playlists_all:
             for playlists in self.playlists_all:
                 if (playlists["playlist_info"]["domain"] == glob.active_playlist["playlist_info"]["domain"]
-                        and playlists["playlist_info"]["username"] == glob.active_playlist["playlist_info"]["username"]
-                        and playlists["playlist_info"]["password"] == glob.active_playlist["playlist_info"]["password"]):
+                        and playlists["playlist_info"]["username"] == glob.active_playlist["playlist_info"]["username"]):
                     playlists.update(glob.active_playlist)
                     break
 
         with open(self.playlists_json, "w") as f:
-            json.dump(self.playlists_all, f)
+            json.dump(self.playlists_all, f, indent=4)
 
         if self.chosen_category == "favourites":
             del self.list2[current_index]
@@ -2165,7 +2164,7 @@ class XStreamity_Vod_Categories(Screen):
                 downloads_all.append([_("Movie"), title, stream_url, "Not Started", 0, 0, description, duration, channel, timestamp])
 
                 with open(downloads_json, "w") as f:
-                    json.dump(downloads_all, f)
+                    json.dump(downloads_all, f, indent=4)
 
                 self.session.openWithCallback(self.opendownloader, MessageBox, _(title) + "\n\n" + _("Added to download manager") + "\n\n" + _("Note recording acts as an open connection.") + "\n" + _("Do not record and play streams at the same time.") + "\n\n" + _("Open download manager?"))
 

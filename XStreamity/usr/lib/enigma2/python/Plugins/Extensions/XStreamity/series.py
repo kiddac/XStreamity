@@ -925,7 +925,8 @@ class XStreamity_Series_Categories(Screen):
             print("*** buildSeries ***")
 
         self.main_list = []
-        # 0 index, 1 name, 2 series_id, 3 cover, 4 plot, 5 cast, 6 director, 7 genre, 8 releaseDate, 9 rating, 10 last_modified, 11 next_url, 12 tmdb, 13 hidden, 14 year, 15 backdrop
+
+        # 0 index, 1 name, 2 series_id, 3 cover, 4 plot, 5 cast, 6 director, 7 genre, 8 releaseDate, 9 rating, 10 last_modified, 11 next_url, 12 tmdb, 13 hidden, 14 year, 15 backdrop, 16 favourite
         self.main_list = [buildSeriesTitlesList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[9], x[10], x[11], x[12], x[13], x[14], x[15], x[16]) for x in self.list2 if not x[13]]
         self["main_list"].setList(self.main_list)
 
@@ -2452,7 +2453,7 @@ class XStreamity_Series_Categories(Screen):
                     break
 
         with open(self.playlists_json, "w") as f:
-            json.dump(self.playlists_all, f)
+            json.dump(self.playlists_all, f, indent=4)
 
         self.buildLists()
 
@@ -2525,13 +2526,12 @@ class XStreamity_Series_Categories(Screen):
         if self.playlists_all:
             for playlists in self.playlists_all:
                 if (playlists["playlist_info"]["domain"] == glob.active_playlist["playlist_info"]["domain"]
-                        and playlists["playlist_info"]["username"] == glob.active_playlist["playlist_info"]["username"]
-                        and playlists["playlist_info"]["password"] == glob.active_playlist["playlist_info"]["password"]):
+                        and playlists["playlist_info"]["username"] == glob.active_playlist["playlist_info"]["username"]):
                     playlists.update(glob.active_playlist)
                     break
 
         with open(self.playlists_json, "w") as f:
-            json.dump(self.playlists_all, f)
+            json.dump(self.playlists_all, f, indent=4)
 
         if self.level == 2:
             self.createSetup()
@@ -2629,7 +2629,7 @@ class XStreamity_Series_Categories(Screen):
                 downloads_all.append([_("Series"), title, stream_url, "Not Started", 0, 0, description, duration, channel, timestamp])
 
                 with open(downloads_json, "w") as f:
-                    json.dump(downloads_all, f)
+                    json.dump(downloads_all, f, indent=4)
 
                 self.session.openWithCallback(self.opendownloader, MessageBox, _(title) + "\n\n" + _("Added to download manager") + "\n\n" + _("Note recording acts as an open connection.") + "\n" + _("Do not record and play streams at the same time.") + "\n\n" + _("Open download manager?"))
 

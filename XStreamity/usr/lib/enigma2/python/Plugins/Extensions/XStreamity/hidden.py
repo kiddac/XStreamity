@@ -168,7 +168,6 @@ class XStreamity_HiddenCategories(Screen, ProtectedScreen):
         player_info = glob.active_playlist["player_info"]
         domain = playlist_info["domain"]
         username = playlist_info["username"]
-        password = playlist_info["password"]
 
         # Define dictionary to map category types to keys in player_info
         category_keys = {
@@ -203,13 +202,12 @@ class XStreamity_HiddenCategories(Screen, ProtectedScreen):
         for idx, playlist in enumerate(self.playlists_all):
             if (
                 playlist["playlist_info"]["domain"].strip() == str(domain).strip() and
-                playlist["playlist_info"]["username"].strip() == str(username).strip() and
-                playlist["playlist_info"]["password"].strip() == str(password).strip()
+                playlist["playlist_info"]["username"].strip() == str(username).strip()
             ):
                 self.playlists_all[idx] = glob.active_playlist
                 break
 
         with open(self.playlists_json, "w") as f:
-            json.dump(self.playlists_all, f)
+            json.dump(self.playlists_all, f, indent=4)
 
         self.close()

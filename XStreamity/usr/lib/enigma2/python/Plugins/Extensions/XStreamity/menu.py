@@ -60,6 +60,7 @@ def clean_names(streams):
             item["name"] = normalize_superscripts(item["name"])
     return streams
 
+
 class XStreamity_Menu(Screen):
     ALLOW_SUSPEND = True
 
@@ -237,7 +238,7 @@ class XStreamity_Menu(Screen):
         playlists_all[glob.current_selection] = glob.active_playlist
 
         with open(self.playlists_json, "w") as f:
-            json.dump(playlists_all, f)
+            json.dump(playlists_all, f, indent=4)
 
     def createSetup(self):
         self.list = []

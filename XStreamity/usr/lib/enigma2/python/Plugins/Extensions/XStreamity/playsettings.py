@@ -4,6 +4,7 @@
 # Standard library imports
 import os
 import json
+
 try:
     from urlparse import urlparse, parse_qs
 except ImportError:
@@ -348,6 +349,6 @@ class XStreamity_Settings(ConfigListScreen, Screen):
 
     def writeJsonFile(self):
         with open(self.playlists_json, "w") as f:
-            json.dump(self.playlists_all, f)
+            json.dump(self.playlists_all, f, indent=4)
         self.clear_caches()
         self.close()
