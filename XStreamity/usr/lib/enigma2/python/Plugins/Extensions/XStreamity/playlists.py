@@ -18,11 +18,6 @@ except ImportError:
     from httplib import HTTPConnection
     HTTPConnection.debuglevel = 0
 
-try:
-    from urllib.parse import unquote
-except ImportError:
-    from urllib import unquote
-
 # Third-party imports
 import requests
 from requests.adapters import HTTPAdapter, Retry
@@ -456,15 +451,9 @@ class XStreamity_Playlists(Screen):
                     lines = f.readlines()
                     f.seek(0)
                     f.truncate()
-
-                    username = str(self.currentplaylist["playlist_info"]["username"])
-                    username_unquote = unquote(username)
-
                     for line in lines:
-                        if (str(self.currentplaylist["playlist_info"]["domain"]) in line
-                                and (("username=" + username) in line or ("username=" + username_unquote) in line)):
+                        if str(self.currentplaylist["playlist_info"]["domain"]) in line and "username=" + str(self.currentplaylist["playlist_info"]["username"]) in line:
                             line = "#%s" % line
-
                         f.write(line)
                 x = 0
                 for playlist in self.playlists_all:

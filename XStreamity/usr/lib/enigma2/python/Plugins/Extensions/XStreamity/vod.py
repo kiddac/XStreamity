@@ -1746,8 +1746,7 @@ class XStreamity_Vod_Categories(Screen):
 
             if self.playlists_all:
                 for idx, playlists in enumerate(self.playlists_all):
-                    if (playlists["playlist_info"]["domain"] == glob.active_playlist["playlist_info"]["domain"]
-                            and playlists["playlist_info"]["username"] == glob.active_playlist["playlist_info"]["username"]):
+                    if playlists["playlist_info"]["domain"] == glob.active_playlist["playlist_info"]["domain"] and playlists["playlist_info"]["username"] == glob.active_playlist["playlist_info"]["username"] and playlists["playlist_info"]["password"] == glob.active_playlist["playlist_info"]["password"]:
                         self.playlists_all[idx] = glob.active_playlist
                         break
 
@@ -2075,7 +2074,8 @@ class XStreamity_Vod_Categories(Screen):
         if self.playlists_all:
             for playlists in self.playlists_all:
                 if (playlists["playlist_info"]["domain"] == glob.active_playlist["playlist_info"]["domain"]
-                        and playlists["playlist_info"]["username"] == glob.active_playlist["playlist_info"]["username"]):
+                        and playlists["playlist_info"]["username"] == glob.active_playlist["playlist_info"]["username"]
+                        and playlists["playlist_info"]["password"] == glob.active_playlist["playlist_info"]["password"]):
                     playlists.update(glob.active_playlist)
                     break
 
