@@ -290,11 +290,14 @@ class XStreamity_Menu(Screen):
         self.index += 1
         self.list.append([self.index, _("Playlist Settings"), 4, ""])
 
-        if show_live:
-            if glob.active_playlist["data"]["live_categories"] and len(glob.active_playlist["data"]["live_categories"]) > 0 \
-                    and "category_id" in glob.active_playlist["data"]["live_categories"][0] and "user_info" not in glob.active_playlist["data"]["live_categories"]:
-                self.index += 1
-                self.list.append([self.index, _("Manual EPG Update"), 5, ""])
+        try:
+            if show_live:
+                if glob.active_playlist["data"]["live_categories"] and len(glob.active_playlist["data"]["live_categories"]) > 0 \
+                        and "category_id" in glob.active_playlist["data"]["live_categories"][0] and "user_info" not in glob.active_playlist["data"]["live_categories"]:
+                    self.index += 1
+                    self.list.append([self.index, _("Manual EPG Update"), 5, ""])
+        except Exception as e:
+            print(e)
 
         self.drawList = [buildListEntry(x[0], x[1], x[2], x[3]) for x in self.list]
         self["list"].setList(self.drawList)
