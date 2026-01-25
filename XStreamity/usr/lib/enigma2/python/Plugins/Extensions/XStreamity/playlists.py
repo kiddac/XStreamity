@@ -465,21 +465,16 @@ class XStreamity_Playlists(Screen):
                 self.deleteEpgData()
 
     def deleteEpgData(self, data=None):
-        if data is None:
-            self.session.openWithCallback(self.deleteEpgData, MessageBox, _("Delete providers EPG data?"))
-        else:
-            self["splash"].show()
-            playlist_name = str(self.currentplaylist["playlist_info"]["name"])
-            epglocation = str(cfg.epglocation.value)
-            epgfolder = os.path.join(epglocation, playlist_name)
+        self["splash"].show()
+        playlist_name = str(self.currentplaylist["playlist_info"]["name"])
+        epglocation = str(cfg.epglocation.value)
+        epgfolder = os.path.join(epglocation, playlist_name)
 
-            try:
-                shutil.rmtree(epgfolder)
-            except Exception as e:
-                print("Error deleting EPG data:", e)
-
-            self["splash"].show()
-            self.start()
+        try:
+            shutil.rmtree(epgfolder)
+        except Exception as e:
+            print("Error deleting EPG data:", e)
+        self.start()
 
     def getCurrentEntry(self):
         if self.list:

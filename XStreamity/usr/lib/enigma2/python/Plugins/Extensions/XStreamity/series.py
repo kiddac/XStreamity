@@ -118,6 +118,9 @@ class XStreamity_Series_Categories(Screen):
         self.main_title = _("Series")
         self["main_title"] = StaticText(self.main_title)
 
+        self.group_title = ""
+        self.series_group_title = ""
+
         self.main_list = []
         self["main_list"] = List(self.main_list, enableWrapAround=True)
 
@@ -1005,7 +1008,21 @@ class XStreamity_Series_Categories(Screen):
             self["page"].setText(_("Page: ") + "{}/{}".format(page, page_all))
             self["listposition"].setText("{}/{}".format(position, position_all))
 
-            self["main_title"].setText("{}: {}".format(self.main_title, channel_title))
+            parts = []
+
+            if self.main_title:
+                parts.append(self.main_title)
+
+            if self.group_title:
+                parts.append(self.group_title)
+
+            if self.series_group_title:
+                parts.append(self.series_group_title)
+
+            if channel_title:
+                parts.append(channel_title)
+
+            self["main_title"].setText(": ".join(parts))
 
             if self.level == 2:
                 self.loadDefaultCover()
@@ -2265,6 +2282,7 @@ class XStreamity_Series_Categories(Screen):
             if self.level == 1:
                 if self.list1:
                     category_id = self["main_list"].getCurrent()[3]
+                    self.group_title = self["main_list"].getCurrent()[0]
 
                     next_url = "{0}&action=get_series&category_id={1}".format(self.player_api, category_id)
                     self.chosen_category = ""
@@ -2291,6 +2309,7 @@ class XStreamity_Series_Categories(Screen):
 
             elif self.level == 2:
                 if self.list2:
+                    self.series_group_title = self["main_list"].getCurrent()[0]
                     self.title2 = self["main_list"].getCurrent()[0]
                     self.cover2 = self["main_list"].getCurrent()[5]
                     self.plot2 = self["main_list"].getCurrent()[6]
@@ -2359,7 +2378,7 @@ class XStreamity_Series_Categories(Screen):
 
         if self["main_list"].getCurrent():
             self["main_list"].setIndex(glob.currentchannellistindex)
-            self.createSetup()
+            # self.createSetup()
 
     def back(self, data=None):
         if debugs:
@@ -2388,8 +2407,12 @@ class XStreamity_Series_Categories(Screen):
             print(e)
             self.close()
 
+        if self.level == 2:
+            self.group_title = ""
+
         if self.level == 3:
             self.series_info = ""
+            self.series_group_title = ""
 
         if not glob.nextlist:
             self.close()
@@ -2416,13 +2439,13 @@ class XStreamity_Series_Categories(Screen):
 
             if self["main_list"].getCurrent():
                 if self.level == 1:
-                    self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "series", self.prelist + self.list1, self.level)
+                    self.session.openWithCallback(self.setIndex, hidden.XStreamity_HiddenCategories, "series", self.prelist + self.list1, self.level)
                 elif self.level == 2 and self.chosen_category != "favourites":
-                    self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "series", self.list2, self.level)
+                    self.session.openWithCallback(self.setIndex, hidden.XStreamity_HiddenCategories, "series", self.list2, self.level)
                 elif self.level == 3 and self.chosen_category != "favourites":
-                    self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "series", self.list3, self.level)
+                    self.session.openWithCallback(self.setIndex, hidden.XStreamity_HiddenCategories, "series", self.list3, self.level)
                 elif self.level == 4 and self.chosen_category != "favourites":
-                    self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "series", self.list4, self.level)
+                    self.session.openWithCallback(self.setIndex, hidden.XStreamity_HiddenCategories, "series", self.list4, self.level)
 
     def clearWatched(self):
         if debugs:
@@ -2570,8 +2593,10 @@ class XStreamity_Series_Categories(Screen):
         # self["vod_cover"].hide()
         # self["vod_logo"].hide()
         # self["vod_backdrop"].hide()
+        """
         if self.level == 3 or self.level == 4:
             self["main_title"].setText("")
+            """
         self["x_title"].setText("")
         self["x_description"].setText("")
         self["tagline"].setText("")
@@ -2645,7 +2670,7 @@ class XStreamity_Series_Categories(Screen):
             return
         else:
             from . import downloadmanager
-            self.session.openWithCallback(self.createSetup, downloadmanager.XStreamity_DownloadManager)
+            self.session.openWithCallback(self.setIndex, downloadmanager.XStreamity_DownloadManager)
 
     def check(self, token):
         result = base64.b64decode(token)

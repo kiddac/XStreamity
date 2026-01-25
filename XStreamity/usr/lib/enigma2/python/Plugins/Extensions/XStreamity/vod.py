@@ -128,6 +128,8 @@ class XStreamity_Vod_Categories(Screen):
         self.main_title = _("Movies")
         self["main_title"] = StaticText(self.main_title)
 
+        self.group_title = ""
+
         self.main_list = []
         self["main_list"] = List(self.main_list, enableWrapAround=True)
 
@@ -707,7 +709,19 @@ class XStreamity_Vod_Categories(Screen):
 
             self["page"].setText(_("Page: ") + "{}/{}".format(page, page_all))
             self["listposition"].setText("{}/{}".format(position, position_all))
-            self["main_title"].setText("{}: {}".format(self.main_title, channel_title))
+
+            parts = []
+
+            if self.main_title:
+                parts.append(self.main_title)
+
+            if self.group_title:
+                parts.append(self.group_title)
+
+            if channel_title:
+                parts.append(channel_title)
+
+            self["main_title"].setText(": ".join(parts))
 
             if self.level == 2:
                 self.timerVOD = eTimer()
@@ -1880,6 +1894,7 @@ class XStreamity_Vod_Categories(Screen):
             if self.level == 1:
                 if self.list1:
                     category_id = self["main_list"].getCurrent()[3]
+                    self.group_title = self["main_list"].getCurrent()[0]
 
                     next_url = "{0}&action=get_vod_streams&category_id={1}".format(self.player_api, category_id)
                     self.chosen_category = ""
@@ -1926,7 +1941,7 @@ class XStreamity_Vod_Categories(Screen):
 
         if self["main_list"].getCurrent():
             self["main_list"].setIndex(glob.currentchannellistindex)
-            self.createSetup()
+            # self.createSetup()
 
     def back(self, data=None):
         if debugs:
@@ -1935,6 +1950,7 @@ class XStreamity_Vod_Categories(Screen):
         self.chosen_category = ""
 
         if self.level == 2:
+            self.group_title = ""
             try:
                 self.timerVOD.stop()
             except:
@@ -1980,7 +1996,7 @@ class XStreamity_Vod_Categories(Screen):
             from . import hidden
             current_list = self.prelist + self.list1 if self.level == 1 else self.list2
             if self.level == 1 or (self.level == 2 and self.chosen_category != "favourites" and self.chosen_category != "recents"):
-                self.session.openWithCallback(self.createSetup, hidden.XStreamity_HiddenCategories, "vod", current_list, self.level)
+                self.session.openWithCallback(self.setIndex, hidden.XStreamity_HiddenCategories, "vod", current_list, self.level)
 
     def clearWatched(self):
         if debugs:
@@ -2179,7 +2195,7 @@ class XStreamity_Vod_Categories(Screen):
             return
         else:
             from . import downloadmanager
-            self.session.openWithCallback(self.createSetup, downloadmanager.XStreamity_DownloadManager)
+            self.session.openWithCallback(self.setIndex, downloadmanager.XStreamity_DownloadManager)
 
     def imdb(self):
         if debugs:

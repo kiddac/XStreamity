@@ -16,6 +16,27 @@ except ImportError:
 from .plugin import cfg
 
 
+def dedupe_playlists(playlists):
+    seen = set()
+    unique = []
+
+    for p in playlists:
+        pi = p.get("playlist_info", {})
+        key = (
+            str(pi.get("domain", "")).lower(),
+            str(pi.get("username", "")).strip(),
+            str(pi.get("password", "")).strip()
+        )
+
+        if key in seen:
+            continue
+
+        seen.add(key)
+        unique.append(p)
+
+    return unique
+
+
 def process_files():
 
     playlist_file = cfg.playlist_file.value
@@ -302,6 +323,7 @@ def process_files():
 
     # Write new x-playlists.json file
     with open(playlists_json, "w") as f:
+        playlists_all = dedupe_playlists(playlists_all)
         json.dump(playlists_all, f, indent=4)
 
     return playlists_all

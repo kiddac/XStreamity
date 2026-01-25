@@ -21,8 +21,60 @@ from Components.config import configfile
 from . import _
 from . import xstreamity_globals as glob
 from . import processfiles as loadfiles
-from .plugin import skin_directory, common_path, version, downloads_json, cfg
+from .plugin import skin_directory, common_path, version, downloads_json, cfg, dir_tmp
 from .xStaticText import StaticText
+
+
+def _cleanup_epg_folders(playlists_all):
+    epglocation = str(cfg.epglocation.value)
+
+    if os.path.isdir(epglocation):
+        valid_playlists = set()
+
+        for playlist in playlists_all:
+            try:
+                valid_playlists.add(str(playlist["playlist_info"]["name"]))
+            except Exception:
+                pass
+
+        for folder_name in os.listdir(epglocation):
+            epgfolder = os.path.join(epglocation, folder_name)
+
+            if not os.path.isdir(epgfolder):
+                continue
+
+            if folder_name not in valid_playlists:
+                try:
+                    import shutil
+                    shutil.rmtree(epgfolder)
+                except Exception:
+                    pass
+                continue
+
+            try:
+                for filename in os.listdir(epgfolder):
+                    if filename.lower().endswith(".xml"):
+                        try:
+                            os.remove(os.path.join(epgfolder, filename))
+                        except Exception:
+                            pass
+            except Exception:
+                pass
+
+    try:
+        if os.path.isdir(dir_tmp):
+            for item in os.listdir(dir_tmp):
+                path = os.path.join(dir_tmp, item)
+                try:
+                    if os.path.isdir(path):
+                        import shutil
+                        shutil.rmtree(path)
+                    else:
+                        os.remove(path)
+                except Exception:
+                    pass
+    except Exception:
+        pass
 
 
 class XStreamity_MainMenu(Screen):
@@ -150,6 +202,7 @@ class XStreamity_MainMenu(Screen):
 
     def start(self):
         self.playlists_all = loadfiles.process_files()
+        _cleanup_epg_folders(self.playlists_all)
         self.createSetup()
 
     def createSetup(self):

@@ -174,6 +174,8 @@ class XStreamity_Live_Categories(Screen):
         self.playlists_json = cfg.playlists_json.value
         self.setup_title = _("Live Categories")
         self.main_title = _("Live TV")
+        self.group_title = ""
+
         self["main_title"] = StaticText(self.main_title)
 
         self.main_list = []
@@ -650,7 +652,19 @@ class XStreamity_Live_Categories(Screen):
 
             self["page"].setText(_("Page: ") + "{}/{}".format(page, page_all))
             self["listposition"].setText("{}/{}".format(position, position_all))
-            self["main_title"].setText("{}: {}".format(self.main_title, channel_title))
+
+            parts = []
+
+            if self.main_title:
+                parts.append(self.main_title)
+
+            if self.group_title:
+                parts.append(self.group_title)
+
+            if channel_title:
+                parts.append(channel_title)
+
+            self["main_title"].setText(": ".join(parts))
 
             self.loadBlankImage()
 
@@ -1032,6 +1046,7 @@ class XStreamity_Live_Categories(Screen):
             glob.nextlist[-1]["index"] = current_index
             glob.currentchannellist = self.main_list[:]
             glob.currentchannellistindex = current_index
+            self.group_title = self["main_list"].getCurrent()[0]
 
             if self.level == 1:
                 if self.list1:
@@ -1171,6 +1186,7 @@ class XStreamity_Live_Categories(Screen):
             print("*** back ***")
 
         self.chosen_category = ""
+        self.group_title = ""
 
         if self.selectedlist == self["epg_short_list"]:
             self.shortEPG()

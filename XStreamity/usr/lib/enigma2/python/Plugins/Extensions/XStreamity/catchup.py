@@ -948,7 +948,7 @@ class XStreamity_Catchup_Categories(Screen):
             return
         else:
             from . import downloadmanager
-            self.session.openWithCallback(self.createSetup, downloadmanager.XStreamity_DownloadManager)
+            self.session.openWithCallback(self.setIndex, downloadmanager.XStreamity_DownloadManager)
 
     def failed(self, data=None):
         if data:
