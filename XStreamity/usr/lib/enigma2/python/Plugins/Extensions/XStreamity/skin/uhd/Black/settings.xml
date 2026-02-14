@@ -1,5 +1,5 @@
 <screen name="XStreamitySettings" position="0,0" size="2560,1440" backgroundColor="#000000" flags="wfNoBorder">
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/Black/images/background.png" alphatest="off" position="0,0" size="2560,1440" zPosition="-1"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/Black/images/background.png" alphatest="blend" position="0,0" size="2560,1440" zPosition="-1"/>
 	<widget source="global.CurrentTime" render="Label" position="1987,0" size="534,80" font="xstreamityregular;36" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" halign="right" transparent="1">
 		<convert type="ClockToText">Format:%H:%M | %A %-d %b</convert>
 	</widget>
@@ -25,5 +25,5 @@
 	<widget source="key_green" render="Label" position="740,1360" size="500,80" font="xstreamityregular;32" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" transparent="1" noWrap="1" zPosition="2"/>
 	
 	<widget name="VKeyIcon" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/key_text.png" position="1900,1375" size="51,51" alphatest="blend" transparent="1" zPosition="2"/>
-	<widget name="HelpWindow" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/vkey_icon.png" position="0,0" zPosition="1" size="2560,1440" transparent="1" alphatest="on"/>
+	<widget name="HelpWindow" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/common/vkey_icon.png" position="0,0" zPosition="1" size="2560,1440" transparent="1" alphatest="blend"/>
 </screen>

@@ -217,7 +217,6 @@ class XStreamity_DownloadManager(Screen):
         self.setup_title = _("VOD Download Manager")
         self.onChangedEntry = []
 
-        self.list = []
         self.drawList = []
         self.downloads_all = []
 
@@ -238,6 +237,12 @@ class XStreamity_DownloadManager(Screen):
 
         self["diskspace"] = StaticText()
 
+        self._http = requests.Session()
+        retries = Retry(total=1, backoff_factor=1)
+        adapter = HTTPAdapter(max_retries=retries)
+        self._http.mount("http://", adapter)
+        self._http.mount("https://", adapter)
+
         self["xstreamity_actions"] = ActionMap(["XStreamityActions"], {
             "red": self.keyCancel,
             "cancel": self.keyCancel,
@@ -248,6 +253,14 @@ class XStreamity_DownloadManager(Screen):
 
         self.onFirstExecBegin.append(self.start)
         self.onLayoutFinish.append(self.__layoutFinished)
+        self.onClose.append(self.__onClose)
+
+    def __onClose(self):
+        try:
+            self._http.close()
+        except:
+            pass
+        self._http = None
 
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
@@ -275,11 +288,16 @@ class XStreamity_DownloadManager(Screen):
     def readJsonFile(self):
         if debugs:
             print("*** readJsonFile ***")
-        self.downloads_all = []
+
+        del self.downloads_all[:]
+
         if os.path.isfile(downloads_json):
             try:
                 with open(downloads_json, "r") as f:
-                    self.downloads_all = json.load(f)
+                    data = json.load(f)
+
+                if isinstance(data, list):
+                    self.downloads_all.extend(data)
             except Exception as e:
                 print("Error reading JSON file:", e)
                 with open(downloads_json, "w") as f:
@@ -319,15 +337,10 @@ class XStreamity_DownloadManager(Screen):
             if video[5] == 0:
                 url = video[2]
 
-                retries = Retry(total=3, backoff_factor=1)
-                adapter = HTTPAdapter(max_retries=retries)
+                http = self._http
 
-                with requests.Session() as http:
-                    http.mount("http://", adapter)
-                    http.mount("https://", adapter)
-
-                    try:
-                        r = http.get(url, headers=hdr, timeout=20, verify=False, stream=True)
+                try:
+                    with http.get(url, headers=hdr, timeout=20, verify=False, stream=True) as r:
                         r.raise_for_status()
 
                         if r.status_code == requests.codes.ok or r.status_code == 206:
@@ -357,10 +370,10 @@ class XStreamity_DownloadManager(Screen):
                         else:
                             video[3] = "Error"
 
-                    except Exception as e:
-                        print(e)
-                        video[5] = 0
-                        video[3] = "Error"
+                except Exception as e:
+                    print(e)
+                    video[5] = 0
+                    video[3] = "Error"
 
             x += 1
             if x == 5:
@@ -373,7 +386,6 @@ class XStreamity_DownloadManager(Screen):
         if debugs:
             print("***  checkactivedownloads ***")
         standard_extensions = ['.mp4', '.mkv', '.avi', '.ts']
-        templist = []
         for video in self.downloads_all:
             recbytes = 0
             filmtitle = str(video[1])
@@ -417,9 +429,6 @@ class XStreamity_DownloadManager(Screen):
                 if video[3] == "Downloaded":
                     video[4] = 100
 
-            templist.append(video)
-
-        self.downloads_all[:] = templist
         self.buildList()
         self.saveJson()
 
@@ -486,17 +495,20 @@ class XStreamity_DownloadManager(Screen):
     def buildList(self):
         if debugs:
             print("*** buildList ***")
-        self.drawList = []
-        self.drawList = [
-            self.buildListEntry(
-                x[0], x[1], x[2], str(x[3]), x[4], x[5],
-                x[6] if len(x) > 6 else "",
-                x[7] if len(x) > 7 else "",
-                x[8] if len(x) > 8 else "",
-                x[9] if len(x) > 9 else ""
+
+        del self.drawList[:]
+
+        for x in self.downloads_all:
+            self.drawList.append(
+                self.buildListEntry(
+                    x[0], x[1], x[2], str(x[3]), x[4], x[5],
+                    x[6] if len(x) > 6 else "",
+                    x[7] if len(x) > 7 else "",
+                    x[8] if len(x) > 8 else "",
+                    x[9] if len(x) > 9 else ""
+                )
             )
-            for x in self.downloads_all
-        ]
+
         self["downloadlist"].setList(self.drawList)
 
     def updatescreen(self):
@@ -717,7 +729,7 @@ class XStreamity_DownloadManager(Screen):
     def delete_all(self):
         if debugs:
             print("*** delete_all ***")
-        self.downloads_all = [
+        self.downloads_all[:] = [
             entry for entry in self.downloads_all if entry[3] != "Downloaded"
         ]
 
@@ -788,11 +800,15 @@ class XStreamity_DownloadManager(Screen):
                 print("Error renaming file: " + str(e))
 
         if os.path.isfile(downloads_json):
-            with open(downloads_json, "r") as f:
-                try:
-                    self.downloads_all = json.load(f)
-                except Exception as e:
-                    print(e)
+            try:
+                with open(downloads_json, "r") as f:
+                    data = json.load(f)
+
+                if isinstance(data, list):
+                    del self.downloads_all[:]
+                    self.downloads_all.extend(data)
+            except Exception as e:
+                print(e)
 
         x = 0
         for video in self.downloads_all:

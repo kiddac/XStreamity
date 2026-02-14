@@ -1,5 +1,5 @@
 <screen name="XStreamityMenu" position="0,0" size="1920,1080" flags="wfNoBorder" backgroundColor="#ff000000">
-	<widget name="splash" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/haze/images/splash.png" alphatest="off" position="0,0" size="1920,1080" zPosition="1000"/>
+	<widget name="splash" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/haze/images/splash.png" alphatest="blend" position="0,0" size="1920,1080" zPosition="1000"/>
 	<eLabel position="0,0" size="1920,90" backgroundColor="#1a000000" zPosition="-1"/>
 	<eLabel position="0,91" size="1920,1" backgroundColor="#ffffff" zPosition="-1"/>
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/common/logo_hz.png" position="0,0" size="300,90" alphatest="blend" zPosition="2"/>

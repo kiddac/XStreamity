@@ -8,7 +8,6 @@ import json
 import os
 import base64
 import zlib
-# import random
 
 try:
     from urlparse import urlparse, parse_qsl  # Python 2
@@ -25,6 +24,7 @@ except ImportError:
 
 # Third-party imports
 import requests
+from requests.adapters import HTTPAdapter, Retry
 
 # Enigma2 components
 from Components.ActionMap import ActionMap
@@ -32,7 +32,6 @@ from Components.Pixmap import Pixmap
 from Components.Sources.List import List
 from datetime import datetime
 from enigma import eTimer
-
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools.LoadPixmap import LoadPixmap
@@ -123,6 +122,12 @@ class XStreamity_Scanner(Screen):
         self["scroll_up"].hide()
         self["scroll_down"].hide()
 
+        self._http = requests.Session()
+        retries = Retry(total=1, backoff_factor=1)
+        adapter = HTTPAdapter(max_retries=retries)
+        self._http.mount("http://", adapter)
+        self._http.mount("https://", adapter)
+
         self["actions"] = ActionMap(["XStreamityActions"], {
             "red": self.quit,
             "green": self.getStreamTypes,
@@ -132,6 +137,14 @@ class XStreamity_Scanner(Screen):
 
         self.onFirstExecBegin.append(self.start)
         self.onLayoutFinish.append(self.__layoutFinished)
+        self.onClose.append(self.__onClose)
+
+    def __onClose(self):
+        try:
+            self._http.close()
+        except:
+            pass
+        self._http = None
 
     def clear_caches(self):
         try:
@@ -288,9 +301,9 @@ class XStreamity_Scanner(Screen):
         index = url[1]
         response = None
 
-        with requests.Session() as http:
-            try:
-                r = http.get(url[0], headers=hdr, timeout=5, verify=False)
+        http = self._http
+        try:
+            with http.get(url[0], headers=hdr, timeout=5, verify=False) as r:
                 r.raise_for_status()
                 content_type = r.headers.get('Content-Type', '')
                 if 'application/json' in content_type:
@@ -308,10 +321,10 @@ class XStreamity_Scanner(Screen):
                 else:
                     return index, None
 
-            except requests.exceptions.RequestException:
-                pass
-            except Exception:
-                pass
+        except requests.exceptions.RequestException:
+            pass
+        except Exception:
+            pass
 
         return index, response
 

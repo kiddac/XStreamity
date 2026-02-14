@@ -33,7 +33,7 @@ except ImportError:
 
 # Third-party imports
 import requests
-from PIL import Image, ImageFile, PngImagePlugin
+from PIL import Image
 from requests.adapters import HTTPAdapter, Retry
 from twisted.web.client import downloadPage
 
@@ -76,54 +76,6 @@ if sslverify:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
 
-
-# png hack
-def mycall(self, cid, pos, length):
-    if cid.decode("ascii") == "tRNS":
-        return self.chunk_TRNS(pos, length)
-    else:
-        return getattr(self, "chunk_" + cid.decode("ascii"))(pos, length)
-
-
-def mychunk_TRNS(self, pos, length):
-    i16 = PngImagePlugin.i16
-    _simple_palette = re.compile(b"^\xff*\x00\xff*$")
-    s = ImageFile._safe_read(self.fp, length)
-    if self.im_mode == "P":
-        if _simple_palette.match(s):
-            i = s.find(b"\0")
-            if i >= 0:
-                self.im_info["transparency"] = i
-        else:
-            self.im_info["transparency"] = s
-    elif self.im_mode in ("1", "L", "I"):
-        self.im_info["transparency"] = i16(s)
-    elif self.im_mode == "RGB":
-        self.im_info["transparency"] = i16(s), i16(s, 2), i16(s, 4)
-    return s
-
-
-if pythonVer != 2:
-    PngImagePlugin.ChunkStream.call = mycall
-    PngImagePlugin.PngStream.chunk_TRNS = mychunk_TRNS
-
-_initialized = 0
-
-
-def _mypreinit():
-    global _initialized
-    if _initialized >= 1:
-        return
-    try:
-        from . import MyPngImagePlugin
-        assert MyPngImagePlugin
-    except ImportError:
-        pass
-
-    _initialized = 1
-
-
-Image.preinit = _mypreinit
 
 epgimporter = os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/EPGImport")
 
@@ -251,6 +203,34 @@ class XStreamity_Live_Categories(Screen):
         epglocation = str(cfg.epglocation.value)
         self.epgfolder = os.path.join(epglocation, str(self.name))
         self.epgjsonfile = os.path.join(self.epgfolder, "epg.json")
+        self._epg_json_cache = None
+        self._epg_json_cache_mtime = 0
+
+        self._http = requests.Session()
+        retries = Retry(total=1, backoff_factor=1)
+        adapter = HTTPAdapter(max_retries=retries)
+        self._http.mount("http://", adapter)
+        self._http.mount("https://", adapter)
+
+        self._px_play = LoadPixmap(os.path.join(common_path, "play.png"))
+        self._px_fav = LoadPixmap(os.path.join(common_path, "favourite.png"))
+        self._px_watching = LoadPixmap(os.path.join(common_path, "watching.png"))
+        self._px_more = LoadPixmap(os.path.join(common_path, "more.png"))
+
+        self._re_bouquet_marker = re.compile(r"[^\w\s()\[\]]", re.U)
+
+        if screenwidth.width() == 2560:
+            self.picon_size = (294, 176)
+        elif screenwidth.width() > 1280:
+            self.picon_size = (220, 130)
+        else:
+            self.picon_size = (147, 88)
+
+        self.adult_keywords = set([
+            "adult", "+18", "18+", "18 rated", "xxx", "sex", "porn",
+            "voksen", "volwassen", "aikuinen", "Erwachsene", "dorosly",
+            "взрослый", "vuxen", "£дорослий"
+        ])
 
         # buttons / keys
         self["key_red"] = StaticText(_("Back"))
@@ -312,11 +292,62 @@ class XStreamity_Live_Categories(Screen):
         glob.nextlist = []
         glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self.sortText, "filter": ""})
 
+        self.timer = eTimer()
+
+        self.timerImage = eTimer()
+        try:
+            self.timerImage.callback.append(self.downloadImage)
+        except:
+            self.timerImage_conn = self.timerImage.timeout.connect(self.downloadImage)
+
         self.onFirstExecBegin.append(self.createSetup)
         self.onLayoutFinish.append(self.__layoutFinished)
+        self.onClose.append(self.__onClose)
+
+    def __onClose(self):
+        try:
+            self._http.close()
+        except:
+            pass
+        self._http = None
 
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
+
+    def _get_epg_json(self):
+        try:
+            mtime = os.path.getmtime(self.epgjsonfile)
+        except Exception:
+            self._epg_json_cache = None
+            self._epg_json_cache_mtime = 0
+            return None
+
+        if self._epg_json_cache is not None and self._epg_json_cache_mtime == mtime:
+            return self._epg_json_cache
+
+        try:
+            with open(self.epgjsonfile, "rb") as f:
+                self._epg_json_cache = json.load(f)
+                self._epg_json_cache_mtime = mtime
+                return self._epg_json_cache
+        except Exception:
+            self._epg_json_cache = None
+            self._epg_json_cache_mtime = 0
+            return None
+
+    def _stopTimerImage(self):
+        # Stop any scheduled timer fire
+        try:
+            if self.timerImage:
+                self.timerImage.stop()
+        except:
+            pass
+
+        # Invalidate any in-flight downloadPage callbacks (zap protection)
+        try:
+            self._picon_req_id += 1
+        except:
+            self._picon_req_id = 1
 
     def createSetup(self, data=None):
         if debugs:
@@ -327,7 +358,6 @@ class XStreamity_Live_Categories(Screen):
         if self.level == 1:
             self.getCategories()
             if glob.active_playlist["data"]["customsids"] is True:
-                self.timer = eTimer()
                 try:
                     self.timer_conn = self.timer.timeout.connect(self.xmltvCheckData)
                 except:
@@ -399,6 +429,23 @@ class XStreamity_Live_Categories(Screen):
         else:
             response = self.downloadApiData(glob.nextlist[-1]["next_url"])
 
+        player_info = glob.active_playlist.get("player_info", {})
+
+        if "livefavourites" not in player_info:
+            player_info["livefavourites"] = []
+
+        fav_set = set(str(x.get("stream_id", "")) for x in player_info.get("livefavourites", []) if x.get("stream_id", ""))
+
+        if "channelshidden" not in player_info:
+            player_info["channelshidden"] = []
+
+        channelshidden_set = set(str(x) for x in player_info.get("channelshidden", []) if x != "")
+
+        if "livehidden" not in player_info:
+            player_info["livehidden"] = []
+
+        livehidden_set = set(str(x) for x in player_info.get("livehidden", []) if x != "")
+
         index = 0
         self.list2 = []
 
@@ -416,15 +463,14 @@ class XStreamity_Live_Categories(Screen):
 
                 # restyle bouquet markers
                 if "stream_type" in channel and channel["stream_type"] and channel["stream_type"] != "live":
-                    pattern = re.compile(r"[^\w\s()\[\]]", re.U)
-                    name = re.sub(r"_", "", re.sub(pattern, "", name))
+                    name = re.sub(r"_", "", re.sub(self._re_bouquet_marker, "", name))
                     name = "** " + str(name) + " **"
 
                 stream_id = channel.get("stream_id", "")
                 if not stream_id:
                     continue
 
-                hidden = str(stream_id) in glob.active_playlist["player_info"]["channelshidden"]
+                hidden = str(stream_id) in channelshidden_set
 
                 stream_icon = str(channel.get("stream_icon", ""))
 
@@ -442,7 +488,7 @@ class XStreamity_Live_Categories(Screen):
                 added = str(channel.get("added", "0"))
 
                 category_id = str(channel.get("category_id", ""))
-                if self.chosen_category == "all" and str(category_id) in glob.active_playlist["player_info"]["livehidden"]:
+                if self.chosen_category == "all" and str(category_id) in livehidden_set:
                     continue
 
                 try:
@@ -466,14 +512,7 @@ class XStreamity_Live_Categories(Screen):
 
                 next_url = "{}/live/{}/{}/{}.{}".format(self.host, self.username, self.password, stream_id, self.output)
 
-                favourite = False
-                if "livefavourites" in glob.active_playlist["player_info"]:
-                    for fav in glob.active_playlist["player_info"]["livefavourites"]:
-                        if str(stream_id) == str(fav["stream_id"]):
-                            favourite = True
-                            break
-                else:
-                    glob.active_playlist["player_info"]["livefavourites"] = []
+                favourite = str(stream_id) in fav_set
 
                 """
                 0 = index
@@ -507,15 +546,10 @@ class XStreamity_Live_Categories(Screen):
     def downloadApiData(self, url):
         if debugs:
             print("*** downloadApiData ***")
-        retries = Retry(total=2, backoff_factor=1)
-        adapter = HTTPAdapter(max_retries=retries)
 
-        with requests.Session() as http:
-            http.mount("http://", adapter)
-            http.mount("https://", adapter)
-
-            try:
-                response = http.get(url, headers=hdr, timeout=(10, 30), verify=False)
+        http = self._http
+        try:
+            with http.get(url, headers=hdr, timeout=(10, 30), verify=False) as response:
                 response.raise_for_status()
 
                 if response.status_code == requests.codes.ok:
@@ -527,9 +561,9 @@ class XStreamity_Live_Categories(Screen):
                     except ValueError:
                         print("JSON decoding failed.")
                         return None
-            except Exception as e:
-                print("Error occurred during API data download:", e)
-                self.session.openWithCallback(self.back, MessageBox, _("Server error or invalid link."), MessageBox.TYPE_ERROR, timeout=3)
+        except Exception as e:
+            print("Error occurred during API data download:", e)
+            self.session.openWithCallback(self.back, MessageBox, _("Server error or invalid link."), MessageBox.TYPE_ERROR, timeout=3)
 
     def xmltvCheckData(self):
         if debugs:
@@ -565,11 +599,11 @@ class XStreamity_Live_Categories(Screen):
         self.xmltvdownloaded = False
 
         if self["key_blue"].getText() != _("Reset Search"):
-            self.pre_list = [buildCategoryList(x[0], x[1], x[2], x[3]) for x in self.prelist if not x[3]]
+            self.pre_list = [buildCategoryList(x[0], x[1], x[2], x[3], self._px_more) for x in self.prelist if not x[3]]
         else:
             self.pre_list = []
 
-        self.main_list = [buildCategoryList(x[0], x[1], x[2], x[3]) for x in self.list1 if not x[3]]
+        self.main_list = [buildCategoryList(x[0], x[1], x[2], x[3], self._px_more) for x in self.list1 if not x[3]]
 
         self["main_list"].setList(self.pre_list + self.main_list)
 
@@ -584,10 +618,22 @@ class XStreamity_Live_Categories(Screen):
         # index = 0, name = 1, stream_id = 2, stream_icon = 3, epg_channel_id = 4, added = 5, category_id = 6, custom_sid = 7, nowtime = 9
         # nowTitle = 10, nowDesc = 11, nexttime = 12, nextTitle = 13, nextDesc = 14, next_url = 15, favourite = 16, watching = 17, hidden = 18, nowunixtime = 19, nowunixtime = 20
         if self.chosen_category == "favourites":
-            self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18]) for x in self.list2 if x[16] is True]
+            self.main_list = [
+                buildLiveStreamList(
+                    x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18],
+                    self._px_play, self._px_fav, self._px_watching
+                )
+                for x in self.list2 if x[16] is True
+            ]
             self.epglist = [buildEPGListEntry(x[0], x[1], x[9], x[10], x[11], x[12], x[13], x[14], x[18], x[19], x[20]) for x in self.list2 if x[16] is True]
         else:
-            self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18]) for x in self.list2 if x[18] is False]
+            self.main_list = [
+                buildLiveStreamList(
+                    x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18],
+                    self._px_play, self._px_fav, self._px_watching
+                )
+                for x in self.list2 if x[18] is False
+            ]
             self.epglist = [buildEPGListEntry(x[0], x[1], x[9], x[10], x[11], x[12], x[13], x[14], x[18], x[19], x[20]) for x in self.list2 if x[18] is False]
 
         self["main_list"].setList(self.main_list)
@@ -638,6 +684,7 @@ class XStreamity_Live_Categories(Screen):
     def selectionChanged(self):
         if debugs:
             print("*** selectionchanged ***")
+
         current_item = self["main_list"].getCurrent()
         if current_item:
             channel_title = current_item[0]
@@ -679,13 +726,8 @@ class XStreamity_Live_Categories(Screen):
                         self.refreshEPGInfo()
 
                 if cfg.channelpicons.value:
-                    self.timerimage = eTimer()
-
-                    try:
-                        self.timerimage.callback.append(self.downloadImage)
-                    except:
-                        self.timerimage_conn = self.timerimage.timeout.connect(self.downloadImage)
-                    self.timerimage.start(250, True)
+                    self._stopTimerImage()
+                    self.timerImage.start(250, True)
 
         else:
             position = 0
@@ -702,41 +744,99 @@ class XStreamity_Live_Categories(Screen):
     def downloadImage(self):
         if debugs:
             print("*** downloadimage ***")
-        if self["main_list"].getCurrent():
-            try:
-                for filename in ["original.png", "temp.png"]:
-                    file_path = os.path.join(dir_tmp, filename)
-                    if os.path.exists(file_path):
-                        os.remove(file_path)
-            except Exception:
-                pass
 
+        if not self["main_list"].getCurrent():
+            self.loadDefaultImage()
+            return
+
+        # Clear immediately so previous image doesn't remain if new fails
+        self.loadBlankImage()
+
+        # bump request id so stale callbacks can be ignored (zap protection)
+        try:
+            self._picon_req_id += 1
+        except:
+            self._picon_req_id = 1
+
+        req_id = self._picon_req_id
+
+        desc_image = ""
+        try:
+            desc_image = self["main_list"].getCurrent()[5]
+        except:
             desc_image = ""
+
+        if not desc_image or desc_image == "n/A":
+            self.loadDefaultImage()
+            return
+
+        fd = None
+        temp = None
+
+        try:
+            fd, temp = tempfile.mkstemp(prefix="xst_live_picon_", suffix=".png", dir=dir_tmp)
             try:
-                desc_image = self["main_list"].getCurrent()[5]
+                os.close(fd)
             except:
                 pass
 
-            if desc_image and desc_image != "n/A":
-                temp = os.path.join(dir_tmp, "temp.png")
+            parsed = urlparse(desc_image)
+            domain = parsed.hostname
+            scheme = parsed.scheme
 
+            url = desc_image
+            if pythonVer == 3:
                 try:
-                    parsed = urlparse(desc_image)
-                    domain = parsed.hostname
-                    scheme = parsed.scheme
+                    url = desc_image.encode()
+                except:
+                    url = desc_image
 
-                    if pythonVer == 3:
-                        desc_image = desc_image.encode()
+            def _cleanup_temp():
+                try:
+                    if temp and os.path.exists(temp):
+                        os.remove(temp)
+                except:
+                    pass
 
-                    if scheme == "https" and sslverify:
-                        sniFactory = SNIFactory(domain)
-                        downloadPage(desc_image, temp, sniFactory, timeout=2).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
-                    else:
-                        downloadPage(desc_image, temp, timeout=2).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
-                except Exception:
-                    self.loadDefaultImage()
-            else:
+            def _ok(_data=None):
+                # ignore stale callback if user moved again
+                if getattr(self, "_picon_req_id", 0) != req_id:
+                    _cleanup_temp()
+                    return
+
+                self.resizeImage(temp, req_id=req_id)
+
+            def _err(_failure=None):
+                if getattr(self, "_picon_req_id", 0) != req_id:
+                    _cleanup_temp()
+                    return
+
+                _cleanup_temp()
                 self.loadDefaultImage()
+
+            if scheme == "https" and sslverify:
+                sniFactory = SNIFactory(domain)
+                d = downloadPage(url, temp, sniFactory, timeout=2)
+            else:
+                d = downloadPage(url, temp, timeout=2)
+
+            d.addCallback(_ok)
+            d.addErrback(_err)
+
+        except Exception:
+            try:
+                if fd:
+                    os.close(fd)
+            except:
+                pass
+
+            try:
+                if temp and os.path.exists(temp):
+                    os.remove(temp)
+            except:
+                pass
+
+            self.loadDefaultImage()
 
     def loadBlankImage(self, data=None):
         if debugs:
@@ -750,58 +850,54 @@ class XStreamity_Live_Categories(Screen):
         if self["picon"].instance:
             self["picon"].instance.setPixmapFromFile(os.path.join(common_path, "picon.png"))
 
-    def resizeImage(self, data=None):
+    def resizeImage(self, original, req_id=None, data=None):
         if debugs:
             print("*** resizeImage ***")
-        current_item = self["main_list"].getCurrent()
-        if current_item:
-            original = os.path.join(dir_tmp, "temp.png")
 
-            # Determine the target size based on screen width
-            if screenwidth.width() == 2560:
-                size = [294, 176]
-            elif screenwidth.width() > 1280:
-                size = [220, 130]
-            else:
-                size = [147, 88]
+        # If user moved on, don't update UI; just cleanup the temp file
+        if req_id is not None and getattr(self, "_picon_req_id", 0) != req_id:
+            try:
+                if original and os.path.exists(original):
+                    os.remove(original)
+            except:
+                pass
+            return
 
-            if os.path.exists(original):
-                try:
-                    im = Image.open(original)
+        size = self.picon_size
 
-                    # Convert to RGBA if not already
+        if os.path.exists(original):
+            try:
+                with Image.open(original) as im:
                     if im.mode != "RGBA":
                         im = im.convert("RGBA")
 
-                    # Resize image with Lanczos resampling if available, otherwise use ANTIALIAS
                     try:
                         im.thumbnail(size, Image.Resampling.LANCZOS)
                     except:
                         im.thumbnail(size, Image.ANTIALIAS)
 
-                    # Create blank RGBA image
                     bg = Image.new("RGBA", size, (255, 255, 255, 0))
-
-                    # Calculate position for centering
 
                     left = (size[0] - im.size[0]) // 2
                     top = (size[1] - im.size[1]) // 2
 
-                    # Paste resized image onto blank image
                     bg.paste(im, (left, top), mask=im)
-
-                    # Save as PNG
                     bg.save(original, "PNG")
 
-                    # Set pixmap for picon instance
-                    if self["picon"].instance:
-                        self["picon"].instance.setPixmapFromFile(original)
+                if self["picon"].instance:
+                    self["picon"].instance.setPixmapFromFile(original)
 
-                except Exception as e:
-                    print("Error resizing image:", e)
-                    self.loadDefaultImage()
-            else:
+            except Exception as e:
+                print("Error resizing image:", e)
                 self.loadDefaultImage()
+
+            try:
+                os.remove(original)
+            except:
+                pass
+
+        else:
+            self.loadDefaultImage()
 
     def goUp(self):
         if debugs:
@@ -892,6 +988,7 @@ class XStreamity_Live_Categories(Screen):
     def search(self, result=None):
         if debugs:
             print("*** search ***")
+
         if not self["key_blue"].getText():
             return
 
@@ -1002,11 +1099,6 @@ class XStreamity_Live_Categories(Screen):
         nowtime = int(time.mktime(datetime.now().timetuple())) if pythonVer == 2 else int(datetime.timestamp(datetime.now()))
 
         if self.level == 1 and self["main_list"].getCurrent():
-            adult_keywords = {
-                "adult", "+18", "18+", "18 rated", "xxx", "sex", "porn",
-                "voksen", "volwassen", "aikuinen", "Erwachsene", "dorosly",
-                "взрослый", "vuxen", "£дорослий"
-            }
 
             current_title = str(self["main_list"].getCurrent()[0])
 
@@ -1016,7 +1108,7 @@ class XStreamity_Live_Categories(Screen):
             elif "sport" in current_title.lower():
                 glob.adultChannel = False
 
-            elif any(keyword in current_title.lower() for keyword in adult_keywords):
+            elif any(keyword in current_title.lower() for keyword in self.adult_keywords):
                 glob.adultChannel = True
 
             else:
@@ -1044,7 +1136,10 @@ class XStreamity_Live_Categories(Screen):
         if self["main_list"].getCurrent():
             current_index = self["main_list"].getIndex()
             glob.nextlist[-1]["index"] = current_index
-            glob.currentchannellist = self.main_list[:]
+
+            if glob.currentchannellist is not self.main_list:
+                glob.currentchannellist = self.main_list[:]
+
             glob.currentchannellistindex = current_index
             self.group_title = self["main_list"].getCurrent()[0]
 
@@ -1100,9 +1195,21 @@ class XStreamity_Live_Categories(Screen):
                             channel[17] = (channel[2] == stream_id)
 
                         if self.chosen_category == "favourites":
-                            self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18]) for x in self.list2 if x[16] is True]
+                            self.main_list = [
+                                buildLiveStreamList(
+                                    x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18],
+                                    self._px_play, self._px_fav, self._px_watching
+                                )
+                                for x in self.list2 if x[16] is True
+                            ]
                         else:
-                            self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18]) for x in self.list2 if x[18] is False]
+                            self.main_list = [
+                                buildLiveStreamList(
+                                    x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18],
+                                    self._px_play, self._px_fav, self._px_watching
+                                )
+                                for x in self.list2 if x[18] is False
+                            ]
 
                         self["main_list"].setList(self.main_list)
                         if self["main_list"].getCurrent() and glob.nextlist[-1]["index"] != 0:
@@ -1165,9 +1272,21 @@ class XStreamity_Live_Categories(Screen):
                 pass
 
             if self.chosen_category == "favourites":
-                self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18]) for x in self.list2 if x[16] is True]
+                self.main_list = [
+                    buildLiveStreamList(
+                        x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18],
+                        self._px_play, self._px_fav, self._px_watching
+                    )
+                    for x in self.list2 if x[16] is True
+                ]
             else:
-                self.main_list = [buildLiveStreamList(x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18]) for x in self.list2 if x[18] is False]
+                self.main_list = [
+                    buildLiveStreamList(
+                        x[0], x[1], x[2], x[3], x[15], x[16], x[17], x[18],
+                        self._px_play, self._px_fav, self._px_watching
+                    )
+                    for x in self.list2 if x[18] is False
+                ]
 
             self["main_list"].setList(self.main_list)
 
@@ -1184,6 +1303,8 @@ class XStreamity_Live_Categories(Screen):
     def back(self, data=None):
         if debugs:
             print("*** back ***")
+
+        self._stopTimerImage()
 
         self.chosen_category = ""
         self.group_title = ""
@@ -1290,92 +1411,95 @@ class XStreamity_Live_Categories(Screen):
 
             self.epgcache = eEPGCache.getInstance()
 
-            with open(self.epgjsonfile, "rb") as f:
-                try:
-                    self.epgJson = json.load(f)
-                    for channel in self.list2:
-                        epg_channel_id = channel[4].lower()
+            self.epgJson = self._get_epg_json()
 
-                        if epg_channel_id in self.epgJson:
-                            for index, entry in enumerate(self.epgJson[epg_channel_id]):
-                                if (index + 1 < len(self.epgJson[epg_channel_id])):
-                                    next_el = self.epgJson[epg_channel_id][index + 1]
+            try:
+                offset = int(glob.active_playlist["player_info"]["epgoffset"]) * 3600
 
-                                    if next_el == entry:
-                                        next_el = self.epgJson[epg_channel_id][index + 2]
+                for channel in self.list2:
+                    epg_channel_id = channel[4].lower()
 
-                                    entry[0] = int(entry[0]) + (int(glob.active_playlist["player_info"]["epgoffset"]) * 3600)
-                                    entry[1] = int(entry[1]) + (int(glob.active_playlist["player_info"]["epgoffset"]) * 3600)
+                    if self.epgJson and epg_channel_id in self.epgJson:
+                        channel_epg = self.epgJson[epg_channel_id]
 
-                                    if int(entry[0]) < now and int(entry[1]) > now:
+                        for index, entry in enumerate(channel_epg):
+                            if index + 1 < len(channel_epg):
+                                next_el = channel_epg[index + 1]
 
-                                        channel[9] = str(time.strftime("%H:%M", time.localtime(int(entry[0]))))
-                                        channel[10] = str(entry[2])
-                                        channel[11] = str(entry[3])
-                                        channel[19] = int(entry[0])
+                                if next_el == entry and index + 2 < len(channel_epg):
+                                    next_el = channel_epg[index + 2]
 
-                                        channel[12] = str(time.strftime("%H:%M", time.localtime(int(entry[1]))))
-                                        channel[13] = str(next_el[2])
-                                        channel[14] = str(next_el[3])
-                                        channel[20] = int(entry[1])
+                                start_ts = int(entry[0]) + offset
+                                stop_ts = int(entry[1]) + offset
 
-                                        break
-                        else:
-                            self.eventslist = []
-                            serviceref = channel[8]
+                                if start_ts < now and stop_ts > now:
+                                    channel[9] = str(time.strftime("%H:%M", time.localtime(start_ts)))
+                                    channel[10] = str(entry[2])
+                                    channel[11] = str(entry[3])
+                                    channel[19] = start_ts
 
-                            events = ["IBDTEX", (serviceref, -1, -1, -1)]  # search next 12 hours
-                            self.eventslist = [] if self.epgcache is None else self.epgcache.lookupEvent(events)
+                                    channel[12] = str(time.strftime("%H:%M", time.localtime(stop_ts)))
+                                    channel[13] = str(next_el[2])
+                                    channel[14] = str(next_el[3])
+                                    channel[20] = stop_ts
 
-                            for i in range(len(self.eventslist)):
-                                if self.eventslist[i][1] is not None:
-                                    self.eventslist[i] = (self.eventslist[i][0], self.eventslist[i][1], self.eventslist[i][2], self.eventslist[i][3], self.eventslist[i][4])
+                                    break
+                    else:
+                        self.eventslist = []
+                        serviceref = channel[8]
 
-                            if self.eventslist:
-                                if len(self.eventslist) > 0:
-                                    try:
-                                        # start time
-                                        if self.eventslist[0][1]:
-                                            channel[9] = str(time.strftime("%H:%M", time.localtime(self.eventslist[0][1])))
-                                            channel[19] = int(self.eventslist[0][1])
+                        events = ["IBDTEX", (serviceref, -1, -1, -1)]  # search next 12 hours
+                        self.eventslist = [] if self.epgcache is None else self.epgcache.lookupEvent(events)
 
-                                        # title
-                                        if self.eventslist[0][3]:
-                                            channel[10] = str(self.eventslist[0][3])
+                        for i in range(len(self.eventslist)):
+                            if self.eventslist[i][1] is not None:
+                                self.eventslist[i] = (self.eventslist[i][0], self.eventslist[i][1], self.eventslist[i][2], self.eventslist[i][3], self.eventslist[i][4])
 
-                                        # description
-                                        if self.eventslist[0][4]:
-                                            channel[11] = str(self.eventslist[0][4])
-
-                                    except Exception as e:
-                                        print(e)
-
-                            if len(self.eventslist) > 1:
+                        if self.eventslist:
+                            if len(self.eventslist) > 0:
                                 try:
-                                    # next start time
-                                    if self.eventslist[1][1]:
-                                        channel[12] = str(time.strftime("%H:%M", time.localtime(self.eventslist[1][1])))
-                                        channel[20] = int(self.eventslist[1][1])
+                                    # start time
+                                    if self.eventslist[0][1]:
+                                        channel[9] = str(time.strftime("%H:%M", time.localtime(self.eventslist[0][1])))
+                                        channel[19] = int(self.eventslist[0][1])
 
-                                    # next title
-                                    if self.eventslist[1][3]:
-                                        channel[13] = str(self.eventslist[1][3])
+                                    # title
+                                    if self.eventslist[0][3]:
+                                        channel[10] = str(self.eventslist[0][3])
 
-                                    # next description
-                                    if self.eventslist[1][4]:
-                                        channel[14] = str(self.eventslist[1][4])
+                                    # description
+                                    if self.eventslist[0][4]:
+                                        channel[11] = str(self.eventslist[0][4])
+
                                 except Exception as e:
                                     print(e)
 
-                    self.epglist = [buildEPGListEntry(x[0], x[1], x[9], x[10], x[11], x[12], x[13], x[14], x[18], x[19], x[20]) for x in self.list2 if x[18] is False]
-                    self["epg_list"].updateList(self.epglist)
+                        if len(self.eventslist) > 1:
+                            try:
+                                # next start time
+                                if self.eventslist[1][1]:
+                                    channel[12] = str(time.strftime("%H:%M", time.localtime(self.eventslist[1][1])))
+                                    channel[20] = int(self.eventslist[1][1])
 
-                    instance = self["epg_list"].master.master.instance
-                    instance.setSelectionEnable(0)
-                    self.xmltvdownloaded = True
-                    self.refreshEPGInfo()
-                except Exception as e:
-                    print(e)
+                                # next title
+                                if self.eventslist[1][3]:
+                                    channel[13] = str(self.eventslist[1][3])
+
+                                # next description
+                                if self.eventslist[1][4]:
+                                    channel[14] = str(self.eventslist[1][4])
+                            except Exception as e:
+                                print(e)
+
+                self.epglist = [buildEPGListEntry(x[0], x[1], x[9], x[10], x[11], x[12], x[13], x[14], x[18], x[19], x[20]) for x in self.list2 if x[18] is False]
+                self["epg_list"].updateList(self.epglist)
+
+                instance = self["epg_list"].master.master.instance
+                instance.setSelectionEnable(0)
+                self.xmltvdownloaded = True
+                self.refreshEPGInfo()
+            except Exception as e:
+                print(e)
 
     def hideEPG(self):
         if debugs:
@@ -1497,22 +1621,16 @@ class XStreamity_Live_Categories(Screen):
 
                         url = "{}&action=get_simple_data_table&stream_id={}".format(self.player_api, stream_id)
 
-                        retries = Retry(total=3, backoff_factor=1)
-                        adapter = HTTPAdapter(max_retries=retries)
-
-                        with requests.Session() as http:
-                            http.mount("http://", adapter)
-                            http.mount("https://", adapter)
-
-                            try:
-                                r = http.get(url, headers=hdr, timeout=(10, 20), verify=False)
+                        http = self._http
+                        try:
+                            with http.get(url, headers=hdr, timeout=(10, 20), verify=False) as r:
                                 r.raise_for_status()
 
                                 if r.status_code == requests.codes.ok:
                                     response = r.json()
-                            except Exception as e:
-                                print("Error fetching short EPG:", e)
-                                response = None
+                        except Exception as e:
+                            print("Error fetching short EPG:", e)
+                            response = None
 
                         if response:
                             now = datetime.now()
@@ -1853,15 +1971,18 @@ def buildShortEPGListEntry(date_all, time_all, title, description, index, start_
     return (title, date_all, time_all, description, index, start_datetime, end_datetime, start_timestamp, stop_timestamp)
 
 
-def buildCategoryList(index, title, category_id, hidden):
-    png = LoadPixmap(os.path.join(common_path, "more.png"))
-    return (title, png, index, category_id, hidden)
+def buildCategoryList(index, title, category_id, hidden, px_more=None):
+    return (title, px_more, index, category_id, hidden)
 
 
-def buildLiveStreamList(index, name, stream_id, stream_icon, next_url, favourite, watching, hidden):
-    png = LoadPixmap(os.path.join(common_path, "play.png"))
+def buildLiveStreamList(index, name, stream_id, stream_icon, next_url, favourite, watching, hidden,
+                        px_play=None, px_fav=None, px_watching=None):
+    png = px_play
+
     if favourite:
-        png = LoadPixmap(os.path.join(common_path, "favourite.png"))
+        png = px_fav
+
     if watching:
-        png = LoadPixmap(os.path.join(common_path, "watching.png"))
+        png = px_watching
+
     return (name, png, index, next_url, stream_id, stream_icon, hidden)

@@ -6,6 +6,7 @@ from __future__ import absolute_import, print_function
 from __future__ import division
 import os
 import re
+import tempfile
 from itertools import cycle, islice
 from datetime import datetime, timedelta
 
@@ -22,7 +23,7 @@ except ImportError:
     HTTPConnection.debuglevel = 0
 
 # Third-party imports
-from PIL import Image, ImageFile, PngImagePlugin
+from PIL import Image
 from twisted.web.client import downloadPage
 
 # https twisted client hack #
@@ -94,56 +95,6 @@ else:
             pass
 
 
-# png hack
-def mycall(self, cid, pos, length):
-    if cid.decode("ascii") == "tRNS":
-        return self.chunk_TRNS(pos, length)
-    else:
-        return getattr(self, "chunk_" + cid.decode("ascii"))(pos, length)
-
-
-def mychunk_TRNS(self, pos, length):
-    i16 = PngImagePlugin.i16
-    _simple_palette = re.compile(b"^\xff*\x00\xff*$")
-    s = ImageFile._safe_read(self.fp, length)
-    if self.im_mode == "P":
-        if _simple_palette.match(s):
-            i = s.find(b"\0")
-            if i >= 0:
-                self.im_info["transparency"] = i
-        else:
-            self.im_info["transparency"] = s
-    elif self.im_mode in ("1", "L", "I"):
-        self.im_info["transparency"] = i16(s)
-    elif self.im_mode == "RGB":
-        self.im_info["transparency"] = i16(s), i16(s, 2), i16(s, 4)
-    return s
-
-
-if pythonVer != 2:
-    PngImagePlugin.ChunkStream.call = mycall
-    PngImagePlugin.PngStream.chunk_TRNS = mychunk_TRNS
-
-
-_initialized = 0
-
-
-def _mypreinit():
-    global _initialized
-    if _initialized >= 1:
-        return
-    try:
-        from . import MyPngImagePlugin
-        assert MyPngImagePlugin
-    except ImportError:
-        pass
-
-    _initialized = 1
-
-
-Image.preinit = _mypreinit
-
-
 VIDEO_ASPECT_RATIO_MAP = {
     0: "4:3 Letterbox",
     1: "4:3 PanScan",
@@ -169,14 +120,6 @@ if os.path.exists("/usr/bin/exteplayer3"):
 if os.path.exists("/usr/bin/apt-get"):
     streamtypelist.append("8193")
     vodstreamtypelist.append("8193")
-
-
-def clear_caches():
-    try:
-        with open("/proc/sys/vm/drop_caches", "w") as drop_caches:
-            drop_caches.write("1\n2\n3\n")
-    except IOError:
-        pass
 
 
 class IPTVInfoBarShowHide():
@@ -465,6 +408,7 @@ class XStreamity_CatchupPlayer(
 
         self.streamurl = streamurl
         self.servicetype = servicetype
+
         skin_path = os.path.join(skin_directory, cfg.skin.value)
         skin = os.path.join(skin_path, "catchupplayer.xml")
         with open(skin, "r") as f:
@@ -498,12 +442,47 @@ class XStreamity_CatchupPlayer(
             "ok": self.refreshInfobar,
         }, -2)
 
+        self.timerImage = eTimer()
+        try:
+            self.timerImage.callback.append(self.downloadImage)
+        except:
+            self.timerImage_conn = self.timerImage.timeout.connect(self.downloadImage)
+
         self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl))
+
+    def _stopTimer(self, name):
+        t = getattr(self, name, None)
+        if t:
+            try:
+                t.stop()
+            except:
+                pass
+
+    def _cleanupTimer(self, name):
+        t = getattr(self, name, None)
+        if t:
+            try:
+                t.stop()
+            except:
+                pass
+            try:
+                t.callback[:] = []
+            except:
+                pass
+        try:
+            setattr(self, name, None)
+        except:
+            pass
 
     def refreshInfobar(self):
         IPTVInfoBarShowHide.OkPressed(self)
 
     def playStream(self, servicetype, streamurl):
+        self._stopTimer("timerImage")
+
+        if not streamurl:
+            return
+
         self["x_description"].setText(glob.catchupdata[1])
         self["streamcat"].setText("Catch")
         self["streamtype"].setText(str(servicetype))
@@ -528,63 +507,102 @@ class XStreamity_CatchupPlayer(
             glob.newPlayingServiceRefString = currently_playing_ref.toString()
 
         if cfg.infobarpicons.value is True:
-            try:
-                self.timerimage = eTimer()
-                self.timerimage.callback.append(self.downloadImage)
-            except:
-                self.timerimage_conn = self.timerimage.timeout.connect(self.downloadImage)
-            self.timerimage.start(250, True)
-
-        self.timerCache = eTimer()
-        try:
-            self.timerCache.callback.append(clear_caches)
-        except:
-            self.timerCache_conn = self.timerCache.timeout.connect(clear_caches)
-        self.timerCache.start(5 * 60 * 1000, False)
+            self.timerImage.start(250, True)
 
     def downloadImage(self):
+        # Clear picon immediately on zap so previous one doesn't remain if new fails
         self.loadDefaultImage()
+
         try:
-            os.remove(os.path.join(dir_tmp, "original.png"))
-            os.remove(os.path.join(dir_tmp, "temp.png"))
+            self._picon_req_id += 1
         except:
-            pass
+            self._picon_req_id = 1
+
+        req_id = self._picon_req_id
 
         desc_image = ""
         try:
             desc_image = glob.currentchannellist[glob.currentchannellistindex][5]
         except:
-            pass
+            desc_image = ""
 
-        if desc_image and desc_image != "n/A":
-            temp = os.path.join(dir_tmp, "temp.png")
+        if not desc_image or desc_image == "n/A":
+            return
+
+        fd = None
+        temp = None
+
+        try:
+            fd, temp = tempfile.mkstemp(prefix="xst_picon_", suffix=".png", dir=dir_tmp)
             try:
-                parsed = urlparse(desc_image)
-                domain = parsed.hostname
-                scheme = parsed.scheme
-
-                if pythonVer == 3:
-                    desc_image = desc_image.encode()
-
-                if scheme == "https" and sslverify:
-                    sniFactory = SNIFactory(domain)
-                    downloadPage(desc_image, temp, sniFactory, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
-                else:
-                    downloadPage(desc_image, temp, timeout=5).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
+                os.close(fd)
             except:
+                pass
+
+            parsed = urlparse(desc_image)
+            domain = parsed.hostname
+            scheme = parsed.scheme
+
+            url = desc_image
+            if pythonVer == 3:
+                try:
+                    url = desc_image.encode()
+                except:
+                    url = desc_image
+
+            def _cleanup_temp():
+                try:
+                    if temp and os.path.exists(temp):
+                        os.remove(temp)
+                except:
+                    pass
+
+            def _ok(_data=None):
+                # Ignore stale callbacks (e.g. user zapped again)
+                if getattr(self, "_picon_req_id", 0) != req_id:
+                    _cleanup_temp()
+                    return
+
+                self.resizeImage(temp)
+
+            def _err(_failure=None):
+                # Ignore stale callbacks
+                if getattr(self, "_picon_req_id", 0) != req_id:
+                    _cleanup_temp()
+                    return
+
+                _cleanup_temp()
                 self.loadDefaultImage()
-        else:
+
+            if scheme == "https" and sslverify:
+                sniFactory = SNIFactory(domain)
+                d = downloadPage(url, temp, sniFactory, timeout=2)
+            else:
+                d = downloadPage(url, temp, timeout=2)
+
+            d.addCallback(_ok)
+            d.addErrback(_err)
+
+        except:
+            try:
+                if fd:
+                    os.close(fd)
+            except:
+                pass
+
+            try:
+                if temp and os.path.exists(temp):
+                    os.remove(temp)
+            except:
+                pass
+
             self.loadDefaultImage()
 
     def loadDefaultImage(self, data=None):
         if self["picon"].instance:
             self["picon"].instance.setPixmapFromFile(os.path.join(common_path, "picon.png"))
 
-    def resizeImage(self, data=None):
-        # print("*** resizeImage ***")
-        original = os.path.join(dir_tmp, "temp.png")
-
-        # Determine the target size based on screen width
+    def resizeImage(self, original, data=None):
         if screenwidth.width() == 2560:
             size = [294, 176]
         elif screenwidth.width() > 1280:
@@ -594,50 +612,45 @@ class XStreamity_CatchupPlayer(
 
         if os.path.exists(original):
             try:
-                im = Image.open(original)
+                with Image.open(original) as im:
+                    if im.mode != "RGBA":
+                        im = im.convert("RGBA")
 
-                # Convert to RGBA if not already
-                if im.mode != "RGBA":
-                    im = im.convert("RGBA")
-                try:
-                    im.thumbnail(size, Image.Resampling.LANCZOS)
-                except:
-                    im.thumbnail(size, Image.ANTIALIAS)
+                    try:
+                        im.thumbnail(size, Image.Resampling.LANCZOS)
+                    except:
+                        im.thumbnail(size, Image.ANTIALIAS)
 
-                # Create blank RGBA image
-                bg = Image.new("RGBA", size, (255, 255, 255, 0))
+                    bg = Image.new("RGBA", size, (255, 255, 255, 0))
 
-                # Calculate position for centering
-                left = (size[0] - im.size[0]) // 2
-                top = (size[1] - im.hsize[1]) // 2
+                    left = (size[0] - im.size[0]) // 2
+                    top = (size[1] - im.size[1]) // 2
 
-                # Paste resized image onto blank image
-                bg.paste(im, (left, top), mask=im)
+                    bg.paste(im, (left, top), mask=im)
+                    bg.save(original, "PNG")
 
-                # Save as PNG
-                bg.save(original, "PNG")
-
-                # Set pixmap for picon instance
                 if self["picon"].instance:
                     self["picon"].instance.setPixmapFromFile(original)
 
             except Exception as e:
                 print("Error resizing image:", e)
                 self.loadDefaultImage()
+
+            try:
+                os.remove(original)
+            except:
+                pass
         else:
             self.loadDefaultImage()
 
     def back(self):
+        self._cleanupTimer("timerImage")
+
         glob.nextlist[-1]["index"] = glob.currentchannellistindex
         try:
             setResumePoint(self.session)
         except Exception as e:
             print(e)
-
-        try:
-            self.timerCache.stop()
-        except:
-            pass
 
         try:
             self.session.nav.stopService()

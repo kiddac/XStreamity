@@ -7,10 +7,9 @@ from __future__ import division
 import base64
 import codecs
 import json
-# import math
 import os
-import re
 import time
+import tempfile
 from datetime import datetime, timedelta
 from itertools import cycle, islice
 
@@ -28,7 +27,7 @@ except ImportError:
 
 # Third-party imports
 import requests
-from PIL import Image, ImageFile, PngImagePlugin
+from PIL import Image
 from requests.adapters import HTTPAdapter, Retry
 from twisted.web.client import downloadPage
 
@@ -70,55 +69,6 @@ if sslverify:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
 
-
-# png hack
-def mycall(self, cid, pos, length):
-    if cid.decode("ascii") == "tRNS":
-        return self.chunk_TRNS(pos, length)
-    else:
-        return getattr(self, "chunk_" + cid.decode("ascii"))(pos, length)
-
-
-def mychunk_TRNS(self, pos, length):
-    i16 = PngImagePlugin.i16
-    _simple_palette = re.compile(b"^\xff*\x00\xff*$")
-    s = ImageFile._safe_read(self.fp, length)
-    if self.im_mode == "P":
-        if _simple_palette.match(s):
-            i = s.find(b"\0")
-            if i >= 0:
-                self.im_info["transparency"] = i
-        else:
-            self.im_info["transparency"] = s
-    elif self.im_mode in ("1", "L", "I"):
-        self.im_info["transparency"] = i16(s)
-    elif self.im_mode == "RGB":
-        self.im_info["transparency"] = i16(s), i16(s, 2), i16(s, 4)
-    return s
-
-
-if pythonVer != 2:
-    PngImagePlugin.ChunkStream.call = mycall
-    PngImagePlugin.PngStream.chunk_TRNS = mychunk_TRNS
-
-_initialized = 0
-
-
-def _mypreinit():
-    global _initialized
-    if _initialized >= 1:
-        return
-    try:
-        from . import MyPngImagePlugin
-        assert MyPngImagePlugin
-    except ImportError:
-        pass
-
-    _initialized = 1
-
-
-Image.preinit = _mypreinit
-
 epgimporter = os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/EPGImport")
 
 hdr = {
@@ -141,7 +91,6 @@ def normalize_superscripts(text):
 
 
 def clean_names(streams):
-    """Clean 'name' and 'category_name' fields in each stream entry."""
     for item in streams:
         for field in ("name", "category_name"):
             if field in item and isinstance(item[field], str):
@@ -232,6 +181,30 @@ class XStreamity_Catchup_Categories(Screen):
         self["key_epg"] = StaticText("")
         self["key_menu"] = StaticText("")
 
+        self._http = requests.Session()
+        retries = Retry(total=1, backoff_factor=1)
+        adapter = HTTPAdapter(max_retries=retries)
+        self._http.mount("http://", adapter)
+        self._http.mount("https://", adapter)
+
+        # cache pixmaps (avoid LoadPixmap per row)
+        self._px_more = LoadPixmap(os.path.join(common_path, "more.png"))
+
+        # cache picon target size (screen size does not change at runtime)
+        if screenwidth.width() == 2560:
+            self.picon_size = (294, 176)
+        elif screenwidth.width() > 1280:
+            self.picon_size = (220, 130)
+        else:
+            self.picon_size = (147, 88)
+
+        # cache adult keywords (used in parentalCheck)
+        self.adult_keywords = set([
+            "adult", "+18", "18+", "18 rated", "xxx", "sex", "porn",
+            "voksen", "volwassen", "aikuinen", "Erwachsene", "dorosly",
+            "взрослый", "vuxen", "£дорослий"
+        ])
+
         self["category_actions"] = ActionMap(["XStreamityActions"], {
             "cancel": self.back,
             "red": self.back,
@@ -273,11 +246,33 @@ class XStreamity_Catchup_Categories(Screen):
         glob.nextlist = []
         glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self.sortText, "filter": ""})
 
+        self.timerImage = eTimer()
+        try:
+            self.timerImage.callback.append(self.downloadImage)
+        except:
+            self.timerImage_conn = self.timerImage.timeout.connect(self.downloadImage)
+
         self.onFirstExecBegin.append(self.createSetup)
         self.onLayoutFinish.append(self.__layoutFinished)
+        self.onClose.append(self.__onClose)
+
+    def __onClose(self):
+        try:
+            self._http.close()
+        except:
+            pass
+        self._http = None
 
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
+
+    def _stopTimerImage(self):
+        # Stop any scheduled timer fire
+        try:
+            if self.timerImage:
+                self.timerImage.stop()
+        except:
+            pass
 
     def createSetup(self, data=None):
         self["x_title"].setText("")
@@ -320,7 +315,7 @@ class XStreamity_Catchup_Categories(Screen):
             if "tv_archive" in x and str(x["tv_archive"]) == "1"
             and "tv_archive_duration" in x
             and str(x["tv_archive_duration"]) != "0"
-            and x["category_id"] not in glob.active_playlist["player_info"]["catchuphidden"]
+            and x["category_id"] not in currentHidden
         ]
 
         if archivelist:
@@ -398,15 +393,9 @@ class XStreamity_Catchup_Categories(Screen):
         glob.originalChannelList2 = self.list2[:]
 
     def downloadApiData(self, url):
-        retries = Retry(total=2, backoff_factor=1)
-        adapter = HTTPAdapter(max_retries=retries)
-
-        with requests.Session() as http:
-            http.mount("http://", adapter)
-            http.mount("https://", adapter)
-
-            try:
-                response = http.get(url, headers=hdr, timeout=(10, 60), verify=False)
+        http = self._http
+        try:
+            with http.get(url, headers=hdr, timeout=(10, 60), verify=False) as response:
                 response.raise_for_status()
 
                 if response.status_code == requests.codes.ok:
@@ -418,19 +407,19 @@ class XStreamity_Catchup_Categories(Screen):
                     except ValueError:
                         print("JSON decoding failed.")
                         return None
-            except Exception as e:
-                print("Error occurred during API data download:", e)
-                self.session.openWithCallback(self.back, MessageBox, _("Server error or invalid link."), MessageBox.TYPE_ERROR, timeout=3)
+        except Exception as e:
+            print("Error occurred during API data download:", e)
+            self.session.openWithCallback(self.back, MessageBox, _("Server error or invalid link."), MessageBox.TYPE_ERROR, timeout=3)
 
     def buildList1(self):
         self["picon"].hide()
 
         if self["key_blue"].getText() != _("Reset Search"):
-            self.pre_list = [buildCategoryList(x[0], x[1], x[2], x[3]) for x in self.prelist if not x[3]]
+            self.pre_list = [buildCategoryList(x[0], x[1], x[2], x[3], self._px_more) for x in self.prelist if not x[3]]
         else:
             self.pre_list = []
 
-        self.main_list = [buildCategoryList(x[0], x[1], x[2], x[3]) for x in self.list1 if not x[3]]
+        self.main_list = [buildCategoryList(x[0], x[1], x[2], x[3], self._px_more) for x in self.list1 if not x[3]]
 
         self["main_list"].setList(self.pre_list + self.main_list)
 
@@ -438,7 +427,7 @@ class XStreamity_Catchup_Categories(Screen):
             self["main_list"].setIndex(glob.nextlist[-1]["index"])
 
     def buildList2(self):
-        self.main_list = [buildCatchupStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[13]) for x in self.list2 if not x[13]]
+        self.main_list = [buildCatchupStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[13], self._px_more) for x in self.list2 if not x[13]]
         self["main_list"].setList(self.main_list)
         self["picon"].show()
 
@@ -496,12 +485,8 @@ class XStreamity_Catchup_Categories(Screen):
 
             if self.level == 2:
                 if cfg.channelpicons.value:
-                    self.timerimage = eTimer()
-                    try:
-                        self.timerimage.callback.append(self.downloadImage)
-                    except:
-                        self.timerimage_conn = self.timerimage.timeout.connect(self.downloadImage)
-                    self.timerimage.start(250, True)
+                    self._stopTimerImage()
+                    self.timerImage.start(250, True)
         else:
             position = 0
             position_all = 0
@@ -514,41 +499,98 @@ class XStreamity_Catchup_Categories(Screen):
             self["key_blue"].setText("")
 
     def downloadImage(self):
-        if self["main_list"].getCurrent():
-            try:
-                for filename in ["original.png", "temp.png"]:
-                    file_path = os.path.join(dir_tmp, filename)
-                    if os.path.exists(file_path):
-                        os.remove(file_path)
-            except Exception:
-                pass
+        if not self["main_list"].getCurrent():
+            self.loadDefaultImage()
+            return
 
+        # Clear immediately so previous image doesn't remain if new fails
+        self.loadBlankImage()
+
+        # bump request id so stale callbacks can be ignored (zap protection)
+        try:
+            self._picon_req_id += 1
+        except:
+            self._picon_req_id = 1
+
+        req_id = self._picon_req_id
+
+        desc_image = ""
+        try:
+            desc_image = self["main_list"].getCurrent()[5]
+        except:
             desc_image = ""
+
+        if not desc_image or desc_image == "n/A":
+            self.loadDefaultImage()
+            return
+
+        fd = None
+        temp = None
+
+        try:
+            fd, temp = tempfile.mkstemp(prefix="xst_live_picon_", suffix=".png", dir=dir_tmp)
             try:
-                desc_image = self["main_list"].getCurrent()[5]
+                os.close(fd)
             except:
                 pass
 
-            if desc_image and desc_image != "n/A":
-                temp = os.path.join(dir_tmp, "temp.png")
+            parsed = urlparse(desc_image)
+            domain = parsed.hostname
+            scheme = parsed.scheme
 
+            url = desc_image
+            if pythonVer == 3:
                 try:
-                    parsed = urlparse(desc_image)
-                    domain = parsed.hostname
-                    scheme = parsed.scheme
+                    url = desc_image.encode()
+                except:
+                    url = desc_image
 
-                    if pythonVer == 3:
-                        desc_image = desc_image.encode()
+            def _cleanup_temp():
+                try:
+                    if temp and os.path.exists(temp):
+                        os.remove(temp)
+                except:
+                    pass
 
-                    if scheme == "https" and sslverify:
-                        sniFactory = SNIFactory(domain)
-                        downloadPage(desc_image, temp, sniFactory, timeout=2).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
-                    else:
-                        downloadPage(desc_image, temp, timeout=2).addCallback(self.resizeImage).addErrback(self.loadDefaultImage)
-                except Exception:
-                    self.loadDefaultImage()
-            else:
+            def _ok(_data=None):
+                # ignore stale callback if user moved again
+                if getattr(self, "_picon_req_id", 0) != req_id:
+                    _cleanup_temp()
+                    return
+
+                self.resizeImage(temp, req_id=req_id)
+
+            def _err(_failure=None):
+                if getattr(self, "_picon_req_id", 0) != req_id:
+                    _cleanup_temp()
+                    return
+
+                _cleanup_temp()
                 self.loadDefaultImage()
+
+            if scheme == "https" and sslverify:
+                sniFactory = SNIFactory(domain)
+                d = downloadPage(url, temp, sniFactory, timeout=2)
+            else:
+                d = downloadPage(url, temp, timeout=2)
+
+            d.addCallback(_ok)
+            d.addErrback(_err)
+
+        except Exception:
+            try:
+                if fd:
+                    os.close(fd)
+            except:
+                pass
+
+            try:
+                if temp and os.path.exists(temp):
+                    os.remove(temp)
+            except:
+                pass
+
+            self.loadDefaultImage()
 
     def loadBlankImage(self, data=None):
         if self["picon"].instance:
@@ -558,55 +600,51 @@ class XStreamity_Catchup_Categories(Screen):
         if self["picon"].instance:
             self["picon"].instance.setPixmapFromFile(os.path.join(common_path, "picon.png"))
 
-    def resizeImage(self, data=None):
-        current_item = self["main_list"].getCurrent()
-        if current_item:
-            original = os.path.join(dir_tmp, "temp.png")
+    def resizeImage(self, original, req_id=None, data=None):
+        # If user moved on, don't update UI; just cleanup the temp file
+        if req_id is not None and getattr(self, "_picon_req_id", 0) != req_id:
+            try:
+                if original and os.path.exists(original):
+                    os.remove(original)
+            except:
+                pass
+            return
+        # Determine the target size based on screen width
+        size = self.picon_size
 
-            # Determine the target size based on screen width
-            if screenwidth.width() == 2560:
-                size = [294, 176]
-            elif screenwidth.width() > 1280:
-                size = [220, 130]
-            else:
-                size = [147, 88]
-
-            if os.path.exists(original):
-                try:
-                    im = Image.open(original)
-
-                    # Convert to RGBA if not already
+        if os.path.exists(original):
+            try:
+                with Image.open(original) as im:
                     if im.mode != "RGBA":
                         im = im.convert("RGBA")
 
-                    # Resize image with Lanczos resampling if available, otherwise use ANTIALIAS
                     try:
                         im.thumbnail(size, Image.Resampling.LANCZOS)
                     except:
                         im.thumbnail(size, Image.ANTIALIAS)
 
-                    # Create blank RGBA image
                     bg = Image.new("RGBA", size, (255, 255, 255, 0))
 
-                    # Calculate position for centering
                     left = (size[0] - im.size[0]) // 2
                     top = (size[1] - im.size[1]) // 2
 
-                    # Paste resized image onto blank image
                     bg.paste(im, (left, top), mask=im)
-
-                    # Save as PNG
                     bg.save(original, "PNG")
 
-                    # Set pixmap for picon instance
-                    if self["picon"].instance:
-                        self["picon"].instance.setPixmapFromFile(original)
+                if self["picon"].instance:
+                    self["picon"].instance.setPixmapFromFile(original)
 
-                except Exception as e:
-                    print("Error resizing image:", e)
-                    self.loadDefaultImage()
-            else:
+            except Exception as e:
+                print("Error resizing image:", e)
                 self.loadDefaultImage()
+
+            try:
+                os.remove(original)
+            except:
+                pass
+
+        else:
+            self.loadDefaultImage()
 
     def goUp(self):
         instance = self.selectedlist.master.master.instance
@@ -754,11 +792,6 @@ class XStreamity_Catchup_Categories(Screen):
         nowtime = int(time.mktime(datetime.now().timetuple())) if pythonVer == 2 else int(datetime.timestamp(datetime.now()))
 
         if self.level == 1 and self["main_list"].getCurrent():
-            adult_keywords = {
-                "adult", "+18", "18+", "18 rated", "xxx", "sex", "porn",
-                "voksen", "volwassen", "aikuinen", "Erwachsene", "dorosly",
-                "взрослый", "vuxen", "£дорослий"
-            }
 
             current_title = str(self["main_list"].getCurrent()[0])
 
@@ -768,7 +801,7 @@ class XStreamity_Catchup_Categories(Screen):
             elif "sport" in current_title.lower():
                 glob.adultChannel = False
 
-            elif any(keyword in current_title.lower() for keyword in adult_keywords):
+            elif any(keyword in current_title.lower() for keyword in self.adult_keywords):
                 glob.adultChannel = True
 
             else:
@@ -825,6 +858,8 @@ class XStreamity_Catchup_Categories(Screen):
             self.createSetup()
 
     def back(self, data=None):
+        self._stopTimerImage()
+
         self.hideEPG()
 
         if self.selectedlist == self["epg_short_list"]:
@@ -975,20 +1010,14 @@ class XStreamity_Catchup_Categories(Screen):
                 self.session.open(MessageBox, _("Catchup error. No data for this slot"), MessageBox.TYPE_WARNING, timeout=5)
 
     def checkRedirect(self, url):
-        retries = Retry(total=3, backoff_factor=1)
-        adapter = HTTPAdapter(max_retries=retries)
-
-        with requests.Session() as http:
-            http.mount("http://", adapter)
-            http.mount("https://", adapter)
-
-            try:
-                response = http.get(url, headers=hdr, timeout=30, verify=False, stream=True)
+        http = self._http
+        try:
+            with http.get(url, headers=hdr, timeout=30, verify=False, stream=True) as response:
                 url = response.url
                 return str(url)
-            except Exception as e:
-                print(e)
-                return str(url)
+        except Exception as e:
+            print(e)
+            return str(url)
 
     def parse_datetime(self, datetime_str):
         time_formats = ["%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H-%M-%S", "%Y-%m-%d-%H:%M:%S", "%Y- %m-%d %H:%M:%S"]
@@ -1014,22 +1043,16 @@ class XStreamity_Catchup_Categories(Screen):
         url = "{}{}".format(self.simpledatatable, stream_id)
         url = self.checkRedirect(url)
 
-        retries = Retry(total=3, backoff_factor=1)
-        adapter = HTTPAdapter(max_retries=retries)
-
-        with requests.Session() as http:
-            http.mount("http://", adapter)
-            http.mount("https://", adapter)
-
-            try:
-                response = http.get(url, headers=hdr, timeout=(10, 20), verify=False)
+        http = self._http
+        try:
+            with http.get(url, headers=hdr, timeout=(10, 20), verify=False) as response:
                 response.raise_for_status()
                 if response.status_code == requests.codes.ok:
                     shortEPGJson = response.json()
 
-            except Exception as e:
-                print("Error fetching catchup EPG:", e)
-                return
+        except Exception as e:
+            print("Error fetching catchup EPG:", e)
+            return
 
         if "epg_listings" not in shortEPGJson or not shortEPGJson["epg_listings"]:
             self.session.open(MessageBox, _("Catchup currently not available. Missing EPG data"), type=MessageBox.TYPE_INFO, timeout=2)
@@ -1116,14 +1139,12 @@ class XStreamity_Catchup_Categories(Screen):
         self["epg_short_list"].setList(self.epgshortlist)
 
 
-def buildCategoryList(index, title, category_id, hidden):
-    png = LoadPixmap(os.path.join(common_path, "more.png"))
-    return (title, png, index, category_id, hidden)
+def buildCategoryList(index, title, category_id, hidden, px_more=None):
+    return (title, px_more, index, category_id, hidden)
 
 
-def buildCatchupStreamList(index, title, stream_id, stream_icon, epg_channel_id, added, next_url, hidden):
-    png = LoadPixmap(os.path.join(common_path, "more.png"))
-    return (title, png, index, next_url, stream_id, stream_icon, epg_channel_id, added, hidden)
+def buildCatchupStreamList(index, title, stream_id, stream_icon, epg_channel_id, added, next_url, hidden, px_more=None):
+    return (title, px_more, index, next_url, stream_id, stream_icon, epg_channel_id, added, hidden)
 
 
 def buildCatchupEPGListEntry(title, date_all, time_all, description, start, duration, index):

@@ -13,6 +13,7 @@ import subprocess
 import time
 from itertools import cycle, islice
 import zlib
+import tempfile
 
 try:
     from http.client import HTTPConnection
@@ -115,7 +116,7 @@ class XStreamity_Vod_Categories(Screen):
 
         self.skin_path = os.path.join(skin_directory, cfg.skin.value)
         skin = os.path.join(self.skin_path, "vod_categories.xml")
-        if os.path.exists("/var/lib/dpkg/status"):
+        if DreamOS:
             skin = os.path.join(self.skin_path, "DreamOS/vod_categories.xml")
 
         with codecs.open(skin, "r", encoding="utf-8") as f:
@@ -186,6 +187,135 @@ class XStreamity_Vod_Categories(Screen):
 
         next_url = str(self.player_api) + "&action=get_vod_categories"
 
+        self._vod_req_id = 0
+
+        self._tmp_cover = None
+        self._tmp_logo = None
+        self._tmp_backdrop = None
+        self._tmp_backdrop_src = None
+        self._tmp_backdrop_out = None
+
+        self._mask2 = None
+        self._mask2_alpha = None
+        self._mask2_cache = OrderedDict()
+        self._mask2_cache_max = 5
+        self._mask2_size = None
+        self._backdrop_target_size = None
+
+        try:
+            mask_path = os.path.join(skin_directory, "common/mask2.png")
+
+            if os.path.exists(mask_path):
+                self._mask2 = Image.open(mask_path)
+                self._mask2_size = self._mask2.size
+
+                # Always create a reliable L alpha mask once:
+                if self._mask2.mode in ("RGBA", "LA"):
+                    self._mask2_alpha = self._mask2.split()[-1]   # existing alpha channel
+                else:
+                    # Greyscale (or RGB etc) -> treat brightness as alpha
+                    self._mask2_alpha = self._mask2.convert("L")
+
+        except:
+            self._mask2 = None
+            self._mask2_alpha = None
+            self._mask2_size = None
+
+        # tmdb image sizes (set once)
+        self._tmdb_coversize = "w200"
+        self._tmdb_backdropsize = "w1280"
+        self._tmdb_logosize = "w200"
+        self._cover_target_size = None
+        self._logo_target_size = None
+
+        try:
+            width = screenwidth.width()
+
+            if width <= 1280:
+                self._tmdb_coversize = "w200"
+                self._tmdb_backdropsize = "w1280"
+                self._tmdb_logosize = "w300"
+
+            elif width <= 1920:
+                self._tmdb_coversize = "w300"
+                self._tmdb_backdropsize = "w1280"
+                self._tmdb_logosize = "w300"
+
+            else:
+                self._tmdb_coversize = "w400"
+                self._tmdb_backdropsize = "w1280"
+                self._tmdb_logosize = "w500"
+        except:
+            pass
+
+        self._http = requests.Session()
+        retries = Retry(total=1, backoff_factor=1)
+        adapter = HTTPAdapter(max_retries=retries)
+        self._http.mount("http://", adapter)
+        self._http.mount("https://", adapter)
+
+        self._px_play = LoadPixmap(os.path.join(common_path, "play.png"))
+        self._px_play2 = LoadPixmap(os.path.join(common_path, "play2.png"))
+        self._px_fav = LoadPixmap(os.path.join(common_path, "favourite.png"))
+        self._px_watched = LoadPixmap(os.path.join(common_path, "watched.png"))
+        self._px_more = LoadPixmap(os.path.join(common_path, "more.png"))
+
+        # Precompiled regex (stripjunk)
+        self._re_has_ascii = re.compile(r'[\x00-\x7F]')
+        self._re_has_non_ascii = re.compile(r'[^\x00-\x7F]')
+
+        self._re_remove_non_ascii = re.compile(r'[^\x00-\x7F]+')
+
+        self._re_end_the = re.compile(r'\s*the$', re.IGNORECASE)
+        self._re_prefix_xx_colon = re.compile(r'^\w{2}:', re.IGNORECASE)
+        self._re_prefix_xx_pipe_xx = re.compile(r'^\w{2}\|\w{2}\s', re.IGNORECASE)
+
+        self._re_leading_doublepipes = re.compile(r'^\|\|.*?\|\|')
+        self._re_leading_singlepipe_block = re.compile(r'^\|.*?\|')
+        self._re_any_pipe_block = re.compile(r'\|.*?\|')
+
+        self._re_leading_doublebars = re.compile(r'^┃┃.*?┃┃')
+        self._re_leading_singlebar_block = re.compile(r'^┃.*?┃')
+        self._re_any_bar_block = re.compile(r'┃.*?┃')
+
+        self._re_parens = re.compile(r'\(\(.*?\)\)|\([^()]*\)')
+        self._re_brackets = re.compile(r'\[\[.*?\]\]|\[.*?\]')
+
+        self._re_is_year_only = re.compile(r'^\d{4}$')
+        self._re_trailing_year = re.compile(r'[\s\-]*(?:[\(\[\"]?\d{4}[\)\]\"]?)$')
+
+        self._re_lang_dash_prefix = re.compile(r'^[A-Za-z0-9\-]{1,7}\s*-\s*', re.IGNORECASE)
+
+        # Bad substrings
+        bad_strings = [
+            "ae|", "al|", "ar|", "at|", "ba|", "be|", "bg|", "br|", "cg|", "ch|", "cz|", "da|", "de|", "dk|",
+            "ee|", "en|", "es|", "eu|", "ex-yu|", "fi|", "fr|", "gr|", "hr|", "hu|", "in|", "ir|", "it|", "lt|",
+            "mk|", "mx|", "nl|", "no|", "pl|", "pt|", "ro|", "rs|", "ru|", "se|", "si|", "sk|", "sp|", "tr|",
+            "uk|", "us|", "yu|",
+            "1080p", "1080p-dual-lat-cine-calidad.com", "1080p-dual-lat-cine-calidad.com-1",
+            "1080p-dual-lat-cinecalidad.mx", "1080p-lat-cine-calidad.com", "1080p-lat-cine-calidad.com-1",
+            "1080p-lat-cinecalidad.mx", "1080p.dual.lat.cine-calidad.com", "3d", "'", "#", "(", ")", "-", "[]", "/",
+            "4k", "720p", "aac", "blueray", "ex-yu:", "fhd", "hd", "hdrip", "hindi", "imdb", "multi:", "multi-audio",
+            "multi-sub", "multi-subs", "multisub", "ozlem", "sd", "top250", "u-", "uhd", "vod", "x264",
+            "amz", "dolby", "audio", "8k", "3840p", "50fps", "60fps", "hevc", "raw ", "vip ", "NF", "d+", "a+", "vp", "prmt", "mrvl"
+        ]
+        self._re_bad_strings = re.compile('|'.join(map(re.escape, bad_strings)), re.IGNORECASE)
+
+        # Bad suffixes
+        bad_suffix = [
+            " al", " ar", " ba", " da", " de", " en", " es", " eu", " ex-yu", " fi", " fr", " gr", " hr", " mk",
+            " nl", " no", " pl", " pt", " ro", " rs", " ru", " si", " swe", " sw", " tr", " uk", " yu"
+        ]
+        self._re_bad_suffix = re.compile(r'(' + '|'.join(map(re.escape, bad_suffix)) + r')$', re.IGNORECASE)
+
+        self._re_dots_underscores = re.compile(r"[._'\*]")
+
+        self.adult_keywords = set([
+            "adult", "+18", "18+", "18 rated", "xxx", "sex", "porn",
+            "voksen", "volwassen", "aikuinen", "Erwachsene", "dorosly",
+            "взрослый", "vuxen", "£дорослий"
+        ])
+
         # buttons / keys
         self["key_red"] = StaticText(_("Back"))
         self["key_green"] = StaticText(_("OK"))
@@ -251,23 +381,127 @@ class XStreamity_Vod_Categories(Screen):
 
         self.backdropLoad = ePicLoad()
 
+        self.timerVOD = eTimer()
         try:
-            self.backdropLoad.PictureData.get().append(self.DecodeBackdrop)
+            self.timerVOD.callback.append(self.downloadVodInfo)
         except:
-            self.backdropLoad_conn = self.backdropLoad.PictureData.connect(self.DecodeBackdrop)
-
-        self.logoLoad = ePicLoad()
-
-        try:
-            self.logoLoad.PictureData.get().append(self.DecodeLogo)
-        except:
-            self.logoLoad_conn = self.logoLoad.PictureData.connect(self.DecodeLogo)
+            self.timerVOD_conn = self.timerVOD.timeout.connect(self.downloadVodInfo)
 
         self.onFirstExecBegin.append(self.createSetup)
         self.onLayoutFinish.append(self.__layoutFinished)
+        self.onClose.append(self.__onClose)
+
+    def __onClose(self):
+        try:
+            self._http.close()
+        except:
+            pass
+        self._http = None
 
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
+
+        # cache cover target size
+        try:
+            if self["vod_cover"].instance:
+                self._cover_target_size = (
+                    self["vod_cover"].instance.size().width(),
+                    self["vod_cover"].instance.size().height()
+                )
+        except:
+            self._cover_target_size = None
+
+        # cache logo target size
+        try:
+            if self["vod_logo"].instance:
+                self._logo_target_size = (
+                    self["vod_logo"].instance.size().width(),
+                    self["vod_logo"].instance.size().height()
+                )
+        except:
+            self._logo_target_size = None
+
+        # cache backdrop target size (your existing code)
+        try:
+            if self["vod_backdrop"].instance:
+                self._backdrop_target_size = (
+                    self["vod_backdrop"].instance.size().width(),
+                    self["vod_backdrop"].instance.size().height()
+                )
+        except:
+            self._backdrop_target_size = None
+
+        if not self._backdrop_target_size and self._mask2_size:
+            self._backdrop_target_size = self._mask2_size
+
+    def _stopTimerVod(self):
+        # Stop any scheduled timer fire
+        try:
+            if self.timerVOD:
+                self.timerVOD.stop()
+        except:
+            pass
+
+        # Invalidate any in-flight downloadPage callbacks (zap protection)
+        try:
+            self._vod_req_id += 1
+        except:
+            self._vod_req_id = 1
+
+    def _new_tmp_file(self, prefix, suffix):
+        fd = None
+        path = None
+
+        try:
+            fd, path = tempfile.mkstemp(prefix=prefix, suffix=suffix, dir=dir_tmp)
+        except:
+            fd, path = tempfile.mkstemp(prefix=prefix, suffix=suffix)
+
+        try:
+            os.close(fd)
+        except:
+            pass
+
+        return path
+
+    def _safe_unlink(self, path):
+        try:
+            if path and os.path.exists(path):
+                os.remove(path)
+        except:
+            pass
+
+    def _cleanup_vod_assets(self):
+        self._safe_unlink(self._tmp_cover)
+        self._safe_unlink(self._tmp_logo)
+        self._safe_unlink(self._tmp_backdrop_src)
+        self._safe_unlink(self._tmp_backdrop_out)
+
+        self._tmp_cover = None
+        self._tmp_logo = None
+        self._tmp_backdrop_src = None
+        self._tmp_backdrop_out = None
+
+        if self.cover_download_deferred:
+            try:
+                self.cover_download_deferred.cancel()
+            except:
+                pass
+            self.cover_download_deferred = None
+
+        if self.logo_download_deferred:
+            try:
+                self.logo_download_deferred.cancel()
+            except:
+                pass
+            self.logo_download_deferred = None
+
+        if self.backdrop_download_deferred:
+            try:
+                self.backdrop_download_deferred.cancel()
+            except:
+                pass
+            self.backdrop_download_deferred = None
 
     def goUp(self):
         instance = self["main_list"].master.master.instance
@@ -437,6 +671,20 @@ class XStreamity_Vod_Categories(Screen):
         index = 0
         self.list2 = []
 
+        # Build favourite set once (speed win)
+        vodfavourites = glob.active_playlist["player_info"].get("vodfavourites", [])
+        if "vodfavourites" not in glob.active_playlist["player_info"]:
+            glob.active_playlist["player_info"]["vodfavourites"] = []
+
+        fav_set = set()
+        try:
+            for fav in vodfavourites:
+                fav_id = fav.get("stream_id", "")
+                if fav_id != "":
+                    fav_set.add(str(fav_id))
+        except Exception:
+            fav_set = set()
+
         if response:
             for index, channel in enumerate(response):
                 name = str(channel.get("name", ""))
@@ -457,6 +705,8 @@ class XStreamity_Vod_Categories(Screen):
                     continue
 
                 hidden = str(stream_id) in glob.active_playlist["player_info"]["vodstreamshidden"]
+
+                favourite = str(stream_id) in fav_set
 
                 cover = str(channel.get("stream_icon", ""))
 
@@ -508,15 +758,6 @@ class XStreamity_Vod_Categories(Screen):
 
                 next_url = "{}/movie/{}/{}/{}.{}".format(self.host, self.username, self.password, stream_id, container_extension)
 
-                favourite = False
-                if "vodfavourites" in glob.active_playlist["player_info"]:
-                    for fav in glob.active_playlist["player_info"]["vodfavourites"]:
-                        if str(stream_id) == str(fav["stream_id"]):
-                            favourite = True
-                            break
-                else:
-                    glob.active_playlist["player_info"]["vodfavourites"] = []
-
                 self.list2.append([index, str(name), str(stream_id), str(cover), str(added), str(rating), str(next_url), favourite, container_extension, year, hidden, tmdb, str(trailer)])
         glob.originalChannelList2 = self.list2[:]
 
@@ -524,15 +765,9 @@ class XStreamity_Vod_Categories(Screen):
         if debugs:
             print("*** downloadApiData ***")
 
-        retries = Retry(total=2, backoff_factor=1)
-        adapter = HTTPAdapter(max_retries=retries)
-
-        with requests.Session() as http:
-            http.mount("http://", adapter)
-            http.mount("https://", adapter)
-
-            try:
-                response = http.get(url, headers=hdr, timeout=(10, 30), verify=False)
+        http = self._http
+        try:
+            with http.get(url, headers=hdr, timeout=(10, 30), verify=False) as response:
                 response.raise_for_status()
 
                 if response.status_code == requests.codes.ok:
@@ -544,9 +779,9 @@ class XStreamity_Vod_Categories(Screen):
                     except ValueError:
                         print("JSON decoding failed.")
                         return None
-            except Exception as e:
-                print("Error occurred during API data download:", e)
-                self.session.openWithCallback(self.back, MessageBox, _("Server error or invalid link."), MessageBox.TYPE_ERROR, timeout=3)
+        except Exception as e:
+            print("Error occurred during API data download:", e)
+            self.session.openWithCallback(self.back, MessageBox, _("Server error or invalid link."), MessageBox.TYPE_ERROR, timeout=3)
 
     def buildCategories(self):
         if debugs:
@@ -555,12 +790,18 @@ class XStreamity_Vod_Categories(Screen):
         self.hideVod()
 
         if self["key_blue"].getText() != _("Reset Search"):
-            self.pre_list = [buildCategoryList(x[0], x[1], x[2], x[3]) for x in self.prelist if not x[3]]
+            self.pre_list = [
+                buildCategoryList(x[0], x[1], x[2], x[3], self._px_more)
+                for x in self.prelist if not x[3]
+            ]
         else:
             self.pre_list = []
 
         if self.list1:
-            self.main_list = [buildCategoryList(x[0], x[1], x[2], x[3]) for x in self.list1 if not x[3]]
+            self.main_list = [
+                buildCategoryList(x[0], x[1], x[2], x[3], self._px_more)
+                for x in self.list1 if not x[3]
+            ]
 
             self["main_list"].setList(self.pre_list + self.main_list)
 
@@ -571,16 +812,22 @@ class XStreamity_Vod_Categories(Screen):
         if debugs:
             print("*** buildVod ***")
 
-        self.main_list = []
+        watched_set = set(str(x) for x in glob.active_playlist["player_info"].get("vodwatched", []))
 
         if self.chosen_category == "favourites":
-            self.main_list = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[10], x[11], x[12]) for x in self.list2 if x[7] is True]
+            filtered_list = [x for x in self.list2 if x[7]]
         else:
-            self.main_list = [buildVodStreamList(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[10], x[11], x[12]) for x in self.list2 if x[10] is False]
+            filtered_list = [x for x in self.list2 if not x[10]]
+
+        self.main_list = [
+            buildVodStreamList(
+                x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8], x[10], x[11], x[12],
+                watched_set, self._px_play, self._px_play2, self._px_fav, self._px_watched
+            )
+            for x in filtered_list
+        ]
+
         self["main_list"].setList(self.main_list)
-
-        # self.showVod()
-
         if self["main_list"].getCurrent():
             self["main_list"].setIndex(glob.nextlist[-1]["index"])
 
@@ -588,6 +835,7 @@ class XStreamity_Vod_Categories(Screen):
         if debugs:
             print("*** downloadVodInfo ***")
 
+        self._cleanup_vod_assets()
         self.clearVod()
 
         if self["main_list"].getCurrent():
@@ -598,20 +846,15 @@ class XStreamity_Vod_Categories(Screen):
 
             content = None
 
-            retries = Retry(total=1, backoff_factor=1)
-            adapter = HTTPAdapter(max_retries=retries)
+            http = self._http
 
-            with requests.Session() as http:
-                http.mount("http://", adapter)
-                http.mount("https://", adapter)
-
-                try:
-                    r = http.get(url, headers=hdr, timeout=(10, 20), verify=False)
+            try:
+                with http.get(url, headers=hdr, timeout=(10, 20), verify=False) as r:
                     r.raise_for_status()
                     content = r.json() if r.status_code == requests.codes.ok else None
-                except (requests.RequestException, ValueError) as e:
-                    print("Error during request or JSON decoding:", e)
-                    content = None
+            except (requests.RequestException, ValueError) as e:
+                print("Error during request or JSON decoding:", e)
+                content = None
 
             if not content:
                 return
@@ -627,6 +870,8 @@ class XStreamity_Vod_Categories(Screen):
                     return obj
 
             content = sanitize_false(content)
+
+            # print("*** content ***", content)
 
             if "info" in content and content["info"]:
                 self.tmdbresults = content["info"]
@@ -685,15 +930,6 @@ class XStreamity_Vod_Categories(Screen):
 
         self.tmdbresults = ""
 
-        if self.cover_download_deferred:
-            self.cover_download_deferred.cancel()
-
-        if self.logo_download_deferred:
-            self.logo_download_deferred.cancel()
-
-        if self.backdrop_download_deferred:
-            self.backdrop_download_deferred.cancel()
-
         current_item = self["main_list"].getCurrent()
 
         if current_item:
@@ -724,11 +960,7 @@ class XStreamity_Vod_Categories(Screen):
             self["main_title"].setText(": ".join(parts))
 
             if self.level == 2:
-                self.timerVOD = eTimer()
-                try:
-                    self.timerVOD.callback.append(self.downloadVodInfo)
-                except:
-                    self.timerVOD_conn = self.timerVOD.timeout.connect(self.downloadVodInfo)
+                self._stopTimerVod()
                 self.timerVOD.start(300, True)
         else:
             position = 0
@@ -743,12 +975,11 @@ class XStreamity_Vod_Categories(Screen):
             self.hideVod()
 
     def strip_foreign_mixed(self, text):
-        has_ascii = bool(re.search(r'[\x00-\x7F]', text))
-        has_non_ascii = bool(re.search(r'[^\x00-\x7F]', text))
+        has_ascii = bool(self._re_has_ascii.search(text))
+        has_non_ascii = bool(self._re_has_non_ascii.search(text))
 
         if has_ascii and has_non_ascii:
-            # Remove only non-ASCII characters
-            text = re.sub(r'[^\x00-\x7F]+', '', text)
+            text = self._re_remove_non_ascii.sub('', text)
 
         return text
 
@@ -756,74 +987,50 @@ class XStreamity_Vod_Categories(Screen):
         searchtitle = text
 
         # Move "the" from the end to the beginning (case-insensitive)
-        if searchtitle.strip().lower().endswith("the"):
+        if self._re_end_the.search(searchtitle.strip().lower()):
             searchtitle = "The " + searchtitle[:-3].strip()
 
         # remove xx: at start (case-insensitive)
-        searchtitle = re.sub(r'^\w{2}:', '', searchtitle, flags=re.IGNORECASE)
+        searchtitle = self._re_prefix_xx_colon.sub('', searchtitle)
 
         # remove xx|xx at start (case-insensitive)
-        searchtitle = re.sub(r'^\w{2}\|\w{2}\s', '', searchtitle, flags=re.IGNORECASE)
-
-        # remove xx - at start (case-insensitive)
-        # searchtitle = re.sub(r'^.{2}\+? ?- ?', '', searchtitle, flags=re.IGNORECASE)
+        searchtitle = self._re_prefix_xx_pipe_xx.sub('', searchtitle)
 
         # remove all leading content between and including || or |
-        searchtitle = re.sub(r'^\|\|.*?\|\|', '', searchtitle)
-        searchtitle = re.sub(r'^\|.*?\|', '', searchtitle)
-        searchtitle = re.sub(r'\|.*?\|', '', searchtitle)
+        searchtitle = self._re_leading_doublepipes.sub('', searchtitle)
+        searchtitle = self._re_leading_singlepipe_block.sub('', searchtitle)
+        searchtitle = self._re_any_pipe_block.sub('', searchtitle)
 
         # remove all leading content between and including ┃┃ or ┃
-        searchtitle = re.sub(r'^┃┃.*?┃┃', '', searchtitle)
-        searchtitle = re.sub(r'^┃.*?┃', '', searchtitle)
-        searchtitle = re.sub(r'^┃.*?┃', '', searchtitle)
-        searchtitle = re.sub(r'┃.*?┃', '', searchtitle)
+        searchtitle = self._re_leading_doublebars.sub('', searchtitle)
+        searchtitle = self._re_leading_singlebar_block.sub('', searchtitle)
+        searchtitle = self._re_leading_singlebar_block.sub('', searchtitle)
+        searchtitle = self._re_any_bar_block.sub('', searchtitle)
 
         # remove all content between and including () unless it's all digits
-        # searchtitle = re.sub(r'\((?!\d+\))[^()]*\)', '', searchtitle)
-        searchtitle = re.sub(r'\(\(.*?\)\)|\([^()]*\)', '', searchtitle)
+        searchtitle = self._re_parens.sub('', searchtitle)
 
         # remove all content between and including []
-        searchtitle = re.sub(r'\[\[.*?\]\]|\[.*?\]', '', searchtitle)
+        searchtitle = self._re_brackets.sub('', searchtitle)
 
         # remove trailing year (but not if the whole title *is* a year)
-        if not re.match(r'^\d{4}$', searchtitle.strip()):
-            searchtitle = re.sub(r'[\s\-]*(?:[\(\[\"]?\d{4}[\)\]\"]?)$', '', searchtitle)
+        if not self._re_is_year_only.match(searchtitle.strip()):
+            searchtitle = self._re_trailing_year.sub('', searchtitle)
 
         # remove up to 6 characters followed by space and dash at start (e.g. "EN -", "BE-NL -")
-        searchtitle = re.sub(r'^[A-Za-z0-9\-]{1,7}\s*-\s*', '', searchtitle, flags=re.IGNORECASE)
+        searchtitle = self._re_lang_dash_prefix.sub('', searchtitle)
 
-        # Strip foreign / non-ASCII characters
+        # Strip foreign / non-ASCII characters (only when mixed)
         searchtitle = self.strip_foreign_mixed(searchtitle)
 
         # Bad substrings to strip (case-insensitive)
-        bad_strings = [
-            "ae|", "al|", "ar|", "at|", "ba|", "be|", "bg|", "br|", "cg|", "ch|", "cz|", "da|", "de|", "dk|",
-            "ee|", "en|", "es|", "eu|", "ex-yu|", "fi|", "fr|", "gr|", "hr|", "hu|", "in|", "ir|", "it|", "lt|",
-            "mk|", "mx|", "nl|", "no|", "pl|", "pt|", "ro|", "rs|", "ru|", "se|", "si|", "sk|", "sp|", "tr|",
-            "uk|", "us|", "yu|",
-            "1080p", "1080p-dual-lat-cine-calidad.com", "1080p-dual-lat-cine-calidad.com-1",
-            "1080p-dual-lat-cinecalidad.mx", "1080p-lat-cine-calidad.com", "1080p-lat-cine-calidad.com-1",
-            "1080p-lat-cinecalidad.mx", "1080p.dual.lat.cine-calidad.com", "3d", "'", "#", "(", ")", "-", "[]", "/",
-            "4k", "720p", "aac", "blueray", "ex-yu:", "fhd", "hd", "hdrip", "hindi", "imdb", "multi:", "multi-audio",
-            "multi-sub", "multi-subs", "multisub", "ozlem", "sd", "top250", "u-", "uhd", "vod", "x264",
-            "amz", "dolby", "audio", "8k", "3840p", "50fps", "60fps", "hevc", "raw ", "vip ", "NF", "d+", "a+", "vp", "prmt", "mrvl"
-        ]
-
-        bad_strings_pattern = re.compile('|'.join(map(re.escape, bad_strings)), flags=re.IGNORECASE)
-        searchtitle = bad_strings_pattern.sub('', searchtitle)
+        searchtitle = self._re_bad_strings.sub('', searchtitle)
 
         # Bad suffixes to remove (case-insensitive, only if at end)
-        bad_suffix = [
-            " al", " ar", " ba", " da", " de", " en", " es", " eu", " ex-yu", " fi", " fr", " gr", " hr", " mk",
-            " nl", " no", " pl", " pt", " ro", " rs", " ru", " si", " swe", " sw", " tr", " uk", " yu"
-        ]
-
-        bad_suffix_pattern = re.compile(r'(' + '|'.join(map(re.escape, bad_suffix)) + r')$', flags=re.IGNORECASE)
-        searchtitle = bad_suffix_pattern.sub('', searchtitle)
+        searchtitle = self._re_bad_suffix.sub('', searchtitle)
 
         # Replace '.', '_', "'", '*' with space
-        searchtitle = re.sub(r'[._\'\*]', ' ', searchtitle)
+        searchtitle = self._re_dots_underscores.sub(' ', searchtitle)
 
         # Trim leading/trailing hyphens and whitespace
         searchtitle = searchtitle.strip(' -').strip()
@@ -971,181 +1178,210 @@ class XStreamity_Vod_Categories(Screen):
 
         response = ""
         self.tmdbdetails = []
-        director = []
-        country = []
-        poster_path = ""
-        backdrop_path = ""
-        logo_path = ""
-        logos = []
 
         try:
             with codecs.open(os.path.join(dir_tmp, "search.txt"), "r", encoding="utf-8") as f:
                 response = f.read()
         except Exception as e:
             print("Error reading TMDB response:", e)
+            return
 
-        if response:
+        if not response:
+            return
+
+        try:
+            self.tmdbdetails = json.loads(response, object_pairs_hook=OrderedDict)
+        except Exception as e:
+            print("Error parsing TMDB response:", e)
+            return
+
+        if not self.tmdbdetails:
+            return
+
+        title = self.tmdbdetails.get("title", "")
+        if title:
+            self.tmdbresults["name"] = str(title).strip()
+
+        original_title = self.tmdbdetails.get("original_title", "")
+        if original_title:
+            self.tmdbresults["o_name"] = str(original_title).strip()
+
+        runtime = self.tmdbdetails.get("runtime")
+        if runtime and runtime != 0:
             try:
-                self.tmdbdetails = json.loads(response, object_pairs_hook=OrderedDict)
-            except Exception as e:
-                print("Error parsing TMDB response:", e)
-            else:
-                if self.tmdbdetails:
+                self.tmdbresults["originalduration"] = runtime
+                duration_timedelta = timedelta(minutes=runtime)
+                formatted_time = "{:0d}h {:02d}m".format(
+                    duration_timedelta.seconds // 3600,
+                    (duration_timedelta.seconds % 3600) // 60
+                )
+                self.tmdbresults["duration"] = formatted_time
+            except (TypeError, ValueError) as e:
+                print("Error processing runtime:", e)
 
-                    if "title" in self.tmdbdetails and self.tmdbdetails["title"]:
-                        self.tmdbresults["name"] = str(self.tmdbdetails["title"].strip())
+        country = None
+        origin_country = self.tmdbdetails.get("origin_country")
+        if origin_country:
+            try:
+                country = origin_country[0]
+                self.tmdbresults["country"] = country
+            except (IndexError, TypeError):
+                pass
 
-                    if "original_title" in self.tmdbdetails and self.tmdbdetails["original_title"]:
-                        self.tmdbresults["o_name"] = str(self.tmdbdetails["original_title"]).strip()
+        if not country:
+            production_countries = self.tmdbdetails.get("production_countries")
+            if production_countries:
+                try:
+                    country = ", ".join(str(pc["name"]) for pc in production_countries)
+                    self.tmdbresults["country"] = country
+                except (KeyError, TypeError):
+                    pass
 
-                    if "runtime" in self.tmdbdetails:
-                        runtime = self.tmdbdetails["runtime"]
-                        if runtime and runtime != 0:
-                            self.tmdbresults["originalduration"] = runtime
-                            duration_timedelta = timedelta(minutes=runtime)
-                            formatted_time = "{:0d}h {:02d}m".format(duration_timedelta.seconds // 3600, (duration_timedelta.seconds % 3600) // 60)
-                            self.tmdbresults["duration"] = str(formatted_time)
+        release_date = self.tmdbdetails.get("release_date")
+        if release_date:
+            self.tmdbresults["releaseDate"] = str(release_date).strip()
 
-                    if "origin_country" in self.tmdbdetails and self.tmdbdetails["origin_country"]:
-                        try:
-                            country = self.tmdbdetails["origin_country"][0]
-                            self.tmdbresults["country"] = country
-                        except:
-                            pass
+        # Handle images - single lookups
+        poster_path = self.tmdbdetails.get("poster_path", "")
+        backdrop_path = self.tmdbdetails.get("backdrop_path", "")
 
-                    if not country and "production_countries" in self.tmdbdetails and self.tmdbdetails["production_countries"]:
-                        country = ", ".join(str(pcountry["name"]) for pcountry in self.tmdbdetails["production_countries"])
-                        self.tmdbresults["country"] = country
+        logo_path = ""
+        images = self.tmdbdetails.get("images")
+        if images:
+            logos = images.get("logos")
+            if logos:
+                logo_path = logos[0].get("file_path", "")
 
-                    if "release_date" in self.tmdbdetails and self.tmdbdetails["release_date"]:
-                        self.tmdbresults["releaseDate"] = str(self.tmdbdetails["release_date"]).strip()
+        # Build image URLs only if paths exist
+        if poster_path:
+            self.tmdbresults["cover_big"] = "http://image.tmdb.org/t/p/{}/{}".format(
+                self._tmdb_coversize, poster_path
+            )
 
-                    if "poster_path" in self.tmdbdetails and self.tmdbdetails["poster_path"]:
-                        poster_path = str(self.tmdbdetails["poster_path"]).strip()
+        if backdrop_path:
+            self.tmdbresults["backdrop_path"] = "http://image.tmdb.org/t/p/{}/{}".format(
+                self._tmdb_backdropsize, backdrop_path
+            )
 
-                    if "backdrop_path" in self.tmdbdetails and self.tmdbdetails["backdrop_path"]:
-                        backdrop_path = str(self.tmdbdetails["backdrop_path"]).strip()
+        if logo_path:
+            self.tmdbresults["logo"] = "http://image.tmdb.org/t/p/{}/{}".format(
+                self._tmdb_logosize, logo_path
+            )
 
-                    if "images" in self.tmdbdetails and "logos" in self.tmdbdetails["images"]:
-                        logos = self.tmdbdetails["images"]["logos"]
+        overview = self.tmdbdetails.get("overview")
+        if overview:
+            self.tmdbresults["description"] = str(overview).strip()
 
-                    if logos:
-                        logo_path = logos[0].get("file_path", "")
-                    else:
-                        logo_path = ""
+        tagline = self.tmdbdetails.get("tagline")
+        if tagline:
+            self.tmdbresults["tagline"] = str(tagline).strip()
 
-                    coversize = "w200"
-                    backdropsize = "w1280"
-                    logosize = "w200"
+        # Handle rating
+        vote_average = self.tmdbdetails.get("vote_average")
+        if vote_average not in (None, 0, 0.0, "0", "0.0"):
+            try:
+                rating = float(vote_average)
+                self.tmdbresults["rating"] = "{:.1f}".format(round(rating, 1))
+            except (ValueError, TypeError) as e:
+                print("*** rating error ***", e)
+                self.tmdbresults["rating"] = "0.0"
+        else:
+            self.tmdbresults["rating"] = "0.0"
 
-                    if screenwidth.width() <= 1280:
-                        coversize = "w200"
-                        backdropsize = "w1280"
-                        logosize = "w300"
+        # Handle genres
+        genres = self.tmdbdetails.get("genres")
+        if genres:
+            try:
+                genre = " / ".join(str(g["name"]) for g in genres[:4])
+                self.tmdbresults["genre"] = genre
+            except (KeyError, TypeError):
+                pass
 
-                    elif screenwidth.width() <= 1920:
-                        coversize = "w300"
-                        backdropsize = "w1280"
-                        logosize = "w300"
-                    else:
-                        coversize = "w400"
-                        backdropsize = "w1280"
-                        logosize = "w500"
+        # Handle credits
+        credits = self.tmdbdetails.get("credits")
+        if credits:
+            cast_list = credits.get("cast")
+            if cast_list:
+                try:
+                    cast = ", ".join(actor["name"] for actor in cast_list[:10])
+                    self.tmdbresults["cast"] = cast
+                except (KeyError, TypeError):
+                    pass
 
-                    if poster_path:
-                        self.tmdbresults["cover_big"] = "http://image.tmdb.org/t/p/{}{}".format(coversize, poster_path)
+            crew_list = credits.get("crew")
+            if crew_list:
+                try:
+                    directors = [
+                        actor["name"] for actor in crew_list
+                        if actor.get("job") == "Director"
+                    ]
+                    if directors:
+                        self.tmdbresults["director"] = ", ".join(directors)
+                except (KeyError, TypeError):
+                    pass
 
-                    if backdrop_path:
-                        self.tmdbresults["backdrop_path"] = "http://image.tmdb.org/t/p/{}{}".format(backdropsize, backdrop_path)
+        # Handle videos (trailers) - only for Python 3
+        if pythonVer == 3:
+            videos = self.tmdbdetails.get("videos")
+            if videos:
+                results = videos.get("results")
+                if results:
+                    current_index = self["main_list"].getIndex()
 
-                    if logo_path:
-                        self.tmdbresults["logo"] = "http://image.tmdb.org/t/p/{}{}".format(logosize, logo_path)
-
-                    if "overview" in self.tmdbdetails and self.tmdbdetails["overview"]:
-                        self.tmdbresults["description"] = str(self.tmdbdetails["overview"]).strip()
-
-                    if "tagline" in self.tmdbdetails and self.tmdbdetails["tagline"]:
-                        self.tmdbresults["tagline"] = str(self.tmdbdetails["tagline"]).strip()
-
-                    if "vote_average" in self.tmdbdetails:
-                        rating_str = self.tmdbdetails["vote_average"]
-                        if rating_str not in [None, 0, 0.0, "0", "0.0"]:
-                            try:
-                                rating = float(rating_str)
-                                rounded_rating = round(rating, 1)
-                                self.tmdbresults["rating"] = "{:.1f}".format(rounded_rating)
-                            except ValueError as e:
-                                print("*** rating1 error ***", e)
-                                self.tmdbresults["rating"] = 0
-                        else:
-                            self.tmdbresults["rating"] = 0
-
-                    if "genres" in self.tmdbdetails and self.tmdbdetails["genres"]:
-                        genre = " / ".join(str(genreitem["name"]) for genreitem in self.tmdbdetails["genres"][:4])
-                        self.tmdbresults["genre"] = genre
-
-                    if "credits" in self.tmdbdetails:
-                        if "cast" in self.tmdbdetails["credits"] and self.tmdbdetails["credits"]["cast"]:
-                            cast = ", ".join(actor["name"] for actor in self.tmdbdetails["credits"]["cast"][:10])
-                            self.tmdbresults["cast"] = cast
-
-                        if "crew" in self.tmdbdetails["credits"] and self.tmdbdetails["credits"]["crew"]:
-                            director = ", ".join(actor["name"] for actor in self.tmdbdetails["credits"]["crew"] if actor.get("job") == "Director")
-                            self.tmdbresults["director"] = director
-
-                    if pythonVer == 3 and "videos" in self.tmdbdetails and "results" in self.tmdbdetails["videos"]:
-                        current_index = self["main_list"].getIndex()
-                        for video in self.tmdbdetails["videos"]["results"]:
-                            if video.get("site") == "YouTube" and video.get("type") == "Trailer" and "key" in video:
+                    # Look for YouTube trailers or clips
+                    for video in results:
+                        if video.get("site") == "YouTube" and "key" in video:
+                            video_type = video.get("type")
+                            if video_type in ("Trailer", "Clip"):
                                 try:
                                     self.list2[current_index][12] = str(video["key"])
-                                except:
+                                    self.buildVod()
+                                    break  # Stop after first match
+                                except (IndexError, KeyError):
                                     pass
 
-                                self.buildVod()
-                                break  # Stop after first match
+        # Handle certification
+        def get_certification(data, language_code):
+            """Extract certification for given language code with fallbacks"""
+            fallback_codes = ["GB", "US"]
 
-                            elif video.get("site") == "YouTube" and video.get("type") == "Clip" and "key" in video:
-                                try:
-                                    self.list2[current_index][12] = str(video["key"])
-                                except:
-                                    pass
+            release_dates = data.get("release_dates")
+            if not release_dates:
+                return None
 
-                                self.buildVod()
-                                break  # Stop after first match
+            results = release_dates.get("results")
+            if not results:
+                return None
 
-                    def get_certification(data, language_code):
-                        fallback_codes = ["GB", "US"]
+            # Try specified language code first
+            if language_code:
+                for release in results:
+                    if release.get("iso_3166_1") == language_code:
+                        release_dates_list = release.get("release_dates")
+                        if release_dates_list:
+                            return release_dates_list[0].get("certification")
 
-                        # First attempt to find the certification with the specified language code
-                        if "release_dates" in data and "results" in data["release_dates"]:
-                            for release in data["release_dates"]["results"]:
-                                if "iso_3166_1" in release and "release_dates" in release:
-                                    if release["iso_3166_1"] == language_code:
-                                        return release["release_dates"][0].get("certification")
+            # Try fallback codes
+            for fallback_code in fallback_codes:
+                for release in results:
+                    if release.get("iso_3166_1") == fallback_code:
+                        release_dates_list = release.get("release_dates")
+                        if release_dates_list:
+                            cert = release_dates_list[0].get("certification")
+                            if cert:  # Only return if not empty
+                                return cert
 
-                            # If no match found or language_code is blank, try the fallback codes
-                            for fallback_code in fallback_codes:
-                                for release in data["release_dates"]["results"]:
-                                    if "iso_3166_1" in release and "release_dates" in release:
-                                        if release["iso_3166_1"] == fallback_code:
-                                            return release["release_dates"][0].get("certification")
+            return None
 
-                        # If no match found in fallback codes, return None or an appropriate default value
-                        return None
+        # Get language and certification
+        language = cfg.TMDBLanguage2.value or "en-GB"
+        language_code = language.split("-")[-1]  # Get country code
 
-                    language = cfg.TMDBLanguage2.value
-                    if not language:
-                        language = "en-GB"
+        certification = get_certification(self.tmdbdetails, language_code)
+        if certification:
+            self.tmdbresults["certification"] = str(certification)
 
-                    language = language.split("-")[1]
-
-                    certification = get_certification(self.tmdbdetails, language)
-
-                    if certification:
-                        self.tmdbresults["certification"] = str(certification)
-
-                    self.displayTMDB()
+        self.displayTMDB()
 
     def displayTMDB(self):
         if debugs:
@@ -1272,9 +1508,9 @@ class XStreamity_Vod_Categories(Screen):
                 self["facts"].setText(str(facts))
 
                 if self.level == 2 and cfg.channelcovers.value:
+                    self.downloadBackdrop()
                     self.downloadCover()
                     self.downloadLogo()
-                    self.downloadBackdrop()
 
     def resetButtons(self):
         if debugs:
@@ -1317,182 +1553,106 @@ class XStreamity_Vod_Categories(Screen):
         if cfg.channelcovers.value is False:
             return
 
-        if self["main_list"].getCurrent():
-            try:
-                os.remove(os.path.join(dir_tmp, "cover.jpg"))
-            except:
-                pass
-
-            desc_image = ""
-
-            if self.tmdbresults:  # tmdb
-                desc_image = str(self.tmdbresults.get("cover_big") or "").strip()
-                if self.cover_download_deferred and not self.cover_download_deferred.called:
-                    self.cover_download_deferred.cancel()
-
-                if "http" in desc_image:
-                    self.cover_download_deferred = self.agent.request(b'GET', desc_image.encode(), Headers({'User-Agent': [b"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"]}))
-                    self.cover_download_deferred.addCallback(self.handleCoverResponse)
-                    self.cover_download_deferred.addErrback(self.handleCoverError)
-                else:
-                    self.loadDefaultCover()
-            else:
-                self.loadDefaultCover()
-
-    def downloadLogo(self):
-        if debugs:
-            print("*** downloadLogo ***")
-
-        if cfg.channelcovers.value is False:
+        if not self["main_list"].getCurrent():
             return
 
-        if self["main_list"].getCurrent():
-            try:
-                os.remove(os.path.join(dir_tmp, "logo.png"))
-            except:
-                pass
+        self._safe_unlink(self._tmp_cover)
+        self._tmp_cover = None
 
-            logo_image = ""
+        desc_image = ""
 
-            if self.tmdbresults:  # tmbdb
-                logo_image = str(self.tmdbresults.get("logo") or "").strip()
+        if self.tmdbresults:
+            desc_image = str(self.tmdbresults.get("cover_big") or "").strip()
 
-                if self.logo_download_deferred and not self.logo_download_deferred.called:
-                    self.logo_download_deferred.cancel()
-
-                if "http" in logo_image:
-                    self.logo_download_deferred = self.agent.request(b'GET', logo_image.encode(), Headers({'User-Agent': [b"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"]}))
-                    self.logo_download_deferred.addCallback(self.handleLogoResponse)
-                    self.logo_download_deferred.addErrback(self.handleLogoError)
-                else:
-                    self.loadDefaultLogo()
-            else:
-                self.loadDefaultLogo()
-
-    def downloadBackdrop(self):
-        if debugs:
-            print("*** downloadBackdrop ***")
-
-        if cfg.channelcovers.value is False:
+        if not (desc_image and "http" in desc_image):
+            self.loadDefaultCover()
             return
 
-        if self["main_list"].getCurrent():
-            try:
-                os.remove(os.path.join(dir_tmp, "backdrop.jpg"))
-            except:
-                pass
+        req_id = self._vod_req_id
+        # self.redirect_count = 0
 
-            backdrop_image = ""
+        if self.cover_download_deferred and not self.cover_download_deferred.called:
+            self.cover_download_deferred.cancel()
 
-            if self.tmdbresults:  # tmbdb
-                backdrop_image = str(self.tmdbresults.get("backdrop_path") or "").strip()
+        self.cover_download_deferred = self.agent.request(
+            b'GET',
+            desc_image.encode(),
+            Headers({'User-Agent': [b"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"]})
+        )
 
-                if self.backdrop_download_deferred and not self.backdrop_download_deferred.called:
-                    self.backdrop_download_deferred.cancel()
-
-                if "http" in backdrop_image:
-                    self.redirect_count = 0
-                    self.backdrop_download_deferred = self.agent.request(b'GET', backdrop_image.encode(), Headers({'User-Agent': [b"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"]}))
-                    self.backdrop_download_deferred.addCallback(self.handleBackdropResponse)
-                    self.backdrop_download_deferred.addErrback(self.handleBackdropError)
-                else:
-                    self.loadDefaultBackdrop()
-            else:
-                self.loadDefaultBackdrop()
+        self.cover_download_deferred.addCallback(self.coverResponse, req_id)
+        self.cover_download_deferred.addErrback(self.coverError, req_id)
 
     def downloadCoverFromUrl(self, url):
         if debugs:
             print("*** downloadCoverFromUrl ***")
+
+        req_id = self._vod_req_id
 
         self.cover_download_deferred = self.agent.request(
             b'GET',
             url.encode(),
             Headers({'User-Agent': [b"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"]})
         )
-        self.cover_download_deferred.addCallback(self.handleCoverResponse)
-        self.cover_download_deferred.addErrback(self.handleCoverError)
+        self.cover_download_deferred.addCallback(self.coverFromUrlResponse, req_id)
+        self.cover_download_deferred.addErrback(self.coverError, req_id)
 
-    def handleCoverResponse(self, response):
+    def coverResponse(self, response, req_id):
         if debugs:
-            print("*** handlecoverresponse ***")
+            print("*** coverresponse ***")
+
+        if req_id != self._vod_req_id:
+            return
 
         if response.code == 200:
             d = readBody(response)
-            d.addCallback(self.handleCoverBody)
+            d.addCallback(self.coverBody, req_id)
             return d
+
         elif response.code in (301, 302):
-            if self.redirect_count < 2:
-                self.redirect_count += 1
-                location = response.headers.getRawHeaders('location')[0]
-                self.downloadCoverFromUrl(location)
+            location = response.headers.getRawHeaders('location')[0]
+            self.downloadCoverFromUrl(location)
         else:
-            self.handleCoverError("HTTP error code: %s" % response.code)
+            self.coverError("HTTP error code: %s" % response.code)
 
-    def handleLogoResponse(self, response):
-        if debugs:
-            print("*** handlelogoresponse ***")
-
-        if response.code == 200:
-            d = readBody(response)
-            d.addCallback(self.handleLogoBody)
-            return d
-
-    def handleBackdropResponse(self, response):
-        if debugs:
-            print("*** handlebackdropresponse ***")
+    def coverFromUrlResponse(self, response, req_id):
+        if req_id != self._vod_req_id:
+            return
 
         if response.code == 200:
             d = readBody(response)
-            d.addCallback(self.handleBackdropBody)
+            d.addCallback(self.coverBody, req_id)
             return d
 
-    def handleCoverBody(self, body):
-        if debugs:
-            print("*** handlecoverbody ***")
+        self.coverError("HTTP error code: %s" % response.code)
 
-        temp = os.path.join(dir_tmp, "cover.jpg")
-        with open(temp, 'wb') as f:
-            f.write(body)
+    def coverBody(self, body, req_id):
+        if debugs:
+            print("*** coverbody ***")
+
+        if req_id != self._vod_req_id:
+            return
+
+        temp = self._new_tmp_file("xst_vod_cover_", ".jpg")
+        self._tmp_cover = temp
+
+        try:
+            with open(temp, 'wb') as f:
+                f.write(body)
+        except:
+            self._safe_unlink(temp)
+            self._tmp_cover = None
+            self.loadDefaultCover()
+            return
+
         self.resizeCover(temp)
 
-    def handleLogoBody(self, body):
-        if debugs:
-            print("*** handlelogobody ***")
-
-        temp = os.path.join(dir_tmp, "logo.png")
-        with open(temp, 'wb') as f:
-            f.write(body)
-        self.resizeLogo(temp)
-
-    def handleBackdropBody(self, body):
-        if debugs:
-            print("*** handlebackdropbody ***")
-
-        temp = os.path.join(dir_tmp, "backdrop.jpg")
-        with open(temp, 'wb') as f:
-            f.write(body)
-        self.resizeBackdrop(temp)
-
-    def handleCoverError(self, error):
+    def coverError(self, error, req_id=None):
         if debugs:
             print("*** handle error ***")
 
         print(error)
         self.loadDefaultCover()
-
-    def handleLogoError(self, error):
-        if debugs:
-            print("*** handle error ***")
-
-        print(error)
-        self.loadDefaultLogo()
-
-    def handleBackdropError(self, error):
-        if debugs:
-            print("*** handle error ***")
-
-        print(error)
-        self.loadDefaultBackdrop()
 
     def loadDefaultCover(self, data=None):
         if debugs:
@@ -1501,141 +1661,28 @@ class XStreamity_Vod_Categories(Screen):
         if self["vod_cover"].instance:
             self["vod_cover"].instance.setPixmapFromFile(os.path.join(skin_directory, "common/blank.png"))
 
-    def loadDefaultLogo(self, data=None):
-        if debugs:
-            print("*** loadDefaultLogo ***")
-
-        if self["vod_logo"].instance:
-            self["vod_logo"].instance.setPixmapFromFile(os.path.join(skin_directory, "common/blank.png"))
-
-    def loadDefaultBackdrop(self, data=None):
-        if debugs:
-            print("*** loadDefaultBackdrop ***")
-
-        if self["vod_backdrop"].instance:
-            self["vod_backdrop"].instance.setPixmapFromFile(os.path.join(skin_directory, "common/blank.png"))
-
-    def resizeCover(self, data=None):
+    def resizeCover(self, preview):
         if debugs:
             print("*** resizeCover ***")
 
-        if self["main_list"].getCurrent() and self["vod_cover"].instance:
-            preview = os.path.join(dir_tmp, "cover.jpg")
-            if os.path.isfile(preview):
-                try:
-                    self.coverLoad.setPara([self["vod_cover"].instance.size().width(), self["vod_cover"].instance.size().height(), 1, 1, 0, 1, "FF000000"])
-                    self.coverLoad.startDecode(preview)
-                except Exception as e:
-                    print(e)
-
-    def resizeLogo(self, data=None):
-        if debugs:
-            print("*** resizeLogo ***")
-
-        if self["main_list"].getCurrent() and self["vod_logo"].instance:
-            preview = os.path.join(dir_tmp, "logo.png")
-            if os.path.isfile(preview):
-                width = self["vod_logo"].instance.size().width()
-                height = self["vod_logo"].instance.size().height()
-                size = [width, height]
-
-                try:
-                    im = Image.open(preview)
-                    if im.mode != "RGBA":
-                        im = im.convert("RGBA")
-
-                    try:
-                        im.thumbnail(size, Image.Resampling.LANCZOS)
-                    except:
-                        im.thumbnail(size, Image.ANTIALIAS)
-
-                    bg = Image.new("RGBA", size, (255, 255, 255, 0))
-
-                    left = (size[0] - im.size[0])
-
-                    bg.paste(im, (left, 0), mask=im)
-
-                    bg.save(preview, "PNG", compress_level=0)
-
-                    if self["vod_logo"].instance:
-                        self["vod_logo"].instance.setPixmapFromFile(preview)
-                        self["vod_logo"].show()
-                except Exception as e:
-                    print("Error resizing logo:", e)
-                    self["vod_logo"].hide()
-
-    def resizeBackdrop(self, data=None):
-        if debugs:
-            print("*** resizeBackdrop ***")
-
-        if not (self["main_list"].getCurrent() and self["vod_backdrop"].instance):
+        if not (self["main_list"].getCurrent() and self["vod_cover"].instance):
+            self._safe_unlink(preview)
             return
 
-        preview = os.path.join(dir_tmp, "backdrop.jpg")
         if not os.path.isfile(preview):
             return
 
         try:
-            # Get final size from vod_backdrop instance
-            bd_width, bd_height = self["vod_backdrop"].instance.size().width(), self["vod_backdrop"].instance.size().height()
-            bd_size = (bd_width, bd_height)
+            if self._cover_target_size:
+                width, height = self._cover_target_size
+            else:
+                width = self["vod_cover"].instance.size().width()
+                height = self["vod_cover"].instance.size().height()
 
-            # Load and process the source image
-            im = Image.open(preview)
-            if im.mode != "RGBA":
-                im = im.convert("RGBA")
-
-            # Backward-compatible resampling method selection
-            try:
-                # New versions (Pillow >= 9.1.0)
-                resample_method = Image.Resampling.LANCZOS
-            except AttributeError:
-                try:
-                    # Older versions (Pillow 2.0+)
-                    resample_method = Image.LANCZOS
-                except AttributeError:
-                    # Very old versions (pre-2.0)
-                    resample_method = Image.ANTIALIAS
-
-            # Resize image
-            im.thumbnail(bd_size, resample_method)
-
-            # Load and resize mask with same resampling method
-            mask = Image.open(os.path.join(skin_directory, "common/mask2.png"))
-            if mask.mode != "RGBA":
-                mask = mask.convert("RGBA")
-            mask = mask.resize(im.size, resample_method)
-
-            # Create transparent background
-            background = Image.new('RGBA', bd_size, (0, 0, 0, 0))
-
-            # Calculate position (center horizontally)
-
-            # Get actual resized image dimensions (fallback for older Pillow)
-            try:
-                im_w, im_h = im.width, im.height
-            except AttributeError:
-                im_w, im_h = im.size
-
-            # Calculate position (center horizontally)
-            x_offset = (bd_width - im_w) // 2
-            y_offset = 0
-
-            # Paste with mask for gradient transparency
-            background.paste(im, (x_offset, y_offset), mask)
-
-            # Save result
-            output = os.path.join(dir_tmp, "background.png")
-            background.save(output, "PNG")
-
-            # Update backdrop
-            if self["vod_backdrop"].instance:
-                self["vod_backdrop"].instance.setPixmapFromFile(output)
-                self["vod_backdrop"].show()
-
-        except Exception as e:
-            print("Error resizing backdrop:", e)
-            self["vod_backdrop"].hide()
+            self.coverLoad.setPara([width, height, 1, 1, 0, 1, "FF000000"])
+            self.coverLoad.startDecode(preview)
+        except:
+            self._safe_unlink(preview)
 
     def DecodeCover(self, PicInfo=None):
         if debugs:
@@ -1648,27 +1695,293 @@ class XStreamity_Vod_Categories(Screen):
         else:
             self["vod_cover"].hide()
 
-    def DecodeLogo(self, PicInfo=None):
-        if debugs:
-            print("*** decodelogo ***")
+        self._safe_unlink(self._tmp_cover)
+        self._tmp_cover = None
 
-        ptr = self.logoLoad.getData()
-        if ptr is not None and self.level == 2:
-            self["vod_logo"].instance.setPixmap(ptr)
-            self["vod_logo"].show()
+    def downloadLogo(self):
+        if debugs:
+            print("*** downloadLogo ***")
+
+        if cfg.channelcovers.value is False:
+            return
+
+        if not self["main_list"].getCurrent():
+            return
+
+        self._safe_unlink(self._tmp_logo)
+        self._tmp_logo = None
+
+        logo_image = ""
+
+        if self.tmdbresults:  # tmbdb
+            logo_image = str(self.tmdbresults.get("logo") or "").strip()
+
+        if not (logo_image and "http" in logo_image):
+            self.loadDefaultLogo()
+            return
+
+        req_id = self._vod_req_id
+
+        if self.logo_download_deferred and not self.logo_download_deferred.called:
+            self.logo_download_deferred.cancel()
+
+        self.logo_download_deferred = self.agent.request(
+            b'GET',
+            logo_image.encode(),
+            Headers({'User-Agent': [b"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"]})
+        )
+        self.logo_download_deferred.addCallback(self.logoResponse, req_id)
+        self.logo_download_deferred.addErrback(self.logoError, req_id)
+
+    def logoResponse(self, response, req_id):
+        if debugs:
+            print("*** logoresponse ***")
+
+        if req_id != self._vod_req_id:
+            return
+
+        if response.code == 200:
+            d = readBody(response)
+            d.addCallback(self.logoBody, req_id)
+            return d
+
+    def logoBody(self, body, req_id):
+        if debugs:
+            print("*** logobody ***")
+
+        if req_id != self._vod_req_id:
+            return
+
+        temp = self._new_tmp_file("xst_vod_logo_", ".png")
+        self._tmp_logo = temp
+
+        try:
+            with open(temp, 'wb') as f:
+                f.write(body)
+        except:
+            self._safe_unlink(temp)
+            self._tmp_logo = None
+            self.loadDefaultLogo()
+            return
+
+        self.resizeLogo(temp)
+
+    def logoError(self, error, req_id=None):
+        if debugs:
+            print("*** handle error ***")
+
+        print(error)
+        self.loadDefaultLogo()
+
+    def loadDefaultLogo(self, data=None):
+        if debugs:
+            print("*** loadDefaultLogo ***")
+
+        if self["vod_logo"].instance:
+            self["vod_logo"].instance.setPixmapFromFile(os.path.join(skin_directory, "common/blank.png"))
+
+    def resizeLogo(self, preview):
+        if debugs:
+            print("*** resizeLogo ***")
+
+        if not (self["main_list"].getCurrent() and self["vod_logo"].instance):
+            self._safe_unlink(preview)
+            return
+
+        if self._logo_target_size:
+            size = self._logo_target_size
         else:
+            size = (
+                self["vod_logo"].instance.size().width(),
+                self["vod_logo"].instance.size().height()
+            )
+
+        try:
+            im = Image.open(preview)
+
+            if im.mode != "RGBA":
+                im = im.convert("RGBA")
+
+            # Only thumbnail if image is bigger than target
+            if im.size[0] > size[0] or im.size[1] > size[1]:
+                try:
+                    im.thumbnail(size, Image.Resampling.LANCZOS)
+                except:
+                    im.thumbnail(size, Image.ANTIALIAS)
+
+            bg = Image.new("RGBA", size, (255, 255, 255, 0))
+
+            # right-aligned logo (same as your original)
+            left = size[0] - im.size[0]
+            top = 0
+
+            bg.paste(im, (left, top), mask=im)
+
+            bg.save(preview, "PNG", compress_level=0)
+
+            self["vod_logo"].instance.setPixmapFromFile(preview)
+            self["vod_logo"].show()
+
+        except Exception as e:
+            print("Error resizing logo:", e)
             self["vod_logo"].hide()
 
-    def DecodeBackdrop(self, PicInfo=None):
-        if debugs:
-            print("*** decodebackdrop ***")
+        # cleanup tempfile
+        self._safe_unlink(preview)
+        self._tmp_logo = None
 
-        ptr = self.backdropLoad.getData()
-        if ptr is not None and self.level == 2:
-            self["vod_backdrop"].instance.setPixmap(ptr)
+    def downloadBackdrop(self):
+        if debugs:
+            print("*** downloadBackdrop ***")
+
+        if cfg.channelcovers.value is False:
+            return
+
+        if not self["main_list"].getCurrent():
+            return
+
+        self._safe_unlink(self._tmp_backdrop_src)
+        self._tmp_backdrop_src = None
+
+        backdrop_image = ""
+
+        if self.tmdbresults:  # tmbdb
+            backdrop_image = str(self.tmdbresults.get("backdrop_path") or "").strip()
+
+        if not (backdrop_image and "http" in backdrop_image):
+            self.loadDefaultBackdrop()
+            return
+
+        req_id = self._vod_req_id
+
+        if self.backdrop_download_deferred and not self.backdrop_download_deferred.called:
+            self.backdrop_download_deferred.cancel()
+
+        self.backdrop_download_deferred = self.agent.request(
+            b'GET',
+            backdrop_image.encode(),
+            Headers({'User-Agent': [b"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"]})
+        )
+
+        self.backdrop_download_deferred.addCallback(self.backdropResponse, req_id)
+        self.backdrop_download_deferred.addErrback(self.backdropError, req_id)
+
+    def backdropResponse(self, response, req_id):
+        if debugs:
+            print("*** backdropresponse ***")
+
+        if req_id != self._vod_req_id:
+            return
+
+        if response.code == 200:
+            d = readBody(response)
+            d.addCallback(self.backdropBody, req_id)
+            return d
+
+    def backdropBody(self, body, req_id):
+        if debugs:
+            print("*** backdropbody ***")
+
+        if req_id != self._vod_req_id:
+            return
+
+        temp = self._new_tmp_file("xst_vod_backdrop_", ".jpg")
+        self._tmp_backdrop_src = temp
+
+        try:
+            with open(temp, 'wb') as f:
+                f.write(body)
+        except:
+            self._safe_unlink(temp)
+            self._tmp_backdrop_src = None
+            self.loadDefaultBackdrop()
+            return
+
+        self.resizeBackdrop(temp)
+
+    def backdropError(self, error, req_id=None):
+        if debugs:
+            print("*** handle error ***")
+
+        print(error)
+        self.loadDefaultBackdrop()
+
+    def loadDefaultBackdrop(self, data=None):
+        if debugs:
+            print("*** loadDefaultBackdrop ***")
+
+        if self["vod_backdrop"].instance:
+            self["vod_backdrop"].instance.setPixmapFromFile(os.path.join(skin_directory, "common/blank.png"))
+
+    def resizeBackdrop(self, preview):
+        if debugs:
+            print("*** resizeBackdrop ***")
+
+        if not (self["main_list"].getCurrent() and self["vod_backdrop"].instance):
+            self._safe_unlink(preview)
+            return
+
+        try:
+            if not self._mask2_alpha or not self._mask2_size:
+                self.loadDefaultBackdrop()
+                self._safe_unlink(preview)
+                return
+
+            bd_size = self._mask2_size
+            bd_width, bd_height = bd_size
+
+            im = Image.open(preview)
+            if im.mode != "RGBA":
+                im = im.convert("RGBA")
+
+            try:
+                resample = Image.Resampling.LANCZOS
+            except:
+                resample = Image.ANTIALIAS
+
+            # Fit inside mask size (no crop)
+            if im.size != bd_size:
+                im.thumbnail(bd_size, resample)
+
+            im_w, im_h = im.size
+            x_offset = (bd_width - im_w) // 2
+            y_offset = 0
+
+            # paste() mask must match im.size
+            key = "%dx%d" % (im_w, im_h)
+            if key in self._mask2_cache:
+                alpha = self._mask2_cache[key]
+            else:
+                alpha = self._mask2_alpha
+                if alpha.size != im.size:
+                    alpha = alpha.resize(im.size, resample)
+
+                self._mask2_cache[key] = alpha
+
+                try:
+                    while len(self._mask2_cache) > self._mask2_cache_max:
+                        self._mask2_cache.popitem(last=False)
+                except:
+                    pass
+
+            background = Image.new("RGBA", bd_size, (0, 0, 0, 0))
+            background.paste(im, (x_offset, y_offset), alpha)
+
+            output = self._new_tmp_file("xst_vod_backdrop_out_", ".png")
+            self._tmp_backdrop_out = output
+
+            background.save(output, "PNG", compress_level=0)
+            self["vod_backdrop"].instance.setPixmapFromFile(output)
             self["vod_backdrop"].show()
-        else:
+
+        except Exception as e:
+            print("Error resizing backdrop:", e)
             self["vod_backdrop"].hide()
+
+        self._safe_unlink(preview)
+        self._safe_unlink(self._tmp_backdrop_out)
+        self._tmp_backdrop_src = None
+        self._tmp_backdrop_out = None
 
     def sort(self):
         if debugs:
@@ -1845,12 +2158,6 @@ class XStreamity_Vod_Categories(Screen):
         nowtime = int(time.mktime(datetime.now().timetuple())) if pythonVer == 2 else int(datetime.timestamp(datetime.now()))
 
         if self.level == 1 and self["main_list"].getCurrent():
-            adult_keywords = {
-                "adult", "+18", "18+", "18 rated", "xxx", "sex", "porn",
-                "voksen", "volwassen", "aikuinen", "Erwachsene", "dorosly",
-                "взрослый", "vuxen", "£дорослий"
-            }
-
             current_title = str(self["main_list"].getCurrent()[0])
 
             if current_title == "ALL" or current_title == _("ALL"):
@@ -1859,7 +2166,7 @@ class XStreamity_Vod_Categories(Screen):
             elif "sport" in current_title.lower():
                 glob.adultChannel = False
 
-            elif any(keyword in current_title.lower() for keyword in adult_keywords):
+            elif any(keyword in current_title.lower() for keyword in self.adult_keywords):
                 glob.adultChannel = True
 
             else:
@@ -1951,19 +2258,8 @@ class XStreamity_Vod_Categories(Screen):
 
         if self.level == 2:
             self.group_title = ""
-            try:
-                self.timerVOD.stop()
-            except:
-                pass
-
-            if self.cover_download_deferred:
-                self.cover_download_deferred.cancel()
-
-            if self.logo_download_deferred:
-                self.logo_download_deferred.cancel()
-
-            if self.backdrop_download_deferred:
-                self.backdrop_download_deferred.cancel()
+            self._stopTimerVod()
+            self._cleanup_vod_assets()
 
         del glob.nextlist[-1]
 
@@ -2281,11 +2577,8 @@ class XStreamity_Vod_Categories(Screen):
 
         try:
             from pytubefix import YouTube
-            from pytubefix.exceptions import AgeRestrictedError
 
             yt = YouTube("https://www.youtube.com/watch?v=" + str(trailer_id))
-            # print("*** trying to play trailer ***", yt)
-            # print("*** yt.streams ***", yt.streams)
 
             video_stream = max(
                 [s for s in yt.streams.filter(mime_type="video/webm", progressive=False)
@@ -2304,7 +2597,11 @@ class XStreamity_Vod_Categories(Screen):
                 )
 
             # Get lowest quality audio stream
-            audio_stream = yt.streams.filter(mime_type="audio/mp4", progressive=False, only_audio=True).order_by("abr").desc().last()
+            audio_stream = yt.streams.filter(
+                mime_type="audio/mp4",
+                progressive=False,
+                only_audio=True
+            ).order_by("abr").desc().last()
 
             if not video_stream or not audio_stream:
                 self.session.open(MessageBox, _("No trailer found."), type=MessageBox.TYPE_INFO, timeout=5)
@@ -2318,29 +2615,30 @@ class XStreamity_Vod_Categories(Screen):
             video_stream.download(output_path=download_dir, filename=video_file, skip_existing=False)
             audio_stream.download(output_path=download_dir, filename=audio_file, skip_existing=False)
 
-            # Merge video and audio with FFmpeg
+            video_path = os.path.join(download_dir, video_file)
+            audio_path = os.path.join(download_dir, audio_file)
+            output_path = os.path.join(download_dir, output_file)
+
             ffmpeg_cmd = [
                 "ffmpeg",
-                "-i", download_dir + video_file,
-                "-i", download_dir + audio_file,
+                "-i", video_path,
+                "-i", audio_path,
                 "-c:v", "copy",
                 "-c:a", "copy",
-                "-y", download_dir + output_file  # Overwrite if exists
+                "-y", output_path
             ]
 
             result = subprocess.run(ffmpeg_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
             if result.returncode != 0:
                 print("FFmpeg failed to merge the files!")
+                print("FFmpeg stderr:", result.stderr.decode() if result.stderr else "")
                 return
 
-            self.trailer_next(download_dir + output_file, yt.title)
-
-        except AgeRestrictedError:
-            self.session.open(MessageBox, _("Trailer is age restricted, and can't be accessed without logging in."), type=MessageBox.TYPE_INFO, timeout=5)
+            self.trailer_next(output_path, yt.title)
 
         except Exception as e:
-            print(e)
+            print("Trailer error:", e)
 
     def trailer_next(self, file, title):
         if debugs:
@@ -2358,92 +2656,118 @@ class XStreamity_Vod_Categories(Screen):
 
             self.reference = eServiceReference(int(streamtype), 0, next_url)
             self.reference.setName(title)
-            self.session.openWithCallback(self.trailer_cleanup, vodplayer.XStreamity_VodPlayer, str(next_url), str(streamtype), None)
+            self.session.openWithCallback(
+                self.trailer_cleanup,
+                vodplayer.XStreamity_VodPlayer,
+                str(next_url),
+                str(streamtype),
+                None
+            )
 
     def trailer_cleanup(self, *args):
         if debugs:
             print("*** trailer_cleanup ***")
 
-        for file in os.listdir(dir_tmp):
-            if file.startswith("video_") or file.startswith("audio_") or file.startswith("output_"):
-                try:
-                    os.remove(os.path.join(dir_tmp, file))
-                except:
-                    pass
+        try:
+            for file in os.listdir(dir_tmp):
+                if file.startswith(("video_", "audio_", "output_")):
+                    try:
+                        os.remove(os.path.join(dir_tmp, file))
+                    except Exception as e:
+                        print("Failed to remove {}: {}".format(file, e))
+        except Exception as e:
+            print("Cleanup error:", e)
 
         self.setIndex()
 
 
 def check_and_install_ffmpeg():
+    """Check if FFmpeg is installed, install if not"""
     try:
-        subprocess.run(["ffmpeg", "-version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run(
+            ["ffmpeg", "-version"],
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
         return True
-    except subprocess.CalledProcessError:
+    except (subprocess.CalledProcessError, FileNotFoundError):
         print("FFmpeg is not installed. Installing...")
 
     # Check if opkg exists to determine the package manager
     if os.path.exists("/etc/opkg/"):
-        if install_ffmpeg_opkg():
-            return True
+        return install_ffmpeg_opkg()
     else:
-        if install_ffmpeg_apt():
-            return True
-
-    return False
+        return install_ffmpeg_apt()
 
 
 def install_ffmpeg_opkg():
+    """Install FFmpeg using opkg package manager"""
     try:
         subprocess.run(["opkg", "update"], check=True)
         subprocess.run(["opkg", "install", "ffmpeg"], check=True)
         print("FFmpeg installed successfully.")
         return True
-    except subprocess.CalledProcessError:
-        print("Failed to install FFmpeg using opkg.")
+    except subprocess.CalledProcessError as e:
+        print("Failed to install FFmpeg using opkg:", e)
         return False
 
 
 def install_ffmpeg_apt():
+    """Install FFmpeg using apt package manager"""
     try:
         subprocess.run(["apt-get", "update"], check=True)
         subprocess.run(["apt-get", "-y", "install", "ffmpeg"], check=True)
         print("FFmpeg installed successfully.")
         return True
-    except subprocess.CalledProcessError:
-        print("Failed to install FFmpeg using apt-get.")
+    except subprocess.CalledProcessError as e:
+        print("Failed to install FFmpeg using apt-get:", e)
         return False
 
 
 def get_python_site_packages():
-    python_dirs = sorted([d for d in os.listdir("/usr/lib/") if d.startswith("python")], reverse=True)
-    for py_dir in python_dirs:
-        site_packages = os.path.join("/usr/lib", py_dir, "site-packages")
+    """Find the site-packages directory for the current Python installation"""
+    try:
+        python_dirs = sorted(
+            [d for d in os.listdir("/usr/lib/") if d.startswith("python")],
+            reverse=True
+        )
+        for py_dir in python_dirs:
+            site_packages = os.path.join("/usr/lib", py_dir, "site-packages")
+            if os.path.exists(site_packages):
+                return site_packages
+    except Exception as e:
+        print("Error finding site-packages:", e)
 
-        if os.path.exists(site_packages):
-            return site_packages
     return None
 
 
-def get_latest_pytubefix_version():
-    url = "https://pypi.org/project/pytubefix/#files"
-    response = requests.get(url)
+def compare_versions(version1, version2):
+    """Compare two version strings (e.g., '9.5.1' vs '9.6.0')
+    Returns: 1 if version1 > version2, -1 if version1 < version2, 0 if equal
+    """
+    try:
+        v1_parts = [int(x) for x in version1.split('.')]
+        v2_parts = [int(x) for x in version2.split('.')]
 
-    if response.status_code == 200:
-        # matches = re.findall(r'href="[^"]+/pytubefix-(\d+\.\d+\.\d+)\.tar\.gz"', response.text)
-        matches = re.findall(r'href="[^"]*/pytubefix-([\w\.\-]+)\.tar\.gz"', response.text)
+        # Pad shorter version with zeros
+        max_len = max(len(v1_parts), len(v2_parts))
+        v1_parts.extend([0] * (max_len - len(v1_parts)))
+        v2_parts.extend([0] * (max_len - len(v2_parts)))
 
-        if matches:
-            latest_version = sorted(matches, key=lambda s: list(map(int, s.split('.'))), reverse=True)[0]
-            return latest_version
-        else:
-            print("No .tar.gz versions found on PyPI.")
-            return None
-    else:
-        print("Failed to fetch PyPI page. Status:", response.status_code)
-        return None
+        for v1, v2 in zip(v1_parts, v2_parts):
+            if v1 > v2:
+                return 1
+            elif v1 < v2:
+                return -1
+        return 0
+    except Exception as e:
+        print("Error comparing versions:", e)
+        return 0
 
 
 def check_pytubefix_version():
+    """Get the currently installed pytubefix version"""
     try:
         import pytubefix
 
@@ -2455,37 +2779,60 @@ def check_pytubefix_version():
                 return pkg_resources.get_distribution("pytubefix").version
             except Exception:
                 return None
-    except Exception:
+    except ImportError:
+        return None
+    except Exception as e:
+        print("Error checking pytubefix version:", e)
         return None
 
 
 def check_and_install_pytubefix():
+    """Install pytubefix version 9.5.1 (max supported version)"""
+
+    # Maximum supported version
+    MAX_VERSION = "9.3.0"
+    MAX_VERSION_URL = "https://files.pythonhosted.org/packages/a6/8a/2611bd7297e4b3ee1973c4d78e79f5a416cfebe89d4783f7da6f45c6b5d4/pytubefix-9.3.0.tar.gz"
+
     site_packages = get_python_site_packages()
-    pytubefix_path = os.path.join(site_packages, "pytubefix") if site_packages else None
+    if not site_packages:
+        print("Could not find site-packages directory")
+        return False
 
-    # Attempt to get the latest version from PyPI
-    expected_version = get_latest_pytubefix_version()
+    pytubefix_path = os.path.join(site_packages, "pytubefix")
 
-    # Fallback to 8.12.3 if PyPI version retrieval fails
-    if not expected_version:
-        print("Using fallback version 8.12.3")
-        expected_version = "8.12.3"
-
-    # Define static URL for fallback version 8.12.3
-    if expected_version == "8.12.3":
-        url = "https://files.pythonhosted.org/packages/2f/43/528a5c70382499fdad0af998c8d06bcd0ada1a92ed30623396c144f9b9c0/pytubefix-8.12.3.tar.gz"
-    else:
-        # Dynamic URL for the latest version fetched from PyPI
-        url = "https://files.pythonhosted.org/packages/source/p/pytubefix/pytubefix-%s.tar.gz" % expected_version
-
-    # Check if pytubefix is already installed and verify version
-    if pytubefix_path and os.path.exists(pytubefix_path) and os.listdir(pytubefix_path):
+    # Check if pytubefix is already installed
+    if os.path.exists(pytubefix_path) and os.listdir(pytubefix_path):
         installed_version = check_pytubefix_version()
-        if installed_version == expected_version:
-            print("pytubefix version %s is already installed" % installed_version)
-            return True
-        else:
-            print("pytubefix version is %s, expected %s. Reinstalling..." % (installed_version, expected_version))
+
+        if installed_version:
+            version_comparison = compare_versions(installed_version, MAX_VERSION)
+
+            if version_comparison == 0:
+                # Exact version match
+                print("pytubefix version {} is already installed".format(installed_version))
+                return True
+            elif version_comparison > 0:
+                # Newer version installed - need to downgrade
+                print("pytubefix version {} is newer than maximum supported version {}. Downgrading...".format(
+                    installed_version, MAX_VERSION
+                ))
+                try:
+                    shutil.rmtree(pytubefix_path)
+                    print("Removed newer version {}".format(installed_version))
+                except Exception as e:
+                    print("Failed to remove newer version:", e)
+                    return False
+            else:
+                # Older version installed - upgrade to max version
+                print("pytubefix version {} is older than maximum supported version {}. Upgrading...".format(
+                    installed_version, MAX_VERSION
+                ))
+                try:
+                    shutil.rmtree(pytubefix_path)
+                    print("Removed older version {}".format(installed_version))
+                except Exception as e:
+                    print("Failed to remove older version:", e)
+                    return False
 
     # Ensure temporary directory exists
     if not os.path.exists(dir_tmp):
@@ -2493,76 +2840,120 @@ def check_and_install_pytubefix():
             os.makedirs(dir_tmp)
             print("Created temporary directory:", dir_tmp)
         except Exception as e:
-            print("Failed to create temporary directory:", str(e))
+            print("Failed to create temporary directory:", e)
             return False
 
-    # Download the correct tarball version
-    response = requests.get(url)
+    # Download pytubefix
+    print("Downloading pytubefix version {}...".format(MAX_VERSION))
+    try:
+        response = requests.get(MAX_VERSION_URL, timeout=30)
+        response.raise_for_status()
+    except Exception as e:
+        print("Failed to download pytubefix tarball:", e)
+        return False
 
-    if response.status_code == 200:
-        tarball_path = os.path.join(dir_tmp, "pytubefix-%s.tar.gz" % expected_version)
+    tarball_path = os.path.join(dir_tmp, "pytubefix-{}.tar.gz".format(MAX_VERSION))
+
+    try:
         with open(tarball_path, "wb") as f:
             f.write(response.content)
-
         print("Tarball downloaded successfully at", tarball_path)
+    except Exception as e:
+        print("Failed to save tarball:", e)
+        return False
 
+    # Extract tarball
+    try:
+        import tarfile
+        with tarfile.open(tarball_path, "r:gz") as tar:
+            tar.extractall(path=dir_tmp)
+        print("Tarball extracted successfully")
+    except Exception as e:
+        print("Failed to extract tarball:", e)
+        # Cleanup
         try:
-            import tarfile
-            with tarfile.open(tarball_path, "r:gz") as tar:
-                tar.extractall(path=dir_tmp)
+            os.remove(tarball_path)
+        except:
+            pass
+        return False
+
+    # Copy pytubefix to site-packages
+    extracted_path = os.path.join(dir_tmp, "pytubefix-{}".format(MAX_VERSION), "pytubefix")
+
+    if not os.path.exists(extracted_path):
+        print("Failed to find pytubefix folder at", extracted_path)
+        # Cleanup
+        try:
+            os.remove(tarball_path)
+            extracted_root = os.path.join(dir_tmp, "pytubefix-{}".format(MAX_VERSION))
+            if os.path.exists(extracted_root):
+                shutil.rmtree(extracted_root)
+        except:
+            pass
+        return False
+
+    print("pytubefix folder found at", extracted_path, ". Copying it to", pytubefix_path)
+
+    try:
+        # Remove existing installation if present
+        if os.path.exists(pytubefix_path):
+            shutil.rmtree(pytubefix_path)
+
+        # Copy new version
+        shutil.copytree(extracted_path, pytubefix_path)
+        print("pytubefix {} installed successfully at {}".format(MAX_VERSION, pytubefix_path))
+
+        # Cleanup temporary files
+        try:
+            if os.path.exists(tarball_path):
+                os.remove(tarball_path)
+            extracted_root = os.path.join(dir_tmp, "pytubefix-{}".format(MAX_VERSION))
+            if os.path.exists(extracted_root):
+                shutil.rmtree(extracted_root)
+            print("Cleaned up temporary files")
         except Exception as e:
-            print("Failed to extract tarball:", str(e))
-            return False
+            print("Cleanup warning:", e)
 
-        extracted_path = os.path.join(dir_tmp, "pytubefix-%s" % expected_version, "pytubefix")
-        print("Checking if extracted pytubefix folder exists at", extracted_path)
+        return True
 
-        if os.path.exists(extracted_path):
-            print("pytubefix folder found at", extracted_path, ". Copying it to", pytubefix_path)
-            try:
-                if os.path.exists(pytubefix_path):
-                    shutil.rmtree(pytubefix_path)
-
-                shutil.copytree(extracted_path, pytubefix_path)
-                print("pytubefix installed successfully at", pytubefix_path)
-
-                # Cleanup temporary files
-                try:
-                    if os.path.exists(tarball_path):
-                        os.remove(tarball_path)
-                    extracted_root = os.path.join(dir_tmp, "pytubefix-%s" % expected_version)
-                    if os.path.exists(extracted_root):
-                        shutil.rmtree(extracted_root)
-                    print("Cleaned up temporary files")
-                except Exception as e:
-                    print("Cleanup failed:", str(e))
-
-                return True
-            except Exception as e:
-                print("Failed to copy pytubefix:", str(e))
-                return False
-        else:
-            print("Failed to find pytubefix folder at", extracted_path)
-            return False
-    else:
-        print("Failed to download pytubefix tarball. HTTP status code:", response.status_code)
+    except Exception as e:
+        print("Failed to copy pytubefix:", e)
+        # Cleanup
+        try:
+            if os.path.exists(tarball_path):
+                os.remove(tarball_path)
+            extracted_root = os.path.join(dir_tmp, "pytubefix-{}".format(MAX_VERSION))
+            if os.path.exists(extracted_root):
+                shutil.rmtree(extracted_root)
+        except:
+            pass
         return False
 
 
-def buildCategoryList(index, title, category_id, hidden):
-    png = LoadPixmap(os.path.join(common_path, "more.png"))
-    return (title, png, index, category_id, hidden)
+def buildCategoryList(index, title, category_id, hidden, px_more=None):
+    return (title, px_more, index, category_id, hidden)
 
 
-def buildVodStreamList(index, title, stream_id, cover, added, rating, next_url, favourite, container_extension, hidden, tmdb, trailer):
-    png = LoadPixmap(os.path.join(common_path, "play.png"))
+def buildVodStreamList(
+    index, title, stream_id, cover, added, rating, next_url, favourite, container_extension, hidden, tmdb, trailer, watched_set,
+    px_play=None, px_play2=None, px_fav=None, px_watched=None
+):
+
+    is_watched = False
+    try:
+        is_watched = str(stream_id) in watched_set
+    except Exception:
+        is_watched = False
+
+    png = px_play
+
     if trailer and pythonVer == 3:
-        png = LoadPixmap(os.path.join(common_path, "play2.png"))
+        png = px_play2
 
     if favourite:
-        png = LoadPixmap(os.path.join(common_path, "favourite.png"))
-    for channel in glob.active_playlist["player_info"]["vodwatched"]:
-        if int(stream_id) == int(channel):
-            png = LoadPixmap(os.path.join(common_path, "watched.png"))
+        png = px_fav
+
+    if is_watched:
+        png = px_watched
 
     return (title, png, index, next_url, stream_id, cover, added, rating, container_extension, hidden, tmdb, trailer)

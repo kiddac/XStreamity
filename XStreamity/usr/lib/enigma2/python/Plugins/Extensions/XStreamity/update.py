@@ -74,13 +74,21 @@ hdr = {
     'Accept-Encoding': 'gzip, deflate'
 }
 
+playlists_json = cfg.playlists_json.value
+
 
 class XStreamity_Update:
     def __init__(self, session=None, mode=None):
-        self.playlists_json = cfg.playlists_json.value
         self.mode = mode
         self.session = session
         self.urllist = []
+
+        self._http = requests.Session()
+        retries = Retry(total=1, backoff_factor=1)
+        adapter = HTTPAdapter(max_retries=retries)
+        self._http.mount("http://", adapter)
+        self._http.mount("https://", adapter)
+
         if not self.check_recordings_in_progress():
             self.process_json_file()
 
@@ -104,24 +112,18 @@ class XStreamity_Update:
             pass
 
     def check_redirect(self, url):
-        retries = Retry(total=3, backoff_factor=1)
-        adapter = HTTPAdapter(max_retries=retries)
-
-        with requests.Session() as http:
-            http.mount("http://", adapter)
-            http.mount("https://", adapter)
-
-            try:
-                response = http.get(url, headers=hdr, timeout=30, verify=False, stream=True)
+        http = self._http
+        try:
+            with http.get(url, headers=hdr, timeout=30, verify=False, stream=True) as response:
                 url = response.url
                 return str(url)
-            except Exception as e:
-                print(e)
-                return str(url)
+        except Exception as e:
+            print(e)
+            return str(url)
 
     def process_json_file(self):
         try:
-            with open(self.playlists_json, "r") as f:
+            with open(playlists_json, "r") as f:
                 self.playlists_all = json.load(f)
         except Exception as e:
             print("Error loading playlists JSON file:", e)

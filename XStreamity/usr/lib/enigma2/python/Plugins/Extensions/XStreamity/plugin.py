@@ -5,14 +5,32 @@ import os
 import shutil
 import sys
 import time
+import glob as glob_module
 import twisted.python.runtime
-import glob
 
 from . import _
-from Components.config import config, ConfigSubsection, ConfigSelection, ConfigDirectory, ConfigYesNo, ConfigSelectionNumber, ConfigClock, ConfigPIN, ConfigInteger, configfile, ConfigText
+from . import xstreamity_globals as glob
+from Components.config import (
+    config, ConfigSubsection, ConfigSelection, ConfigDirectory,
+    ConfigYesNo, ConfigSelectionNumber, ConfigClock, ConfigPIN,
+    ConfigInteger, configfile, ConfigText
+)
+
 from enigma import eTimer, getDesktop, addFont
 from Plugins.Plugin import PluginDescriptor
 from os.path import isdir
+
+# ------------------------------------------------------------------
+# Basic environment / platform checks
+# ------------------------------------------------------------------
+
+pythonVer = sys.version_info.major
+isDreambox = os.path.exists("/usr/bin/apt-get")
+debugs = False
+
+# ------------------------------------------------------------------
+# Dependencies checks
+# ------------------------------------------------------------------
 
 try:
     from multiprocessing.pool import ThreadPool
@@ -29,22 +47,33 @@ try:
 except ImportError:
     hasConcurrent = False
 
-pythonFull = float(str(sys.version_info.major) + "." + str(sys.version_info.minor))
-pythonVer = sys.version_info.major
 
-isDreambox = os.path.exists("/usr/bin/apt-get")
-
-debugs = False
-
-with open("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/version.txt", "r") as f:
-    version = f.readline()
-
-screenwidth = getDesktop(0).size()
+# ------------------------------------------------------------------
+# Paths
+# ------------------------------------------------------------------
 
 dir_etc = "/etc/enigma2/xstreamity/"
 dir_tmp = "/etc/enigma2/xstreamity/tmp/"
 dir_plugins = "/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/"
 
+
+# ------------------------------------------------------------------
+# Version
+# ------------------------------------------------------------------
+
+version = ""
+try:
+    with open(os.path.join(dir_plugins, "version.txt"), "r") as f:
+        version = f.readline().strip()
+except:
+    version = ""
+
+
+# ------------------------------------------------------------------
+# Screen / skin selection
+# ------------------------------------------------------------------
+
+screenwidth = getDesktop(0).size()
 
 if screenwidth.width() == 2560:
     skin_directory = os.path.join(dir_plugins, "skin/uhd/")
@@ -53,7 +82,15 @@ elif screenwidth.width() > 1280:
 else:
     skin_directory = os.path.join(dir_plugins, "skin/hd/")
 
-folders = [folder for folder in os.listdir(skin_directory) if folder != "common"]
+try:
+    folders = [x for x in os.listdir(skin_directory) if x != "common"]
+except:
+    folders = ["default"]
+
+
+# ------------------------------------------------------------------
+# Language & User-Agent options
+# ------------------------------------------------------------------
 
 languages = [
     ("", "English"),
@@ -91,10 +128,13 @@ useragents = [
     ("Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.6422.165 Mobile Safari/537.36", "Android")
 ]
 
-# Configurations initialization
+
+# ------------------------------------------------------------------
+# Config setup
+# ------------------------------------------------------------------
+
 config.plugins.XStreamity = ConfigSubsection()
 cfg = config.plugins.XStreamity
-
 
 live_streamtype_choices = [("1", "DVB(1)"), ("4097", "IPTV(4097)")]
 vod_streamtype_choices = [("4097", "IPTV(4097)")]
@@ -107,7 +147,7 @@ if os.path.exists("/usr/bin/exteplayer3"):
     live_streamtype_choices.append(("5002", "ExtePlayer(5002)"))
     vod_streamtype_choices.append(("5002", "ExtePlayer(5002)"))
 
-if os.path.exists("/usr/bin/apt-get"):
+if isDreambox:
     live_streamtype_choices.append(("8193", "DreamOS GStreamer(8193)"))
     vod_streamtype_choices.append(("8193", "DreamOS GStreamer(8193)"))
 
@@ -115,10 +155,11 @@ cfg.livetype = ConfigSelection(default="4097", choices=live_streamtype_choices)
 cfg.vodtype = ConfigSelection(default="4097", choices=vod_streamtype_choices)
 
 
-try:
-    result = cfg.downloadlocation.value
-except:
-    result = ""
+# ------------------------------------------------------------------
+# Download location (safe, minimal writes)
+# ------------------------------------------------------------------
+
+result = cfg.downloadlocation.value if hasattr(cfg, "downloadlocation") else ""
 
 if not result:
     try:
@@ -137,8 +178,22 @@ if not result:
         result = "/media/"
 
 cfg.downloadlocation = ConfigDirectory(default=result)
+# ------------------------------------------------------------------
+# EPG location (prefer system epgcachepath if available)
+# ------------------------------------------------------------------
 
-cfg.epglocation = ConfigDirectory(default="/etc/enigma2/xstreamity/epg/")
+epg_base = "/etc/enigma2/"
+
+try:
+    if hasattr(config, "misc") and hasattr(config.misc, "epgcachepath"):
+        epgcachepath = config.misc.epgcachepath.value
+        if epgcachepath:
+            epg_base = epgcachepath
+except:
+    pass
+
+cfg.epglocation = ConfigDirectory(default=os.path.join(epg_base, "xstreamity", "epg") + "/")
+cfg.location = ConfigDirectory(default=dir_etc)
 cfg.location = ConfigDirectory(default=dir_etc)
 cfg.main = ConfigYesNo(default=True)
 cfg.livepreview = ConfigYesNo(default=False)
@@ -151,7 +206,7 @@ cfg.catchupstart = ConfigSelectionNumber(0, 30, 1, default=0, wraparound=True)
 cfg.catchupend = ConfigSelectionNumber(0, 30, 1, default=0, wraparound=True)
 cfg.subs = ConfigYesNo(default=False)
 cfg.skipplaylistsscreen = ConfigYesNo(default=False)
-cfg.wakeup = ConfigClock(default=((9 * 60) + 9) * 60)  # 10:09
+cfg.wakeup = ConfigClock(default=((9 * 60) + 9) * 60)
 cfg.adult = ConfigYesNo(default=False)
 cfg.adultpin = ConfigPIN(default=0000)
 cfg.retries = ConfigSubsection()
@@ -159,28 +214,25 @@ cfg.retries.adultpin = ConfigSubsection()
 cfg.retries.adultpin.tries = ConfigInteger(default=3)
 cfg.retries.adultpin.time = ConfigInteger(default=3)
 cfg.location_valid = ConfigYesNo(default=True)
-
 cfg.channelpicons = ConfigYesNo(default=True)
 cfg.infobarpicons = ConfigYesNo(default=True)
 cfg.channelcovers = ConfigYesNo(default=True)
 cfg.infobarcovers = ConfigYesNo(default=True)
 cfg.boot = ConfigYesNo(default=False)
-
 cfg.useragent = ConfigSelection(default="Enigma2 - XStreamity Plugin", choices=useragents)
-
 cfg.vodcategoryorder = ConfigSelection(default=(_("Sort: Original")), choices=[(_("Sort: A-Z"), "A-Z"), (_("Sort: Z-A"), "Z-A"), (_("Sort: Original"), _("Original"))])
 cfg.vodstreamorder = ConfigSelection(default=(_("Sort: Original")), choices=[(_("Sort: A-Z"), "A-Z"), (_("Sort: Z-A"), "Z-A"), (_("Sort: Added"), _("Added")), (_("Sort: Year"), _("Year")), (_("Sort: Original"), _("Original"))])
-
 cfg.seriescategoryorder = ConfigSelection(default=(_("Sort: Original")), choices=[(_("Sort: A-Z"), "A-Z"), (_("Sort: Z-A"), "Z-A"), (_("Sort: Original"), _("Original"))])
 cfg.seriesorder = ConfigSelection(default=(_("Sort: Original")), choices=[(_("Sort: A-Z"), "A-Z"), (_("Sort: Z-A"), "Z-A"), (_("Sort: Added"), _("Added")), (_("Sort: Year"), _("Year")), (_("Sort: Original"), _("Original"))])
 
 
-# Set default file paths
+# ------------------------------------------------------------------
+# File paths
+# ------------------------------------------------------------------
+
 playlist_file = os.path.join(dir_etc, "playlists.txt")
 playlists_json = os.path.join(dir_etc, "x-playlists.json")
 downloads_json = os.path.join(dir_etc, "downloads2.json")
-
-# Set skin and font paths
 skin_path = os.path.join(skin_directory, cfg.skin.value)
 common_path = os.path.join(skin_directory, "common/")
 
@@ -196,7 +248,6 @@ if location:
 
         cfg.location_valid.setValue(True)
 else:
-
     cfg.location.setValue(dir_etc)
     cfg.location_valid.setValue(False)
 
@@ -216,28 +267,13 @@ configfile.save()
 glob.original_playlist_file = cfg.playlist_file.value
 glob.original_playlists_json = cfg.playlists_json.value
 
-font_folder = os.path.join(dir_plugins, "fonts/")
-addFont(os.path.join(font_folder, "m-plus-rounded-1c-regular.ttf"), "xstreamityregular", 100, 0)
-addFont(os.path.join(font_folder, "m-plus-rounded-1c-medium.ttf"), "xstreamitybold", 100, 0)
-addFont(os.path.join(font_folder, "slyk-medium.ttf"), "slykregular", 100, 0)
-addFont(os.path.join(font_folder, "slyk-bold.ttf"), "slykbold", 100, 0)
-addFont(os.path.join(font_folder, "classfont2.ttf"), "klass", 100, 0)
-
-hdr = {
-    'User-Agent': "Enigma2 - XStreamity Plugin",
-    'Accept-Encoding': 'gzip, deflate'
-}
+# ------------------------------------------------------------------
+# Check folders
+# ------------------------------------------------------------------
 
 # create folder for working files
 if not os.path.exists(dir_etc):
     os.makedirs(dir_etc)
-
-# delete temporary folder and contents
-if os.path.exists("/tmp/xstreamity/"):
-    shutil.rmtree("/tmp/xstreamity/")
-
-if os.path.exists(dir_tmp):
-    shutil.rmtree("/etc/enigma2/xstreamity/tmp/")
 
 # create temporary folder for downloaded files
 if not os.path.exists(dir_tmp):
@@ -258,42 +294,49 @@ if not os.path.isfile(cfg.downloads_json.value):
     with open(cfg.downloads_json.value, "a") as f:
         f.close()
 
-# remove dodgy versions of my plugin
-if os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/XStreamityPro/"):
+
+# ------------------------------------------------------------------
+# Fonts (safe)
+# ------------------------------------------------------------------
+
+font_folder = os.path.join(dir_plugins, "fonts/")
+for font, name in [
+    ("m-plus-rounded-1c-regular.ttf", "xstreamityregular"),
+    ("m-plus-rounded-1c-medium.ttf", "xstreamitybold"),
+    ("slyk-medium.ttf", "slykregular"),
+    ("slyk-bold.ttf", "slykbold"),
+    ("classfont2.ttf", "klass"),
+]:
     try:
-        shutil.rmtree("/usr/lib/enigma2/python/Plugins/Extensions/XStreamityPro/")
+        addFont(os.path.join(font_folder, font), name, 100, 0)
     except:
         pass
 
-# remove toys skin
-if os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/toys/"):
-    try:
-        shutil.rmtree("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/toys/")
-    except:
-        pass
 
-if os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/toys/"):
-    try:
-        shutil.rmtree("/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/uhd/toys/")
-    except:
-        pass
+# ------------------------------------------------------------------
+# Headers
+# ------------------------------------------------------------------
 
-# try and override epgimport settings
-"""
-try:
-    config.plugins.epgimport.import_onlybouquet.value = False
-    config.plugins.epgimport.import_onlybouquet.save()
-    configfile.save()
-except Exception as e:
-    print(e)
-    """
+hdr = {
+    'User-Agent': str(cfg.useragent.value),
+    'Accept-Encoding': 'gzip, deflate'
+}
 
+
+# ------------------------------------------------------------------
+# Main entry
+# ------------------------------------------------------------------
 
 def main(session, **kwargs):
 
+    if os.path.exists(dir_tmp):
+        shutil.rmtree(dir_tmp)
+
+    os.makedirs(dir_tmp)
+
     epgfolder = os.path.join(cfg.epglocation.value, '*', '*.xml')
 
-    for file_path in glob.glob(epgfolder):
+    for file_path in glob_module.glob(epgfolder):
         try:
             os.remove(file_path)
         except:
@@ -301,24 +344,22 @@ def main(session, **kwargs):
 
     from . import mainmenu
     session.open(mainmenu.XStreamity_MainMenu)
-    return
 
+
+# ------------------------------------------------------------------
+# Menus / autostart / boot
+# ------------------------------------------------------------------
 
 def mainmenu(menu_id, **kwargs):
     if menu_id == "mainmenu":
         return [(_("XStreamity"), main, "XStreamity", 50)]
-    else:
-        return []
-
-
-xsAutoStartTimer = None
+    return []
 
 
 class XSAutoStartTimer:
     def __init__(self, session):
         self.session = session
         self.timer = eTimer()
-
         try:
             self.timer_conn = self.timer.timeout.connect(self.onTimer)
         except:
@@ -334,20 +375,10 @@ class XSAutoStartTimer:
     def update(self, atLeast=0):
         self.timer.stop()
         wake = self.getWakeTime()
-        nowtime = time.time()
-        if wake > 0:
-            if wake < nowtime + atLeast:
-                # Tomorrow.
-                wake += 24 * 3600
-            next = wake - int(nowtime)
-            if next > 3600:
-                next = 3600
-            if next <= 0:
-                next = 60
-            self.timer.startLongTimer(next)
-        else:
-            wake = -1
-        return wake
+        now = int(time.time())
+        if wake < now + atLeast:
+            wake += 86400
+        self.timer.startLongTimer(max(60, min(3600, wake - now)))
 
     def onTimer(self):
         self.timer.stop()
@@ -365,16 +396,15 @@ class XSAutoStartTimer:
         update.XStreamity_Update(self.session)
 
 
+xsAutoStartTimer = None
+
+
 def autostart(reason, session=None, **kwargs):
     global xsAutoStartTimer
-    if reason == 0:
-        if session is not None:
-            if xsAutoStartTimer is None:
-                xsAutoStartTimer = XSAutoStartTimer(session)
-    return
+    if reason == 0 and session and xsAutoStartTimer is None:
+        xsAutoStartTimer = XSAutoStartTimer(session)
 
 
-# auto boot start
 glb_session = None
 glb_startDelay = None
 

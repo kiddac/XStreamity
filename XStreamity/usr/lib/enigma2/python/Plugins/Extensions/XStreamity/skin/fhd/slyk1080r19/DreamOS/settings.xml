@@ -1,5 +1,5 @@
 <screen name="XStreamitySettings" position="0,0" size="1920,1080" backgroundColor="#1c5791" flags="wfNoBorder">
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/background.png" alphatest="off" position="0,0" size="1920,1080" zPosition="-1"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/background.png" alphatest="blend" position="0,0" size="1920,1080" zPosition="-1"/>
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/fhd/slyk1080r19/images/slyklogo.png" position="center,44" size="144,78" alphatest="blend" backgroundColor="#ff000000" zPosition="2"/>
 	<widget source="session.VideoPicture" render="Pig" position="1357,122" size="503,267" backgroundColor="#ff000000" transparent="1"/>
 	<eLabel position="1357,122" size="473,267" backgroundColor="#ff000000" zPosition="4"/>

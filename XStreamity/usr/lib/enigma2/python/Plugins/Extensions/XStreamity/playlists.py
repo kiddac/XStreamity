@@ -81,6 +81,12 @@ class XStreamity_Playlists(Screen):
         self["scroll_up"].hide()
         self["scroll_down"].hide()
 
+        self._http = requests.Session()
+        retries = Retry(total=1, backoff_factor=1)
+        adapter = HTTPAdapter(max_retries=retries)
+        self._http.mount("http://", adapter)
+        self._http.mount("https://", adapter)
+
         self["actions"] = ActionMap(["XStreamityActions"], {
             "red": self.quit,
             "green": self.getStreamTypes,
@@ -94,6 +100,14 @@ class XStreamity_Playlists(Screen):
 
         self.onFirstExecBegin.append(self.start)
         self.onLayoutFinish.append(self.__layoutFinished)
+        self.onClose.append(self.__onClose)
+
+    def __onClose(self):
+        try:
+            self._http.close()
+        except:
+            pass
+        self._http = None
 
     def clear_caches(self):
         try:
@@ -172,15 +186,9 @@ class XStreamity_Playlists(Screen):
         index = url[1]
         response = None
 
-        retries = Retry(total=2, backoff_factor=1)
-        adapter = HTTPAdapter(max_retries=retries)
-
-        with requests.Session() as http:
-            http.mount("http://", adapter)
-            http.mount("https://", adapter)
-
-            try:
-                r = http.get(url[0], headers=hdr, timeout=6, verify=False)
+        http = self._http
+        try:
+            with http.get(url[0], headers=hdr, timeout=6, verify=False) as r:
                 r.raise_for_status()
 
                 # Get Content-Type from headers
@@ -208,10 +216,10 @@ class XStreamity_Playlists(Screen):
                     print("Final response is non-JSON content:", r.url)
                     return index, None
 
-            except requests.exceptions.RequestException as e:
-                print("Request error:", e)
-            except Exception as e:
-                print("Unexpected error:", e)
+        except requests.exceptions.RequestException as e:
+            print("Request error:", e)
+        except Exception as e:
+            print("Unexpected error:", e)
 
         return index, response
 

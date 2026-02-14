@@ -35,6 +35,9 @@ hdr = {
     'Accept-Encoding': 'gzip, deflate'
 }
 
+playlist_file = cfg.playlist_file.value
+playlists_json = cfg.playlists_json.value
+
 
 class XStreamity_AddServer(ConfigListScreen, Screen):
 
@@ -50,9 +53,6 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 
         with open(skin, "r") as f:
             self.skin = f.read()
-
-        self.playlist_file = cfg.playlist_file.value
-        self.playlists_json = cfg.playlists_json.value
 
         self.setup_title = _("Add Xtream Codes Playlist")
 
@@ -74,6 +74,12 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
         self.protocol = "http://"
         self.output = "ts"
 
+        self._http = requests.Session()
+        retries = Retry(total=1, backoff_factor=1)
+        adapter = HTTPAdapter(max_retries=retries)
+        self._http.mount("http://", adapter)
+        self._http.mount("https://", adapter)
+
         self["actions"] = ActionMap(["XStreamityActions"], {
             "cancel": self.cancel,
             "red": self.cancel,
@@ -85,6 +91,14 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 
         self.onFirstExecBegin.append(self.initConfig)
         self.onLayoutFinish.append(self.__layoutFinished)
+        self.onClose.append(self.__onClose)
+
+    def __onClose(self):
+        try:
+            self._http.close()
+        except:
+            pass
+        self._http = None
 
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
@@ -178,13 +192,13 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
         playlists_all = []
 
         # Check if the playlist file exists and is not empty
-        if os.path.exists(self.playlists_json) and os.path.getsize(self.playlists_json) > 0:
+        if os.path.exists(playlists_json) and os.path.getsize(playlists_json) > 0:
             try:
-                with open(self.playlists_json) as f:
+                with open(playlists_json) as f:
                     playlists_all = json.load(f)
             except Exception as e:
                 print("Error loading playlist JSON:", e)
-                os.remove(self.playlists_json)
+                os.remove(playlists_json)
 
         return playlists_all
 
@@ -225,11 +239,11 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
             self.session.open(MessageBox, _("Name already used. Please enter a unique name."), MessageBox.TYPE_ERROR, timeout=10)
             return
 
-        if not os.path.exists(self.playlist_file):
-            with open(self.playlist_file, "a") as f:
+        if not os.path.exists(playlist_file):
+            with open(playlist_file, "a") as f:
                 pass
 
-        with open(self.playlist_file, "a") as f:
+        with open(playlist_file, "a") as f:
             f.write("\n{}\n".format(playlistline))
 
         self.session.open(MessageBox, _("Playlist added successfully."), type=MessageBox.TYPE_INFO, timeout=5)
@@ -248,15 +262,9 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
     def checkline(self):
         valid = False
 
-        retries = Retry(total=2, backoff_factor=1)
-        adapter = HTTPAdapter(max_retries=retries)
-
-        with requests.Session() as http:
-            http.mount("http://", adapter)
-            http.mount("https://", adapter)
-
-            try:
-                response = http.get(self.apiline, headers=hdr, timeout=30, verify=False)
+        http = self._http
+        try:
+            with http.get(self.apiline, headers=hdr, timeout=30, verify=False) as response:
                 response.raise_for_status()
                 if response.status_code == requests.codes.ok:
                     try:
@@ -265,7 +273,7 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
                             valid = str(json_response["user_info"]["auth"]) == "1"
                     except ValueError:
                         pass
-            except Exception as e:
-                print("Error connecting:", e)
+        except Exception as e:
+            print("Error connecting:", e)
 
         return valid
