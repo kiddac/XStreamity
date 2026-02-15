@@ -169,7 +169,7 @@ class XStreamity_Vod_Categories(Screen):
         self.chosen_category = ""
 
         self.pin = False
-        self.tmdbresults = ""
+        self.tmdbresults = {}
         self.sortindex = 0
         self.sortText = ""
 
@@ -204,19 +204,33 @@ class XStreamity_Vod_Categories(Screen):
 
         try:
             mask_path = os.path.join(skin_directory, "common/mask2.png")
-
             if os.path.exists(mask_path):
                 self._mask2 = Image.open(mask_path)
+                self._mask2.load()  # Force load the image data
                 self._mask2_size = self._mask2.size
 
                 # Always create a reliable L alpha mask once:
-                if self._mask2.mode in ("RGBA", "LA"):
-                    self._mask2_alpha = self._mask2.split()[-1]   # existing alpha channel
-                else:
-                    # Greyscale (or RGB etc) -> treat brightness as alpha
+                try:
+                    if self._mask2.mode in ("RGBA", "LA"):
+                        # For RGBA/LA, extract the alpha channel
+                        if hasattr(self._mask2, 'split'):
+                            bands = self._mask2.split()
+                            if bands:
+                                self._mask2_alpha = bands[-1]
+                            else:
+                                raise ValueError("split() returned empty")
+                        else:
+                            # Old PIL without proper split
+                            self._mask2_alpha = self._mask2.convert("L")
+                    else:
+                        # Greyscale (or RGB etc) -> treat brightness as alpha
+                        self._mask2_alpha = self._mask2.convert("L")
+                except Exception as e:
+                    print("Error extracting alpha, using greyscale fallback:", e)
                     self._mask2_alpha = self._mask2.convert("L")
 
-        except:
+        except Exception as e:
+            print("Error loading mask2:", e)
             self._mask2 = None
             self._mask2_alpha = None
             self._mask2_size = None
@@ -925,7 +939,7 @@ class XStreamity_Vod_Categories(Screen):
         if debugs:
             print("*** selectionChanged ***")
 
-        self.tmdbresults = ""
+        self.tmdbresults = {}
 
         current_item = self["main_list"].getCurrent()
 
@@ -1175,6 +1189,7 @@ class XStreamity_Vod_Categories(Screen):
 
         response = ""
         self.tmdbdetails = []
+        self.tmdbresults = {}
 
         try:
             with codecs.open(os.path.join(dir_tmp, "search.txt"), "r", encoding="utf-8") as f:
@@ -1958,8 +1973,8 @@ class XStreamity_Vod_Categories(Screen):
                 try:
                     while len(self._mask2_cache) > self._mask2_cache_max:
                         self._mask2_cache.popitem(last=False)
-                except:
-                    pass
+                except Exception as e:
+                    print(e)
 
             background = Image.new("RGBA", bd_size, (0, 0, 0, 0))
             background.paste(im, (x_offset, y_offset), alpha)

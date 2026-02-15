@@ -845,7 +845,6 @@ class XStreamity_Live_Categories(Screen):
         if debugs:
             print("*** resizeImage ***")
 
-        # If user moved on, don't update UI; just cleanup the temp file
         if req_id is not None and getattr(self, "_picon_req_id", 0) != req_id:
             try:
                 if original and os.path.exists(original):
@@ -855,25 +854,23 @@ class XStreamity_Live_Categories(Screen):
             return
 
         size = self.picon_size
-
         if os.path.exists(original):
+            im = None
             try:
-                with Image.open(original) as im:
-                    if im.mode != "RGBA":
-                        im = im.convert("RGBA")
+                im = Image.open(original)
+                if im.mode != "RGBA":
+                    im = im.convert("RGBA")
 
-                    try:
-                        im.thumbnail(size, Image.Resampling.LANCZOS)
-                    except:
-                        im.thumbnail(size, Image.ANTIALIAS)
+                try:
+                    im.thumbnail(size, Image.Resampling.LANCZOS)
+                except:
+                    im.thumbnail(size, Image.ANTIALIAS)
 
-                    bg = Image.new("RGBA", size, (255, 255, 255, 0))
-
-                    left = (size[0] - im.size[0]) // 2
-                    top = (size[1] - im.size[1]) // 2
-
-                    bg.paste(im, (left, top), mask=im)
-                    bg.save(original, "PNG")
+                bg = Image.new("RGBA", size, (255, 255, 255, 0))
+                left = (size[0] - im.size[0]) // 2
+                top = (size[1] - im.size[1]) // 2
+                bg.paste(im, (left, top), mask=im)
+                bg.save(original, "PNG")
 
                 if self["picon"].instance:
                     self["picon"].instance.setPixmapFromFile(original)
@@ -881,12 +878,17 @@ class XStreamity_Live_Categories(Screen):
             except Exception as e:
                 print("Error resizing image:", e)
                 self.loadDefaultImage()
+            finally:
+                if im is not None:
+                    try:
+                        im.close()
+                    except:
+                        pass
 
             try:
                 os.remove(original)
             except:
                 pass
-
         else:
             self.loadDefaultImage()
 
