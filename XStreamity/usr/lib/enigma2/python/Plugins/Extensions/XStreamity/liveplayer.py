@@ -373,12 +373,6 @@ class XStreamity_StreamPlayer(
 
         self.setup_title = _("TV")
 
-        self._http = requests.Session()
-        retries = Retry(total=1, backoff_factor=1)
-        adapter = HTTPAdapter(max_retries=retries)
-        self._http.mount("http://", adapter)
-        self._http.mount("https://", adapter)
-
         self["actions"] = ActionMap(["XStreamityActions"], {
             "cancel": self.back,
             "stop": self.back,
@@ -412,14 +406,6 @@ class XStreamity_StreamPlayer(
             self.timerRecent_conn = self.timerRecent.timeout.connect(self.addRecentLiveList)
 
         self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl))
-        self.onClose.append(self.__onClose)
-
-    def __onClose(self):
-        try:
-            self._http.close()
-        except:
-            pass
-        self._http = None
 
     def _stopTimer(self, name):
         t = getattr(self, name, None)
@@ -490,18 +476,24 @@ class XStreamity_StreamPlayer(
                         shortEPGJson = []
                         url = player_api + "&action=get_short_epg&stream_id=" + str(stream_id) + "&limit=2"
 
-                        http = self._http
-                        try:
-                            with http.get(url, headers=hdr, timeout=(10, 20), verify=False) as r:
+                        retries = Retry(total=1, backoff_factor=1)
+                        adapter = HTTPAdapter(max_retries=retries)
+
+                        with requests.Session() as http:
+                            http.mount("http://", adapter)
+                            http.mount("https://", adapter)
+
+                            try:
+                                r = http.get(url, headers=hdr, timeout=(10, 20), verify=False)
                                 r.raise_for_status()
 
                                 if r.status_code == requests.codes.ok:
                                     response = r.json()
                                     shortEPGJson = response.get("epg_listings", [])
-                        except Exception as e:
-                            print("Error fetching or processing response:", e)
-                            response = None
-                            shortEPGJson = []
+                            except Exception as e:
+                                print("Error fetching or processing response:", e)
+                                response = None
+                                shortEPGJson = []
 
                         if shortEPGJson and len(shortEPGJson) > 1:
                             self.epgshortlist = []

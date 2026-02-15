@@ -237,12 +237,6 @@ class XStreamity_DownloadManager(Screen):
 
         self["diskspace"] = StaticText()
 
-        self._http = requests.Session()
-        retries = Retry(total=1, backoff_factor=1)
-        adapter = HTTPAdapter(max_retries=retries)
-        self._http.mount("http://", adapter)
-        self._http.mount("https://", adapter)
-
         self["xstreamity_actions"] = ActionMap(["XStreamityActions"], {
             "red": self.keyCancel,
             "cancel": self.keyCancel,
@@ -253,14 +247,6 @@ class XStreamity_DownloadManager(Screen):
 
         self.onFirstExecBegin.append(self.start)
         self.onLayoutFinish.append(self.__layoutFinished)
-        self.onClose.append(self.__onClose)
-
-    def __onClose(self):
-        try:
-            self._http.close()
-        except:
-            pass
-        self._http = None
 
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
@@ -337,10 +323,15 @@ class XStreamity_DownloadManager(Screen):
             if video[5] == 0:
                 url = video[2]
 
-                http = self._http
+                retries = Retry(total=1, backoff_factor=1)
+                adapter = HTTPAdapter(max_retries=retries)
 
-                try:
-                    with http.get(url, headers=hdr, timeout=20, verify=False, stream=True) as r:
+                with requests.Session() as http:
+                    http.mount("http://", adapter)
+                    http.mount("https://", adapter)
+
+                    try:
+                        r = http.get(url, headers=hdr, timeout=20, verify=False, stream=True)
                         r.raise_for_status()
 
                         if r.status_code == requests.codes.ok or r.status_code == 206:
@@ -370,10 +361,10 @@ class XStreamity_DownloadManager(Screen):
                         else:
                             video[3] = "Error"
 
-                except Exception as e:
-                    print(e)
-                    video[5] = 0
-                    video[3] = "Error"
+                    except Exception as e:
+                        print(e)
+                        video[5] = 0
+                        video[3] = "Error"
 
             x += 1
             if x == 5:

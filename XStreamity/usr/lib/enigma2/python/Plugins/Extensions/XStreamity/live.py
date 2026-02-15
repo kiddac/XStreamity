@@ -206,12 +206,6 @@ class XStreamity_Live_Categories(Screen):
         self._epg_json_cache = None
         self._epg_json_cache_mtime = 0
 
-        self._http = requests.Session()
-        retries = Retry(total=1, backoff_factor=1)
-        adapter = HTTPAdapter(max_retries=retries)
-        self._http.mount("http://", adapter)
-        self._http.mount("https://", adapter)
-
         self._px_play = LoadPixmap(os.path.join(common_path, "play.png"))
         self._px_fav = LoadPixmap(os.path.join(common_path, "favourite.png"))
         self._px_watching = LoadPixmap(os.path.join(common_path, "watching.png"))
@@ -302,14 +296,6 @@ class XStreamity_Live_Categories(Screen):
 
         self.onFirstExecBegin.append(self.createSetup)
         self.onLayoutFinish.append(self.__layoutFinished)
-        self.onClose.append(self.__onClose)
-
-    def __onClose(self):
-        try:
-            self._http.close()
-        except:
-            pass
-        self._http = None
 
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
@@ -546,10 +532,15 @@ class XStreamity_Live_Categories(Screen):
     def downloadApiData(self, url):
         if debugs:
             print("*** downloadApiData ***")
+        retries = Retry(total=1, backoff_factor=1)
+        adapter = HTTPAdapter(max_retries=retries)
 
-        http = self._http
-        try:
-            with http.get(url, headers=hdr, timeout=(10, 30), verify=False) as response:
+        with requests.Session() as http:
+            http.mount("http://", adapter)
+            http.mount("https://", adapter)
+
+            try:
+                response = http.get(url, headers=hdr, timeout=(10, 30), verify=False)
                 response.raise_for_status()
 
                 if response.status_code == requests.codes.ok:
@@ -561,9 +552,9 @@ class XStreamity_Live_Categories(Screen):
                     except ValueError:
                         print("JSON decoding failed.")
                         return None
-        except Exception as e:
-            print("Error occurred during API data download:", e)
-            self.session.openWithCallback(self.back, MessageBox, _("Server error or invalid link."), MessageBox.TYPE_ERROR, timeout=3)
+            except Exception as e:
+                print("Error occurred during API data download:", e)
+                self.session.openWithCallback(self.back, MessageBox, _("Server error or invalid link."), MessageBox.TYPE_ERROR, timeout=3)
 
     def xmltvCheckData(self):
         if debugs:
@@ -1621,16 +1612,22 @@ class XStreamity_Live_Categories(Screen):
 
                         url = "{}&action=get_simple_data_table&stream_id={}".format(self.player_api, stream_id)
 
-                        http = self._http
-                        try:
-                            with http.get(url, headers=hdr, timeout=(10, 20), verify=False) as r:
+                        retries = Retry(total=1, backoff_factor=1)
+                        adapter = HTTPAdapter(max_retries=retries)
+
+                        with requests.Session() as http:
+                            http.mount("http://", adapter)
+                            http.mount("https://", adapter)
+
+                            try:
+                                r = http.get(url, headers=hdr, timeout=(10, 20), verify=False)
                                 r.raise_for_status()
 
                                 if r.status_code == requests.codes.ok:
                                     response = r.json()
-                        except Exception as e:
-                            print("Error fetching short EPG:", e)
-                            response = None
+                            except Exception as e:
+                                print("Error fetching short EPG:", e)
+                                response = None
 
                         if response:
                             now = datetime.now()

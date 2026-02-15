@@ -87,12 +87,6 @@ class XStreamity_Menu(Screen):
         self["splash"] = Pixmap()
         self["splash"].show()
 
-        self._http = requests.Session()
-        retries = Retry(total=1, backoff_factor=1)
-        adapter = HTTPAdapter(max_retries=retries)
-        self._http.mount("http://", adapter)
-        self._http.mount("https://", adapter)
-
         self["actions"] = ActionMap(["XStreamityActions"], {
             "red": self.quit,
             "cancel": self.quit,
@@ -112,14 +106,6 @@ class XStreamity_Menu(Screen):
 
         self.onFirstExecBegin.append(self.start)
         self.onLayoutFinish.append(self.__layoutFinished)
-        self.onClose.append(self.__onClose)
-
-    def __onClose(self):
-        try:
-            self._http.close()
-        except:
-            pass
-        self._http = None
 
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
@@ -156,9 +142,15 @@ class XStreamity_Menu(Screen):
         category = url[1]
         response = ""
 
-        http = self._http
-        try:
-            with http.get(url[0], headers=hdr, timeout=(10, 20), verify=False) as r:
+        retries = Retry(total=1, backoff_factor=1)
+        adapter = HTTPAdapter(max_retries=retries)
+
+        with requests.Session() as http:
+            http.mount("http://", adapter)
+            http.mount("https://", adapter)
+
+            try:
+                r = http.get(url[0], headers=hdr, timeout=(10, 20), verify=False)
                 r.raise_for_status()
                 if r.status_code == requests.codes.ok:
                     try:
@@ -169,8 +161,8 @@ class XStreamity_Menu(Screen):
 
                     except ValueError as e:
                         print("Error decoding JSON:", e)
-        except Exception as e:
-            print("Request error:", e)
+            except Exception as e:
+                print("Request error:", e)
 
         return category, response
 

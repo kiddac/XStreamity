@@ -24,7 +24,6 @@ except ImportError:
 
 # Third-party imports
 import requests
-from requests.adapters import HTTPAdapter, Retry
 
 # Enigma2 components
 from Components.ActionMap import ActionMap
@@ -122,12 +121,6 @@ class XStreamity_Scanner(Screen):
         self["scroll_up"].hide()
         self["scroll_down"].hide()
 
-        self._http = requests.Session()
-        retries = Retry(total=1, backoff_factor=1)
-        adapter = HTTPAdapter(max_retries=retries)
-        self._http.mount("http://", adapter)
-        self._http.mount("https://", adapter)
-
         self["actions"] = ActionMap(["XStreamityActions"], {
             "red": self.quit,
             "green": self.getStreamTypes,
@@ -137,14 +130,6 @@ class XStreamity_Scanner(Screen):
 
         self.onFirstExecBegin.append(self.start)
         self.onLayoutFinish.append(self.__layoutFinished)
-        self.onClose.append(self.__onClose)
-
-    def __onClose(self):
-        try:
-            self._http.close()
-        except:
-            pass
-        self._http = None
 
     def clear_caches(self):
         try:
@@ -157,10 +142,6 @@ class XStreamity_Scanner(Screen):
         self.setTitle(self.setup_title)
 
     def start(self):
-        # cfg.playlist_file.setValue(scanner_playlist_file)
-        # cfg.playlists_json.setValue(scanner_playlists_json)
-        # cfg.save()
-
         cfg.playlist_file.value = scanner_playlist_file  # Force overwrite
         cfg.playlist_file.save()
 
@@ -301,9 +282,9 @@ class XStreamity_Scanner(Screen):
         index = url[1]
         response = None
 
-        http = self._http
-        try:
-            with http.get(url[0], headers=hdr, timeout=5, verify=False) as r:
+        with requests.Session() as http:
+            try:
+                r = http.get(url[0], headers=hdr, timeout=5, verify=False)
                 r.raise_for_status()
                 content_type = r.headers.get('Content-Type', '')
                 if 'application/json' in content_type:
@@ -321,10 +302,10 @@ class XStreamity_Scanner(Screen):
                 else:
                     return index, None
 
-        except requests.exceptions.RequestException:
-            pass
-        except Exception:
-            pass
+            except requests.exceptions.RequestException:
+                pass
+            except Exception:
+                pass
 
         return index, response
 

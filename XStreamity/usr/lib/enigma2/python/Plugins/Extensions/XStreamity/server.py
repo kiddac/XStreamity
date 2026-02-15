@@ -74,12 +74,6 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
         self.protocol = "http://"
         self.output = "ts"
 
-        self._http = requests.Session()
-        retries = Retry(total=1, backoff_factor=1)
-        adapter = HTTPAdapter(max_retries=retries)
-        self._http.mount("http://", adapter)
-        self._http.mount("https://", adapter)
-
         self["actions"] = ActionMap(["XStreamityActions"], {
             "cancel": self.cancel,
             "red": self.cancel,
@@ -91,14 +85,6 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 
         self.onFirstExecBegin.append(self.initConfig)
         self.onLayoutFinish.append(self.__layoutFinished)
-        self.onClose.append(self.__onClose)
-
-    def __onClose(self):
-        try:
-            self._http.close()
-        except:
-            pass
-        self._http = None
 
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
@@ -262,9 +248,15 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
     def checkline(self):
         valid = False
 
-        http = self._http
-        try:
-            with http.get(self.apiline, headers=hdr, timeout=30, verify=False) as response:
+        retries = Retry(total=1, backoff_factor=1)
+        adapter = HTTPAdapter(max_retries=retries)
+
+        with requests.Session() as http:
+            http.mount("http://", adapter)
+            http.mount("https://", adapter)
+
+            try:
+                response = http.get(self.apiline, headers=hdr, timeout=30, verify=False)
                 response.raise_for_status()
                 if response.status_code == requests.codes.ok:
                     try:
@@ -273,7 +265,7 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
                             valid = str(json_response["user_info"]["auth"]) == "1"
                     except ValueError:
                         pass
-        except Exception as e:
-            print("Error connecting:", e)
+            except Exception as e:
+                print("Error connecting:", e)
 
         return valid

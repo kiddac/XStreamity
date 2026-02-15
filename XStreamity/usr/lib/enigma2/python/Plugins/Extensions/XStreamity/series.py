@@ -260,12 +260,6 @@ class XStreamity_Series_Categories(Screen):
         except:
             pass
 
-        self._http = requests.Session()
-        retries = Retry(total=1, backoff_factor=1)
-        adapter = HTTPAdapter(max_retries=retries)
-        self._http.mount("http://", adapter)
-        self._http.mount("https://", adapter)
-
         self._px_play = LoadPixmap(os.path.join(common_path, "play.png"))
         self._px_fav = LoadPixmap(os.path.join(common_path, "favourite.png"))
         self._px_watched = LoadPixmap(os.path.join(common_path, "watched.png"))
@@ -397,14 +391,6 @@ class XStreamity_Series_Categories(Screen):
 
         self.onFirstExecBegin.append(self.createSetup)
         self.onLayoutFinish.append(self.__layoutFinished)
-        self.onClose.append(self.__onClose)
-
-    def __onClose(self):
-        try:
-            self._http.close()
-        except:
-            pass
-        self._http = None
 
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
@@ -1122,9 +1108,15 @@ class XStreamity_Series_Categories(Screen):
         if debugs:
             print("*** downloadApiData ***", url)
 
-        http = self._http
-        try:
-            with http.get(url, headers=hdr, timeout=(10, 30), verify=False) as response:
+        retries = Retry(total=1, backoff_factor=1)
+        adapter = HTTPAdapter(max_retries=retries)
+
+        with requests.Session() as http:
+            http.mount("http://", adapter)
+            http.mount("https://", adapter)
+
+            try:
+                response = http.get(url, headers=hdr, timeout=(10, 30), verify=False)
                 response.raise_for_status()
 
                 if response.status_code == requests.codes.ok:
@@ -1136,9 +1128,9 @@ class XStreamity_Series_Categories(Screen):
                     except ValueError:
                         print("JSON decoding failed.")
                         return None
-        except Exception as e:
-            print("Error occurred during API data download:", e)
-            self.session.openWithCallback(self.back, MessageBox, _("Server error or invalid link."), MessageBox.TYPE_ERROR, timeout=3)
+            except Exception as e:
+                print("Error occurred during API data download:", e)
+                self.session.openWithCallback(self.back, MessageBox, _("Server error or invalid link."), MessageBox.TYPE_ERROR, timeout=3)
 
     def buildCategories(self):
         if debugs:

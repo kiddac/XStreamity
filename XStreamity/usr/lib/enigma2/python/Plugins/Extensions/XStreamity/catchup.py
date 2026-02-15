@@ -181,12 +181,6 @@ class XStreamity_Catchup_Categories(Screen):
         self["key_epg"] = StaticText("")
         self["key_menu"] = StaticText("")
 
-        self._http = requests.Session()
-        retries = Retry(total=1, backoff_factor=1)
-        adapter = HTTPAdapter(max_retries=retries)
-        self._http.mount("http://", adapter)
-        self._http.mount("https://", adapter)
-
         # cache pixmaps (avoid LoadPixmap per row)
         self._px_more = LoadPixmap(os.path.join(common_path, "more.png"))
 
@@ -254,14 +248,6 @@ class XStreamity_Catchup_Categories(Screen):
 
         self.onFirstExecBegin.append(self.createSetup)
         self.onLayoutFinish.append(self.__layoutFinished)
-        self.onClose.append(self.__onClose)
-
-    def __onClose(self):
-        try:
-            self._http.close()
-        except:
-            pass
-        self._http = None
 
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
@@ -393,9 +379,15 @@ class XStreamity_Catchup_Categories(Screen):
         glob.originalChannelList2 = self.list2[:]
 
     def downloadApiData(self, url):
-        http = self._http
-        try:
-            with http.get(url, headers=hdr, timeout=(10, 60), verify=False) as response:
+        retries = Retry(total=1, backoff_factor=1)
+        adapter = HTTPAdapter(max_retries=retries)
+
+        with requests.Session() as http:
+            http.mount("http://", adapter)
+            http.mount("https://", adapter)
+
+            try:
+                response = http.get(url, headers=hdr, timeout=(10, 60), verify=False)
                 response.raise_for_status()
 
                 if response.status_code == requests.codes.ok:
@@ -407,9 +399,9 @@ class XStreamity_Catchup_Categories(Screen):
                     except ValueError:
                         print("JSON decoding failed.")
                         return None
-        except Exception as e:
-            print("Error occurred during API data download:", e)
-            self.session.openWithCallback(self.back, MessageBox, _("Server error or invalid link."), MessageBox.TYPE_ERROR, timeout=3)
+            except Exception as e:
+                print("Error occurred during API data download:", e)
+                self.session.openWithCallback(self.back, MessageBox, _("Server error or invalid link."), MessageBox.TYPE_ERROR, timeout=3)
 
     def buildList1(self):
         self["picon"].hide()
@@ -1010,14 +1002,20 @@ class XStreamity_Catchup_Categories(Screen):
                 self.session.open(MessageBox, _("Catchup error. No data for this slot"), MessageBox.TYPE_WARNING, timeout=5)
 
     def checkRedirect(self, url):
-        http = self._http
-        try:
-            with http.get(url, headers=hdr, timeout=30, verify=False, stream=True) as response:
+        retries = Retry(total=1, backoff_factor=1)
+        adapter = HTTPAdapter(max_retries=retries)
+
+        with requests.Session() as http:
+            http.mount("http://", adapter)
+            http.mount("https://", adapter)
+
+            try:
+                response = http.get(url, headers=hdr, timeout=30, verify=False, stream=True)
                 url = response.url
                 return str(url)
-        except Exception as e:
-            print(e)
-            return str(url)
+            except Exception as e:
+                print(e)
+                return str(url)
 
     def parse_datetime(self, datetime_str):
         time_formats = ["%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H-%M-%S", "%Y-%m-%d-%H:%M:%S", "%Y- %m-%d %H:%M:%S"]
@@ -1043,16 +1041,22 @@ class XStreamity_Catchup_Categories(Screen):
         url = "{}{}".format(self.simpledatatable, stream_id)
         url = self.checkRedirect(url)
 
-        http = self._http
-        try:
-            with http.get(url, headers=hdr, timeout=(10, 20), verify=False) as response:
+        retries = Retry(total=1, backoff_factor=1)
+        adapter = HTTPAdapter(max_retries=retries)
+
+        with requests.Session() as http:
+            http.mount("http://", adapter)
+            http.mount("https://", adapter)
+
+            try:
+                response = http.get(url, headers=hdr, timeout=(10, 20), verify=False)
                 response.raise_for_status()
                 if response.status_code == requests.codes.ok:
                     shortEPGJson = response.json()
 
-        except Exception as e:
-            print("Error fetching catchup EPG:", e)
-            return
+            except Exception as e:
+                print("Error fetching catchup EPG:", e)
+                return
 
         if "epg_listings" not in shortEPGJson or not shortEPGJson["epg_listings"]:
             self.session.open(MessageBox, _("Catchup currently not available. Missing EPG data"), type=MessageBox.TYPE_INFO, timeout=2)
