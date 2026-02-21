@@ -1,5 +1,5 @@
 <screen name="XStreamityCategories" position="0,0" size="1280,720" backgroundColor="#000000" flags="wfNoBorder">
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/Black/images/background.png" alphatest="blend" position="0,0" size="1280,720" zPosition="-1"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/Black/images/background.png" alphatest="off" position="0,0" size="1280,720" zPosition="-1"/>
 	<widget name="vod_backdrop" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/Black/images/backdrop.png" position="426,0" size="853,480" alphatest="blend" zPosition="1"/>
 	<widget source="session.VideoPicture" render="Pig" position="0,0" size="320,180" backgroundColor="#ff000000" zPosition="2"/>
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skin/hd/common/divider.png" position="20,246" size="280,2" alphatest="blend" zPosition="1"/>
