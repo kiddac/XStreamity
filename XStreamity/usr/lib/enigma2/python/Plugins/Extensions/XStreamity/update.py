@@ -97,13 +97,6 @@ class XStreamity_Update:
         else:
             return False
 
-    def clear_caches(self):
-        try:
-            with open("/proc/sys/vm/drop_caches", "w") as drop_caches:
-                drop_caches.write("1\n2\n3\n")
-        except IOError:
-            pass
-
     def check_redirect(self, url):
         retries = Retry(total=1, backoff_factor=1)
         adapter = HTTPAdapter(max_retries=retries)
@@ -136,7 +129,7 @@ class XStreamity_Update:
                 domain = playlist["playlist_info"]["domain"]
                 name = playlist["playlist_info"]["name"]
                 xmltv = playlist["playlist_info"]["xmltv_api"]
-                epglocation = str(cfg.epglocation.value)
+                epglocation = os.path.join(str(cfg.epglocation.value).rstrip("/"), "iptv-epg")
                 epgfolder = os.path.join(epglocation, str(name))
                 epgxmlfile = os.path.join(epgfolder, "epg.xml")
                 epgjsonfile = os.path.join(epgfolder, "epg.json")
@@ -151,7 +144,7 @@ class XStreamity_Update:
                     domain = playlist["playlist_info"]["domain"]
                     name = playlist["playlist_info"]["name"]
                     xmltv = playlist["playlist_info"]["xmltv_api"]
-                    epglocation = str(cfg.epglocation.value)
+                    epglocation = os.path.join(str(cfg.epglocation.value).rstrip("/"), "iptv-epg")
                     epgfolder = os.path.join(epglocation, str(name))
                     epgxmlfile = os.path.join(epgfolder, "epg.xml")
                     epgjsonfile = os.path.join(epgfolder, "epg.json")
@@ -165,7 +158,6 @@ class XStreamity_Update:
                         os.makedirs(epgfolder)
 
         self.processPlaylist()
-        self.clear_caches()
 
     def processPlaylist(self):
         if self.urllist:
@@ -247,19 +239,50 @@ class XStreamity_Update:
         nowtime = calendar.timegm(time.gmtime())
         epgjsonfile = self.urllist[0][3]
         epgxmlfile = self.urllist[0][2]
+        epglockfile = epgjsonfile + ".lock"
 
-        for channel, start, stop, title, desc in self.buildjson2():
-            start = get_time_utc(start, quickptime)
-            stop = get_time_utc(stop, quickptime)
+        # Check for active lock from another plugin
+        if os.path.exists(epglockfile):
+            if time.time() - os.path.getmtime(epglockfile) < 1800:
+                print("EPG locked by another process, skipping:", epgjsonfile)
+                if os.path.exists(epgxmlfile):
+                    os.remove(epgxmlfile)
+                self.urllist.pop(0)
+                if self.urllist:
+                    self.processPlaylist()
+                return
 
-            if start < nowtime + (3600 * 24) and stop > start and stop > nowtime:
-                epgitems.setdefault(channel, []).append([start, stop, title, desc])
+            # Lock is stale, remove it
+            os.remove(epglockfile)
 
-        with open(epgjsonfile, "w") as jsonFile:
-            json.dump(epgitems, jsonFile, ensure_ascii=False)
+        # Acquire lock
+        try:
+            open(epglockfile, "w").close()
+        except Exception as e:
+            print("Could not create EPG lock file:", e)
 
-        if os.path.exists(epgxmlfile):
-            os.remove(epgxmlfile)
+        try:
+            for channel, start, stop, title, desc in self.buildjson2():
+                start = get_time_utc(start, quickptime)
+                stop = get_time_utc(stop, quickptime)
+
+                if start < nowtime + (3600 * 24) and stop > start and stop > nowtime:
+                    epgitems.setdefault(channel, []).append([start, stop, title, desc])
+
+            with open(epgjsonfile, "w") as jsonFile:
+                json.dump(epgitems, jsonFile, ensure_ascii=False)
+
+        finally:
+            # Always release lock and clean up xml
+            try:
+                os.remove(epglockfile)
+            except Exception:
+                pass
+            if os.path.exists(epgxmlfile):
+                try:
+                    os.remove(epgxmlfile)
+                except Exception:
+                    pass
 
         epgitems.clear()
         self.urllist.pop(0)

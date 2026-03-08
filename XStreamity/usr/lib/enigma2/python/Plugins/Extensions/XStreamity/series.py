@@ -12,6 +12,7 @@ import time
 from itertools import cycle, islice
 import zlib
 import tempfile
+import unicodedata
 
 try:
     from http.client import HTTPConnection
@@ -81,7 +82,6 @@ def normalize_superscripts(text):
 
 
 def clean_names(streams):
-    """Clean 'name' and 'category_name' fields in each stream entry."""
     for item in streams:
         for field in ("name", "category_name"):
             if field in item and isinstance(item[field], str):
@@ -1288,12 +1288,21 @@ class XStreamity_Series_Categories(Screen):
             self["key_blue"].setText("")
             self.hideVod()
 
-    def strip_foreign_mixed(self, text):
+    def normalize_text(self, text):
+
         has_ascii = bool(self._re_has_ascii.search(text))
         has_non_ascii = bool(self._re_has_non_ascii.search(text))
 
         if has_ascii and has_non_ascii:
-            text = self._re_remove_non_ascii.sub('', text)
+
+            if pythonVer == 2:
+                if isinstance(text, str):
+                    text = text.decode("utf-8", "ignore")
+
+                text = unicodedata.normalize("NFKD", text).encode("ascii", "ignore")
+
+            else:
+                text = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("ascii")
 
         return text
 
@@ -1318,7 +1327,6 @@ class XStreamity_Series_Categories(Screen):
         # remove all leading content between and including ┃┃ or ┃
         searchtitle = self._re_leading_doublebars.sub('', searchtitle)
         searchtitle = self._re_leading_singlebar_block.sub('', searchtitle)
-        searchtitle = self._re_leading_singlebar_block.sub('', searchtitle)
         searchtitle = self._re_any_bar_block.sub('', searchtitle)
 
         # remove all content between and including () unless it's all digits
@@ -1334,8 +1342,8 @@ class XStreamity_Series_Categories(Screen):
         # remove up to 6 characters followed by space and dash at start (e.g. "EN -", "BE-NL -")
         searchtitle = self._re_lang_dash_prefix.sub('', searchtitle)
 
-        # Strip foreign / non-ASCII characters (only when mixed)
-        searchtitle = self.strip_foreign_mixed(searchtitle)
+        # normalise text
+        searchtitle = self.normalize_text(searchtitle)
 
         # Bad substrings to strip (case-insensitive)
         searchtitle = self._re_bad_strings.sub('', searchtitle)
@@ -1713,7 +1721,6 @@ class XStreamity_Series_Categories(Screen):
 
         # Handle certification
         def get_certification(data, language_code):
-            """Extract certification for given language code with fallbacks"""
             fallback_codes = ["GB", "US"]
 
             release_dates = data.get("release_dates")
@@ -2956,10 +2963,6 @@ class XStreamity_Series_Categories(Screen):
         # self["vod_cover"].hide()
         # self["vod_logo"].hide()
         # self["vod_backdrop"].hide()
-        """
-        if self.level == 3 or self.level == 4:
-            self["main_title"].setText("")
-            """
         self["x_title"].setText("")
         self["x_description"].setText("")
         self["tagline"].setText("")
@@ -2985,45 +2988,56 @@ class XStreamity_Series_Categories(Screen):
         if self.level != 4:
             return
 
-        if self["main_list"].getCurrent():
-            title = self["main_list"].getCurrent()[0]
-            stream_url = self["main_list"].getCurrent()[3]
-            description = self["main_list"].getCurrent()[6]
-            duration = self["main_list"].getCurrent()[12]
+        if not self["main_list"].getCurrent():
+            return
 
+        title = self["main_list"].getCurrent()[0]
+        stream_url = self["main_list"].getCurrent()[3]
+        description = self["main_list"].getCurrent()[6]
+        duration = self["main_list"].getCurrent()[12]
+
+        try:
+            h, m, s = map(int, duration.split(":"))
+            duration = h * 60 + m + s // 60
+        except Exception:
+            duration = 0
+
+        timestamp = ""
+        channel = _("Series")
+        downloads_all = []
+
+        if os.path.isfile(downloads_json):
             try:
-                h, m, s = map(int, duration.split(":"))
-                duration = h * 60 + m + s // 60
-            except:
-                duration = 0
-
-            timestamp = ""
-            channel = _("Series")
-
-            downloads_all = []
-            if os.path.isfile(downloads_json):
                 with open(downloads_json, "r") as f:
-                    try:
-                        downloads_all = json.load(f)
-                    except:
-                        pass
+                    downloads_all = json.load(f)
+                if not isinstance(downloads_all, list):
+                    downloads_all = []
+            except Exception as e:
+                print("Error loading downloads JSON:", e)
+                downloads_all = []
 
-            exists = False
-            for video in downloads_all:
-                url = video[2]
-                if stream_url == url:
-                    exists = True
+        exists = any(video[2] == stream_url for video in downloads_all if len(video) > 2)
 
-            if exists is False:
-                downloads_all.append([_("Series"), title, stream_url, "Not Started", 0, 0, description, duration, channel, timestamp])
-
+        if not exists:
+            downloads_all.append([_("Series"), title, stream_url, "Not Started", 0, 0, description, duration, channel, timestamp])
+            try:
                 with open(downloads_json, "w") as f:
                     json.dump(downloads_all, f, indent=4)
+            except Exception as e:
+                print("Error saving downloads JSON:", e)
+                self.session.open(MessageBox, _("Failed to add to download manager"), MessageBox.TYPE_ERROR, timeout=5)
+                return
 
-                self.session.openWithCallback(self.opendownloader, MessageBox, _(title) + "\n\n" + _("Added to download manager") + "\n\n" + _("Note recording acts as an open connection.") + "\n" + _("Do not record and play streams at the same time.") + "\n\n" + _("Open download manager?"))
-
-            else:
-                self.session.open(MessageBox, _(title) + "\n\n" + _("Already added to download manager"), MessageBox.TYPE_ERROR, timeout=5)
+            self.session.openWithCallback(
+                self.opendownloader,
+                MessageBox,
+                _(title) + "\n\n" + _("Added to download manager") + "\n\n" +
+                _("Note recording acts as an open connection.") + "\n" +
+                _("Do not record and play streams at the same time.") + "\n\n" +
+                _("Open download manager?")
+            )
+        else:
+            self.session.open(MessageBox, _(title) + "\n\n" + _("Already added to download manager"), MessageBox.TYPE_ERROR, timeout=5)
 
     def opendownloader(self, answer=None):
         if debugs:

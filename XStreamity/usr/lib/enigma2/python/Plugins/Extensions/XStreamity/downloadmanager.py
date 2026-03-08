@@ -74,8 +74,6 @@ def convert_size(size_bytes):
 
 
 def detect_video_extension(file_path):
-    """Try to detect the correct video extension from .mp4, .mkv, .avi, .ts"""
-
     # First try mimetypes if available
     try:
         import mimetypes

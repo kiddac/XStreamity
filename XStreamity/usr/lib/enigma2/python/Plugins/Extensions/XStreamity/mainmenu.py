@@ -26,31 +26,29 @@ from .xStaticText import StaticText
 
 
 def _cleanup_epg_folders(playlists_all):
-    epglocation = str(cfg.epglocation.value)
+    import shutil
+    epg_root = os.path.join(str(cfg.epglocation.value).rstrip("/"), "iptv-epg")
 
-    if os.path.isdir(epglocation):
+    if "iptv-epg" not in epg_root:
+        return
+
+    if os.path.isdir(epg_root):
         valid_playlists = set()
-
         for playlist in playlists_all:
             try:
                 valid_playlists.add(str(playlist["playlist_info"]["name"]))
             except Exception:
                 pass
-
-        for folder_name in os.listdir(epglocation):
-            epgfolder = os.path.join(epglocation, folder_name)
-
+        for folder_name in os.listdir(epg_root):
+            epgfolder = os.path.join(epg_root, folder_name)
             if not os.path.isdir(epgfolder):
                 continue
-
             if folder_name not in valid_playlists:
                 try:
-                    import shutil
                     shutil.rmtree(epgfolder)
                 except Exception:
                     pass
                 continue
-
             try:
                 for filename in os.listdir(epgfolder):
                     if filename.lower().endswith(".xml"):
@@ -67,7 +65,6 @@ def _cleanup_epg_folders(playlists_all):
                 path = os.path.join(dir_tmp, item)
                 try:
                     if os.path.isdir(path):
-                        import shutil
                         shutil.rmtree(path)
                     else:
                         os.remove(path)
@@ -132,7 +129,6 @@ class XStreamity_MainMenu(Screen):
             glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
             glob.newPlayingServiceRefString = glob.newPlayingServiceRef.toString()
 
-        # self.onShow.append(self.createSetup)
         self.onFirstExecBegin.append(self.check_dependencies)
         self.onLayoutFinish.append(self.__layoutFinished)
 
@@ -200,7 +196,7 @@ class XStreamity_MainMenu(Screen):
         else:
             self.start()
 
-    def start(self):
+    def start(self, answer=None):
         self.playlists_all = loadfiles.process_files()
         _cleanup_epg_folders(self.playlists_all)
         self.createSetup()
@@ -232,23 +228,23 @@ class XStreamity_MainMenu(Screen):
 
     def playlists(self):
         from . import playlists
-        self.session.openWithCallback(lambda: self.start, playlists.XStreamity_Playlists)
+        self.session.openWithCallback(self.start, playlists.XStreamity_Playlists)
 
     def settings(self):
         from . import settings
-        self.session.openWithCallback(lambda: self.start, settings.XStreamity_Settings)
+        self.session.openWithCallback(self.start, settings.XStreamity_Settings)
 
     def addServer(self):
         from . import server
-        self.session.openWithCallback(lambda: self.start, server.XStreamity_AddServer)
+        self.session.openWithCallback(self.start, server.XStreamity_AddServer)
 
     def downloadManager(self):
         from . import downloadmanager
-        self.session.openWithCallback(lambda: self.start, downloadmanager.XStreamity_DownloadManager)
+        self.session.openWithCallback(self.start, downloadmanager.XStreamity_DownloadManager)
 
     def hackavision(self):
         from . import scanner
-        self.session.openWithCallback(lambda: self.start, scanner.XStreamity_Scanner)
+        self.session.openWithCallback(lambda _: self.start, scanner.XStreamity_Scanner)
 
     def __next__(self):
         current_entry = self["list"].getCurrent()

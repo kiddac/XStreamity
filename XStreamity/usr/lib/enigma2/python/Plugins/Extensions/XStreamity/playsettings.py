@@ -68,13 +68,6 @@ class XStreamity_Settings(ConfigListScreen, Screen):
         self.onFirstExecBegin.append(self.initConfig)
         self.onLayoutFinish.append(self.__layoutFinished)
 
-    def clear_caches(self):
-        try:
-            with open("/proc/sys/vm/drop_caches", "w") as drop_caches:
-                drop_caches.write("1\n2\n3\n")
-        except IOError:
-            pass
-
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
 
@@ -350,5 +343,4 @@ class XStreamity_Settings(ConfigListScreen, Screen):
     def writeJsonFile(self):
         with open(self.playlists_json, "w") as f:
             json.dump(self.playlists_all, f, indent=4)
-        self.clear_caches()
         self.close()

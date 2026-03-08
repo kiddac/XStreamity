@@ -135,43 +135,38 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
         currConfig = self["config"].getCurrent()
 
         if currConfig is not None:
-            if isinstance(currConfig[1], ConfigText):
-                if "VKeyIcon" in self:
-                    if isinstance(currConfig[1], ConfigNumber):
-                        try:
-                            self["VirtualKB"].setEnabled(False)
-                        except:
-                            pass
-
-                        try:
-                            self["virtualKeyBoardActions"].setEnabled(False)
-                        except:
-                            pass
-
-                        self["VKeyIcon"].hide()
-                    else:
-                        try:
-                            self["VirtualKB"].setEnabled(True)
-                        except:
-                            pass
-
-                        try:
-                            self["virtualKeyBoardActions"].setEnabled(True)
-                        except:
-                            pass
-                        self["VKeyIcon"].show()
-
-                if "HelpWindow" in self and currConfig[1].help_window and currConfig[1].help_window.instance is not None:
-                    helpwindowpos = self["HelpWindow"].getPosition()
-                    currConfig[1].help_window.instance.move(ePoint(helpwindowpos[0], helpwindowpos[1]))
-
-            else:
-                if "VKeyIcon" in self:
+            if "VKeyIcon" in self:
+                if isinstance(currConfig[1], ConfigNumber):
+                    try:
+                        self["VirtualKB"].setEnabled(False)
+                    except:
+                        pass
+                    try:
+                        self["virtualKeyBoardActions"].setEnabled(False)
+                    except:
+                        pass
+                    self["VKeyIcon"].hide()
+                elif isinstance(currConfig[1], ConfigText):
+                    try:
+                        self["VirtualKB"].setEnabled(True)
+                    except:
+                        pass
+                    try:
+                        self["virtualKeyBoardActions"].setEnabled(True)
+                    except:
+                        pass
+                    self["VKeyIcon"].show()
+                else:
                     try:
                         self["VirtualKB"].setEnabled(False)
                     except:
                         pass
                     self["VKeyIcon"].hide()
+
+            if "HelpWindow" in self and isinstance(currConfig[1], ConfigText):
+                if currConfig[1].help_window and currConfig[1].help_window.instance is not None:
+                    helpwindowpos = self["HelpWindow"].getPosition()
+                    currConfig[1].help_window.instance.move(ePoint(helpwindowpos[0], helpwindowpos[1]))
 
     def getPlaylistJson(self):
         playlists_all = []

@@ -37,7 +37,6 @@ from Tools.LoadPixmap import LoadPixmap
 
 # Local application/library-specific imports
 from . import _
-from . import checkinternet
 from . import xstreamity_globals as glob
 from .plugin import skin_directory, cfg, common_path, version, hasConcurrent, hasMultiprocessing, dir_tmp
 from .xStaticText import StaticText
@@ -89,6 +88,14 @@ def sort_key(item):
     return (primary, secondary, tertiary)
 
 
+def check_internet():
+    try:
+        requests.get("https://clients3.google.com/generate_204", timeout=5)
+        return True
+    except requests.exceptions.RequestException:
+        return False
+
+
 class XStreamity_Scanner(Screen):
     ALLOW_SUSPEND = True
 
@@ -130,13 +137,6 @@ class XStreamity_Scanner(Screen):
         self.onFirstExecBegin.append(self.start)
         self.onLayoutFinish.append(self.__layoutFinished)
 
-    def clear_caches(self):
-        try:
-            with open("/proc/sys/vm/drop_caches", "w") as drop_caches:
-                drop_caches.write("1\n2\n3\n")
-        except IOError:
-            pass
-
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
 
@@ -147,9 +147,9 @@ class XStreamity_Scanner(Screen):
         cfg.playlists_json.value = scanner_playlists_json  # Force overwrite
         cfg.playlists_json.save()
 
-        self.checkinternet = checkinternet.check_internet()
-        if not self.checkinternet:
+        if not check_internet():
             self.session.openWithCallback(self.quit, MessageBox, _("No internet."), type=MessageBox.TYPE_ERROR, timeout=5)
+            return
 
         self["version"].setText(version)
 
@@ -170,8 +170,6 @@ class XStreamity_Scanner(Screen):
             except:
                 self.makeScanUrlData()
         self.scantimer.start(10, True)
-
-        self.clear_caches()
 
     def makeScanUrlData(self):
         base_url = get_base_url()

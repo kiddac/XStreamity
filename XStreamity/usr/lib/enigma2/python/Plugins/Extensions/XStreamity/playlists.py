@@ -36,7 +36,6 @@ from . import _
 from . import xstreamity_globals as glob
 from .plugin import skin_directory, cfg, common_path, version, hasConcurrent, hasMultiprocessing
 from .xStaticText import StaticText
-from . import checkinternet
 
 
 epgimporter = os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/EPGImport")
@@ -44,6 +43,14 @@ epgimporter = os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/EPGImpor
 hdr = {
     'User-Agent': str(cfg.useragent.value)
 }
+
+
+def check_internet():
+    try:
+        requests.get("https://clients3.google.com/generate_204", timeout=5)
+        return True
+    except requests.exceptions.RequestException:
+        return False
 
 
 class XStreamity_Playlists(Screen):
@@ -94,13 +101,6 @@ class XStreamity_Playlists(Screen):
         self.onFirstExecBegin.append(self.start)
         self.onLayoutFinish.append(self.__layoutFinished)
 
-    def clear_caches(self):
-        try:
-            with open("/proc/sys/vm/drop_caches", "w") as drop_caches:
-                drop_caches.write("1\n2\n3\n")
-        except IOError:
-            pass
-
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
 
@@ -117,9 +117,9 @@ class XStreamity_Playlists(Screen):
         self.playlist_file = cfg.playlist_file.value
         self.playlists_json = cfg.playlists_json.value
 
-        self.checkinternet = checkinternet.check_internet()
-        if not self.checkinternet:
+        if not check_internet():
             self.session.openWithCallback(self.quit, MessageBox, _("No internet."), type=MessageBox.TYPE_ERROR, timeout=5)
+            return
 
         if epgimporter:
             self.epgimportcleanup()
@@ -139,8 +139,6 @@ class XStreamity_Playlists(Screen):
             self.delayedDownload()
         else:
             self.close()
-
-        self.clear_caches()
 
     def delayedDownload(self):
         self.timer = eTimer()
@@ -466,7 +464,7 @@ class XStreamity_Playlists(Screen):
     def deleteEpgData(self, data=None):
         self["splash"].show()
         playlist_name = str(self.currentplaylist["playlist_info"]["name"])
-        epglocation = str(cfg.epglocation.value)
+        epglocation = os.path.join(str(cfg.epglocation.value).rstrip("/"), "iptv-epg")
         epgfolder = os.path.join(epglocation, playlist_name)
 
         try:

@@ -910,66 +910,86 @@ class XStreamity_Catchup_Categories(Screen):
         if self.selectedlist != self["epg_short_list"]:
             return
 
-        if self["main_list"].getCurrent():
+        if not self["main_list"].getCurrent():
+            return
 
-            next_url = self["main_list"].getCurrent()[3]
-            stream = next_url.rpartition("/")[-1]
+        if not self["epg_short_list"].getCurrent():
+            return
 
-            description = str(self["epg_short_list"].getCurrent()[3])
+        main_current = self["main_list"].getCurrent()
+        epg_current = self["epg_short_list"].getCurrent()
 
-            date = str(self["epg_short_list"].getCurrent()[4])  # "2025-04-09:18-55"
+        next_url = main_current[3] if len(main_current) > 3 else ""
+        if not next_url:
+            return
 
-            timestamp = ""
+        stream = next_url.rpartition("/")[-1]
+        description = str(epg_current[3]) if len(epg_current) > 3 else ""
+        date = str(epg_current[4]) if len(epg_current) > 4 else ""
+        timestamp = ""
 
-            if ":" in date:
+        if ":" in date:
+            try:
                 parts = date.split(":")
                 if len(parts) == 2:
-                    date_part = parts[0]         # "2025-04-09"
-                    time_part = parts[1]         # "18-55"
-                    time_part = time_part.replace("-", ":")  # → "18:55"
-                    cleaned = date_part + " " + time_part    # → "2025-04-09 18:55"
-
+                    date_part = parts[0]
+                    time_part = parts[1].replace("-", ":")
+                    cleaned = date_part + " " + time_part
                     dt = datetime.strptime(cleaned, "%Y-%m-%d %H:%M")
                     timestamp = int(time.mktime(dt.timetuple()))
+            except Exception as e:
+                print("Error parsing timestamp:", e)
+                timestamp = ""
 
-            date_all = str(self["epg_short_list"].getCurrent()[1]).strip()
-            time_all = str(self["epg_short_list"].getCurrent()[2]).strip()
+        try:
+            date_all = str(epg_current[1]).strip() if len(epg_current) > 1 else ""
+            time_all = str(epg_current[2]).strip() if len(epg_current) > 2 else ""
             time_start = time_all.partition(" - ")[0].strip()
             current_year = int(datetime.now().year)
             date2 = str(datetime.strptime(str(current_year) + str(date_all) + str(time_start), "%Y%a %d/%m%H:%M")).replace("-", "").replace(":", "")[:-2]
+        except Exception as e:
+            print("Error parsing date2:", e)
+            date2 = ""
 
-            duration = str(self["epg_short_list"].getCurrent()[5])
-            playurl = "%s/timeshift/%s/%s/%s/%s/%s" % (self.host, self.username, self.password, duration, date, stream)
+        duration = str(epg_current[5]) if len(epg_current) > 5 else "0"
+        otitle = str(epg_current[0]) if len(epg_current) > 0 else ""
+        channel = str(main_current[0]) if len(main_current) > 0 else ""
+        title = str(date2) + " - " + str(channel) + " - " + str(otitle)
+        playurl = "%s/timeshift/%s/%s/%s/%s/%s" % (self.host, self.username, self.password, duration, date, stream)
 
-            otitle = str(self["epg_short_list"].getCurrent()[0])
-            channel = str(self["main_list"].getCurrent()[0])
-            title = str(date2) + " - " + str(channel) + " - " + str(otitle)
-
-            downloads_all = []
-            if os.path.isfile(downloads_json):
+        downloads_all = []
+        if os.path.isfile(downloads_json):
+            try:
                 with open(downloads_json, "r") as f:
-                    try:
-                        downloads_all = json.load(f)
-                    except:
-                        pass
+                    downloads_all = json.load(f)
+                if not isinstance(downloads_all, list):
+                    downloads_all = []
+            except Exception as e:
+                print("Error loading downloads JSON:", e)
+                downloads_all = []
 
-            exists = False
-            for video in downloads_all:
-                url = video[2]
+        exists = any(video[2] == playurl for video in downloads_all if len(video) > 2)
 
-                if playurl == url:
-                    exists = True
-
-            if exists is False:
-                downloads_all.append([_("Catch-up"), title, playurl, "Not Started", 0, 0, description, duration, channel, timestamp])
-
+        if not exists:
+            downloads_all.append([_("Catch-up"), title, playurl, "Not Started", 0, 0, description, duration, channel, timestamp])
+            try:
                 with open(downloads_json, "w") as f:
                     json.dump(downloads_all, f, indent=4)
+            except Exception as e:
+                print("Error saving downloads JSON:", e)
+                self.session.open(MessageBox, _("Failed to add to download manager"), MessageBox.TYPE_ERROR, timeout=5)
+                return
 
-                self.session.openWithCallback(self.opendownloader, MessageBox, _(title) + "\n\n" + _("Added to download manager") + "\n\n" + _("Note recording acts as an open connection.") + "\n" + _("Do not record and play streams at the same time.") + "\n\n" + _("Open download manager?"))
-
-            else:
-                self.session.open(MessageBox, _(title) + "\n\n" + _("Already added to download manager"), MessageBox.TYPE_ERROR, timeout=5)
+            self.session.openWithCallback(
+                self.opendownloader,
+                MessageBox,
+                _(title) + "\n\n" + _("Added to download manager") + "\n\n" +
+                _("Note recording acts as an open connection.") + "\n" +
+                _("Do not record and play streams at the same time.") + "\n\n" +
+                _("Open download manager?")
+            )
+        else:
+            self.session.open(MessageBox, _(title) + "\n\n" + _("Already added to download manager"), MessageBox.TYPE_ERROR, timeout=5)
 
     def opendownloader(self, answer=None):
         if not answer:

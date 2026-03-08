@@ -14,6 +14,7 @@ import time
 from itertools import cycle, islice
 import zlib
 import tempfile
+import unicodedata
 
 try:
     from http.client import HTTPConnection
@@ -89,7 +90,6 @@ def normalize_superscripts(text):
 
 
 def clean_names(streams):
-    """Clean 'name' and 'category_name' fields in each stream entry."""
     for item in streams:
         for field in ("name", "category_name"):
             if field in item and isinstance(item[field], str):
@@ -982,12 +982,21 @@ class XStreamity_Vod_Categories(Screen):
             self["key_blue"].setText("")
             self.hideVod()
 
-    def strip_foreign_mixed(self, text):
+    def normalize_text(self, text):
+
         has_ascii = bool(self._re_has_ascii.search(text))
         has_non_ascii = bool(self._re_has_non_ascii.search(text))
 
         if has_ascii and has_non_ascii:
-            text = self._re_remove_non_ascii.sub('', text)
+
+            if pythonVer == 2:
+                if isinstance(text, str):
+                    text = text.decode("utf-8", "ignore")
+
+                text = unicodedata.normalize("NFKD", text).encode("ascii", "ignore")
+
+            else:
+                text = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("ascii")
 
         return text
 
@@ -1012,7 +1021,6 @@ class XStreamity_Vod_Categories(Screen):
         # remove all leading content between and including ┃┃ or ┃
         searchtitle = self._re_leading_doublebars.sub('', searchtitle)
         searchtitle = self._re_leading_singlebar_block.sub('', searchtitle)
-        searchtitle = self._re_leading_singlebar_block.sub('', searchtitle)
         searchtitle = self._re_any_bar_block.sub('', searchtitle)
 
         # remove all content between and including () unless it's all digits
@@ -1028,8 +1036,8 @@ class XStreamity_Vod_Categories(Screen):
         # remove up to 6 characters followed by space and dash at start (e.g. "EN -", "BE-NL -")
         searchtitle = self._re_lang_dash_prefix.sub('', searchtitle)
 
-        # Strip foreign / non-ASCII characters (only when mixed)
-        searchtitle = self.strip_foreign_mixed(searchtitle)
+        # normalise text
+        searchtitle = self.normalize_text(searchtitle)
 
         # Bad substrings to strip (case-insensitive)
         searchtitle = self._re_bad_strings.sub('', searchtitle)
@@ -1140,11 +1148,6 @@ class XStreamity_Vod_Categories(Screen):
 
                 if not resultid:
                     self.displayTMDB()
-                    """
-                    if cfg.channelcovers.value:
-                        # self.tmdbresults = ""
-                        self.downloadCover()
-                        """
                     return
 
                 self.getTMDBDetails(resultid)
@@ -1332,26 +1335,43 @@ class XStreamity_Vod_Categories(Screen):
         # Handle videos (trailers) - only for Python 3
         if pythonVer == 3:
             videos = self.tmdbdetails.get("videos")
+
             if videos:
                 results = videos.get("results")
                 if results:
                     current_index = self["main_list"].getIndex()
 
-                    # Look for YouTube trailers or clips
+                    selected_video = None
+
+                    # 1. Prefer official YouTube Trailer
                     for video in results:
-                        if video.get("site") == "YouTube" and "key" in video:
-                            video_type = video.get("type")
-                            if video_type in ("Trailer", "Clip"):
-                                try:
-                                    self.list2[current_index][12] = str(video["key"])
-                                    self.buildVod()
-                                    break  # Stop after first match
-                                except (IndexError, KeyError):
-                                    pass
+                        if video.get("site") == "YouTube" and video.get("type") == "Trailer" and video.get("official") is True and video.get("key"):
+                            selected_video = video
+                            break
+
+                    # 2. Fallback to any YouTube Trailer
+                    if selected_video is None:
+                        for video in results:
+                            if video.get("site") == "YouTube" and video.get("type") == "Trailer" and video.get("key"):
+                                selected_video = video
+                                break
+
+                    # 3. Fallback to official Teaser
+                    if selected_video is None:
+                        for video in results:
+                            if video.get("site") == "YouTube" and video.get("type") == "Teaser" and video.get("official") is True and video.get("key"):
+                                selected_video = video
+                                break
+
+                    if selected_video is not None:
+                        try:
+                            self.list2[current_index][12] = str(selected_video["key"])
+                            self.buildVod()
+                        except (IndexError, KeyError):
+                            pass
 
         # Handle certification
         def get_certification(data, language_code):
-            """Extract certification for given language code with fallbacks"""
             fallback_codes = ["GB", "US"]
 
             release_dates = data.get("release_dates")
@@ -2459,38 +2479,49 @@ class XStreamity_Vod_Categories(Screen):
         if debugs:
             print("*** downloadVideo ***")
 
-        if self["main_list"].getCurrent():
-            title = self["main_list"].getCurrent()[0]
-            stream_url = self["main_list"].getCurrent()[3]
-            description = str(self.tmdbresults["description"])
-            duration = int(self.tmdbresults["originalduration"])
-            timestamp = ""
-            channel = _("VOD")
+        if not self["main_list"].getCurrent():
+            return
 
-            downloads_all = []
-            if os.path.isfile(downloads_json):
+        title = self["main_list"].getCurrent()[0]
+        stream_url = self["main_list"].getCurrent()[3]
+        description = str(self.tmdbresults.get("description", ""))
+        duration = int(self.tmdbresults.get("originalduration", 0))
+        timestamp = ""
+        channel = _("VOD")
+        downloads_all = []
+
+        if os.path.isfile(downloads_json):
+            try:
                 with open(downloads_json, "r") as f:
-                    try:
-                        downloads_all = json.load(f)
-                    except:
-                        pass
+                    downloads_all = json.load(f)
+                if not isinstance(downloads_all, list):
+                    downloads_all = []
+            except Exception as e:
+                print("Error loading downloads JSON:", e)
+                downloads_all = []
 
-            exists = False
-            for video in downloads_all:
-                url = video[2]
-                if stream_url == url:
-                    exists = True
+        exists = any(video[2] == stream_url for video in downloads_all if len(video) > 2)
 
-            if exists is False:
-                downloads_all.append([_("Movie"), title, stream_url, "Not Started", 0, 0, description, duration, channel, timestamp])
-
+        if not exists:
+            downloads_all.append([_("Movie"), title, stream_url, "Not Started", 0, 0, description, duration, channel, timestamp])
+            try:
                 with open(downloads_json, "w") as f:
                     json.dump(downloads_all, f, indent=4)
+            except Exception as e:
+                print("Error saving downloads JSON:", e)
+                self.session.open(MessageBox, _("Failed to add to download manager"), MessageBox.TYPE_ERROR, timeout=5)
+                return
 
-                self.session.openWithCallback(self.opendownloader, MessageBox, _(title) + "\n\n" + _("Added to download manager") + "\n\n" + _("Note recording acts as an open connection.") + "\n" + _("Do not record and play streams at the same time.") + "\n\n" + _("Open download manager?"))
-
-            else:
-                self.session.open(MessageBox, _(title) + "\n\n" + _("Already added to download manager"), MessageBox.TYPE_ERROR, timeout=5)
+            self.session.openWithCallback(
+                self.opendownloader,
+                MessageBox,
+                _(title) + "\n\n" + _("Added to download manager") + "\n\n" +
+                _("Note recording acts as an open connection.") + "\n" +
+                _("Do not record and play streams at the same time.") + "\n\n" +
+                _("Open download manager?")
+            )
+        else:
+            self.session.open(MessageBox, _(title) + "\n\n" + _("Already added to download manager"), MessageBox.TYPE_ERROR, timeout=5)
 
     def opendownloader(self, answer=None):
         if debugs:
@@ -2568,10 +2599,6 @@ class XStreamity_Vod_Categories(Screen):
         if pythonVer == 2:
             return
 
-        ffmpeg_installed = check_and_install_ffmpeg()
-        if not ffmpeg_installed:
-            return
-
         pytubefix_installed = check_and_install_pytubefix()
         if not pytubefix_installed:
             return
@@ -2580,7 +2607,7 @@ class XStreamity_Vod_Categories(Screen):
         if not current_item:
             return
 
-        trailer_id = str(current_item[11])
+        trailer_id = str(current_item[12])
         if not trailer_id:
             return
 
@@ -2589,62 +2616,34 @@ class XStreamity_Vod_Categories(Screen):
 
             yt = YouTube("https://www.youtube.com/watch?v=" + str(trailer_id))
 
-            video_stream = max(
-                [s for s in yt.streams.filter(mime_type="video/webm", progressive=False)
-                 if s.resolution and int(s.resolution[:-1]) <= 1080],
-                key=lambda s: int(s.resolution[:-1]),
+            streaming_data = yt.vid_info.get("streamingData", {})
+            formats = streaming_data.get("formats", [])
+
+            if not formats:
+                self.session.open(
+                    MessageBox,
+                    _("No compatible trailer found."),
+                    type=MessageBox.TYPE_INFO,
+                    timeout=5
+                )
+                return
+
+            # choose largest progressive
+            best = max(
+                formats,
+                key=lambda f: int(f.get("height", 0)),
                 default=None
             )
 
-            # If no WebM stream found, try MP4
-            if video_stream is None:
-                video_stream = max(
-                    [s for s in yt.streams.filter(mime_type="video/mp4", progressive=False)
-                     if s.resolution and int(s.resolution[:-1]) <= 1080],
-                    key=lambda s: int(s.resolution[:-1]),
-                    default=None
-                )
-
-            # Get lowest quality audio stream
-            audio_stream = yt.streams.filter(
-                mime_type="audio/mp4",
-                progressive=False,
-                only_audio=True
-            ).order_by("abr").desc().last()
-
-            if not video_stream or not audio_stream:
-                self.session.open(MessageBox, _("No trailer found."), type=MessageBox.TYPE_INFO, timeout=5)
+            if not best:
                 return
 
-            download_dir = dir_tmp
-            video_file = "video_{}.mp4".format(trailer_id)
-            audio_file = "audio_{}.mp4".format(trailer_id)
-            output_file = "output_{}.mkv".format(trailer_id)
+            stream_url = best.get("url")
 
-            video_stream.download(output_path=download_dir, filename=video_file, skip_existing=False)
-            audio_stream.download(output_path=download_dir, filename=audio_file, skip_existing=False)
-
-            video_path = os.path.join(download_dir, video_file)
-            audio_path = os.path.join(download_dir, audio_file)
-            output_path = os.path.join(download_dir, output_file)
-
-            ffmpeg_cmd = [
-                "ffmpeg",
-                "-i", video_path,
-                "-i", audio_path,
-                "-c:v", "copy",
-                "-c:a", "copy",
-                "-y", output_path
-            ]
-
-            result = subprocess.run(ffmpeg_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
-            if result.returncode != 0:
-                print("FFmpeg failed to merge the files!")
-                print("FFmpeg stderr:", result.stderr.decode() if result.stderr else "")
+            if not stream_url:
                 return
 
-            self.trailer_next(output_path, yt.title)
+            self.trailer_next(stream_url, yt.title)
 
         except Exception as e:
             print("Trailer error:", e)
@@ -2667,7 +2666,7 @@ class XStreamity_Vod_Categories(Screen):
             self.reference.setName(title)
             self.session.openWithCallback(
                 self.trailer_cleanup,
-                vodplayer.XStreamity_VodPlayer,
+                vodplayer.EStalker_VodPlayer,
                 str(next_url),
                 str(streamtype),
                 None
@@ -2677,21 +2676,10 @@ class XStreamity_Vod_Categories(Screen):
         if debugs:
             print("*** trailer_cleanup ***")
 
-        try:
-            for file in os.listdir(dir_tmp):
-                if file.startswith(("video_", "audio_", "output_")):
-                    try:
-                        os.remove(os.path.join(dir_tmp, file))
-                    except Exception as e:
-                        print("Failed to remove {}: {}".format(file, e))
-        except Exception as e:
-            print("Cleanup error:", e)
-
         self.setIndex()
 
 
 def check_and_install_ffmpeg():
-    """Check if FFmpeg is installed, install if not"""
     try:
         subprocess.run(
             ["ffmpeg", "-version"],
@@ -2711,7 +2699,6 @@ def check_and_install_ffmpeg():
 
 
 def install_ffmpeg_opkg():
-    """Install FFmpeg using opkg package manager"""
     try:
         subprocess.run(["opkg", "update"], check=True)
         subprocess.run(["opkg", "install", "ffmpeg"], check=True)
@@ -2723,7 +2710,6 @@ def install_ffmpeg_opkg():
 
 
 def install_ffmpeg_apt():
-    """Install FFmpeg using apt package manager"""
     try:
         subprocess.run(["apt-get", "update"], check=True)
         subprocess.run(["apt-get", "-y", "install", "ffmpeg"], check=True)
@@ -2735,7 +2721,6 @@ def install_ffmpeg_apt():
 
 
 def get_python_site_packages():
-    """Find the site-packages directory for the current Python installation"""
     try:
         python_dirs = sorted(
             [d for d in os.listdir("/usr/lib/") if d.startswith("python")],
@@ -2752,9 +2737,6 @@ def get_python_site_packages():
 
 
 def compare_versions(version1, version2):
-    """Compare two version strings (e.g., '9.5.1' vs '9.6.0')
-    Returns: 1 if version1 > version2, -1 if version1 < version2, 0 if equal
-    """
     try:
         v1_parts = [int(x) for x in version1.split('.')]
         v2_parts = [int(x) for x in version2.split('.')]
@@ -2776,7 +2758,6 @@ def compare_versions(version1, version2):
 
 
 def check_pytubefix_version():
-    """Get the currently installed pytubefix version"""
     try:
         import pytubefix
 
@@ -2796,8 +2777,6 @@ def check_pytubefix_version():
 
 
 def check_and_install_pytubefix():
-    """Install pytubefix version 9.5.1 (max supported version)"""
-
     # Maximum supported version
     MAX_VERSION = "9.3.0"
     MAX_VERSION_URL = "https://files.pythonhosted.org/packages/a6/8a/2611bd7297e4b3ee1973c4d78e79f5a416cfebe89d4783f7da6f45c6b5d4/pytubefix-9.3.0.tar.gz"

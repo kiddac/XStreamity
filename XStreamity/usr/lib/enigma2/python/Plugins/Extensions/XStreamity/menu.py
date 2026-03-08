@@ -53,7 +53,6 @@ def normalize_superscripts(text):
 
 
 def clean_names(streams):
-    """Clean only the 'name' field in each stream entry."""
     for item in streams:
         if "name" in item and isinstance(item["name"], str):
             item["name"] = normalize_superscripts(item["name"])
