@@ -153,6 +153,15 @@ if isDreambox:
 cfg.livetype = ConfigSelection(default="4097", choices=live_streamtype_choices)
 cfg.vodtype = ConfigSelection(default="4097", choices=vod_streamtype_choices)
 
+cfg.ar_id_player = ConfigSelection(default="6", choices=[
+    ("0", _("4:3 Letterbox")),
+    ("1", _("4:3 PanScan")),
+    ("2", _("16:9")),
+    ("3", _("16:9 Always")),
+    ("4", _("16:10 Letterbox")),
+    ("5", _("16:10 PanScan")),
+    ("6", _("16:9 Letterbox")),
+])
 
 # ------------------------------------------------------------------
 # Download location (safe, minimal writes)

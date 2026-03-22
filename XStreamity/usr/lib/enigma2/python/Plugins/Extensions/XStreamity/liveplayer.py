@@ -96,7 +96,6 @@ else:
         def __init__(self, *args, **kwargs):
             pass
 
-
 VIDEO_ASPECT_RATIO_MAP = {
     0: "4:3 Letterbox",
     1: "4:3 PanScan",
@@ -336,6 +335,12 @@ class XStreamity_StreamPlayer(
 
         IPTVInfoBarPVRState.__init__(self, PVRState, True)
 
+        self.ar_id_player = 6
+        try:
+            self.ar_id_player = int(cfg.ar_id_player.value)
+        except Exception:
+            self.ar_id_player = 2
+
         self.playlists_json = cfg.playlists_json.value
         self.streamurl = streamurl
         self.servicetype = servicetype
@@ -367,8 +372,6 @@ class XStreamity_StreamPlayer(
         self["state"] = Label()
         self["speed"] = Label()
         self["statusicon"] = MultiPixmap()
-
-        self.ar_id_player = 0
 
         self.setup_title = _("TV")
 
@@ -733,6 +736,8 @@ class XStreamity_StreamPlayer(
         # add to recently watched
         self.timerRecent.start(5 * 60 * 1000, True)
 
+        self.setAspectRatio(self.ar_id_player)
+
         self.originalservicetype = self.servicetype
 
         self.refreshInfobar()
@@ -931,6 +936,12 @@ class XStreamity_StreamPlayer(
 
             self.streamurl = glob.currentchannellist[glob.currentchannellistindex][3]
             self.playStream(self.servicetype, self.streamurl)
+
+    def setAspectRatio(self, ar_index):
+        try:
+            eAVSwitch.getInstance().setAspectRatio(int(ar_index))
+        except Exception as e:
+            print("[XStreamity] setAspectRatio failed: %s" % e)
 
     def nextARfunction(self):
         self.ar_id_player += 1

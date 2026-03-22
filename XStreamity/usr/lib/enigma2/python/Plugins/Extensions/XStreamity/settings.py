@@ -172,6 +172,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.cfg_infobarpicons = getConfigListEntry(_("Show infobar picons"), cfg.infobarpicons)
         self.cfg_infobarcovers = getConfigListEntry(_("Show infobar posters"), cfg.infobarcovers)
         self.cfg_boot = getConfigListEntry(_("Auto start XStreamity on boot") + _(" *Restart GUI Required"), cfg.boot)
+        self.cfg_ar_id_player = getConfigListEntry(_("Default screen aspect ratio"), cfg.ar_id_player)
 
         self.org_main = cfg.main.value
         self.org_wakeup = cfg.wakeup.value
@@ -194,6 +195,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
             self.cfg_epglocation,
             self.cfg_downloadlocation,
             self.cfg_skipplaylistsscreen,
+            self.cfg_ar_id_player,
             self.cfg_livetype,
             self.cfg_vodtype,
             self.cfg_vodcategoryorder,

@@ -401,6 +401,12 @@ class XStreamity_VodPlayer(
         except Exception as e:
             print(e)
 
+        self.ar_id_player = 6
+        try:
+            self.ar_id_player = int(cfg.ar_id_player.value)
+        except Exception:
+            self.ar_id_player = 2
+
         IPTVInfoBarPVRState.__init__(self, PVRState, True)
 
         if cfg.subs.value is True:
@@ -433,8 +439,6 @@ class XStreamity_VodPlayer(
             self.PicLoad.PictureData.get().append(self.DecodePicture)
         except:
             self.PicLoad_conn = self.PicLoad.PictureData.connect(self.DecodePicture)
-
-        self.ar_id_player = 0
 
         self.setup_title = _("VOD")
 
@@ -624,6 +628,8 @@ class XStreamity_VodPlayer(
                 self.timerRecent.start(5 * 60 * 1000, True)
 
             self.timerWatched.start(15 * 60 * 1000, True)
+
+        self.setAspectRatio(self.ar_id_player)
 
     def loadDefaultImage(self, data=None):
         if self["cover"].instance:
@@ -845,6 +851,12 @@ class XStreamity_VodPlayer(
                     return
                 self.streamurl = glob.currentchannellist[glob.currentchannellistindex][3]
                 self.playStream(self.servicetype, self.streamurl)
+
+    def setAspectRatio(self, ar_index):
+        try:
+            eAVSwitch.getInstance().setAspectRatio(int(ar_index))
+        except Exception as e:
+            print("[XStreamity] setAspectRatio failed: %s" % e)
 
     def nextARfunction(self):
         self.ar_id_player += 1
