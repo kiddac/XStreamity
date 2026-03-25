@@ -335,19 +335,18 @@ hdr = {
 # ------------------------------------------------------------------
 
 def main(session, **kwargs):
-
     if os.path.exists(dir_tmp):
         shutil.rmtree(dir_tmp)
-
     os.makedirs(dir_tmp)
 
-    epgfolder = os.path.join(cfg.epglocation.value, '*', '*.xml')
-
-    for file_path in glob_module.glob(epgfolder):
-        try:
-            os.remove(file_path)
-        except:
-            pass
+    epg_root = os.path.join(str(cfg.epglocation.value).rstrip("/"), "iptv-epg")
+    if os.path.isdir(epg_root):
+        epgfolder = os.path.join(epg_root, '*', '*.xml')
+        for file_path in glob_module.glob(epgfolder):
+            try:
+                os.remove(file_path)
+            except:
+                pass
 
     from . import mainmenu
     session.open(mainmenu.XStreamity_MainMenu)
