@@ -401,13 +401,13 @@ class XStreamity_VodPlayer(
         except Exception as e:
             print(e)
 
+        IPTVInfoBarPVRState.__init__(self, PVRState, True)
+
         self.ar_id_player = 6
         try:
             self.ar_id_player = int(cfg.ar_id_player.value)
         except Exception:
             self.ar_id_player = 2
-
-        IPTVInfoBarPVRState.__init__(self, PVRState, True)
 
         if cfg.subs.value is True:
             SubsSupport.__init__(self, searchSupport=True, embeddedSupport=True)
@@ -418,8 +418,21 @@ class XStreamity_VodPlayer(
         self.originalservicetype = self.servicetype
         self.stream_id = stream_id
 
-        skin_path = os.path.join(skin_directory, cfg.skin.value)
+        skin_path = os.path.join(
+            skin_directory,
+            cfg.interface.value,
+            cfg.skin.value
+        )
+
+        if not os.path.exists(skin_path):
+            skin_path = os.path.join(
+                skin_directory,
+                cfg.interface.value,
+                "default"
+            )
+
         skin = os.path.join(skin_path, "vodplayer.xml")
+
         with open(skin, "r") as f:
             self.skin = f.read()
 

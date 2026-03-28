@@ -1,0 +1,44 @@
+<screen name="XKlassUserInfo" position="0,0" size="1920,1080" backgroundColor="#0c145a" flags="wfNoBorder">
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/xklass/default/images/background-plain.png" alphatest="off" position="0,0" size="1920,1080" zPosition="-1"/>
+	
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/xklass/default/images/background-bokeh.png" alphatest="blend" position="0,0" size="1683,362" zPosition="1"/>
+	
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/common/xklass-logo.png" position="75,60" size="320,120" alphatest="blend" zPosition="2"/>
+	<widget source="Title" render="Label" position="90,267" size="480,72" font="xstreamityregular;48" foregroundColor="#ffffff" backgroundColor="#0c145a" valign="center" halign="left" noWrap="1" transparent="1" zPosition="2"/>
+	<widget source="global.CurrentTime" render="Label" position="1380,60" size="450,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#71354a" valign="center" halign="right" transparent="1" zPosition="2">
+		<convert type="ClockToText">Format:%H:%M | %A %-d %b</convert>
+	</widget>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/common/divider.png" position="540,337" size="840,4" alphatest="blend" zPosition="1"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/common/divider.png" position="540,409" size="840,4" alphatest="blend" zPosition="1"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/common/divider.png" position="540,481" size="840,4" alphatest="blend" zPosition="1"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/common/divider.png" position="540,553" size="840,4" alphatest="blend" zPosition="1"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/common/divider.png" position="540,625" size="840,4" alphatest="blend" zPosition="1"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/common/divider.png" position="540,697" size="840,4" alphatest="blend" zPosition="1"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/common/divider.png" position="540,769" size="840,4" alphatest="blend" zPosition="1"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/common/divider.png" position="540,841" size="840,4" alphatest="blend" zPosition="1"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/common/divider.png" position="540,913" size="840,4" alphatest="blend" zPosition="1"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/common/divider.png" position="540,985" size="840,4" alphatest="blend" zPosition="1"/>
+	<widget source="t_status" render="Label" position="568,267" size="369,72" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#091153" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<widget source="t_trial" render="Label" position="568,339" size="369,72" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#091153" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<widget source="t_activeconn" render="Label" position="568,411" size="369,72" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#091153" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<widget source="t_maxconn" render="Label" position="568,483" size="369,72" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#091153" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<widget source="t_created" render="Label" position="568,555" size="369,72" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#091153" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<widget source="t_expiry" render="Label" position="568,627" size="369,72" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#091153" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<widget source="t_formats" render="Label" position="568,699" size="369,72" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#091153" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<widget source="t_realurl" render="Label" position="568,771" size="369,72" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#091153" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<widget source="t_timezone" render="Label" position="568,843" size="369,72" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#091153" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<widget source="t_serveroffset" render="Label" position="568,915" size="369,72" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#091153" valign="center" halign="left" transparent="1" noWrap="1" zPosition="2"/>
+	<widget name="status" position="568,267" size="806,72" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#091153" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
+	<widget name="trial" position="568,339" size="806,72" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#091153" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
+	<widget name="activeconn" position="568,411" size="806,72" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#091153" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
+	<widget name="maxconn" position="568,483" size="806,72" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#091153" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
+	<widget name="created" position="568,555" size="806,72" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#091153" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
+	<widget name="expiry" position="568,627" size="806,72" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#091153" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
+	<widget name="formats" position="568,699" size="806,72" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#091153" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
+	<widget name="realurl" position="568,771" size="806,72" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#091153" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
+	<widget name="timezone" position="568,843" size="806,72" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#091153" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
+	<widget name="serveroffset" position="568,915" size="806,72" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#091153" valign="center" halign="right" transparent="1" noWrap="1" zPosition="2"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/common/button-bg.png" position="0,1020" size="1920,60" alphatest="blend" zPosition="1"/>
+	<widget source="key_red" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/common/key_red.png" position="504,1031" size="38,38" alphatest="blend" zPosition="2"/>
+	<widget source="key_red" render="Label" position="552,1020" size="225,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="2"/>
+</screen>

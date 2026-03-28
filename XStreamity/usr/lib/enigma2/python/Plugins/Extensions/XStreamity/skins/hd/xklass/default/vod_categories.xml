@@ -1,0 +1,77 @@
+<screen name="XKlassVod" position="0,0" size="1280,720" backgroundColor="#0c145a" flags="wfNoBorder">
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/xklass/default/images/background-plain.png" alphatest="off" position="0,0" size="1280,720" zPosition="-1"/>
+	<widget name="vod_backdrop" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/xklass/default/images/backdrop.png" position="426,0" size="853,480" alphatest="blend" zPosition="1"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/xklass/default/images/background-bokeh.png" alphatest="blend" position="0,0" size="1122,241" zPosition="2"/>
+	<widget name="splash" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/xklass/default/images/splash.png" alphatest="off" position="0,0" size="1280,720" zPosition="1000"/>
+	<widget source="session.VideoPicture" render="Pig" position="22,20" size="320,180" backgroundColor="#ff000000" transparent="1" zPosition="3"/>
+	<eLabel position="22,20" size="314,177" backgroundColor="#ff000000" zPosition="4"/>
+	<eLabel position="22,20" size="314,1" backgroundColor="#7577b2" zPosition="5" transparent="0"/>
+	<eLabel position="23,21" size="312,1" backgroundColor="#0c145a" zPosition="5" transparent="0"/>
+	<eLabel position="22,196" size="314,1" backgroundColor="#7577b2" zPosition="5" transparent="0"/>
+	<eLabel position="23,194" size="312,1" backgroundColor="#0c145a" zPosition="5" transparent="0"/>
+	<eLabel position="22,20" size="1,177" backgroundColor="#7577b2" zPosition="5" transparent="0"/>
+	<eLabel position="23,21" size="1,174" backgroundColor="#0c145a" zPosition="5" transparent="0"/>
+	<eLabel position="335,20" size="1,177" backgroundColor="#7577b2" zPosition="5" transparent="0"/>
+	<eLabel position="334,21" size="1,174" backgroundColor="#0c145a" zPosition="5" transparent="0"/>
+	<widget source="main_title" render="Label" position="360,20" size="666,28" font="xstreamityregular;18" foregroundColor="#ffffff" backgroundColor="#751f7a" valign="top" halign="left" noWrap="1" transparent="1" zPosition="3"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/xklass/default/images/list-bg.png" position="20,200" size="320,480" alphatest="blend" zPosition="3"/>
+	<widget source="main_list" render="Listbox" position="20,200" size="320,480" foregroundColor="#ffffff" foregroundColorSelected="#ffffff" backgroundColor="#0c145a" backgroundColorSelected="#494f83" enableWrapAround="1" transparent="1" zPosition="4" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/xklass/default/images/list-selected.png" backgroundPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/common/blank.png" scrollbarMode="showNever">
+		<convert type="TemplatedMultiContent">{"template": [
+			MultiContentEntryText(pos=(12, 0), size = (268, 48), font=0, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER, text = 0),
+			MultiContentEntryPixmapAlphaBlend(pos=(292, 16), size=(18, 16), png = 1),
+			],
+			"fonts": [gFont("xstreamityregular", 18)],
+			"itemHeight": 48,
+			"scrollbarMode": "showNever"
+			}</convert>
+	</widget>
+	<widget name="vod_logo" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/common/blank.png" position="1040,20" size="200,120" alphatest="blend" zPosition="3"/>
+	<!-- rating background -->
+	<widget source="rating_text" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/common/facts-bg.png" position="360,264" size="900,60" alphatest="blend" zPosition="3">
+		<convert type="ConditionalShowHide"/>
+	</widget>
+	<widget source="rating_text" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/common/rating-bg.png" position="360,264" size="60,60" alphatest="blend" zPosition="3">
+		<convert type="ConditionalShowHide"/>
+	</widget>
+	<!-- rating percent -->
+	<widget source="rating_text" render="Label" position="360,264" size="60,60" font="xstreamitybold;16" foregroundColor="#ffffff" backgroundColor="#000000" halign="center" valign="center" noWrap="1" transparent="1" zPosition="3"/>
+	<!-- rating dial -->
+	<widget source="rating_percent" render="Label" position="360,264" size="60,60" font="klass;60" foregroundColor="#57ffff" backgroundColor="#000000" halign="center" valign="top" transparent="1" zPosition="4"/>
+	<widget name="vod_cover" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/common/vod_cover.png" position="360,360" size="200,300" alphatest="blend" zPosition="3"/>
+	<!-- channels -->
+	<widget source="x_title" render="Label" position="360,200" size="900,60" font="xstreamitybold;32" foregroundColor="#ffffff" backgroundColor="#0c145a" halign="left" noWrap="1" transparent="1" zPosition="3"/>
+	<widget source="facts" render="Label" position="440,272" size="800,20" font="xstreamityregular;16" foregroundColor="#ffffff" backgroundColor="#0c145a" halign="left" valign="center" noWrap="1" transparent="1" zPosition="3"/>
+	<widget source="tagline" render="Label" position="440,291" size="800,24" font="xstreamityregular;16" foregroundColor="#57ffff" backgroundColor="#0c145a" halign="left" valign="center" noWrap="1" transparent="1" zPosition="4"/>
+	<widget source="overview" render="Label" position="580,356" size="680,40" font="xstreamityregular;20" foregroundColor="#ffffff" backgroundColor="#0c145a" halign="left" noWrap="1" transparent="1" zPosition="3"/>
+	<widget source="x_description" render="XKlassRunningText" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" position="580,386" size="680,110" font="xstreamityregular;18" foregroundColor="#ffffff" backgroundColor="#0c145a" halign="left" transparent="1" zPosition="3"/>
+	<widget source="vod_cast_label" render="Label" position="580,528" size="160,22" font="xstreamitybold;16" foregroundColor="#ffffff" backgroundColor="#0c145a" halign="left" noWrap="1" transparent="1" zPosition="3"/>
+	<widget source="vod_cast" render="Label" position="580,552" size="680,48" font="xstreamityregular;16" foregroundColor="#ffffff" backgroundColor="#0c145a" halign="left" transparent="1" zPosition="3"/>
+	<widget source="vod_director_label" render="Label" position="580,614" size="160,40" font="xstreamitybold;16" foregroundColor="#ffffff" backgroundColor="#0c145a" halign="left" noWrap="1" transparent="1" zPosition="3"/>
+	<widget source="vod_director" render="Label" position="580,638" size="320,40" font="xstreamityregular;16" foregroundColor="#ffffff" backgroundColor="#0c145a" halign="left" noWrap="1" transparent="1" zPosition="3"/>
+	<widget source="vod_country_label" render="Label" position="900,614" size="160,40" font="xstreamitybold;16" foregroundColor="#ffffff" backgroundColor="#0c145a" halign="left" noWrap="1" transparent="1" zPosition="3"/>
+	<widget source="vod_country" render="Label" position="900,638" size="320,40" font="xstreamityregular;16" foregroundColor="#ffffff" backgroundColor="#0c145a" halign="left" noWrap="1" transparent="1" zPosition="3"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/common/button-bg.png" position="0,680" size="1280,40" alphatest="blend" zPosition="2"/>
+	<widget source="key_red" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/common/key_red.png" position="336,687" size="25,25" alphatest="blend" zPosition="3"/>
+	<widget source="key_red" render="Label" position="368,680" size="150,40" font="xstreamityregular;16" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="3"/>
+	<widget source="key_green" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/common/key_green.png" position="518,687" size="25,25" alphatest="blend" zPosition="3"/>
+	<widget source="key_green" render="Label" position="550,680" size="150,40" font="xstreamityregular;16" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="3"/>
+	<widget source="key_yellow" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/common/key_yellow.png" position="699,687" size="25,25" alphatest="blend" zPosition="3">
+		<convert type="ConditionalShowHide"/>
+	</widget>
+	<widget source="key_yellow" render="Label" position="731,680" size="150,40" font="xstreamityregular;16" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="3"/>
+	<widget source="key_blue" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/common/key_blue.png" position="881,687" size="25,25" alphatest="blend" zPosition="3">
+		<convert type="ConditionalShowHide"/>
+	</widget>
+	<widget source="key_blue" render="Label" position="913,680" size="150,40" font="xstreamityregular;16" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="3"/>
+	<widget source="key_epg" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/common/key_epg.png" position="1062,687" size="25,25" alphatest="blend" zPosition="3">
+		<convert type="ConditionalShowHide"/>
+	</widget>
+	<widget source="key_epg" render="Label" position="1094,680" size="110,40" font="xstreamityregular;16" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" zPosition="3"/>
+	<widget source="key_menu" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/common/key_menu.png" position="1199,687" size="25,25" alphatest="blend" zPosition="3">
+		<convert type="ConditionalShowHide"/>
+	</widget>
+	<widget source="key_menu" render="Label" position="1231,680" size="150,40" font="xstreamityregular;16" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" zPosition="3"/>
+	<widget source="page" render="Label" position="12,680" size="146,40" font="xstreamityregular;16" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="3"/>
+	<widget source="listposition" render="Label" position="198,680" size="110,40" font="xstreamityregular;16" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" halign="right" transparent="1" noWrap="1" zPosition="3"/>
+</screen>
+

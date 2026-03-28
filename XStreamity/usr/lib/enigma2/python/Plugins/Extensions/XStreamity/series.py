@@ -55,7 +55,8 @@ from enigma import ePicLoad, eServiceReference, eTimer
 # Local imports
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import (cfg, common_path, dir_tmp, downloads_json, pythonVer, screenwidth, skin_directory, debugs)
+from .plugin import (cfg, common_path, dir_tmp, downloads_json, pythonVer, screenwidth, skin_directory, hasConcurrent, hasMultiprocessing, debugs)
+
 from .xStaticText import StaticText
 
 if os.path.exists("/var/lib/dpkg/status"):
@@ -105,10 +106,23 @@ class XStreamity_Series_Categories(Screen):
         self.logo_download_deferred = None
         self.backdrop_download_deferred = None
 
-        self.skin_path = os.path.join(skin_directory, cfg.skin.value)
-        skin = os.path.join(self.skin_path, "vod_categories.xml")
-        if DreamOS:
-            skin = os.path.join(self.skin_path, "DreamOS/vod_categories.xml")
+        skin_path = os.path.join(
+            skin_directory,
+            cfg.interface.value,
+            cfg.skin.value
+        )
+
+        if not os.path.exists(skin_path):
+            skin_path = os.path.join(
+                skin_directory,
+                cfg.interface.value,
+                "default"
+            )
+
+        skin = os.path.join(skin_path, "vod_categories.xml")
+
+        if cfg.interface.value == "xstreamity" and DreamOS:
+            skin = os.path.join(skin_path, "DreamOS/vod_categories.xml")
 
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
@@ -184,6 +198,7 @@ class XStreamity_Series_Categories(Screen):
         self.sortText = _("Sort: A-Z")
 
         self.level = 1
+        glob.current_level = 1
 
         self.host = glob.active_playlist["playlist_info"]["host"]
         self.username = glob.active_playlist["playlist_info"]["username"]
@@ -197,6 +212,11 @@ class XStreamity_Series_Categories(Screen):
         self.token = "ZUp6enk4cko4ZzBKTlBMTFNxN3djd25MOHEzeU5Zak1Bdkd6S3lPTmdqSjhxeUxMSTBNOFRhUGNBMjBCVmxBTzlBPT0K"
 
         next_url = str(self.player_api) + "&action=get_series_categories"
+
+        self.original_active_playlist = glob.active_playlist
+        self.tmdbsetting = cfg.TMDB.value
+
+        self.firstrun = True
 
         self._vod_req_id = 0
 
@@ -346,6 +366,11 @@ class XStreamity_Series_Categories(Screen):
 
         self._re_year = re.compile(r"\b\d{4}\b")
 
+        menu_handler = self.showHiddenList
+
+        if cfg.interface.value == "xklass":
+            menu_handler = self.showPopupMenu
+
         self["category_actions"] = ActionMap(["XStreamityActions"], {
             "cancel": self.back,
             "red": self.back,
@@ -360,7 +385,7 @@ class XStreamity_Series_Categories(Screen):
             "channelUp": self.pageUp,
             "channelDown": self.pageDown,
             "0": self.reset,
-            "menu": self.showHiddenList,
+            "menu": menu_handler,
         }, -2)
 
         self["channel_actions"] = ActionMap(["XStreamityActions"], {
@@ -379,13 +404,23 @@ class XStreamity_Series_Categories(Screen):
             "rec": self.downloadVideo,
             "5": self.downloadVideo,
             "0": self.reset,
-            "menu": self.showHiddenList,
+            "menu": menu_handler,
             "1": self.clearWatched,
             "tv": self.favourite,
             "stop": self.favourite,
         }, -2)
 
+        self['menu_actions'] = ActionMap(["XStreamityActions"], {
+            "cancel": self.closeChoiceBoxDialog,
+            "red": self.closeChoiceBoxDialog,
+            "menu": self.closeChoiceBoxDialog,
+        }, -2)
+
+        self["menu_actions"].setEnabled(False)
         self["channel_actions"].setEnabled(False)
+
+        self["splash"] = Pixmap()
+        self["splash"].show()
 
         glob.nextlist = []
         glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self.sortText, "filter": ""})
@@ -402,8 +437,27 @@ class XStreamity_Series_Categories(Screen):
         except:
             self.timerSeries_conn = self.timerSeries.timeout.connect(self.displaySeriesData)
 
-        self.onFirstExecBegin.append(self.createSetup)
+        self.onFirstExecBegin.append(self.start)
+
+        if cfg.interface.value == "xklass":
+            try:
+                self.closeChoiceBoxDialog()
+            except Exception as e:
+                print(e)
+
         self.onLayoutFinish.append(self.__layoutFinished)
+
+    def start(self):
+        if cfg.interface.value == "xklass":
+            self.initGlobals()
+            self.onShow.append(self.refresh)
+            self.onHide.append(self.__onHide)
+
+        else:
+            self.createSetup()
+
+    def __onHide(self):
+        glob.current_level = self.level
 
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
@@ -534,10 +588,251 @@ class XStreamity_Series_Categories(Screen):
         self["main_list"].setIndex(0)
         self.selectionChanged()
 
+    def initGlobals(self):
+        if debugs:
+            print("*** initglobals ***")
+
+        self.host = glob.active_playlist["playlist_info"]["host"]
+        self.username = glob.active_playlist["playlist_info"]["username"]
+        self.password = glob.active_playlist["playlist_info"]["password"]
+        self.output = glob.active_playlist["playlist_info"]["output"]
+        self.name = glob.active_playlist["playlist_info"]["name"]
+        self.player_api = glob.active_playlist["playlist_info"]["player_api"]
+        self.liveStreamsData = []
+        self.p_live_categories_url = str(self.player_api) + "&action=get_live_categories"
+        self.p_vod_categories_url = str(self.player_api) + "&action=get_vod_categories"
+        self.p_series_categories_url = str(self.player_api) + "&action=get_series_categories"
+
+        if self.level == 1:
+            next_url = str(self.player_api) + "&action=get_series_categories"
+            glob.nextlist = []
+            glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self.sortText, "filter": ""})
+
+    def playOriginalChannel(self):
+        if debugs:
+            print("*** playOriginalChannel ***")
+        try:
+            if glob.currentPlayingServiceRefString:
+                self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
+        except Exception as e:
+            print(e)
+
+    def refresh(self):
+        if debugs:
+            print("*** refresh ***")
+
+        self.level = glob.current_level
+
+        if not glob.ChoiceBoxDialog:
+            if self.level == 1:
+                self["category_actions"].setEnabled(True)
+                self["channel_actions"].setEnabled(False)
+                self["menu_actions"].setEnabled(False)
+            else:
+                self["category_actions"].setEnabled(False)
+                self["channel_actions"].setEnabled(True)
+                self["menu_actions"].setEnabled(False)
+
+        sameplaylist = True
+
+        if (self.original_active_playlist["playlist_info"]["full_url"] != glob.active_playlist["playlist_info"]["full_url"]) or self.tmdbsetting != cfg.TMDB.value:
+            if self.level == 1:
+                self.reset()
+
+            elif self.level == 2:
+                self.back()
+                self.reset()
+
+            elif self.level == 3:
+                self.back()
+                self.back()
+                self.reset()
+
+            elif self.level == 4:
+                self.back()
+                self.back()
+                self.back()
+                self.reset()
+
+            sameplaylist = False
+
+            self.initGlobals()
+
+        if (self.original_active_playlist["playlist_info"]["full_url"] != glob.active_playlist["playlist_info"]["full_url"]) or self.tmdbsetting != cfg.TMDB.value:
+            if not glob.active_playlist["player_info"]["showvod"]:
+                self.original_active_playlist = glob.active_playlist
+                self.tmdbsetting = cfg.TMDB.value
+                self.close()
+            else:
+                self.original_active_playlist = glob.active_playlist
+                self.tmdbsetting = cfg.TMDB.value
+                self.makeUrlList()
+
+        if self.firstrun or not sameplaylist:
+            self.firstrun = False
+            self.resetButtons()
+            self.createSetup()
+
+        if sameplaylist:
+            if self["main_list"].getCurrent():
+                self["main_list"].setIndex(glob.nextlist[-1]["index"])
+            self.selectionChanged()
+
+    def makeUrlList(self):
+        if debugs:
+            print("*** makeurllist ***")
+
+        self.url_list = []
+
+        player_api = str(glob.active_playlist["playlist_info"].get("player_api", ""))
+        full_url = str(glob.active_playlist["playlist_info"].get("full_url", ""))
+        domain = str(glob.active_playlist["playlist_info"].get("domain", ""))
+        username = str(glob.active_playlist["playlist_info"].get("username", ""))
+        password = str(glob.active_playlist["playlist_info"].get("password", ""))
+        if "get.php" in full_url and domain and username and password:
+            self.url_list.append([player_api, 0])
+            self.url_list.append([self.p_live_categories_url, 1])
+            self.url_list.append([self.p_vod_categories_url, 2])
+            self.url_list.append([self.p_series_categories_url, 3])
+
+        self.process_downloads()
+
+    def download_url(self, url):
+        if debugs:
+            print("*** download_url ***")
+
+        import requests
+        index = url[1]
+        response = None
+
+        retries = Retry(total=1, backoff_factor=1)
+        adapter = HTTPAdapter(max_retries=retries)
+
+        with requests.Session() as http:
+            http.mount("http://", adapter)
+            http.mount("https://", adapter)
+
+            try:
+                r = http.get(url[0], headers=hdr, timeout=(10, 20), verify=False)
+                r.raise_for_status()
+
+                # Get Content-Type from headers
+                content_type = r.headers.get('Content-Type', '')
+
+                # Handle JSON content directly
+                if 'application/json' in content_type:
+                    try:
+                        response = r.json()
+                    except ValueError as e:
+                        print("Error decoding JSON:", e, url)
+                        return index, None
+
+                # Handle text/html content
+                elif 'text/html' in content_type:
+                    try:
+                        # Attempt to parse the HTML body as JSON
+                        response_text = r.text
+                        response = json.loads(response_text)
+                    except ValueError as e:
+                        print("Error decoding JSON from HTML content:", e, url)
+                        return index, None
+
+                else:
+                    print("Final response is non-JSON content:", r.url)
+                    return index, None
+
+            except requests.exceptions.RequestException as e:
+                print("Request error:", e)
+            except Exception as e:
+                print("Unexpected error:", e)
+
+        return index, response
+
+    def process_downloads(self):
+        if debugs:
+            print("*** process downloads ***")
+
+        threads = min(len(self.url_list), 10)
+
+        self.retry = 0
+        glob.active_playlist["data"]["live_categories"] = []
+        glob.active_playlist["data"]["vod_categories"] = []
+        glob.active_playlist["data"]["series_categories"] = []
+
+        if hasConcurrent or hasMultiprocessing:
+            if hasConcurrent:
+                try:
+                    from concurrent.futures import ThreadPoolExecutor
+                    with ThreadPoolExecutor(max_workers=threads) as executor:
+                        results = list(executor.map(self.download_url, self.url_list))
+                except Exception as e:
+                    print("Concurrent execution error:", e)
+
+            elif hasMultiprocessing:
+                # print("********** trying multiprocessing threadpool *******")
+                try:
+                    from multiprocessing.pool import ThreadPool
+                    pool = ThreadPool(threads)
+                    results = pool.imap_unordered(self.download_url, self.url_list)
+                    pool.close()
+                    pool.join()
+                except Exception as e:
+                    print("Multiprocessing execution error:", e)
+
+            for index, response in results:
+                if response:
+                    if index == 0:
+                        if "user_info" in response:
+                            glob.active_playlist.update(response)
+                        else:
+                            glob.active_playlist["user_info"] = {}
+                    if index == 1:
+                        glob.active_playlist["data"]["live_categories"] = response
+                    if index == 2:
+                        glob.active_playlist["data"]["vod_categories"] = response
+                    if index == 3:
+                        glob.active_playlist["data"]["series_categories"] = response
+
+        else:
+            # print("*** trying sequential ***")
+            for url in self.url_list:
+                result = self.download_url(url)
+                index = result[0]
+                response = result[1]
+                if response:
+                    if index == 0:
+                        if "user_info" in response:
+                            glob.active_playlist.update(response)
+                        else:
+                            glob.active_playlist["user_info"] = {}
+                    if index == 1:
+                        glob.active_playlist["data"]["live_categories"] = response
+                    if index == 2:
+                        glob.active_playlist["data"]["vod_categories"] = response
+                    if index == 3:
+                        glob.active_playlist["data"]["series_categories"] = response
+
+        # glob.active_playlist["data"]["data_downloaded"] = True
+        glob.active_playlist["data"]["live_streams"] = []
+        self.writeJsonFile()
+
+    def writeJsonFile(self):
+        if debugs:
+            print("*** writejsonfile ***")
+
+        with open(self.playlists_json, "r") as f:
+            playlists_all = json.load(f)
+
+        playlists_all[glob.current_selection] = glob.active_playlist
+
+        with open(self.playlists_json, "w") as f:
+            json.dump(playlists_all, f, indent=4)
+
     def createSetup(self, data=None):
         if debugs:
             print("*** createSetup ***")
 
+        self["splash"].hide()
         self["x_title"].setText("")
         self["x_description"].setText("")
 
@@ -2681,6 +2976,8 @@ class XStreamity_Series_Categories(Screen):
 
                     self["category_actions"].setEnabled(False)
                     self["channel_actions"].setEnabled(True)
+                    self["menu_actions"].setEnabled(False)
+
                     self["key_yellow"].setText(_("Sort: A-Z"))
 
                     glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self["key_yellow"].getText(), "filter": ""})
@@ -2716,6 +3013,7 @@ class XStreamity_Series_Categories(Screen):
                     self["main_list"].setIndex(0)
                     self["category_actions"].setEnabled(False)
                     self["channel_actions"].setEnabled(True)
+                    self["menu_actions"].setEnabled(False)
                     self["key_yellow"].setText(_("Sort: A-Z"))
 
                     glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self["key_yellow"].getText(), "filter": ""})
@@ -2733,6 +3031,8 @@ class XStreamity_Series_Categories(Screen):
                     self["main_list"].setIndex(0)
                     self["category_actions"].setEnabled(False)
                     self["channel_actions"].setEnabled(True)
+                    self["menu_actions"].setEnabled(False)
+
                     self["key_yellow"].setText(_("Sort: A-Z"))
                     glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self["key_yellow"].getText(), "filter": ""})
                     self.createSetup()
@@ -2766,6 +3066,12 @@ class XStreamity_Series_Categories(Screen):
         if debugs:
             print("*** back ***")
 
+        if cfg.interface.value == "xklass":
+            try:
+                self.closeChoiceBoxDialog()
+            except Exception as e:
+                print(e)
+
         self.chosen_category = ""
 
         self._stopTimerSeries()
@@ -2791,9 +3097,11 @@ class XStreamity_Series_Categories(Screen):
             self["x_description"].setText("")
             self["key_epg"].setText("")
             self.level -= 1
+            glob.current_level = self.level
             if self.level == 1:
                 self["category_actions"].setEnabled(True)
                 self["channel_actions"].setEnabled(False)
+                self["menu_actions"].setEnabled(False)
             self.buildLists()
 
             self.loadDefaultCover()
@@ -3080,6 +3388,52 @@ class XStreamity_Series_Categories(Screen):
             facts.append(str(stream_format).upper())
 
         return " • ".join(facts)
+
+    def showChoiceBoxDialog(self, Answer=None):
+        if debugs:
+            print("*** showChoiceBoxDialog ***")
+
+        self["channel_actions"].setEnabled(False)
+        self["category_actions"].setEnabled(False)
+        glob.ChoiceBoxDialog['dialogactions'].execBegin()
+        glob.ChoiceBoxDialog.show()
+        self["menu_actions"].setEnabled(True)
+
+    def closeChoiceBoxDialog(self, Answer=None):
+        if debugs:
+            print("*** closeChoiceBoxDialog ***")
+
+        if glob.ChoiceBoxDialog:
+            self["menu_actions"].setEnabled(False)
+            glob.ChoiceBoxDialog.hide()
+            glob.ChoiceBoxDialog['dialogactions'].execEnd()
+            self.session.deleteDialog(glob.ChoiceBoxDialog)
+
+            if self.level == 1:
+                self["category_actions"].setEnabled(True)
+                self["channel_actions"].setEnabled(False)
+
+            if self.level != 1:
+                self["category_actions"].setEnabled(False)
+                self["channel_actions"].setEnabled(True)
+
+    def showPopupMenu(self):
+        if debugs:
+            print("*** showPopupMenu ***")
+
+        from . import channelmenu
+        glob.current_list = self.prelist + self.list1 if self.level == 1 else self.list2
+        glob.current_level = self.level
+        glob.current_screen = "series"
+        if self.level == 1 or (self.level == 2 and self.chosen_category != "favourites" and self.chosen_category != "recents"):
+            glob.current_list = self.prelist + self.list1 if self.level == 1 else self.list2
+            glob.current_level = self.level
+            glob.current_screen = "series"
+        else:
+            glob.current_list = ""
+
+        glob.ChoiceBoxDialog = self.session.instantiateDialog(channelmenu.XKlass_ChannelMenu, "series")
+        self.showChoiceBoxDialog()
 
 
 def buildCategoryList(index, title, category_id, hidden, png):

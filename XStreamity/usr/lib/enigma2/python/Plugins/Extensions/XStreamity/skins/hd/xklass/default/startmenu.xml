@@ -1,0 +1,44 @@
+<screen name="XKlassMenu" position="0,0" size="1280,720" backgroundColor="#0d155f" flags="wfNoBorder">
+	<widget source="session.VideoPicture" render="Pig" position="0,0" size="1280,720" backgroundColor="#ff000000" zPosition="-1"/>
+	<widget source="background" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/xklass/default/images/background-plain.png" alphatest="off" position="0,0" size="1280,720" zPosition="1">
+		<convert type="ConditionalShowHide"/>
+	</widget>
+	
+	<widget source="background" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/xklass/default/images/background-bokeh.png" alphatest="blend" position="0,0" size="1122,241" zPosition="2">
+		<convert type="ConditionalShowHide"/>
+	</widget>
+
+	<widget name="splash" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/xklass/default/images/splash.png" alphatest="off" position="0,0" size="1280,720" zPosition="1000"/>
+	
+	<!-- logo large -->
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/common/xklass-logo-large.png" alphatest="blend" position="379,250" size="520,218" zPosition="2"/>
+	<widget source="version" render="Label" position="513, 430" size="340,18" font="xstreamityregular;12" foregroundColor="#ffffff" backgroundColor="#091153" halign="center" valign="center" transparent="1" zPosition="2"/>
+		
+	<widget name="list1-bg" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/xklass/default/images/menu-selected.png" alphatest="blend" position="center,520" size="800,80" zPosition="2"/>
+		
+	<widget source="list" render="Listbox" position="center,520" size="800,80" foregroundColor="#dddddd" backgroundColor="#0b0f59" foregroundColorSelected="#ffffff" backgroundColorSelected="#0b0f59" 
+	backgroundPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/common/blank.png" 
+	enableWrapAround="1" transparent="1" zPosition="2" scrollbarMode="showNever">
+		<convert type="TemplatedMultiContent">{"template": [
+			MultiContentEntryText(pos=(0, 0), size=(800, 80), font=0, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor = None, backcolor_sel = None, flags = RT_HALIGN_CENTER|RT_VALIGN_CENTER, text = 1),
+			],
+			"fonts": [gFont("xstreamityregular", 48)],
+			"itemHeight": 80,
+			"scrollbarMode": "showNever"
+			}</convert>
+	</widget>
+
+	<widget name="list2-bg" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/xklass/default/images/menu-selected-small.png" alphatest="blend" position="center, 620" size="800,40" zPosition="2"/>
+	
+	<widget source="playlists" render="Listbox" position="center,620" size="800,40" foregroundColor="#dddddd" backgroundColor="#0b0f59" foregroundColorSelected="#ffffff" backgroundColorSelected="#0b0f59" 
+    backgroundPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/common/blank.png" 
+	enableWrapAround="1" transparent="1" zPosition="2" scrollbarMode="showNever">
+		<convert type="TemplatedMultiContent">{"template": [
+			MultiContentEntryText(pos=(0, 0), size=(800, 40), font=0, color = 0x00dddddd, color_sel = 0x00ffffff, backcolor = None, backcolor_sel = None, flags = RT_HALIGN_CENTER|RT_VALIGN_CENTER, text = 1),
+			],
+			"fonts": [gFont("xstreamityregular", 24)],
+			"itemHeight": 40,
+			"scrollbarMode": "showNever"
+			}</convert>
+	</widget>
+</screen>

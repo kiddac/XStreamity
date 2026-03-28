@@ -219,7 +219,19 @@ class XStreamity_DownloadManager(Screen):
 
         self.progress = 0
 
-        skin_path = os.path.join(skin_directory, cfg.skin.value)
+        skin_path = os.path.join(
+            skin_directory,
+            cfg.interface.value,
+            cfg.skin.value
+        )
+
+        if not os.path.exists(skin_path):
+            skin_path = os.path.join(
+                skin_directory,
+                cfg.interface.value,
+                "default"
+            )
+
         skin = os.path.join(skin_path, "downloadmanager.xml")
 
         with open(skin, "r") as f:
@@ -230,7 +242,7 @@ class XStreamity_DownloadManager(Screen):
 
         self["key_red"] = StaticText(_("Back"))
         self["key_green"] = StaticText()
-        self["key_blue"] = StaticText()
+        self["key_yellow"] = StaticText()
 
         self["diskspace"] = StaticText()
 
@@ -239,7 +251,7 @@ class XStreamity_DownloadManager(Screen):
             "cancel": self.keyCancel,
             "green": self.download,
             "ok": self.download,
-            "blue": self.delete,
+            "yellow": self.delete,
         }, -2)
 
         self.onFirstExecBegin.append(self.start)
@@ -475,7 +487,7 @@ class XStreamity_DownloadManager(Screen):
                         shortpath,
                         filename
                     )
-                    
+
                 try:
                     JobManager.AddJob(downloadJob(self, cmd, path, filmtitle), onFail=self.fail)
                 except Exception as e:
@@ -554,16 +566,16 @@ class XStreamity_DownloadManager(Screen):
         if self["downloadlist"].getCurrent():
             if self["downloadlist"].getCurrent()[3] == _("In progress") or self["downloadlist"].getCurrent()[3] == _("Waiting"):
                 self["key_green"].setText(_("Cancel"))
-                self["key_blue"].setText("")
+                self["key_yellow"].setText("")
             elif self["downloadlist"].getCurrent()[3] == _("Not Started"):
                 self["key_green"].setText(_("Download"))
-                self["key_blue"].setText(_("Remove"))
+                self["key_yellow"].setText(_("Remove"))
             elif self["downloadlist"].getCurrent()[3] == _("Error") or self["downloadlist"].getCurrent()[3] == _("Downloaded"):
                 self["key_green"].setText("")
-                self["key_blue"].setText(_("Remove"))
+                self["key_yellow"].setText(_("Remove"))
         else:
             self["key_green"].setText("")
-            self["key_blue"].setText("")
+            self["key_yellow"].setText("")
 
     def keyCancel(self, answer=None):
         global ui

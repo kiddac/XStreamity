@@ -30,6 +30,7 @@ from enigma import eTimer
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools.LoadPixmap import LoadPixmap
+from Components.config import configfile
 
 # Local application/library-specific imports
 from . import _
@@ -60,8 +61,24 @@ class XStreamity_Playlists(Screen):
         Screen.__init__(self, session)
         self.session = session
 
-        skin_path = os.path.join(skin_directory, cfg.skin.value)
+        skin_path = os.path.join(
+            skin_directory,
+            cfg.interface.value,
+            cfg.skin.value
+        )
+
+        if not os.path.exists(skin_path):
+            skin_path = os.path.join(
+                skin_directory,
+                cfg.interface.value,
+                "default"
+            )
+
         skin = os.path.join(skin_path, "playlists.xml")
+
+        if cfg.interface.value == "xklass" and os.path.exists("/var/lib/dpkg/status"):
+            skin = os.path.join(skin_path, "DreamOS/playlists.xml")
+
         with open(skin, "r") as f:
             self.skin = f.read()
 
@@ -69,6 +86,9 @@ class XStreamity_Playlists(Screen):
         self.playlists_json = cfg.playlists_json.value
 
         self.setup_title = _("Manage Playlists")
+
+        self.original_current_selection = glob.current_selection
+        self.original_active_playlist = glob.active_playlist
 
         self["key_red"] = StaticText(_("Back"))
         self["key_green"] = StaticText(_("OK"))
@@ -87,11 +107,18 @@ class XStreamity_Playlists(Screen):
         self["scroll_up"].hide()
         self["scroll_down"].hide()
 
+        action_ok = self.getStreamTypes
+        action_green = self.getStreamTypes
+
+        if cfg.interface.value == "xklass":
+            action_ok = self.closePlaylists
+            action_green = self.closePlaylists
+
         self["actions"] = ActionMap(["XStreamityActions"], {
             "red": self.quit,
-            "green": self.getStreamTypes,
+            "green": action_green,
             "cancel": self.quit,
-            "ok": self.getStreamTypes,
+            "ok": action_ok,
             "blue": self.openUserInfo,
             "info": self.openUserInfo,
             "yellow": self.deleteServer,
@@ -106,13 +133,14 @@ class XStreamity_Playlists(Screen):
 
     def start(self):
 
-        if glob.original_playlist_file and glob.original_playlist_file:
-            cfg.playlist_file.setValue(glob.original_playlist_file)
-            cfg.playlists_json.setValue(glob.original_playlists_json)
-            glob.current_selection = 0
-            cfg.save()
-            glob.original_playlist_file = ""
-            glob.original_playlists_json = ""
+        if cfg.interface.value == "xstreamity":
+            if glob.original_playlist_file and glob.original_playlist_file:
+                cfg.playlist_file.setValue(glob.original_playlist_file)
+                cfg.playlists_json.setValue(glob.original_playlists_json)
+                glob.current_selection = 0
+                cfg.save()
+                glob.original_playlist_file = ""
+                glob.original_playlists_json = ""
 
         self.playlist_file = cfg.playlist_file.value
         self.playlists_json = cfg.playlists_json.value
@@ -197,7 +225,7 @@ class XStreamity_Playlists(Screen):
                         # Attempt to parse the HTML body as JSON
                         response_text = r.text
                         response = json.loads(response_text)
-                    except json.JSONDecodeError as e:
+                    except ValueError as e:
                         print("Error decoding JSON from HTML content:", e, url)
                         return index, None
 
@@ -347,7 +375,11 @@ class XStreamity_Playlists(Screen):
         for playlist in self.playlists_all:
             name = playlist["playlist_info"].get("name", playlist["playlist_info"].get("domain", ""))
             url = playlist["playlist_info"].get("host", "")
+
             status = _("Server Not Responding")
+
+            if cfg.interface.value == "xklass":
+                status = _("Error")
 
             active = ""
             activenum = ""
@@ -371,13 +403,24 @@ class XStreamity_Playlists(Screen):
 
                     if user_status == "Active":
                         exp_date = user_info.get("exp_date")
-                        if exp_date:
-                            try:
-                                expires = _("Expires: ") + datetime.fromtimestamp(int(exp_date)).strftime("%d-%m-%Y")
-                            except:
+
+                        if cfg.interface.value == "xstreamity":
+                            if exp_date:
+                                try:
+                                    expires = _("Expires: ") + datetime.fromtimestamp(int(exp_date)).strftime("%d-%m-%Y")
+                                except:
+                                    expires = _("Expires: ") + "Null"
+                            else:
                                 expires = _("Expires: ") + "Null"
-                        else:
-                            expires = _("Expires: ") + "Null"
+
+                        elif cfg.interface.value == "xklass":
+                            if exp_date:
+                                try:
+                                    expires = datetime.fromtimestamp(int(exp_date)).strftime("%d-%m-%Y")
+                                except:
+                                    expires = "Null"
+                            else:
+                                expires = "Null"
 
                         active = str(_("Active Conn:"))
                         activenum = playlist["user_info"]["active_cons"]
@@ -404,8 +447,18 @@ class XStreamity_Playlists(Screen):
         self.drawList = [self.buildListEntry(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8]) for x in self.list]
         self["playlists"].setList(self.drawList)
 
-        if len(self.list) == 1 and cfg.skipplaylistsscreen.value and "user_info" in self.playlists_all[0] and "status" in self.playlists_all[0]["user_info"] and self.playlists_all[0]["user_info"]["status"] == "Active":
-            self.getStreamTypes()
+        if cfg.interface.value == "xstreamity":
+            if len(self.list) == 1 and cfg.skipplaylistsscreen.value and "user_info" in self.playlists_all[0] and "status" in self.playlists_all[0]["user_info"] and self.playlists_all[0]["user_info"]["status"] == "Active":
+                self.getStreamTypes()
+        elif cfg.interface.value == "xklass":
+            p = 0
+            for playlist in self.playlists_all:
+                if str(playlist["playlist_info"]["name"]) == str(cfg.lastplaylist.value):
+                    break
+                p += 1
+
+            if self["playlists"].getCurrent():
+                self["playlists"].setIndex(p)
 
         if fail_count_check:
             self.session.open(MessageBox, _("You have dead playlists that are slowing down loading.\n\nPress Yellow button to soft delete dead playlists"), MessageBox.TYPE_WARNING)
@@ -427,7 +480,7 @@ class XStreamity_Playlists(Screen):
                 pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "led_grey.png"))
             elif status == _("Disabled"):
                 pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "led_grey.png"))
-            elif status == _("Server Not Responding"):
+            elif status == _("Server Not Responding") or status == _("Error"):
                 pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "led_red.png"))
             elif status == _("Not Authorised"):
                 pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "led_red.png"))
@@ -435,6 +488,10 @@ class XStreamity_Playlists(Screen):
         return (index, str(name), str(url), str(expires), str(status), pixmap, str(active), str(activenum), str(maxc), str(maxnum))
 
     def quit(self, answer=None):
+        if cfg.interface.value == "xklass":
+            glob.current_selection = self.original_current_selection
+            glob.active_playlist = self.original_active_playlist
+            self.writeJsonFile()
         self.close()
 
     def deleteServer(self, answer=None):
@@ -478,19 +535,24 @@ class XStreamity_Playlists(Screen):
             glob.current_selection = self["playlists"].getIndex()
             glob.active_playlist = self.playlists_all[glob.current_selection]
 
-            num_playlists = self["playlists"].count()
-            if num_playlists > 5:
-                self["scroll_up"].show()
-                self["scroll_down"].show()
+            if cfg.interface.value == "xstreamity":
+                num_playlists = self["playlists"].count()
+                if num_playlists > 5:
+                    self["scroll_up"].show()
+                    self["scroll_down"].show()
 
-                if glob.current_selection < 5:
-                    self["scroll_up"].hide()
+                    if glob.current_selection < 5:
+                        self["scroll_up"].hide()
 
-                elif glob.current_selection + 1 > ((self["playlists"].count() // 5) * 5):
-                    self["scroll_down"].hide()
+                    elif glob.current_selection + 1 > ((self["playlists"].count() // 5) * 5):
+                        self["scroll_down"].hide()
         else:
-            glob.current_selection = 0
-            glob.active_playlist = {}
+            if cfg.interface.value == "xstreamity":
+                glob.current_selection = 0
+                glob.active_playlist = {}
+            elif cfg.interface.value == "xklass":
+                glob.current_selection = self.original_current_selection
+                glob.active_playlist = self.original_active_playlist
 
     def openUserInfo(self):
         if self.list:
@@ -511,12 +573,26 @@ class XStreamity_Playlists(Screen):
         if len(self.list) == 1 and cfg.skipplaylistsscreen.value is True:
             self.quit()
 
+    def closePlaylists(self):
+        if "user_info" in glob.active_playlist and "auth" in glob.active_playlist["user_info"] and str(glob.active_playlist["user_info"]["auth"]) == "1" and glob.active_playlist["user_info"]["status"] == "Active":
+            cfg.lastplaylist.setValue(str(glob.active_playlist["playlist_info"]["name"]))
+            cfg.save()
+            configfile.save()
+            self.close()
+        else:
+            glob.current_selection = self.original_current_selection
+            glob.active_playlist = self.original_active_playlist
+            self.close()
+
     def epgimportcleanup(self):
         channelfilelist = []
         oldchannelfiles = pythonglob.glob("/etc/epgimport/xstreamity.*.channels.xml")
 
-        with open(self.playlists_json, "r") as f:
-            self.playlists_all = json.load(f)
+        try:
+            with open(self.playlists_json, "r") as f:
+                self.playlists_all = json.load(f)
+        except:
+            self.playlists_all = []
 
         for playlist in self.playlists_all:
             cleanName = re.sub(r'[\'\<\>\:\"\/\\\|\?\*\(\)\[\]]', "_", str(playlist["playlist_info"]["name"]))

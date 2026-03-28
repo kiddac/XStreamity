@@ -4,7 +4,7 @@
 import os
 
 from . import _
-from .plugin import cfg, skin_directory
+from .plugin import cfg, skin_directory, InternetSpeedTest_installed, NetSpeedTest_installed
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -54,8 +54,21 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
         self.session = session
 
-        skin_path = os.path.join(skin_directory, cfg.skin.value)
+        skin_path = os.path.join(
+            skin_directory,
+            cfg.interface.value,
+            cfg.skin.value
+        )
+
+        if not os.path.exists(skin_path):
+            skin_path = os.path.join(
+                skin_directory,
+                cfg.interface.value,
+                "default"
+            )
+
         skin = os.path.join(skin_path, "settings.xml")
+
         if os.path.exists("/var/lib/dpkg/status"):
             skin = os.path.join(skin_path, "DreamOS/settings.xml")
 
@@ -148,7 +161,19 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
             self.close()
 
     def initConfig(self):
+        interface_dir = os.path.join(skin_directory, cfg.interface.value)
+
+        try:
+            skin_choices = [x for x in os.listdir(interface_dir) if x != "common"]
+        except:
+            skin_choices = ["default"]
+
+        cfg.skin.setChoices(skin_choices)
+
         self.cfg_skin = getConfigListEntry(_("Select skin"), cfg.skin)
+
+        self.cfg_interface = getConfigListEntry(_("Select interface"), cfg.interface)
+
         self.cfg_useragent = getConfigListEntry(_("Select fake web user-agent"), cfg.useragent)
         self.cfg_location = getConfigListEntry(_("playlists.txt location") + _(" *Restart GUI Required"), cfg.location)
         self.cfg_epglocation = getConfigListEntry(_("EPG download location"), cfg.epglocation)
@@ -185,16 +210,25 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.cfg_seriescategoryorder = getConfigListEntry(_("Default Series category sort order"), cfg.seriescategoryorder)
         self.cfg_seriesorder = getConfigListEntry(_("Default Series sort order"), cfg.seriesorder)
 
+        self.cfg_introvideo = getConfigListEntry(_("Show intro video"), cfg.introvideo)
+        self.cfg_introloop = getConfigListEntry(_("Loop intro video"), cfg.introloop)
+        self.cfg_introvideoselection = getConfigListEntry(_("Intro video selection"), cfg.introvideoselection)
+        self.cfg_speedtest = getConfigListEntry(_("Show Speedtest on start menu"), cfg.speedtest)
+        self.cfg_manageplaylists = getConfigListEntry(_("Show Manage Playlists on start menu"), cfg.manageplaylists)
+        self.cfg_startmenuplaylists = getConfigListEntry(_("Show playlists on start menu"), cfg.startmenuplaylists)
+        self.cfg_sidemenumanageplaylists = getConfigListEntry(_("Show Manage Playlists in popup menu"), cfg.sidemenumanageplaylists)
+        self.cfg_sidemenuaccountinfo = getConfigListEntry(_("Show Account Info in popup menu"), cfg.sidemenuaccountinfo)
+
         self.createSetup()
 
     def createSetup(self):
         config_entries = [
+            self.cfg_interface,
             self.cfg_skin,
             self.cfg_useragent,
             self.cfg_location,
             self.cfg_epglocation,
             self.cfg_downloadlocation,
-            self.cfg_skipplaylistsscreen,
             self.cfg_ar_id_player,
             self.cfg_livetype,
             self.cfg_vodtype,
@@ -219,6 +253,23 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
             self.cfg_infobarcovers,
             self.cfg_boot
         ]
+
+        if cfg.interface.value == "xklass":
+            config_entries += [
+                self.cfg_introvideo,
+                self.cfg_introloop if cfg.introvideo.value else None,
+                self.cfg_introvideoselection if cfg.introvideo.value else None,
+                self.cfg_speedtest if InternetSpeedTest_installed or NetSpeedTest_installed else None,
+                self.cfg_manageplaylists,
+                self.cfg_startmenuplaylists,
+                self.cfg_sidemenumanageplaylists,
+                self.cfg_sidemenuaccountinfo,
+            ]
+
+        if cfg.interface.value == "xstreamity":
+            config_entries += [
+                self.cfg_skipplaylistsscreen,
+            ]
 
         self.list = [entry for entry in config_entries if entry is not None]
 
@@ -263,6 +314,11 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
     def changedEntry(self):
         self.item = self["config"].getCurrent()
+
+        if self["config"].getCurrent()[1] == cfg.interface:
+            self.initConfig()
+            return
+
         for x in self.onChangedEntry:
             x()
 

@@ -1,0 +1,16 @@
+<screen name="XKlassChannelMenu" position="1840,0" size="720,1440" backgroundColor="#1e1d69" flags="wfNoBorder" zPosition="90">
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/uhd/xklass/default/images/menu-line.png" position="0,0" size="8,1440" alphatest="blend" zPosition="1"/>
+	<widget source="provider" render="Label" position="44, 40" size="640,54" font="xstreamityregular;36" foregroundColor="#57ffff" backgroundColor="#091153" halign="center" valign="center" transparent="1"/>
+	<widget source="list" render="Listbox" position="44,120" size="640,1344" foregroundColor="#ffffff" foregroundColorSelected="#ffffff" backgroundColor="#0c145a" backgroundColorSelected="#494f83" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/uhd/xklass/default/images/list-selected.png" backgroundPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/uhd/common/blank.png" scrollbarMode="showNever" enableWrapAround="1" transparent="1" zPosition="2">
+		<convert type="TemplatedMultiContent">{"template": [
+			MultiContentEntryText(pos=(0, 0), size=(96, 96), font=1, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_CENTER|RT_VALIGN_CENTER|RT_WRAP, text = 2),
+			MultiContentEntryText(pos=(100, 0), size=(520, 96), font=0, color = 0x00ffffff, color_sel = 0x00ffffff, backcolor_sel = None, flags = RT_HALIGN_LEFT|RT_VALIGN_CENTER|RT_WRAP, text = 1),
+			],
+			"fonts": [gFont("xstreamityregular", 36), gFont("klass", 64)],
+			"itemHeight": 96,
+			"scrollbarMode": "showNever"
+			}</convert>
+	</widget>
+</screen>
+
+

@@ -53,8 +53,21 @@ class XStreamity_HiddenCategories(Screen, ProtectedScreen):
 
         self.session = session
 
-        skin_path = os.path.join(skin_directory, cfg.skin.value)
+        skin_path = os.path.join(
+            skin_directory,
+            cfg.interface.value,
+            cfg.skin.value
+        )
+
+        if not os.path.exists(skin_path):
+            skin_path = os.path.join(
+                skin_directory,
+                cfg.interface.value,
+                "default"
+            )
+
         skin = os.path.join(skin_path, "hidden.xml")
+
         with open(skin, "r") as f:
             self.skin = f.read()
 
@@ -63,6 +76,10 @@ class XStreamity_HiddenCategories(Screen, ProtectedScreen):
         self.level = level
 
         self.setup_title = _("Hidden Categories")
+
+        self.main_title = _("Hidden Categories")
+        self["main_title"] = StaticText(self.main_title)
+
         self.startList = []
         self.drawList = []
         self["hidden_list"] = List(self.drawList, enableWrapAround=True)

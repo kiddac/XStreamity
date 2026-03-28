@@ -15,7 +15,6 @@ from Components.config import (
     ConfigYesNo, ConfigSelectionNumber, ConfigClock, ConfigPIN,
     ConfigInteger, configfile, ConfigText
 )
-
 from enigma import eTimer, getDesktop, addFont
 from Plugins.Plugin import PluginDescriptor
 from os.path import isdir
@@ -24,6 +23,7 @@ from os.path import isdir
 # Basic environment / platform checks
 # ------------------------------------------------------------------
 
+pythonFull = float(str(sys.version_info.major) + "." + str(sys.version_info.minor))
 pythonVer = sys.version_info.major
 isDreambox = os.path.exists("/usr/bin/apt-get")
 debugs = False
@@ -55,7 +55,7 @@ except ImportError:
 dir_etc = "/etc/enigma2/xstreamity/"
 dir_tmp = "/etc/enigma2/xstreamity/tmp/"
 dir_plugins = "/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/"
-
+dir_videos = os.path.join(dir_plugins, "video/")
 
 # ------------------------------------------------------------------
 # Version
@@ -70,23 +70,16 @@ except:
 
 
 # ------------------------------------------------------------------
-# Screen / skin selection
+# Video list (for XKlass)
 # ------------------------------------------------------------------
 
-screenwidth = getDesktop(0).size()
-
-if screenwidth.width() == 2560:
-    skin_directory = os.path.join(dir_plugins, "skin/uhd/")
-elif screenwidth.width() > 1280:
-    skin_directory = os.path.join(dir_plugins, "skin/fhd/")
-else:
-    skin_directory = os.path.join(dir_plugins, "skin/hd/")
-
 try:
-    folders = [x for x in os.listdir(skin_directory) if x != "common"]
+    files = os.listdir(dir_videos)
+    video_extensions = ('.mp4', '.avi', '.mkv')
+    video_files = [file for file in files if file.endswith(video_extensions)]
+    video_list = [(os.path.join(dir_videos, file), file) for file in video_files]
 except:
-    folders = ["default"]
-
+    video_list = []
 
 # ------------------------------------------------------------------
 # Language & User-Agent options
@@ -127,13 +120,40 @@ useragents = [
     ("Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Mobile Safari/537.36", "Android")
 ]
 
-
 # ------------------------------------------------------------------
 # Config setup
 # ------------------------------------------------------------------
 
 config.plugins.XStreamity = ConfigSubsection()
 cfg = config.plugins.XStreamity
+
+cfg.interface = ConfigSelection(
+    default="xstreamity",
+    choices=[
+        ("xstreamity", "XStreamity"),
+        ("xklass", "XKlass")
+    ]
+)
+
+# ------------------------------------------------------------------
+# Screen / skin selection
+# ------------------------------------------------------------------
+
+screenwidth = getDesktop(0).size()
+
+if screenwidth.width() == 2560:
+    skin_directory = os.path.join(dir_plugins, "skins/uhd/")
+elif screenwidth.width() > 1280:
+    skin_directory = os.path.join(dir_plugins, "skins/fhd/")
+else:
+    skin_directory = os.path.join(dir_plugins, "skins/hd/")
+
+interface_dir = os.path.join(skin_directory, cfg.interface.value)
+
+try:
+    folders = [x for x in os.listdir(interface_dir) if x != "common"]
+except:
+    folders = ["default"]
 
 live_streamtype_choices = [("1", "DVB(1)"), ("4097", "IPTV(4097)")]
 vod_streamtype_choices = [("4097", "IPTV(4097)")]
@@ -186,6 +206,7 @@ if not result:
         result = "/media/"
 
 cfg.downloadlocation = ConfigDirectory(default=result)
+
 # ------------------------------------------------------------------
 # EPG location (prefer system epgcachepath if available)
 # ------------------------------------------------------------------
@@ -202,9 +223,8 @@ except:
 
 cfg.epglocation = ConfigDirectory(default=epg_base)
 cfg.location = ConfigDirectory(default=dir_etc)
-cfg.location = ConfigDirectory(default=dir_etc)
 cfg.main = ConfigYesNo(default=True)
-cfg.livepreview = ConfigYesNo(default=False)
+cfg.livepreview = ConfigYesNo(default=True)
 cfg.stopstream = ConfigYesNo(default=False)
 cfg.skin = ConfigSelection(default="default", choices=folders)
 cfg.timeout = ConfigSelectionNumber(1, 20, 1, default=20, wraparound=True)
@@ -222,17 +242,31 @@ cfg.retries.adultpin = ConfigSubsection()
 cfg.retries.adultpin.tries = ConfigInteger(default=3)
 cfg.retries.adultpin.time = ConfigInteger(default=3)
 cfg.location_valid = ConfigYesNo(default=True)
+
 cfg.channelpicons = ConfigYesNo(default=True)
 cfg.infobarpicons = ConfigYesNo(default=True)
 cfg.channelcovers = ConfigYesNo(default=True)
 cfg.infobarcovers = ConfigYesNo(default=True)
+
+cfg.introvideo = ConfigYesNo(default=True)
+cfg.introloop = ConfigYesNo(default=False)
+cfg.introvideoselection = ConfigSelection(choices=video_list)
+cfg.speedtest = ConfigYesNo(default=False)
+
+cfg.startmenuplaylists = ConfigYesNo(default=True)
+cfg.manageplaylists = ConfigYesNo(default=True)
+cfg.sidemenumanageplaylists = ConfigYesNo(default=True)
+cfg.sidemenuaccountinfo = ConfigYesNo(default=True)
+
 cfg.boot = ConfigYesNo(default=False)
 cfg.useragent = ConfigSelection(default="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36", choices=useragents)
+cfg.lastplaylist = ConfigText()
+
 cfg.vodcategoryorder = ConfigSelection(default=(_("Sort: Original")), choices=[(_("Sort: A-Z"), "A-Z"), (_("Sort: Z-A"), "Z-A"), (_("Sort: Original"), _("Original"))])
 cfg.vodstreamorder = ConfigSelection(default=(_("Sort: Original")), choices=[(_("Sort: A-Z"), "A-Z"), (_("Sort: Z-A"), "Z-A"), (_("Sort: Added"), _("Added")), (_("Sort: Year"), _("Year")), (_("Sort: Original"), _("Original"))])
+
 cfg.seriescategoryorder = ConfigSelection(default=(_("Sort: Original")), choices=[(_("Sort: A-Z"), "A-Z"), (_("Sort: Z-A"), "Z-A"), (_("Sort: Original"), _("Original"))])
 cfg.seriesorder = ConfigSelection(default=(_("Sort: Original")), choices=[(_("Sort: A-Z"), "A-Z"), (_("Sort: Z-A"), "Z-A"), (_("Sort: Added"), _("Added")), (_("Sort: Year"), _("Year")), (_("Sort: Original"), _("Original"))])
-
 
 # ------------------------------------------------------------------
 # File paths
@@ -275,7 +309,17 @@ configfile.save()
 glob.original_playlist_file = cfg.playlist_file.value
 glob.original_playlists_json = cfg.playlists_json.value
 
-# ------------------------------------------------------------------
+if os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/InternetSpeedTest"):
+    InternetSpeedTest_installed = True
+else:
+    InternetSpeedTest_installed = False
+
+
+if os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/NetSpeedTest"):
+    NetSpeedTest_installed = True
+else:
+    NetSpeedTest_installed = False
+
 # Check folders
 # ------------------------------------------------------------------
 
@@ -301,7 +345,6 @@ if not os.path.isfile(cfg.playlists_json.value):
 if not os.path.isfile(cfg.downloads_json.value):
     with open(cfg.downloads_json.value, "a") as f:
         f.close()
-
 
 # ------------------------------------------------------------------
 # Fonts (safe)
@@ -340,6 +383,7 @@ def main(session, **kwargs):
     os.makedirs(dir_tmp)
 
     epg_root = os.path.join(str(cfg.epglocation.value).rstrip("/"), "iptv-epg")
+
     if os.path.isdir(epg_root):
         epgfolder = os.path.join(epg_root, '*', '*.xml')
         for file_path in glob_module.glob(epgfolder):
@@ -348,8 +392,12 @@ def main(session, **kwargs):
             except:
                 pass
 
-    from . import mainmenu
-    session.open(mainmenu.XStreamity_MainMenu)
+    if cfg.interface.value == "xklass":
+        from . import startmenu
+        session.open(startmenu.XStreamity_StartMenu)
+    else:
+        from . import mainmenu
+        session.open(mainmenu.XStreamity_MainMenu)
 
 
 # ------------------------------------------------------------------
@@ -420,19 +468,23 @@ class StartDelay:
         self.timerboot = eTimer()
 
     def start(self):
-        delay = 2000
 
         try:
             self.timer_conn = self.timerboot.timeout.connect(self.query)
         except:
             self.timerboot.callback.append(self.query)
 
-        self.timerboot.start(delay, True)
+        self.timerboot.start(2000, True)
 
     def query(self):
-        from . import playlists
-        glb_session.open(playlists.XStreamity_Playlists)
-        return
+        if cfg.interface.value == "xklass":
+            from . import startmenu
+            glb_session.open(startmenu.XStreamity_StartMenu)
+            return
+        else:
+            from . import playlists
+            glb_session.open(playlists.XStreamity_Playlists)
+            return
 
 
 def bootstart(reason, **kwargs):
@@ -444,6 +496,10 @@ def bootstart(reason, **kwargs):
         glb_startDelay = StartDelay()
         glb_startDelay.start()
 
+
+# ------------------------------------------------------------------
+# PLUGIN DESCRIPTOR
+# ------------------------------------------------------------------
 
 def Plugins(**kwargs):
     iconFile = "icons/plugin-icon_sd.png"
