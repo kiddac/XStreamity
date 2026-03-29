@@ -1,4 +1,4 @@
-<screen name="XKlassMenu" position="0,0" size="2560,1440" backgroundColor="#0d155f" flags="wfNoBorder">
+<screen name="XStreamityStartMenu" position="0,0" size="2560,1440" backgroundColor="#0d155f" flags="wfNoBorder">
 	<widget source="session.VideoPicture" render="Pig" position="0,0" size="2560,1440" backgroundColor="#ff000000" zPosition="-1"/>
 	<widget source="background" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/uhd/xklass/default/images/background-plain.png" alphatest="off" position="0,0" size="2560,1440" zPosition="1">
 		<convert type="ConditionalShowHide"/>

@@ -1,4 +1,4 @@
-<screen name="XKlassHiddenCategories" position="0,0" size="2560,1440" backgroundColor="#0c145a" flags="wfNoBorder">
+<screen name="XStreamityHiddenCategories" position="0,0" size="2560,1440" backgroundColor="#0c145a" flags="wfNoBorder">
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/uhd/xklass/default/images/background-plain.png" alphatest="off" position="0,0" size="2560,1440" zPosition="-1"/>
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/uhd/xklass/default/images/background-bokeh.png" alphatest="blend" position="0,0" size="2244,483" zPosition="1"/>
 	<widget source="session.VideoPicture" render="Pig" position="44,40" size="640,360" backgroundColor="#ff000000" transparent="1" zPosition="3"/>

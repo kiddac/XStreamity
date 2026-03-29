@@ -1,4 +1,4 @@
-<screen name="XKlassVod" position="0,0" size="1920,1080" backgroundColor="#0c145a" flags="wfNoBorder">
+<screen name="XStreamityCategories" position="0,0" size="1920,1080" backgroundColor="#0c145a" flags="wfNoBorder">
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/xklass/default/images/background-plain.png" alphatest="off" position="0,0" size="1920,1080" zPosition="-1"/>
 	<widget name="vod_backdrop" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/xklass/default/images/backdrop.png" position="640,0" size="1280,720" alphatest="blend" zPosition="1"/>
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/xklass/default/images/background-bokeh.png" alphatest="blend" position="0,0" size="1683,362" zPosition="2"/>
@@ -43,7 +43,7 @@
 	<widget source="facts" render="Label" position="660,408" size="1200,30" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#0c145a" halign="left" valign="center" noWrap="1" transparent="1" zPosition="3"/>
 	<widget source="tagline" render="Label" position="660,437" size="1200,36" font="xstreamityregular;24" foregroundColor="#57ffff" backgroundColor="#0c145a" halign="left" valign="center" noWrap="1" transparent="1" zPosition="4"/>
 	<widget source="overview" render="Label" position="870,534" size="1020,60" font="xstreamityregular;30" foregroundColor="#ffffff" backgroundColor="#0c145a" halign="left" noWrap="1" transparent="1" zPosition="3"/>
-	<widget source="x_description" render="XKlassRunningText" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" position="870,579" size="1020,165" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#0c145a" halign="left" transparent="1" zPosition="3"/>
+	<widget source="x_description" render="XStreamityRunningText" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" position="870,579" size="1020,165" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#0c145a" halign="left" transparent="1" zPosition="3"/>
 	<widget source="vod_cast_label" render="Label" position="870,792" size="240,33" font="xstreamitybold;24" foregroundColor="#ffffff" backgroundColor="#0c145a" halign="left" noWrap="1" transparent="1" zPosition="3"/>
 	<widget source="vod_cast" render="Label" position="870,828" size="1020,72" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#0c145a" halign="left" transparent="1" zPosition="3"/>
 	<widget source="vod_director_label" render="Label" position="870,921" size="240,60" font="xstreamitybold;24" foregroundColor="#ffffff" backgroundColor="#0c145a" halign="left" noWrap="1" transparent="1" zPosition="3"/>

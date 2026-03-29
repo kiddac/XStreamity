@@ -3432,7 +3432,7 @@ class XStreamity_Series_Categories(Screen):
         else:
             glob.current_list = ""
 
-        glob.ChoiceBoxDialog = self.session.instantiateDialog(channelmenu.XKlass_ChannelMenu, "series")
+        glob.ChoiceBoxDialog = self.session.instantiateDialog(channelmenu.XStreamity_ChannelMenu, "series")
         self.showChoiceBoxDialog()
 
 

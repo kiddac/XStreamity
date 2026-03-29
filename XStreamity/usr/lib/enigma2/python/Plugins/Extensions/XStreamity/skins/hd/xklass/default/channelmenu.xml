@@ -1,4 +1,4 @@
-<screen name="XKlassChannelMenu" position="920,0" size="360,720" backgroundColor="#1e1d69" flags="wfNoBorder" zPosition="90">
+<screen name="XStreamityChannelMenu" position="920,0" size="360,720" backgroundColor="#1e1d69" flags="wfNoBorder" zPosition="90">
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/xklass/default/images/menu-line.png" position="0,0" size="4,720" alphatest="blend" zPosition="1"/>
 	<widget source="provider" render="Label" position="22, 20" size="320,26" font="xstreamityregular;18" foregroundColor="#57ffff" backgroundColor="#091153" halign="center" valign="center" transparent="1"/>
 	<widget source="list" render="Listbox" position="22,60" size="320,672" foregroundColor="#ffffff" foregroundColorSelected="#ffffff" backgroundColor="#0c145a" backgroundColorSelected="#494f83" selectionPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/xklass/default/images/list-selected.png" backgroundPixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/common/blank.png" scrollbarMode="showNever" enableWrapAround="1" transparent="1" zPosition="2">

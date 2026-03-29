@@ -971,5 +971,5 @@ class XStreamity_StartMenu(Screen):
 
     def noreload(self, Answer=None):
         self.playlists_all = loadfiles.process_files()
-        _cleanup_epg_folders(self.playlists_all)
+        _cleanup_epg_folders(self.playlists_all, cfg, dir_tmp)
         self.start()

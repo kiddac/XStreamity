@@ -1,4 +1,4 @@
-<screen name="XKlassLive" position="0,0" size="1920,1080" backgroundColor="#0c145a" flags="wfNoBorder">
+<screen name="XStreamityCategories" position="0,0" size="1920,1080" backgroundColor="#0c145a" flags="wfNoBorder">
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/xklass/default/images/background-plain.png" alphatest="off" position="0,0" size="1920,1080" zPosition="-1"/>
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/xklass/default/images/background-bokeh.png" alphatest="blend" position="0,0" size="1683,362" zPosition="1"/>
 	<widget name="splash" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/xklass/default/images/splash.png" alphatest="off" position="0,0" size="1920,1080" zPosition="1000"/>
@@ -17,7 +17,7 @@
 		<convert type="ClockToText">Format:%H:%M | %A %-d %b</convert>
 	</widget>
 	<widget source="x_title" render="Label" position="540,90" size="1110,42" font="xstreamitybold;30" foregroundColor="#ffffff" backgroundColor="#0c145a" halign="left" noWrap="1" transparent="1" zPosition="2"/>
-	<widget source="x_description" render="XKlassRunningText" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" position="540,144" size="1080,120" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#0c145a" halign="left" transparent="1" zPosition="2"/>
+	<widget source="x_description" render="XStreamityRunningText" options="movetype=running,startpoint=0,direction=top,steptime=80,repeat=0,always=0,oneshot=0,startdelay=6000,wrap" position="540,144" size="1080,120" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#0c145a" halign="left" transparent="1" zPosition="2"/>
 	<widget name="picon" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/common/picon.png" position="1658,90" size="220,132" alphatest="blend" zPosition="2"/>
 	<widget name="progress" position="1658,255" size="220,12" borderWidth="0" borderColor="#ffffff" foregroundColor="#57ffff" backgroundColor="#494f83" zPosition="3"/>
 	<!-- channels -->

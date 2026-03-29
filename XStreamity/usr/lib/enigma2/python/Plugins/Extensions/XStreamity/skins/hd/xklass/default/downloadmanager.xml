@@ -1,4 +1,4 @@
-<screen name="XKlassDownloader" position="0,0" size="1280,720" backgroundColor="#0c145a" flags="wfNoBorder">
+<screen name="XStreamityDownloader" position="0,0" size="1280,720" backgroundColor="#0c145a" flags="wfNoBorder">
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/xklass/default/images/background-plain.png" alphatest="off" position="0,0" size="1280,720" zPosition="-1"/>
 	
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/xklass/default/images/background-bokeh.png" alphatest="blend" position="0,0" size="1122,241" zPosition="1"/>
