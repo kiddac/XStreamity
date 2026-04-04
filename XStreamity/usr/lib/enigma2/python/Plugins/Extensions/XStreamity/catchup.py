@@ -127,6 +127,8 @@ class XStreamity_Catchup_Categories(Screen):
         with codecs.open(skin, "r", encoding="utf-8") as f:
             self.skin = f.read()
 
+        glob.active_playlist.setdefault("data", {})
+
         self.setup_title = _("Catch Up Categories")
         self.main_title = _("Catch Up TV")
         self["main_title"] = StaticText(self.main_title)
@@ -268,7 +270,8 @@ class XStreamity_Catchup_Categories(Screen):
         self["channel_actions"].setEnabled(False)
 
         self["splash"] = Pixmap()
-        self["splash"].show()
+        # self["splash"].show()
+        self["splash"].hide()
 
         glob.nextlist = []
         glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self.sortText, "filter": ""})
@@ -371,6 +374,7 @@ class XStreamity_Catchup_Categories(Screen):
 
             if not glob.active_playlist["player_info"]["showcatchup"]:
                 self.original_active_playlist = glob.active_playlist
+                # self["splash"].hide()
                 self.close()
             else:
                 self.original_active_playlist = glob.active_playlist
@@ -452,6 +456,7 @@ class XStreamity_Catchup_Categories(Screen):
 
     def process_downloads(self):
         threads = min(len(self.url_list), 10)
+        results = []
 
         self.retry = 0
         glob.active_playlist["data"]["live_categories"] = []
@@ -525,7 +530,6 @@ class XStreamity_Catchup_Categories(Screen):
             json.dump(playlists_all, f, indent=4)
 
     def createSetup(self, data=None):
-        self["splash"].hide()
         self["x_title"].setText("")
         self["x_description"].setText("")
 
@@ -534,6 +538,7 @@ class XStreamity_Catchup_Categories(Screen):
         else:
             self.getLevel2()
 
+        # self["splash"].hide()
         self.buildLists()
 
     def buildLists(self):
@@ -559,7 +564,7 @@ class XStreamity_Catchup_Categories(Screen):
         hidden = "0" in currentHidden
 
         if not self.liveStreamsData:
-            self.liveStreamsData = self.downloadApiData(self.liveStreamsUrl)
+            self.liveStreamsData = self.downloadApiData(self.liveStreamsUrl) or []
 
         archivelist = [
             x for x in self.liveStreamsData
@@ -593,7 +598,7 @@ class XStreamity_Catchup_Categories(Screen):
         glob.originalChannelList1 = self.list1[:]
 
     def getLevel2(self):
-        response = self.downloadApiData(glob.nextlist[-1]["next_url"])
+        response = self.downloadApiData(glob.nextlist[-1]["next_url"]) or []
 
         index = 0
         self.list2 = []
@@ -666,7 +671,8 @@ class XStreamity_Catchup_Categories(Screen):
                         return None
             except Exception as e:
                 print("Error occurred during API data download:", e)
-                self.session.openWithCallback(self.back, MessageBox, _("Server error or invalid link."), MessageBox.TYPE_ERROR, timeout=3)
+                self.session.open(MessageBox, _("Server error or invalid link."), MessageBox.TYPE_ERROR, timeout=3)
+                return None
 
     def buildList1(self):
         self["picon"].hide()
@@ -693,7 +699,7 @@ class XStreamity_Catchup_Categories(Screen):
 
     def resetButtons(self):
         if glob.nextlist[-1]["filter"]:
-            self["key_yellow"].setText("")
+            self["key_yellow"].setText(self.sortText)
             self["key_blue"].setText(_("Reset Search"))
             self["key_menu"].setText("")
         else:
@@ -935,7 +941,11 @@ class XStreamity_Catchup_Categories(Screen):
         if not current_sort:
             return
 
-        activelist = self.list1 if self.level == 1 else self.list2
+        if glob.nextlist[-1]["filter"]:
+            activelist = glob.originalChannelList1[:] if self.level == 1 else glob.originalChannelList2[:]
+            activelist = [channel for channel in activelist if str(self.filterresult).lower() in str(channel[1]).lower()]
+        else:
+            activelist = self.list1 if self.level == 1 else self.list2
 
         sortlist = [_("Sort: A-Z"), _("Sort: Z-A")]
         if self.level == 1:
@@ -991,42 +1001,47 @@ class XStreamity_Catchup_Categories(Screen):
 
     def filterChannels(self, result=None):
         activelist = []
+
         if result:
             self.filterresult = result
             glob.nextlist[-1]["filter"] = self.filterresult
-
-            activelist = self.list1 if self.level == 1 else self.list2
-
             self.searchString = result
+            activelist = self.list1 if self.level == 1 else self.list2
             activelist = [channel for channel in activelist if str(result).lower() in str(channel[1]).lower()]
 
             if not activelist:
                 self.searchString = ""
                 self.session.openWithCallback(self.search, MessageBox, _("No results found."), type=MessageBox.TYPE_ERROR, timeout=5)
             else:
+                self._pre_search_sort = self["key_yellow"].getText()
+                activelist.sort(key=lambda x: x[1].lower(), reverse=False)
+                self.sortText = _("Sort: Z-A")
+                glob.nextlist[-1]["sort"] = self.sortText
+
                 if self.level == 1:
                     self.list1 = activelist
                 else:
                     self.list2 = activelist
 
                 self["key_blue"].setText(_("Reset Search"))
-                self["key_yellow"].setText("")
+                self["key_yellow"].setText(_("Sort: A-Z"))
 
                 self.buildLists()
 
     def resetSearch(self):
         self["key_blue"].setText(_("Search"))
-        self["key_yellow"].setText(self.sortText)
 
         if self.level == 1:
-            activelist = glob.originalChannelList1[:]
-            self.list1 = activelist
+            self.list1 = glob.originalChannelList1[:]
         else:
-            activelist = glob.originalChannelList2[:]
-            self.list2 = activelist
+            self.list2 = glob.originalChannelList2[:]
 
         self.filterresult = ""
         glob.nextlist[-1]["filter"] = self.filterresult
+
+        self.sortText = getattr(self, "_pre_search_sort", self.sortText)
+        glob.nextlist[-1]["sort"] = self.sortText
+        self["key_yellow"].setText(self.sortText)
 
         self.buildLists()
 
@@ -1143,6 +1158,7 @@ class XStreamity_Catchup_Categories(Screen):
 
             if not glob.nextlist:
                 self.stopStream()
+                # self["splash"].hide()
                 self.close()
             else:
                 self["x_title"].setText("")

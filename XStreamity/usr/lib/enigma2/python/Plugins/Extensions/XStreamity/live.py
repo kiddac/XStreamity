@@ -107,7 +107,8 @@ class XStreamity_Live_Categories(Screen):
     ALLOW_SUSPEND = True
 
     def __init__(self, session):
-        # print("*** live init ***")
+        if debugs:
+            print("*** __init__ ***")
         Screen.__init__(self, session)
         self.session = session
         glob.categoryname = "live"
@@ -309,7 +310,8 @@ class XStreamity_Live_Categories(Screen):
         self["channel_actions"].setEnabled(False)
 
         self["splash"] = Pixmap()
-        self["splash"].show()
+        # self["splash"].show()
+        self["splash"].hide()
 
         glob.nextlist = []
         glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self.sortText, "filter": ""})
@@ -333,6 +335,8 @@ class XStreamity_Live_Categories(Screen):
         self.onLayoutFinish.append(self.__layoutFinished)
 
     def start(self):
+        if debugs:
+            print("*** start ***")
         if cfg.interface.value == "xklass":
             self.initGlobals()
             self.onShow.append(self.refresh)
@@ -348,6 +352,9 @@ class XStreamity_Live_Categories(Screen):
         self.setTitle(self.setup_title)
 
     def _get_epg_json(self):
+        if debugs:
+            print("*** _get_epg_json***")
+
         try:
             mtime = os.path.getmtime(self.epgjsonfile)
         except Exception:
@@ -369,6 +376,8 @@ class XStreamity_Live_Categories(Screen):
             return None
 
     def _stopTimerImage(self):
+        if debugs:
+            print("*** _stopTimerImage ***")
         # Stop any scheduled timer fire
         try:
             if self.timerImage:
@@ -384,7 +393,8 @@ class XStreamity_Live_Categories(Screen):
 
     def initGlobals(self):
         if debugs:
-            print("*** initglobals ***")
+            print("*** initGlobals ***")
+
         self.host = glob.active_playlist["playlist_info"]["host"]
         self.username = glob.active_playlist["playlist_info"]["username"]
         self.password = glob.active_playlist["playlist_info"]["password"]
@@ -422,6 +432,7 @@ class XStreamity_Live_Categories(Screen):
     def playOriginalChannel(self):
         if debugs:
             print("*** playOriginalChannel ***")
+
         try:
             if glob.currentPlayingServiceRefString:
                 self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
@@ -459,6 +470,7 @@ class XStreamity_Live_Categories(Screen):
 
             if not glob.active_playlist["player_info"]["showlive"]:
                 self.original_active_playlist = glob.active_playlist
+                # self["splash"].hide()
                 self.close()
             else:
                 self.original_active_playlist = glob.active_playlist
@@ -476,7 +488,8 @@ class XStreamity_Live_Categories(Screen):
 
     def makeUrlList(self):
         if debugs:
-            print("*** makeurllist ***")
+            print("*** makeUrlList ***")
+
         self.url_list = []
 
         player_api = str(glob.active_playlist["playlist_info"].get("player_api", ""))
@@ -546,7 +559,8 @@ class XStreamity_Live_Categories(Screen):
 
     def process_downloads(self):
         if debugs:
-            print("*** process downloads ***")
+            print("*** process_downloads ***")
+
         threads = min(len(self.url_list), 10)
 
         self.retry = 0
@@ -616,7 +630,8 @@ class XStreamity_Live_Categories(Screen):
 
     def writeJsonFile(self):
         if debugs:
-            print("*** writejsonfile ***")
+            print("*** writeJsonFile ***")
+
         with open(self.playlists_json, "r") as f:
             playlists_all = json.load(f)
 
@@ -628,7 +643,7 @@ class XStreamity_Live_Categories(Screen):
     def createSetup(self, data=None):
         if debugs:
             print("*** createSetup ***")
-        self["splash"].hide()
+
         self["x_title"].setText("")
         self["x_description"].setText("")
 
@@ -647,11 +662,13 @@ class XStreamity_Live_Categories(Screen):
         else:
             self.getLevel2()
 
+        # self["splash"].hide()
         self.buildLists()
 
     def buildLists(self):
         if debugs:
             print("*** buildLists ***")
+
         if self.level == 1:
             self.buildList1()
         else:
@@ -663,6 +680,7 @@ class XStreamity_Live_Categories(Screen):
     def getCategories(self):
         if debugs:
             print("*** getCategories **")
+
         self.list1 = []
         self.prelist = []
 
@@ -823,6 +841,7 @@ class XStreamity_Live_Categories(Screen):
     def downloadApiData(self, url):
         if debugs:
             print("*** downloadApiData ***")
+
         retries = Retry(total=1, backoff_factor=1)
         adapter = HTTPAdapter(max_retries=retries)
 
@@ -845,11 +864,13 @@ class XStreamity_Live_Categories(Screen):
                         return None
             except Exception as e:
                 print("Error occurred during API data download:", e)
-                self.session.openWithCallback(self.back, MessageBox, _("Server error or invalid link."), MessageBox.TYPE_ERROR, timeout=3)
+                self.session.open(MessageBox, _("Server error or invalid link."), MessageBox.TYPE_ERROR, timeout=3)
+                return None
 
     def xmltvCheckData(self):
         if debugs:
             print("*** xmltvCheckData ***")
+
         safeName = re.sub(r'[\'\<\>\:\"\/\\\|\?\*\(\)\[\]]', "_", str(glob.active_playlist["playlist_info"]["name"]))
         safeName = re.sub(r" +", "_", safeName)  # Combine multiple spaces into one underscore
         safeName = re.sub(r"_+", "_", safeName)  # Replace multiple underscores with a single underscore
@@ -875,7 +896,8 @@ class XStreamity_Live_Categories(Screen):
 
     def buildList1(self):
         if debugs:
-            print("*** buildlist1 ***")
+            print("*** buildList1 ***")
+
         self["key_epg"].setText("")
         self.hideEPG()
         self.xmltvdownloaded = False
@@ -894,7 +916,8 @@ class XStreamity_Live_Categories(Screen):
 
     def buildList2(self):
         if debugs:
-            print("*** buildlist2 ***")
+            print("*** buildList2 ***")
+
         self.main_list = []
         self.epglist = []
         # index = 0, name = 1, stream_id = 2, stream_icon = 3, epg_channel_id = 4, added = 5, category_id = 6, custom_sid = 7, nowtime = 9
@@ -928,9 +951,10 @@ class XStreamity_Live_Categories(Screen):
 
     def resetButtons(self):
         if debugs:
-            print("*** buttons ***")
+            print("*** resetButtons ***")
+
         if glob.nextlist[-1]["filter"]:
-            self["key_yellow"].setText("")
+            self["key_yellow"].setText(self.sortText)
             self["key_blue"].setText(_("Reset Search"))
             self["key_menu"].setText("")
         else:
@@ -952,7 +976,8 @@ class XStreamity_Live_Categories(Screen):
 
     def stopStream(self):
         if debugs:
-            print("*** stop stream ***")
+            print("*** stopStream ***")
+
         current_playing_ref = glob.currentPlayingServiceRefString
         new_playing_ref = glob.newPlayingServiceRefString
 
@@ -965,7 +990,7 @@ class XStreamity_Live_Categories(Screen):
 
     def selectionChanged(self):
         if debugs:
-            print("*** selectionchanged ***")
+            print("*** selectionChanged ***")
 
         current_item = self["main_list"].getCurrent()
         if current_item:
@@ -1025,7 +1050,7 @@ class XStreamity_Live_Categories(Screen):
 
     def downloadImage(self):
         if debugs:
-            print("*** downloadimage ***")
+            print("*** downloadImage ***")
 
         if not self["main_list"].getCurrent():
             self.loadDefaultImage()
@@ -1122,13 +1147,15 @@ class XStreamity_Live_Categories(Screen):
 
     def loadBlankImage(self, data=None):
         if debugs:
-            print("*** loadblankimage ***")
+            print("*** loadBlankImage ***")
+
         if self["picon"].instance:
             self["picon"].instance.setPixmapFromFile(os.path.join(common_path, "picon_blank.png"))
 
     def loadDefaultImage(self, data=None):
         if debugs:
-            print("*** loaddefaultimage ***")
+            print("*** loadDefaultImage ***")
+
         if self["picon"].instance:
             self["picon"].instance.setPixmapFromFile(os.path.join(common_path, "picon.png"))
 
@@ -1185,28 +1212,32 @@ class XStreamity_Live_Categories(Screen):
 
     def goUp(self):
         if debugs:
-            print("*** goup ***")
+            print("*** goUp ***")
+
         instance = self.selectedlist.master.master.instance
         instance.moveSelection(instance.moveUp)
         self.selectionChanged()
 
     def goDown(self):
         if debugs:
-            print("*** godown ***")
+            print("*** goDown ***")
+
         instance = self.selectedlist.master.master.instance
         instance.moveSelection(instance.moveDown)
         self.selectionChanged()
 
     def pageUp(self):
         if debugs:
-            print("*** pageup ***")
+            print("*** pageUp ***")
+
         instance = self.selectedlist.master.master.instance
         instance.moveSelection(instance.pageUp)
         self.selectionChanged()
 
     def pageDown(self):
         if debugs:
-            print("*** pagedown ***")
+            print("*** pageDown ***")
+
         instance = self.selectedlist.master.master.instance
         instance.moveSelection(instance.pageDown)
         self.selectionChanged()
@@ -1215,6 +1246,7 @@ class XStreamity_Live_Categories(Screen):
     def reset(self):
         if debugs:
             print("*** reset ***")
+
         self.selectedlist.setIndex(0)
         self.selectionChanged()
 
@@ -1226,7 +1258,11 @@ class XStreamity_Live_Categories(Screen):
         if not current_sort:
             return
 
-        activelist = self.list1 if self.level == 1 else self.list2
+        if glob.nextlist[-1]["filter"]:
+            activelist = glob.originalChannelList1[:] if self.level == 1 else glob.originalChannelList2[:]
+            activelist = [channel for channel in activelist if str(self.filterresult).lower() in str(channel[1]).lower()]
+        else:
+            activelist = self.list1 if self.level == 1 else self.list2
 
         sortlist = [_("Sort: A-Z"), _("Sort: Z-A")]
         if self.level == 1:
@@ -1289,7 +1325,8 @@ class XStreamity_Live_Categories(Screen):
 
     def deleteRecent(self):
         if debugs:
-            print("*** deleterecent ***")
+            print("*** deleteRecent ***")
+
         current_item = self["main_list"].getCurrent()
         if current_item:
             current_index = self["main_list"].getIndex()
@@ -1317,52 +1354,60 @@ class XStreamity_Live_Categories(Screen):
 
     def filterChannels(self, result=None):
         if debugs:
-            print("*** filterchannels ***")
+            print("*** filterChannels ***")
+
         activelist = []
+
         if result:
             self.filterresult = result
             glob.nextlist[-1]["filter"] = self.filterresult
-
-            activelist = self.list1 if self.level == 1 else self.list2
-
             self.searchString = result
+            activelist = self.list1 if self.level == 1 else self.list2
             activelist = [channel for channel in activelist if str(result).lower() in str(channel[1]).lower()]
 
             if not activelist:
                 self.searchString = ""
                 self.session.openWithCallback(self.search, MessageBox, _("No results found."), type=MessageBox.TYPE_ERROR, timeout=5)
             else:
+                self._pre_search_sort = self["key_yellow"].getText()
+                activelist.sort(key=lambda x: x[1].lower(), reverse=False)
+                self.sortText = _("Sort: Z-A")
+                glob.nextlist[-1]["sort"] = self.sortText
+
                 if self.level == 1:
                     self.list1 = activelist
                 else:
                     self.list2 = activelist
 
                 self["key_blue"].setText(_("Reset Search"))
-                self["key_yellow"].setText("")
+                self["key_yellow"].setText(_("Sort: A-Z"))
 
                 self.buildLists()
 
     def resetSearch(self):
         if debugs:
-            print("*** resetsearch ***")
+            print("*** resetSearch ***")
+
         self["key_blue"].setText(_("Search"))
-        self["key_yellow"].setText(self.sortText)
 
         if self.level == 1:
-            activelist = glob.originalChannelList1[:]
-            self.list1 = activelist
+            self.list1 = glob.originalChannelList1[:]
         else:
-            activelist = glob.originalChannelList2[:]
-            self.list2 = activelist
+            self.list2 = glob.originalChannelList2[:]
 
         self.filterresult = ""
         glob.nextlist[-1]["filter"] = self.filterresult
+
+        self.sortText = getattr(self, "_pre_search_sort", self.sortText)
+        glob.nextlist[-1]["sort"] = self.sortText
+        self["key_yellow"].setText(self.sortText)
 
         self.buildLists()
 
     def pinEntered(self, result=None):
         if debugs:
-            print("*** pinentered ***")
+            print("*** pinEntered ***")
+
         if not result:
             self.pin = False
             self.session.open(MessageBox, _("Incorrect pin code."), type=MessageBox.TYPE_ERROR, timeout=5)
@@ -1378,7 +1423,9 @@ class XStreamity_Live_Categories(Screen):
             return
 
     def parentalCheck(self):
-        # print("*** parentalcheck ***")
+        if debugs:
+            print("*** parentalCheck ***")
+
         self.pin = True
         nowtime = int(time.mktime(datetime.now().timetuple())) if pythonVer == 2 else int(datetime.timestamp(datetime.now()))
 
@@ -1541,10 +1588,16 @@ class XStreamity_Live_Categories(Screen):
                     self.createSetup()
 
     def reload(self):
+        if debugs:
+            print("*** reload ***")
+
         self.setIndex()
         self.setWatchingIcon(glob.currentchannellistindex)
 
     def setWatchingIcon(self, idx):
+        if debugs:
+            print("*** setWatchingIcon ***")
+
         if self["main_list"].getCurrent() and self.list2:
             # Clear all watching flags
             for channel in self.list2:
@@ -1577,13 +1630,12 @@ class XStreamity_Live_Categories(Screen):
 
     def setIndex(self, data=None):
         if debugs:
-            print("*** setindex ***")
+            print("*** setIndex ***")
 
         if self["main_list"].getCurrent():
             self["main_list"].setIndex(glob.currentchannellistindex)
             self["epg_list"].setIndex(glob.currentchannellistindex)
             self.xmltvdownloaded = False
-            # self.createSetup()
 
     def back(self, data=None):
         if debugs:
@@ -1613,6 +1665,7 @@ class XStreamity_Live_Categories(Screen):
 
         if not glob.nextlist:
             self.stopStream()
+            # self["splash"].hide()
             self.close()
         else:
             self["x_title"].setText("")
@@ -1628,6 +1681,9 @@ class XStreamity_Live_Categories(Screen):
             self.buildLists()
 
     def showHiddenList(self):
+        if debugs:
+            print("*** showHiddenList ***")
+
         if self["key_menu"].getText() and self["main_list"].getCurrent():
             from . import hidden
             current_list = self.prelist + self.list1 if self.level == 1 else self.list2
@@ -1638,6 +1694,7 @@ class XStreamity_Live_Categories(Screen):
     def favourite(self):
         if debugs:
             print("*** favourite ***")
+
         if not self["main_list"].getCurrent():
             return
 
@@ -1698,6 +1755,7 @@ class XStreamity_Live_Categories(Screen):
     def addEPG(self):
         if debugs:
             print("*** addEPG ***")
+
         if self["main_list"].getCurrent():
             now = time.time() + (self.epgtimeshift * 3600)
 
@@ -1796,6 +1854,7 @@ class XStreamity_Live_Categories(Screen):
     def hideEPG(self):
         if debugs:
             print("*** hideEPG ***")
+
         self["epg_list"].setList([])
         self["picon"].hide()
         self["epg_bg"].hide()
@@ -1807,6 +1866,7 @@ class XStreamity_Live_Categories(Screen):
     def showEPG(self):
         if debugs:
             print("*** showEPG ***")
+
         if self["main_list"].getCurrent():
             self["picon"].show()
             self["epg_bg"].show()
@@ -1814,7 +1874,8 @@ class XStreamity_Live_Categories(Screen):
 
     def refreshEPGInfo(self):
         if debugs:
-            print("*** refreshEPG ***")
+            print("*** refreshEPGInfo ***")
+
         current_item = self["epg_list"].getCurrent()
         if not current_item:
             return
@@ -1858,6 +1919,7 @@ class XStreamity_Live_Categories(Screen):
     def nownext(self):
         if debugs:
             print("*** nownext ***")
+
         current_item = self["main_list"].getCurrent()
         if not current_item:
             return
@@ -1883,6 +1945,9 @@ class XStreamity_Live_Categories(Screen):
                 self["key_epg"].setText(_("Next Info"))
 
     def parse_datetime(self, datetime_str):
+        if debugs:
+            print("*** parse_datetime ***")
+
         time_formats = ["%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H-%M-%S", "%Y-%m-%d-%H:%M:%S", "%Y- %m-%d %H:%M:%S"]
 
         for time_format in time_formats:
@@ -1895,6 +1960,7 @@ class XStreamity_Live_Categories(Screen):
     def shortEPG(self):
         if debugs:
             print("*** shortEPG ***")
+
         if self["main_list"].getCurrent():
             self.showingshortEPG = not self.showingshortEPG
 
@@ -1985,7 +2051,8 @@ class XStreamity_Live_Categories(Screen):
 
     def displayShortEPG(self):
         if debugs:
-            print("*** displayshortEPG ***")
+            print("*** displayShortEPG ***")
+
         if self["epg_short_list"].getCurrent():
             title = str(self["epg_short_list"].getCurrent()[0])
             description = str(self["epg_short_list"].getCurrent()[3])
@@ -1996,7 +2063,8 @@ class XStreamity_Live_Categories(Screen):
     # record button download video file
     def downloadStream(self, limitEvent=True):
         if debugs:
-            print("*** downloadstream ***")
+            print("*** downloadStream ***")
+
         from . import record
         current_index = self["main_list"].getIndex()
         begin = int(time.time())
@@ -2035,7 +2103,8 @@ class XStreamity_Live_Categories(Screen):
 
     def RecordDateInputClosed(self, data=None):
         if debugs:
-            print("*** recorddateinputclosed ***")
+            print("*** RecordDateInputClosed ***")
+
         if data:
             begin = data[1]
             end = data[2]
@@ -2087,7 +2156,8 @@ class XStreamity_Live_Categories(Screen):
 
     def downloadXMLTVdata(self):
         if debugs:
-            print("*** downloadxmltvdata ***")
+            print("*** downloadXMLTVdata ***")
+
         if epgimporter is False:
             return
 
@@ -2114,7 +2184,8 @@ class XStreamity_Live_Categories(Screen):
 
     def downloadComplete(self, data=None, filename=None):
         if debugs:
-            print("*** downloadcomplete ***")
+            print("*** downloadComplete ***")
+
         channellist_all = []
         with open(filename, "r+b") as f:
             try:
@@ -2130,7 +2201,8 @@ class XStreamity_Live_Categories(Screen):
 
     def buildXMLTV(self):
         if debugs:
-            print("*** buildxmltv ***")
+            print("*** buildXMLTV ***")
+
         safeName = re.sub(r'[\'\<\>\:\"\/\\\|\?\*\(\)\[\]]', "_", str(glob.active_playlist["playlist_info"]["name"]))
         safeName = re.sub(r" +", "_", safeName)
         safeName = re.sub(r"_+", "_", safeName)
@@ -2149,7 +2221,6 @@ class XStreamity_Live_Categories(Screen):
                 pass
 
         # buildXMLTVSourceFile
-
         sourcefile = "/etc/epgimport/xstreamity.sources.xml"
         if not os.path.isfile(sourcefile) or os.stat(sourcefile).st_size == 0:
             with open(sourcefile, "w") as f:
@@ -2238,11 +2309,10 @@ class XStreamity_Live_Categories(Screen):
             xml_str += '</channels>\n'
             f.write(xml_str)
 
-        # self.buildLists()
-
     def epgminus(self):
         if debugs:
             print("*** epgminus ***")
+
         self.epgtimeshift -= 1
         if self.epgtimeshift <= 0:
             self.epgtimeshift = 0
@@ -2251,16 +2321,21 @@ class XStreamity_Live_Categories(Screen):
     def epgplus(self):
         if debugs:
             print("*** epgplus ***")
+
         self.epgtimeshift += 1
         self.addEPG()
 
     def epgreset(self):
         if debugs:
-            print("*** epg reset ***")
+            print("*** epgreset ***")
+
         self.epgtimeshift = 0
         self.addEPG()
 
     def showChoiceBoxDialog(self, Answer=None):
+        if debugs:
+            print("*** showChoiceBoxDialog ***")
+
         self["channel_actions"].setEnabled(False)
         self["category_actions"].setEnabled(False)
         glob.ChoiceBoxDialog['dialogactions'].execBegin()
@@ -2268,6 +2343,9 @@ class XStreamity_Live_Categories(Screen):
         self["menu_actions"].setEnabled(True)
 
     def closeChoiceBoxDialog(self, Answer=None):
+        if debugs:
+            print("*** closeChoiceBoxDialog ***")
+
         if glob.ChoiceBoxDialog:
             if self.level == 1:
                 self["category_actions"].setEnabled(True)
@@ -2283,6 +2361,8 @@ class XStreamity_Live_Categories(Screen):
             self.session.deleteDialog(glob.ChoiceBoxDialog)
 
     def showPopupMenu(self):
+        if debugs:
+            print("*** showPopupMenu ***")
         from . import channelmenu
         glob.current_list = self.prelist + self.list1 if self.level == 1 else self.list2
         glob.current_level = self.level
@@ -2307,8 +2387,7 @@ def buildCategoryList(index, title, category_id, hidden, px_more=None):
     return (title, px_more, index, category_id, hidden)
 
 
-def buildLiveStreamList(index, name, stream_id, stream_icon, next_url, favourite, watching, hidden,
-                        px_play=None, px_fav=None, px_watching=None):
+def buildLiveStreamList(index, name, stream_id, stream_icon, next_url, favourite, watching, hidden, px_play=None, px_fav=None, px_watching=None):
     png = px_play
 
     if favourite:

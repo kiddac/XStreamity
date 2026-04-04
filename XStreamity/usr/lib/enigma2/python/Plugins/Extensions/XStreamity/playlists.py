@@ -166,6 +166,7 @@ class XStreamity_Playlists(Screen):
         if self.playlists_all and os.path.isfile(self.playlist_file) and os.path.getsize(self.playlist_file) > 0:
             self.delayedDownload()
         else:
+            self["splash"].hide()
             self.close()
 
     def delayedDownload(self):
@@ -192,6 +193,8 @@ class XStreamity_Playlists(Screen):
 
         if self.url_list:
             self.process_downloads()
+        else:
+            self.createSetup()
 
     def download_url(self, url):
         index = url[1]
@@ -242,6 +245,7 @@ class XStreamity_Playlists(Screen):
 
     def process_downloads(self):
         threads = min(len(self.url_list), 5)
+        results = []
 
         if hasConcurrent or hasMultiprocessing:
             if hasConcurrent:
@@ -362,12 +366,15 @@ class XStreamity_Playlists(Screen):
         self.writeJsonFile()
 
     def writeJsonFile(self):
-        with open(self.playlists_json, "w") as f:
-            json.dump(self.playlists_all, f, indent=4)
+        try:
+            with open(self.playlists_json, "w") as f:
+                json.dump(self.playlists_all, f, indent=4)
+        except Exception as e:
+            print("JSON write error:", e)
+
         self.createSetup()
 
     def createSetup(self):
-        self["splash"].hide()
         self.list = []
         fail_count_check = False
         index = 0
@@ -444,6 +451,8 @@ class XStreamity_Playlists(Screen):
             self.list.append([index, name, url, expires, status, active, activenum, maxc, maxnum])
             index += 1
 
+        self["splash"].hide()
+
         self.drawList = [self.buildListEntry(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8]) for x in self.list]
         self["playlists"].setList(self.drawList)
 
@@ -492,6 +501,7 @@ class XStreamity_Playlists(Screen):
             glob.current_selection = self.original_current_selection
             glob.active_playlist = self.original_active_playlist
             self.writeJsonFile()
+        self["splash"].hide()
         self.close()
 
     def deleteServer(self, answer=None):
@@ -519,7 +529,6 @@ class XStreamity_Playlists(Screen):
                 self.deleteEpgData()
 
     def deleteEpgData(self, data=None):
-        self["splash"].show()
         playlist_name = str(self.currentplaylist["playlist_info"]["name"])
         epglocation = os.path.join(str(cfg.epglocation.value).rstrip("/"), "iptv-epg")
         epgfolder = os.path.join(epglocation, playlist_name)
@@ -578,10 +587,12 @@ class XStreamity_Playlists(Screen):
             cfg.lastplaylist.setValue(str(glob.active_playlist["playlist_info"]["name"]))
             cfg.save()
             configfile.save()
+            self["splash"].hide()
             self.close()
         else:
             glob.current_selection = self.original_current_selection
             glob.active_playlist = self.original_active_playlist
+            self["splash"].hide()
             self.close()
 
     def epgimportcleanup(self):

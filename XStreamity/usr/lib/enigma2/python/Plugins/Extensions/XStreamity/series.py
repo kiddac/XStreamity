@@ -420,7 +420,8 @@ class XStreamity_Series_Categories(Screen):
         self["channel_actions"].setEnabled(False)
 
         self["splash"] = Pixmap()
-        self["splash"].show()
+        # self["splash"].show()
+        self["splash"].hide()
 
         glob.nextlist = []
         glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self.sortText, "filter": ""})
@@ -662,6 +663,7 @@ class XStreamity_Series_Categories(Screen):
             if not glob.active_playlist["player_info"]["showvod"]:
                 self.original_active_playlist = glob.active_playlist
                 self.tmdbsetting = cfg.TMDB.value
+                # self["splash"].hide()
                 self.close()
             else:
                 self.original_active_playlist = glob.active_playlist
@@ -832,7 +834,6 @@ class XStreamity_Series_Categories(Screen):
         if debugs:
             print("*** createSetup ***")
 
-        self["splash"].hide()
         self["x_title"].setText("")
         self["x_description"].setText("")
 
@@ -848,6 +849,7 @@ class XStreamity_Series_Categories(Screen):
         elif self.level == 4:
             self.getEpisodes()
 
+        # self["splash"].hide()
         self.getSortOrder()
         self.buildLists()
 
@@ -1438,7 +1440,8 @@ class XStreamity_Series_Categories(Screen):
                         return None
             except Exception as e:
                 print("Error occurred during API data download:", e)
-                self.session.openWithCallback(self.back, MessageBox, _("Server error or invalid link."), MessageBox.TYPE_ERROR, timeout=3)
+                self.session.open(MessageBox, _("Server error or invalid link."), MessageBox.TYPE_ERROR, timeout=3)
+                return None
 
     def buildCategories(self):
         if debugs:
@@ -2221,7 +2224,7 @@ class XStreamity_Series_Categories(Screen):
             print("*** resetButtons ***")
 
         if glob.nextlist[-1]["filter"]:
-            self["key_yellow"].setText("")
+            self["key_yellow"].setText(self.sortText)
             self["key_blue"].setText(_("Reset Search"))
             self["key_menu"].setText("")
         else:
@@ -2736,17 +2739,25 @@ class XStreamity_Series_Categories(Screen):
         if not current_sort:
             return
 
-        if self.level == 1:
-            activelist = self.list1
-
-        elif self.level == 2:
-            activelist = self.list2
-
-        elif self.level == 3:
-            activelist = self.list3
-
-        elif self.level == 4:
-            activelist = self.list4
+        if glob.nextlist[-1]["filter"]:
+            if self.level == 1:
+                activelist = glob.originalChannelList1[:]
+            elif self.level == 2:
+                activelist = glob.originalChannelList2[:]
+            elif self.level == 3:
+                activelist = glob.originalChannelList3[:]
+            elif self.level == 4:
+                activelist = glob.originalChannelList4[:]
+            activelist = [channel for channel in activelist if str(self.filterresult).lower() in str(channel[1]).lower()]
+        else:
+            if self.level == 1:
+                activelist = self.list1
+            elif self.level == 2:
+                activelist = self.list2
+            elif self.level == 3:
+                activelist = self.list3
+            elif self.level == 4:
+                activelist = self.list4
 
         if self.level == 1:
             sortlist = [_("Sort: A-Z"), _("Sort: Z-A"), _("Sort: Original")]
@@ -2846,6 +2857,11 @@ class XStreamity_Series_Categories(Screen):
                 self.searchString = ""
                 self.session.openWithCallback(self.search, MessageBox, _("No results found."), type=MessageBox.TYPE_ERROR, timeout=5)
             else:
+                self._pre_search_sort = self["key_yellow"].getText()
+                activelist.sort(key=lambda x: x[1].lower(), reverse=False)
+                self.sortText = _("Sort: Z-A")
+                glob.nextlist[-1]["sort"] = self.sortText
+
                 if self.level == 1:
                     self.list1 = activelist
 
@@ -2859,7 +2875,7 @@ class XStreamity_Series_Categories(Screen):
                     self.list4 = activelist
 
                 self["key_blue"].setText(_("Reset Search"))
-                self["key_yellow"].setText("")
+                self["key_yellow"].setText(_("Sort: A-Z"))
 
                 self.hideVod()
                 self.buildLists()
@@ -2869,28 +2885,23 @@ class XStreamity_Series_Categories(Screen):
             print("*** resetSearch ***")
 
         self["key_blue"].setText(_("Search"))
-        self["key_yellow"].setText(self.sortText)
 
         if self.level == 1:
-            activelist = glob.originalChannelList1[:]
-            self.list1 = activelist
-
+            self.list1 = glob.originalChannelList1[:]
         elif self.level == 2:
-            activelist = glob.originalChannelList2[:]
-            self.list2 = activelist
-
+            self.list2 = glob.originalChannelList2[:]
         elif self.level == 3:
-            activelist = glob.originalChannelList3[:]
-            self.list3 = activelist
-
+            self.list3 = glob.originalChannelList3[:]
         elif self.level == 4:
-            activelist = glob.originalChannelList4[:]
-            self.list4 = activelist
+            self.list4 = glob.originalChannelList4[:]
 
         self.filterresult = ""
         glob.nextlist[-1]["filter"] = self.filterresult
 
-        self.getSortOrder()
+        self.sortText = getattr(self, "_pre_search_sort", self.sortText)
+        glob.nextlist[-1]["sort"] = self.sortText
+        self["key_yellow"].setText(self.sortText)
+
         self.buildLists()
 
     def pinEntered(self, result=None):
@@ -3081,6 +3092,7 @@ class XStreamity_Series_Categories(Screen):
             del glob.nextlist[-1]
         except Exception as e:
             print(e)
+            # self["splash"].hide()
             self.close()
 
         if self.level == 2:
@@ -3091,6 +3103,7 @@ class XStreamity_Series_Categories(Screen):
             self.series_group_title = ""
 
         if not glob.nextlist:
+            # self["splash"].hide()
             self.close()
         else:
             self["x_title"].setText("")

@@ -211,7 +211,6 @@ class XStreamity_StartMenu(Screen):
             else:
                 self["background"].setText("True")
 
-            self["splash"].hide()
             self.createSetupOptions()
             # self.close()
         else:
@@ -359,7 +358,7 @@ class XStreamity_StartMenu(Screen):
 
     def update_playlists_with_results(self, results):
         if debugs:
-            print("*** update_playlists_with_results ***")
+            print("*** update_playlists_with_results ***", results)
 
         for index, response in results:
             if response:
@@ -464,8 +463,6 @@ class XStreamity_StartMenu(Screen):
         else:
             self["background"].setText("True")
 
-        self["splash"].hide()
-
         self.list2 = []
 
         for playlist in self.playlists_all:
@@ -513,9 +510,11 @@ class XStreamity_StartMenu(Screen):
         )
 
         if activeplaylists:
+            self["splash"].hide()
             self.set_last_playlist()
             self.makeUrlCategoryList()
         else:
+            self["splash"].hide()
             self.addServer()
             self.close()
 
@@ -714,7 +713,7 @@ class XStreamity_StartMenu(Screen):
         if debugs:
             print("*** createSetupOptions ***")
 
-        self.list = []
+        self["list"].setIndex(0)
         self.index = 0
         downloads_all = []
 
@@ -772,6 +771,8 @@ class XStreamity_StartMenu(Screen):
 
         if cfg.speedtest.value and (InternetSpeedTest_installed is True or NetSpeedTest_installed is True):
             self.list.append(["", _("Speed Test"), 8])
+
+        self["splash"].hide()
 
         self.drawList = [self.buildListEntry(x[0], x[1], x[2]) for x in self.list]
         self["list"].setList(self.drawList)
@@ -889,6 +890,7 @@ class XStreamity_StartMenu(Screen):
         except Exception as e:
             print(e)
 
+        self["splash"].hide()
         self.close()
 
     def playVideo(self, result=None):

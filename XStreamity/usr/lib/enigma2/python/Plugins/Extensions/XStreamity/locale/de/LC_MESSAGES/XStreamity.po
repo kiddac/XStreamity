@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2026-03-30 21:14+0100\n"
-"PO-Revision-Date: 2026-03-30 21:14+0100\n"
+"PO-Revision-Date: 2026-04-01 21:09+0200\n"
 "Last-Translator: Masta2002\n"
 "Language-Team: \n"
 "Language: de\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: Poedit 3.9\n"
 "X-Poedit-Basepath: ../../..\n"
 "X-Poedit-SearchPath-0: .\n"
 
@@ -171,7 +171,7 @@ msgstr "Mediathek"
 
 #: catchup.py:1260 series.py:3336 vod.py:2798
 msgid "Failed to add to download manager"
-msgstr ""
+msgstr "Das Hinzufügen zum Download-Manager ist fehlgeschlagen"
 
 #: catchup.py:1266 series.py:3342 vod.py:2804
 msgid "Added to download manager"
@@ -220,7 +220,7 @@ msgstr "Änderung der Auflösung fehlgeschlagen"
 
 #: channelmenu.py:63
 msgid "Menu"
-msgstr ""
+msgstr "Menü"
 
 #: channelmenu.py:120 channelmenu.py:153 channelmenu.py:260 menu.py:309
 msgid "Manual EPG Update"
@@ -233,20 +233,20 @@ msgstr "Playlisten Einstellungen"
 
 #: channelmenu.py:123 channelmenu.py:157 channelmenu.py:264
 msgid "Show/Hide Channels"
-msgstr ""
+msgstr "Kanäle anzeigen/ausblenden"
 
 #: channelmenu.py:125 channelmenu.py:159 channelmenu.py:266
 msgid "Account Info"
-msgstr ""
+msgstr "Konto Info"
 
 #: channelmenu.py:127 channelmenu.py:161 channelmenu.py:270 playlists.py:88
 #: startmenu.py:763
 msgid "Manage Playlists"
-msgstr ""
+msgstr "Wiedergabelisten verwalten"
 
 #: channelmenu.py:128 channelmenu.py:163 channelmenu.py:272
 msgid "Add New Playlist"
-msgstr ""
+msgstr "Neue Wiedergabeliste hinzufügen"
 
 #: channelmenu.py:139 channelmenu.py:165 channelmenu.py:274 mainmenu.py:186
 #: startmenu.py:768
@@ -255,7 +255,7 @@ msgstr "Download Manager"
 
 #: channelmenu.py:140 channelmenu.py:167 channelmenu.py:276 startmenu.py:765
 msgid "Global Settings"
-msgstr ""
+msgstr "Globale Einstellungen"
 
 #: channelmenu.py:184 menu.py:361
 msgid "Recordings in progress. EPG not downloaded."
@@ -267,11 +267,11 @@ msgstr "EPGs werden heruntergeladen."
 
 #: channelmenu.py:252
 msgid "Live"
-msgstr ""
+msgstr "Live"
 
 #: channelmenu.py:254 menu.py:292
 msgid "Vod"
-msgstr ""
+msgstr "Vod"
 
 #: channelmenu.py:256 series.py:134 series.py:3314 series.py:3330
 #: startmenu.py:754
@@ -280,7 +280,7 @@ msgstr "Serien"
 
 #: channelmenu.py:258
 msgid "Catchup"
-msgstr ""
+msgstr "Catchup"
 
 #: downloadmanager.py:59 downloadmanager.py:570 downloadmanager.py:634
 msgid "Not Started"
@@ -467,11 +467,11 @@ msgstr "Playlisten Menü"
 
 #: menu.py:289
 msgid "Live Streams"
-msgstr ""
+msgstr "Live Streams"
 
 #: menu.py:295
 msgid "TV Series"
-msgstr ""
+msgstr "TV Serien"
 
 #: menu.py:319
 msgid "No data, blocked or playlist not compatible with XStreamity plugin."
@@ -603,31 +603,31 @@ msgstr "Name bereits verwendet. Bitte gib einen eindeutigen Namen ein."
 
 #: plugin.py:177
 msgid "4:3 Letterbox"
-msgstr ""
+msgstr "4:3 Letterbox"
 
 #: plugin.py:178
 msgid "4:3 PanScan"
-msgstr ""
+msgstr "4:3 PanScan"
 
 #: plugin.py:179
 msgid "16:9"
-msgstr ""
+msgstr "16:9"
 
 #: plugin.py:180
 msgid "16:9 Always"
-msgstr ""
+msgstr "16:9 Immer"
 
 #: plugin.py:181
 msgid "16:10 Letterbox"
-msgstr ""
+msgstr "16:10 Letterbox"
 
 #: plugin.py:182
 msgid "16:10 PanScan"
-msgstr ""
+msgstr "16:10 PanScan"
 
 #: plugin.py:183
 msgid "16:9 Letterbox"
-msgstr ""
+msgstr "16:9 Letterbox"
 
 #: plugin.py:265 plugin.py:266 plugin.py:268 plugin.py:269
 msgid "Original"
@@ -812,6 +812,9 @@ msgid ""
 "\n"
 "Pin cannot be 0000, 1111, or 1234"
 msgstr ""
+"Bitte ändere die standardmäßige PIN für die Kindersicherung.\n"
+"\n"
+"Die PIN darf nicht 0000, 1111 oder 1234 lauten"
 
 #: settings.py:149
 msgid "You need to restart the GUI"
@@ -827,7 +830,7 @@ msgstr "Wähle Skin"
 
 #: settings.py:175
 msgid "Select interface"
-msgstr ""
+msgstr "Oberfläche auswählen"
 
 #: settings.py:177
 msgid "Select fake web user-agent"
@@ -928,7 +931,7 @@ msgstr "XStreamity beim Booten automatisch starten"
 
 #: settings.py:200
 msgid "Default screen aspect ratio"
-msgstr ""
+msgstr "Standard Bildschirmseitenverhältnis"
 
 #: settings.py:207
 msgid "Default VOD category sort order"
@@ -948,35 +951,35 @@ msgstr "Standard-Sortierreihenfolge für Serien"
 
 #: settings.py:213
 msgid "Show intro video"
-msgstr ""
+msgstr "Zeige Intro Video"
 
 #: settings.py:214
 msgid "Loop intro video"
-msgstr ""
+msgstr "Intro Video als Schleife abspielen"
 
 #: settings.py:215
 msgid "Intro video selection"
-msgstr ""
+msgstr "Intro Video auswahl"
 
 #: settings.py:216
 msgid "Show Speedtest on start menu"
-msgstr ""
+msgstr "Zeige Speedtest im Startmenü"
 
 #: settings.py:217
 msgid "Show Manage Playlists on start menu"
-msgstr ""
+msgstr "Zeige Wiedergabelisten verwalten im Start Menü"
 
 #: settings.py:218
 msgid "Show playlists on start menu"
-msgstr ""
+msgstr "Zeige Wiedergabelisten im Startmenü"
 
 #: settings.py:219
 msgid "Show Manage Playlists in popup menu"
-msgstr ""
+msgstr "Zeige Wiedergabelisten verwalten im Popup Menü"
 
 #: settings.py:220
 msgid "Show Account Info in popup menu"
-msgstr ""
+msgstr "Zeige Kontoinformationen im Popup Menü"
 
 #: settings.py:363
 msgid "Choose Directory:"
@@ -988,11 +991,11 @@ msgstr "Verzeichnis auswählen"
 
 #: startmenu.py:573
 msgid "Active:"
-msgstr ""
+msgstr "Aktiv:"
 
 #: startmenu.py:573
 msgid "Max:"
-msgstr ""
+msgstr "Max:"
 
 #: startmenu.py:751 vod.py:141
 msgid "Movies"
@@ -1000,11 +1003,11 @@ msgstr "Filme"
 
 #: startmenu.py:771
 msgid "Reboot GUI"
-msgstr ""
+msgstr "GUI Neustarten"
 
 #: startmenu.py:774
 msgid "Speed Test"
-msgstr ""
+msgstr "Geschwindigkeitstest"
 
 #: vod.py:139
 msgid "Vod Categories"
@@ -1036,27 +1039,4 @@ msgstr ""
 
 #: vod.py:2954
 msgid "No compatible trailer found."
-msgstr ""
-
-#~ msgid "Manage Playlist"
-#~ msgstr "Playlist verwalten"
-
-#~ msgid "Delete providers EPG data?"
-#~ msgstr "Lösche die EPG Daten des Anbieters?"
-
-#~ msgid ""
-#~ "Please change default parental pin.\n"
-#~ "\n"
-#~ "Pin cannot be 0000, 111, or 1234"
-#~ msgstr ""
-#~ "Bitte ändern Sie den Standard-Eltern-Pin.\n"
-#~ "\n"
-#~ "Die PIN kann nicht 0000, 111 oder 1234 sein."
-
-#~ msgid "No trailer found."
-#~ msgstr "Kein Trailer gefunden."
-
-#~ msgid "Trailer is age restricted, and can't be accessed without logging in."
-#~ msgstr ""
-#~ "Der Trailer unterliegt einer Altersbeschränkung und kann ohne Anmeldung "
-#~ "nicht aufgerufen werden."
+msgstr "Kein kompatibler Trailer gefunden."

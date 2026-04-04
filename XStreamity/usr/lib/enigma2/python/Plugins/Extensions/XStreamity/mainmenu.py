@@ -209,7 +209,7 @@ class XStreamity_MainMenu(Screen):
 
     def hackavision(self):
         from . import scanner
-        self.session.openWithCallback(lambda _: self.start, scanner.XStreamity_Scanner)
+        self.session.openWithCallback(self.start, scanner.XStreamity_Scanner)
 
     def __next__(self):
         current_entry = self["list"].getCurrent()

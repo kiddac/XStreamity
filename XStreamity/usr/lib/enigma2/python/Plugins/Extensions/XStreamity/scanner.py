@@ -73,17 +73,23 @@ def get_base_url():
 def sort_key(item):
     index, name, url, expires, status, active, activenum, maxc, maxnum, exp_ts = item
 
-    # Primary: maxnum (desc)
-    primary = -maxnum
+    try:
+        maxnum = int(maxnum)
+    except (TypeError, ValueError):
+        maxnum = 0
 
-    # Secondary: difference between maxnum and activenum (desc)
+    try:
+        activenum = int(activenum)
+    except (TypeError, ValueError):
+        activenum = 0
+
+    primary = -maxnum
     secondary = -(maxnum - activenum)
 
-    # Third: expiry timestamp (Null first)
     if exp_ts is None:
-        tertiary = float("inf")  # Null sorts higher
+        tertiary = float("-inf")
     else:
-        tertiary = -exp_ts  # later date first
+        tertiary = -exp_ts
 
     return (primary, secondary, tertiary)
 
@@ -125,7 +131,7 @@ class XStreamity_Scanner(Screen):
         self["key_red"] = StaticText(_("Back"))
         self["key_green"] = StaticText(_("OK"))
         self["key_yellow"] = StaticText()
-        self["key_blue"] = StaticText()
+        self["key_blue"] = StaticText(_("Info"))
         self["version"] = StaticText()
 
         self.list = []
@@ -144,6 +150,8 @@ class XStreamity_Scanner(Screen):
             "green": self.getStreamTypes,
             "cancel": self.quit,
             "ok": self.getStreamTypes,
+            "blue": self.openUserInfo,
+            "info": self.openUserInfo,
         }, -2)
 
         self.onFirstExecBegin.append(self.start)
@@ -259,6 +267,7 @@ class XStreamity_Scanner(Screen):
         if self.playlists_all and os.path.isfile(scanner_playlist_file) and os.path.getsize(scanner_playlist_file) > 0:
             self.delayedDownload()
         else:
+            self["splash"].hide()
             self.close()
 
     def delayedDownload(self):
@@ -446,7 +455,6 @@ class XStreamity_Scanner(Screen):
         self.createSetup()
 
     def createSetup(self):
-        self["splash"].hide()
         self.list = []
 
         for playlist in self.playlists_all:
@@ -523,6 +531,9 @@ class XStreamity_Scanner(Screen):
             self.list.append([index, name, url, expires, status, active, activenum, maxc, maxnum, exp_ts])
 
         self.list.sort(key=sort_key)
+
+        self["splash"].hide()
+
         self.drawList = [self.buildListEntry(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], x[8]) for x in self.list]
         self["playlists"].setList(self.drawList)
 
@@ -560,7 +571,7 @@ class XStreamity_Scanner(Screen):
         cfg.playlists_json.setValue(original_playlists_json)
         glob.current_selection = 0
         cfg.save()
-
+        self["splash"].hide()
         self.close()
 
     def getCurrentEntry(self):
@@ -587,6 +598,14 @@ class XStreamity_Scanner(Screen):
         else:
             glob.current_selection = 0
             glob.active_playlist = {}
+
+    def openUserInfo(self):
+        if self.list:
+            current_playlist = glob.active_playlist
+
+            if "user_info" in current_playlist and "auth" in current_playlist["user_info"] and str(current_playlist["user_info"]["auth"]) == "1":
+                from . import serverinfo
+                self.session.open(serverinfo.XStreamity_UserInfo)
 
     def getStreamTypes(self):
         from . import menu

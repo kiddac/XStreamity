@@ -113,6 +113,7 @@ class XStreamity_Menu(Screen):
         self.p_series_categories_url = self.player_api + "&action=get_series_categories"
         self.p_live_streams_url = self.player_api + "&action=get_live_streams"
 
+        glob.active_playlist.setdefault("data", {})
         glob.active_playlist["data"]["live_streams"] = []
 
         self.onFirstExecBegin.append(self.start)
@@ -134,7 +135,6 @@ class XStreamity_Menu(Screen):
                     self.makeUrlList()
             self.timer.start(10, True)
         else:
-            self["splash"].hide()
             self.createSetup()
 
     def makeUrlList(self):
@@ -238,7 +238,6 @@ class XStreamity_Menu(Screen):
                     if category == 3:
                         glob.active_playlist["data"]["live_streams"] = response
 
-        self["splash"].hide()
         glob.active_playlist["data"]["data_downloaded"] = True
         self.createSetup()
 
@@ -272,7 +271,7 @@ class XStreamity_Menu(Screen):
         show_series = glob.active_playlist["player_info"].get("showseries", False)
         show_catchup = glob.active_playlist["player_info"].get("showcatchup", False)
 
-        content = glob.active_playlist["data"]["live_streams"]
+        content = glob.active_playlist["data"].get("live_streams", [])
 
         has_catchup = any(str(item.get("tv_archive", "0")) == "1" for item in content if "tv_archive" in item)
         has_custom_sids = any(item.get("custom_sid", False) for item in content if "custom_sid" in item)
@@ -310,15 +309,18 @@ class XStreamity_Menu(Screen):
         except Exception as e:
             print(e)
 
+        self["splash"].hide()
+
         self.drawList = [buildListEntry(x[0], x[1], x[2], x[3]) for x in self.list]
         self["list"].setList(self.drawList)
 
         self.writeJsonFile()
 
         if not self.list:
-            self.session.openWithCallback(self.close, MessageBox, (_("No data, blocked or playlist not compatible with XStreamity plugin.")), MessageBox.TYPE_WARNING, timeout=5)
+            self.session.openWithCallback(self.quit, MessageBox, (_("No data, blocked or playlist not compatible with XStreamity plugin.")), MessageBox.TYPE_WARNING, timeout=5)
 
     def quit(self):
+        self["splash"].hide()
         self.close()
 
     def __next__(self):
