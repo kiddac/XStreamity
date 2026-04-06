@@ -25,3 +25,4 @@ current_level = None
 current_screen = None
 previous_screen = None
 current_active_playlist_selection = 0
+original_aspect_ratio = None

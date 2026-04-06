@@ -65,16 +65,23 @@ from Screens.Screen import Screen
 from ServiceReference import ServiceReference
 from Tools.BoundFunction import boundFunction
 
-try:
-    from enigma import eAVSwitch
-except Exception:
-    from enigma import eAVControl as eAVSwitch
-
 # Local application/library-specific imports
 from . import _
 from . import xstreamity_globals as glob
 from .plugin import cfg, common_path, dir_tmp, pythonVer, screenwidth, skin_directory
 from .xStaticText import StaticText
+
+try:
+    from enigma import eAVSwitch
+except Exception:
+    from enigma import eAVControl as eAVSwitch
+
+hasAVSwitch = False
+try:
+    from Components.AVSwitch import avSwitch
+    hasAVSwitch = True
+except Exception:
+    pass
 
 if cfg.subs.value is True:
     try:
@@ -340,6 +347,20 @@ class XStreamity_StreamPlayer(
             self.ar_id_player = int(cfg.ar_id_player.value)
         except Exception:
             self.ar_id_player = 2
+
+        glob.original_aspect_ratio = None
+
+        if hasAVSwitch:
+            try:
+                glob.original_aspect_ratio = avSwitch.getAspectRatioSetting()
+            except Exception as e:
+                print(e)
+
+        if glob.original_aspect_ratio is None:
+            try:
+                glob.original_aspect_ratio = eAVSwitch.getInstance().getAspectRatio()
+            except Exception:
+                glob.original_aspect_ratio = None
 
         self.playlists_json = cfg.playlists_json.value
         self.streamurl = streamurl
@@ -749,7 +770,8 @@ class XStreamity_StreamPlayer(
         # add to recently watched
         self.timerRecent.start(5 * 60 * 1000, True)
 
-        self.setAspectRatio(self.ar_id_player)
+        if self.ar_id_player != -1:
+            self.setAspectRatio(self.ar_id_player)
 
         self.originalservicetype = self.servicetype
 
@@ -772,6 +794,12 @@ class XStreamity_StreamPlayer(
                     epg_cache.load()
             except Exception as e:
                 print(e)
+
+        try:
+            if glob.original_aspect_ratio is not None:
+                eAVSwitch.getInstance().setAspectRatio(glob.original_aspect_ratio)
+        except Exception:
+            pass
 
         self.close()
 
