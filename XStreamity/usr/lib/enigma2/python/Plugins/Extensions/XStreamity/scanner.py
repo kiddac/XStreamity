@@ -136,6 +136,8 @@ class XStreamity_Scanner(Screen):
 
         self.list = []
         self.drawList = []
+        self.playlists_all = []
+
         self["playlists"] = List(self.drawList, enableWrapAround=True)
         self["playlists"].onSelectionChanged.append(self.getCurrentEntry)
         self["splash"] = Pixmap()
@@ -172,8 +174,6 @@ class XStreamity_Scanner(Screen):
             return
 
         self["version"].setText(version)
-
-        self.playlists_all = []
 
         if os.path.exists(scans_dir):
             for file_name in ["playlists.txt", "x-playlists.json"]:

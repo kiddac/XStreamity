@@ -23,7 +23,12 @@ from . import xstreamity_globals as glob
 from . import processfiles as loadfiles
 from .plugin import skin_directory, common_path, version, downloads_json, cfg, dir_tmp
 from .xStaticText import StaticText
-from .utils import _cleanup_epg_folders
+from .utils import _cleanup_epg_folders, _get_current_aspect_ratio
+
+try:
+    from enigma import eAVSwitch
+except Exception:
+    from enigma import eAVControl as eAVSwitch
 
 
 class XStreamity_MainMenu(Screen):
@@ -93,6 +98,8 @@ class XStreamity_MainMenu(Screen):
             glob.currentPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
             glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
             glob.newPlayingServiceRefString = glob.newPlayingServiceRef.toString()
+
+        glob.original_aspect_ratio = _get_current_aspect_ratio()
 
         self.onFirstExecBegin.append(self.check_dependencies)
         self.onLayoutFinish.append(self.__layoutFinished)
@@ -234,6 +241,13 @@ class XStreamity_MainMenu(Screen):
         if glob.currentPlayingServiceRefString != glob.newPlayingServiceRefString:
             if glob.newPlayingServiceRefString and glob.currentPlayingServiceRefString:
                 self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
+
+        try:
+            if glob.original_aspect_ratio is not None:
+                eAVSwitch.getInstance().setAspectRatio(glob.original_aspect_ratio)
+        except Exception:
+            pass
+
         self.close()
 
     def resetData(self, answer=None):

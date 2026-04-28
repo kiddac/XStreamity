@@ -1331,11 +1331,14 @@ class XStreamity_Live_Categories(Screen):
         if current_item:
             current_index = self["main_list"].getIndex()
 
-            with open(self.playlists_json, "r") as f:
-                try:
-                    self.playlists_all = json.load(f)
-                except Exception:
-                    os.remove(self.playlists_json)
+            if not os.path.exists(self.playlists_json):
+                self.playlists_all = []
+            else:
+                with open(self.playlists_json, "r") as f:
+                    try:
+                        self.playlists_all = json.load(f)
+                    except Exception:
+                        os.remove(self.playlists_json)
 
             del glob.active_playlist["player_info"]['liverecents'][current_index]
             self.hideEPG()
@@ -1591,8 +1594,8 @@ class XStreamity_Live_Categories(Screen):
         if debugs:
             print("*** reload ***")
 
-        self.setIndex()
         self.setWatchingIcon(glob.currentchannellistindex)
+        self.setIndex()
 
     def setWatchingIcon(self, idx):
         if debugs:
@@ -1661,7 +1664,8 @@ class XStreamity_Live_Categories(Screen):
         except:
             pass
 
-        del glob.nextlist[-1]
+        if glob.nextlist:
+            glob.nextlist.pop()
 
         if not glob.nextlist:
             self.stopStream()

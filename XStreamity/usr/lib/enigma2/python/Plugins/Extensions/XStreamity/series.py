@@ -3089,7 +3089,8 @@ class XStreamity_Series_Categories(Screen):
         self._cleanup_series_assets()
 
         try:
-            del glob.nextlist[-1]
+            if glob.nextlist:
+                glob.nextlist.pop()
         except Exception as e:
             print(e)
             # self["splash"].hide()

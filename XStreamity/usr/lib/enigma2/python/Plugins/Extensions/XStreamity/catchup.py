@@ -1154,7 +1154,8 @@ class XStreamity_Catchup_Categories(Screen):
             self.selectedlist = self["main_list"]
             self.resetButtons()
         else:
-            del glob.nextlist[-1]
+            if glob.nextlist:
+                glob.nextlist.pop()
 
             if not glob.nextlist:
                 self.stopStream()

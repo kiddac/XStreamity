@@ -67,18 +67,12 @@ from . import _
 from . import xstreamity_globals as glob
 from .plugin import cfg, common_path, dir_tmp, pythonVer, screenwidth, skin_directory
 from .xStaticText import StaticText
+from .utils import _get_current_aspect_ratio
 
 try:
     from enigma import eAVSwitch
 except Exception:
     from enigma import eAVControl as eAVSwitch
-
-hasAVSwitch = False
-try:
-    from Components.AVSwitch import avSwitch
-    hasAVSwitch = True
-except Exception:
-    pass
 
 if cfg.subs.value is True:
     try:
@@ -407,29 +401,11 @@ class XStreamity_CatchupPlayer(
 
         IPTVInfoBarPVRState.__init__(self, PVRState, True)
 
-        self.ar_id_player = 6
+        self.ar_id_player = -1
         try:
             self.ar_id_player = int(cfg.ar_id_player.value)
         except Exception:
-            self.ar_id_player = 2
-
-        glob.original_aspect_ratio = None
-
-        if hasAVSwitch:
-            try:
-                glob.original_aspect_ratio = avSwitch.getAspectRatioSetting()
-            except Exception as e:
-                print(e)
-
-        if glob.original_aspect_ratio is None:
-            try:
-                glob.original_aspect_ratio = eAVSwitch.getInstance().getAspectRatio()
-            except Exception:
-                glob.original_aspect_ratio = None
-
-        if cfg.subs.value is True:
-            SubsSupport.__init__(self, searchSupport=True, embeddedSupport=True)
-            SubsSupportStatus.__init__(self)
+            self.ar_id_player = -1
 
         self.streamurl = streamurl
         self.servicetype = servicetype
@@ -545,8 +521,27 @@ class XStreamity_CatchupPlayer(
         if cfg.infobarpicons.value is True:
             self.timerImage.start(250, True)
 
-        if self.ar_id_player != -1:
-            self.setAspectRatio(self.ar_id_player)
+        try:
+            self.arTimer.stop()
+        except:
+            pass
+
+        self.arTimer = eTimer()
+
+        try:
+            self.arTimer.callback.append(self.applyAspectRatio)
+        except:
+            self.arTimer_conn = self.arTimer.timeout.connect(self.applyAspectRatio)
+
+        self.arTimer.start(200, True)
+
+    def applyAspectRatio(self):
+        current_ar = _get_current_aspect_ratio()
+        try:
+            if self.ar_id_player != -1 and current_ar is not None and int(current_ar) != int(self.ar_id_player):
+                self.setAspectRatio(self.ar_id_player)
+        except Exception:
+            pass
 
     def downloadImage(self):
         # Clear picon immediately on zap so previous one doesn't remain if new fails
@@ -699,12 +694,6 @@ class XStreamity_CatchupPlayer(
         try:
             self.session.nav.stopService()
         except:
-            pass
-
-        try:
-            if glob.original_aspect_ratio is not None:
-                eAVSwitch.getInstance().setAspectRatio(glob.original_aspect_ratio)
-        except Exception:
             pass
 
         self.close()

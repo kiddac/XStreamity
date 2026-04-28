@@ -84,6 +84,7 @@ class XStreamity_Playlists(Screen):
 
         self.playlist_file = cfg.playlist_file.value
         self.playlists_json = cfg.playlists_json.value
+        self.playlists_all = []
 
         self.setup_title = _("Manage Playlists")
 
@@ -151,8 +152,6 @@ class XStreamity_Playlists(Screen):
 
         if epgimporter:
             self.epgimportcleanup()
-
-        self.playlists_all = []
 
         # check if playlists.json file exists in specified location
         if os.path.isfile(self.playlists_json):

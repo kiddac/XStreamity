@@ -33,8 +33,12 @@ from . import xstreamity_globals as glob
 from . import processfiles as loadfiles
 from .plugin import cfg, downloads_json, hasConcurrent, hasMultiprocessing, pythonFull, skin_directory, version, InternetSpeedTest_installed, NetSpeedTest_installed, debugs, pythonVer, dir_tmp
 from .xStaticText import StaticText
-from .utils import _cleanup_epg_folders
+from .utils import _cleanup_epg_folders, _get_current_aspect_ratio
 
+try:
+    from enigma import eAVSwitch
+except Exception:
+    from enigma import eAVControl as eAVSwitch
 
 hdr = {
     'User-Agent': str(cfg.useragent.value),
@@ -151,6 +155,8 @@ class XStreamity_StartMenu(Screen):
             glob.newPlayingServiceRefString = glob.newPlayingServiceRef.toString()
         except:
             pass
+
+        glob.original_aspect_ratio = _get_current_aspect_ratio()
 
         self.tracker = ServiceEventTracker(screen=self, eventmap={
             iPlayableService.evEOF: self.onEOF
@@ -891,6 +897,13 @@ class XStreamity_StartMenu(Screen):
             print(e)
 
         self["splash"].hide()
+
+        try:
+            if glob.original_aspect_ratio is not None:
+                eAVSwitch.getInstance().setAspectRatio(glob.original_aspect_ratio)
+        except Exception:
+            pass
+
         self.close()
 
     def playVideo(self, result=None):

@@ -3,6 +3,18 @@
 
 import os
 
+try:
+    from enigma import eAVSwitch
+except Exception:
+    from enigma import eAVControl as eAVSwitch
+
+hasAVSwitch = False
+try:
+    from Components.AVSwitch import avSwitch
+    hasAVSwitch = True
+except Exception:
+    pass
+
 
 def _cleanup_epg_folders(playlists_all, cfg, dir_tmp):
     import shutil
@@ -51,3 +63,79 @@ def _cleanup_epg_folders(playlists_all, cfg, dir_tmp):
                     pass
     except Exception:
         pass
+
+
+def _get_current_aspect_ratio():
+
+    current_ar = None
+
+    # 1 Fallback to proc (ATV / BH / VTi etc)
+    if current_ar is None:
+        try:
+            if os.path.exists("/proc/stb/video/aspect"):
+                with open("/proc/stb/video/aspect", "r") as f:
+                    aspect = f.read().strip()
+
+                with open("/proc/stb/video/policy", "r") as f:
+                    policy = f.read().strip()
+
+                if aspect == "4:3":
+                    if policy == "letterbox":
+                        current_ar = 0
+                    elif policy == "panscan":
+                        current_ar = 1
+
+                elif aspect == "16:9":
+                    if policy == "letterbox":
+                        current_ar = 6
+                    elif policy == "panscan":
+                        current_ar = 3
+                    else:
+                        current_ar = 2
+
+                elif aspect == "16:10":
+                    if policy == "letterbox":
+                        current_ar = 4
+                    elif policy == "panscan":
+                        current_ar = 5
+
+        except Exception as e:
+            print("*** proc read failed ***", e)
+
+    # 2 Try eAVSwitch (if available)
+    if current_ar is None:
+        try:
+            inst = eAVSwitch.getInstance()
+            if hasattr(inst, "getAspectRatio"):
+                current_ar = int(inst.getAspectRatio())
+        except Exception as e:
+            print("*** eAVSwitch failed ***", e)
+
+    # 3 DreamOS fallback
+    if current_ar is None:
+        try:
+            if os.path.exists("/sys/class/video/screen_mode"):
+                with open("/sys/class/video/screen_mode", "r") as f:
+                    mode = f.read().strip()
+
+                print("*** AR via DreamOS ***", mode)
+
+                if "letterbox" in mode:
+                    current_ar = 0
+                elif "panscan" in mode:
+                    current_ar = 1
+                elif "16:9" in mode:
+                    current_ar = 2
+
+        except Exception as e:
+            print("*** DreamOS read failed ***", e)
+
+    # 4 Final fallback - config settings
+    if current_ar is None:
+        try:
+            if hasAVSwitch:
+                current_ar = int(avSwitch.getAspectRatioSetting())
+        except Exception as e:
+            print("*** avSwitch failed ***", e)
+
+    return current_ar

@@ -2378,11 +2378,14 @@ class XStreamity_Vod_Categories(Screen):
         if current_item:
             current_index = self["main_list"].getIndex()
 
-            with open(self.playlists_json, "r") as f:
-                try:
-                    self.playlists_all = json.load(f)
-                except Exception:
-                    os.remove(self.playlists_json)
+            if not os.path.exists(self.playlists_json):
+                self.playlists_all = []
+            else:
+                with open(self.playlists_json, "r") as f:
+                    try:
+                        self.playlists_all = json.load(f)
+                    except Exception:
+                        os.remove(self.playlists_json)
 
             del glob.active_playlist["player_info"]['vodrecents'][current_index]
             self.hideVod()
@@ -2587,7 +2590,8 @@ class XStreamity_Vod_Categories(Screen):
             self._stopTimerVod()
             self._cleanup_vod_assets()
 
-        del glob.nextlist[-1]
+        if glob.nextlist:
+            glob.nextlist.pop()
 
         if not glob.nextlist:
             # self["splash"].hide()

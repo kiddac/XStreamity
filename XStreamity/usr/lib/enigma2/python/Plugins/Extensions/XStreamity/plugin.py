@@ -173,7 +173,7 @@ if isDreambox:
 cfg.livetype = ConfigSelection(default="4097", choices=live_streamtype_choices)
 cfg.vodtype = ConfigSelection(default="4097", choices=vod_streamtype_choices)
 
-cfg.ar_id_player = ConfigSelection(default="6", choices=[
+cfg.ar_id_player = ConfigSelection(default="-1", choices=[
     ("-1", _("Auto")),
     ("0", _("4:3 Letterbox")),
     ("1", _("4:3 PanScan")),
