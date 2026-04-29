@@ -11,9 +11,10 @@ from itertools import cycle, islice
 from datetime import datetime, timedelta
 
 try:
-    from urlparse import urlparse
-except ImportError:
-    from urllib.parse import urlparse
+    from urllib.parse import urlparse, urlunparse, quote
+except:
+    from urlparse import urlparse, urlunparse
+    from urllib import quote
 
 try:
     from http.client import HTTPConnection
@@ -65,7 +66,7 @@ except ImportError as e:
 # Local application/library-specific imports
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import cfg, common_path, dir_tmp, pythonVer, screenwidth, skin_directory
+from .plugin import cfg, common_path, dir_tmp, screenwidth, skin_directory
 from .xStaticText import StaticText
 from .utils import _get_current_aspect_ratio
 
@@ -119,6 +120,32 @@ if os.path.exists("/usr/bin/exteplayer3"):
 if os.path.exists("/usr/bin/apt-get"):
     streamtypelist.append("8193")
     vodstreamtypelist.append("8193")
+
+
+def safe_url(url):
+    if not url:
+        return None
+
+    try:
+        parsed = urlparse(url)
+
+        # encode path + query safely
+        path = quote(parsed.path)
+        query = quote(parsed.query, safe="=&")
+
+        safe = urlunparse((
+            parsed.scheme,
+            parsed.netloc,
+            path,
+            parsed.params,
+            query,
+            parsed.fragment
+        ))
+
+        return safe.encode("utf-8")
+
+    except Exception:
+        return None
 
 
 class IPTVInfoBarShowHide():
@@ -560,29 +587,37 @@ class XStreamity_CatchupPlayer(
         except:
             desc_image = ""
 
-        if not desc_image or desc_image == "n/A":
+        if not desc_image or desc_image.lower() == "n/a":
+            self.loadDefaultImage()
+            return
+
+        if not desc_image.startswith(("http://", "https://")):
+            self.loadDefaultImage()
             return
 
         fd = None
         temp = None
 
         try:
-            fd, temp = tempfile.mkstemp(prefix="xst_picon_", suffix=".png", dir=dir_tmp)
+            fd, temp = tempfile.mkstemp(prefix="xst_live_picon_", suffix=".png", dir=dir_tmp)
             try:
                 os.close(fd)
             except:
                 pass
 
-            parsed = urlparse(desc_image)
-            domain = parsed.hostname
-            scheme = parsed.scheme
+            safe = safe_url(desc_image)
 
-            url = desc_image
-            if pythonVer == 3:
-                try:
-                    url = desc_image.encode()
-                except:
-                    url = desc_image
+            if not safe:
+                self.loadDefaultImage()
+                return
+
+            try:
+                parsed = urlparse(desc_image)
+                domain = parsed.hostname
+                scheme = parsed.scheme
+            except:
+                domain = None
+                scheme = None
 
             def _cleanup_temp():
                 try:
@@ -610,14 +645,14 @@ class XStreamity_CatchupPlayer(
 
             if scheme == "https" and sslverify:
                 sniFactory = SNIFactory(domain)
-                d = downloadPage(url, temp, sniFactory, timeout=2)
+                d = downloadPage(safe, temp, sniFactory, timeout=2)
             else:
-                d = downloadPage(url, temp, timeout=2)
+                d = downloadPage(safe, temp, timeout=2)
 
             d.addCallback(_ok)
             d.addErrback(_err)
 
-        except:
+        except Exception:
             try:
                 if fd:
                     os.close(fd)

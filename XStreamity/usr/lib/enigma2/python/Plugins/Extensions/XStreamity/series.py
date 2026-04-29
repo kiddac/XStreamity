@@ -22,9 +22,10 @@ except ImportError:
     HTTPConnection.debuglevel = 0
 
 try:
+    from urllib.parse import urlparse, urlunparse, quote
+except:
+    from urlparse import urlparse, urlunparse
     from urllib import quote
-except ImportError:
-    from urllib.parse import quote
 
 # Third-party imports
 import requests
@@ -76,6 +77,32 @@ if pythonVer == 3:
         '0123456789abcdefghijklmnoprstuvwxyz'
         'ABDEGHIJKLMNOPRTUVW+-=()'
     )
+
+
+def safe_url(url):
+    if not url:
+        return None
+
+    try:
+        parsed = urlparse(url)
+
+        # encode path + query safely
+        path = quote(parsed.path)
+        query = quote(parsed.query, safe="=&")
+
+        safe = urlunparse((
+            parsed.scheme,
+            parsed.netloc,
+            path,
+            parsed.params,
+            query,
+            parsed.fragment
+        ))
+
+        return safe.encode("utf-8")
+
+    except Exception:
+        return None
 
 
 def normalize_superscripts(text):
@@ -2270,6 +2297,7 @@ class XStreamity_Series_Categories(Screen):
 
         if not desc_image:
             self.loadDefaultCover()
+
             return
 
         if "http" not in desc_image:
@@ -2282,11 +2310,27 @@ class XStreamity_Series_Categories(Screen):
         if self.cover_download_deferred and not self.cover_download_deferred.called:
             self.cover_download_deferred.cancel()
 
-        self.cover_download_deferred = self.agent.request(
-            b'GET',
-            desc_image.encode(),
-            Headers({'User-Agent': [b"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"]})
-        )
+        safe = safe_url(desc_image)
+        if not safe:
+            self.loadDefaultCover()
+            return
+
+        try:
+            self.cover_download_deferred = self.agent.request(
+                b'GET',
+                safe,
+                Headers({
+                    'User-Agent': [
+                        b"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"
+                    ]
+                })
+            )
+
+        except Exception as e:
+            if debugs:
+                print("Cover request failed:", e)
+            self.loadDefaultCover()
+            return
 
         self.cover_download_deferred.addCallback(self.coverResponse, req_id)
         self.cover_download_deferred.addErrback(self.coverError, req_id)
@@ -2297,11 +2341,24 @@ class XStreamity_Series_Categories(Screen):
 
         req_id = self._vod_req_id
 
-        self.cover_download_deferred = self.agent.request(
-            b'GET',
-            url.encode(),
-            Headers({'User-Agent': [b"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"]})
-        )
+        safe = safe_url(url)
+        if not safe:
+            self.loadDefaultCover()
+            return
+
+        try:
+            self.cover_download_deferred = self.agent.request(
+                b'GET',
+                safe,
+                Headers({'User-Agent': [b"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"]})
+            )
+
+        except Exception as e:
+            if debugs:
+                print("Cover request failed:", e)
+            self.loadDefaultCover()
+            return
+
         self.cover_download_deferred.addCallback(self.coverFromUrlResponse, req_id)
         self.cover_download_deferred.addErrback(self.coverError, req_id)
 
@@ -2319,7 +2376,13 @@ class XStreamity_Series_Categories(Screen):
 
         elif response.code in (301, 302):
             location = response.headers.getRawHeaders('location')[0]
-            self.downloadCoverFromUrl(location)
+            safe = safe_url(location)
+
+            if not safe:
+                self.loadDefaultCover()
+                return
+
+            self.downloadCoverFromUrl(safe.decode("utf-8"))
         else:
             self.coverError("HTTP error code: %s" % response.code)
 
@@ -2441,11 +2504,24 @@ class XStreamity_Series_Categories(Screen):
         if self.logo_download_deferred and not self.logo_download_deferred.called:
             self.logo_download_deferred.cancel()
 
-        self.logo_download_deferred = self.agent.request(
-            b'GET',
-            logo_image.encode(),
-            Headers({'User-Agent': [b"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"]})
-        )
+        safe = safe_url(logo_image)
+        if not safe:
+            self.loadDefaultLogo()
+            return
+
+        try:
+            self.logo_download_deferred = self.agent.request(
+                b'GET',
+                safe,
+                Headers({'User-Agent': [b"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"]})
+            )
+
+        except Exception as e:
+            if debugs:
+                print("Logo request failed:", e)
+            self.loadDefaultLogo()
+            return
+
         self.logo_download_deferred.addCallback(self.logoResponse, req_id)
         self.logo_download_deferred.addErrback(self.logoError, req_id)
 
@@ -2605,11 +2681,23 @@ class XStreamity_Series_Categories(Screen):
         if self.backdrop_download_deferred and not self.backdrop_download_deferred.called:
             self.backdrop_download_deferred.cancel()
 
-        self.backdrop_download_deferred = self.agent.request(
-            b'GET',
-            backdrop_image.encode(),
-            Headers({'User-Agent': [b"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"]})
-        )
+        safe = safe_url(backdrop_image)
+        if not safe:
+            self.loadDefaultBackdrop()
+            return
+
+        try:
+            self.backdrop_download_deferred = self.agent.request(
+                b'GET',
+                safe,
+                Headers({'User-Agent': [b"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"]})
+            )
+
+        except Exception as e:
+            if debugs:
+                print("Backdrop request failed:", e)
+            self.loadDefaultBackdrop()
+            return
 
         self.backdrop_download_deferred.addCallback(self.backdropResponse, req_id)
         self.backdrop_download_deferred.addErrback(self.backdropError, req_id)

@@ -8,6 +8,7 @@ import json
 import os
 import base64
 import zlib
+import socket
 
 try:
     from urlparse import urlparse, parse_qsl  # Python 2
@@ -95,11 +96,14 @@ def sort_key(item):
 
 
 def check_internet():
-    try:
-        requests.get("https://clients3.google.com/generate_204", timeout=5)
-        return True
-    except requests.exceptions.RequestException:
-        return False
+    for host in ("1.1.1.1", "8.8.8.8"):
+        try:
+            conn = socket.create_connection((host, 53), 2)
+            conn.close()
+            return True
+        except OSError:
+            continue
+    return False
 
 
 class XStreamity_Scanner(Screen):
