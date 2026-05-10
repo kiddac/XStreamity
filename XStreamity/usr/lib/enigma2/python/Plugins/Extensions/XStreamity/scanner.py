@@ -8,7 +8,6 @@ import json
 import os
 import base64
 import zlib
-import socket
 
 try:
     from urlparse import urlparse, parse_qsl  # Python 2
@@ -32,7 +31,6 @@ from Components.Pixmap import Pixmap
 from Components.Sources.List import List
 from datetime import datetime
 from enigma import eTimer
-from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools.LoadPixmap import LoadPixmap
 
@@ -93,17 +91,6 @@ def sort_key(item):
         tertiary = -exp_ts
 
     return (primary, secondary, tertiary)
-
-
-def check_internet():
-    for host in ("1.1.1.1", "8.8.8.8"):
-        try:
-            conn = socket.create_connection((host, 53), 2)
-            conn.close()
-            return True
-        except OSError:
-            continue
-    return False
 
 
 class XStreamity_Scanner(Screen):
@@ -172,10 +159,6 @@ class XStreamity_Scanner(Screen):
 
         cfg.playlists_json.value = scanner_playlists_json  # Force overwrite
         cfg.playlists_json.save()
-
-        if not check_internet():
-            self.session.openWithCallback(self.quit, MessageBox, _("No internet."), type=MessageBox.TYPE_ERROR, timeout=5)
-            return
 
         self["version"].setText(version)
 

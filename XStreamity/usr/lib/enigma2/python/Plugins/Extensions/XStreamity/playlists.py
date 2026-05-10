@@ -9,7 +9,6 @@ import glob as pythonglob
 import os
 import re
 import shutil
-import socket
 from datetime import datetime
 
 try:
@@ -45,17 +44,6 @@ epgimporter = os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/EPGImpor
 hdr = {
     'User-Agent': str(cfg.useragent.value)
 }
-
-
-def check_internet():
-    for host in ("1.1.1.1", "8.8.8.8"):
-        try:
-            conn = socket.create_connection((host, 53), 2)
-            conn.close()
-            return True
-        except OSError:
-            continue
-    return False
 
 
 class XStreamity_Playlists(Screen):
@@ -149,10 +137,6 @@ class XStreamity_Playlists(Screen):
 
         self.playlist_file = cfg.playlist_file.value
         self.playlists_json = cfg.playlists_json.value
-
-        if not check_internet():
-            self.session.openWithCallback(self.quit, MessageBox, _("No internet."), type=MessageBox.TYPE_ERROR, timeout=5)
-            return
 
         if epgimporter:
             self.epgimportcleanup()

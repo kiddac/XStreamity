@@ -11,10 +11,9 @@ import tempfile
 from itertools import cycle, islice
 
 try:
-    from urllib.parse import urlparse, urlunparse, quote
-except:
-    from urlparse import urlparse, urlunparse
-    from urllib import quote
+    from urlparse import urlparse
+except ImportError:
+    from urllib.parse import urlparse
 
 try:
     from http.client import HTTPConnection
@@ -46,7 +45,7 @@ except ImportError as e:
 # Local application/library-specific imports
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import cfg, dir_tmp, screenwidth, skin_directory
+from .plugin import cfg, dir_tmp, pythonVer, screenwidth, skin_directory
 from .xStaticText import StaticText
 from .utils import _get_current_aspect_ratio
 
@@ -122,32 +121,6 @@ if os.path.exists("/usr/bin/apt-get"):
     vodstreamtypelist.append("8193")
 
 playlists_json = cfg.playlists_json.value
-
-
-def safe_url(url):
-    if not url:
-        return None
-
-    try:
-        parsed = urlparse(url)
-
-        # encode path + query safely
-        path = quote(parsed.path)
-        query = quote(parsed.query, safe="=&")
-
-        safe = urlunparse((
-            parsed.scheme,
-            parsed.netloc,
-            path,
-            parsed.params,
-            query,
-            parsed.fragment
-        ))
-
-        return safe.encode("utf-8")
-
-    except Exception:
-        return None
 
 
 class IPTVInfoBarShowHide():
@@ -730,19 +703,16 @@ class XStreamity_VodPlayer(
 
             self._cover_tmp = temp
 
-            safe = safe_url(desc_image)
+            parsed = urlparse(desc_image)
+            domain = parsed.hostname
+            scheme = parsed.scheme
 
-            if not safe:
-                self.loadDefaultImage()
-                return
-
-            try:
-                parsed = urlparse(desc_image)
-                domain = parsed.hostname
-                scheme = parsed.scheme
-            except:
-                domain = None
-                scheme = None
+            url = desc_image
+            if pythonVer == 3:
+                try:
+                    url = desc_image.encode()
+                except:
+                    url = desc_image
 
             def _cleanup_temp():
                 try:
@@ -768,9 +738,9 @@ class XStreamity_VodPlayer(
 
             if scheme == "https" and sslverify:
                 sniFactory = SNIFactory(domain)
-                d = downloadPage(safe, temp, sniFactory, timeout=5)
+                d = downloadPage(url, temp, sniFactory, timeout=5)
             else:
-                d = downloadPage(safe, temp, timeout=5)
+                d = downloadPage(url, temp, timeout=5)
 
             d.addCallback(_ok)
             d.addErrback(_err)

@@ -21,10 +21,9 @@ except ImportError:
     HTTPConnection.debuglevel = 0
 
 try:
-    from urllib.parse import urlparse, urlunparse, quote
+    from urllib.parse import urlparse
 except:
-    from urlparse import urlparse, urlunparse
-    from urllib import quote
+    from urlparse import urlparse
 
 # Third-party imports
 import requests
@@ -86,32 +85,6 @@ if pythonVer == 3:
         '0123456789abcdefghijklmnoprstuvwxyz'
         'ABDEGHIJKLMNOPRTUVW+-=()'
     )
-
-
-def safe_url(url):
-    if not url:
-        return None
-
-    try:
-        parsed = urlparse(url)
-
-        # encode path + query safely
-        path = quote(parsed.path)
-        query = quote(parsed.query, safe="=&")
-
-        safe = urlunparse((
-            parsed.scheme,
-            parsed.netloc,
-            path,
-            parsed.params,
-            query,
-            parsed.fragment
-        ))
-
-        return safe.encode("utf-8")
-
-    except Exception:
-        return None
 
 
 def normalize_superscripts(text):
@@ -828,19 +801,17 @@ class XStreamity_Catchup_Categories(Screen):
             except:
                 pass
 
-            safe = safe_url(desc_image)
+            parsed = urlparse(desc_image)
+            domain = parsed.hostname
+            scheme = parsed.scheme
 
-            if not safe:
-                self.loadDefaultImage()
-                return
+            url = desc_image
 
-            try:
-                parsed = urlparse(desc_image)
-                domain = parsed.hostname
-                scheme = parsed.scheme
-            except:
-                domain = None
-                scheme = None
+            if pythonVer == 3:
+                try:
+                    url = desc_image.encode()
+                except:
+                    url = desc_image
 
             def _cleanup_temp():
                 try:
@@ -867,9 +838,9 @@ class XStreamity_Catchup_Categories(Screen):
 
             if scheme == "https" and sslverify:
                 sniFactory = SNIFactory(domain)
-                d = downloadPage(safe, temp, sniFactory, timeout=2)
+                d = downloadPage(url, temp, sniFactory, timeout=2)
             else:
-                d = downloadPage(safe, temp, timeout=2)
+                d = downloadPage(url, temp, timeout=2)
 
             d.addCallback(_ok)
             d.addErrback(_err)

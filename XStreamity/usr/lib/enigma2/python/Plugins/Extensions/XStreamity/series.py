@@ -22,10 +22,10 @@ except ImportError:
     HTTPConnection.debuglevel = 0
 
 try:
-    from urllib.parse import urlparse, urlunparse, quote
-except:
-    from urlparse import urlparse, urlunparse
     from urllib import quote
+except ImportError:
+    from urllib.parse import quote
+
 
 # Third-party imports
 import requests
@@ -77,32 +77,6 @@ if pythonVer == 3:
         '0123456789abcdefghijklmnoprstuvwxyz'
         'ABDEGHIJKLMNOPRTUVW+-=()'
     )
-
-
-def safe_url(url):
-    if not url:
-        return None
-
-    try:
-        parsed = urlparse(url)
-
-        # encode path + query safely
-        path = quote(parsed.path)
-        query = quote(parsed.query, safe="=&")
-
-        safe = urlunparse((
-            parsed.scheme,
-            parsed.netloc,
-            path,
-            parsed.params,
-            query,
-            parsed.fragment
-        ))
-
-        return safe.encode("utf-8")
-
-    except Exception:
-        return None
 
 
 def normalize_superscripts(text):
@@ -2295,30 +2269,31 @@ class XStreamity_Series_Categories(Screen):
             if not desc_image:
                 desc_image = self.storedcover or ""
 
-        if not desc_image:
+        if not desc_image or desc_image.lower() == "n/a":
             self.loadDefaultCover()
-
             return
 
-        if "http" not in desc_image:
+        if not desc_image.startswith(("http://", "https://")):
             self.loadDefaultCover()
             return
 
         req_id = self._vod_req_id
-        # self.redirect_count = 0
 
         if self.cover_download_deferred and not self.cover_download_deferred.called:
             self.cover_download_deferred.cancel()
 
-        safe = safe_url(desc_image)
-        if not safe:
+        try:
+            url_bytes = desc_image.encode("latin-1")
+        except (UnicodeEncodeError, UnicodeDecodeError):
+            if debugs:
+                print("Non-ASCII cover URL skipped:", desc_image)
             self.loadDefaultCover()
             return
 
         try:
             self.cover_download_deferred = self.agent.request(
                 b'GET',
-                safe,
+                url_bytes,
                 Headers({
                     'User-Agent': [
                         b"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"
@@ -2341,16 +2316,23 @@ class XStreamity_Series_Categories(Screen):
 
         req_id = self._vod_req_id
 
-        safe = safe_url(url)
-        if not safe:
+        try:
+            url_bytes = url.encode("latin-1")
+        except (UnicodeEncodeError, UnicodeDecodeError):
+            if debugs:
+                print("Non-ASCII cover URL skipped:", url)
             self.loadDefaultCover()
             return
 
         try:
             self.cover_download_deferred = self.agent.request(
                 b'GET',
-                safe,
-                Headers({'User-Agent': [b"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"]})
+                url_bytes,
+                Headers({
+                    'User-Agent': [
+                        b"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"
+                    ]
+                })
             )
 
         except Exception as e:
@@ -2376,13 +2358,7 @@ class XStreamity_Series_Categories(Screen):
 
         elif response.code in (301, 302):
             location = response.headers.getRawHeaders('location')[0]
-            safe = safe_url(location)
-
-            if not safe:
-                self.loadDefaultCover()
-                return
-
-            self.downloadCoverFromUrl(safe.decode("utf-8"))
+            self.downloadCoverFromUrl(location)
         else:
             self.coverError("HTTP error code: %s" % response.code)
 
@@ -2491,11 +2467,11 @@ class XStreamity_Series_Categories(Screen):
             if tmdb_logo:
                 logo_image = tmdb_logo
 
-        if not logo_image:
+        if not logo_image or logo_image.lower() == "n/a":
             self.loadDefaultLogo()
             return
 
-        if "http" not in logo_image:
+        if not logo_image.startswith(("http://", "https://")):
             self.loadDefaultLogo()
             return
 
@@ -2504,16 +2480,23 @@ class XStreamity_Series_Categories(Screen):
         if self.logo_download_deferred and not self.logo_download_deferred.called:
             self.logo_download_deferred.cancel()
 
-        safe = safe_url(logo_image)
-        if not safe:
+        try:
+            url_bytes = logo_image.encode("latin-1")
+        except (UnicodeEncodeError, UnicodeDecodeError):
+            if debugs:
+                print("Non-ASCII cover URL skipped:", logo_image)
             self.loadDefaultLogo()
             return
 
         try:
             self.logo_download_deferred = self.agent.request(
                 b'GET',
-                safe,
-                Headers({'User-Agent': [b"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"]})
+                url_bytes,
+                Headers({
+                    'User-Agent': [
+                        b"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"
+                    ]
+                })
             )
 
         except Exception as e:
@@ -2666,13 +2649,13 @@ class XStreamity_Series_Categories(Screen):
                     pass
 
             if not backdrop_image:
-                backdrop_image = self.storedcover or ""
+                backdrop_image = self.storedbackdrop or ""
 
-        if not backdrop_image:
+        if not backdrop_image or backdrop_image.lower() == "n/a":
             self.loadDefaultBackdrop()
             return
 
-        if "http" not in backdrop_image:
+        if not backdrop_image.startswith(("http://", "https://")):
             self.loadDefaultBackdrop()
             return
 
@@ -2681,16 +2664,23 @@ class XStreamity_Series_Categories(Screen):
         if self.backdrop_download_deferred and not self.backdrop_download_deferred.called:
             self.backdrop_download_deferred.cancel()
 
-        safe = safe_url(backdrop_image)
-        if not safe:
+        try:
+            url_bytes = backdrop_image.encode("latin-1")
+        except (UnicodeEncodeError, UnicodeDecodeError):
+            if debugs:
+                print("Non-ASCII cover URL skipped:", backdrop_image)
             self.loadDefaultBackdrop()
             return
 
         try:
             self.backdrop_download_deferred = self.agent.request(
                 b'GET',
-                safe,
-                Headers({'User-Agent': [b"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"]})
+                url_bytes,
+                Headers({
+                    'User-Agent': [
+                        b"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36"
+                    ]
+                })
             )
 
         except Exception as e:
