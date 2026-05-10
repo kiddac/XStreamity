@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: XStreamity v4.47\n"
 "POT-Creation-Date: 2026-03-30 21:16+0100\n"
-"PO-Revision-Date: 2026-03-30 21:16+0100\n"
+"PO-Revision-Date: 2026-03-31 13:30+0200\n"
 "Last-Translator: Dario Croci <spaeleus@croci.org>\n"
 "Language-Team: Dario Croci <spaeleus@croci.org>\n"
 "Language: it_IT\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: Poedit 3.9\n"
 "X-Poedit-Basepath: ../../../../../../../../..\n"
 "X-Poedit-SearchPath-0: .\n"
 
@@ -69,7 +69,7 @@ msgstr "Errore"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/Task.py:335
 msgid "An unknown error occurred!"
-msgstr "Si è verificato un errore sconosciuto."
+msgstr "Si è verificato un errore sconosciuto!"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/Task.py:355
 #, python-format
@@ -339,7 +339,7 @@ msgstr "Catch-Up"
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:3336
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:2798
 msgid "Failed to add to download manager"
-msgstr ""
+msgstr "Impossibile aggiungere al gestore download"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/catchup.py:1266
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:3342
@@ -423,13 +423,13 @@ msgstr "Impostazioni playlist"
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/channelmenu.py:157
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/channelmenu.py:264
 msgid "Show/Hide Channels"
-msgstr ""
+msgstr "Mostra/Nascondi canali"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/channelmenu.py:125
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/channelmenu.py:159
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/channelmenu.py:266
 msgid "Account Info"
-msgstr ""
+msgstr "Informazioni Account"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/channelmenu.py:127
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/channelmenu.py:161
@@ -437,13 +437,13 @@ msgstr ""
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:88
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/startmenu.py:763
 msgid "Manage Playlists"
-msgstr ""
+msgstr "Gestisci le playlist"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/channelmenu.py:128
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/channelmenu.py:163
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/channelmenu.py:272
 msgid "Add New Playlist"
-msgstr ""
+msgstr "Aggiungi nuova playlist"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/channelmenu.py:139
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/channelmenu.py:165
@@ -458,7 +458,7 @@ msgstr "Download Manager"
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/channelmenu.py:276
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/startmenu.py:765
 msgid "Global Settings"
-msgstr ""
+msgstr "Impostazioni globali"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/channelmenu.py:184
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:361
@@ -500,7 +500,7 @@ msgstr "Non avviato"
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:63
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:573
 msgid "Downloaded"
-msgstr ""
+msgstr "Scaricata"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:214
 msgid "VOD Download Manager"
@@ -547,15 +547,15 @@ msgstr "Annullare questo download?"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:710
 msgid "Select an action:"
-msgstr ""
+msgstr "Seleziona un'azione:"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:712
 msgid "Delete this entry"
-msgstr ""
+msgstr "Elimina questa voce"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/downloadmanager.py:713
 msgid "Delete all downloaded entries"
-msgstr ""
+msgstr "Elimina tutte le voci scaricate"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/hidden.py:29
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:32
@@ -702,7 +702,7 @@ msgstr ""
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:92
 msgid "Playlist Menu"
-msgstr ""
+msgstr "Menu playlist"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/menu.py:289
 msgid "Live Streams"
@@ -724,7 +724,7 @@ msgstr "Info"
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:149
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/scanner.py:163
 msgid "No internet."
-msgstr "Niente internet"
+msgstr "Niente internet."
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:379
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/playlists.py:483
@@ -886,7 +886,7 @@ msgstr ""
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:180
 msgid "16:9 Always"
-msgstr ""
+msgstr "16:9 Sempre"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:181
 msgid "16:10 Letterbox"
@@ -905,12 +905,12 @@ msgstr ""
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:268
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:269
 msgid "Original"
-msgstr ""
+msgstr "Originale"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:266
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:269
 msgid "Added"
-msgstr ""
+msgstr "Aggiunto"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:266
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:269
@@ -928,7 +928,7 @@ msgstr "Ordine: Anno"
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:266
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:269
 msgid "Year"
-msgstr ""
+msgstr "Anno"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:409
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py:509
@@ -980,7 +980,7 @@ msgstr "Stagione "
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:2133
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1805
 msgid "Rating: "
-msgstr ""
+msgstr "Valutazione:"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:2209
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1797
@@ -1000,15 +1000,15 @@ msgstr "Nazione:"
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:2212
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:1767
 msgid "Overview"
-msgstr ""
+msgstr "Panoramica"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:3242
 msgid "Series group added to favourites."
-msgstr ""
+msgstr "Serie TV aggiunta ai preferiti."
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/series.py:3244
 msgid "Series group removed from favourites."
-msgstr ""
+msgstr "Gruppo della serie rimosso dai preferiti."
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/server.py:68
 msgid "Add Xtream Codes Playlist"
@@ -1104,6 +1104,9 @@ msgid ""
 "\n"
 "Pin cannot be 0000, 1111, or 1234"
 msgstr ""
+"Modifica il PIN predefinito per il controllo parentale.\n"
+"\n"
+"Il PIN non può essere 0000, 1111 o 1234."
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:149
 msgid "You need to restart the GUI"
@@ -1119,11 +1122,11 @@ msgstr "Selezionare skin"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:175
 msgid "Select interface"
-msgstr ""
+msgstr "Seleziona interfaccia"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:177
 msgid "Select fake web user-agent"
-msgstr ""
+msgstr "Seleziona un user-agent web falso"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:178
 msgid "playlists.txt location"
@@ -1222,55 +1225,55 @@ msgstr "Avvio automatico di XStreamity al boot"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:200
 msgid "Default screen aspect ratio"
-msgstr ""
+msgstr "Proporzioni predefinite dello schermo"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:207
 msgid "Default VOD category sort order"
-msgstr ""
+msgstr "Ordine visualizzazione predefinito delle categorie VOD"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:208
 msgid "Default VOD stream sort order"
-msgstr ""
+msgstr "Ordine visualizzazione predefinito dei flussi VOD"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:210
 msgid "Default Series category sort order"
-msgstr ""
+msgstr "Ordine visualizzazione Categoria Serie predefinita"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:211
 msgid "Default Series sort order"
-msgstr ""
+msgstr "Ordine di ordinamento predefinito della serie"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:213
 msgid "Show intro video"
-msgstr ""
+msgstr "Mostra il video introduttivo"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:214
 msgid "Loop intro video"
-msgstr ""
+msgstr "Video introduttivo in loop"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:215
 msgid "Intro video selection"
-msgstr ""
+msgstr "Selezione del video introduttivo"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:216
 msgid "Show Speedtest on start menu"
-msgstr ""
+msgstr "Mostra Speedtest nel menu Start"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:217
 msgid "Show Manage Playlists on start menu"
-msgstr ""
+msgstr "Mostra Gestisci playlist nel menu Start"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:218
 msgid "Show playlists on start menu"
-msgstr ""
+msgstr "Mostra le playlist nel menu Start"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:219
 msgid "Show Manage Playlists in popup menu"
-msgstr ""
+msgstr "Mostra Gestisci playlist nel menu a comparsa"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:220
 msgid "Show Account Info in popup menu"
-msgstr ""
+msgstr "Mostra le informazioni dell'account nel menu a comparsa"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/settings.py:363
 msgid "Choose Directory:"
@@ -1282,7 +1285,7 @@ msgstr "Selezionare la directory"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/startmenu.py:573
 msgid "Active:"
-msgstr ""
+msgstr "Attivo:"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/startmenu.py:573
 msgid "Max:"
@@ -1291,11 +1294,11 @@ msgstr ""
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/startmenu.py:751
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/vod.py:141
 msgid "Movies"
-msgstr ""
+msgstr "Films"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/startmenu.py:771
 msgid "Reboot GUI"
-msgstr ""
+msgstr "Riavvia la GUI"
 
 #: lib/enigma2/python/Plugins/Extensions/XStreamity/startmenu.py:774
 msgid "Speed Test"
