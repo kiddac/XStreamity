@@ -116,7 +116,7 @@ class XStreamity_Live_Categories(Screen):
         skin_path = os.path.join(
             skin_directory,
             cfg.interface.value,
-            cfg.skin.value
+            cfg.skin2.value
         )
 
         if not os.path.exists(skin_path):
@@ -190,6 +190,8 @@ class XStreamity_Live_Categories(Screen):
         glob.current_level = 1
 
         self.selectedlist = self["main_list"]
+
+        self._picon_req_id = 0
 
         self.host = glob.active_playlist["playlist_info"]["host"]
         self.username = glob.active_playlist["playlist_info"]["username"]
@@ -833,8 +835,29 @@ class XStreamity_Live_Categories(Screen):
                 20 = nextunixtime
                 """
 
-                self.list2.append([index, str(name), str(stream_id), str(stream_icon), str(epg_channel_id), str(added), str(category_id), str(custom_sid), str(service_ref),
-                                  "", "", "", "", "", "", str(next_url), favourite, False, hidden, None, None])
+                self.list2.append([
+                    index,
+                    str(name),
+                    str(stream_id),
+                    str(stream_icon),
+                    str(epg_channel_id),
+                    str(added),
+                    str(category_id),
+                    str(custom_sid),
+                    str(service_ref),
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    str(next_url),
+                    favourite,
+                    False,
+                    hidden,
+                    None,
+                    None
+                ])
 
         glob.originalChannelList2 = self.list2[:]
 
@@ -920,8 +943,31 @@ class XStreamity_Live_Categories(Screen):
 
         self.main_list = []
         self.epglist = []
-        # index = 0, name = 1, stream_id = 2, stream_icon = 3, epg_channel_id = 4, added = 5, category_id = 6, custom_sid = 7, nowtime = 9
-        # nowTitle = 10, nowDesc = 11, nexttime = 12, nextTitle = 13, nextDesc = 14, next_url = 15, favourite = 16, watching = 17, hidden = 18, nowunixtime = 19, nowunixtime = 20
+
+        """
+        0 = index
+        1 = name
+        2 = stream_id
+        3 = stream_icon
+        4 = epg_channel_id
+        5 = add
+        6 = category_id
+        7 = custom_sid
+        8 = service_ref
+        9 = nowtime
+        10 = nowTitle
+        11 = nowDescription
+        12 = nexttime
+        13 = nextTitle
+        14 = nextDesc
+        15 = next_url
+        16 = favourite
+        17 = watched
+        18 = hidden
+        19 = nowunixtime
+        20 = nextunixtime
+        """
+
         if self.chosen_category == "favourites":
             self.main_list = [
                 buildLiveStreamList(
@@ -1165,7 +1211,7 @@ class XStreamity_Live_Categories(Screen):
 
     def resizeImage(self, original, req_id=None, data=None):
         if debugs:
-            print("*** resizeImage ***")
+            print("*** resizeImage ***", original, req_id)
 
         if req_id is not None and getattr(self, "_picon_req_id", 0) != req_id:
             try:
@@ -1183,10 +1229,14 @@ class XStreamity_Live_Categories(Screen):
                 if im.mode != "RGBA":
                     im = im.convert("RGBA")
 
+                if im.size[0] == 0 or im.size[1] == 0:
+                    raise ValueError("Image has zero dimension")
+                ratio = min(size[0] / float(im.size[0]), size[1] / float(im.size[1]))
+                new_size = (int(im.size[0] * ratio), int(im.size[1] * ratio))
                 try:
-                    im.thumbnail(size, Image.Resampling.LANCZOS)
+                    im = im.resize(new_size, Image.Resampling.LANCZOS)
                 except:
-                    im.thumbnail(size, Image.ANTIALIAS)
+                    im = im.resize(new_size, Image.ANTIALIAS)
 
                 bg = Image.new("RGBA", size, (255, 255, 255, 0))
                 left = (size[0] - im.size[0]) // 2
@@ -1600,6 +1650,7 @@ class XStreamity_Live_Categories(Screen):
 
         self.setWatchingIcon(glob.currentchannellistindex)
         self.setIndex()
+        self.downloadImage()
 
     def setWatchingIcon(self, idx):
         if debugs:

@@ -410,10 +410,12 @@ class XStreamity_CatchupPlayer(
         self.streamurl = streamurl
         self.servicetype = servicetype
 
+        self._picon_req_id = 0
+
         skin_path = os.path.join(
             skin_directory,
             cfg.interface.value,
-            cfg.skin.value
+            cfg.skin2.value
         )
 
         if not os.path.exists(skin_path):
@@ -656,10 +658,14 @@ class XStreamity_CatchupPlayer(
                 if im.mode != "RGBA":
                     im = im.convert("RGBA")
 
+                if im.size[0] == 0 or im.size[1] == 0:
+                    raise ValueError("Image has zero dimension")
+                ratio = min(size[0] / float(im.size[0]), size[1] / float(im.size[1]))
+                new_size = (int(im.size[0] * ratio), int(im.size[1] * ratio))
                 try:
-                    im.thumbnail(size, Image.Resampling.LANCZOS)
+                    im = im.resize(new_size, Image.Resampling.LANCZOS)
                 except:
-                    im.thumbnail(size, Image.ANTIALIAS)
+                    im = im.resize(new_size, Image.ANTIALIAS)
 
                 bg = Image.new("RGBA", size, (255, 255, 255, 0))
                 left = (size[0] - im.size[0]) // 2

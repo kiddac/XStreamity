@@ -139,6 +139,11 @@ cfg.interface = ConfigSelection(
 # Screen / skin selection
 # ------------------------------------------------------------------
 
+blackfolder = "/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/xstreamity/Black"
+
+if os.path.exists(blackfolder):
+    shutil.rmtree(blackfolder)
+
 screenwidth = getDesktop(0).size()
 
 if screenwidth.width() == 2560:
@@ -151,7 +156,7 @@ else:
 interface_dir = os.path.join(skin_directory, cfg.interface.value)
 
 try:
-    folders = [x for x in os.listdir(interface_dir) if x != "common"]
+    folders = os.listdir(interface_dir)
 except:
     folders = ["default"]
 
@@ -227,7 +232,7 @@ cfg.location = ConfigDirectory(default=dir_etc)
 cfg.main = ConfigYesNo(default=True)
 cfg.livepreview = ConfigYesNo(default=True)
 cfg.stopstream = ConfigYesNo(default=False)
-cfg.skin = ConfigSelection(default="default", choices=folders)
+cfg.skin2 = ConfigSelection(default="default", choices=folders)
 cfg.timeout = ConfigSelectionNumber(1, 20, 1, default=20, wraparound=True)
 cfg.TMDB = ConfigYesNo(default=True)
 cfg.TMDBLanguage2 = ConfigSelection(default="", choices=languages)
@@ -276,7 +281,7 @@ cfg.seriesorder = ConfigSelection(default=(_("Sort: Original")), choices=[(_("So
 playlist_file = os.path.join(dir_etc, "playlists.txt")
 playlists_json = os.path.join(dir_etc, "x-playlists.json")
 downloads_json = os.path.join(dir_etc, "downloads2.json")
-skin_path = os.path.join(skin_directory, cfg.skin.value)
+skin_path = os.path.join(skin_directory, cfg.skin2.value)
 common_path = os.path.join(skin_directory, "common/")
 
 location = cfg.location.value

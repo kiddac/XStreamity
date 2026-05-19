@@ -1,6 +1,6 @@
 <screen name="XStreamityPlaylists" position="0,0" size="1920,1080" backgroundColor="#000000" flags="wfNoBorder">
-	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/xstreamity/Black/images/background.png" alphatest="off" position="0,0" size="1920,1080" zPosition="-1"/>
-	<widget name="splash" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/xstreamity/Black/images/splash.png" alphatest="off" position="0,0" size="1920,1080" zPosition="1000"/>
+	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/xstreamity/black/images/background.png" alphatest="off" position="0,0" size="1920,1080" zPosition="-1"/>
+	<widget name="splash" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/xstreamity/black/images/splash.png" alphatest="off" position="0,0" size="1920,1080" zPosition="1000"/>
 	<widget source="global.CurrentTime" render="Label" position="1490,0" size="400,60" font="xstreamityregular;27" foregroundColor="#ffffff" backgroundColor="#000000" valign="center" halign="right" transparent="1">
 		<convert type="ClockToText">Format:%H:%M | %A %-d %b</convert>
 	</widget>
@@ -41,8 +41,8 @@
 			}
 		</convert>
 	</widget>
-	<widget name="scroll_up" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/xstreamity/Black/images/up.png" position="center,283" size="36,36" alphatest="blend" zPosition="2"/>
-	<widget name="scroll_down" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/xstreamity/Black/images/down.png" position="center,941" size="36,36" alphatest="blend" zPosition="2"/>
+	<widget name="scroll_up" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/xstreamity/black/images/up.png" position="center,283" size="36,36" alphatest="blend" zPosition="2"/>
+	<widget name="scroll_down" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/xstreamity/black/images/down.png" position="center,941" size="36,36" alphatest="blend" zPosition="2"/>
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/common/divider.png" position="center,448" size="924,4" alphatest="blend" zPosition="1"/>
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/common/divider.png" position="center,568" size="924,4" alphatest="blend" zPosition="1"/>
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/common/divider.png" position="center,688" size="924,4" alphatest="blend" zPosition="1"/>

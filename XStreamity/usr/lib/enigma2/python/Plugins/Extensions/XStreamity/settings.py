@@ -57,7 +57,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         skin_path = os.path.join(
             skin_directory,
             cfg.interface.value,
-            cfg.skin.value
+            cfg.skin2.value
         )
 
         if not os.path.exists(skin_path):
@@ -164,16 +164,20 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         interface_dir = os.path.join(skin_directory, cfg.interface.value)
 
         try:
-            skin_choices = [x for x in os.listdir(interface_dir) if x != "common"]
+            skin_choices = os.listdir(interface_dir)
         except:
             skin_choices = ["default"]
 
-        cfg.skin.setChoices(skin_choices)
+        current_skin = cfg.skin2.value  # grab BEFORE setChoices wipes it
+        cfg.skin2.setChoices(skin_choices)
 
-        self.cfg_skin = getConfigListEntry(_("Select skin"), cfg.skin)
+        if current_skin in skin_choices:
+            cfg.skin2.value = current_skin
+        else:
+            cfg.skin2.value = "default"
 
+        self.cfg_skin = getConfigListEntry(_("Select skin"), cfg.skin2)
         self.cfg_interface = getConfigListEntry(_("Select interface"), cfg.interface)
-
         self.cfg_useragent = getConfigListEntry(_("Select fake web user-agent"), cfg.useragent)
         self.cfg_location = getConfigListEntry(_("playlists.txt location") + _(" *Restart GUI Required"), cfg.location)
         self.cfg_epglocation = getConfigListEntry(_("EPG download location"), cfg.epglocation)
@@ -206,7 +210,6 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
         self.cfg_vodcategoryorder = getConfigListEntry(_("Default VOD category sort order"), cfg.vodcategoryorder)
         self.cfg_vodstreamorder = getConfigListEntry(_("Default VOD stream sort order"), cfg.vodstreamorder)
-
         self.cfg_seriescategoryorder = getConfigListEntry(_("Default Series category sort order"), cfg.seriescategoryorder)
         self.cfg_seriesorder = getConfigListEntry(_("Default Series sort order"), cfg.seriesorder)
 

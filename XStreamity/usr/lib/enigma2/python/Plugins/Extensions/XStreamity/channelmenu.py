@@ -40,7 +40,7 @@ class XStreamity_ChannelMenu(Screen):
         skin_path = os.path.join(
             skin_directory,
             cfg.interface.value,
-            cfg.skin.value
+            cfg.skin2.value
         )
 
         if not os.path.exists(skin_path):

@@ -350,7 +350,7 @@ class XStreamity_StreamPlayer(
         skin_path = os.path.join(
             skin_directory,
             cfg.interface.value,
-            cfg.skin.value
+            cfg.skin2.value
         )
 
         if not os.path.exists(skin_path):
@@ -389,6 +389,13 @@ class XStreamity_StreamPlayer(
 
         self.setup_title = _("TV")
 
+        if screenwidth.width() == 2560:
+            self.picon_size = (294, 176)
+        elif screenwidth.width() > 1280:
+            self.picon_size = (220, 130)
+        else:
+            self.picon_size = (147, 88)
+
         self["actions"] = ActionMap(["XStreamityActions"], {
             "cancel": self.back,
             "stop": self.back,
@@ -404,6 +411,8 @@ class XStreamity_StreamPlayer(
             "0": self.restartStream,
             "ok": self.OKButton,
         }, -2)
+
+        self._picon_req_id = 0
 
         epg_cache = eEPGCache.getInstance()
         if epg_cache:
@@ -864,10 +873,9 @@ class XStreamity_StreamPlayer(
                     _cleanup_temp()
                     return
 
-                self.resizeImage(temp)
+                self.resizeImage(temp, req_id=req_id)
 
             def _err(_failure=None):
-                # Ignore stale callbacks
                 if getattr(self, "_picon_req_id", 0) != req_id:
                     _cleanup_temp()
                     return
@@ -884,7 +892,7 @@ class XStreamity_StreamPlayer(
             d.addCallback(_ok)
             d.addErrback(_err)
 
-        except:
+        except Exception:
             try:
                 if fd:
                     os.close(fd)
@@ -903,14 +911,8 @@ class XStreamity_StreamPlayer(
         if self["picon"].instance:
             self["picon"].instance.setPixmapFromFile(os.path.join(common_path, "picon.png"))
 
-    def resizeImage(self, original, data=None):
-        if screenwidth.width() == 2560:
-            size = [294, 176]
-        elif screenwidth.width() > 1280:
-            size = [220, 130]
-        else:
-            size = [147, 88]
-
+    def resizeImage(self, original, req_id=None, data=None):
+        size = self.picon_size
         if os.path.exists(original):
             im = None
             try:
@@ -918,10 +920,14 @@ class XStreamity_StreamPlayer(
                 if im.mode != "RGBA":
                     im = im.convert("RGBA")
 
+                if im.size[0] == 0 or im.size[1] == 0:
+                    raise ValueError("Image has zero dimension")
+                ratio = min(size[0] / float(im.size[0]), size[1] / float(im.size[1]))
+                new_size = (int(im.size[0] * ratio), int(im.size[1] * ratio))
                 try:
-                    im.thumbnail(size, Image.Resampling.LANCZOS)
+                    im = im.resize(new_size, Image.Resampling.LANCZOS)
                 except:
-                    im.thumbnail(size, Image.ANTIALIAS)
+                    im = im.resize(new_size, Image.ANTIALIAS)
 
                 bg = Image.new("RGBA", size, (255, 255, 255, 0))
                 left = (size[0] - im.size[0]) // 2

@@ -422,7 +422,7 @@ class XStreamity_VodPlayer(
         skin_path = os.path.join(
             skin_directory,
             cfg.interface.value,
-            cfg.skin.value
+            cfg.skin2.value
         )
 
         if not os.path.exists(skin_path):
@@ -469,6 +469,8 @@ class XStreamity_VodPlayer(
             "green": self.nextAR,
             "ok": self.refreshInfobar,
         }, -2)
+
+        self._vod_req_id = 0
 
         self.timerRecent = eTimer()
         try:
