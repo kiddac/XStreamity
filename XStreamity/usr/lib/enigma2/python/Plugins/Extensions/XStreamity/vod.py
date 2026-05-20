@@ -3075,7 +3075,8 @@ class XStreamity_Vod_Categories(Screen):
         if not current_item:
             return
 
-        trailer_id = str(current_item[12])
+        trailer_id = str(current_item[11])
+
         if not trailer_id:
             return
 
@@ -3134,7 +3135,7 @@ class XStreamity_Vod_Categories(Screen):
             self.reference.setName(title)
             self.session.openWithCallback(
                 self.trailer_cleanup,
-                vodplayer.EStalker_VodPlayer,
+                vodplayer.XStreamity_VodPlayer,
                 str(next_url),
                 str(streamtype),
                 None
