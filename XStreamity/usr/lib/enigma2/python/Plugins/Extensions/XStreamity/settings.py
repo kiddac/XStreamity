@@ -54,18 +54,11 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
         self.session = session
 
-        skin_path = os.path.join(
-            skin_directory,
-            cfg.interface.value,
-            cfg.skin2.value
-        )
+        if cfg.interface.value == "xstreamity":
+            skin_path = os.path.join(skin_directory, cfg.interface.value, cfg.xstreamity_skin.value)
 
-        if not os.path.exists(skin_path):
-            skin_path = os.path.join(
-                skin_directory,
-                cfg.interface.value,
-                "default"
-            )
+        if cfg.interface.value == "xklass":
+            skin_path = os.path.join(skin_directory, cfg.interface.value, cfg.xklass_skin.value)
 
         skin = os.path.join(skin_path, "settings.xml")
 
@@ -161,23 +154,9 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
             self.close()
 
     def initConfig(self):
-        interface_dir = os.path.join(skin_directory, cfg.interface.value)
-
-        try:
-            skin_choices = os.listdir(interface_dir)
-        except:
-            skin_choices = ["default"]
-
-        current_skin = cfg.skin2.value  # grab BEFORE setChoices wipes it
-        cfg.skin2.setChoices(skin_choices)
-
-        if current_skin in skin_choices:
-            cfg.skin2.value = current_skin
-        else:
-            cfg.skin2.value = "default"
-
-        self.cfg_skin = getConfigListEntry(_("Select skin"), cfg.skin2)
         self.cfg_interface = getConfigListEntry(_("Select interface"), cfg.interface)
+        self.cfg_xstreamity_skin = getConfigListEntry(_("Select skin"), cfg.xstreamity_skin)
+        self.cfg_xklass_skin = getConfigListEntry(_("Select skin"), cfg.xklass_skin)
         self.cfg_useragent = getConfigListEntry(_("Select fake web user-agent"), cfg.useragent)
         self.cfg_location = getConfigListEntry(_("playlists.txt location") + _(" *Restart GUI Required"), cfg.location)
         self.cfg_epglocation = getConfigListEntry(_("EPG download location"), cfg.epglocation)
@@ -227,7 +206,8 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
     def createSetup(self):
         config_entries = [
             self.cfg_interface,
-            self.cfg_skin,
+            self.cfg_xstreamity_skin if cfg.interface.value == "xstreamity" else None,
+            self.cfg_xklass_skin if cfg.interface.value == "xklass" else None,
             self.cfg_useragent,
             self.cfg_location,
             self.cfg_epglocation,

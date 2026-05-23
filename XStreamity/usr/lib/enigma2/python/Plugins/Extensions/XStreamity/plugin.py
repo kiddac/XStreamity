@@ -153,12 +153,18 @@ elif screenwidth.width() > 1280:
 else:
     skin_directory = os.path.join(dir_plugins, "skins/hd/")
 
-interface_dir = os.path.join(skin_directory, cfg.interface.value)
+xstreamity_dir = os.path.join(skin_directory, "xstreamity")
+xklass_dir = os.path.join(skin_directory, "xklass")
 
 try:
-    folders = os.listdir(interface_dir)
+    xstreamityfolders = os.listdir(xstreamity_dir)
 except:
-    folders = ["default"]
+    xstreamityfolders = ["default"]
+
+try:
+    xklassfolders = os.listdir(xklass_dir)
+except:
+    xklassfolders = ["default"]
 
 live_streamtype_choices = [("1", "DVB(1)"), ("4097", "IPTV(4097)")]
 vod_streamtype_choices = [("4097", "IPTV(4097)")]
@@ -232,7 +238,8 @@ cfg.location = ConfigDirectory(default=dir_etc)
 cfg.main = ConfigYesNo(default=True)
 cfg.livepreview = ConfigYesNo(default=True)
 cfg.stopstream = ConfigYesNo(default=False)
-cfg.skin2 = ConfigSelection(default="default", choices=folders)
+cfg.xstreamity_skin = ConfigSelection(default="default", choices=xstreamityfolders)
+cfg.xklass_skin = ConfigSelection(default="default", choices=xklassfolders)
 cfg.timeout = ConfigSelectionNumber(1, 20, 1, default=20, wraparound=True)
 cfg.TMDB = ConfigYesNo(default=True)
 cfg.TMDBLanguage2 = ConfigSelection(default="", choices=languages)
@@ -281,7 +288,6 @@ cfg.seriesorder = ConfigSelection(default=(_("Sort: Original")), choices=[(_("So
 playlist_file = os.path.join(dir_etc, "playlists.txt")
 playlists_json = os.path.join(dir_etc, "x-playlists.json")
 downloads_json = os.path.join(dir_etc, "downloads2.json")
-skin_path = os.path.join(skin_directory, cfg.skin2.value)
 common_path = os.path.join(skin_directory, "common/")
 
 location = cfg.location.value

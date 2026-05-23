@@ -347,19 +347,11 @@ class XStreamity_StreamPlayer(
         self.servicetype = servicetype
         self.originalservicetype = self.servicetype
 
-        skin_path = os.path.join(
-            skin_directory,
-            cfg.interface.value,
-            cfg.skin2.value
-        )
+        if cfg.interface.value == "xstreamity":
+            skin_path = os.path.join(skin_directory, cfg.interface.value, cfg.xstreamity_skin.value)
 
-        if not os.path.exists(skin_path):
-            skin_path = os.path.join(
-                skin_directory,
-                cfg.interface.value,
-                "default"
-            )
-
+        if cfg.interface.value == "xklass":
+            skin_path = os.path.join(skin_directory, cfg.interface.value, cfg.xklass_skin.value)
         skin = os.path.join(skin_path, "streamplayer.xml")
 
         with open(skin, "r") as f:
