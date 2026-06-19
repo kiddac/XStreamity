@@ -45,7 +45,7 @@ except ImportError as e:
 # Local application/library-specific imports
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import cfg, dir_tmp, pythonVer, screenwidth, skin_directory
+from .plugin import cfg, dir_tmp, pythonVer, screenwidth, skin_directory, common_path
 from .xStaticText import StaticText
 from .utils import _get_current_aspect_ratio
 
@@ -659,7 +659,7 @@ class XStreamity_VodPlayer(
     def loadDefaultImage(self, data=None):
         if self["cover"].instance:
             self["cover"].instance.setPixmapFromFile(
-                os.path.join(skin_directory, "common/cover.png")
+                os.path.join(common_path, "cover.png")
             )
 
     def downloadImage(self):

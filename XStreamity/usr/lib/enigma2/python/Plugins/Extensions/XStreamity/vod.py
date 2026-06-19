@@ -1874,7 +1874,6 @@ class XStreamity_Vod_Categories(Screen):
         if self.tmdbresults:
             desc_image = str(self.tmdbresults.get("cover_big") or "").strip()
 
-
         if not desc_image or desc_image.lower() == "n/a":
             self.loadDefaultCover()
             return
@@ -2012,7 +2011,7 @@ class XStreamity_Vod_Categories(Screen):
             print("*** loadDefaultCover ***")
 
         if self["vod_cover"].instance:
-            self["vod_cover"].instance.setPixmapFromFile(os.path.join(skin_directory, "common/blank.png"))
+            self["vod_cover"].instance.setPixmapFromFile(os.path.join(common_path, "blank.png"))
 
     def resizeCover(self, preview):
         if debugs:
@@ -2157,7 +2156,7 @@ class XStreamity_Vod_Categories(Screen):
             print("*** loadDefaultLogo ***")
 
         if self["vod_logo"].instance:
-            self["vod_logo"].instance.setPixmapFromFile(os.path.join(skin_directory, "common/blank.png"))
+            self["vod_logo"].instance.setPixmapFromFile(os.path.join(common_path, "blank.png"))
 
     def resizeLogo(self, preview):
         if debugs:
@@ -2338,7 +2337,7 @@ class XStreamity_Vod_Categories(Screen):
             print("*** loadDefaultBackdrop ***")
 
         if self["vod_backdrop"].instance:
-            self["vod_backdrop"].instance.setPixmapFromFile(os.path.join(skin_directory, "common/blank.png"))
+            self["vod_backdrop"].instance.setPixmapFromFile(os.path.join(common_path, "blank.png"))
 
     def resizeBackdrop(self, preview):
         if debugs:

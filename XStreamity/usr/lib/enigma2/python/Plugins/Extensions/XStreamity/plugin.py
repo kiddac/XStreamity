@@ -139,10 +139,18 @@ cfg.interface = ConfigSelection(
 # Screen / skin selection
 # ------------------------------------------------------------------
 
-blackfolder = "/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/xstreamity/Black"
+blackfolderhd = "/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/xstreamity/Black"
+blackfolderfhd = "/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/xstreamity/Black"
+blackfolderuhd = "/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/uhd/xstreamity/Black"
 
-if os.path.exists(blackfolder):
-    shutil.rmtree(blackfolder)
+if os.path.exists(blackfolderhd):
+    shutil.rmtree(blackfolderhd)
+
+if os.path.exists(blackfolderfhd):
+    shutil.rmtree(blackfolderfhd)
+
+if os.path.exists(blackfolderuhd):
+    shutil.rmtree(blackfolderuhd)
 
 screenwidth = getDesktop(0).size()
 
