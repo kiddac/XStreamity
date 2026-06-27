@@ -1132,11 +1132,37 @@ class XStreamity_Catchup_Categories(Screen):
                 else:
                     self.createSetup()
 
+    def applySavedSort(self):
+        """Re-apply the sort currently stored in glob.nextlist without advancing to the next sort type."""
+        current_sort = glob.nextlist[-1].get("sort", "")
+        if not current_sort or current_sort == _("Sort: Original"):
+            return
+
+        activelist = self.list1 if self.level == 1 else self.list2
+
+        if current_sort == _("Sort: A-Z"):
+            activelist.sort(key=lambda x: x[1].lower(), reverse=False)
+        elif current_sort == _("Sort: Z-A"):
+            activelist.sort(key=lambda x: x[1].lower(), reverse=True)
+        elif current_sort == _("Sort: Added") and self.level != 1:
+            activelist.sort(key=lambda x: x[1].lower(), reverse=False)
+            activelist.sort(key=lambda x: (x[5] or ""), reverse=True)
+
+        if self.level == 1:
+            self.list1 = activelist
+        else:
+            self.list2 = activelist
+
+        self.sortText = current_sort
+        self["key_yellow"].setText(self.sortText)
+        self.buildLists()
+
     def setIndex(self, data=None):
         if self["main_list"].getCurrent():
-            self["main_list"].setIndex(glob.currentchannellistindex)
             if cfg.interface.value == "xstreamity":
                 self.createSetup()
+                self.applySavedSort()
+            self["main_list"].setIndex(glob.currentchannellistindex)
 
     def back(self, data=None):
         self._stopTimerImage()
