@@ -157,6 +157,7 @@ class XStreamity_Catchup_Categories(Screen):
 
         self.searchString = ""
         self.filterresult = ""
+        self.filterresult2 = ""
 
         self.pin = False
 
@@ -535,6 +536,7 @@ class XStreamity_Catchup_Categories(Screen):
 
         # self["splash"].hide()
         self.buildLists()
+        self.setIndex()
 
     def buildLists(self):
         if self.level == 1:
@@ -947,7 +949,10 @@ class XStreamity_Catchup_Categories(Screen):
 
         if glob.nextlist[-1]["filter"]:
             activelist = glob.originalChannelList1[:] if self.level == 1 else glob.originalChannelList2[:]
-            activelist = [channel for channel in activelist if str(self.filterresult).lower() in str(channel[1]).lower()]
+            if self.level == 1:
+                activelist = [channel for channel in activelist if str(self.filterresult).lower() in str(channel[1]).lower()]
+            if self.level == 2:
+                activelist = [channel for channel in activelist if str(self.filterresult2).lower() in str(channel[1]).lower()]
         else:
             activelist = self.list1 if self.level == 1 else self.list2
 
@@ -1007,8 +1012,13 @@ class XStreamity_Catchup_Categories(Screen):
         activelist = []
 
         if result:
-            self.filterresult = result
-            glob.nextlist[-1]["filter"] = self.filterresult
+            if self.level == 1:
+                self.filterresult = result
+                glob.nextlist[-1]["filter"] = self.filterresult
+            if self.level == 2:
+                self.filterresult2 = result
+                glob.nextlist[-1]["filter"] = self.filterresult2
+
             self.searchString = result
             activelist = self.list1 if self.level == 1 else self.list2
             activelist = [channel for channel in activelist if str(result).lower() in str(channel[1]).lower()]
@@ -1041,7 +1051,12 @@ class XStreamity_Catchup_Categories(Screen):
             self.list2 = glob.originalChannelList2[:]
 
         self.filterresult = ""
-        glob.nextlist[-1]["filter"] = self.filterresult
+        self.filterresult2 = ""
+
+        if self.level == 1:
+            glob.nextlist[-1]["filter"] = self.filterresult
+        if self.level == 2:
+            glob.nextlist[-1]["filter"] = self.filterresult2
 
         self.sortText = getattr(self, "_pre_search_sort", self.sortText)
         glob.nextlist[-1]["sort"] = self.sortText
@@ -1133,20 +1148,43 @@ class XStreamity_Catchup_Categories(Screen):
                     self.createSetup()
 
     def applySavedSort(self):
-        """Re-apply the sort currently stored in glob.nextlist without advancing to the next sort type."""
         current_sort = glob.nextlist[-1].get("sort", "")
-        if not current_sort or current_sort == _("Sort: Original"):
+
+        if not current_sort:
             return
 
-        activelist = self.list1 if self.level == 1 else self.list2
+        if glob.nextlist[-1]["filter"]:
+            activelist = glob.originalChannelList1[:] if self.level == 1 else glob.originalChannelList2[:]
+            if self.level == 1:
+                activelist = [channel for channel in activelist if str(self.filterresult).lower() in str(channel[1]).lower()]
+            if self.level == 2:
+                activelist = [channel for channel in activelist if str(self.filterresult2).lower() in str(channel[1]).lower()]
+        else:
+            activelist = self.list1 if self.level == 1 else self.list2
 
-        if current_sort == _("Sort: A-Z"):
-            activelist.sort(key=lambda x: x[1].lower(), reverse=False)
-        elif current_sort == _("Sort: Z-A"):
-            activelist.sort(key=lambda x: x[1].lower(), reverse=True)
-        elif current_sort == _("Sort: Added") and self.level != 1:
-            activelist.sort(key=lambda x: x[1].lower(), reverse=False)
-            activelist.sort(key=lambda x: (x[5] or ""), reverse=True)
+        if self.level == 1:
+            if current_sort == _("Sort: Z-A"):
+                activelist.sort(key=lambda x: x[1].lower(), reverse=False)
+
+            elif current_sort == _("Sort: Original"):
+                activelist.sort(key=lambda x: x[1].lower(), reverse=True)
+
+            elif current_sort == _("Sort: Sort: A-Z"):
+                activelist.sort(key=lambda x: x[0], reverse=False)
+
+        elif self.level == 2:
+            if current_sort == _("Sort: Z-A"):
+                activelist.sort(key=lambda x: x[1].lower(), reverse=False)
+
+            elif current_sort == _("Sort: Added"):
+                activelist.sort(key=lambda x: x[1].lower(), reverse=True)
+
+            elif current_sort == _("Sort: Original"):
+                activelist.sort(key=lambda x: x[1].lower(), reverse=False)
+                activelist.sort(key=lambda x: (x[5] or ""), reverse=True)
+
+            elif current_sort == _("Sort: Sort: A-Z"):
+                activelist.sort(key=lambda x: x[0], reverse=False)
 
         if self.level == 1:
             self.list1 = activelist
@@ -1159,9 +1197,7 @@ class XStreamity_Catchup_Categories(Screen):
 
     def setIndex(self, data=None):
         if self["main_list"].getCurrent():
-            if cfg.interface.value == "xstreamity":
-                self.createSetup()
-                self.applySavedSort()
+            self.applySavedSort()
             self["main_list"].setIndex(glob.currentchannellistindex)
 
     def back(self, data=None):
@@ -1323,7 +1359,7 @@ class XStreamity_Catchup_Categories(Screen):
             return
         else:
             from . import downloadmanager
-            self.session.openWithCallback(self.setIndex, downloadmanager.XStreamity_DownloadManager)
+            self.session.openWithCallback(self.createSetup, downloadmanager.XStreamity_DownloadManager)
 
     def failed(self, data=None):
         if data:
@@ -1345,7 +1381,8 @@ class XStreamity_Catchup_Categories(Screen):
                 from . import catchupplayer
                 streamtype = glob.active_playlist["player_info"]["vodtype"]
                 glob.catchupdata = [str(epg_short_list_current_item[0]), str(epg_short_list_current_item[3])]
-                self.session.openWithCallback(self.setIndex, catchupplayer.XStreamity_CatchupPlayer, str(playurl), str(streamtype))
+
+                self.session.openWithCallback(self.createSetup, catchupplayer.XStreamity_CatchupPlayer, str(playurl), str(streamtype))
             else:
                 self.session.open(MessageBox, _("Catchup error. No data for this slot"), MessageBox.TYPE_WARNING, timeout=5)
 

@@ -1024,6 +1024,7 @@ class XStreamity_Live_Categories(Screen):
             currently_playing_service = self.session.nav.getCurrentlyPlayingServiceReference()
             if currently_playing_service:
                 self.session.nav.stopService()
+
             self.session.nav.playService(eServiceReference(current_playing_ref))
             glob.newPlayingServiceRefString = current_playing_ref
 
@@ -1598,9 +1599,13 @@ class XStreamity_Live_Categories(Screen):
                             self["main_list"].setIndex(glob.nextlist[-1]["index"])
 
                     playing = self.session.nav.getCurrentlyPlayingServiceReference()
+                    playing_ref = ""
 
                     if playing:
-                        if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString() and cfg.livepreview.value is True:
+                        playing_ref = playing.toString()
+
+                    if cfg.livepreview.value is True:
+                        if playing_ref != self.reference.toString():
                             try:
                                 self.session.nav.playService(self.reference)
                             except Exception as e:
@@ -1613,24 +1618,10 @@ class XStreamity_Live_Categories(Screen):
 
                             update_channel_icons_and_list()
                         else:
-                            update_channel_icons_and_list()
                             self.session.openWithCallback(self.reload, liveplayer.XStreamity_StreamPlayer, str(next_url), str(streamtype), stream_id)
                     else:
-                        if cfg.livepreview.value is True:
-                            try:
-                                self.session.nav.playService(self.reference)
-                            except Exception as e:
-                                print(e)
-
-                            nowref = self.session.nav.getCurrentlyPlayingServiceReference()
-                            if nowref:
-                                glob.newPlayingServiceRef = nowref
-                                glob.newPlayingServiceRefString = nowref.toString()
-
-                            update_channel_icons_and_list()
-                        else:
-                            update_channel_icons_and_list()
-                            self.session.openWithCallback(self.reload, liveplayer.XStreamity_StreamPlayer, str(next_url), str(streamtype), stream_id)
+                        self.session.nav.playService(self.reference)
+                        self.session.openWithCallback(self.reload, liveplayer.XStreamity_StreamPlayer, str(next_url), str(streamtype), stream_id)
 
                     self["category_actions"].setEnabled(False)
 
@@ -1641,24 +1632,26 @@ class XStreamity_Live_Categories(Screen):
         if debugs:
             print("*** reload ***")
 
-        self.setWatchingIcon(glob.currentchannellistindex)
+        stream_id = ""
+
+        try:
+            stream_id = glob.currentchannellist[glob.currentchannellistindex][4]
+        except:
+            pass
+
+        self.setWatchingIcon(stream_id)
         self.setIndex()
         self.downloadImage()
 
-    def setWatchingIcon(self, idx):
+    def setWatchingIcon(self, stream_id):
         if debugs:
             print("*** setWatchingIcon ***")
 
         if self["main_list"].getCurrent() and self.list2:
-            # Clear all watching flags
-            for channel in self.list2:
-                channel[17] = False
+            stream_id = str(stream_id)
 
-            # Set watching for currently active channel index
-            try:
-                self.list2[idx][17] = True
-            except:
-                pass
+            for channel in self.list2:
+                channel[17] = str(channel[2]) == stream_id
 
             if self.chosen_category == "favourites":
                 self.main_list = [
@@ -2184,7 +2177,7 @@ class XStreamity_Live_Categories(Screen):
 
             # switch channel to prevent multi active users
             if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString():
-                self.session.nav.stopService()
+                # self.session.nav.stopService()
                 self.session.nav.playService(self.reference)
 
                 if self.session.nav.getCurrentlyPlayingServiceReference():

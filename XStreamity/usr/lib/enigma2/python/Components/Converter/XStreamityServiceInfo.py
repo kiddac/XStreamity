@@ -1,6 +1,6 @@
 
 from Components.Converter.Converter import Converter
-from enigma import iServiceInformation, iPlayableService
+from enigma import iServiceInformation, iPlayableService, eTimer
 from Components.Element import cached
 from Components.Converter.Poll import Poll
 from os import path
@@ -25,16 +25,28 @@ class XStreamityServiceInfo(Poll, Converter):
     IS_HD = 10
     IS_FHD = 11
     IS_UHD = 12
+    IS_4_3 = 13
 
     def __init__(self, type):
         Poll.__init__(self)
         Converter.__init__(self, type)
-        self.poll_interval = 1000
+
+        self.poll_interval = 250
         self.poll_enabled = True
+        self.ready = False
+        self.ready_waiting = False
+
+        self.readyTimer = eTimer()
+        try:
+            self.readyTimer_conn = self.readyTimer.timeout.connect(self._setReady)
+        except:
+            self.readyTimer.callback.append(self._setReady)
+
         self.type, self.interesting_events = {
 
             "IsMultichannel": (self.IS_MULTICHANNEL, (iPlayableService.evUpdatedInfo,)),
-            "IsWidescreen": (self.IS_WIDESCREEN, (iPlayableService.evVideoSizeChanged,)),
+            "IsWidescreen": (self.IS_WIDESCREEN, (iPlayableService.evVideoSizeChanged, iPlayableService.evUpdatedInfo,)),
+            "Is4_3": (self.IS_4_3, (iPlayableService.evVideoSizeChanged, iPlayableService.evUpdatedInfo,)),
             "VideoWidth": (self.XRES, (iPlayableService.evVideoSizeChanged,)),
             "VideoHeight": (self.YRES, (iPlayableService.evVideoSizeChanged,)),
             "Framerate": (self.FRAMERATE, (iPlayableService.evVideoSizeChanged, iPlayableService.evUpdatedInfo,)),
@@ -46,7 +58,37 @@ class XStreamityServiceInfo(Poll, Converter):
             "IsUHD": (self.IS_UHD, (iPlayableService.evVideoSizeChanged,)),
 
         }[type]
+
         self.interesting_events += (iPlayableService.evStart,)
+
+    def _clearReady(self):
+        self.ready = False
+        self.ready_waiting = False
+
+        try:
+            self.readyTimer.stop()
+        except:
+            pass
+
+        Converter.changed(self, (self.CHANGED_ALL,))
+
+    def _startReadyTimer(self):
+        if self.ready_waiting:
+            return
+
+        self.ready_waiting = True
+
+        try:
+            self.readyTimer.stop()
+        except:
+            pass
+
+        self.readyTimer.start(1500, True)
+
+    def _setReady(self):
+        self.ready = True
+        self.ready_waiting = False
+        Converter.changed(self, (self.CHANGED_ALL,))
 
     def getServiceInfoString(self, info, what, convert=lambda x: "%d" % x):
         v = info.getInfo(what)
@@ -109,6 +151,9 @@ class XStreamityServiceInfo(Poll, Converter):
 
     @cached
     def getBoolean(self):
+        if not self.ready:
+            return False
+
         service = self.source.service
         info = service and service.info()
         if not info:
@@ -190,6 +235,12 @@ class XStreamityServiceInfo(Poll, Converter):
         elif self.type == self.IS_WIDESCREEN:
             return video_aspect in WIDESCREEN
 
+        elif self.type == self.IS_4_3:
+            if video_aspect is None or video_aspect == -1:
+                return False
+
+            return video_aspect not in WIDESCREEN
+
         elif self.type == self.AUDIOTRACKS_AVAILABLE:
             audio = service.audioTracks()
             return audio and audio.getNumberOfTracks() > 1
@@ -227,6 +278,8 @@ class XStreamityServiceInfo(Poll, Converter):
 
     @cached
     def getText(self):
+        if not self.ready:
+            return ""
 
         service = self.source.service
         info = service and service.info()
@@ -261,7 +314,6 @@ class XStreamityServiceInfo(Poll, Converter):
             if not video_height:
                 try:
                     video_height = int(self.getServiceInfoString(info, iServiceInformation.sVideoHeight))
-
                 except:
                     return ""
             return "%d" % video_height
@@ -306,6 +358,9 @@ class XStreamityServiceInfo(Poll, Converter):
 
     @cached
     def getValue(self):
+        if not self.ready:
+            return -1
+
         service = self.source.service
         info = service and service.info()
         if not info:
@@ -370,5 +425,22 @@ class XStreamityServiceInfo(Poll, Converter):
     value = property(getValue)
 
     def changed(self, what):
+        if what[0] == self.CHANGED_SPECIFIC:
+            if what[1] == iPlayableService.evStart:
+                self._clearReady()
+                return
+
+            if what[1] in (
+                iPlayableService.evVideoSizeChanged,
+                iPlayableService.evUpdatedInfo
+            ):
+                if not self.ready:
+                    self._startReadyTimer()
+                    Converter.changed(self, (self.CHANGED_ALL,))
+                    return
+
+                Converter.changed(self, what)
+                return
+
         if what[0] != self.CHANGED_SPECIFIC or what[1] in self.interesting_events:
             Converter.changed(self, what)

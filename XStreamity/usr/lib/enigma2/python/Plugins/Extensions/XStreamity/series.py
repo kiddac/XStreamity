@@ -3131,6 +3131,7 @@ class XStreamity_Series_Categories(Screen):
 
                     self.reference = eServiceReference(int(streamtype), 0, next_url)
                     self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
+                    self.session.nav.playService(self.reference)
                     self.session.openWithCallback(self.setIndex, vodplayer.XStreamity_VodPlayer, str(next_url), str(streamtype), stream_id)
 
                 else:

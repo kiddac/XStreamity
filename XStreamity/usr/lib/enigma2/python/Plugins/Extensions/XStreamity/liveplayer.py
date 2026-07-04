@@ -63,7 +63,7 @@ from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection, InfoBarS
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from ServiceReference import ServiceReference
-from Tools.BoundFunction import boundFunction
+# from Tools.BoundFunction import boundFunction
 
 # Local application/library-specific imports
 from . import _
@@ -145,7 +145,7 @@ class IPTVInfoBarShowHide():
             self.hideTimer_conn = self.hideTimer.timeout.connect(self.doTimerHide)
         except:
             self.hideTimer.callback.append(self.doTimerHide)
-        self.hideTimer.start(3000, True)
+        self.hideTimer.start(4000, True)
 
         self.onShow.append(self.__onShow)
         self.onHide.append(self.__onHide)
@@ -167,7 +167,7 @@ class IPTVInfoBarShowHide():
     def startHideTimer(self):
         if self.__state == self.STATE_SHOWN and not self.__locked:
             self.hideTimer.stop()
-            self.hideTimer.start(3000, True)
+            self.hideTimer.start(4000, True)
 
         elif hasattr(self, "pvrStateDialog"):
             self.hideTimer.stop()
@@ -406,10 +406,6 @@ class XStreamity_StreamPlayer(
 
         self._picon_req_id = 0
 
-        epg_cache = eEPGCache.getInstance()
-        if epg_cache:
-            epg_cache.save()
-
         self.timerImage = eTimer()
         try:
             self.timerImage.callback.append(self.downloadImage)
@@ -422,7 +418,7 @@ class XStreamity_StreamPlayer(
         except:
             self.timerRecent_conn = self.timerRecent.timeout.connect(self.addRecentLiveList)
 
-        self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl))
+        # self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl))
 
     def _stopTimer(self, name):
         t = getattr(self, name, None)
@@ -711,9 +707,9 @@ class XStreamity_StreamPlayer(
                 epg_cache = eEPGCache.getInstance()
                 if epg_cache:
                     duration = end_time - start_time
-
-                    epg_cache.importEvent(service_ref.toString(), [(start_time, duration, title, description, "", 0, eventid)])
-
+                    now = time.time()
+                    if now >= end_time:
+                        epg_cache.importEvent(service_ref.toString(), [(start_time, duration, title, description, "", 0, eventid)])
             except Exception as e:
                 print("Error adding event to EPG cache: %s" % e)
 
@@ -724,7 +720,6 @@ class XStreamity_StreamPlayer(
         playing = self.session.nav.getCurrentlyPlayingServiceReference()
 
         if playing:
-
             if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString():
                 try:
                     self.session.nav.playService(self.reference)

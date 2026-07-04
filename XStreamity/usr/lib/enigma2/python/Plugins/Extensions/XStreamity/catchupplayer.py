@@ -4,16 +4,17 @@
 # Standard library imports
 from __future__ import absolute_import, print_function
 from __future__ import division
+
 import os
 import re
 import tempfile
-from itertools import cycle, islice
 from datetime import datetime, timedelta
+from itertools import cycle, islice
 
 try:
-    from urllib.parse import urlparse
-except:
     from urlparse import urlparse
+except ImportError:
+    from urllib.parse import urlparse
 
 try:
     from http.client import HTTPConnection
@@ -51,7 +52,7 @@ from Components.Label import Label
 from Components.Pixmap import MultiPixmap, Pixmap
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 from enigma import eTimer, eServiceReference, iPlayableService
-from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection, InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport, InfoBarNotifications
+from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection, InfoBarSummarySupport, InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport, InfoBarNotifications
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools import Notifications
@@ -142,7 +143,7 @@ class IPTVInfoBarShowHide():
             self.hideTimer_conn = self.hideTimer.timeout.connect(self.doTimerHide)
         except:
             self.hideTimer.callback.append(self.doTimerHide)
-        self.hideTimer.start(3000, True)
+        self.hideTimer.start(4000, True)
 
         self.onShow.append(self.__onShow)
         self.onHide.append(self.__onHide)
@@ -164,7 +165,7 @@ class IPTVInfoBarShowHide():
     def startHideTimer(self):
         if self.__state == self.STATE_SHOWN and not self.__locked:
             self.hideTimer.stop()
-            self.hideTimer.start(3000, True)
+            self.hideTimer.start(4000, True)
 
         elif hasattr(self, "pvrStateDialog"):
             self.hideTimer.stop()
@@ -362,16 +363,16 @@ class XStreamityCueSheetSupport:
 
 
 class XStreamity_CatchupPlayer(
-
     InfoBarBase,
     IPTVInfoBarShowHide,
+    IPTVInfoBarPVRState,
     XStreamityCueSheetSupport,
+    InfoBarAudioSelection,
     InfoBarSeek,
     InfoBarNotifications,
-    InfoBarAudioSelection,
-    IPTVInfoBarPVRState,
-    InfoBarMoviePlayerSummarySupport,
+    InfoBarSummarySupport,
     InfoBarSubtitleSupport,
+    InfoBarMoviePlayerSummarySupport,
     SubsSupportStatus,
     SubsSupport,
         Screen):
@@ -389,6 +390,7 @@ class XStreamity_CatchupPlayer(
             InfoBarAudioSelection,
             InfoBarSeek,
             InfoBarNotifications,
+            InfoBarSummarySupport,
             InfoBarSubtitleSupport,
             InfoBarMoviePlayerSummarySupport
         ):
@@ -439,13 +441,15 @@ class XStreamity_CatchupPlayer(
 
         self["actions"] = ActionMap(["XStreamityActions"], {
             "cancel": self.back,
-            "red": self.back,
             "stop": self.back,
+            "red": self.back,
+            "channelUp": self.pageUp,
+            "down": self.pageDown,
+            "channelDown": self.pageDown,
+            "up": self.pageUp,
             "tv": self.toggleStreamType,
             "info": self.toggleStreamType,
             "green": self.nextAR,
-            "channelUp": self.pageUp,
-            "channelDown": self.pageDown,
             "ok": self.refreshInfobar,
         }, -2)
 
@@ -502,16 +506,22 @@ class XStreamity_CatchupPlayer(
         self.reference = eServiceReference(int(servicetype), 0, streamurl)
         self.reference.setName(glob.catchupdata[0])
 
-        currently_playing_ref = self.session.nav.getCurrentlyPlayingServiceReference()
-        if currently_playing_ref and currently_playing_ref.toString() != self.reference.toString():
-            self.session.nav.stopService()
+        if self.session.nav.getCurrentlyPlayingServiceReference():
+            if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString():
 
-        self.session.nav.playService(self.reference)
+                try:
+                    self.session.nav.stopService()
+                except:
+                    pass
 
-        currently_playing_ref = self.session.nav.getCurrentlyPlayingServiceReference()
-        if currently_playing_ref:
-            glob.newPlayingServiceRef = currently_playing_ref
-            glob.newPlayingServiceRefString = currently_playing_ref.toString()
+                self.session.nav.playService(self.reference)
+
+        else:
+            self.session.nav.playService(self.reference)
+
+        if self.session.nav.getCurrentlyPlayingServiceReference():
+            glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
+            glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
 
         if cfg.infobarpicons.value is True:
             self.timerImage.start(250, True)
@@ -710,7 +720,10 @@ class XStreamity_CatchupPlayer(
                 currentindex = index
                 break
         nextStreamType = islice(cycle(vodstreamtypelist), currentindex + 1, None)
-        self.servicetype = int(next(nextStreamType))
+        try:
+            self.servicetype = int(next(nextStreamType))
+        except:
+            pass
         self.playStream(self.servicetype, self.streamurl)
 
     def setAspectRatio(self, ar_index):

@@ -82,8 +82,8 @@
 		<convert type="ConditionalShowHide"/>
 	</widget>
 	<widget text="4:3" render="FixedLabel" source="session.CurrentService" position="1168,654" size="60,24" font="xstreamitybold;18" foregroundColor="#ffffff" backgroundColor="#40000000" valign="center" halign="center" transparent="1" zPosition="3">
-		<convert type="XStreamityServiceInfo">IsWidescreen</convert>
-		<convert type="ConditionalShowHide">Invert</convert>
+		<convert type="XStreamityServiceInfo">Is4_3</convert>
+		<convert type="ConditionalShowHide"/>
 	</widget>
 	<widget source="session.CurrentService" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/hd/common/dolby.png" position="1168,682" size="60,24" alphatest="blend" zPosition="2">
 		<convert type="XStreamityServiceInfo">IsMultichannel</convert>
