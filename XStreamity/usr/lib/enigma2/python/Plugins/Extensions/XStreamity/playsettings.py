@@ -230,7 +230,6 @@ class XStreamity_Settings(ConfigListScreen, Screen):
 
         if self["config"].isChanged():
             self.name = self.nameCfg.value.strip()
-            self.full_url = playlist_info.get("full_url", "")
 
             if not self.name or len(self.name) < 3:
                 self.session.open(MessageBox, _("Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum 3 characters."), MessageBox.TYPE_ERROR, timeout=10)

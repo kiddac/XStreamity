@@ -6,13 +6,6 @@ import json
 import os
 from datetime import datetime
 
-try:
-    from http.client import HTTPConnection
-    HTTPConnection.debuglevel = 0
-except ImportError:
-    from httplib import HTTPConnection
-    HTTPConnection.debuglevel = 0
-
 # Third-party imports
 from requests.adapters import HTTPAdapter, Retry
 
@@ -211,7 +204,6 @@ class XStreamity_StartMenu(Screen):
                 self["background"].setText("True")
 
             self.createSetupOptions()
-            # self.close()
         else:
             self.delayedDownload()
 
@@ -268,9 +260,11 @@ class XStreamity_StartMenu(Screen):
             print("*** concurrent_download ***")
 
         from concurrent.futures import ThreadPoolExecutor
+
         try:
             with ThreadPoolExecutor(max_workers=threads) as executor:
                 results = list(executor.map(self.downloadUrl, self.url_list))
+
             self.update_playlists_with_results(results)
         except Exception as e:
             print("Concurrent execution error:", e)
@@ -280,16 +274,14 @@ class XStreamity_StartMenu(Screen):
             print("*** multiprocessing_download ***")
 
         from multiprocessing.pool import ThreadPool
+
         try:
             pool = ThreadPool(threads)
-            results = pool.imap_unordered(self.downloadUrl, self.url_list)
+            results = list(pool.imap_unordered(self.downloadUrl, self.url_list))
             pool.close()
             pool.join()
 
-            # Convert iterator to list
-            results_list = list(results)
-
-            self.update_playlists_with_results(results_list)
+            self.update_playlists_with_results(results)
         except Exception as e:
             print("Multiprocessing execution error:", e)
 
@@ -298,14 +290,15 @@ class XStreamity_StartMenu(Screen):
             print("*** sequential_download ***")
 
         for url in self.url_list:
-            results = self.downloadUrl(url)
-            self.update_playlists_with_results(results)
+            result = self.downloadUrl(url)
+            self.update_playlists_with_results([result])
 
     def downloadUrl(self, url):
         if debugs:
             print("*** downloadUrl ***")
 
         import requests
+
         index = url[1]
         response = None
 
@@ -320,13 +313,12 @@ class XStreamity_StartMenu(Screen):
                 r = http.get(url[0], headers=hdr, timeout=6, verify=False)
                 r.raise_for_status()
 
-                # Get Content-Type from headers
                 content_type = r.headers.get('Content-Type', '')
 
-                # Handle JSON content directly
                 if 'application/json' in content_type:
                     try:
                         response = r.json()
+
                         if pythonVer == 3:
                             response = clean_names(response)
 
@@ -334,10 +326,8 @@ class XStreamity_StartMenu(Screen):
                         print("Error decoding JSON:", e, url)
                         return index, None
 
-                # Handle text/html content
                 elif 'text/html' in content_type:
                     try:
-                        # Attempt to parse the HTML body as JSON
                         response_text = r.text
                         response = json.loads(response_text)
                     except ValueError as e:
@@ -389,7 +379,6 @@ class XStreamity_StartMenu(Screen):
                         try:
                             time_now_datestamp = datetime.strptime(str(server_info["time_now"]), time_format)
                             offset = datetime.now().hour - time_now_datestamp.hour
-                            # print("*** offset ***", offset)
                             playlists["player_info"]["serveroffset"] = offset
                             break
                         except ValueError:
@@ -400,14 +389,11 @@ class XStreamity_StartMenu(Screen):
                         timestamp = int(server_info["timestamp_now"])
                         timestamp_dt = datetime.utcfromtimestamp(timestamp)
 
-                        # Get the current system time
                         current_dt = datetime.now()
 
-                        # Calculate the difference
                         time_difference = current_dt - timestamp_dt
                         hour_difference = int(time_difference.total_seconds() / 3600)
                         catchupoffset = hour_difference
-                        # print("hour_difference:", hour_difference)
                         playlists["player_info"]["catchupoffset"] = catchupoffset
                     except:
                         pass
@@ -538,14 +524,10 @@ class XStreamity_StartMenu(Screen):
 
                 activeindex += 1
 
-        # If no match found, fall back to the first playlist in list2
-
         if not found:
-
             activeindex = 0
 
             for playlist in self.playlists_all:
-
                 playlist_name = playlist["playlist_info"]["name"]
 
                 if "user_info" in playlist and playlist["user_info"] and "status" in playlist["user_info"] and playlist["user_info"]["status"] == "Active":
@@ -878,25 +860,46 @@ class XStreamity_StartMenu(Screen):
 
     def quit(self, data=None):
         self.playOriginalChannel()
+        self.clearData()
+
+    def clearData(self):
+        for playlist in self.playlists_all:
+            playlist["data"]["live_categories"] = []
+            playlist["data"]["vod_categories"] = []
+            playlist["data"]["series_categories"] = []
+            playlist["data"]["live_streams"] = []
+            playlist["data"]["data_downloaded"] = False
+            playlist["data"]["fail_count"] = 0
+
+        try:
+            with open(self.playlists_json, "w") as f:
+                json.dump(self.playlists_all, f, indent=4)
+        except Exception as e:
+            print("JSON write error:", e)
 
     def playOriginalChannel(self):
         if debugs:
             print("*** playOriginalChannel ***")
 
-        try:
-            if glob.currentPlayingServiceRefString:
-                self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
-        except Exception as e:
-            print(e)
+        if glob.currentPlayingServiceRefString:
+            if glob.currentPlayingServiceRefString != glob.newPlayingServiceRefString:
+                try:
+                    self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
+                except:
+                    pass
+            try:
+                if glob.original_aspect_ratio is not None:
+                    eAVSwitch.getInstance().setAspectRatio(glob.original_aspect_ratio)
+            except Exception:
+                pass
+
+        else:
+            try:
+                self.session.nav.stopService()
+            except:
+                pass
 
         self["splash"].hide()
-
-        try:
-            if glob.original_aspect_ratio is not None:
-                eAVSwitch.getInstance().setAspectRatio(glob.original_aspect_ratio)
-        except Exception:
-            pass
-
         self.close()
 
     def playVideo(self, result=None):

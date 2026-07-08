@@ -57,13 +57,13 @@ from Components.ProgressBar import ProgressBar
 from Components.Pixmap import MultiPixmap, Pixmap
 from Components.ServiceEventTracker import ServiceEventTracker, InfoBarBase
 from Components.config import ConfigClock, ConfigText, NoSave
-from enigma import eTimer, eServiceReference, iPlayableService, eEPGCache
+from enigma import eTimer, eServiceReference, iPlayableService
 from RecordTimer import RecordTimerEntry
 from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection, InfoBarSummarySupport, InfoBarMoviePlayerSummarySupport, InfoBarSubtitleSupport
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from ServiceReference import ServiceReference
-# from Tools.BoundFunction import boundFunction
+from Tools.BoundFunction import boundFunction
 
 # Local application/library-specific imports
 from . import _
@@ -77,26 +77,6 @@ try:
 except Exception:
     from enigma import eAVControl as eAVSwitch
 
-if cfg.subs.value is True:
-    try:
-        from Plugins.Extensions.SubsSupport import SubsSupport, SubsSupportStatus
-    except ImportError:
-        class SubsSupport(object):
-            def __init__(self, *args, **kwargs):
-                pass
-
-        class SubsSupportStatus(object):
-            def __init__(self, *args, **kwargs):
-                pass
-else:
-    class SubsSupport(object):
-        def __init__(self, *args, **kwargs):
-            pass
-
-    class SubsSupportStatus(object):
-        def __init__(self, *args, **kwargs):
-            pass
-
 VIDEO_ASPECT_RATIO_MAP = {
     0: "4:3 Letterbox",
     1: "4:3 PanScan",
@@ -108,20 +88,15 @@ VIDEO_ASPECT_RATIO_MAP = {
 }
 
 streamtypelist = ["1", "4097"]
-vodstreamtypelist = ["4097"]
 
 if os.path.exists("/usr/bin/gstplayer"):
     streamtypelist.append("5001")
-    vodstreamtypelist.append("5001")
-
 
 if os.path.exists("/usr/bin/exteplayer3"):
     streamtypelist.append("5002")
-    vodstreamtypelist.append("5002")
 
 if os.path.exists("/usr/bin/apt-get"):
     streamtypelist.append("8193")
-    vodstreamtypelist.append("8193")
 
 
 class IPTVInfoBarShowHide():
@@ -316,7 +291,7 @@ class XStreamity_StreamPlayer(
 
     ALLOW_SUSPEND = True
 
-    def __init__(self, session, streamurl, servicetype, stream_id=None):
+    def __init__(self, session, streamurl, servicetype):
         Screen.__init__(self, session)
         self.session = session
 
@@ -379,7 +354,7 @@ class XStreamity_StreamPlayer(
         self["speed"] = Label()
         self["statusicon"] = MultiPixmap()
 
-        self.setup_title = _("TV")
+        # self.setup_title = _("TV")
 
         if screenwidth.width() == 2560:
             self.picon_size = (294, 176)
@@ -400,6 +375,7 @@ class XStreamity_StreamPlayer(
             "info": self.toggleStreamType,
             "green": self.nextAR,
             "rec": self.IPTVstartInstantRecording,
+            "5": self.IPTVstartInstantRecording,
             "0": self.restartStream,
             "ok": self.OKButton,
         }, -2)
@@ -418,7 +394,7 @@ class XStreamity_StreamPlayer(
         except:
             self.timerRecent_conn = self.timerRecent.timeout.connect(self.addRecentLiveList)
 
-        # self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl))
+        self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl))
 
     def _stopTimer(self, name):
         t = getattr(self, name, None)
@@ -458,8 +434,6 @@ class XStreamity_StreamPlayer(
 
             startnowunixtime = glob.currentepglist[glob.currentchannellistindex][9]
             startnextunixtime = glob.currentepglist[glob.currentchannellistindex][10]
-
-            percent = 0
 
             if startnowunixtime and startnextunixtime:
                 self["progress"].show()
@@ -505,7 +479,6 @@ class XStreamity_StreamPlayer(
                                     shortEPGJson = response.get("epg_listings", [])
                             except Exception as e:
                                 print("Error fetching or processing response:", e)
-                                response = None
                                 shortEPGJson = []
 
                         if shortEPGJson and len(shortEPGJson) > 1:
@@ -592,27 +565,36 @@ class XStreamity_StreamPlayer(
             if glob.currentepglist[glob.currentchannellistindex][4]:
                 description = glob.currentepglist[glob.currentchannellistindex][4]
 
+            streamtype = glob.active_playlist["player_info"]["livetype"]
+
+            if str(os.path.splitext(self.streamurl)[-1]).lower() == ".m3u8":
+                if streamtype == "1":
+                    streamtype = "4097"
+
+            if streamtype not in ("1", "4097"):
+                streamtype = "4097"
+
             eventid = int(self.streamurl.rpartition("/")[-1].partition(".")[0])
-            serviceref = eServiceReference(1, 0, self.streamurl)
 
-            if isinstance(serviceref, eServiceReference):
-                serviceref = ServiceReference(serviceref)
+            self.reference = eServiceReference(int(streamtype), 0, self.streamurl)
 
-            recording = RecordTimerEntry(
-                serviceref, begin, end, name, description, eventid, dirname=str(cfg.downloadlocation.value)
-            )
+            # serviceref = eServiceReference(1, 0, self.streamurl)
+
+            if isinstance(self.reference, eServiceReference):
+                serviceref = ServiceReference(self.reference)
+
+            recording = RecordTimerEntry(serviceref, begin, end, name, description, eventid, dirname=str(cfg.downloadlocation.value))
             recording.dontSave = True
 
             simulTimerList = self.session.nav.RecordTimer.record(recording)
 
             if simulTimerList is None:  # no conflict
                 recording.autoincrease = False
-
                 self.session.open(MessageBox, _("Recording Timer Set."), MessageBox.TYPE_INFO, timeout=5)
             else:
                 self.session.open(MessageBox, _("Recording Failed."), MessageBox.TYPE_WARNING)
-        else:
-            return
+
+        return
 
     def addRecentLiveList(self):
         if glob.adultChannel:
@@ -677,50 +659,15 @@ class XStreamity_StreamPlayer(
         except:
             pass
 
-        startnowunixtime = glob.currentepglist[glob.currentchannellistindex][9]
-        startnextunixtime = glob.currentepglist[glob.currentchannellistindex][10]
+        self.reference = eServiceReference(int(servicetype), 0, streamurl)
+        self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
 
-        service_ref = ""
+        """
+        if self.session.nav.getCurrentlyPlayingServiceReference():
+            current_ref_string = self.session.nav.getCurrentlyPlayingServiceReference().toString()
+            current_ref_string = current_ref_string.replace("%3a", ":").replace("%3A", ":")
 
-        if startnowunixtime and startnextunixtime:
-            title = glob.currentepglist[glob.currentchannellistindex][3]
-            description = glob.currentepglist[glob.currentchannellistindex][4]
-            eventid = int("99" + self.streamurl.rpartition("/")[-1].partition(".")[0])
-
-            start_time = startnowunixtime
-            end_time = startnextunixtime
-
-            self.unique_ref = 0
-            stream_id = str(glob.currentchannellist[glob.currentchannellistindex][4])
-
-            for j in str(self.streamurl):
-                value = ord(j)
-                self.unique_ref += value
-
-            bouquet_id1 = int(stream_id) // 65535
-            bouquet_id2 = int(stream_id) - int(bouquet_id1 * 65535)
-            service_ref = eServiceReference(str(servicetype) + ":0:1:" + str(format(bouquet_id1, "x")) + ":" + str(format(bouquet_id2, "x")) + ":" + str(format(self.unique_ref, "x")) + ":0:0:0:0:" + str(streamurl).replace(":", "%3a"))
-            service_ref.setName(glob.currentchannellist[glob.currentchannellistindex][0])
-            self.reference = service_ref
-
-            try:
-                epg_cache = eEPGCache.getInstance()
-                if epg_cache:
-                    duration = end_time - start_time
-                    now = time.time()
-                    if now >= end_time:
-                        epg_cache.importEvent(service_ref.toString(), [(start_time, duration, title, description, "", 0, eventid)])
-            except Exception as e:
-                print("Error adding event to EPG cache: %s" % e)
-
-        if not service_ref:
-            self.reference = eServiceReference(int(servicetype), 0, streamurl)
-            self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
-
-        playing = self.session.nav.getCurrentlyPlayingServiceReference()
-
-        if playing:
-            if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString():
+            if (str(streamurl) not in current_ref_string) or (str(servicetype) not in current_ref_string):
                 try:
                     self.session.nav.playService(self.reference)
                 except Exception as e:
@@ -730,6 +677,12 @@ class XStreamity_StreamPlayer(
                 self.session.nav.playService(self.reference)
             except Exception as e:
                 print(e)
+                """
+
+        try:
+            self.session.nav.playService(self.reference)
+        except Exception as e:
+            print(e)
 
         nowref = self.session.nav.getCurrentlyPlayingServiceReference()
         if nowref:
@@ -773,18 +726,6 @@ class XStreamity_StreamPlayer(
         self._cleanupTimer("timerRecent")
 
         glob.nextlist[-1]["index"] = glob.currentchannellistindex
-
-        startnowunixtime = glob.currentepglist[glob.currentchannellistindex][9]
-        startnextunixtime = glob.currentepglist[glob.currentchannellistindex][10]
-
-        if startnowunixtime and startnextunixtime:
-            try:
-                epg_cache = eEPGCache.getInstance()
-                if epg_cache:
-                    epg_cache.flushEPG()
-                    epg_cache.load()
-            except Exception as e:
-                print(e)
 
         self.close()
 
@@ -898,7 +839,7 @@ class XStreamity_StreamPlayer(
         if self["picon"].instance:
             self["picon"].instance.setPixmapFromFile(os.path.join(common_path, "picon.png"))
 
-    def resizeImage(self, original, req_id=None, data=None):
+    def resizeImage(self, original, req_id=None):
         size = self.picon_size
         if os.path.exists(original):
             im = None

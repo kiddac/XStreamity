@@ -15,13 +15,6 @@ try:
 except ImportError:
     from urllib.parse import urlparse
 
-try:
-    from http.client import HTTPConnection
-    HTTPConnection.debuglevel = 0
-except ImportError:
-    from httplib import HTTPConnection
-    HTTPConnection.debuglevel = 0
-
 # Third-party imports
 import requests
 from requests.adapters import HTTPAdapter, Retry
@@ -86,16 +79,20 @@ class XStreamity_Update:
             self.process_json_file()
 
     def check_recordings_in_progress(self):
-        recordings = self.session.nav.getRecordings()
-        next_rec_time = -1
-
-        if not recordings:
-            next_rec_time = self.session.nav.RecordTimer.getNextRecordingTime()
-
-        if recordings or (next_rec_time > 0 and (next_rec_time - rtime()) < 360):
-            return True
-        else:
+        if not self.session:
             return False
+
+        recordings = self.session.nav.getRecordings()
+
+        if recordings:
+            return True
+
+        next_rec_time = self.session.nav.RecordTimer.getNextRecordingTime()
+
+        if next_rec_time > 0 and (next_rec_time - rtime()) < 360:
+            return True
+
+        return False
 
     def check_redirect(self, url):
         retries = Retry(total=1, backoff_factor=1)
@@ -134,7 +131,7 @@ class XStreamity_Update:
                 epgxmlfile = os.path.join(epgfolder, "epg.xml")
                 epgjsonfile = os.path.join(epgfolder, "epg.json")
 
-                self.urllist.append([domain, xmltv, epgxmlfile, epgjsonfile])
+                self.urllist.append([xmltv, epgxmlfile, epgjsonfile])
 
                 if not os.path.exists(epgfolder):
                     os.makedirs(epgfolder)
@@ -161,14 +158,14 @@ class XStreamity_Update:
 
     def processPlaylist(self):
         if self.urllist:
-            xmltv = self.urllist[0][1]
+            xmltv = self.urllist[0][0]
             try:
                 self.downloadxmltv(str(xmltv))
             except Exception as e:
                 print(e)
 
     def downloadxmltv(self, url):
-        epgxmlfile = self.urllist[0][2]
+        epgxmlfile = self.urllist[0][1]
 
         url = self.check_redirect(url)
         time.sleep(1)
@@ -224,7 +221,7 @@ class XStreamity_Update:
             self.processPlaylist()
 
     def createJsonFail(self, data=None):
-        epgjsonfile = self.urllist[0][3]
+        epgjsonfile = self.urllist[0][2]
         print(("Create Json failed:", data))
         try:
             os.remove(epgjsonfile)
@@ -237,8 +234,8 @@ class XStreamity_Update:
     def buildjson(self):
         epgitems = {}
         nowtime = calendar.timegm(time.gmtime())
-        epgjsonfile = self.urllist[0][3]
-        epgxmlfile = self.urllist[0][2]
+        epgxmlfile = self.urllist[0][1]
+        epgjsonfile = self.urllist[0][2]
         epglockfile = epgjsonfile + ".lock"
 
         # Check for active lock from another plugin
@@ -290,7 +287,7 @@ class XStreamity_Update:
             self.processPlaylist()
 
     def buildjson2(self):
-        fileobj = self.urllist[0][2]
+        fileobj = self.urllist[0][1]
         try:
             for event, elem in iterparse(fileobj):
 

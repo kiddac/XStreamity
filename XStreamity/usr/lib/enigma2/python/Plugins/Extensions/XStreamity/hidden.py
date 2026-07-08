@@ -76,18 +76,11 @@ class XStreamity_HiddenCategories(Screen, ProtectedScreen):
         self.startList = []
         self.drawList = []
         self["hidden_list"] = List(self.drawList, enableWrapAround=True)
-        self["hidden_list"].onSelectionChanged.append(self.getCurrentEntry)
-        self.currentSelection = 0
 
         self["key_red"] = StaticText(_("Cancel"))
         self["key_green"] = StaticText(_("Save"))
         self["key_yellow"] = StaticText(_("Invert"))
         self["key_blue"] = StaticText(_("Reset"))
-
-        playlist_info = glob.active_playlist["playlist_info"]
-        self.protocol = playlist_info["protocol"]
-        self.domain = playlist_info["domain"]
-        self.host = playlist_info["host"]
 
         self["actions"] = ActionMap(["XStreamityActions"], {
             "red": self.keyCancel,
@@ -107,7 +100,6 @@ class XStreamity_HiddenCategories(Screen, ProtectedScreen):
         self.getCurrentEntry()
 
     def loadHidden(self):
-        self.playlists_all = []
         self.startList = []
         player_info = glob.active_playlist["player_info"]
 
@@ -123,14 +115,13 @@ class XStreamity_HiddenCategories(Screen, ProtectedScreen):
         list_key = category_keys.get(self.category_type, [])[self.level - 1]
 
         # Retrieve hidelist based on list_key
-        self.hidelist = player_info.get(list_key, [])
+        hidelist = player_info.get(list_key, [])
 
         # Populate startList based on hidelist
         for item in self.channellist:
-            hidden = item[2] in self.hidelist
+            hidden = item[2] in hidelist
             self.startList.append([item[1], item[2], hidden])
 
-        self.drawList = []
         self.drawList = [self.buildListEntry(x[0], x[1], x[2]) for x in self.startList]
         self["hidden_list"].setList(self.drawList)
 
@@ -141,7 +132,6 @@ class XStreamity_HiddenCategories(Screen, ProtectedScreen):
         return (pixmap, str(name), str(category_id), enabled)
 
     def refresh(self):
-        self.drawList = []
         self.drawList = [self.buildListEntry(x[0], x[1], x[2]) for x in self.startList]
         self["hidden_list"].updateList(self.drawList)
 

@@ -7,13 +7,6 @@ import json
 
 import time
 
-try:
-    from http.client import HTTPConnection
-    HTTPConnection.debuglevel = 0
-except:
-    from httplib import HTTPConnection
-    HTTPConnection.debuglevel = 0
-
 # Third-party imports
 import requests
 
@@ -179,7 +172,6 @@ class XStreamity_Menu(Screen):
         return category, response
 
     def process_downloads(self):
-        self.retry = 0
         glob.active_playlist["data"]["live_categories"] = []
         glob.active_playlist["data"]["vod_categories"] = []
         glob.active_playlist["data"]["series_categories"] = []
@@ -189,7 +181,6 @@ class XStreamity_Menu(Screen):
 
         if hasConcurrent or hasMultiprocessing:
             if hasConcurrent:
-                # print("******* trying concurrent futures ******")
                 try:
                     from concurrent.futures import ThreadPoolExecutor
                     with ThreadPoolExecutor(max_workers=threads) as executor:
@@ -199,7 +190,6 @@ class XStreamity_Menu(Screen):
 
             elif hasMultiprocessing:
                 try:
-                    # print("*** trying multiprocessing ThreadPool ***")
                     from multiprocessing.pool import ThreadPool
                     pool = ThreadPool(threads)
                     results = pool.imap(self.download_url, self.url_list)
@@ -223,7 +213,6 @@ class XStreamity_Menu(Screen):
                         glob.active_playlist["data"]["live_streams"] = response
 
         else:
-            # print("*** trying sequential ***")
             for url in self.url_list:
                 result = self.download_url(url)
                 category = result[0]

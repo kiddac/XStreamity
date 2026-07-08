@@ -6,13 +6,6 @@ import os
 import json
 from time import time
 
-try:
-    from http.client import HTTPConnection
-    HTTPConnection.debuglevel = 0
-except:
-    from httplib import HTTPConnection
-    HTTPConnection.debuglevel = 0
-
 # Enigma2 components
 from Components.ActionMap import ActionMap
 from Components.Sources.List import List
@@ -29,8 +22,6 @@ from . import processfiles as loadfiles
 
 class XStreamity_ChannelMenu(Screen):
     ALLOW_SUSPEND = True
-
-    instance = None
 
     def __init__(self, session, callfunc):
         Screen.__init__(self, session)
@@ -50,7 +41,7 @@ class XStreamity_ChannelMenu(Screen):
 
         self.list = []
         self.drawList = []
-        self.playlists_all = self.playlists_all = loadfiles.process_files()
+        self.playlists_all = loadfiles.process_files()
         self["list"] = List(self.drawList, enableWrapAround=True)
 
         self.setup_title = _("Menu")
@@ -132,7 +123,6 @@ class XStreamity_ChannelMenu(Screen):
             self.list.append([12, _("Download Manager")])
         self.list.append([13, _("Global Settings")])
 
-        self.drawList = []
         self.drawList = [buildListEntry(x[0], x[1]) for x in self.list]
         self["list"].setList(self.drawList)
 
@@ -140,9 +130,6 @@ class XStreamity_ChannelMenu(Screen):
         choice = self["list"].getCurrent()[1]
 
         if self["list"].getCurrent():
-            if choice == "":
-                pass
-
             if choice == _("Manual EPG Update"):
                 self.manualEPGUpdate()
             if choice == _("Playlist Settings"):
@@ -232,24 +219,10 @@ class XStreamity_ChannelMenu(Screen):
             glob.ChoiceBoxDialog.hide()
             glob.ChoiceBoxDialog['dialogactions'].execEnd()
 
-    def exitDialog(self):
-        if glob.ChoiceBoxDialog:
-            glob.ChoiceBoxDialog.hide()
-            glob.ChoiceBoxDialog['dialogactions'].execEnd()
-            self.session.deleteDialog(glob.ChoiceBoxDialog)
-
 
 def buildListEntry(index, choice):
     icon = None
 
-    if choice == _("Live"):
-        icon = ""
-    if choice == _("Vod"):
-        icon = ""
-    if choice == _("Series"):
-        icon = ""
-    if choice == _("Catchup"):
-        icon = ""
     if choice == _("Manual EPG Update"):
         icon = ""
     if choice == _("Playlist Settings"):
@@ -258,8 +231,6 @@ def buildListEntry(index, choice):
         icon = ""
     if choice == _("Account Info"):
         icon = ""
-    if choice == ("Set As Default Playlist"):
-        icon = ""
     if choice == _("Manage Playlists"):
         icon = ""
     if choice == _("Add New Playlist"):

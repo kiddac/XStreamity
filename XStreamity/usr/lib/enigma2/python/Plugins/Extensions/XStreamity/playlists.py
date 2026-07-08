@@ -11,13 +11,6 @@ import re
 import shutil
 from datetime import datetime
 
-try:
-    from http.client import HTTPConnection
-    HTTPConnection.debuglevel = 0
-except ImportError:
-    from httplib import HTTPConnection
-    HTTPConnection.debuglevel = 0
-
 # Third-party imports
 import requests
 from requests.adapters import HTTPAdapter, Retry
@@ -120,7 +113,7 @@ class XStreamity_Playlists(Screen):
     def start(self):
 
         if cfg.interface.value == "xstreamity":
-            if glob.original_playlist_file and glob.original_playlist_file:
+            if glob.original_playlist_file and glob.original_playlists_json:
                 cfg.playlist_file.setValue(glob.original_playlist_file)
                 cfg.playlists_json.setValue(glob.original_playlists_json)
                 glob.current_selection = 0
@@ -229,7 +222,6 @@ class XStreamity_Playlists(Screen):
 
         if hasConcurrent or hasMultiprocessing:
             if hasConcurrent:
-                # print("******* trying concurrent futures ******")
                 try:
                     from concurrent.futures import ThreadPoolExecutor
                     with ThreadPoolExecutor(max_workers=threads) as executor:
@@ -238,7 +230,6 @@ class XStreamity_Playlists(Screen):
                     print("Concurrent execution error:", e)
 
             elif hasMultiprocessing:
-                # print("********** trying multiprocessing threadpool *******")
                 try:
                     from multiprocessing.pool import ThreadPool
                     pool = ThreadPool(threads)
@@ -255,7 +246,6 @@ class XStreamity_Playlists(Screen):
                     self.playlists_all[index]["user_info"] = {}
 
         else:
-            # print("********** trying sequential download *******")
             for url in self.url_list:
                 result = self.download_url(url)
                 index = result[0]
@@ -263,7 +253,7 @@ class XStreamity_Playlists(Screen):
                 if response:
                     self.playlists_all[index].update(response)
                 else:
-                    self.playlists_all[index]["user_info"] = []
+                    self.playlists_all[index]["user_info"] = {}
 
         self.buildPlaylistList()
 
@@ -288,7 +278,6 @@ class XStreamity_Playlists(Screen):
                         try:
                             time_now_datestamp = datetime.strptime(str(server_info["time_now"]), time_format)
                             offset = datetime.now().hour - time_now_datestamp.hour
-                            # print("*** offset ***", offset)
                             playlists["player_info"]["serveroffset"] = offset
                             break
                         except ValueError:
@@ -306,13 +295,11 @@ class XStreamity_Playlists(Screen):
                         time_difference = current_dt - timestamp_dt
                         hour_difference = int(time_difference.total_seconds() / 3600)
                         catchupoffset = hour_difference
-                        # print("hour_difference:", hour_difference)
                         playlists["player_info"]["catchupoffset"] = catchupoffset
                     except:
                         pass
 
-                auth = user_info.get("auth", 1)
-                if not isinstance(auth, int):
+                if not isinstance(user_info.get("auth", 1), int):
                     user_info["auth"] = 1
 
                 if "status" in user_info:

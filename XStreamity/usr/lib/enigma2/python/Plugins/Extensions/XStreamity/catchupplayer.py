@@ -1,10 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# Standard library imports
 from __future__ import absolute_import, print_function
 from __future__ import division
 
+# Standard library imports
 import os
 import re
 import tempfile
@@ -15,13 +15,6 @@ try:
     from urlparse import urlparse
 except ImportError:
     from urllib.parse import urlparse
-
-try:
-    from http.client import HTTPConnection
-    HTTPConnection.debuglevel = 0
-except ImportError:
-    from httplib import HTTPConnection
-    HTTPConnection.debuglevel = 0
 
 # Third-party imports
 from PIL import Image
@@ -105,21 +98,16 @@ VIDEO_ASPECT_RATIO_MAP = {
     6: "16:9 Letterbox"
 }
 
-streamtypelist = ["1", "4097"]
-vodstreamtypelist = ["4097"]
+streamtypelist = ["4097"]
 
 if os.path.exists("/usr/bin/gstplayer"):
     streamtypelist.append("5001")
-    vodstreamtypelist.append("5001")
-
 
 if os.path.exists("/usr/bin/exteplayer3"):
     streamtypelist.append("5002")
-    vodstreamtypelist.append("5002")
 
 if os.path.exists("/usr/bin/apt-get"):
     streamtypelist.append("8193")
-    vodstreamtypelist.append("8193")
 
 
 class IPTVInfoBarShowHide():
@@ -377,6 +365,8 @@ class XStreamity_CatchupPlayer(
     SubsSupport,
         Screen):
 
+    ALLOW_SUSPEND = True
+
     def __init__(self, session, streamurl, servicetype):
         Screen.__init__(self, session)
         self.session = session
@@ -412,8 +402,6 @@ class XStreamity_CatchupPlayer(
         self.streamurl = streamurl
         self.servicetype = servicetype
 
-        self._picon_req_id = 0
-
         if cfg.interface.value == "xstreamity":
             skin_path = os.path.join(skin_directory, cfg.interface.value, cfg.xstreamity_skin.value)
 
@@ -429,15 +417,24 @@ class XStreamity_CatchupPlayer(
         self["streamcat"] = StaticText()
         self["streamtype"] = StaticText()
         self["extension"] = StaticText()
+
         self["picon"] = Pixmap()
+        self["PTSSeekBack"] = Pixmap()
+        self["PTSSeekPointer"] = Pixmap()
+
         self["eventname"] = Label()
         self["state"] = Label()
         self["speed"] = Label()
         self["statusicon"] = MultiPixmap()
-        self["PTSSeekBack"] = Pixmap()
-        self["PTSSeekPointer"] = Pixmap()
 
-        self.setup_title = _("Catch Up")
+        # self.setup_title = _("Catch Up")
+
+        if screenwidth.width() == 2560:
+            self.picon_size = (294, 176)
+        elif screenwidth.width() > 1280:
+            self.picon_size = (220, 130)
+        else:
+            self.picon_size = (147, 88)
 
         self["actions"] = ActionMap(["XStreamityActions"], {
             "cancel": self.back,
@@ -450,8 +447,11 @@ class XStreamity_CatchupPlayer(
             "tv": self.toggleStreamType,
             "info": self.toggleStreamType,
             "green": self.nextAR,
+            "0": self.restartStream,
             "ok": self.refreshInfobar,
         }, -2)
+
+        self._picon_req_id = 0
 
         self.timerImage = eTimer()
         try:
@@ -485,6 +485,11 @@ class XStreamity_CatchupPlayer(
         except:
             pass
 
+    def restartStream(self):
+        if self.session:
+            self.session.nav.stopService()
+            self.playStream(self.servicetype, self.streamurl)
+
     def refreshInfobar(self):
         IPTVInfoBarShowHide.OkPressed(self)
 
@@ -506,22 +511,28 @@ class XStreamity_CatchupPlayer(
         self.reference = eServiceReference(int(servicetype), 0, streamurl)
         self.reference.setName(glob.catchupdata[0])
 
+        """
         if self.session.nav.getCurrentlyPlayingServiceReference():
             if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString():
-
                 try:
-                    self.session.nav.stopService()
-                except:
-                    pass
-
-                self.session.nav.playService(self.reference)
-
+                    self.session.nav.playService(self.reference)
+                except Exception as e:
+                    print(e)
         else:
+            try:
+                self.session.nav.playService(self.reference)
+            except Exception as e:
+                print(e)
+                """
+        try:
             self.session.nav.playService(self.reference)
+        except Exception as e:
+            print(e)
 
-        if self.session.nav.getCurrentlyPlayingServiceReference():
-            glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
-            glob.newPlayingServiceRefString = self.session.nav.getCurrentlyPlayingServiceReference().toString()
+        nowref = self.session.nav.getCurrentlyPlayingServiceReference()
+        if nowref:
+            glob.newPlayingServiceRef = nowref
+            glob.newPlayingServiceRefString = nowref.toString()
 
         if cfg.infobarpicons.value is True:
             self.timerImage.start(250, True)
@@ -547,6 +558,30 @@ class XStreamity_CatchupPlayer(
                 self.setAspectRatio(self.ar_id_player)
         except Exception:
             pass
+
+    def back(self):
+        self._cleanupTimer("timerImage")
+
+        glob.nextlist[-1]["index"] = glob.currentchannellistindex
+        try:
+            setResumePoint(self.session)
+        except Exception as e:
+            print(e)
+
+        self.close()
+
+    def toggleStreamType(self):
+        current_index = 0
+        for index, item in enumerate(streamtypelist):
+            if str(item) == str(self.servicetype):
+                current_index = index
+                break
+        next_stream_type = islice(cycle(streamtypelist), current_index + 1, None)
+        try:
+            self.servicetype = int(next(next_stream_type))
+        except:
+            pass
+        self.playStream(self.servicetype, self.streamurl)
 
     def downloadImage(self):
         # Clear picon immediately on zap so previous one doesn't remain if new fails
@@ -607,10 +642,9 @@ class XStreamity_CatchupPlayer(
                     _cleanup_temp()
                     return
 
-                self.resizeImage(temp)
+                self.resizeImage(temp, req_id=req_id)
 
             def _err(_failure=None):
-                # Ignore stale callbacks
                 if getattr(self, "_picon_req_id", 0) != req_id:
                     _cleanup_temp()
                     return
@@ -646,14 +680,8 @@ class XStreamity_CatchupPlayer(
         if self["picon"].instance:
             self["picon"].instance.setPixmapFromFile(os.path.join(common_path, "picon.png"))
 
-    def resizeImage(self, original, data=None):
-        if screenwidth.width() == 2560:
-            size = [294, 176]
-        elif screenwidth.width() > 1280:
-            size = [220, 130]
-        else:
-            size = [147, 88]
-
+    def resizeImage(self, original, req_id=None):
+        size = self.picon_size
         if os.path.exists(original):
             im = None
             try:
@@ -695,36 +723,6 @@ class XStreamity_CatchupPlayer(
                 pass
         else:
             self.loadDefaultImage()
-
-    def back(self):
-        self._cleanupTimer("timerImage")
-
-        glob.nextlist[-1]["index"] = glob.currentchannellistindex
-        try:
-            setResumePoint(self.session)
-        except Exception as e:
-            print(e)
-
-        try:
-            self.session.nav.stopService()
-        except:
-            pass
-
-        self.close()
-
-    def toggleStreamType(self):
-        currentindex = 0
-
-        for index, item in enumerate(vodstreamtypelist, start=0):
-            if str(item) == str(self.servicetype):
-                currentindex = index
-                break
-        nextStreamType = islice(cycle(vodstreamtypelist), currentindex + 1, None)
-        try:
-            self.servicetype = int(next(nextStreamType))
-        except:
-            pass
-        self.playStream(self.servicetype, self.streamurl)
 
     def setAspectRatio(self, ar_index):
         try:

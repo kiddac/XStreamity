@@ -68,7 +68,7 @@ class RecordDateInput(ConfigListScreen, Screen):
             "green": self.keyGo,
         }, -2)
 
-        self.onFirstExecBegin.append(self.initConfig)
+        self.onFirstExecBegin.append(self.createSetup)
         self.onLayoutFinish.append(self.__layoutFinished)
 
     def __layoutFinished(self):
@@ -86,21 +86,15 @@ class RecordDateInput(ConfigListScreen, Screen):
 
             self.close()
 
-    def initConfig(self):
-        self.timeinput_name = self.conf_name
-        self.timeinput_date = self.conf_date
-        self.timeinput_starttime = self.conf_starttime
-        self.timeinput_endtime = self.conf_endtime
-        self.createSetup()
-
     def createSetup(self):
         self.list = []
 
-        self.list.append(getConfigListEntry(_("Name"), self.timeinput_name))
-        if not self.conf_instant:
-            self.list.append(getConfigListEntry(_("Start Time"), self.timeinput_starttime))
+        self.list.append(getConfigListEntry(_("Name"), self.conf_name))
 
-        self.list.append(getConfigListEntry(_("End Time"), self.timeinput_endtime))
+        if not self.conf_instant:
+            self.list.append(getConfigListEntry(_("Start Time"), self.conf_starttime))
+
+        self.list.append(getConfigListEntry(_("End Time"), self.conf_endtime))
 
         self["config"].list = self.list
         self["config"].l.setList(self.list)
@@ -128,8 +122,11 @@ class RecordDateInput(ConfigListScreen, Screen):
         return int(time.mktime(dt.timetuple()))
 
     def keyGo(self):
-        starttime = self.getTimestamp(self.timeinput_date, self.timeinput_starttime.value)
-        if self.timeinput_endtime.value < self.timeinput_starttime.value:
-            self.timeinput_date += 86400
-        endtime = self.getTimestamp(self.timeinput_date, self.timeinput_endtime.value)
-        self.close((True, starttime, endtime, self.timeinput_name.value))
+        starttime = self.getTimestamp(self.conf_date, self.conf_starttime.value)
+
+        if self.conf_endtime.value < self.conf_starttime.value:
+            self.conf_date += 86400
+
+        endtime = self.getTimestamp(self.conf_date, self.conf_endtime.value)
+
+        self.close((True, starttime, endtime, self.conf_name.value))

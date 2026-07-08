@@ -63,20 +63,30 @@ def process_files():
     with open(playlist_file, "r+") as f:
         lines = f.readlines()
 
+    cleaned_lines = []
+
     with open(playlist_file, "w") as f:
         for line in lines:
             line = re.sub(" +", " ", line)
             line = line.strip(" ")
+
             if not line.startswith(("http://", "https://", "#")):
                 line = "# " + line
+
             if "=mpegts" in line:
                 line = line.replace("=mpegts", "=ts")
+
             if "=hls" in line:
                 line = line.replace("=hls", "=m3u8")
+
             if line.strip() == "#":
                 line = ""
+
             if line != "":
                 f.write(line)
+                cleaned_lines.append(line)
+
+    lines = cleaned_lines
 
     # Read entries from playlists.txt
     index = 0
@@ -84,47 +94,46 @@ def process_files():
     vodtype = cfg.vodtype.value
 
     for line in lines:
-        port = ""
-        username = ""
-        password = ""
-        media_type = ""
-        output = ""
-        livehidden = []
-        channelshidden = []
-        vodhidden = []
-        vodstreamshidden = []
-        serieshidden = []
-        seriestitleshidden = []
-        seriesseasonshidden = []
-        seriesepisodeshidden = []
-        catchuphidden = []
-        catchupchannelshidden = []
-        showlive = True
-        showvod = True
-        showseries = True
-        showcatchup = True
-        livefavourites = []
-        vodfavourites = []
-        seriesfavourites = []
-        liverecents = []
-        vodrecents = []
-        vodwatched = []
-        serieswatched = []
-        live_streams = []
-        serveroffset = 0
-        catchupoffset = 0
-        epgoffset = 0
-        epgalternative = False
-        epgalternativeurl = ""
-        customsids = False
-        fail_count = 0
-
         if line.startswith("http"):
+            port = ""
+            livehidden = []
+            channelshidden = []
+            vodhidden = []
+            vodstreamshidden = []
+            serieshidden = []
+            seriestitleshidden = []
+            seriesseasonshidden = []
+            seriesepisodeshidden = []
+            catchuphidden = []
+            catchupchannelshidden = []
+            showlive = True
+            showvod = True
+            showseries = True
+            showcatchup = True
+            livefavourites = []
+            vodfavourites = []
+            seriesfavourites = []
+            liverecents = []
+            vodrecents = []
+            vodwatched = []
+            serieswatched = []
+            serveroffset = 0
+            catchupoffset = 0
+            epgoffset = 0
+            epgalternative = False
+            epgalternativeurl = ""
+            customsids = False
+            fail_count = 0
+
             line = line.strip(" ")
+
             parsed_uri = urlparse(line)
             protocol = parsed_uri.scheme + "://"
 
             if not (protocol == "http://" or protocol == "https://"):
+                continue
+
+            if not parsed_uri.hostname:
                 continue
 
             domain = parsed_uri.hostname.lower()
@@ -183,45 +192,68 @@ def process_files():
 
             for playlist in playlists_all:
                 # Extra check in case playlists.txt details have been amended
-                if ("domain" in playlist["playlist_info"]
-                        and "username" in playlist["playlist_info"]
-                        and "password" in playlist["playlist_info"]):
+
+                playlist_info = playlist.get("playlist_info", {})
+
+                if ("domain" in playlist_info
+                        and "username" in playlist_info
+                        and "password" in playlist_info):
                     if (playlist["playlist_info"]["domain"] == domain
-                            and playlist["playlist_info"]["username"] == username
-                            and playlist["playlist_info"]["password"] == password):
+                            and playlist_info["username"] == username
+                            and playlist_info["password"] == password):
 
                         playlist_exists = True
 
                         # Dictionary containing keys and default values for playlist["player_info"] and playlist["data"]
                         default_values = {
                             "player_info": {
+                                "livetype": livetype,
+                                "vodtype": vodtype,
+                                "livehidden": livehidden,
                                 "channelshidden": channelshidden,
+                                "vodhidden": vodhidden,
                                 "vodstreamshidden": vodstreamshidden,
+                                "serieshidden": serieshidden,
                                 "seriestitleshidden": seriestitleshidden,
                                 "seriesseasonshidden": seriesseasonshidden,
                                 "seriesepisodeshidden": seriesepisodeshidden,
                                 "catchuphidden": catchuphidden,
                                 "catchupchannelshidden": catchupchannelshidden,
+                                "livefavourites": livefavourites,
+                                "vodfavourites": vodfavourites,
+                                "seriesfavourites": seriesfavourites,
+                                "liverecents": liverecents,
+                                "vodrecents": vodrecents,
+                                "vodwatched": vodwatched,
+                                "serieswatched": serieswatched,
+                                "showlive": showlive,
+                                "showvod": showvod,
+                                "showseries": showseries,
+                                "showcatchup": showcatchup,
                                 "serveroffset": serveroffset,
                                 "catchupoffset": catchupoffset,
                                 "epgoffset": epgoffset,
                                 "epgalternative": epgalternative,
                                 "epgalternativeurl": epgalternativeurl,
-                                "liverecents": liverecents,
-                                "vodrecents": vodrecents,
-                                "vodwatched": vodwatched,
-                                "serieswatched": serieswatched,
-                                "seriesfavourites": seriesfavourites,
                             },
                             "data": {
-                                "live_streams": live_streams,
+                                "live_categories": [],
+                                "vod_categories": [],
+                                "series_categories": [],
+                                "live_streams": [],
+                                "catchup": False,
                                 "customsids": customsids,
+                                "epg_date": "",
+                                "data_downloaded": False,
                                 "fail_count": fail_count
                             }
                         }
 
                         # Iterate over keys and default values and update playlist
                         for key, value in default_values.items():
+                            if key not in playlist:
+                                playlist[key] = {}
+
                             for sub_key, sub_value in value.items():
                                 if sub_key not in playlist[key]:
                                     playlist[key][sub_key] = sub_value
@@ -319,7 +351,7 @@ def process_files():
                     break
 
     for index, playlist in enumerate(new_list):
-        playlist["playlist_info"]["index"] = index  # Or index + 1 if you want to start from 1
+        playlist["playlist_info"]["index"] = index
     playlists_all = new_list
 
     # Write new x-playlists.json file

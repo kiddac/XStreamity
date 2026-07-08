@@ -21,13 +21,6 @@ try:
 except:
     from urllib.parse import urlparse
 
-try:
-    from http.client import HTTPConnection
-    HTTPConnection.debuglevel = 0
-except:
-    from httplib import HTTPConnection
-    HTTPConnection.debuglevel = 0
-
 
 # Third-party imports
 import requests
@@ -78,7 +71,7 @@ def detect_video_extension(file_path):
     try:
         import mimetypes
         # Get MIME type based on file content
-        mime_type, encoding = mimetypes.guess_type(file_path)
+        mime_type = mimetypes.guess_type(file_path)[0]
 
         if mime_type:
             # Map MIME types to our 4 allowed extensions
@@ -156,7 +149,6 @@ class downloadTask(Task):
         self.starttime = time.time()
 
     def processOutput(self, data):
-        global ui
         if pythonVer == 3:
             data = str(data)
         try:
@@ -212,12 +204,9 @@ class XStreamity_DownloadManager(Screen):
         self.session = session
 
         self.setup_title = _("VOD Download Manager")
-        self.onChangedEntry = []
 
         self.drawList = []
         self.downloads_all = []
-
-        self.progress = 0
 
         if cfg.interface.value == "xstreamity":
             skin_path = os.path.join(skin_directory, cfg.interface.value, cfg.xstreamity_skin.value)
@@ -380,7 +369,6 @@ class XStreamity_DownloadManager(Screen):
             print("***  checkactivedownloads ***")
         standard_extensions = ['.mp4', '.mkv', '.avi', '.ts']
         for video in self.downloads_all:
-            recbytes = 0
             filmtitle = str(video[1])
 
             try:
@@ -783,7 +771,6 @@ class XStreamity_DownloadManager(Screen):
     def download_finished(self, filename, filmtitle):
         if debugs:
             print("*** downloaded_finished ***")
-        global ui
 
         standard_extensions = ['.mp4', '.mkv', '.avi', '.ts']
 
@@ -797,7 +784,6 @@ class XStreamity_DownloadManager(Screen):
             new_filename = file_name + detected_extension
             try:
                 os.rename(filename, new_filename)
-                # Update filename for metadata creation
                 filename = new_filename
             except Exception as e:
                 print("Error renaming file: " + str(e))
@@ -813,18 +799,56 @@ class XStreamity_DownloadManager(Screen):
             except Exception as e:
                 print(e)
 
-        x = 0
-        for video in self.downloads_all:
-            if str(video[1]) == str(filmtitle):
+        video_index = None
+        dtype = ""
+        filmtitle = str(filmtitle)
+        filmdescription = ""
+        filmduration = ""
+        filmchannel = ""
+        filmdate = ""
+
+        for index, video in enumerate(self.downloads_all):
+            if len(video) > 1 and str(video[1]) == str(filmtitle):
+                video_index = index
+
+                if len(video) > 0:
+                    dtype = video[0]
+
+                if len(video) > 6:
+                    filmdescription = video[6]
+
+                if len(video) > 7:
+                    filmduration = video[7]
+
+                if len(video) > 8:
+                    filmchannel = video[8]
+
+                if len(video) > 9:
+                    filmdate = video[9]
+
                 break
-            x += 1
-        self.downloads_all[x][3] = "Downloaded"
-        self.downloads_all[x][4] = 100
+
+        if video_index is None:
+            print("Finished download not found in downloads list: " + str(filmtitle))
+            return
+
+        self.downloads_all[video_index][3] = "Downloaded"
+        self.downloads_all[video_index][4] = 100
 
         if ui:
             self.sortlist()
             self.buildList()
-        self.createMetaFile(filename, self.dtype, self.filmtitle, self.filmdescription, self.filmduration, self.filmchannel, self.filmdate)
+
+        self.createMetaFile(
+            filename,
+            dtype,
+            filmtitle,
+            filmdescription,
+            filmduration,
+            filmchannel,
+            filmdate
+        )
+
         self.saveJson()
 
     def buildListEntry(self, dtype, title, url, state, progress, length, description, duration, channel, date):

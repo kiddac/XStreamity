@@ -15,13 +15,6 @@ from datetime import datetime, timedelta
 from itertools import cycle, islice
 
 try:
-    from http.client import HTTPConnection
-    HTTPConnection.debuglevel = 0
-except ImportError:
-    from httplib import HTTPConnection
-    HTTPConnection.debuglevel = 0
-
-try:
     from urllib.parse import urlparse
 except:
     from urlparse import urlparse
@@ -194,8 +187,6 @@ class XStreamity_Live_Categories(Screen):
 
         self.player_api = glob.active_playlist["playlist_info"]["player_api"]
 
-        self.liveStreamsData = []
-
         next_url = str(self.player_api) + "&action=get_live_categories"
 
         full_url = glob.active_playlist["playlist_info"]["full_url"]
@@ -304,10 +295,6 @@ class XStreamity_Live_Categories(Screen):
         self["menu_actions"].setEnabled(False)
         self["channel_actions"].setEnabled(False)
 
-        self["splash"] = Pixmap()
-        # self["splash"].show()
-        self["splash"].hide()
-
         glob.nextlist = []
         glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self.sortText, "filter": ""})
 
@@ -398,8 +385,6 @@ class XStreamity_Live_Categories(Screen):
 
         self.player_api = glob.active_playlist["playlist_info"]["player_api"]
 
-        self.liveStreamsData = []
-
         full_url = glob.active_playlist["playlist_info"]["full_url"]
 
         self.p_live_categories_url = str(self.player_api) + "&action=get_live_categories"
@@ -423,16 +408,6 @@ class XStreamity_Live_Categories(Screen):
             next_url = str(self.player_api) + "&action=get_live_categories"
             glob.nextlist = []
             glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self.sortText, "filter": ""})
-
-    def playOriginalChannel(self):
-        if debugs:
-            print("*** playOriginalChannel ***")
-
-        try:
-            if glob.currentPlayingServiceRefString:
-                self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
-        except Exception as e:
-            print(e)
 
     def refresh(self):
         if debugs:
@@ -465,7 +440,6 @@ class XStreamity_Live_Categories(Screen):
 
             if not glob.active_playlist["player_info"]["showlive"]:
                 self.original_active_playlist = glob.active_playlist
-                # self["splash"].hide()
                 self.close()
             else:
                 self.original_active_playlist = glob.active_playlist
@@ -505,7 +479,6 @@ class XStreamity_Live_Categories(Screen):
         if debugs:
             print("*** download_url ***")
 
-        import requests
         index = url[1]
         response = None
 
@@ -558,7 +531,6 @@ class XStreamity_Live_Categories(Screen):
 
         threads = min(len(self.url_list), 10)
 
-        self.retry = 0
         glob.active_playlist["data"]["live_categories"] = []
         glob.active_playlist["data"]["vod_categories"] = []
         glob.active_playlist["data"]["series_categories"] = []
@@ -573,7 +545,6 @@ class XStreamity_Live_Categories(Screen):
                     print("Concurrent execution error:", e)
 
             elif hasMultiprocessing:
-                # print("********** trying multiprocessing threadpool *******")
                 try:
                     from multiprocessing.pool import ThreadPool
                     pool = ThreadPool(threads)
@@ -619,7 +590,6 @@ class XStreamity_Live_Categories(Screen):
                     if index == 4:
                         glob.active_playlist["data"]["customsids"] = any(item.get("custom_sid", False) for item in response if "custom_sid" in item)
 
-        # glob.active_playlist["data"]["data_downloaded"] = True
         glob.active_playlist["data"]["live_streams"] = []
         self.writeJsonFile()
 
@@ -657,7 +627,6 @@ class XStreamity_Live_Categories(Screen):
         else:
             self.getLevel2()
 
-        # self["splash"].hide()
         self.buildLists()
 
     def buildLists(self):
@@ -710,8 +679,6 @@ class XStreamity_Live_Categories(Screen):
         if debugs:
             print("*** getLevel2 ***")
 
-        response = ""
-
         if self.chosen_category == "favourites":
             response = glob.active_playlist["player_info"].get("livefavourites", [])
         elif self.chosen_category == "recents":
@@ -736,7 +703,6 @@ class XStreamity_Live_Categories(Screen):
 
         livehidden_set = set(str(x) for x in player_info.get("livehidden", []) if x != "")
 
-        index = 0
         self.list2 = []
 
         if response:
@@ -934,9 +900,6 @@ class XStreamity_Live_Categories(Screen):
         if debugs:
             print("*** buildList2 ***")
 
-        self.main_list = []
-        self.epglist = []
-
         """
         0 = index
         1 = name
@@ -1010,7 +973,7 @@ class XStreamity_Live_Categories(Screen):
 
             self["key_menu"].setText("+/-")
 
-            if self.chosen_category == "favourites" or self.chosen_category == "recent":
+            if self.chosen_category == "favourites" or self.chosen_category == "recents":
                 self["key_menu"].setText("")
 
     def stopStream(self):
@@ -1020,13 +983,16 @@ class XStreamity_Live_Categories(Screen):
         current_playing_ref = glob.currentPlayingServiceRefString
         new_playing_ref = glob.newPlayingServiceRefString
 
-        if current_playing_ref and new_playing_ref and current_playing_ref != new_playing_ref:
-            currently_playing_service = self.session.nav.getCurrentlyPlayingServiceReference()
-            if currently_playing_service:
-                self.session.nav.stopService()
+        if current_playing_ref:
+            if current_playing_ref and new_playing_ref and current_playing_ref != new_playing_ref:
+                currently_playing_service = self.session.nav.getCurrentlyPlayingServiceReference()
+                if currently_playing_service:
+                    self.session.nav.stopService()
 
-            self.session.nav.playService(eServiceReference(current_playing_ref))
-            glob.newPlayingServiceRefString = current_playing_ref
+                self.session.nav.playService(eServiceReference(current_playing_ref))
+                glob.newPlayingServiceRefString = current_playing_ref
+        else:
+            self.session.nav.stopService()
 
     def selectionChanged(self):
         if debugs:
@@ -1203,7 +1169,7 @@ class XStreamity_Live_Categories(Screen):
         if self["picon"].instance:
             self["picon"].instance.setPixmapFromFile(os.path.join(common_path, "picon.png"))
 
-    def resizeImage(self, original, req_id=None, data=None):
+    def resizeImage(self, original, req_id=None):
         if debugs:
             print("*** resizeImage ***", original, req_id)
 
@@ -1406,8 +1372,6 @@ class XStreamity_Live_Categories(Screen):
     def filterChannels(self, result=None):
         if debugs:
             print("*** filterChannels ***")
-
-        activelist = []
 
         if result:
             self.filterresult = result
@@ -1618,10 +1582,10 @@ class XStreamity_Live_Categories(Screen):
 
                             update_channel_icons_and_list()
                         else:
-                            self.session.openWithCallback(self.reload, liveplayer.XStreamity_StreamPlayer, str(next_url), str(streamtype), stream_id)
+                            self.session.openWithCallback(self.reload, liveplayer.XStreamity_StreamPlayer, str(next_url), str(streamtype))
                     else:
-                        self.session.nav.playService(self.reference)
-                        self.session.openWithCallback(self.reload, liveplayer.XStreamity_StreamPlayer, str(next_url), str(streamtype), stream_id)
+                        # self.session.nav.playService(self.reference)
+                        self.session.openWithCallback(self.reload, liveplayer.XStreamity_StreamPlayer, str(next_url), str(streamtype))
 
                     self["category_actions"].setEnabled(False)
 
@@ -1641,6 +1605,7 @@ class XStreamity_Live_Categories(Screen):
 
         self.setWatchingIcon(stream_id)
         self.setIndex()
+        self.selectionChanged()
         self.downloadImage()
 
     def setWatchingIcon(self, stream_id):
@@ -1710,13 +1675,14 @@ class XStreamity_Live_Categories(Screen):
 
         if not glob.nextlist:
             self.stopStream()
-            # self["splash"].hide()
             self.close()
         else:
             self["x_title"].setText("")
             self["x_description"].setText("")
+
             if cfg.stopstream.value:
                 self.stopStream()
+
             self.level -= 1
 
             self["category_actions"].setEnabled(True)
@@ -1772,7 +1738,6 @@ class XStreamity_Live_Categories(Screen):
             }
 
             glob.active_playlist["player_info"]["livefavourites"].insert(0, newfavourite)
-            # self.hideEPG()
 
         with open(self.playlists_json, "r") as f:
             try:
@@ -1946,8 +1911,6 @@ class XStreamity_Live_Categories(Screen):
         self["x_title"].setText(nowTitle)
         self["x_description"].setText(descriptionnow)
 
-        percent = 0
-
         if startnowunixtime and startnextunixtime:
             self["progress"].show()
 
@@ -2086,7 +2049,6 @@ class XStreamity_Live_Categories(Screen):
                             self["key_epg"].setText("")
 
                             self.selectedlist = self["epg_short_list"]
-                            # self.displayShortEPG()
                     except Exception as e:
                         print("Error fetching short EPG:", e)
             else:
@@ -2158,7 +2120,14 @@ class XStreamity_Live_Categories(Screen):
             current_index = self["main_list"].getIndex()
             description = ""
             streamurl = self["main_list"].getCurrent()[3]
-            streamtype = 1
+            streamtype = glob.active_playlist["player_info"]["livetype"]
+
+            if str(os.path.splitext(streamurl)[-1]).lower() == ".m3u8":
+                if streamtype == "1":
+                    streamtype = "4097"
+
+            if streamtype not in ("1", "4097"):
+                streamtype = "4097"
 
             if self.epglist[current_index][4]:
                 description = self.epglist[current_index][4]
@@ -2170,19 +2139,20 @@ class XStreamity_Live_Categories(Screen):
 
             eventid = int(streamurl.rpartition("/")[-1].partition(".")[0])
 
-            if streamurl.endswith("m3u8"):
-                streamtype = 4097
-
-            self.reference = eServiceReference(streamtype, 0, streamurl)
+            self.reference = eServiceReference(int(streamtype), 0, streamurl)
 
             # switch channel to prevent multi active users
+            """
             if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString():
-                # self.session.nav.stopService()
                 self.session.nav.playService(self.reference)
 
                 if self.session.nav.getCurrentlyPlayingServiceReference():
                     glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
                     glob.newPlayingServiceRefString = glob.newPlayingServiceRef.toString()
+                    """
+
+            # stop channel to prevent multi active users
+            self.session.nav.stopService()
 
             if isinstance(self.reference, eServiceReference):
                 serviceref = ServiceReference(self.reference)

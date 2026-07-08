@@ -103,8 +103,8 @@ class XStreamity_MainMenu(Screen):
     def getDynamicKeyCombo(self):
         today = datetime.date.today()
         day = str(today.day).zfill(2)
-        year = str(today.month).zfill(2)
-        return day + year
+        month = str(today.month).zfill(2)
+        return day + month
 
     def keyPressed(self, key):
         self.key_sequence.append(key)
@@ -138,7 +138,6 @@ class XStreamity_MainMenu(Screen):
         except Exception as e:
             print("Error checking location validity:", e)
 
-        dependencies = True
         dependencies = self.check_python_dependencies()
 
         if not dependencies:
@@ -229,17 +228,41 @@ class XStreamity_MainMenu(Screen):
 
     def quit(self, data=None):
         self.playOriginalChannel()
+        self.clearData()
 
-    def playOriginalChannel(self):
-        if glob.currentPlayingServiceRefString != glob.newPlayingServiceRefString:
-            if glob.newPlayingServiceRefString and glob.currentPlayingServiceRefString:
-                self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
+    def clearData(self):
+        for playlist in self.playlists_all:
+            playlist["data"]["live_categories"] = []
+            playlist["data"]["vod_categories"] = []
+            playlist["data"]["series_categories"] = []
+            playlist["data"]["live_streams"] = []
+            playlist["data"]["data_downloaded"] = False
+            playlist["data"]["fail_count"] = 0
 
         try:
-            if glob.original_aspect_ratio is not None:
-                eAVSwitch.getInstance().setAspectRatio(glob.original_aspect_ratio)
-        except Exception:
-            pass
+            with open(self.playlists_json, "w") as f:
+                json.dump(self.playlists_all, f, indent=4)
+        except Exception as e:
+            print("JSON write error:", e)
+
+    def playOriginalChannel(self):
+        if glob.currentPlayingServiceRefString:
+            if glob.currentPlayingServiceRefString != glob.newPlayingServiceRefString:
+                try:
+                    self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
+                except:
+                    pass
+            try:
+                if glob.original_aspect_ratio is not None:
+                    eAVSwitch.getInstance().setAspectRatio(glob.original_aspect_ratio)
+            except Exception:
+                pass
+
+        else:
+            try:
+                self.session.nav.stopService()
+            except:
+                pass
 
         self.close()
 

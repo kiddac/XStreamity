@@ -9,19 +9,12 @@ import json
 import os
 import re
 import shutil
-import subprocess
+# import subprocess
 import time
 from itertools import cycle, islice
 import zlib
 import tempfile
 import unicodedata
-
-try:
-    from http.client import HTTPConnection
-    HTTPConnection.debuglevel = 0
-except ImportError:
-    from httplib import HTTPConnection
-    HTTPConnection.debuglevel = 0
 
 try:
     from urllib import quote
@@ -184,8 +177,6 @@ class XStreamity_Vod_Categories(Screen):
         self.host = glob.active_playlist["playlist_info"]["host"]
         self.username = glob.active_playlist["playlist_info"]["username"]
         self.password = glob.active_playlist["playlist_info"]["password"]
-        self.output = glob.active_playlist["playlist_info"]["output"]
-        self.name = glob.active_playlist["playlist_info"]["name"]
 
         self.player_api = glob.active_playlist["playlist_info"]["player_api"]
 
@@ -201,7 +192,6 @@ class XStreamity_Vod_Categories(Screen):
 
         self._tmp_cover = None
         self._tmp_logo = None
-        self._tmp_backdrop = None
         self._tmp_backdrop_src = None
         self._tmp_backdrop_out = None
 
@@ -281,8 +271,6 @@ class XStreamity_Vod_Categories(Screen):
         # Precompiled regex (stripjunk)
         self._re_has_ascii = re.compile(r'[\x00-\x7F]')
         self._re_has_non_ascii = re.compile(r'[^\x00-\x7F]')
-
-        self._re_remove_non_ascii = re.compile(r'[^\x00-\x7F]+')
 
         self._re_end_the = re.compile(r'\s*the$', re.IGNORECASE)
         self._re_prefix_xx_colon = re.compile(r'^\w{2}:', re.IGNORECASE)
@@ -400,7 +388,6 @@ class XStreamity_Vod_Categories(Screen):
         self["channel_actions"].setEnabled(False)
 
         self["splash"] = Pixmap()
-        # self["splash"].show()
         self["splash"].hide()
 
         glob.nextlist = []
@@ -580,10 +567,7 @@ class XStreamity_Vod_Categories(Screen):
         self.host = glob.active_playlist["playlist_info"]["host"]
         self.username = glob.active_playlist["playlist_info"]["username"]
         self.password = glob.active_playlist["playlist_info"]["password"]
-        self.output = glob.active_playlist["playlist_info"]["output"]
-        self.name = glob.active_playlist["playlist_info"]["name"]
         self.player_api = glob.active_playlist["playlist_info"]["player_api"]
-        self.liveStreamsData = []
         self.p_live_categories_url = str(self.player_api) + "&action=get_live_categories"
         self.p_vod_categories_url = str(self.player_api) + "&action=get_vod_categories"
         self.p_series_categories_url = str(self.player_api) + "&action=get_series_categories"
@@ -592,16 +576,6 @@ class XStreamity_Vod_Categories(Screen):
             next_url = str(self.player_api) + "&action=get_vod_categories"
             glob.nextlist = []
             glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self.sortText, "filter": ""})
-
-    def playOriginalChannel(self):
-        if debugs:
-            print("*** playOriginalChannel ***")
-
-        try:
-            if glob.currentPlayingServiceRefString:
-                self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
-        except Exception as e:
-            print(e)
 
     def refresh(self):
         if debugs:
@@ -633,7 +607,6 @@ class XStreamity_Vod_Categories(Screen):
 
             if not glob.active_playlist["player_info"]["showvod"]:
                 self.original_active_playlist = glob.active_playlist
-                # self["splash"].hide()
                 self.close()
             else:
                 self.original_active_playlist = glob.active_playlist
@@ -672,7 +645,6 @@ class XStreamity_Vod_Categories(Screen):
         if debugs:
             print("*** download_url ***")
 
-        import requests
         index = url[1]
         response = None
 
@@ -725,10 +697,11 @@ class XStreamity_Vod_Categories(Screen):
 
         threads = min(len(self.url_list), 10)
 
-        self.retry = 0
         glob.active_playlist["data"]["live_categories"] = []
         glob.active_playlist["data"]["vod_categories"] = []
         glob.active_playlist["data"]["series_categories"] = []
+
+        results = []
 
         if hasConcurrent or hasMultiprocessing:
             if hasConcurrent:
@@ -740,7 +713,7 @@ class XStreamity_Vod_Categories(Screen):
                     print("Concurrent execution error:", e)
 
             elif hasMultiprocessing:
-                # print("********** trying multiprocessing threadpool *******")
+
                 try:
                     from multiprocessing.pool import ThreadPool
                     pool = ThreadPool(threads)
@@ -765,7 +738,6 @@ class XStreamity_Vod_Categories(Screen):
                         glob.active_playlist["data"]["series_categories"] = response
 
         else:
-            # print("*** trying sequential ***")
             for url in self.url_list:
                 result = self.download_url(url)
                 index = result[0]
@@ -783,7 +755,6 @@ class XStreamity_Vod_Categories(Screen):
                     if index == 3:
                         glob.active_playlist["data"]["series_categories"] = response
 
-        # glob.active_playlist["data"]["data_downloaded"] = True
         glob.active_playlist["data"]["live_streams"] = []
         self.writeJsonFile()
 
@@ -811,7 +782,6 @@ class XStreamity_Vod_Categories(Screen):
         else:
             self.getVodCategoryStreams()
 
-        # self["splash"].hide()
         self.getSortOrder()
         self.buildLists()
 
@@ -888,7 +858,6 @@ class XStreamity_Vod_Categories(Screen):
         if debugs:
             print("*** getCategories **")
 
-        index = 0
         self.list1 = []
         self.prelist = []
 
@@ -931,7 +900,6 @@ class XStreamity_Vod_Categories(Screen):
             self["key_epg"].setText("TMDB")
         else:
             self["key_epg"].setText("IMDB")
-        response = ""
 
         if self.chosen_category == "favourites":
             response = glob.active_playlist["player_info"].get("vodfavourites", [])
@@ -940,7 +908,6 @@ class XStreamity_Vod_Categories(Screen):
         else:
             response = self.downloadApiData(glob.nextlist[-1]["next_url"])
 
-        index = 0
         self.list2 = []
 
         # Build favourite set once (speed win)
@@ -1155,8 +1122,6 @@ class XStreamity_Vod_Categories(Screen):
 
             content = sanitize_false(content)
 
-            # print("*** content ***", content)
-
             if "info" in content and content["info"]:
                 self.tmdbresults = content["info"]
 
@@ -1337,10 +1302,7 @@ class XStreamity_Vod_Categories(Screen):
 
         if current_item:
             title = ""
-            searchtitle = ""
-            self.searchtitle = ""
             self.isIMDB = False
-            self.tmdb_id_exists = False
             year = ""
 
             next_url = current_item[3]
@@ -1463,7 +1425,6 @@ class XStreamity_Vod_Categories(Screen):
         if debugs:
             print("*** processTMDBDetails ***")
 
-        response = ""
         self.tmdbdetails = []
         self.tmdbresults = {}
 
@@ -1827,14 +1788,13 @@ class XStreamity_Vod_Categories(Screen):
             self["key_menu"].setText("")
         else:
             if not glob.nextlist[-1]["sort"]:
-                # self.sortText = _("Sort: A-Z")
                 glob.nextlist[-1]["sort"] = self.sortText
 
             self["key_blue"].setText(_("Search"))
             self["key_yellow"].setText(_(glob.nextlist[-1]["sort"]))
             self["key_menu"].setText("+/-")
 
-            if self.chosen_category == "favourites" or self.chosen_category == "recent":
+            if self.chosen_category == "favourites" or self.chosen_category == "recents":
                 self["key_menu"].setText("")
 
             if self.chosen_category == "recents":
@@ -2521,8 +2481,6 @@ class XStreamity_Vod_Categories(Screen):
         if debugs:
             print("*** filterChannels ***")
 
-        activelist = []
-
         if result:
             self.filterresult = result
             glob.nextlist[-1]["filter"] = self.filterresult
@@ -2674,7 +2632,7 @@ class XStreamity_Vod_Categories(Screen):
 
                     self.reference = eServiceReference(int(streamtype), 0, next_url)
                     self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
-                    self.session.nav.playService(self.reference)
+                    # self.session.nav.playService(self.reference)
                     self.session.openWithCallback(self.setIndex, vodplayer.XStreamity_VodPlayer, str(next_url), str(streamtype), stream_id)
 
                 else:
@@ -2709,7 +2667,6 @@ class XStreamity_Vod_Categories(Screen):
             glob.nextlist.pop()
 
         if not glob.nextlist:
-            # self["splash"].hide()
             self.close()
         else:
             self["x_title"].setText("")
@@ -2874,7 +2831,6 @@ class XStreamity_Vod_Categories(Screen):
         self["vod_cover"].hide()
         self["vod_logo"].hide()
         self["vod_backdrop"].hide()
-        # self["main_title"].setText("")
         self["x_title"].setText("")
         self["x_description"].setText("")
         self["tagline"].setText("")
@@ -3141,6 +3097,7 @@ class XStreamity_Vod_Categories(Screen):
         self.setIndex()
 
 
+"""
 def check_and_install_ffmpeg():
     try:
         subprocess.run(
@@ -3180,6 +3137,7 @@ def install_ffmpeg_apt():
     except subprocess.CalledProcessError as e:
         print("Failed to install FFmpeg using apt-get:", e)
         return False
+        """
 
 
 def get_python_site_packages():

@@ -1,23 +1,47 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+# Standard library imports
 from collections import OrderedDict
 import json
 import os
 import re
+
 try:
     from urllib.parse import urlparse, parse_qs
 except ImportError:
     from urlparse import urlparse, parse_qs
 
+# Local application/library-specific imports
 from .plugin import cfg, dir_tmp
 
-scans_dir = os.path.join(dir_tmp, "scans")
-scanner_playlist_file = os.path.join(scans_dir, "playlists.txt")
-scanner_playlists_json = os.path.join(scans_dir, "x-playlists.json")
+
+def dedupe_playlists(playlists):
+    seen = set()
+    unique = []
+
+    for p in playlists:
+        pi = p.get("playlist_info", {})
+        key = (
+            str(pi.get("domain", "")).lower(),
+            str(pi.get("username", "")).strip(),
+            str(pi.get("password", "")).strip()
+        )
+
+        if key in seen:
+            continue
+
+        seen.add(key)
+        unique.append(p)
+
+    return unique
 
 
 def process_files():
+    scans_dir = os.path.join(dir_tmp, "scans")
+    scanner_playlist_file = os.path.join(scans_dir, "playlists.txt")
+    scanner_playlists_json = os.path.join(scans_dir, "x-playlists.json")
+
     # Check if playlists.txt file exists in specified location
     if not os.path.isfile(scanner_playlist_file):
         with open(scanner_playlist_file, "a"):
@@ -40,20 +64,30 @@ def process_files():
     with open(scanner_playlist_file, "r+") as f:
         lines = f.readlines()
 
+    cleaned_lines = []
+
     with open(scanner_playlist_file, "w") as f:
         for line in lines:
             line = re.sub(" +", " ", line)
             line = line.strip(" ")
+
             if not line.startswith(("http://", "https://", "#")):
                 line = "# " + line
+
             if "=mpegts" in line:
                 line = line.replace("=mpegts", "=ts")
+
             if "=hls" in line:
                 line = line.replace("=hls", "=m3u8")
+
             if line.strip() == "#":
                 line = ""
+
             if line != "":
                 f.write(line)
+                cleaned_lines.append(line)
+
+    lines = cleaned_lines
 
     # Read entries from playlists.txt
     index = 0
@@ -61,44 +95,43 @@ def process_files():
     vodtype = cfg.vodtype.value
 
     for line in lines:
-        port = ""
-        username = ""
-        password = ""
-        media_type = ""
-        output = ""
-        livehidden = []
-        channelshidden = []
-        vodhidden = []
-        vodstreamshidden = []
-        serieshidden = []
-        seriestitleshidden = []
-        seriesseasonshidden = []
-        seriesepisodeshidden = []
-        catchuphidden = []
-        catchupchannelshidden = []
-        showlive = True
-        showvod = True
-        showseries = True
-        showcatchup = True
-        livefavourites = []
-        vodfavourites = []
-        seriesfavourites = []
-        liverecents = []
-        vodrecents = []
-        vodwatched = []
-        serieswatched = []
-        serveroffset = 0
-        catchupoffset = 0
-        epgoffset = 0
-        epgalternative = False
-        epgalternativeurl = ""
-
         if line.startswith("http"):
+            port = ""
+            livehidden = []
+            channelshidden = []
+            vodhidden = []
+            vodstreamshidden = []
+            serieshidden = []
+            seriestitleshidden = []
+            seriesseasonshidden = []
+            seriesepisodeshidden = []
+            catchuphidden = []
+            catchupchannelshidden = []
+            showlive = True
+            showvod = True
+            showseries = True
+            showcatchup = True
+            livefavourites = []
+            vodfavourites = []
+            seriesfavourites = []
+            liverecents = []
+            vodrecents = []
+            vodwatched = []
+            serieswatched = []
+            serveroffset = 0
+            catchupoffset = 0
+            epgoffset = 0
+            epgalternative = False
+            epgalternativeurl = ""
+
             line = line.strip(" ")
             parsed_uri = urlparse(line)
             protocol = parsed_uri.scheme + "://"
 
             if not (protocol == "http://" or protocol == "https://"):
+                continue
+
+            if not parsed_uri.hostname:
                 continue
 
             domain = parsed_uri.hostname.lower()
@@ -211,6 +244,7 @@ def process_files():
 
     # Write new x-playlists.json file
     with open(scanner_playlists_json, "w") as f:
+        playlists_all = dedupe_playlists(playlists_all)
         json.dump(playlists_all, f, indent=4)
 
     return playlists_all

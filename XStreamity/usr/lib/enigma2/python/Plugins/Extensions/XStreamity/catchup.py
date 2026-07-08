@@ -14,13 +14,6 @@ from datetime import datetime, timedelta
 from itertools import cycle, islice
 
 try:
-    from http.client import HTTPConnection
-    HTTPConnection.debuglevel = 0
-except ImportError:
-    from httplib import HTTPConnection
-    HTTPConnection.debuglevel = 0
-
-try:
     from urllib.parse import urlparse
 except:
     from urlparse import urlparse
@@ -70,8 +63,6 @@ if sslverify:
             return ctx
 
 playlists_json = cfg.playlists_json.value
-
-epgimporter = os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/EPGImport")
 
 hdr = {
     'User-Agent': str(cfg.useragent.value),
@@ -263,10 +254,6 @@ class XStreamity_Catchup_Categories(Screen):
         self["menu_actions"].setEnabled(False)
         self["channel_actions"].setEnabled(False)
 
-        self["splash"] = Pixmap()
-        # self["splash"].show()
-        self["splash"].hide()
-
         self._picon_req_id = 0
 
         glob.nextlist = []
@@ -333,15 +320,6 @@ class XStreamity_Catchup_Categories(Screen):
             glob.nextlist = []
             glob.nextlist.append({"next_url": next_url, "index": 0, "level": self.level, "sort": self.sortText, "filter": ""})
 
-    def playOriginalChannel(self):
-        # self.stopVideo()
-
-        try:
-            if glob.currentPlayingServiceRefString:
-                self.session.nav.playService(eServiceReference(glob.currentPlayingServiceRefString))
-        except Exception as e:
-            print(e)
-
     def refresh(self):
         self.level = glob.current_level
 
@@ -370,7 +348,6 @@ class XStreamity_Catchup_Categories(Screen):
 
             if not glob.active_playlist["player_info"]["showcatchup"]:
                 self.original_active_playlist = glob.active_playlist
-                # self["splash"].hide()
                 self.close()
             else:
                 self.original_active_playlist = glob.active_playlist
@@ -403,7 +380,6 @@ class XStreamity_Catchup_Categories(Screen):
         self.process_downloads()
 
     def download_url(self, url):
-        import requests
         index = url[1]
         response = None
 
@@ -454,7 +430,6 @@ class XStreamity_Catchup_Categories(Screen):
         threads = min(len(self.url_list), 10)
         results = []
 
-        self.retry = 0
         glob.active_playlist["data"]["live_categories"] = []
         glob.active_playlist["data"]["vod_categories"] = []
         glob.active_playlist["data"]["series_categories"] = []
@@ -512,7 +487,6 @@ class XStreamity_Catchup_Categories(Screen):
                     if index == 3:
                         glob.active_playlist["data"]["series_categories"] = response
 
-        # glob.active_playlist["data"]["data_downloaded"] = True
         glob.active_playlist["data"]["live_streams"] = []
         self.writeJsonFile()
 
@@ -534,7 +508,6 @@ class XStreamity_Catchup_Categories(Screen):
         else:
             self.getLevel2()
 
-        # self["splash"].hide()
         self.buildLists()
         self.setIndex()
 
@@ -563,13 +536,26 @@ class XStreamity_Catchup_Categories(Screen):
         if not self.liveStreamsData:
             self.liveStreamsData = self.downloadApiData(self.liveStreamsUrl) or []
 
-        archivelist = [
-            x for x in self.liveStreamsData
-            if "tv_archive" in x and str(x["tv_archive"]) == "1"
-            and "tv_archive_duration" in x
-            and str(x["tv_archive_duration"]) != "0"
-            and x["category_id"] not in currentHidden
-        ]
+        archivelist = []
+
+        for x in self.liveStreamsData:
+            tv_archive = str(x.get("tv_archive", "")).strip()
+            tv_archive_duration = str(x.get("tv_archive_duration", "")).strip()
+            category_id = str(x.get("category_id", ""))
+
+            if tv_archive != "1":
+                continue
+
+            if not tv_archive_duration.isdigit():
+                continue
+
+            if int(tv_archive_duration) <= 0:
+                continue
+
+            if category_id in currentHidden:
+                continue
+
+            archivelist.append(x)
 
         if archivelist:
             self.prelist.append(
@@ -605,7 +591,16 @@ class XStreamity_Catchup_Categories(Screen):
 
             for index, channel in enumerate(response):
 
-                if channel.get("tv_archive") == 0 or channel.get("tv_archive") == "0" or channel.get("tv_archive_duration") == "0" or channel.get("tv_archive_duration") == 0:
+                tv_archive = str(channel.get("tv_archive", "")).strip()
+                tv_archive_duration = str(channel.get("tv_archive_duration", "")).strip()
+
+                if tv_archive != "1":
+                    continue
+
+                if not tv_archive_duration.isdigit():
+                    continue
+
+                if int(tv_archive_duration) <= 0:
                     continue
 
                 name = str(channel.get("name", ""))
@@ -865,7 +860,7 @@ class XStreamity_Catchup_Categories(Screen):
         if self["picon"].instance:
             self["picon"].instance.setPixmapFromFile(os.path.join(common_path, "picon.png"))
 
-    def resizeImage(self, original, req_id=None, data=None):
+    def resizeImage(self, original, req_id=None):
         if req_id is not None and getattr(self, "_picon_req_id", 0) != req_id:
             try:
                 if original and os.path.exists(original):
@@ -944,7 +939,12 @@ class XStreamity_Catchup_Categories(Screen):
 
     def sort(self):
         current_sort = self["key_yellow"].getText()
+
         if not current_sort:
+            return
+
+        if current_sort == _("Reverse"):
+            self.reverse()
             return
 
         if glob.nextlist[-1]["filter"]:
@@ -1169,7 +1169,7 @@ class XStreamity_Catchup_Categories(Screen):
             elif current_sort == _("Sort: Original"):
                 activelist.sort(key=lambda x: x[1].lower(), reverse=True)
 
-            elif current_sort == _("Sort: Sort: A-Z"):
+            elif current_sort == _("Sort: A-Z"):
                 activelist.sort(key=lambda x: x[0], reverse=False)
 
         elif self.level == 2:
@@ -1183,7 +1183,7 @@ class XStreamity_Catchup_Categories(Screen):
                 activelist.sort(key=lambda x: x[1].lower(), reverse=False)
                 activelist.sort(key=lambda x: (x[5] or ""), reverse=True)
 
-            elif current_sort == _("Sort: Sort: A-Z"):
+            elif current_sort == _("Sort: A-Z"):
                 activelist.sort(key=lambda x: x[0], reverse=False)
 
         if self.level == 1:
@@ -1225,7 +1225,6 @@ class XStreamity_Catchup_Categories(Screen):
 
             if not glob.nextlist:
                 self.stopStream()
-                # self["splash"].hide()
                 self.close()
             else:
                 self["x_title"].setText("")
@@ -1361,11 +1360,6 @@ class XStreamity_Catchup_Categories(Screen):
             from . import downloadmanager
             self.session.openWithCallback(self.createSetup, downloadmanager.XStreamity_DownloadManager)
 
-    def failed(self, data=None):
-        if data:
-            print(data)
-        return
-
     def playCatchup(self):
         current_main_list_item = self["main_list"].getCurrent()
         if current_main_list_item:
@@ -1429,6 +1423,8 @@ class XStreamity_Catchup_Categories(Screen):
         retries = Retry(total=1, backoff_factor=1)
         adapter = HTTPAdapter(max_retries=retries)
 
+        shortEPGJson = {}
+
         with requests.Session() as http:
             http.mount("http://", adapter)
             http.mount("https://", adapter)
@@ -1436,9 +1432,9 @@ class XStreamity_Catchup_Categories(Screen):
             try:
                 response = http.get(url, headers=hdr, timeout=(10, 20), verify=False)
                 response.raise_for_status()
+
                 if response.status_code == requests.codes.ok:
                     shortEPGJson = response.json()
-
             except Exception as e:
                 print("Error fetching catchup EPG:", e)
                 return
@@ -1456,61 +1452,69 @@ class XStreamity_Catchup_Categories(Screen):
         catchupend = int(cfg.catchupend.value)
 
         for listing in shortEPGJson["epg_listings"]:
-            if "has_archive" in listing and listing["has_archive"] == 1 or ("now_playing" in listing and listing["now_playing"] == 1):
-                title = base64.b64decode(listing.get("title", "")).decode("utf-8")
-                description = base64.b64decode(listing.get("description", "")).decode("utf-8")
+            has_archive = str(listing.get("has_archive", "0")).strip()
+            now_playing = str(listing.get("now_playing", "0")).strip()
 
-                start = listing.get("start", "")
-                end = listing.get("end", "")
-                stop = listing.get("stop", "")
+            if has_archive != "1" and now_playing != "1":
+                continue
 
-                if start:
-                    start_datetime_original = self.parse_datetime(start)
-                    if start_datetime_original:
-                        start_datetime = start_datetime_original + timedelta(hours=shift)
-                        start_datetime_original_margin = start_datetime_original - timedelta(minutes=catchupstart)
-                    else:
-                        print("Error parsing start datetime")
-                        continue
+            title = base64.b64decode(listing.get("title", "")).decode("utf-8")
+            description = base64.b64decode(listing.get("description", "")).decode("utf-8")
 
-                if end:
-                    end_datetime = self.parse_datetime(end)
-                    if end_datetime:
-                        end_datetime += timedelta(hours=shift)
-                    else:
-                        print("Error parsing end datetime")
-                        continue
-                elif stop:
-                    stop_datetime = self.parse_datetime(stop)
-                    if stop_datetime:
-                        end_datetime = stop_datetime + timedelta(hours=shift)
-                    else:
-                        print("Error parsing stop datetime")
-                        continue
+            start = listing.get("start", "")
+            end = listing.get("end", "")
+            stop = listing.get("stop", "")
+
+            if not start:
+                continue
+
+            start_datetime_original = self.parse_datetime(start)
+
+            if not start_datetime_original:
+                print("Error parsing start datetime")
+                continue
+
+            start_datetime = start_datetime_original + timedelta(hours=shift)
+            start_datetime_original_margin = start_datetime_original - timedelta(minutes=catchupstart)
+
+            if end:
+                end_datetime = self.parse_datetime(end)
+
+                if end_datetime:
+                    end_datetime += timedelta(hours=shift)
                 else:
-                    print("Error: Missing end or stop time")
+                    print("Error parsing end datetime")
                     continue
 
-                if start_datetime and end_datetime:
+            elif stop:
+                stop_datetime = self.parse_datetime(stop)
 
-                    start_datetime_margin = start_datetime - timedelta(minutes=catchupstart)
-                    end_datetime_margin = end_datetime + timedelta(minutes=catchupend)
+                if stop_datetime:
+                    end_datetime = stop_datetime + timedelta(hours=shift)
+                else:
+                    print("Error parsing stop datetime")
+                    continue
 
-                    epg_date_all = start_datetime.strftime("%a %d/%m")
+            else:
+                print("Error: Missing end or stop time")
+                continue
 
-                    epg_time_all = "{} - {}".format(start_datetime.strftime("%H:%M"), end_datetime.strftime("%H:%M"))
+            if start_datetime and end_datetime:
+                start_datetime_margin = start_datetime - timedelta(minutes=catchupstart)
+                end_datetime_margin = end_datetime + timedelta(minutes=catchupend)
 
-                    epg_duration = int((end_datetime_margin - start_datetime_margin).total_seconds() / 60.0)
+                epg_date_all = start_datetime.strftime("%a %d/%m")
+                epg_time_all = "{} - {}".format(start_datetime.strftime("%H:%M"), end_datetime.strftime("%H:%M"))
 
-                    url_datestring = start_datetime_original_margin.strftime("%Y-%m-%d:%H-%M")
+                epg_duration = int((end_datetime_margin - start_datetime_margin).total_seconds() / 60.0)
 
-                    # url_datestring = start_datetime_margin.strftime("%Y-%m-%d:%H-%M")
+                url_datestring = start_datetime_original_margin.strftime("%Y-%m-%d:%H-%M")
 
-                    if (epg_date_all, epg_time_all) not in duplicatecheck:
-                        duplicatecheck.add((epg_date_all, epg_time_all))
-                        self.epgshortlist.append(buildCatchupEPGListEntry(str(title), epg_date_all, epg_time_all, str(description), url_datestring, str(epg_duration), index))
+                if (epg_date_all, epg_time_all) not in duplicatecheck:
+                    duplicatecheck.add((epg_date_all, epg_time_all))
+                    self.epgshortlist.append(buildCatchupEPGListEntry(str(title), epg_date_all, epg_time_all, str(description), url_datestring, str(epg_duration), index))
 
-                        index += 1
+                    index += 1
 
         self.epgshortlist.reverse()
         self["epg_short_list"].setList(self.epgshortlist)

@@ -106,9 +106,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         elif answer:
             for x in self["config"].list:
                 x[1].cancel()
-
             self.close()
-        return
 
     def save(self):
         pin_value = str(cfg.adultpin.value).strip().zfill(4)
@@ -296,8 +294,6 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
                     self["VKeyIcon"].hide()
 
     def changedEntry(self):
-        self.item = self["config"].getCurrent()
-
         if self["config"].getCurrent()[1] == cfg.interface:
             self.initConfig()
             return
@@ -326,8 +322,6 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
                 self.openDirectoryBrowser(cfg.downloadlocation.value, "downloadlocation")
             elif sel == cfg.epglocation:
                 self.openDirectoryBrowser(cfg.epglocation.value, "epglocation")
-        else:
-            pass
 
     def openDirectoryBrowser(self, path, cfgitem):
         cfg_map = {

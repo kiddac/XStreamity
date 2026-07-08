@@ -5,13 +5,6 @@
 import os
 import json
 
-try:
-    from http.client import HTTPConnection
-    HTTPConnection.debuglevel = 0
-except ImportError:
-    from httplib import HTTPConnection
-    HTTPConnection.debuglevel = 0
-
 # Third-party imports
 import requests
 from requests.adapters import HTTPAdapter, Retry
@@ -19,7 +12,7 @@ from requests.adapters import HTTPAdapter, Retry
 # Enigma2 components
 from Components.ActionMap import ActionMap
 from Components.ConfigList import ConfigListScreen
-from Components.config import getConfigListEntry, NoSave, ConfigText, ConfigSelection, ConfigNumber, ConfigYesNo, ConfigEnableDisable
+from Components.config import getConfigListEntry, NoSave, ConfigText, ConfigSelection
 from Components.Pixmap import Pixmap
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
@@ -106,9 +99,7 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
             self.close()
 
     def void(self):
-        currConfig = self["config"].getCurrent()
-        if isinstance(currConfig[1], ConfigNumber):
-            pass
+        pass
 
     def initConfig(self):
         self.nameCfg = NoSave(ConfigText(default="IPTV", fixed_size=False))
@@ -141,17 +132,7 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 
         if currConfig is not None:
             if "VKeyIcon" in self:
-                if isinstance(currConfig[1], ConfigNumber):
-                    try:
-                        self["VirtualKB"].setEnabled(False)
-                    except:
-                        pass
-                    try:
-                        self["virtualKeyBoardActions"].setEnabled(False)
-                    except:
-                        pass
-                    self["VKeyIcon"].hide()
-                elif isinstance(currConfig[1], ConfigText):
+                if isinstance(currConfig[1], ConfigText):
                     try:
                         self["VirtualKB"].setEnabled(True)
                     except:
@@ -215,7 +196,7 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 
         # check name is not blank
         if not self.name or len(self.name) < 3:
-            self.session.open(MessageBox, _("Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum 2 characters."), MessageBox.TYPE_ERROR, timeout=10)
+            self.session.open(MessageBox, _("Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum 3 characters."), MessageBox.TYPE_ERROR, timeout=10)
             self.createSetup()
             return
 
@@ -235,11 +216,11 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
         self.close()
 
     def changedEntry(self):
-        self.item = self["config"].getCurrent()
         for x in self.onChangedEntry:
             x()
+
         try:
-            if isinstance(self["config"].getCurrent()[1], ConfigEnableDisable) or isinstance(self["config"].getCurrent()[1], ConfigYesNo) or isinstance(self["config"].getCurrent()[1], ConfigSelection):
+            if isinstance(self["config"].getCurrent()[1], ConfigSelection):
                 self.createSetup()
         except Exception as e:
             print("Error in changedEntry:", e)

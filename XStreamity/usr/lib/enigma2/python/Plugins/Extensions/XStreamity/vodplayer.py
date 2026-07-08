@@ -15,13 +15,6 @@ try:
 except ImportError:
     from urllib.parse import urlparse
 
-try:
-    from http.client import HTTPConnection
-    HTTPConnection.debuglevel = 0
-except ImportError:
-    from httplib import HTTPConnection
-    HTTPConnection.debuglevel = 0
-
 # Third-party imports
 from twisted.web.client import downloadPage
 
@@ -54,7 +47,7 @@ from Screens.InfoBarGenerics import InfoBarSeek, InfoBarAudioSelection, InfoBarS
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
 from Tools import Notifications
-# from Tools.BoundFunction import boundFunction
+from Tools.BoundFunction import boundFunction
 
 try:
     from .resumepoints import setResumePoint, getResumePoint
@@ -105,20 +98,16 @@ VIDEO_ASPECT_RATIO_MAP = {
     6: "16:9 Letterbox"
 }
 
-streamtypelist = ["1", "4097"]
 vodstreamtypelist = ["4097"]
 
 if os.path.exists("/usr/bin/gstplayer"):
-    streamtypelist.append("5001")
     vodstreamtypelist.append("5001")
 
 
 if os.path.exists("/usr/bin/exteplayer3"):
-    streamtypelist.append("5002")
     vodstreamtypelist.append("5002")
 
 if os.path.exists("/usr/bin/apt-get"):
-    streamtypelist.append("8193")
     vodstreamtypelist.append("8193")
 
 playlists_json = cfg.playlists_json.value
@@ -319,7 +308,6 @@ class XStreamityCueSheetSupport:
             return
 
         if self.ENABLE_RESUME_SUPPORT and not self.started:
-
             self.started = True
             last = None
 
@@ -448,8 +436,6 @@ class XStreamity_VodPlayer(
         except:
             self.PicLoad_conn = self.PicLoad.PictureData.connect(self.DecodePicture)
 
-        self.setup_title = _("VOD")
-
         self["actions"] = ActionMap(["XStreamityActions"], {
             "cancel": self.back,
             "stop": self.back,
@@ -464,7 +450,7 @@ class XStreamity_VodPlayer(
             "ok": self.refreshInfobar,
         }, -2)
 
-        self._vod_req_id = 0
+        self._cover_req_id = 0
 
         self.timerRecent = eTimer()
         try:
@@ -478,7 +464,7 @@ class XStreamity_VodPlayer(
         except:
             self.timerWatched_conn = self.timerWatched.timeout.connect(self.addWatchedList)
 
-        # self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl))
+        self.onFirstExecBegin.append(boundFunction(self.playStream, self.servicetype, self.streamurl))
 
     def _stopTimer(self, name):
         t = getattr(self, name, None)
@@ -599,9 +585,6 @@ class XStreamity_VodPlayer(
         if not streamurl:
             return
 
-        if cfg.infobarcovers.value is True:
-            self.downloadImage()
-
         self["streamcat"].setText("VOD" if glob.categoryname == "vod" else "Series")
         self["streamtype"].setText(str(servicetype))
 
@@ -613,18 +596,10 @@ class XStreamity_VodPlayer(
         self.reference = eServiceReference(int(self.servicetype), 0, streamurl)
         self.reference.setName(glob.currentchannellist[glob.currentchannellistindex][0])
 
-        if self.session.nav.getCurrentlyPlayingServiceReference():
-            if self.session.nav.getCurrentlyPlayingServiceReference().toString() != self.reference.toString():
+        self.session.nav.playService(self.reference)
 
-                try:
-                    self.session.nav.stopService()
-                except:
-                    pass
-
-                self.session.nav.playService(self.reference)
-
-        else:
-            self.session.nav.playService(self.reference)
+        if cfg.infobarcovers.value is True:
+            self.downloadImage()
 
         if self.session.nav.getCurrentlyPlayingServiceReference():
             glob.newPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
@@ -756,7 +731,7 @@ class XStreamity_VodPlayer(
 
             self.loadDefaultImage()
 
-    def resizeImage(self, preview, req_id=None, data=None):
+    def resizeImage(self, preview, req_id=None):
         if not self["cover"].instance:
             return
 
@@ -844,18 +819,26 @@ class XStreamity_VodPlayer(
         self.close()
 
     def toggleStreamType(self):
+        try:
+            setResumePoint(self.session)
+        except Exception as e:
+            print(e)
+
         currentindex = 0
 
         for index, item in enumerate(vodstreamtypelist, start=0):
             if str(item) == str(self.servicetype):
                 currentindex = index
                 break
+
         nextStreamType = islice(cycle(vodstreamtypelist), currentindex + 1, None)
+
         try:
             self.servicetype = int(next(nextStreamType))
         except:
             pass
 
+        self.started = False
         self.playStream(self.servicetype, self.streamurl)
 
     def __next__(self):

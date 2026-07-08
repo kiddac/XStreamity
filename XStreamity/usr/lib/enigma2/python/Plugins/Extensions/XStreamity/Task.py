@@ -308,7 +308,7 @@ class JobManager:
                 job.onSuccess(job)
             self.kick()
 
-    # Set job.onSuccess to this function if you want to pop up the jobview when the job is done/
+    # Set job.onSuccess to this function if you want to pop up the jobview when the job is done.
     def popupTaskView(self, job):
         if not self.visible:
             self.visible = True

@@ -15,13 +15,6 @@ try:
 except:
     from urllib.parse import urlparse, parse_qsl, urlencode  # Python 3
 
-try:
-    from http.client import HTTPConnection
-    HTTPConnection.debuglevel = 0
-except ImportError:
-    from httplib import HTTPConnection
-    HTTPConnection.debuglevel = 0
-
 # Third-party imports
 import requests
 
@@ -40,8 +33,6 @@ from . import xstreamity_globals as glob
 from .plugin import skin_directory, cfg, common_path, version, hasConcurrent, hasMultiprocessing, dir_tmp
 from .xStaticText import StaticText
 
-
-epgimporter = os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/EPGImport")
 
 hdr = {
     'User-Agent': str(cfg.useragent.value)
@@ -70,7 +61,9 @@ def get_base_url():
 
 
 def sort_key(item):
-    index, name, url, expires, status, active, activenum, maxc, maxnum, exp_ts = item
+    activenum = item[6]
+    maxnum = item[8]
+    exp_ts = item[9]
 
     try:
         maxnum = int(maxnum)
@@ -197,7 +190,7 @@ class XStreamity_Scanner(Screen):
             if not response:
                 continue
 
-            index, data = response
+            data = response[1]
 
             if not data or not data.get("results"):
                 continue
@@ -233,9 +226,7 @@ class XStreamity_Scanner(Screen):
             else:
                 break
 
-        # Convert the set back to a list and shuffle to randomize the order
         final_urls_to_write = list(final_urls_to_write_set)
-        # random.shuffle(final_urls_to_write)
 
         with open(scanner_playlist_file, "a") as f:
             for url, domain in final_urls_to_write:
@@ -276,7 +267,6 @@ class XStreamity_Scanner(Screen):
             self.process_downloads()
 
     def download_url(self, url):
-        # print("*** url ***", url)
         index = url[1]
         response = None
 
@@ -308,7 +298,6 @@ class XStreamity_Scanner(Screen):
         return index, response
 
     def process_downloads(self):
-        # threads = min(len(self.url_list), 15)
         threads = len(self.url_list)
         results = []
 
@@ -556,7 +545,6 @@ class XStreamity_Scanner(Screen):
 
     def getCurrentEntry(self):
         if self.list:
-            # index = self["playlists"].getIndex()
             index = self["playlists"].getCurrent()[0]
             for idx, playlists in enumerate(self.playlists_all):
                 if playlists["playlist_info"]["index"] == index:
