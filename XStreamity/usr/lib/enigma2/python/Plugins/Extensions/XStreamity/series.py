@@ -15,6 +15,13 @@ import tempfile
 import unicodedata
 
 try:
+    from http.client import HTTPConnection
+    HTTPConnection.debuglevel = 0
+except ImportError:
+    from httplib import HTTPConnection
+    HTTPConnection.debuglevel = 0
+
+try:
     from urllib import quote
 except ImportError:
     from urllib.parse import quote
@@ -27,6 +34,7 @@ from requests.adapters import HTTPAdapter, Retry
 from twisted.internet import reactor
 from twisted.web.client import Agent, downloadPage, readBody
 from twisted.web.http_headers import Headers
+from twisted.internet.protocol import Factory
 
 try:
     from twisted.web.client import BrowserLikePolicyForHTTPS
@@ -62,6 +70,7 @@ hdr = {
     'User-Agent': str(cfg.useragent.value)
 }
 
+Factory.noisy = False
 
 if pythonVer == 3:
     superscript_to_normal = str.maketrans(
@@ -2205,7 +2214,7 @@ class XStreamity_Series_Categories(Screen):
             if not desc_image:
                 desc_image = self.storedcover or ""
 
-        if not desc_image or desc_image.lower() == "n/a":
+        if not desc_image or str(desc_image).lower() == "n/a":
             self.loadDefaultCover()
             return
 

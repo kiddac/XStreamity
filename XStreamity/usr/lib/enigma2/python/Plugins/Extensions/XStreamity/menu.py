@@ -7,6 +7,13 @@ import json
 
 import time
 
+try:
+    from http.client import HTTPConnection
+    HTTPConnection.debuglevel = 0
+except:
+    from httplib import HTTPConnection
+    HTTPConnection.debuglevel = 0
+
 # Third-party imports
 import requests
 

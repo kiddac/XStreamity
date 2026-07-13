@@ -15,6 +15,13 @@ try:
 except ImportError:
     from urllib.parse import urlparse
 
+try:
+    from http.client import HTTPConnection
+    HTTPConnection.debuglevel = 0
+except ImportError:
+    from httplib import HTTPConnection
+    HTTPConnection.debuglevel = 0
+
 # Third-party imports
 import requests
 from requests.adapters import HTTPAdapter, Retry

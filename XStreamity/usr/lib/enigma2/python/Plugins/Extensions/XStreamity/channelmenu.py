@@ -6,6 +6,13 @@ import os
 import json
 from time import time
 
+try:
+    from http.client import HTTPConnection
+    HTTPConnection.debuglevel = 0
+except:
+    from httplib import HTTPConnection
+    HTTPConnection.debuglevel = 0
+
 # Enigma2 components
 from Components.ActionMap import ActionMap
 from Components.Sources.List import List

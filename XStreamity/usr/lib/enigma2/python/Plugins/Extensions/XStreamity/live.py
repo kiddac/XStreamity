@@ -15,6 +15,13 @@ from datetime import datetime, timedelta
 from itertools import cycle, islice
 
 try:
+    from http.client import HTTPConnection
+    HTTPConnection.debuglevel = 0
+except ImportError:
+    from httplib import HTTPConnection
+    HTTPConnection.debuglevel = 0
+
+try:
     from urllib.parse import urlparse
 except:
     from urlparse import urlparse
@@ -1079,7 +1086,7 @@ class XStreamity_Live_Categories(Screen):
         except:
             desc_image = ""
 
-        if not desc_image or desc_image.lower() == "n/a":
+        if not desc_image or str(desc_image).lower() == "n/a":
             self.loadDefaultImage()
             return
 

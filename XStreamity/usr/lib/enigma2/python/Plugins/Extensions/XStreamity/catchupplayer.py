@@ -16,6 +16,13 @@ try:
 except ImportError:
     from urllib.parse import urlparse
 
+try:
+    from http.client import HTTPConnection
+    HTTPConnection.debuglevel = 0
+except ImportError:
+    from httplib import HTTPConnection
+    HTTPConnection.debuglevel = 0
+
 # Third-party imports
 from PIL import Image
 from twisted.web.client import downloadPage
@@ -600,7 +607,7 @@ class XStreamity_CatchupPlayer(
         except:
             desc_image = ""
 
-        if not desc_image or desc_image.lower() == "n/a":
+        if not desc_image or str(desc_image).lower() == "n/a":
             self.loadDefaultImage()
             return
 

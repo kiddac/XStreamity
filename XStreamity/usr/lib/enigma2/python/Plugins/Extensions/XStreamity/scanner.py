@@ -15,6 +15,13 @@ try:
 except:
     from urllib.parse import urlparse, parse_qsl, urlencode  # Python 3
 
+try:
+    from http.client import HTTPConnection
+    HTTPConnection.debuglevel = 0
+except ImportError:
+    from httplib import HTTPConnection
+    HTTPConnection.debuglevel = 0
+
 # Third-party imports
 import requests
 

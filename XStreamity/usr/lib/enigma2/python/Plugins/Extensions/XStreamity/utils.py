@@ -66,7 +66,6 @@ def _cleanup_epg_folders(playlists_all, cfg, dir_tmp):
 
 
 def _get_current_aspect_ratio():
-
     current_ar = None
 
     # 1 Fallback to proc (ATV / BH / VTi etc)

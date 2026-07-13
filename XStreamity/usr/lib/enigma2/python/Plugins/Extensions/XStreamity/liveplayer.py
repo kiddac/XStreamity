@@ -759,7 +759,7 @@ class XStreamity_StreamPlayer(
         except:
             desc_image = ""
 
-        if not desc_image or desc_image.lower() == "n/a":
+        if not desc_image or str(desc_image).lower() == "n/a":
             self.loadDefaultImage()
             return
 
