@@ -50,14 +50,17 @@
 	<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/common/button-bg.png" position="0,1020" size="1920,60" alphatest="blend" zPosition="1"/>
 	
 	<widget source="key_red" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/common/key_red.png" position="30,1031" size="38,38" alphatest="blend" zPosition="2"/>
-	<widget source="key_red" render="Label" position="90,1020" size="375,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="2"/>
+	<widget source="key_red" render="Label" position="90,1020" size="312,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="2"/>
 	
-	<widget source="key_green" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/common/key_green.png" position="495,1031" size="38,38" alphatest="blend" zPosition="2"/>
-	<widget source="key_green" render="Label" position="555,1020" size="375,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="2"/>
+	<widget source="key_green" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/common/key_green.png" position="402,1031" size="38,38" alphatest="blend" zPosition="2"/>
+	<widget source="key_green" render="Label" position="462,1020" size="312,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="2"/>
 	
-	<widget source="key_yellow" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/common/key_yellow.png" position="960,1031" size="38,38" alphatest="blend" zPosition="2"/>
-	<widget source="key_yellow" render="Label" position="1020,1020" size="375,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="2"/>
+	<widget source="key_yellow" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/common/key_yellow.png" position="774,1031" size="38,38" alphatest="blend" zPosition="2"/>
+	<widget source="key_yellow" render="Label" position="834,1020" size="312,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="2"/>
 	
-	<widget source="key_blue" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/common/key_blue.png" position="1425,1031" size="38,38" alphatest="blend" zPosition="2"/>
-	<widget source="key_blue" render="Label" position="1485,1020" size="375,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="2"/>
+	<widget source="key_blue" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/common/key_blue.png" position="1146,1031" size="38,38" alphatest="blend" zPosition="2"/>
+	<widget source="key_blue" render="Label" position="1206,1020" size="312,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="2"/>
+	
+	<widget source="key_menu" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/fhd/common/key_menu.png" position="1518,1031" size="38,38" alphatest="blend" zPosition="2"/>
+	<widget source="key_menu" render="Label" position="1578,1020" size="312,60" font="xstreamityregular;24" foregroundColor="#ffffff" backgroundColor="#0a3162" valign="center" transparent="1" noWrap="1" zPosition="2"/>
 </screen>

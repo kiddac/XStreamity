@@ -11,6 +11,13 @@ import re
 import shutil
 from datetime import datetime
 
+try:
+    from http.client import HTTPConnection
+    HTTPConnection.debuglevel = 0
+except ImportError:
+    from httplib import HTTPConnection
+    HTTPConnection.debuglevel = 0
+
 # Third-party imports
 import requests
 from requests.adapters import HTTPAdapter, Retry
@@ -73,6 +80,7 @@ class XStreamity_Playlists(Screen):
         self["key_green"] = StaticText(_("OK"))
         self["key_yellow"] = StaticText(_("Delete"))
         self["key_blue"] = StaticText(_("Info"))
+        self["key_menu"] = StaticText(_("Edit"))
         self["version"] = StaticText(version)
 
         self.list = []

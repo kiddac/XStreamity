@@ -55,13 +55,19 @@
 		</convert>
 
 	</widget>
+	
 	<widget source="key_red" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/uhd/xstreamity/slyk1080r19/images/key_red.png" position="204,1262" size="48,48" alphatest="blend" zPosition="2"/>
-	<widget source="key_red" render="Label" position="268,1255" size="436,59" font="slykregular;52" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" noWrap="1" zPosition="2"/>
-	<widget source="key_green" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/uhd/xstreamity/slyk1080r19/images/key_green.png" position="704,1262" size="48,48" alphatest="blend" zPosition="2"/>
-	<widget source="key_green" render="Label" position="768,1255" size="436,59" font="slykregular;52" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" noWrap="1" zPosition="2"/>
-	<widget source="key_yellow" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/uhd/xstreamity/slyk1080r19/images/key_yellow.png" position="1204,1262" size="48,48" alphatest="blend" zPosition="2"/>
-	<widget source="key_yellow" render="Label" position="1268,1255" size="436,59" font="slykregular;52" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" zPosition="2"/>
-	<widget source="key_blue" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/uhd/xstreamity/slyk1080r19/images/key_blue.png" position="1704,1262" size="48,48" alphatest="blend" zPosition="2"/>
-	<widget source="key_blue" render="Label" position="1768,1255" size="436,59" font="slykregular;52" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" zPosition="2"/>
-	<!-- <eLabel text="Press SELECT to view" position="203,1323" size="576,64" font="slykregular;52" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="top" halign="left" transparent="1" zPosition="1"/> -->
+	<widget source="key_red" render="Label" position="268,1255" size="367,59" font="slykregular;48" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" noWrap="1" zPosition="2"/>
+
+	<widget source="key_green" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/uhd/xstreamity/slyk1080r19/images/key_green.png" position="635,1262" size="48,48" alphatest="blend" zPosition="2"/>
+	<widget source="key_green" render="Label" position="699,1255" size="367,59" font="slykregular;48" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" noWrap="1" zPosition="2"/>
+
+	<widget source="key_yellow" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/uhd/xstreamity/slyk1080r19/images/key_yellow.png" position="1066,1262" size="48,48" alphatest="blend" zPosition="2"/>
+	<widget source="key_yellow" render="Label" position="1130,1255" size="367,59" font="slykregular;48" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" zPosition="2"/>
+
+	<widget source="key_blue" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/uhd/xstreamity/slyk1080r19/images/key_blue.png" position="1496,1262" size="48,48" alphatest="blend" zPosition="2"/>
+	<widget source="key_blue" render="Label" position="1560,1255" size="367,59" font="slykregular;48" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" zPosition="2"/>
+
+	<widget source="key_menu" render="Pixmap" pixmap="/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/skins/uhd/xstreamity/slyk1080r19/images/key-menu.png" position="1926,1262" size="100,48" alphatest="blend" zPosition="2"/>
+	<widget source="key_menu" render="Label" position="2042,1255" size="331,59" font="slykregular;48" foregroundColor="#5ea1e3" backgroundColor="#1c4475" valign="center" transparent="1" zPosition="2"/>
 </screen>
