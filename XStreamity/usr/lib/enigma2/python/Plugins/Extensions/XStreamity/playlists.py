@@ -36,6 +36,7 @@ from Components.config import configfile
 from . import _
 from . import xstreamity_globals as glob
 from .plugin import skin_directory, cfg, common_path, version, hasConcurrent, hasMultiprocessing
+from .processfiles import save_playlist_order
 from .xStaticText import StaticText
 
 
@@ -70,6 +71,11 @@ class XStreamity_Playlists(Screen):
         self.playlist_file = cfg.playlist_file.value
         self.playlists_json = cfg.playlists_json.value
         self.playlists_all = []
+        self.edit_mode = False
+        self.edit_original_playlists = []
+        self.edit_original_list = []
+        self.edit_original_draw_list = []
+        self.edit_original_index = 0
 
         self.setup_title = _("Manage Playlists")
 
@@ -80,7 +86,7 @@ class XStreamity_Playlists(Screen):
         self["key_green"] = StaticText(_("OK"))
         self["key_yellow"] = StaticText(_("Delete"))
         self["key_blue"] = StaticText(_("Info"))
-        self["key_menu"] = StaticText(_("Edit"))
+        self["key_menu"] = StaticText(_("Edit mode"))
         self["version"] = StaticText(version)
 
         self.list = []
@@ -94,22 +100,29 @@ class XStreamity_Playlists(Screen):
         self["scroll_up"].hide()
         self["scroll_down"].hide()
 
-        action_ok = self.getStreamTypes
-        action_green = self.getStreamTypes
+        self.action_ok = self.getStreamTypes
+        self.action_green = self.getStreamTypes
 
         if cfg.interface.value == "xklass":
-            action_ok = self.closePlaylists
-            action_green = self.closePlaylists
+            self.action_ok = self.closePlaylists
+            self.action_green = self.closePlaylists
 
         self["actions"] = ActionMap(["XStreamityActions"], {
-            "red": self.quit,
-            "green": action_green,
-            "cancel": self.quit,
-            "ok": action_ok,
-            "blue": self.openUserInfo,
-            "info": self.openUserInfo,
-            "yellow": self.deleteServer,
-            "0": self.goTop
+            "red": self.redButton,
+            "green": self.greenButton,
+            "cancel": self.cancelButton,
+            "ok": self.okButton,
+            "blue": self.blueButton,
+            "info": self.blueButton,
+            "yellow": self.yellowButton,
+            "menu": self.toggleEditMode,
+            "up": self.goUp,
+            "down": self.goDown,
+            "left": self.pageUp,
+            "right": self.pageDown,
+            "pageUp": self.pageUp,
+            "pageDown": self.pageDown,
+            "0": self.zeroButton
         }, -2)
 
         self.onFirstExecBegin.append(self.start)
@@ -119,7 +132,6 @@ class XStreamity_Playlists(Screen):
         self.setTitle(self.setup_title)
 
     def start(self):
-
         if cfg.interface.value == "xstreamity":
             if glob.original_playlist_file and glob.original_playlists_json:
                 cfg.playlist_file.setValue(glob.original_playlist_file)
@@ -470,6 +482,188 @@ class XStreamity_Playlists(Screen):
                 pixmap = LoadPixmap(cached=True, path=os.path.join(common_path, "led_red.png"))
 
         return (index, str(name), str(url), str(expires), str(status), pixmap, str(active), str(activenum), str(maxc), str(maxnum))
+
+    def redButton(self):
+        if self.edit_mode:
+            self.cancelEditMode()
+        else:
+            self.quit()
+
+    def greenButton(self):
+        if self.edit_mode:
+            self.saveEditMode()
+        else:
+            self.action_green()
+
+    def yellowButton(self):
+        if not self.edit_mode:
+            self.deleteServer()
+
+    def blueButton(self):
+        if not self.edit_mode:
+            self.openUserInfo()
+
+    def cancelButton(self):
+        if self.edit_mode:
+            self.cancelEditMode()
+        else:
+            self.quit()
+
+    def okButton(self):
+        if not self.edit_mode:
+            self.action_ok()
+
+    def toggleEditMode(self):
+        if self.edit_mode:
+            self.saveEditMode()
+            return
+
+        if len(self.playlists_all) < 2:
+            return
+
+        self.edit_mode = True
+        self.edit_original_playlists = list(self.playlists_all)
+        self.edit_original_list = [list(entry) for entry in self.list]
+        self.edit_original_draw_list = list(self.drawList)
+        self.edit_original_index = self["playlists"].getIndex()
+
+        self["key_red"].setText(_("Cancel"))
+        self["key_green"].setText(_("Save"))
+        self["key_yellow"].setText("")
+        self["key_blue"].setText("")
+        self["key_menu"].setText(_("Save"))
+
+    def saveEditMode(self):
+        ordercheck = save_playlist_order(self.playlists_all)
+        if not ordercheck:
+            self.cancelEditMode()
+            self.session.open(
+                MessageBox,
+                _("Unable to save the playlist order."),
+                MessageBox.TYPE_ERROR
+            )
+            return
+
+        self.edit_mode = False
+        self.clearEditModeData()
+        self.restoreButtonText()
+        self.getCurrentEntry()
+
+    def cancelEditMode(self):
+        if not self.edit_mode:
+            return
+
+        self.playlists_all = list(self.edit_original_playlists)
+        self.list = [list(entry) for entry in self.edit_original_list]
+        self.drawList = list(self.edit_original_draw_list)
+        self["playlists"].setList(self.drawList)
+
+        if self.drawList:
+            self["playlists"].setIndex(self.edit_original_index)
+
+        self.edit_mode = False
+        self.clearEditModeData()
+        self.restoreButtonText()
+        self.getCurrentEntry()
+
+    def clearEditModeData(self):
+        self.edit_original_playlists = []
+        self.edit_original_list = []
+        self.edit_original_draw_list = []
+        self.edit_original_index = 0
+
+    def restoreButtonText(self):
+        self["key_red"].setText(_("Back"))
+        self["key_green"].setText(_("OK"))
+        self["key_yellow"].setText(_("Delete"))
+        self["key_blue"].setText(_("Info"))
+        self["key_menu"].setText(_("Edit mode"))
+
+    def goUp(self):
+        if self.edit_mode:
+            self.movePlaylist(-1)
+        else:
+            self.moveSelection(-1)
+
+    def goDown(self):
+        if self.edit_mode:
+            self.movePlaylist(1)
+        else:
+            self.moveSelection(1)
+
+    def pageUp(self):
+        if self.edit_mode:
+            self.movePlaylist(-5)
+        else:
+            self.moveSelection(-5)
+
+    def pageDown(self):
+        if self.edit_mode:
+            self.movePlaylist(5)
+        else:
+            self.moveSelection(5)
+
+    def zeroButton(self):
+        if not self.edit_mode:
+            self.goTop()
+
+    def moveSelection(self, amount):
+        count = self["playlists"].count()
+
+        if not count:
+            return
+
+        current_index = self["playlists"].getIndex()
+        new_index = current_index + amount
+
+        if amount == -1 and new_index < 0:
+            new_index = count - 1
+        elif amount == 1 and new_index >= count:
+            new_index = 0
+        else:
+            new_index = max(0, min(new_index, count - 1))
+
+        self["playlists"].setIndex(new_index)
+
+    def movePlaylist(self, amount):
+        count = len(self.playlists_all)
+
+        if count < 2:
+            return
+
+        current_index = self["playlists"].getIndex()
+
+        new_index = max(0, min(current_index + amount, count - 1))
+
+        if new_index == current_index:
+            return
+
+        playlist = self.playlists_all.pop(current_index)
+        list_entry = self.list.pop(current_index)
+
+        self.playlists_all.insert(new_index, playlist)
+        self.list.insert(new_index, list_entry)
+
+        for index, entry in enumerate(self.list):
+            entry[0] = index
+
+        self.drawList = [
+            self.buildListEntry(
+                entry[0],
+                entry[1],
+                entry[2],
+                entry[3],
+                entry[4],
+                entry[5],
+                entry[6],
+                entry[7],
+                entry[8]
+            )
+            for entry in self.list
+        ]
+
+        self["playlists"].setList(self.drawList)
+        self["playlists"].setIndex(new_index)
 
     def quit(self, answer=None):
         if cfg.interface.value == "xklass":

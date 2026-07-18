@@ -37,6 +37,171 @@ def dedupe_playlists(playlists):
     return unique
 
 
+def normalise_playlist_value(value, lower=False):
+    try:
+        text_type = unicode
+    except NameError:
+        text_type = str
+
+    if value is None:
+        value = text_type("")
+    elif not isinstance(value, text_type):
+        try:
+            value = text_type(value, "utf-8")
+        except TypeError:
+            value = text_type(value)
+        except UnicodeDecodeError:
+            value = text_type(value, "utf-8", "ignore")
+
+    value = value.strip()
+
+    if lower:
+        value = value.lower()
+
+    return value
+
+
+def get_playlist_key(playlist):
+    playlist_info = playlist.get("playlist_info", {})
+
+    return (
+        normalise_playlist_value(
+            playlist_info.get("domain", ""),
+            lower=True
+        ),
+        normalise_playlist_value(playlist_info.get("username", "")),
+        normalise_playlist_value(playlist_info.get("password", ""))
+    )
+
+
+def get_playlist_line_key(line):
+    line = line.strip()
+
+    if not line.startswith(("http://", "https://")):
+        return None
+
+    try:
+        parsed_uri = urlparse(line)
+        query = parse_qs(parsed_uri.query, keep_blank_values=True)
+    except Exception:
+        return None
+
+    if not parsed_uri.hostname:
+        return None
+
+    if "username" not in query or "password" not in query:
+        return None
+
+    return (
+        normalise_playlist_value(parsed_uri.hostname, lower=True),
+        normalise_playlist_value(query["username"][0]),
+        normalise_playlist_value(query["password"][0])
+    )
+
+
+def get_line_ending(line):
+    if line.endswith("\r\n"):
+        return "\r\n"
+
+    if line.endswith("\n"):
+        return "\n"
+
+    return ""
+
+
+def save_playlist_order(playlists):
+    playlist_file = cfg.playlist_file.value
+    playlists_json = cfg.playlists_json.value
+
+    if not os.path.isfile(playlist_file):
+        print("Playlist order save error: playlists.txt does not exist")
+        return False
+
+    try:
+        with open(playlist_file, "r") as f:
+            lines = f.readlines()
+    except Exception as e:
+        print("Playlist order read error:", e)
+        return False
+
+    playlist_keys = []
+    seen_keys = set()
+
+    for playlist in playlists:
+        key = get_playlist_key(playlist)
+
+        if key in seen_keys:
+            continue
+
+        seen_keys.add(key)
+        playlist_keys.append(key)
+
+    valid_keys = set(playlist_keys)
+    playlist_lines = {}
+    playlist_positions = []
+
+    for position, line in enumerate(lines):
+        key = get_playlist_line_key(line)
+
+        if key not in valid_keys:
+            continue
+
+        if key not in playlist_lines:
+            playlist_lines[key] = []
+
+        playlist_lines[key].append(line)
+        playlist_positions.append(position)
+
+    for key in playlist_keys:
+        if key not in playlist_lines:
+            print(
+                "Playlist order save error: playlist entry is missing:",
+                key
+            )
+            return False
+
+    ordered_lines = []
+
+    for key in playlist_keys:
+        ordered_lines.extend(playlist_lines[key])
+
+    if len(ordered_lines) != len(playlist_positions):
+        print("Playlist order save error: playlist line count mismatch")
+        return False
+
+    for position, ordered_line in zip(playlist_positions, ordered_lines):
+        line_ending = get_line_ending(lines[position])
+        lines[position] = ordered_line.rstrip("\r\n") + line_ending
+
+    old_indexes = []
+
+    for index, playlist in enumerate(playlists):
+        playlist_info = playlist.get("playlist_info", {})
+        old_indexes.append(playlist_info.get("index"))
+        playlist_info["index"] = index
+
+    try:
+        with open(playlist_file, "w") as f:
+            f.writelines(lines)
+
+        with open(playlists_json, "w") as f:
+            json.dump(playlists, f, indent=4)
+    except Exception as e:
+        for index, playlist in enumerate(playlists):
+            playlist_info = playlist.get("playlist_info", {})
+            old_index = old_indexes[index]
+
+            if old_index is None:
+                playlist_info.pop("index", None)
+            else:
+                playlist_info["index"] = old_index
+
+        print("Playlist order write error:", e)
+        return False
+
+    return True
+
+
 def process_files():
     playlist_file = cfg.playlist_file.value
     playlists_json = cfg.playlists_json.value
