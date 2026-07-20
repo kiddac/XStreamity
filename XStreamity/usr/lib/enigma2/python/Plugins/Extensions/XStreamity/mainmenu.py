@@ -23,7 +23,7 @@ from . import xstreamity_globals as glob
 from . import processfiles as loadfiles
 from .plugin import skin_directory, common_path, version, downloads_json, cfg, dir_tmp
 from .xStaticText import StaticText
-from .utils import _cleanup_epg_folders, _get_current_aspect_ratio
+from .utils import _cleanup_epg_folders, _get_current_aspect_ratio, clearCaches
 
 try:
     from enigma import eAVSwitch
@@ -36,6 +36,9 @@ class XStreamity_MainMenu(Screen):
 
     def __init__(self, session):
         Screen.__init__(self, session)
+
+        clearCaches()
+
         self.session = session
 
         if cfg.interface.value == "xstreamity":
@@ -227,8 +230,8 @@ class XStreamity_MainMenu(Screen):
                 self.hackavision()
 
     def quit(self, data=None):
-        self.playOriginalChannel()
         self.clearData()
+        self.playOriginalChannel()
 
     def clearData(self):
         for playlist in self.playlists_all:
@@ -264,6 +267,7 @@ class XStreamity_MainMenu(Screen):
             except:
                 pass
 
+        clearCaches()
         self.close()
 
     def resetData(self, answer=None):

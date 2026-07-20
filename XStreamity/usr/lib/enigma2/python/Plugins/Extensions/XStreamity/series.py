@@ -57,14 +57,9 @@ from enigma import ePicLoad, eServiceReference, eTimer
 # Local imports
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import (cfg, common_path, dir_tmp, downloads_json, pythonVer, screenwidth, skin_directory, hasConcurrent, hasMultiprocessing, debugs)
+from .plugin import (cfg, common_path, dir_tmp, downloads_json, pythonVer, screenwidth, skin_directory, hasConcurrent, hasMultiprocessing, debugs, isDreambox)
 
 from .xStaticText import StaticText
-
-if os.path.exists("/var/lib/dpkg/status"):
-    DreamOS = True
-else:
-    DreamOS = False
 
 hdr = {
     'User-Agent': str(cfg.useragent.value)
@@ -117,7 +112,7 @@ class XStreamity_Series_Categories(Screen):
 
         skin = os.path.join(skin_path, "vod_categories.xml")
 
-        if cfg.interface.value == "xstreamity" and DreamOS:
+        if cfg.interface.value == "xstreamity" and isDreambox:
             skin = os.path.join(skin_path, "DreamOS/vod_categories.xml")
 
         with codecs.open(skin, "r", encoding="utf-8") as f:

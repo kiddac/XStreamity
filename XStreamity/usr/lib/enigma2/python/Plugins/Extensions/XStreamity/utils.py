@@ -138,3 +138,13 @@ def _get_current_aspect_ratio():
             print("*** avSwitch failed ***", e)
 
     return current_ar
+
+
+def clearCaches():
+    try:
+        os.system("sync")
+
+        with open("/proc/sys/vm/drop_caches", "w") as drop_caches:
+            drop_caches.write("3\n")
+    except (IOError, OSError):
+        pass

@@ -21,7 +21,7 @@ import requests
 from Components.ActionMap import ActionMap
 from Components.Pixmap import Pixmap
 from Components.Sources.List import List
-from enigma import eTimer, getDesktop
+from enigma import eTimer
 from requests.adapters import HTTPAdapter, Retry
 from Screens.MessageBox import MessageBox
 from Screens.Screen import Screen
@@ -30,17 +30,8 @@ from Tools.LoadPixmap import LoadPixmap
 # Local application/library-specific imports
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import common_path, hasConcurrent, hasMultiprocessing, cfg, pythonVer, dir_plugins
+from .plugin import common_path, hasConcurrent, hasMultiprocessing, cfg, pythonVer, skin_directory
 from .xStaticText import StaticText
-
-screenwidth = getDesktop(0).size()
-
-if screenwidth.width() == 2560:
-    skin_directory = os.path.join(dir_plugins, "skins/uhd/")
-elif screenwidth.width() > 1280:
-    skin_directory = os.path.join(dir_plugins, "skins/fhd/")
-else:
-    skin_directory = os.path.join(dir_plugins, "skins/hd/")
 
 hdr = {
     'User-Agent': str(cfg.useragent.value)
@@ -72,6 +63,7 @@ class XStreamity_Menu(Screen):
 
     def __init__(self, session):
         Screen.__init__(self, session)
+
         self.session = session
 
         if cfg.interface.value == "xstreamity":

@@ -35,7 +35,7 @@ from Components.config import configfile
 # Local application/library-specific imports
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import skin_directory, cfg, common_path, version, hasConcurrent, hasMultiprocessing
+from .plugin import skin_directory, cfg, common_path, version, hasConcurrent, hasMultiprocessing, isDreambox
 from .processfiles import save_playlist_order
 from .xStaticText import StaticText
 
@@ -62,7 +62,7 @@ class XStreamity_Playlists(Screen):
 
         skin = os.path.join(skin_path, "playlists.xml")
 
-        if cfg.interface.value == "xklass" and os.path.exists("/var/lib/dpkg/status"):
+        if cfg.interface.value == "xklass" and isDreambox:
             skin = os.path.join(skin_path, "DreamOS/playlists.xml")
 
         with open(skin, "r") as f:

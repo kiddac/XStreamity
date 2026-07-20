@@ -48,6 +48,7 @@ class XStreamity_HiddenCategories(Screen, ProtectedScreen):
         Screen.__init__(self, session)
 
         self.playlists_json = cfg.playlists_json.value
+
         if cfg.adult.value:
             ProtectedScreen.__init__(self)
 
@@ -97,7 +98,6 @@ class XStreamity_HiddenCategories(Screen, ProtectedScreen):
 
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
-        self.getCurrentEntry()
 
     def loadHidden(self):
         self.startList = []
@@ -150,9 +150,6 @@ class XStreamity_HiddenCategories(Screen, ProtectedScreen):
         for idx, item in enumerate(self["hidden_list"].list):
             self.startList[idx][2] = False
         self.refresh()
-
-    def getCurrentEntry(self):
-        self.currentSelection = self["hidden_list"].getIndex()
 
     def keyCancel(self):
         self.close()

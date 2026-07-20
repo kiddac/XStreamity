@@ -54,7 +54,7 @@ from enigma import eEPGCache, eServiceReference, eTimer
 # Local application/library-specific imports
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import cfg, common_path, dir_tmp, pythonVer, screenwidth, skin_directory, hasConcurrent, hasMultiprocessing, debugs
+from .plugin import cfg, common_path, dir_tmp, pythonVer, screenwidth, skin_directory, hasConcurrent, hasMultiprocessing, debugs, isDreambox
 from .xStaticText import StaticText
 
 # HTTPS twisted client hack
@@ -120,7 +120,7 @@ class XStreamity_Live_Categories(Screen):
             skin_path = os.path.join(skin_directory, cfg.interface.value, cfg.xklass_skin.value)
 
         skin = os.path.join(skin_path, "live_categories.xml")
-        if os.path.exists("/var/lib/dpkg/status"):
+        if isDreambox:
             skin = os.path.join(skin_path, "DreamOS/live_categories.xml")
 
         with codecs.open(skin, "r", encoding="utf-8") as f:

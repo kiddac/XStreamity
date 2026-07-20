@@ -4,7 +4,7 @@
 import os
 
 from . import _
-from .plugin import cfg, skin_directory, InternetSpeedTest_installed, NetSpeedTest_installed
+from .plugin import cfg, skin_directory, InternetSpeedTest_installed, NetSpeedTest_installed, isDreambox
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -62,7 +62,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
         skin = os.path.join(skin_path, "settings.xml")
 
-        if os.path.exists("/var/lib/dpkg/status"):
+        if isDreambox:
             skin = os.path.join(skin_path, "DreamOS/settings.xml")
 
         with open(skin, "r") as f:

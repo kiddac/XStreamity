@@ -33,7 +33,7 @@ from . import xstreamity_globals as glob
 from . import processfiles as loadfiles
 from .plugin import cfg, downloads_json, hasConcurrent, hasMultiprocessing, pythonFull, skin_directory, version, InternetSpeedTest_installed, NetSpeedTest_installed, debugs, pythonVer, dir_tmp
 from .xStaticText import StaticText
-from .utils import _cleanup_epg_folders, _get_current_aspect_ratio
+from .utils import _cleanup_epg_folders, _get_current_aspect_ratio, clearCaches
 
 try:
     from enigma import eAVSwitch
@@ -76,6 +76,9 @@ class XStreamity_StartMenu(Screen):
         if debugs:
             print("*** __init__ ***")
         Screen.__init__(self, session)
+
+        clearCaches()
+
         self.session = session
 
         if cfg.interface.value == "xstreamity":
@@ -866,8 +869,8 @@ class XStreamity_StartMenu(Screen):
         self.session.openWithCallback(self.noreload, server.XStreamity_AddServer)
 
     def quit(self, data=None):
-        self.playOriginalChannel()
         self.clearData()
+        self.playOriginalChannel()
 
     def clearData(self):
         for playlist in self.playlists_all:
@@ -907,6 +910,7 @@ class XStreamity_StartMenu(Screen):
                 pass
 
         self["splash"].hide()
+        clearCaches()
         self.close()
 
     def playVideo(self, result=None):

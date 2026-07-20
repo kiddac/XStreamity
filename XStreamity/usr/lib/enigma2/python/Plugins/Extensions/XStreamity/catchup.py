@@ -46,7 +46,7 @@ from enigma import eTimer, eServiceReference
 # Local application/library-specific imports
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import cfg, common_path, dir_tmp, downloads_json, pythonVer, screenwidth, skin_directory, hasConcurrent, hasMultiprocessing
+from .plugin import cfg, common_path, dir_tmp, downloads_json, pythonVer, screenwidth, skin_directory, hasConcurrent, hasMultiprocessing, isDreambox
 from .xStaticText import StaticText
 
 
@@ -112,7 +112,7 @@ class XStreamity_Catchup_Categories(Screen):
 
         skin = os.path.join(skin_path, "live_categories.xml")
 
-        if os.path.exists("/var/lib/dpkg/status"):
+        if isDreambox:
             skin = os.path.join(skin_path, "DreamOS/live_categories.xml")
 
         with codecs.open(skin, "r", encoding="utf-8") as f:

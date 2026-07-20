@@ -21,7 +21,7 @@ from Screens.Screen import Screen
 # Local application/library-specific imports
 from . import _
 from . import xstreamity_globals as glob
-from .plugin import skin_directory, cfg
+from .plugin import skin_directory, cfg, isDreambox
 from .xStaticText import StaticText
 
 
@@ -40,7 +40,7 @@ class XStreamity_Settings(ConfigListScreen, Screen):
 
         skin = os.path.join(skin_path, "settings.xml")
 
-        if os.path.exists("/var/lib/dpkg/status"):
+        if isDreambox:
             skin = os.path.join(skin_path, "DreamOS/settings.xml")
 
         with open(skin, "r") as f:

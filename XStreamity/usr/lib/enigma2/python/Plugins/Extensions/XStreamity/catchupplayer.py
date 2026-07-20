@@ -68,7 +68,7 @@ from . import _
 from . import xstreamity_globals as glob
 from .plugin import cfg, common_path, dir_tmp, pythonVer, screenwidth, skin_directory
 from .xStaticText import StaticText
-from .utils import _get_current_aspect_ratio
+from .utils import _get_current_aspect_ratio, clearCaches
 
 try:
     from enigma import eAVSwitch
@@ -574,7 +574,7 @@ class XStreamity_CatchupPlayer(
             setResumePoint(self.session)
         except Exception as e:
             print(e)
-
+        clearCaches()
         self.close()
 
     def toggleStreamType(self):
