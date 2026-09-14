@@ -48,12 +48,6 @@ hdr = {
 scans_dir = os.path.join(dir_tmp, "scans")
 badurls_file = os.path.join(scans_dir, "badurls.txt")
 
-original_playlist_file = cfg.playlist_file.value
-original_playlists_json = cfg.playlists_json.value
-
-glob.original_playlist_file = original_playlist_file
-glob.original_playlists_json = original_playlists_json
-
 scanner_playlist_file = os.path.join(scans_dir, "playlists.txt")
 scanner_playlists_json = os.path.join(scans_dir, "x-playlists.json")
 
@@ -147,6 +141,11 @@ class XStreamity_Scanner(Screen):
         self.setTitle(self.setup_title)
 
     def start(self):
+        self.original_playlist_file = cfg.playlist_file.value
+        self.original_playlists_json = cfg.playlists_json.value
+        glob.original_playlist_file = self.original_playlist_file
+        glob.original_playlists_json = self.original_playlists_json
+
         cfg.playlist_file.value = scanner_playlist_file  # Force overwrite
         cfg.playlist_file.save()
 
@@ -543,8 +542,8 @@ class XStreamity_Scanner(Screen):
                 if os.path.exists(file_path):
                     os.remove(file_path)
 
-        cfg.playlist_file.setValue(original_playlist_file)
-        cfg.playlists_json.setValue(original_playlists_json)
+        cfg.playlist_file.setValue(self.original_playlist_file)
+        cfg.playlists_json.setValue(self.original_playlists_json)
         glob.current_selection = 0
         cfg.save()
         self["splash"].hide()

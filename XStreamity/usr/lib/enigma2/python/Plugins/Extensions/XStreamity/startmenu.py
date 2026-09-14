@@ -66,9 +66,6 @@ def clean_names(streams):
     return streams
 
 
-playlists_json = cfg.playlists_json.value
-
-
 class XStreamity_StartMenu(Screen):
     ALLOW_SUSPEND = True
 
@@ -133,6 +130,7 @@ class XStreamity_StartMenu(Screen):
         self.toggle = False
 
         self.playlists_all = loadfiles.process_files()
+        self.playlists_json = cfg.playlists_json.value
 
         _cleanup_epg_folders(self.playlists_all, cfg, dir_tmp)
 
@@ -447,7 +445,7 @@ class XStreamity_StartMenu(Screen):
         if debugs:
             print("*** writeJsonFile ***")
 
-        with open(playlists_json, "w") as f:
+        with open(self.playlists_json, "w") as f:
             json.dump(self.playlists_all, f, indent=4)
 
     def createSetupPlaylists(self):
@@ -494,7 +492,7 @@ class XStreamity_StartMenu(Screen):
                 self.session.open(MessageBox, _("You have dead playlists that are slowing down loading.\n\nPress Yellow button to soft delete dead playlists"), MessageBox.TYPE_WARNING)
                 for playlist in self.playlists_all:
                     playlist["data"]["fail_count"] = 0
-                with open(playlists_json, "w") as f:
+                with open(self.playlists_json, "w") as f:
                     json.dump(self.playlists_all, f, indent=4)
 
         self.drawList2 = [self.buildPlalyistListEntry(x[0], x[1], x[2], x[3], x[4]) for x in self.list2]
@@ -964,8 +962,8 @@ class XStreamity_StartMenu(Screen):
             self.session.openWithCallback(self.resetData, MessageBox, _("Warning: delete stored json data for all playlists... Settings, favourites etc. \nPlaylists will not be deleted.\nDo you wish to continue?"))
         elif answer:
             try:
-                os.remove(playlists_json)
-                with open(playlists_json, "a"):
+                os.remove(self.playlists_json)
+                with open(self.playlists_json, "a"):
                     pass
             except OSError as e:
                 print("Error deleting or recreating JSON file:", e)
@@ -992,6 +990,7 @@ class XStreamity_StartMenu(Screen):
             self.createSetupOptions()
 
     def noreload(self, Answer=None):
+        self.playlists_json = cfg.playlists_json.value
         self.playlists_all = loadfiles.process_files()
         _cleanup_epg_folders(self.playlists_all, cfg, dir_tmp)
         self.start()

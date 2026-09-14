@@ -4,7 +4,15 @@
 import os
 
 from . import _
-from .plugin import cfg, skin_directory, InternetSpeedTest_installed, NetSpeedTest_installed, isDreambox
+from .plugin import (
+    cfg,
+    skin_directory,
+    InternetSpeedTest_installed,
+    NetSpeedTest_installed,
+    isDreambox,
+    refresh_playlist_choices,
+    refresh_playlist_paths,
+)
 from .xStaticText import StaticText
 
 from Components.ActionMap import ActionMap
@@ -122,14 +130,14 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         restart_needed = (
             self.org_main != cfg.main.value or
             self.org_wakeup != cfg.wakeup.value or
-            self.org_boot != cfg.boot.value or
-            self.location != cfg.location.value
+            self.org_boot != cfg.boot.value
         )
 
         if self["config"].isChanged():
             for x in self["config"].list:
                 x[1].save()
 
+            refresh_playlist_paths()
             cfg.save()
             configfile.save()
 
@@ -152,11 +160,13 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
             self.close()
 
     def initConfig(self):
+        refresh_playlist_choices()
         self.cfg_interface = getConfigListEntry(_("Select interface"), cfg.interface)
         self.cfg_xstreamity_skin = getConfigListEntry(_("Select skin"), cfg.xstreamity_skin)
         self.cfg_xklass_skin = getConfigListEntry(_("Select skin"), cfg.xklass_skin)
         self.cfg_useragent = getConfigListEntry(_("Select fake web user-agent"), cfg.useragent)
-        self.cfg_location = getConfigListEntry(_("playlists.txt location") + _(" *Restart GUI Required"), cfg.location)
+        self.cfg_location = getConfigListEntry(_("Playlist files location"), cfg.location)
+        self.cfg_playlist_name = getConfigListEntry(_("Active playlist file"), cfg.playlist_name)
         self.cfg_epglocation = getConfigListEntry(_("EPG download location"), cfg.epglocation)
         self.cfg_downloadlocation = getConfigListEntry(_("VOD download folder"), cfg.downloadlocation)
         self.cfg_livetype = getConfigListEntry(_("Default LIVE stream type"), cfg.livetype)
@@ -170,7 +180,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.cfg_TMDBLanguage2 = getConfigListEntry(_("Movie Database language"), cfg.TMDBLanguage2)
         self.cfg_catchupstart = getConfigListEntry(_("Margin before catchup (mins)"), cfg.catchupstart)
         self.cfg_catchupend = getConfigListEntry(_("Margin after catchup (mins)"), cfg.catchupend)
-        self.cfg_subs = getConfigListEntry(_("Allow SubsSupport plugin in VOD"), cfg.subs)
+        self.cfg_subs = getConfigListEntry(_("Allow subtitle support plugin in VOD and Catch Up"), cfg.subs)
         self.cfg_skipplaylistsscreen = getConfigListEntry(_("Skip playlist selection screen if only 1 playlist"), cfg.skipplaylistsscreen)
         self.cfg_wakeup = getConfigListEntry(_("Automatic EPG download time") + _(" *Restart GUI Required"), cfg.wakeup)
         self.cfg_channelpicons = getConfigListEntry(_("Show channel picons"), cfg.channelpicons)
@@ -183,8 +193,6 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.org_main = cfg.main.value
         self.org_wakeup = cfg.wakeup.value
         self.org_boot = cfg.boot.value
-        self.location = cfg.location.value
-
         self.cfg_vodcategoryorder = getConfigListEntry(_("Default VOD category sort order"), cfg.vodcategoryorder)
         self.cfg_vodstreamorder = getConfigListEntry(_("Default VOD stream sort order"), cfg.vodstreamorder)
         self.cfg_seriescategoryorder = getConfigListEntry(_("Default Series category sort order"), cfg.seriescategoryorder)
@@ -208,6 +216,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
             self.cfg_xklass_skin if cfg.interface.value == "xklass" else None,
             self.cfg_useragent,
             self.cfg_location,
+            self.cfg_playlist_name,
             self.cfg_epglocation,
             self.cfg_downloadlocation,
             self.cfg_ar_id_player,
@@ -226,7 +235,10 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
             self.cfg_catchupend,
             self.cfg_adult,
             self.cfg_adultpin if cfg.adult.value else None,
-            self.cfg_subs if os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/SubsSupport") else None,
+            self.cfg_subs if any(os.path.isdir(path) for path in (
+                "/usr/lib/enigma2/python/Plugins/Extensions/SubsSupportPro",
+                "/usr/lib/enigma2/python/Plugins/Extensions/SubsSupport",
+            )) else None,
             self.cfg_main,
             self.cfg_channelpicons,
             self.cfg_channelcovers,
@@ -350,4 +362,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         def callback(path):
             if path is not None:
                 config_entry.setValue(str(path))
+                if config_entry == cfg.location:
+                    refresh_playlist_choices(str(path))
+                    self.createSetup()
         return callback

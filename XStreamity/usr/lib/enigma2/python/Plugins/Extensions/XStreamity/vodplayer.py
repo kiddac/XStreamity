@@ -75,15 +75,19 @@ except Exception:
 
 if cfg.subs.value is True:
     try:
-        from Plugins.Extensions.SubsSupport import SubsSupport, SubsSupportStatus
+        from Plugins.Extensions.SubsSupportPro import SubsProSupport as SubsSupport
+        from Plugins.Extensions.SubsSupportPro import SubsProSupportStatus as SubsSupportStatus
     except ImportError:
-        class SubsSupport(object):
-            def __init__(self, *args, **kwargs):
-                pass
+        try:
+            from Plugins.Extensions.SubsSupport import SubsSupport, SubsSupportStatus
+        except ImportError:
+            class SubsSupport(object):
+                def __init__(self, *args, **kwargs):
+                    pass
 
-        class SubsSupportStatus(object):
-            def __init__(self, *args, **kwargs):
-                pass
+            class SubsSupportStatus(object):
+                def __init__(self, *args, **kwargs):
+                    pass
 else:
     class SubsSupport(object):
         def __init__(self, *args, **kwargs):
@@ -115,9 +119,6 @@ if os.path.exists("/usr/bin/exteplayer3"):
 
 if os.path.exists("/usr/bin/apt-get"):
     vodstreamtypelist.append("8193")
-
-playlists_json = cfg.playlists_json.value
-
 
 class IPTVInfoBarShowHide():
     STATE_HIDDEN = 0
@@ -501,6 +502,7 @@ class XStreamity_VodPlayer(
 
     def addRecentVodList(self):
         # print("**** addrecentvodlist ***")
+        playlists_json = cfg.playlists_json.value
         name = glob.originalChannelList2[glob.currentchannellistindex][1]
         stream_id = glob.originalChannelList2[glob.currentchannellistindex][2]
         stream_icon = glob.originalChannelList2[glob.currentchannellistindex][3]
@@ -549,6 +551,7 @@ class XStreamity_VodPlayer(
             json.dump(self.playlists_all, f, indent=4)
 
     def addWatchedList(self):
+        playlists_json = cfg.playlists_json.value
         stream_id = self.stream_id
 
         if glob.categoryname == "vod":

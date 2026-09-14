@@ -164,6 +164,7 @@ class XStreamity_MainMenu(Screen):
             self.start()
 
     def start(self, answer=None):
+        self.playlists_json = cfg.playlists_json.value
         self.playlists_all = loadfiles.process_files()
         _cleanup_epg_folders(self.playlists_all, cfg, dir_tmp)
         self.createSetup()

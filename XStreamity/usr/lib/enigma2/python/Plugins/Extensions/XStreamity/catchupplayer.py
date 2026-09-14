@@ -77,15 +77,19 @@ except Exception:
 
 if cfg.subs.value is True:
     try:
-        from Plugins.Extensions.SubsSupport import SubsSupport, SubsSupportStatus
+        from Plugins.Extensions.SubsSupportPro import SubsProSupport as SubsSupport
+        from Plugins.Extensions.SubsSupportPro import SubsProSupportStatus as SubsSupportStatus
     except ImportError:
-        class SubsSupport(object):
-            def __init__(self, *args, **kwargs):
-                pass
+        try:
+            from Plugins.Extensions.SubsSupport import SubsSupport, SubsSupportStatus
+        except ImportError:
+            class SubsSupport(object):
+                def __init__(self, *args, **kwargs):
+                    pass
 
-        class SubsSupportStatus(object):
-            def __init__(self, *args, **kwargs):
-                pass
+            class SubsSupportStatus(object):
+                def __init__(self, *args, **kwargs):
+                    pass
 else:
     class SubsSupport(object):
         def __init__(self, *args, **kwargs):
@@ -405,6 +409,10 @@ class XStreamity_CatchupPlayer(
             self.ar_id_player = int(cfg.ar_id_player.value)
         except Exception:
             self.ar_id_player = -1
+
+        if cfg.subs.value is True:
+            SubsSupport.__init__(self, searchSupport=True, embeddedSupport=True)
+            SubsSupportStatus.__init__(self)
 
         self.streamurl = streamurl
         self.servicetype = servicetype

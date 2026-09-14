@@ -9,7 +9,6 @@ import glob as glob_module
 import twisted.python.runtime
 
 from . import _
-from . import xstreamity_globals as glob
 from Components.config import (
     config, ConfigSubsection, ConfigSelection, ConfigDirectory,
     ConfigYesNo, ConfigSelectionNumber, ConfigClock, ConfigPIN,
@@ -293,41 +292,95 @@ cfg.seriesorder = ConfigSelection(default=(_("Sort: Original")), choices=[(_("So
 # File paths
 # ------------------------------------------------------------------
 
-playlist_file = os.path.join(dir_etc, "playlists.txt")
-playlists_json = os.path.join(dir_etc, "x-playlists.json")
 downloads_json = os.path.join(dir_etc, "downloads2.json")
 common_path = os.path.join(skin_directory, "common/")
 
-location = cfg.location.value
 
-if location:
-    if os.path.exists(location):
-        playlist_file = os.path.join(cfg.location.value, "playlists.txt")
+def get_playlist_choices(location=None):
+    """Return selectable text files from the configured playlist directory."""
+    location = location or cfg.location.value or dir_etc
+    filenames = []
+
+    try:
+        if os.path.isdir(location):
+            filenames = [
+                filename for filename in os.listdir(location)
+                if filename.lower().endswith(".txt") and
+                os.path.isfile(os.path.join(location, filename))
+            ]
+    except Exception:
+        filenames = []
+
+    filenames = sorted(set(filenames), key=lambda filename: filename.lower())
+    if "playlists.txt" in filenames:
+        filenames.remove("playlists.txt")
+    filenames.insert(0, "playlists.txt")
+
+    return [(filename, filename) for filename in filenames]
+
+
+cfg.playlist_name = ConfigSelection(default="playlists.txt", choices=get_playlist_choices())
+
+
+def refresh_playlist_choices(location=None):
+    """Refresh the filename selector while preserving a valid selection."""
+    choices = get_playlist_choices(location)
+    filenames = [choice[0] for choice in choices]
+    selected = os.path.basename(cfg.playlist_name.value or "playlists.txt")
+
+    if selected not in filenames:
+        selected = "playlists.txt"
+
+    cfg.playlist_name.setChoices(choices, default="playlists.txt")
+    cfg.playlist_name.setValue(selected)
+    return choices
+
+
+def refresh_playlist_paths(create_files=True):
+    """Update the active text and JSON paths without requiring a GUI restart."""
+    location = cfg.location.value or dir_etc
+
+    try:
+        if not os.path.isdir(location):
+            os.makedirs(location)
         cfg.location_valid.setValue(True)
-    else:
-        os.makedirs(location)  # Create directory if it doesn't exist
-        playlist_file = os.path.join(location, "playlists.txt")
+    except Exception:
+        location = dir_etc
+        cfg.location.setValue(location)
+        cfg.location_valid.setValue(False)
+        if not os.path.isdir(location):
+            os.makedirs(location)
 
-        cfg.location_valid.setValue(True)
-else:
-    cfg.location.setValue(dir_etc)
-    cfg.location_valid.setValue(False)
+    refresh_playlist_choices(location)
+    filename = os.path.basename(cfg.playlist_name.value or "playlists.txt")
+    if not filename.lower().endswith(".txt"):
+        filename = "playlists.txt"
+        cfg.playlist_name.setValue(filename)
 
-cfg.playlist_file = ConfigText(playlist_file)
-cfg.playlists_json = ConfigText(playlists_json)
+    playlist_file = os.path.join(location, filename)
+    file_stem = os.path.splitext(filename)[0]
+    json_filename = "x-playlists.json" if filename == "playlists.txt" else "{}-data.json".format(file_stem)
+    playlists_json = os.path.join(dir_etc, json_filename)
+
+    cfg.playlist_file.setValue(playlist_file)
+    cfg.playlists_json.setValue(playlists_json)
+
+    if create_files:
+        for path in (playlist_file, playlists_json):
+            if not os.path.isfile(path):
+                with open(path, "a"):
+                    pass
+
+    return playlist_file, playlists_json
+
+
+cfg.playlist_file = ConfigText(default=os.path.join(dir_etc, "playlists.txt"))
+cfg.playlists_json = ConfigText(default=os.path.join(dir_etc, "x-playlists.json"))
 cfg.downloads_json = ConfigText(downloads_json)
-
-cfg.playlist_file.value = playlist_file  # Force overwrite
-cfg.playlist_file.save()
-
-cfg.playlists_json.value = playlists_json  # Force overwrite
-cfg.playlists_json.save()
+refresh_playlist_paths()
 
 cfg.save()
 configfile.save()
-
-glob.original_playlist_file = cfg.playlist_file.value
-glob.original_playlists_json = cfg.playlists_json.value
 
 if os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/InternetSpeedTest"):
     InternetSpeedTest_installed = True
@@ -350,16 +403,6 @@ if not os.path.exists(dir_etc):
 # create temporary folder for downloaded files
 if not os.path.exists(dir_tmp):
     os.makedirs(dir_tmp)
-
-# check if playlists.txt file exists in specified location
-if not os.path.isfile(cfg.playlist_file.value):
-    with open(cfg.playlist_file.value, "a") as f:
-        f.close()
-
-# check if x-playlists.json file exists in specified location
-if not os.path.isfile(cfg.playlists_json.value):
-    with open(cfg.playlists_json.value, "a") as f:
-        f.close()
 
 # check if x-downloads.json file exists in specified location
 if not os.path.isfile(cfg.downloads_json.value):

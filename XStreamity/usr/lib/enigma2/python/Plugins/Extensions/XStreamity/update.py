@@ -73,9 +73,6 @@ hdr = {
     'User-Agent': str(cfg.useragent.value)
 }
 
-playlists_json = cfg.playlists_json.value
-
-
 class XStreamity_Update:
     def __init__(self, session=None, mode=None):
         self.mode = mode
@@ -118,6 +115,7 @@ class XStreamity_Update:
                 return str(url)
 
     def process_json_file(self):
+        playlists_json = cfg.playlists_json.value
         try:
             with open(playlists_json, "r") as f:
                 self.playlists_all = json.load(f)

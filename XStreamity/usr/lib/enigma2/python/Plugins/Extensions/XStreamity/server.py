@@ -34,10 +34,6 @@ hdr = {
     'User-Agent': str(cfg.useragent.value)
 }
 
-playlist_file = cfg.playlist_file.value
-playlists_json = cfg.playlists_json.value
-
-
 class XStreamity_AddServer(ConfigListScreen, Screen):
 
     def __init__(self, session):
@@ -163,6 +159,7 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
 
     def getPlaylistJson(self):
         playlists_all = []
+        playlists_json = cfg.playlists_json.value
 
         # Check if the playlist file exists and is not empty
         if os.path.exists(playlists_json) and os.path.getsize(playlists_json) > 0:
@@ -211,6 +208,8 @@ class XStreamity_AddServer(ConfigListScreen, Screen):
         if any(playlists["playlist_info"]["name"] == self.name for playlists in self.playlists_all):
             self.session.open(MessageBox, _("Name already used. Please enter a unique name."), MessageBox.TYPE_ERROR, timeout=10)
             return
+
+        playlist_file = cfg.playlist_file.value
 
         if not os.path.exists(playlist_file):
             with open(playlist_file, "a") as f:

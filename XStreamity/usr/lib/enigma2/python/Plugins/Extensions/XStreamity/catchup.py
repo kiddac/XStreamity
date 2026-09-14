@@ -69,8 +69,6 @@ if sslverify:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
 
-playlists_json = cfg.playlists_json.value
-
 hdr = {
     'User-Agent': str(cfg.useragent.value),
 }
@@ -498,6 +496,7 @@ class XStreamity_Catchup_Categories(Screen):
         self.writeJsonFile()
 
     def writeJsonFile(self):
+        playlists_json = cfg.playlists_json.value
         with open(playlists_json, "r") as f:
             playlists_all = json.load(f)
 
