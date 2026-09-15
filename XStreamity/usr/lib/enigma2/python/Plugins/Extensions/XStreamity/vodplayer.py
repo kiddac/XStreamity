@@ -120,6 +120,7 @@ if os.path.exists("/usr/bin/exteplayer3"):
 if os.path.exists("/usr/bin/apt-get"):
     vodstreamtypelist.append("8193")
 
+
 class IPTVInfoBarShowHide():
     STATE_HIDDEN = 0
     STATE_HIDING = 1
