@@ -124,6 +124,17 @@ def save_playlist_order(playlists):
         print("Playlist order read error:", e)
         return False
 
+    # A playlist can legitimately have no line in playlists.txt (for
+    # example, one added directly to playlists.json by a third-party
+    # integration). Only playlists that already have a line take part in
+    # the reorder below; the rest are still reindexed and written to
+    # playlists.json further down, just not reordered within playlists.txt.
+    existing_line_keys = set()
+    for line in lines:
+        key = get_playlist_line_key(line)
+        if key is not None:
+            existing_line_keys.add(key)
+
     playlist_keys = []
     seen_keys = set()
 
@@ -134,7 +145,9 @@ def save_playlist_order(playlists):
             continue
 
         seen_keys.add(key)
-        playlist_keys.append(key)
+
+        if key in existing_line_keys:
+            playlist_keys.append(key)
 
     valid_keys = set(playlist_keys)
     playlist_lines = {}
@@ -525,3 +538,4 @@ def process_files():
         json.dump(playlists_all, f, indent=4)
 
     return playlists_all
+                
