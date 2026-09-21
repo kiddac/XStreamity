@@ -124,6 +124,17 @@ def save_playlist_order(playlists):
         print("Playlist order read error:", e)
         return False
 
+    # A playlist can legitimately have no line in playlists.txt (for
+    # example, one added directly to playlists.json by a third-party
+    # integration). Only playlists that already have a line take part in
+    # the reorder below; the rest are still reindexed and written to
+    # playlists.json further down, just not reordered within playlists.txt.
+    existing_line_keys = set()
+    for line in lines:
+        key = get_playlist_line_key(line)
+        if key is not None:
+            existing_line_keys.add(key)
+
     playlist_keys = []
     seen_keys = set()
 
@@ -134,7 +145,9 @@ def save_playlist_order(playlists):
             continue
 
         seen_keys.add(key)
-        playlist_keys.append(key)
+
+        if key in existing_line_keys:
+            playlist_keys.append(key)
 
     valid_keys = set(playlist_keys)
     playlist_lines = {}
@@ -507,13 +520,33 @@ def process_files():
     new_list = []
 
     for playlist in playlists_all:
+        domain = str(playlist["playlist_info"]["domain"])
+        username = str(playlist["playlist_info"]["username"])
+        password = str(playlist["playlist_info"]["password"])
+
+        referenced = False
+        active = False
+
         for line in lines:
-            if not line.startswith("#"):
-                if (str(playlist["playlist_info"]["domain"]) in line
-                        and "username=" + str(playlist["playlist_info"]["username"]) in line
-                        and "password=" + str(playlist["playlist_info"]["password"]) in line):
-                    new_list.append(playlist)
-                    break
+            if (domain in line
+                    and "username=" + username in line
+                    and "password=" + password in line):
+                referenced = True
+
+                if not line.startswith("#"):
+                    active = True
+
+                break
+
+        # Keep the playlist if it has an active (non-commented) line in
+        # playlists.txt, or if it has no line there at all - the latter
+        # covers a playlist added directly to playlists.json by a
+        # third-party integration rather than through the normal Add
+        # Playlist screen. A playlist whose line exists but is commented
+        # out was explicitly soft-deleted (see deleteServer()), so it is
+        # still removed here as before.
+        if active or not referenced:
+            new_list.append(playlist)
 
     for index, playlist in enumerate(new_list):
         playlist["playlist_info"]["index"] = index
@@ -525,3 +558,4 @@ def process_files():
         json.dump(playlists_all, f, indent=4)
 
     return playlists_all
+        
