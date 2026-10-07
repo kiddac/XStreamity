@@ -77,6 +77,8 @@ class XStreamity_StartMenu(Screen):
         clearCaches()
 
         self.session = session
+        self.onlineUpdater = None
+        self.onlineUpdateStarted = False
 
         if cfg.interface.value == "xstreamity":
             skin_path = os.path.join(skin_directory, cfg.interface.value, cfg.xstreamity_skin.value)
@@ -157,6 +159,7 @@ class XStreamity_StartMenu(Screen):
 
         self.onLayoutFinish.append(self.__layoutFinished)
         self.onFirstExecBegin.append(self.check_dependencies)
+        self.onClose.append(self.closeOnlineUpdater)
 
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
@@ -204,6 +207,10 @@ class XStreamity_StartMenu(Screen):
 
         self["playlists"].master.master.instance.setSelectionEnable(0)
 
+        if not self.onlineUpdateStarted:
+            self.onlineUpdateStarted = True
+            self.checkOnlineUpdate()
+
         if not self.playlists_all:
             if cfg.introvideo.value:
                 self.playVideo()
@@ -213,6 +220,18 @@ class XStreamity_StartMenu(Screen):
             self.createSetupOptions()
         else:
             self.delayedDownload()
+
+    def checkOnlineUpdate(self):
+        try:
+            from .updater import OnlineUpdater
+            self.onlineUpdater = OnlineUpdater(self.session, version)
+            self.onlineUpdater.check()
+        except Exception as error:
+            print("[XStreamity] Unable to initialise update check: %s" % error)
+
+    def closeOnlineUpdater(self):
+        if self.onlineUpdater is not None:
+            self.onlineUpdater.close()
 
     def delayedDownload(self):
         if debugs:
