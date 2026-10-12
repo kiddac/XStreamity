@@ -148,20 +148,21 @@ class OnlineUpdater(object):
             remoteVersion,
             _("is available"),
             description,
-            _("Do you want to install it now?")
+            _("Do you want to install it now? Your box will restart after install")
         )
         self.session.openWithCallback(
             self._install,
             MessageBox,
             message,
-            MessageBox.TYPE_YESNO
+            MessageBox.TYPE_YESNO,
+            default=False
         )
 
     def _install(self, answer=False):
         if not answer or self.closed:
             return
 
-        command = "wget '%s' -O - | /bin/sh" % INSTALLER_URL
+        command = "wget --no-check-certificate '%s' -O - | /bin/sh" % INSTALLER_URL
         self.session.open(
             Console,
             title=_("Installing XStreamity update"),

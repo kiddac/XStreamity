@@ -6,6 +6,7 @@ What is new:
 - Amended sslverify code to work with newer twisted agent
 - This only affects picons and infobar images
 - Removed commented out code
+- Added --no-check-certificate to the installer for older wget packages
 "
 
 PLUGINPATH=/usr/lib/enigma2/python/Plugins/Extensions/XStreamity
@@ -17,7 +18,7 @@ rm -rf "$TMPDIR"
 mkdir -p "$TMPDIR"
 cd "$TMPDIR" || exit 1
 
-if ! wget -q "https://github.com/kiddac/XStreamity/archive/refs/heads/master.tar.gz" -O master.tar.gz \
+if ! wget --no-check-certificate -q "https://github.com/kiddac/XStreamity/archive/refs/heads/master.tar.gz" -O master.tar.gz \
    || ! tar -xzf master.tar.gz \
    || [ ! -f "$ARCHIVE_ROOT/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py" ]; then
     echo "Download failed. Nothing was changed."
