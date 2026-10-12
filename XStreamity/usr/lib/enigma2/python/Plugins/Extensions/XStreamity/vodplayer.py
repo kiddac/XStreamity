@@ -25,27 +25,6 @@ except ImportError:
 # Third-party imports
 from twisted.web.client import downloadPage
 
-"""
-# https twisted client hack #
-try:
-    from twisted.internet import ssl
-    from twisted.internet._sslverify import ClientTLSOptions
-    sslverify = True
-except:
-    sslverify = False
-
-if sslverify:
-    class SNIFactory(ssl.ClientContextFactory):
-        def __init__(self, hostname=None):
-            self.hostname = hostname
-
-        def getContext(self):
-            ctx = self._contextFactory(self.method)
-            if self.hostname:
-                ClientTLSOptions(self.hostname, ctx)
-            return ctx
-            """
-
 # HTTPS twisted client hack (shared SNI helper)
 from .sslfactory import SNIFactory, sslverify
 
