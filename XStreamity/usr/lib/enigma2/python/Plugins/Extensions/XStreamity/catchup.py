@@ -50,12 +50,13 @@ from .plugin import cfg, common_path, dir_tmp, downloads_json, pythonVer, screen
 from .xStaticText import StaticText
 
 
-# HTTPS twisted client hack
+"""
+# https twisted client hack #
 try:
     from twisted.internet import ssl
     from twisted.internet._sslverify import ClientTLSOptions
     sslverify = True
-except ImportError:
+except:
     sslverify = False
 
 if sslverify:
@@ -68,6 +69,10 @@ if sslverify:
             if self.hostname:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
+            """
+
+# HTTPS twisted client hack (shared SNI helper)
+from .sslfactory import SNIFactory, sslverify
 
 hdr = {
     'User-Agent': str(cfg.useragent.value),

@@ -57,12 +57,13 @@ from . import xstreamity_globals as glob
 from .plugin import cfg, common_path, dir_tmp, pythonVer, screenwidth, skin_directory, hasConcurrent, hasMultiprocessing, debugs, isDreambox
 from .xStaticText import StaticText
 
-# HTTPS twisted client hack
+"""
+# https twisted client hack #
 try:
     from twisted.internet import ssl
     from twisted.internet._sslverify import ClientTLSOptions
     sslverify = True
-except ImportError:
+except:
     sslverify = False
 
 if sslverify:
@@ -75,6 +76,10 @@ if sslverify:
             if self.hostname:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
+            """
+
+# HTTPS twisted client hack (shared SNI helper)
+from .sslfactory import SNIFactory, sslverify
 
 epgimporter = os.path.isdir("/usr/lib/enigma2/python/Plugins/Extensions/EPGImport")
 

@@ -32,14 +32,14 @@ from twisted.web.client import downloadPage
 from . import xstreamity_globals as glob
 from .plugin import pythonVer, cfg
 
+"""
 # https twisted client hack #
-sslverify = False
 try:
     from twisted.internet import ssl
     from twisted.internet._sslverify import ClientTLSOptions
     sslverify = True
-except ImportError:
-    pass
+except:
+    sslverify = False
 
 if sslverify:
     class SNIFactory(ssl.ClientContextFactory):
@@ -51,6 +51,10 @@ if sslverify:
             if self.hostname:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
+            """
+
+# HTTPS twisted client hack (shared SNI helper)
+from .sslfactory import SNIFactory, sslverify
 
 
 def quickptime(str):
@@ -72,6 +76,7 @@ def get_time_utc(timestring, fdateparse):
 hdr = {
     'User-Agent': str(cfg.useragent.value)
 }
+
 
 class XStreamity_Update:
     def __init__(self, session=None, mode=None):

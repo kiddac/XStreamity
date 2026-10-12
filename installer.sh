@@ -3,7 +3,8 @@
 
 description="
 What is new:
-- Online update checking when XStreamity is opened
+- sslveritfy code amends to work with newer twisted agent
+= effects picons and infovar images
 "
 
 PLUGINPATH=/usr/lib/enigma2/python/Plugins/Extensions/XStreamity

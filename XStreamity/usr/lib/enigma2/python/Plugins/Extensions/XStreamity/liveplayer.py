@@ -31,6 +31,7 @@ import requests
 from requests.adapters import HTTPAdapter, Retry
 from twisted.web.client import downloadPage
 
+"""
 # https twisted client hack #
 try:
     from twisted.internet import ssl
@@ -49,6 +50,10 @@ if sslverify:
             if self.hostname:
                 ClientTLSOptions(self.hostname, ctx)
             return ctx
+            """
+
+# HTTPS twisted client hack (shared SNI helper)
+from .sslfactory import SNIFactory, sslverify
 
 # Enigma2 components
 from Components.ActionMap import ActionMap
