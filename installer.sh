@@ -4,7 +4,8 @@
 description="
 What is new:
 - sslveritfy code amends to work with newer twisted agent
-= effects picons and infovar images
+- effects picons and infovar images
+- removed commented out code
 "
 
 PLUGINPATH=/usr/lib/enigma2/python/Plugins/Extensions/XStreamity
