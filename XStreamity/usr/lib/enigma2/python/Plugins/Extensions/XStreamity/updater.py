@@ -155,7 +155,7 @@ class OnlineUpdater(object):
             MessageBox,
             message,
             MessageBox.TYPE_YESNO,
-            default=False
+            default = False
         )
 
     def _install(self, answer=False):

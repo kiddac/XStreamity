@@ -3,10 +3,7 @@
 
 description="
 What is new:
-- Amended sslverify code to work with newer twisted agent
-- This only affects picons and infobar images
-- Removed commented out code
-- Added --no-check-certificate to the installer for older wget packages
+- Fixed an error in auto update epg code
 "
 
 PLUGINPATH=/usr/lib/enigma2/python/Plugins/Extensions/XStreamity

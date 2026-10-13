@@ -138,7 +138,7 @@ class XStreamity_Update:
                     if xmltv in [x[1] for x in self.urllist]:
                         continue
 
-                    self.urllist.append([domain, xmltv, epgxmlfile, epgjsonfile])
+                    self.urllist.append([xmltv, epgxmlfile, epgjsonfile])
 
                     if not os.path.exists(epgfolder):
                         os.makedirs(epgfolder)
