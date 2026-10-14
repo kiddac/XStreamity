@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2026-03-30 21:17+0100\n"
-"PO-Revision-Date: 2026-03-30 21:17+0100\n"
+"POT-Creation-Date: 2026-10-14 19:45+0100\n"
+"PO-Revision-Date: 2026-10-14 19:45+0100\n"
 "Last-Translator: Warder <ciksa@seznam.cz>\n"
 "Language-Team: \n"
 "Language: ru\n"
@@ -11,17 +11,17 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: Poedit 3.10\n"
 "X-Poedit-Basepath: ../../..\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: Task.py:49 downloadmanager.py:61 downloadmanager.py:567
-#: downloadmanager.py:663
+#: Task.py:49 downloadmanager.py:61 downloadmanager.py:555
+#: downloadmanager.py:651
 msgid "Waiting"
 msgstr "Ожидание"
 
-#: Task.py:50 downloadmanager.py:60 downloadmanager.py:567
-#: downloadmanager.py:663
+#: Task.py:50 downloadmanager.py:60 downloadmanager.py:555
+#: downloadmanager.py:651
 msgid "In progress"
 msgstr "В процессе"
 
@@ -42,8 +42,8 @@ msgstr ""
 "Ошибка: %s\n"
 "Повторить?"
 
-#: Task.py:297 downloadmanager.py:62 downloadmanager.py:573 playlists.py:382
-#: playlists.py:483
+#: Task.py:297 downloadmanager.py:62 downloadmanager.py:561 playlists.py:376
+#: playlists.py:479
 msgid "Error"
 msgstr "Ошибка"
 
@@ -64,262 +64,245 @@ msgstr "Отмена по запросу пользователя"
 msgid "Error code"
 msgstr "Код ошибки"
 
-#: catchup.py:130
+#: catchup.py:104
 msgid "Catch Up Categories"
-msgstr "Catch Up категории"
+msgstr "Категории архива ТВ"
 
-#: catchup.py:131 menu.py:299 startmenu.py:757
+#: catchup.py:105 menu.py:287 startmenu.py:765
 msgid "Catch Up TV"
-msgstr "Catch Up ТВ"
+msgstr "Архив ТВ"
 
-#: catchup.py:169 catchup.py:706 catchup.py:940 catchup.py:954 catchup.py:1101
-#: live.py:185 live.py:943 live.py:1231 live.py:1245 live.py:1452 plugin.py:265
-#: plugin.py:266 plugin.py:268 plugin.py:269 series.py:198 series.py:860
-#: series.py:864 series.py:884 series.py:2229 series.py:2752 series.py:2755
-#: series.py:2757 series.py:2768 series.py:2981 series.py:3017 series.py:3036
-#: vod.py:829 vod.py:833 vod.py:849 vod.py:2304 vod.py:2306 vod.py:2316
-#: vod.py:2531
+#: catchup.py:144 catchup.py:693 catchup.py:948 catchup.py:962 catchup.py:1030
+#: catchup.py:1124 catchup.py:1161 catchup.py:1175 live.py:163 live.py:960
+#: live.py:1272 live.py:1286 live.py:1389 live.py:1505 plugin.py:293
+#: plugin.py:294 plugin.py:296 plugin.py:297 series.py:181 series.py:816
+#: series.py:820 series.py:840 series.py:2173 series.py:2779 series.py:2782
+#: series.py:2784 series.py:2795 series.py:2894 series.py:3008 series.py:3044
+#: series.py:3063 vod.py:798 vod.py:804 vod.py:820 vod.py:2391 vod.py:2393
+#: vod.py:2403 vod.py:2510
 msgid "Sort: A-Z"
 msgstr "Сорт: А-Я"
 
-#: catchup.py:195 channelmenu.py:68 downloadmanager.py:243 live.py:243
-#: mainmenu.py:61 menu.py:94 playlists.py:93 playsettings.py:66 scanner.py:125
-#: series.py:358 server.py:76 settings.py:85 vod.py:345
+#: catchup.py:170 channelmenu.py:59 downloadmanager.py:232 live.py:221
+#: mainmenu.py:64 menu.py:87 playlists.py:85 playlists.py:576
+#: playsettings.py:59 scanner.py:109 series.py:334 server.py:65 settings.py:86
+#: vod.py:330
 msgid "Back"
 msgstr "Назад"
 
-#: catchup.py:196 channelmenu.py:69 live.py:244 mainmenu.py:62 menu.py:95
-#: playlists.py:94 scanner.py:126 series.py:359 vod.py:346
+#: catchup.py:171 channelmenu.py:60 live.py:222 mainmenu.py:65 menu.py:88
+#: playlists.py:86 playlists.py:577 scanner.py:110 series.py:335 vod.py:331
 msgid "OK"
 msgstr "OK"
 
-#: catchup.py:198 catchup.py:709 catchup.py:1018 live.py:246 live.py:940
-#: live.py:1348 series.py:361 series.py:2232 series.py:2871 vod.py:348
-#: vod.py:1835 vod.py:2428
+#: catchup.py:173 catchup.py:696 catchup.py:1035 live.py:224 live.py:957
+#: live.py:1397 series.py:337 series.py:2176 series.py:2903 vod.py:333
+#: vod.py:1797 vod.py:2519
 msgid "Search"
 msgstr "Поиск"
 
-#: catchup.py:574 catchup.py:1057 live.py:682 live.py:1389 series.py:958
-#: series.py:2922 vod.py:914 vod.py:2470
+#: catchup.py:551 catchup.py:1080 live.py:655 live.py:1442 series.py:914
+#: series.py:2949 vod.py:884 vod.py:2561
 msgid "ALL"
 msgstr "ВСЕ"
 
-#: catchup.py:669 live.py:848 series.py:1441 vod.py:1065
+#: catchup.py:655 live.py:840 series.py:1389 vod.py:1033
 msgid "Server error or invalid link."
 msgstr "Ошибка сервера или недопустимая ссылка."
 
-#: catchup.py:674 catchup.py:697 catchup.py:987 catchup.py:1012 live.py:883
-#: live.py:934 live.py:1281 live.py:1340 series.py:1449 series.py:2225
-#: series.py:2814 series.py:2861 vod.py:1073 vod.py:1828 vod.py:2355
-#: vod.py:2418
+#: catchup.py:661 catchup.py:684 catchup.py:995 catchup.py:1029 live.py:878
+#: live.py:951 live.py:1322 live.py:1388 series.py:1398 series.py:2169
+#: series.py:2841 series.py:2893 vod.py:1042 vod.py:1791 vod.py:2442
+#: vod.py:2509
 msgid "Reset Search"
 msgstr "Сбросить поиск"
 
-#: catchup.py:702
+#: catchup.py:689 catchup.py:935
 msgid "Reverse"
-msgstr "Реверс"
+msgstr "Обратный порядок"
 
-#: catchup.py:737 catchup.py:753 live.py:982 live.py:1020 series.py:1536
-#: series.py:1580 vod.py:1232 vod.py:1257
+#: catchup.py:724 catchup.py:740 live.py:1004 live.py:1042 series.py:1483
+#: series.py:1527 vod.py:1199 vod.py:1224
 msgid "Page: "
 msgstr "Страница: "
 
-#: catchup.py:940 catchup.py:957 live.py:1231 live.py:1248 plugin.py:265
-#: plugin.py:266 plugin.py:268 plugin.py:269 series.py:860 series.py:864
-#: series.py:887 series.py:2752 series.py:2755 series.py:2757 series.py:2771
-#: vod.py:829 vod.py:833 vod.py:852 vod.py:2304 vod.py:2306 vod.py:2319
+#: catchup.py:948 catchup.py:965 catchup.py:1021 catchup.py:1155
+#: catchup.py:1165 live.py:1272 live.py:1289 live.py:1380 plugin.py:293
+#: plugin.py:294 plugin.py:296 plugin.py:297 series.py:816 series.py:820
+#: series.py:843 series.py:2779 series.py:2782 series.py:2784 series.py:2798
+#: series.py:2878 vod.py:798 vod.py:804 vod.py:823 vod.py:2391 vod.py:2393
+#: vod.py:2406 vod.py:2501
 msgid "Sort: Z-A"
 msgstr "Сорт: Я-А"
 
-#: catchup.py:942 catchup.py:944 catchup.py:965 live.py:1233 live.py:1235
-#: live.py:1256 plugin.py:265 plugin.py:266 plugin.py:268 plugin.py:269
-#: series.py:860 series.py:864 series.py:898 series.py:2752 series.py:2755
-#: series.py:2757 series.py:2782 vod.py:829 vod.py:833 vod.py:863 vod.py:2304
-#: vod.py:2306 vod.py:2330
+#: catchup.py:950 catchup.py:952 catchup.py:973 catchup.py:1158 catchup.py:1171
+#: live.py:1274 live.py:1276 live.py:1297 plugin.py:293 plugin.py:294
+#: plugin.py:296 plugin.py:297 series.py:816 series.py:820 series.py:854
+#: series.py:2779 series.py:2782 series.py:2784 series.py:2809 vod.py:798
+#: vod.py:804 vod.py:834 vod.py:2391 vod.py:2393 vod.py:2417
 msgid "Sort: Original"
-msgstr "Сортировка: Оригинал"
+msgstr "Сортировка: исходная"
 
-#: catchup.py:944 catchup.py:960 live.py:1235 live.py:1251 plugin.py:266
-#: plugin.py:269 series.py:864 series.py:890 series.py:2755 series.py:2757
-#: series.py:2774 vod.py:833 vod.py:855 vod.py:2306 vod.py:2322
+#: catchup.py:952 catchup.py:968 catchup.py:1168 live.py:1276 live.py:1292
+#: plugin.py:294 plugin.py:297 series.py:820 series.py:846 series.py:2782
+#: series.py:2784 series.py:2801 vod.py:804 vod.py:826 vod.py:2393 vod.py:2409
 msgid "Sort: Added"
-msgstr "Сортировка: Добавлено"
+msgstr "Сортировка: по дате добавления"
 
-#: catchup.py:990 live.py:1288 series.py:2818 vod.py:2362
+#: catchup.py:998 live.py:1329 series.py:2845 vod.py:2449
 msgid "Filter this category..."
 msgstr "Отфильтровать эту категорию..."
 
-#: catchup.py:1005 live.py:1333 series.py:2847 vod.py:2411
+#: catchup.py:1017 live.py:1376 series.py:2874 vod.py:2497
 msgid "No results found."
 msgstr "Результатов не найдено."
 
-#: catchup.py:1036 live.py:1368 series.py:2902 vod.py:2450
+#: catchup.py:1059 live.py:1419 series.py:2929 vod.py:2541
 msgid "Incorrect pin code."
 msgstr "Неправильный пин код."
 
-#: catchup.py:1076 live.py:1408 series.py:2941 vod.py:2489
+#: catchup.py:1099 live.py:1461 series.py:2968 vod.py:2580
 msgid "Please enter the parental control pin code"
 msgstr "Пожалуйста, введите PIN-код родительского контроля"
 
-#: catchup.py:1077 hidden.py:29 live.py:1409 series.py:2942 settings.py:32
-#: vod.py:2490
+#: catchup.py:1100 hidden.py:29 live.py:1462 series.py:2969 settings.py:40
+#: vod.py:2581
 msgid "Enter pin code"
 msgstr "Введите пин-код"
 
-#: catchup.py:1254
+#: catchup.py:1325
 msgid "Catch-up"
-msgstr "Catch-up"
+msgstr "Архив ТВ"
 
-#: catchup.py:1260 series.py:3336 vod.py:2798
+#: catchup.py:1331 series.py:3365 vod.py:2890
 msgid "Failed to add to download manager"
-msgstr ""
+msgstr "Не удалось добавить в загрузки"
 
-#: catchup.py:1266 series.py:3342 vod.py:2804
+#: catchup.py:1337 series.py:3371 vod.py:2896
 msgid "Added to download manager"
 msgstr "Добавлено в менеджер загрузок"
 
-#: catchup.py:1267 series.py:3343 vod.py:2805
+#: catchup.py:1338 series.py:3372 vod.py:2897
 msgid "Note recording acts as an open connection."
-msgstr "Запись заметок действует как открытое соединение."
+msgstr "Примечание: запись занимает одно подключение."
 
-#: catchup.py:1268 series.py:3344 vod.py:2806
+#: catchup.py:1339 series.py:3373 vod.py:2898
 msgid "Do not record and play streams at the same time."
 msgstr "Не записывайте и не воспроизводите потоки одновременно."
 
-#: catchup.py:1269 series.py:3345 vod.py:2807
+#: catchup.py:1340 series.py:3374 vod.py:2899
 msgid "Open download manager?"
 msgstr "Открыть менеджер загрузок?"
 
-#: catchup.py:1272 series.py:3348 vod.py:2810
+#: catchup.py:1343 series.py:3377 vod.py:2902
 msgid "Already added to download manager"
 msgstr "Уже добавлено в менеджер загрузок"
 
-#: catchup.py:1303
+#: catchup.py:1370
 msgid "Catchup error. No data for this slot"
-msgstr "Ошибка catchup. Нет данных для этого слота"
+msgstr "Ошибка архива ТВ. Нет данных за этот период"
 
-#: catchup.py:1363
+#: catchup.py:1432
 msgid "Catchup currently not available. Missing EPG data"
-msgstr "Catchup в настоящее время недоступен. Отсутствующие данные EPG"
+msgstr "Архив ТВ недоступен: нет данных EPG"
 
-#: catchupplayer.py:346 vodplayer.py:347
+#: catchupplayer.py:330 vodplayer.py:329
 msgid "Do you want to resume this playback?"
 msgstr "Желаете возобновить просмотр?"
 
-#: catchupplayer.py:346 vodplayer.py:347
+#: catchupplayer.py:330 vodplayer.py:329
 #, python-format
 msgid "Resume position at %s"
-msgstr "Возобновить позицию в %s"
+msgstr "Продолжить с %s"
 
-#: catchupplayer.py:447
-msgid "Catch Up"
-msgstr "Догнать"
-
-#: catchupplayer.py:711 liveplayer.py:968 vodplayer.py:883
+#: catchupplayer.py:741 liveplayer.py:908 vodplayer.py:879
 msgid "Resolution Change Failed"
-msgstr "Изменение разрешения Не удалось"
+msgstr "Не удалось изменить разрешение"
 
-#: channelmenu.py:63
+#: channelmenu.py:54
 msgid "Menu"
-msgstr ""
+msgstr "Меню"
 
-#: channelmenu.py:120 channelmenu.py:153 channelmenu.py:260 menu.py:309
+#: channelmenu.py:111 channelmenu.py:140 channelmenu.py:233 menu.py:297
 msgid "Manual EPG Update"
 msgstr "Ручное обновление EPG"
 
-#: channelmenu.py:121 channelmenu.py:155 channelmenu.py:262 menu.py:302
-#: playsettings.py:59
+#: channelmenu.py:112 channelmenu.py:142 channelmenu.py:235 menu.py:290
+#: playsettings.py:52
 msgid "Playlist Settings"
 msgstr "Настройки плейлистов"
 
-#: channelmenu.py:123 channelmenu.py:157 channelmenu.py:264
+#: channelmenu.py:114 channelmenu.py:144 channelmenu.py:237
 msgid "Show/Hide Channels"
-msgstr ""
+msgstr "Показать/скрыть каналы"
 
-#: channelmenu.py:125 channelmenu.py:159 channelmenu.py:266
+#: channelmenu.py:116 channelmenu.py:146 channelmenu.py:239
 msgid "Account Info"
-msgstr ""
+msgstr "Данные аккаунта"
 
-#: channelmenu.py:127 channelmenu.py:161 channelmenu.py:270 playlists.py:88
-#: startmenu.py:763
+#: channelmenu.py:118 channelmenu.py:148 channelmenu.py:241 playlists.py:80
+#: startmenu.py:771
 msgid "Manage Playlists"
-msgstr ""
+msgstr "Управление плейлистами"
 
-#: channelmenu.py:128 channelmenu.py:163 channelmenu.py:272
+#: channelmenu.py:119 channelmenu.py:150 channelmenu.py:243
 msgid "Add New Playlist"
-msgstr ""
+msgstr "Добавить плейлист"
 
-#: channelmenu.py:139 channelmenu.py:165 channelmenu.py:274 mainmenu.py:186
-#: startmenu.py:768
+#: channelmenu.py:130 channelmenu.py:152 channelmenu.py:245 mainmenu.py:210
+#: startmenu.py:776
 msgid "Download Manager"
 msgstr "Менеджер загрузок"
 
-#: channelmenu.py:140 channelmenu.py:167 channelmenu.py:276 startmenu.py:765
+#: channelmenu.py:131 channelmenu.py:154 channelmenu.py:247 startmenu.py:773
 msgid "Global Settings"
-msgstr ""
+msgstr "Общие настройки"
 
-#: channelmenu.py:184 menu.py:361
+#: channelmenu.py:171 menu.py:352
 msgid "Recordings in progress. EPG not downloaded."
 msgstr "Запись продолжается. EPG не загружен."
 
-#: channelmenu.py:186 menu.py:363
+#: channelmenu.py:173 menu.py:354
 msgid "EPGs downloading."
 msgstr "Загрузка EPG."
 
-#: channelmenu.py:252
-msgid "Live"
-msgstr ""
-
-#: channelmenu.py:254 menu.py:292
-msgid "Vod"
-msgstr ""
-
-#: channelmenu.py:256 series.py:134 series.py:3314 series.py:3330
-#: startmenu.py:754
-msgid "Series"
-msgstr "Серии"
-
-#: channelmenu.py:258
-msgid "Catchup"
-msgstr ""
-
-#: downloadmanager.py:59 downloadmanager.py:570 downloadmanager.py:634
+#: downloadmanager.py:59 downloadmanager.py:558 downloadmanager.py:622
 msgid "Not Started"
-msgstr "Не начался"
+msgstr "Не начато"
 
-#: downloadmanager.py:63 downloadmanager.py:573
+#: downloadmanager.py:63 downloadmanager.py:561
 msgid "Downloaded"
-msgstr "Загруженный"
+msgstr "Загружено"
 
-#: downloadmanager.py:214
+#: downloadmanager.py:213
 msgid "VOD Download Manager"
 msgstr "Менеджер загрузок VOD"
 
-#: downloadmanager.py:318
+#: downloadmanager.py:307
 msgid "Free Space:"
 msgstr "Свободное место:"
 
-#: downloadmanager.py:318
+#: downloadmanager.py:307
 msgid "of"
 msgstr "из"
 
-#: downloadmanager.py:568 downloadmanager.py:714 hidden.py:89
+#: downloadmanager.py:556 downloadmanager.py:702 hidden.py:81 playlists.py:530
 msgid "Cancel"
 msgstr "Отмена"
 
-#: downloadmanager.py:571
+#: downloadmanager.py:559
 msgid "Download"
 msgstr "Скачать"
 
-#: downloadmanager.py:572 downloadmanager.py:575
+#: downloadmanager.py:560 downloadmanager.py:563
 msgid "Remove"
 msgstr "Удалить"
 
-#: downloadmanager.py:590
+#: downloadmanager.py:578
 msgid "Please set download folder in Main Settings."
 msgstr "Пожалуйста, установите папку загрузки в основных настройках."
 
-#: downloadmanager.py:590
+#: downloadmanager.py:578
 msgid ""
 "Vod Download folder location does not exist.\n"
 "\n"
@@ -327,103 +310,101 @@ msgstr ""
 "Расположение папки Vod Download не существует.\n"
 "\n"
 
-#: downloadmanager.py:670
+#: downloadmanager.py:658
 msgid "Cancel this download?"
 msgstr "Отменить эту загрузку?"
 
-#: downloadmanager.py:710
+#: downloadmanager.py:698
 msgid "Select an action:"
 msgstr "Выберите действие:"
 
-#: downloadmanager.py:712
+#: downloadmanager.py:700
 msgid "Delete this entry"
 msgstr "Удалить эту запись"
 
-#: downloadmanager.py:713
+#: downloadmanager.py:701
 msgid "Delete all downloaded entries"
 msgstr "Удалить все загруженные записи"
 
-#: hidden.py:29 settings.py:32
+#: hidden.py:29 settings.py:40
 msgid "Please enter the correct pin code"
 msgstr "Пожалуйста, введите правильный пин-код"
 
-#: hidden.py:38 settings.py:41
+#: hidden.py:38 settings.py:49
 msgid "The pin code you entered is wrong."
 msgstr "Введен неверный пин-код."
 
-#: hidden.py:78 hidden.py:80
+#: hidden.py:72 hidden.py:74
 msgid "Hidden Categories"
-msgstr "Показывать категории? (Вкл/Выкл)"
+msgstr "Скрытые категории"
 
-#: hidden.py:90 playsettings.py:67 record.py:54 server.py:77 settings.py:86
+#: hidden.py:82 playlists.py:531 playlists.py:534 playsettings.py:60
+#: record.py:47 server.py:66 settings.py:87
 msgid "Save"
 msgstr "Сохранить"
 
-#: hidden.py:91
+#: hidden.py:83
 msgid "Invert"
 msgstr "Инвертировать"
 
-#: hidden.py:92
+#: hidden.py:84
 msgid "Reset"
 msgstr "Сброс"
 
-#: hidden.py:181
+#: hidden.py:161
 msgid "Error: All categories hidden. Please amend your selection."
 msgstr "Ошибка: Все категории скрыты. Пожалуйста, измените свой выбор."
 
-#: live.py:136
+#: live.py:114
 msgid "Live Categories"
 msgstr "Live Категории"
 
-#: live.py:137 startmenu.py:748
+#: live.py:115 startmenu.py:756
 msgid "Live TV"
 msgstr "Прямой Эфир"
 
-#: live.py:680 series.py:957 vod.py:912
+#: live.py:653 series.py:913 vod.py:882
 msgid "FAVOURITES"
 msgstr "ИЗБРАННОЕ"
 
-#: live.py:681 vod.py:913
+#: live.py:654 vod.py:883
 msgid "RECENTLY WATCHED"
 msgstr "НЕДАВНО ПРОСМОТРЕНО"
 
-#: live.py:938 live.py:1284 playlists.py:95 vod.py:1843 vod.py:2358
+#: live.py:955 live.py:1325 playlists.py:87 playlists.py:578 vod.py:1805
+#: vod.py:2445
 msgid "Delete"
 msgstr "Удалить"
 
-#: live.py:1834 live.py:1874 live.py:1883
+#: live.py:1896 live.py:1935 live.py:1944
 msgid "Next Info"
-msgstr "Следующая информация"
+msgstr "Следующая передача"
 
-#: live.py:1878
+#: live.py:1939
 msgid "Now Info"
-msgstr "Сейчас Информация"
+msgstr "Текущая передача"
 
-#: live.py:2083 liveplayer.py:613
+#: live.py:2158 liveplayer.py:577
 msgid "Recording Timer Set."
-msgstr "Набор таймеров записи."
+msgstr "Таймер записи установлен."
 
-#: live.py:2085 liveplayer.py:615
+#: live.py:2160 liveplayer.py:579
 msgid "Recording Failed."
 msgstr "Не удалось записать."
 
-#: liveplayer.py:389
-msgid "TV"
-msgstr "ТВ"
-
-#: mainmenu.py:60 startmenu.py:99
+#: mainmenu.py:63 startmenu.py:98
 msgid "Main Menu"
 msgstr "Главное меню"
 
-#: mainmenu.py:63
+#: mainmenu.py:66
 msgid "Reset JSON"
 msgstr "Сброс JSON"
 
-#: mainmenu.py:134
+#: mainmenu.py:142
 msgid "Playlists.txt location is invalid and has been reset."
-msgstr "Плейлисты.txt местоположение недопустимо и было сброшено."
+msgstr "Путь к playlists.txt неверен и сброшен."
 
-#: mainmenu.py:160
+#: mainmenu.py:167
 msgid ""
 "Dependencies not installed.\n"
 "\n"
@@ -433,23 +414,23 @@ msgstr ""
 "\n"
 "Попробуйте сначала установить более старую версию из фидов..."
 
-#: mainmenu.py:181
+#: mainmenu.py:205
 msgid "Playlists"
 msgstr "Плейлисты"
 
-#: mainmenu.py:181 mainmenu.py:183 startmenu.py:759
+#: mainmenu.py:205 mainmenu.py:207 startmenu.py:767
 msgid "Add Playlist"
 msgstr "Добавить Плейлист"
 
-#: mainmenu.py:181 mainmenu.py:183 settings.py:78
+#: mainmenu.py:205 mainmenu.py:207 settings.py:79
 msgid "Main Settings"
 msgstr "Основные настройки"
 
-#: mainmenu.py:189
+#: mainmenu.py:213
 msgid "Hack-A-Vision"
 msgstr "Hack-A-Vision"
 
-#: mainmenu.py:241 startmenu.py:942
+#: mainmenu.py:297 startmenu.py:997
 msgid ""
 "Warning: delete stored json data for all playlists... Settings, favourites "
 "etc. \n"
@@ -461,73 +442,77 @@ msgstr ""
 "Плейлисты не будут удалены.\n"
 "Хотите продолжить?"
 
-#: menu.py:92
+#: menu.py:85
 msgid "Playlist Menu"
 msgstr "Меню плейлиста"
 
-#: menu.py:289
+#: menu.py:277
 msgid "Live Streams"
-msgstr ""
+msgstr "Прямые трансляции"
 
-#: menu.py:295
+#: menu.py:280
+msgid "Vod"
+msgstr "VOD"
+
+#: menu.py:283
 msgid "TV Series"
-msgstr ""
+msgstr "Сериалы"
 
-#: menu.py:319
+#: menu.py:309
 msgid "No data, blocked or playlist not compatible with XStreamity plugin."
 msgstr ""
 "Нет данных, заблокирован или плейлист не совместим с плагином XStreamity."
 
-#: playlists.py:96
+#: playlists.py:88 playlists.py:579 scanner.py:112
 msgid "Info"
 msgstr "Информация"
 
-#: playlists.py:149 scanner.py:163
-msgid "No internet."
-msgstr "Нет интернета."
+#: playlists.py:89 playlists.py:580
+msgid "Edit mode"
+msgstr "Режим редактирования"
 
-#: playlists.py:379 playlists.py:483 scanner.py:455 scanner.py:545
+#: playlists.py:373 playlists.py:479 scanner.py:438 scanner.py:531
 msgid "Server Not Responding"
 msgstr "Сервер не отвечает"
 
-#: playlists.py:392 playlists.py:485 scanner.py:482 scanner.py:547
+#: playlists.py:386 playlists.py:481 scanner.py:465 scanner.py:533
 msgid "Not Authorised"
 msgstr "Не авторизовано"
 
-#: playlists.py:397 playlists.py:471 scanner.py:488 scanner.py:533
-#: serverinfo.py:85
+#: playlists.py:391 playlists.py:467 scanner.py:471 scanner.py:519
+#: serverinfo.py:78
 msgid "Active"
-msgstr "Активный"
+msgstr "Активен"
 
-#: playlists.py:398 playlists.py:477 scanner.py:489 scanner.py:539
-#: serverinfo.py:86
+#: playlists.py:392 playlists.py:473 scanner.py:472 scanner.py:525
+#: serverinfo.py:79
 msgid "Banned"
-msgstr "Забанен"
+msgstr "Заблокирован"
 
-#: playlists.py:399 playlists.py:481 scanner.py:490 scanner.py:543
-#: serverinfo.py:87
+#: playlists.py:393 playlists.py:477 scanner.py:473 scanner.py:529
+#: serverinfo.py:80
 msgid "Disabled"
 msgstr "Отключено"
 
-#: playlists.py:400 playlists.py:479 scanner.py:491 scanner.py:541
-#: serverinfo.py:88
+#: playlists.py:394 playlists.py:475 scanner.py:474 scanner.py:527
+#: serverinfo.py:81
 msgid "Expired"
-msgstr "Истекший"
+msgstr "Истёк"
 
-#: playlists.py:410 playlists.py:412 playlists.py:414 scanner.py:501
-#: scanner.py:503 scanner.py:505
+#: playlists.py:404 playlists.py:406 playlists.py:408 scanner.py:484
+#: scanner.py:486 scanner.py:488
 msgid "Expires: "
 msgstr "Истекает: "
 
-#: playlists.py:425 scanner.py:507
+#: playlists.py:419 scanner.py:490
 msgid "Active Conn:"
-msgstr "Активный Конн:"
+msgstr "Активных подключений:"
 
-#: playlists.py:433 scanner.py:515
+#: playlists.py:427 scanner.py:498
 msgid "Max Conn:"
-msgstr "Макс Конн:"
+msgstr "Макс. подключений:"
 
-#: playlists.py:464 startmenu.py:502
+#: playlists.py:460 startmenu.py:512
 msgid ""
 "You have dead playlists that are slowing down loading.\n"
 "\n"
@@ -537,59 +522,63 @@ msgstr ""
 "\n"
 "Нажмите желтую кнопку, чтобы легко удалить неработающие плейлисты"
 
-#: playlists.py:502
+#: playlists.py:542
+msgid "Unable to save the playlist order."
+msgstr "Не удалось сохранить порядок плейлистов."
+
+#: playlists.py:681
 msgid "Delete selected playlist?"
 msgstr "Удалить выбранный плейлист?"
 
-#: playsettings.py:89 record.py:87 server.py:106 settings.py:110
+#: playsettings.py:82 record.py:80 server.py:95 settings.py:111
 msgid "Really close without saving settings?"
 msgstr "Серьёзно закрыть без сохранения настроек?"
 
-#: playsettings.py:145 server.py:133
+#: playsettings.py:138 server.py:120
 msgid "Short name or provider name:"
 msgstr "Краткое имя или имя поставщика:"
 
-#: playsettings.py:146
+#: playsettings.py:139
 msgid "Show LIVE category:"
-msgstr "Показать категорию LIVE:"
+msgstr "Показывать категорию LIVE:"
+
+#: playsettings.py:140
+msgid "Show VOD category:"
+msgstr "Показывать категорию VOD:"
+
+#: playsettings.py:141
+msgid "Show SERIES category:"
+msgstr "Показывать категорию SERIES:"
+
+#: playsettings.py:142
+msgid "Show CATCHUP category:"
+msgstr "Показывать категорию CATCHUP:"
+
+#: playsettings.py:143 server.py:126
+msgid "Output:"
+msgstr "Вывод:"
 
 #: playsettings.py:147
-msgid "Show VOD category:"
-msgstr "Показать VOD категорию:"
-
-#: playsettings.py:148
-msgid "Show SERIES category:"
-msgstr "Показать серию категории:"
-
-#: playsettings.py:149
-msgid "Show CATCHUP category:"
-msgstr "Показать CATCHUP категорию:"
-
-#: playsettings.py:150 server.py:139
-msgid "Output:"
-msgstr "На выходе:"
-
-#: playsettings.py:154
 msgid "Stream Type LIVE:"
 msgstr "Тип трансляции LIVE:"
 
-#: playsettings.py:157
+#: playsettings.py:150
 msgid "Stream Type VOD/SERIES:"
 msgstr "Тип потока VOD/SERIES:"
 
-#: playsettings.py:160
+#: playsettings.py:153
 msgid "EPG offset:"
 msgstr "Смещение EPG:"
 
-#: playsettings.py:161
+#: playsettings.py:154
 msgid "Use alternative EPG url:"
 msgstr "Используйте альтернативный URL-адрес EPG:"
 
-#: playsettings.py:165
+#: playsettings.py:158
 msgid "Alternative EPG url:"
 msgstr "Альтернативный URL EPG:"
 
-#: playsettings.py:243
+#: playsettings.py:235 server.py:203
 msgid ""
 "Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum 3 "
 "characters."
@@ -597,427 +586,454 @@ msgstr ""
 "Название букета не может быть пустым. Пожалуйста, введите уникальное "
 "название букета. Минимум 3 символа."
 
-#: playsettings.py:249 server.py:231
+#: playsettings.py:241 server.py:209
 msgid "Name already used. Please enter a unique name."
 msgstr "Имя уже используется. Пожалуйста, введите уникальное имя."
 
-#: plugin.py:177
+#: plugin.py:203
+msgid "Auto"
+msgstr "Авто"
+
+#: plugin.py:204
 msgid "4:3 Letterbox"
-msgstr ""
+msgstr "4:3 Letterbox"
 
-#: plugin.py:178
+#: plugin.py:205
 msgid "4:3 PanScan"
-msgstr ""
+msgstr "4:3 PanScan"
 
-#: plugin.py:179
+#: plugin.py:206
 msgid "16:9"
-msgstr ""
+msgstr "16:9"
 
-#: plugin.py:180
+#: plugin.py:207
 msgid "16:9 Always"
-msgstr ""
+msgstr "Всегда 16:9"
 
-#: plugin.py:181
+#: plugin.py:208
 msgid "16:10 Letterbox"
-msgstr ""
+msgstr "16:10 Letterbox"
 
-#: plugin.py:182
+#: plugin.py:209
 msgid "16:10 PanScan"
-msgstr ""
+msgstr "16:10 PanScan"
 
-#: plugin.py:183
+#: plugin.py:210
 msgid "16:9 Letterbox"
-msgstr ""
+msgstr "16:9 Letterbox"
 
-#: plugin.py:265 plugin.py:266 plugin.py:268 plugin.py:269
+#: plugin.py:293 plugin.py:294 plugin.py:296 plugin.py:297
 msgid "Original"
 msgstr "Оригинал"
 
-#: plugin.py:266 plugin.py:269
+#: plugin.py:294 plugin.py:297
 msgid "Added"
 msgstr "Добавлено"
 
-#: plugin.py:266 plugin.py:269 series.py:864 series.py:894 series.py:2755
-#: series.py:2778 vod.py:833 vod.py:859 vod.py:2306 vod.py:2326
+#: plugin.py:294 plugin.py:297 series.py:820 series.py:850 series.py:2782
+#: series.py:2805 vod.py:804 vod.py:830 vod.py:2393 vod.py:2413
 msgid "Sort: Year"
 msgstr "Сорт: Год"
 
-#: plugin.py:266 plugin.py:269
+#: plugin.py:294 plugin.py:297
 msgid "Year"
 msgstr "Год"
 
-#: plugin.py:409 plugin.py:509
+#: plugin.py:481 plugin.py:581
 msgid "XStreamity"
 msgstr "XStreamity"
 
-#: plugin.py:508
+#: plugin.py:580
 msgid "IPTV Xtream Codes playlists player by KiddaC"
 msgstr "IPTV Xtream Коды плейлисты плеер от KiddaC"
 
-#: record.py:53 serverinfo.py:75
+#: record.py:46 serverinfo.py:68
 msgid "Close"
 msgstr "Закрыть"
 
-#: record.py:67
+#: record.py:60
 msgid "Please enter recording time"
 msgstr "Пожалуйста, введите время записи"
 
-#: record.py:70
+#: record.py:63
 msgid "Please enter recording end time"
 msgstr "Пожалуйста, введите время окончания записи"
 
-#: record.py:106
+#: record.py:92
 msgid "Name"
 msgstr "Имя"
 
-#: record.py:108
+#: record.py:95
 msgid "Start Time"
 msgstr "Время начала"
 
-#: record.py:110
+#: record.py:97
 msgid "End Time"
 msgstr "Время окончания"
 
-#: scanner.py:123
+#: scanner.py:107
 msgid "Select Playlist"
 msgstr "Выберите плейлист"
 
-#: series.py:132
+#: series.py:123
 msgid "Series Categories"
 msgstr "Категории серий"
 
-#: series.py:1196 series.py:3455
-msgid "Season "
-msgstr "Время года "
+#: series.py:125 series.py:3343 series.py:3359 startmenu.py:762
+msgid "Series"
+msgstr "Серии"
 
-#: series.py:2133 vod.py:1805
+#: series.py:1144 series.py:3484
+msgid "Season "
+msgstr "Сезон "
+
+#: series.py:2077 vod.py:1768
 msgid "Rating: "
 msgstr "Рейтинг: "
 
-#: series.py:2209 vod.py:1797
+#: series.py:2153 vod.py:1760
 msgid "Cast:"
-msgstr "Гипс:"
+msgstr "В ролях:"
 
-#: series.py:2210 vod.py:1787
+#: series.py:2154 vod.py:1750
 msgid "Director:"
 msgstr "Режиссёр:"
 
-#: series.py:2211 vod.py:1792
+#: series.py:2155 vod.py:1755
 msgid "Country:"
 msgstr "Страна:"
 
-#: series.py:2212 vod.py:1767
+#: series.py:2156 vod.py:1730
 msgid "Overview"
 msgstr "Обзор"
 
-#: series.py:3242
+#: series.py:3271
 msgid "Series group added to favourites."
 msgstr "Группа серий добавлена в избранное."
 
-#: series.py:3244
+#: series.py:3273
 msgid "Series group removed from favourites."
 msgstr "Группа серий удалена из избранного."
 
-#: server.py:68
+#: server.py:57
 msgid "Add Xtream Codes Playlist"
 msgstr "Добавить коды Xtream Плейлист"
 
-#: server.py:134
+#: server.py:121
 msgid "Protocol:"
 msgstr "Протокол:"
 
-#: server.py:135
+#: server.py:122
 msgid "Server URL: i.e. domain.xyz"
 msgstr "URL-адрес сервера: т.е. domain.xyz"
 
-#: server.py:136
+#: server.py:123
 msgid "Port:"
 msgstr "Порт:"
 
-#: server.py:137
+#: server.py:124
 msgid "Username:"
 msgstr "Имя пользователя:"
 
-#: server.py:138
+#: server.py:125
 msgid "Password:"
 msgstr "Пароль:"
 
-#: server.py:220
+#: server.py:198
 msgid "Details are not valid or unauthorised"
 msgstr "Данные не являются действительными или несанкционированными"
 
-#: server.py:225
-msgid ""
-"Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum 2 "
-"characters."
-msgstr ""
-"Имя букета не должно быть пустым. Просим ввести уникальное имя букета. "
-"Минимум 2 символа."
-
-#: server.py:241
+#: server.py:221
 msgid "Playlist added successfully."
 msgstr "Плейлист успешно добавлен."
 
-#: serverinfo.py:45
+#: serverinfo.py:38
 msgid "User Information"
 msgstr "Информация о пользователе"
 
-#: serverinfo.py:58
+#: serverinfo.py:51
 msgid "Status:"
 msgstr "Статус:"
 
-#: serverinfo.py:59
+#: serverinfo.py:52
 msgid "Expiry Date:"
-msgstr "Срок годности:"
+msgstr "Дата окончания:"
 
-#: serverinfo.py:60
+#: serverinfo.py:53
 msgid "Created At:"
-msgstr "Создано:"
+msgstr "Создан:"
 
-#: serverinfo.py:61
+#: serverinfo.py:54
 msgid "Is Trial:"
-msgstr "Является пробным:"
+msgstr "Пробный аккаунт:"
 
-#: serverinfo.py:62
+#: serverinfo.py:55
 msgid "Active Connections:"
 msgstr "Активные подключения:"
 
-#: serverinfo.py:63
+#: serverinfo.py:56
 msgid "Max Connections:"
 msgstr "Максимальное количество подключений:"
 
-#: serverinfo.py:64
+#: serverinfo.py:57
 msgid "Allowed Output Formats:"
 msgstr "Допустимые форматы вывода:"
 
-#: serverinfo.py:65
+#: serverinfo.py:58
 msgid "Real URL:"
 msgstr "Реальный URL:"
 
-#: serverinfo.py:66
+#: serverinfo.py:59
 msgid "Timezone:"
 msgstr "Часовой пояс:"
 
-#: serverinfo.py:67
+#: serverinfo.py:60
 msgid "Server Offset:"
 msgstr "Смещение сервера:"
 
-#: serverinfo.py:95
+#: serverinfo.py:88
 msgid "Unknown"
 msgstr "Неизвестно"
 
-#: settings.py:126
+#: settings.py:125
 msgid ""
 "Please change default parental pin.\n"
 "\n"
 "Pin cannot be 0000, 1111, or 1234"
 msgstr ""
+"Измените PIN-код родительского контроля.\n"
+"\n"
+"PIN-код не может быть 0000, 1111 или 1234"
 
-#: settings.py:149
+#: settings.py:148
 msgid "You need to restart the GUI"
-msgstr "Необходимо перезапустить графический интерфейс пользователя"
+msgstr "Нужно перезапустить интерфейс"
 
-#: settings.py:149
+#: settings.py:148
 msgid "Do you want to restart now?"
 msgstr "Вы хотите перезагрузиться сейчас?"
 
-#: settings.py:173
+#: settings.py:164
+msgid "Select interface"
+msgstr "Выбор интерфейса"
+
+#: settings.py:165 settings.py:166
 msgid "Select skin"
 msgstr "Выбрать скин"
 
-#: settings.py:175
-msgid "Select interface"
-msgstr ""
-
-#: settings.py:177
+#: settings.py:167
 msgid "Select fake web user-agent"
-msgstr "Выберите поддельный веб-агент пользователя"
+msgstr "Выбрать User-Agent браузера"
 
-#: settings.py:178
-msgid "playlists.txt location"
-msgstr "списки воспроизведения.txt расположение"
+#: settings.py:168
+msgid "Playlist files location"
+msgstr "Папка файлов плейлистов"
 
-#: settings.py:178 settings.py:187 settings.py:194 settings.py:199
-msgid " *Restart GUI Required"
-msgstr " *Требуется перезапуск графического интерфейса пользователя"
+#: settings.py:169
+msgid "Active playlist file"
+msgstr "Файл активного плейлиста"
 
-#: settings.py:179
+#: settings.py:170
 msgid "EPG download location"
 msgstr "Расположение загрузки EPG"
 
-#: settings.py:180
+#: settings.py:171
 msgid "VOD download folder"
 msgstr "Папка загрузки VOD"
 
-#: settings.py:181
+#: settings.py:172
 msgid "Default LIVE stream type"
 msgstr "Тип потока LIVE по умолчанию"
 
-#: settings.py:182
+#: settings.py:173
 msgid "Default VOD/SERIES stream type"
 msgstr "Тип потока VOD/SERIES по умолчанию"
 
-#: settings.py:183
+#: settings.py:174
 msgid "Preview LIVE streams in mini tv"
 msgstr "Предварительный просмотр прямых трансляций на мини-телевизоре"
 
-#: settings.py:184
+#: settings.py:175
 msgid "Stop stream on back button"
 msgstr "Остановить поток на кнопке \"Назад\""
 
-#: settings.py:185
+#: settings.py:176
 msgid "XStreamity parental control"
 msgstr "Родительский контроль XStreamity"
 
-#: settings.py:186
+#: settings.py:177
 msgid "XStreamity parental pin"
 msgstr "Родительский пин-код XStreamity"
 
-#: settings.py:187
+#: settings.py:178
 msgid "Show in main menu"
 msgstr "Показать в главном меню"
 
-#: settings.py:188
+#: settings.py:178 settings.py:185 settings.py:190
+msgid " *Restart GUI Required"
+msgstr " *Нужен перезапуск интерфейса"
+
+#: settings.py:179
 msgid "Use Movie Database(TMDB) for VOD & Series"
 msgstr "Используйте базу данных фильмов (TMDB) для VOD & Series"
 
-#: settings.py:189
+#: settings.py:180
 msgid "Movie Database language"
 msgstr "Язык базы данных фильмов"
 
-#: settings.py:190
+#: settings.py:181
 msgid "Margin before catchup (mins)"
-msgstr "Маржа перед догонялкой (мин."
+msgstr "Запас до начала архива (мин)"
 
-#: settings.py:191
+#: settings.py:182
 msgid "Margin after catchup (mins)"
-msgstr "Маржа после догонялки (мин))"
+msgstr "Запас после архива (мин)"
 
-#: settings.py:192
+#: settings.py:183
 msgid "Allow SubsSupport plugin in VOD"
 msgstr "Разрешить плагин SubsSupport в VOD"
 
-#: settings.py:193
+#: settings.py:184
 msgid "Skip playlist selection screen if only 1 playlist"
 msgstr "Пропустить экран выбора плейлиста, если только 1 плейлист"
 
-#: settings.py:194
+#: settings.py:185
 msgid "Automatic EPG download time"
 msgstr "Автоматическое время загрузки EPG"
 
-#: settings.py:195
+#: settings.py:186
 msgid "Show channel picons"
-msgstr "Показать канал пиконов"
+msgstr "Показывать пиконы каналов"
 
-#: settings.py:196
+#: settings.py:187
 msgid "Show Vod/Series posters"
 msgstr "Показать плакаты Vod/Series"
 
-#: settings.py:197
+#: settings.py:188
 msgid "Show infobar picons"
-msgstr "Показать инфобокс пиконы"
+msgstr "Показывать пиконы инфопанели"
 
-#: settings.py:198
+#: settings.py:189
 msgid "Show infobar posters"
 msgstr "Показать плакаты на информационной панели"
 
-#: settings.py:199
+#: settings.py:190
 msgid "Auto start XStreamity on boot"
 msgstr "Автоматический запуск XStreamity при загрузке"
 
-#: settings.py:200
+#: settings.py:191
 msgid "Default screen aspect ratio"
-msgstr ""
+msgstr "Формат экрана по умолчанию"
 
-#: settings.py:207
+#: settings.py:196
 msgid "Default VOD category sort order"
 msgstr "Порядок сортировки категорий VOD по умолчанию"
 
-#: settings.py:208
+#: settings.py:197
 msgid "Default VOD stream sort order"
 msgstr "Порядок сортировки потоков VOD по умолчанию"
 
-#: settings.py:210
+#: settings.py:198
 msgid "Default Series category sort order"
 msgstr "Порядок сортировки категорий серий по умолчанию"
 
-#: settings.py:211
+#: settings.py:199
 msgid "Default Series sort order"
 msgstr "Порядок сортировки серий по умолчанию"
 
-#: settings.py:213
+#: settings.py:201
 msgid "Show intro video"
-msgstr ""
+msgstr "Показывать заставку"
 
-#: settings.py:214
+#: settings.py:202
 msgid "Loop intro video"
-msgstr ""
+msgstr "Повторять заставку"
 
-#: settings.py:215
+#: settings.py:203
 msgid "Intro video selection"
-msgstr ""
+msgstr "Выбор заставки"
 
-#: settings.py:216
+#: settings.py:204
 msgid "Show Speedtest on start menu"
-msgstr ""
+msgstr "Тест скорости в главном меню"
 
-#: settings.py:217
+#: settings.py:205
 msgid "Show Manage Playlists on start menu"
-msgstr ""
+msgstr "Управление плейлистами в главном меню"
 
-#: settings.py:218
+#: settings.py:206
 msgid "Show playlists on start menu"
-msgstr ""
+msgstr "Плейлисты в главном меню"
 
-#: settings.py:219
+#: settings.py:207
 msgid "Show Manage Playlists in popup menu"
-msgstr ""
+msgstr "Управление плейлистами во всплывающем меню"
 
-#: settings.py:220
+#: settings.py:208
 msgid "Show Account Info in popup menu"
-msgstr ""
+msgstr "Данные аккаунта во всплывающем меню"
 
-#: settings.py:363
+#: settings.py:210
+msgid "Prompt if plugin update available"
+msgstr "Предлагать обновление плагина"
+
+#: settings.py:355
 msgid "Choose Directory:"
 msgstr "Выберите Каталог:"
 
-#: settings.py:364
+#: settings.py:356
 msgid "Choose directory"
 msgstr "Выберите каталог"
 
-#: startmenu.py:573
+#: startmenu.py:581
 msgid "Active:"
-msgstr ""
+msgstr "Активно:"
 
-#: startmenu.py:573
+#: startmenu.py:581
 msgid "Max:"
-msgstr ""
+msgstr "Макс.:"
 
-#: startmenu.py:751 vod.py:141
+#: startmenu.py:759 vod.py:131
 msgid "Movies"
 msgstr "Фильмы"
 
-#: startmenu.py:771
+#: startmenu.py:779
 msgid "Reboot GUI"
-msgstr ""
+msgstr "Перезапустить интерфейс"
 
-#: startmenu.py:774
+#: startmenu.py:782
 msgid "Speed Test"
-msgstr ""
+msgstr "Тест скорости"
 
-#: vod.py:139
+#: updater.py:147
+msgid "New version"
+msgstr "Новая версия"
+
+#: updater.py:149
+msgid "is available"
+msgstr "доступна"
+
+#: updater.py:151
+msgid "Do you want to install it now? Your box will restart after install"
+msgstr "Установить сейчас? После установки ресивер перезагрузится"
+
+#: updater.py:168
+msgid "Installing XStreamity update"
+msgstr "Установка обновления XStreamity"
+
+#: vod.py:129
 msgid "Vod Categories"
 msgstr "Vod Категории"
 
-#: vod.py:2776 vodplayer.py:456
+#: vod.py:2868
 msgid "VOD"
 msgstr "ВОД"
 
-#: vod.py:2792
+#: vod.py:2884
 msgid "Movie"
-msgstr "Видео"
+msgstr "Фильм"
 
-#: vod.py:2840
+#: vod.py:2932
 msgid ""
 "The TMDB plugin is not installed!\n"
 "Please install it."
@@ -1025,7 +1041,7 @@ msgstr ""
 "Плагин TMDB не установлен!\n"
 "Пожалуйста, установите его."
 
-#: vod.py:2851
+#: vod.py:2943
 msgid ""
 "The IMDb plugin is not installed!\n"
 "Please install it."
@@ -1033,9 +1049,25 @@ msgstr ""
 "Плагин IMDb не установлен.\n"
 "Пожалуйста, установите его."
 
-#: vod.py:2954
+#: vod.py:3047
 msgid "No compatible trailer found."
-msgstr ""
+msgstr "Подходящий трейлер не найден."
+
+#~ msgid "Catch Up"
+#~ msgstr "Догнать"
+
+#~ msgid "TV"
+#~ msgstr "ТВ"
+
+#~ msgid "No internet."
+#~ msgstr "Нет интернета."
+
+#~ msgid ""
+#~ "Bouquet name cannot be blank. Please enter a unique bouquet name. Minimum "
+#~ "2 characters."
+#~ msgstr ""
+#~ "Имя букета не должно быть пустым. Просим ввести уникальное имя букета. "
+#~ "Минимум 2 символа."
 
 #~ msgid "Manage Playlist"
 #~ msgstr "Управление плейлистом"

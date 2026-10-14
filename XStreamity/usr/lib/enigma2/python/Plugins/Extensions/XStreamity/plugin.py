@@ -138,6 +138,7 @@ cfg.interface = ConfigSelection(
 # Screen / skin selection
 # ------------------------------------------------------------------
 
+
 def _remove_legacy_black_folder(xstreamity_skin_dir):
     """
     Remove a legacy "Black" skin folder left over from an old rename, using
@@ -261,6 +262,7 @@ cfg.catchupstart = ConfigSelectionNumber(0, 30, 1, default=0, wraparound=True)
 cfg.catchupend = ConfigSelectionNumber(0, 30, 1, default=0, wraparound=True)
 cfg.subs = ConfigYesNo(default=False)
 cfg.skipplaylistsscreen = ConfigYesNo(default=False)
+cfg.autoepg = ConfigYesNo(default=True)
 cfg.wakeup = ConfigClock(default=((9 * 60) + 9) * 60)
 cfg.adult = ConfigYesNo(default=False)
 cfg.adultpin = ConfigPIN(default=0000)
@@ -295,6 +297,7 @@ cfg.vodstreamorder = ConfigSelection(default=(_("Sort: Original")), choices=[(_(
 cfg.seriescategoryorder = ConfigSelection(default=(_("Sort: Original")), choices=[(_("Sort: A-Z"), "A-Z"), (_("Sort: Z-A"), "Z-A"), (_("Sort: Original"), _("Original"))])
 cfg.seriesorder = ConfigSelection(default=(_("Sort: Original")), choices=[(_("Sort: A-Z"), "A-Z"), (_("Sort: Z-A"), "Z-A"), (_("Sort: Added"), _("Added")), (_("Sort: Year"), _("Year")), (_("Sort: Original"), _("Original"))])
 
+cfg.autoupdateprompt = ConfigYesNo(default=False)
 # ------------------------------------------------------------------
 # File paths
 # ------------------------------------------------------------------
@@ -525,7 +528,7 @@ xsAutoStartTimer = None
 
 def autostart(reason, session=None, **kwargs):
     global xsAutoStartTimer
-    if reason == 0 and session and xsAutoStartTimer is None:
+    if reason == 0 and session and cfg.autoepg.value and xsAutoStartTimer is None:
         xsAutoStartTimer = XSAutoStartTimer(session)
 
 

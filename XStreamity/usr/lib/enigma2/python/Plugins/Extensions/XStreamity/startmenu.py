@@ -159,7 +159,9 @@ class XStreamity_StartMenu(Screen):
 
         self.onLayoutFinish.append(self.__layoutFinished)
         self.onFirstExecBegin.append(self.check_dependencies)
-        self.onClose.append(self.closeOnlineUpdater)
+
+        if cfg.autoupdateprompt.value:
+            self.onClose.append(self.closeOnlineUpdater)
 
     def __layoutFinished(self):
         self.setTitle(self.setup_title)
@@ -207,7 +209,7 @@ class XStreamity_StartMenu(Screen):
 
         self["playlists"].master.master.instance.setSelectionEnable(0)
 
-        if not self.onlineUpdateStarted:
+        if cfg.autoupdateprompt.value and not self.onlineUpdateStarted:
             self.onlineUpdateStarted = True
             self.checkOnlineUpdate()
 

@@ -1,9 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import os
 import re
 import sys
 
+from Screens import Standby
 from Screens.Console import Console
 from Screens.MessageBox import MessageBox
 
@@ -14,6 +16,8 @@ PY3 = sys.version_info[0] == 3
 INSTALLER_URL = "https://raw.githubusercontent.com/kiddac/XStreamity/master/installer.sh"
 VERSION_URL = "https://raw.githubusercontent.com/kiddac/XStreamity/master/XStreamity/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/version.txt"
 USER_AGENT = "XStreamity online updater"
+INSTALLER_PATH = "/tmp/xstreamity-installer.sh"
+INSTALL_SUCCESS_PATH = "/tmp/xstreamity-update-success"
 
 
 def urlread(url, timeout=10):
@@ -105,6 +109,7 @@ class OnlineUpdater(object):
         self.session = session
         self.currentVersion = str(currentVersion).strip()
         self.closed = False
+        self.installerData = None
 
     def check(self):
         """Run the network request away from the Enigma2 GUI thread."""
@@ -130,6 +135,7 @@ class OnlineUpdater(object):
             return
 
         versionData, installerData = result
+        self.installerData = installerData
         versionText = decodeText(versionData).strip()
         remoteVersion = versionText.splitlines()[0] if versionText else None
         description = parseInstaller(installerData)[1]
@@ -162,10 +168,62 @@ class OnlineUpdater(object):
         if not answer or self.closed:
             return
 
-        command = "wget --no-check-certificate '%s' -O - | /bin/sh" % INSTALLER_URL
-        self.session.open(
+        if not self.installerData:
+            self.session.open(
+                MessageBox,
+                _("The update installer could not be downloaded."),
+                MessageBox.TYPE_ERROR,
+                timeout=10
+            )
+            return
+
+        try:
+            installerData = self.installerData
+            if not isinstance(installerData, bytes):
+                installerData = installerData.encode("utf-8")
+            with open(INSTALLER_PATH, "wb") as installerFile:
+                installerFile.write(installerData)
+        except Exception as error:
+            print("[XStreamity] Unable to save update installer: %s" % error)
+            self.session.open(
+                MessageBox,
+                _("The update installer could not be saved."),
+                MessageBox.TYPE_ERROR,
+                timeout=10
+            )
+            return
+
+        # The installer was already fetched by Python during the update check.
+        # Reusing it avoids BusyBox wget incompatibilities on older images.
+        command = (
+            "rm -f '%s'; /bin/sh '%s'; status=$?; rm -f '%s'; "
+            "[ $status -eq 0 ] && touch '%s'; exit $status"
+        ) % (INSTALL_SUCCESS_PATH, INSTALLER_PATH, INSTALLER_PATH, INSTALL_SUCCESS_PATH)
+        self.session.openWithCallback(
+            self._installFinished,
             Console,
             title=_("Installing XStreamity update"),
             cmdlist=[command],
-            closeOnSuccess=False
+            closeOnSuccess=True
         )
+
+    def _installFinished(self, *args):
+        if not os.path.exists(INSTALL_SUCCESS_PATH):
+            return
+
+        try:
+            os.remove(INSTALL_SUCCESS_PATH)
+        except OSError:
+            pass
+
+        self.session.openWithCallback(
+            self._restartEnigma,
+            MessageBox,
+            _("XStreamity was updated successfully. Restart Enigma2 now?"),
+            MessageBox.TYPE_YESNO,
+            default=False
+        )
+
+    def _restartEnigma(self, answer=False):
+        if answer:
+            Standby.quitMainloop(3)

@@ -112,7 +112,7 @@ class XStreamity_Update:
         if self.mode == "manual":
             playlist = glob.active_playlist
             if "user_info" in playlist and "auth" in playlist["user_info"] and str(playlist["user_info"]["auth"]) == "1":
-                domain = playlist["playlist_info"]["domain"]
+                # domain = playlist["playlist_info"]["domain"]
                 name = playlist["playlist_info"]["name"]
                 xmltv = playlist["playlist_info"]["xmltv_api"]
                 epglocation = os.path.join(str(cfg.epglocation.value).rstrip("/"), "iptv-epg")
@@ -127,7 +127,7 @@ class XStreamity_Update:
         else:
             for playlist in self.playlists_all:
                 if "user_info" in playlist and "auth" in playlist["user_info"] and str(playlist["user_info"]["auth"]) == "1":
-                    domain = playlist["playlist_info"]["domain"]
+                    # domain = playlist["playlist_info"]["domain"]
                     name = playlist["playlist_info"]["name"]
                     xmltv = playlist["playlist_info"]["xmltv_api"]
                     epglocation = os.path.join(str(cfg.epglocation.value).rstrip("/"), "iptv-epg")
@@ -225,50 +225,22 @@ class XStreamity_Update:
         nowtime = calendar.timegm(time.gmtime())
         epgxmlfile = self.urllist[0][1]
         epgjsonfile = self.urllist[0][2]
-        epglockfile = epgjsonfile + ".lock"
 
-        # Check for active lock from another plugin
-        if os.path.exists(epglockfile):
-            if time.time() - os.path.getmtime(epglockfile) < 1800:
-                print("EPG locked by another process, skipping:", epgjsonfile)
-                if os.path.exists(epgxmlfile):
-                    os.remove(epgxmlfile)
-                self.urllist.pop(0)
-                if self.urllist:
-                    self.processPlaylist()
-                return
+        for channel, start, stop, title, desc in self.buildjson2():
+            start = get_time_utc(start, quickptime)
+            stop = get_time_utc(stop, quickptime)
 
-            # Lock is stale, remove it
-            os.remove(epglockfile)
+            if start < nowtime + (3600 * 24) and stop > start and stop > nowtime:
+                epgitems.setdefault(channel, []).append([start, stop, title, desc])
 
-        # Acquire lock
-        try:
-            open(epglockfile, "w").close()
-        except Exception as e:
-            print("Could not create EPG lock file:", e)
+        with open(epgjsonfile, "w") as jsonFile:
+            json.dump(epgitems, jsonFile, ensure_ascii=False)
 
-        try:
-            for channel, start, stop, title, desc in self.buildjson2():
-                start = get_time_utc(start, quickptime)
-                stop = get_time_utc(stop, quickptime)
-
-                if start < nowtime + (3600 * 24) and stop > start and stop > nowtime:
-                    epgitems.setdefault(channel, []).append([start, stop, title, desc])
-
-            with open(epgjsonfile, "w") as jsonFile:
-                json.dump(epgitems, jsonFile, ensure_ascii=False)
-
-        finally:
-            # Always release lock and clean up xml
+        if os.path.exists(epgxmlfile):
             try:
-                os.remove(epglockfile)
+                os.remove(epgxmlfile)
             except Exception:
                 pass
-            if os.path.exists(epgxmlfile):
-                try:
-                    os.remove(epgxmlfile)
-                except Exception:
-                    pass
 
         epgitems.clear()
         self.urllist.pop(0)

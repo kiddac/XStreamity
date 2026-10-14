@@ -1,21 +1,34 @@
 #!/bin/sh
-## setup command=wget https://raw.githubusercontent.com/kiddac/XStreamity/master/installer.sh -O - | /bin/sh
+## setup command=rm -rf /tmp/XStreamity-master /tmp/XStreamity-master.tar.gz; wget -q https://codeload.github.com/kiddac/XStreamity/tar.gz/refs/heads/master -O /tmp/XStreamity-master.tar.gz && tar -xzf /tmp/XStreamity-master.tar.gz -C /tmp && /bin/sh /tmp/XStreamity-master/installer.sh
 
 description="
 What is new:
-- Fixed an error in auto update epg code
+- Added new setting to prompt for auto update - Needs turning on in main settings
+- Added new setting to turn on/off epg auto update
+- Removed epg update lock code - no longer needed now Xstreamity and Xklass are merged into 1 plugin.
+- Amend update path for old wget busybox 
+- Added a restart enigma2 question after auto update
+- Updated PO files and used AI to add in missing translations
 "
 
 PLUGINPATH=/usr/lib/enigma2/python/Plugins/Extensions/XStreamity
 TMPDIR=/tmp/XStreamity_update
 ARCHIVE_ROOT=XStreamity-master/XStreamity
+ARCHIVE_URL=https://codeload.github.com/kiddac/XStreamity/tar.gz/refs/heads/master
 
 echo " ** Download and install XStreamity ** "
 rm -rf "$TMPDIR"
 mkdir -p "$TMPDIR"
 cd "$TMPDIR" || exit 1
 
-if ! wget --no-check-certificate -q "https://github.com/kiddac/XStreamity/archive/refs/heads/master.tar.gz" -O master.tar.gz \
+# GNU wget and newer BusyBox builds support this option, but old VTi BusyBox
+# builds do not. Only add it when the installed wget advertises support.
+WGET_CERT_OPTION=
+if wget --help 2>&1 | grep -q 'no-check-certificate'; then
+    WGET_CERT_OPTION=--no-check-certificate
+fi
+
+if ! wget $WGET_CERT_OPTION -q "$ARCHIVE_URL" -O master.tar.gz \
    || ! tar -xzf master.tar.gz \
    || [ ! -f "$ARCHIVE_ROOT/usr/lib/enigma2/python/Plugins/Extensions/XStreamity/plugin.py" ]; then
     echo "Download failed. Nothing was changed."
@@ -49,6 +62,5 @@ fi
 
 sync
 echo
-echo "XStreamity installed successfully. Restarting Enigma2..."
-killall enigma2
+echo "XStreamity installed successfully. Restart Enigma2 to load the update."
 exit 0

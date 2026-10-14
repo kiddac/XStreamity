@@ -129,6 +129,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
 
         restart_needed = (
             self.org_main != cfg.main.value or
+            self.org_autoepg != cfg.autoepg.value or
             self.org_wakeup != cfg.wakeup.value or
             self.org_boot != cfg.boot.value
         )
@@ -182,6 +183,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.cfg_catchupend = getConfigListEntry(_("Margin after catchup (mins)"), cfg.catchupend)
         self.cfg_subs = getConfigListEntry(_("Allow SubsSupport plugin in VOD"), cfg.subs)
         self.cfg_skipplaylistsscreen = getConfigListEntry(_("Skip playlist selection screen if only 1 playlist"), cfg.skipplaylistsscreen)
+        self.cfg_autoepg = getConfigListEntry(_("Automatic EPG download") + _(" *Restart GUI Required"), cfg.autoepg)
         self.cfg_wakeup = getConfigListEntry(_("Automatic EPG download time") + _(" *Restart GUI Required"), cfg.wakeup)
         self.cfg_channelpicons = getConfigListEntry(_("Show channel picons"), cfg.channelpicons)
         self.cfg_channelcovers = getConfigListEntry(_("Show Vod/Series posters"), cfg.channelcovers)
@@ -191,6 +193,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.cfg_ar_id_player = getConfigListEntry(_("Default screen aspect ratio"), cfg.ar_id_player)
 
         self.org_main = cfg.main.value
+        self.org_autoepg = cfg.autoepg.value
         self.org_wakeup = cfg.wakeup.value
         self.org_boot = cfg.boot.value
         self.cfg_vodcategoryorder = getConfigListEntry(_("Default VOD category sort order"), cfg.vodcategoryorder)
@@ -207,6 +210,8 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
         self.cfg_sidemenumanageplaylists = getConfigListEntry(_("Show Manage Playlists in popup menu"), cfg.sidemenumanageplaylists)
         self.cfg_sidemenuaccountinfo = getConfigListEntry(_("Show Account Info in popup menu"), cfg.sidemenuaccountinfo)
 
+        self.cfg_autoupdateprompt = getConfigListEntry(_("Prompt if plugin update available"), cfg.autoupdateprompt)
+
         self.createSetup()
 
     def createSetup(self):
@@ -214,6 +219,7 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
             self.cfg_interface,
             self.cfg_xstreamity_skin if cfg.interface.value == "xstreamity" else None,
             self.cfg_xklass_skin if cfg.interface.value == "xklass" else None,
+            self.cfg_autoupdateprompt,
             self.cfg_useragent,
             self.cfg_location,
             self.cfg_playlist_name,
@@ -228,7 +234,8 @@ class XStreamity_Settings(ConfigListScreen, Screen, ProtectedScreen):
             self.cfg_seriesorder,
             self.cfg_livepreview,
             self.cfg_stopstream,
-            self.cfg_wakeup,
+            self.cfg_autoepg,
+            self.cfg_wakeup if cfg.autoepg.value else None,
             self.cfg_TMDB,
             self.cfg_TMDBLanguage2 if cfg.TMDB.value else None,
             self.cfg_catchupstart,
