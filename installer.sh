@@ -3,12 +3,7 @@
 
 description="
 What is new:
-- Added new setting to prompt for auto update - Needs turning on in main settings
-- Added new setting to turn on/off epg auto update
-- Removed epg update lock code - no longer needed now Xstreamity and Xklass are merged into 1 plugin.
-- Amend update path for old wget busybox 
-- Added a restart enigma2 question after auto update
-- Updated PO files and used AI to add in missing translations
+- clientcontextfactory amend for twisted client update
 "
 
 PLUGINPATH=/usr/lib/enigma2/python/Plugins/Extensions/XStreamity
