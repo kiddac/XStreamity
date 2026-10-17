@@ -35,7 +35,7 @@ if sslverify:
             self.hostname = hostname
 
         def getContext(self):
-            ctx = super(SNIFactory, self).getContext()
+            ctx = ssl.ClientContextFactory.getContext(self)
 
             if self.hostname:
                 _set_sni(ctx, self.hostname)
