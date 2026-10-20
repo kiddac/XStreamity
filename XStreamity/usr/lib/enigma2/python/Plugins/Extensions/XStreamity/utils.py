@@ -30,7 +30,14 @@ def _cleanup_epg_folders(playlists_all, cfg, dir_tmp):
                 valid_playlists.add(str(playlist["playlist_info"]["name"]))
             except Exception:
                 pass
-        for folder_name in os.listdir(epg_root):
+
+        try:
+            folders = os.listdir(epg_root)
+        except OSError as e:
+            print("[XStreamity] EPG directory listing error:", e)
+            return
+
+        for folder_name in folders:
             epgfolder = os.path.join(epg_root, folder_name)
             if not os.path.isdir(epgfolder):
                 continue

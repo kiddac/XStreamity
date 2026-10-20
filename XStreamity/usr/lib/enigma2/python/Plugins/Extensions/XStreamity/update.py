@@ -7,6 +7,7 @@ import calendar
 import json
 import os
 import time
+from Screens.MessageBox import MessageBox
 from time import time as rtime
 from xml.etree.cElementTree import iterparse
 
@@ -29,6 +30,7 @@ import twisted.python.runtime
 from twisted.web.client import downloadPage
 
 # Local application/library-specific imports
+from . import _
 from . import xstreamity_globals as glob
 from .plugin import pythonVer, cfg
 
@@ -65,6 +67,19 @@ class XStreamity_Update:
 
         if not self.check_recordings_in_progress():
             self.process_json_file()
+
+    def create_epg_folder(self, epgfolder):
+        try:
+            if not os.path.isdir(epgfolder):
+                os.makedirs(epgfolder)
+            return True
+        except OSError as e:
+            print("[XStreamity] EPG directory error:", e)
+
+            if self.mode == "manual" and self.session:
+                self.session.open(MessageBox, _("Unable to access EPG directory.\n\n%s\n\n%s") % (epgfolder, str(e)), MessageBox.TYPE_ERROR, timeout=10)
+
+            return False
 
     def check_recordings_in_progress(self):
         if not self.session:
@@ -120,10 +135,10 @@ class XStreamity_Update:
                 epgxmlfile = os.path.join(epgfolder, "epg.xml")
                 epgjsonfile = os.path.join(epgfolder, "epg.json")
 
-                self.urllist.append([xmltv, epgxmlfile, epgjsonfile])
+                if not self.create_epg_folder(epgfolder):
+                    return
 
-                if not os.path.exists(epgfolder):
-                    os.makedirs(epgfolder)
+                self.urllist.append([xmltv, epgxmlfile, epgjsonfile])
         else:
             for playlist in self.playlists_all:
                 if "user_info" in playlist and "auth" in playlist["user_info"] and str(playlist["user_info"]["auth"]) == "1":
@@ -138,10 +153,10 @@ class XStreamity_Update:
                     if xmltv in [x[1] for x in self.urllist]:
                         continue
 
-                    self.urllist.append([xmltv, epgxmlfile, epgjsonfile])
+                    if not self.create_epg_folder(epgfolder):
+                        return
 
-                    if not os.path.exists(epgfolder):
-                        os.makedirs(epgfolder)
+                    self.urllist.append([xmltv, epgxmlfile, epgjsonfile])
 
         self.processPlaylist()
 

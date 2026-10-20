@@ -3,7 +3,7 @@
 
 description="
 What is new:
-- Fixed a potential crash on XKlass interface if ok button pressed too quickly
+- Fixed a potential crash if external media not mounted correctly or device is full.
 "
 
 PLUGINPATH=/usr/lib/enigma2/python/Plugins/Extensions/XStreamity
