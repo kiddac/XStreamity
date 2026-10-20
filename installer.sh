@@ -3,7 +3,7 @@
 
 description="
 What is new:
-- clientcontextfactory amend for twisted client update
+- Fixed a potential crash on XKlass interface if ok button pressed too quickly
 "
 
 PLUGINPATH=/usr/lib/enigma2/python/Plugins/Extensions/XStreamity

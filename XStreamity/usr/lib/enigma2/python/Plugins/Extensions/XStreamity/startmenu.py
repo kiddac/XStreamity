@@ -141,7 +141,7 @@ class XStreamity_StartMenu(Screen):
             playlist["data"]["vod_categories"] = []
             playlist["data"]["series_categories"] = []
 
-        glob.active_playlist = []
+        glob.active_playlist = {}
 
         try:
             glob.currentPlayingServiceRef = self.session.nav.getCurrentlyPlayingServiceReference()
@@ -786,7 +786,7 @@ class XStreamity_StartMenu(Screen):
         self.drawList = [self.buildListEntry(x[0], x[1], x[2]) for x in self.list]
         self["list"].setList(self.drawList)
 
-        if self.playlists_all:
+        if self.playlists_all and glob.active_playlist:
             playlistindex = glob.active_playlist["playlist_info"]["index"]
             try:
                 self.playlists_all[playlistindex] = glob.active_playlist
@@ -813,7 +813,7 @@ class XStreamity_StartMenu(Screen):
 
         current_entry = self["list"].getCurrent()
 
-        if self.playlists_all:
+        if self.playlists_all and glob.active_playlist:
             glob.current_selection = glob.active_playlist["playlist_info"]["index"]
 
         if current_entry:
