@@ -25,7 +25,7 @@ from os.path import isdir
 pythonFull = float(str(sys.version_info.major) + "." + str(sys.version_info.minor))
 pythonVer = sys.version_info.major
 isDreambox = os.path.exists("/usr/bin/apt-get")
-debugs = True
+debugs = False
 
 # ------------------------------------------------------------------
 # Dependencies checks

@@ -1998,7 +1998,7 @@ class XStreamity_Live_Categories(Screen):
                             duplicatecheck = []
 
                             if "epg_listings" in response and response["epg_listings"]:
-                                print("*** epg_listings **", json.dumps(response["epg_listings"]))
+                                # print("*** epg_listings **", json.dumps(response["epg_listings"]))
                                 for index, listing in enumerate(response["epg_listings"]):
                                     try:
                                         title = base64.b64decode(listing.get("title", "")).decode("utf-8")
@@ -2081,7 +2081,7 @@ class XStreamity_Live_Categories(Screen):
         if self.showingshortEPG:
             current_index = self["epg_short_list"].getIndex()
 
-            print("*** self.epgshortlist[current_index][0] ***", self.epgshortlist[current_index][0])
+            # print("*** self.epgshortlist[current_index][0] ***", self.epgshortlist[current_index][0])
 
             if self.epgshortlist[current_index][0]:
                 name = self.epgshortlist[current_index][0]
@@ -2097,10 +2097,10 @@ class XStreamity_Live_Categories(Screen):
         self.starttime = NoSave(ConfigClock(default=begin))
         self.endtime = NoSave(ConfigClock(default=end))
 
-        print("*** name ***", name)
-        print("*** self.date ***", self.date)
-        print("*** begin ***", begin)
-        print("*** end ***", end)
+        # print("*** name ***", name)
+        # print("*** self.date ***", self.date)
+        # print("*** begin ***", begin)
+        # print("*** end ***", end)
 
         self.session.openWithCallback(self.RecordDateInputClosed, record.RecordDateInput, self.name, self.date, self.starttime, self.endtime)
 
