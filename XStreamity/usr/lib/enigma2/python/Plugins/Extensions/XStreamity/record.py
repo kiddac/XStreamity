@@ -23,6 +23,7 @@ from .xStaticText import StaticText
 class RecordDateInput(ConfigListScreen, Screen):
 
     def __init__(self, session, config_name=None, config_date=None, config_starttime=None, config_endtime=None, config_instant=False):
+        print("*** RecordDateInput ***")
         Screen.__init__(self, session)
         self.session = session
 
@@ -124,9 +125,15 @@ class RecordDateInput(ConfigListScreen, Screen):
     def keyGo(self):
         starttime = self.getTimestamp(self.conf_date, self.conf_starttime.value)
 
+        print("*** starttime ***", starttime)
+
         if self.conf_endtime.value < self.conf_starttime.value:
             self.conf_date += 86400
 
+        print("*** self.conf_date ***", self.conf_date)
+
         endtime = self.getTimestamp(self.conf_date, self.conf_endtime.value)
+
+        print("*** endtime ***", endtime)
 
         self.close((True, starttime, endtime, self.conf_name.value))
