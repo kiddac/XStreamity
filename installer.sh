@@ -3,8 +3,7 @@
 
 description="
 What is new:
-Auto online updater amends for older images
-HTTPS Cert - extra date and time check added.
+EPG offset fix for short epg recording times
 "
 
 PLUGINPATH=/usr/lib/enigma2/python/Plugins/Extensions/XStreamity

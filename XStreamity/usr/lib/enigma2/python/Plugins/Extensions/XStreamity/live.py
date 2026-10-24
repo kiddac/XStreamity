@@ -2007,18 +2007,15 @@ class XStreamity_Live_Categories(Screen):
                                         start = listing.get("start", "")
                                         end = listing.get("end", listing.get("stop", ""))
 
-                                        start_timestamp = int(listing.get("start_timestamp", 0))
-                                        stop_timestamp = int(listing.get("stop_timestamp", 0))
-
-                                        start_timestamp += (3600 * shift)
-                                        stop_timestamp += (3600 * shift)
-
                                         start_datetime = self.parse_datetime(start)
                                         end_datetime = self.parse_datetime(end)
 
                                         if start_datetime and end_datetime:
                                             start_datetime += timedelta(hours=shift)
                                             end_datetime += timedelta(hours=shift)
+
+                                            start_timestamp = int(time.mktime(start_datetime.timetuple()))
+                                            stop_timestamp = int(time.mktime(end_datetime.timetuple()))
                                             epg_date_all = start_datetime.strftime("%a %d/%m")
                                             epg_time_all = "{} - {}".format(start_datetime.strftime("%H:%M"), end_datetime.strftime("%H:%M"))
 
